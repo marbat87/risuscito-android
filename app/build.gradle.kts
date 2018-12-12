@@ -57,9 +57,9 @@ val roomVersion = "1.1.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.0")
     implementation("com.github.gabrielemariotti.changeloglib:changelog:2.1.0")
-    implementation("com.afollestad.material-dialogs:core:2.0.0-rc1")
-    implementation("com.afollestad.material-dialogs:input:2.0.0-rc1")
-    implementation("com.afollestad.material-dialogs:files:2.0.0-rc1")
+    implementation("com.afollestad.material-dialogs:core:2.0.0-rc3")
+    implementation("com.afollestad.material-dialogs:input:2.0.0-rc3")
+    implementation("com.afollestad.material-dialogs:files:2.0.0-rc3")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.0")
     implementation("com.mikepenz:materialdrawer:6.1.1")
     implementation("com.mikepenz:crossfader:1.6.0")
@@ -76,7 +76,7 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:16.0.1")
     implementation("com.google.android.gms:play-services-drive:16.0.0")
-    implementation("com.google.firebase:firebase-core:16.0.5")
+    implementation("com.google.firebase:firebase-core:16.0.6")
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.6@aar") { isTransitive = true }
     implementation("com.afollestad:material-cab:1.3.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.3")

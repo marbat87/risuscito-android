@@ -103,6 +103,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         try {
             val config = ViewConfiguration.get(this)
             val menuKeyField = ViewConfiguration::class.java.getDeclaredField("sHasPermanentMenuKey")
+            @Suppress("SENSELESS_COMPARISON")
             if (menuKeyField != null) {
                 menuKeyField.isAccessible = true
                 menuKeyField.setBoolean(config, false)
