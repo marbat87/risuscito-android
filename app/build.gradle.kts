@@ -55,13 +55,13 @@ val preferenceFixVersion = "1.0.0"
 val lifecycleVersion = "1.1.1"
 val roomVersion = "1.1.1"
 dependencies {
-    implementation("androidx.multidex:multidex:2.0.0")
+    implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.github.gabrielemariotti.changeloglib:changelog:2.1.0")
-    implementation("com.afollestad.material-dialogs:core:2.0.0-rc3")
-    implementation("com.afollestad.material-dialogs:input:2.0.0-rc3")
-    implementation("com.afollestad.material-dialogs:files:2.0.0-rc3")
-    implementation("me.zhanghai.android.materialprogressbar:library:1.6.0")
-    implementation("com.mikepenz:materialdrawer:6.1.1")
+    implementation("com.afollestad.material-dialogs:core:2.0.0-rc5")
+    implementation("com.afollestad.material-dialogs:input:2.0.0-rc5")
+    implementation("com.afollestad.material-dialogs:files:2.0.0-rc5")
+    implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
+    implementation("com.mikepenz:materialdrawer:6.1.2")
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:community-material-typeface:2.7.94.1@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
@@ -77,7 +77,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:16.0.1")
     implementation("com.google.android.gms:play-services-drive:16.0.0")
     implementation("com.google.firebase:firebase-core:16.0.6")
-    implementation("com.crashlytics.sdk.android:crashlytics:2.9.6@aar") { isTransitive = true }
+    implementation("com.crashlytics.sdk.android:crashlytics:2.9.8@aar") { isTransitive = true }
     implementation("com.afollestad:material-cab:1.3.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.3")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.12.0")
