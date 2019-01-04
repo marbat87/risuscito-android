@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import android.os.Build
@@ -270,14 +269,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .withActivity(this@MainActivity)
                 .withTranslucentStatusBar(!isOnTablet)
                 .withSelectionListEnabledForSingleProfile(false)
-                .withHeaderBackground(
-                        if (isOnTablet)
-                            ColorDrawable(ContextCompat.getColor(this, R.color.floating_background))
-                        else
-                            ColorDrawable(themeUtils!!.primaryColor()))
+//                .withHeaderBackground(
+//                        if (isOnTablet)
+//                            ColorDrawable(ContextCompat.getColor(this, R.color.floating_background))
+//                        else
+//                            ColorDrawable(themeUtils!!.primaryColor()))
                 .withSavedInstance(savedInstanceState)
                 .addProfiles(profile)
-                .withNameTypeface(mMediumFont!!)
+                .withNameTypeface(mRegularFont!!)
                 .withEmailTypeface(mRegularFont!!)
                 .withOnAccountHeaderListener { _, mProfile, _ ->
                     // sample usage of the onProfileChanged listener
