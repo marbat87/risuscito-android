@@ -28,7 +28,6 @@ class GeneralInsertSearch : ThemeableActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_insert_search)
 
-//        main_toolbarTitle.setText(R.string.title_activity_inserisci_titolo)
         risuscito_toolbar.setBackgroundColor(themeUtils!!.primaryColor())
         risuscito_toolbar.title = getString(R.string.title_activity_inserisci_titolo)
         setSupportActionBar(risuscito_toolbar)
@@ -57,7 +56,7 @@ class GeneralInsertSearch : ThemeableActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                setResult(Activity.RESULT_CANCELED)
+                setResult(CustomLists.RESULT_CANCELED)
                 finish()
 //                overridePendingTransition(0, R.anim.slide_out_right)
                 Animatoo.animateShrink(this@GeneralInsertSearch)
@@ -69,7 +68,7 @@ class GeneralInsertSearch : ThemeableActivity() {
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
-        setResult(Activity.RESULT_CANCELED)
+        setResult(CustomLists.RESULT_CANCELED)
         finish()
 //        overridePendingTransition(0, R.anim.slide_out_right)
         Animatoo.animateShrink(this@GeneralInsertSearch)

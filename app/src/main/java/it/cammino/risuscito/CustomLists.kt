@@ -39,6 +39,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.tabs_layout.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
@@ -131,11 +132,18 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        //        Log.i(TAG, "requestCode: " + requestCode);
+        Log.i(TAG, "onActivityResult requestCode: $requestCode")
         super.onActivityResult(requestCode, resultCode, data)
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             mCustomListsViewModel!!.indexToShow = mCustomListsViewModel!!.indDaModif
             movePage = true
+        }
+        if (requestCode == CantiParolaFragment.TAG_INSERT_PAROLA
+                || requestCode == CantiEucarestiaFragment.TAG_INSERT_EUCARESTIA
+                || requestCode == ListaPersonalizzataFragment.TAG_INSERT_PERS) {
+            Log.i(TAG, "onActivityResult resultCode: $resultCode")
+            if (resultCode == RESULT_OK || resultCode == RESULT_KO)
+                Snackbar.make(activity!!.main_content, if (resultCode == RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -178,7 +186,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             mCustomListsViewModel!!.indexToShow = 0
                             movePage = true
                             Snackbar.make(
-                                    activity!!.findViewById(R.id.main_content),
+                                    activity!!.main_content,
                                     getString(R.string.list_removed)
                                             + mCustomListsViewModel!!.titoloDaCanc
                                             + "'!",
@@ -453,6 +461,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     companion object {
         const val TAG_CREA_LISTA = 111
         const val TAG_MODIFICA_LISTA = 222
+        const val RESULT_OK = 0
+        const val RESULT_KO = -1
+        const val RESULT_CANCELED = -2
         private val TAG = CustomLists::class.java.canonicalName
     }
 }

@@ -430,7 +430,7 @@ class CantiParolaFragment : Fragment() {
     }
 
     companion object {
-        private const val TAG_INSERT_PAROLA = 333
+        const val TAG_INSERT_PAROLA = 333
         private val TAG = CantiParolaFragment::class.java.canonicalName
     }
 }

@@ -1,6 +1,5 @@
 package it.cammino.risuscito
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
@@ -21,17 +20,15 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
-import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ListeUtils
 import kotlinx.android.synthetic.main.activity_insert_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
@@ -39,7 +36,6 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
-import java.sql.Date
 import java.text.Normalizer
 import java.util.regex.Pattern
 
@@ -110,48 +106,50 @@ class InsertAvanzataFragment : Fragment() {
             mLastClickTime = SystemClock.elapsedRealtime()
 
             if (fromAdd == 1) {
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                            val position = CustomList()
-                            position.id = idLista
-                            position.position = listPosition
-                            position.idCanto = item.id
-                            position.timestamp = Date(System.currentTimeMillis())
-                            try {
-                                mDao.insertPosition(position)
-                            } catch (e: Exception) {
-                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT)
-                                        .show()
-                            }
-
-                            activity!!.setResult(Activity.RESULT_OK)
-                            activity!!.finish()
-//                            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
-                            Animatoo.animateShrink(activity)
-                        })
-                        .start()
+                ListeUtils.addToListaDupAndFinish(activity!!, idLista, listPosition, item.id)
+//                Thread(
+//                        Runnable {
+//                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+//                            val position = CustomList()
+//                            position.id = idLista
+//                            position.position = listPosition
+//                            position.idCanto = item.id
+//                            position.timestamp = Date(System.currentTimeMillis())
+//                            try {
+//                                mDao.insertPosition(position)
+//                            } catch (e: Exception) {
+//                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT)
+//                                        .show()
+//                            }
+//
+//                            activity!!.setResult(Activity.RESULT_OK)
+//                            activity!!.finish()
+////                            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//                            Animatoo.animateShrink(activity)
+//                        })
+//                        .start()
             } else {
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            val listaPers = mDao.getListById(idLista)
-                            if (listaPers?.lista != null) {
-                                listaPers.lista!!.addCanto(item.id.toString(), listPosition)
-                                mDao.updateLista(listaPers)
-                                activity!!.setResult(Activity.RESULT_OK)
-                                activity!!.finish()
-//                                activity!!.overridePendingTransition(0, R.anim.slide_out_right)
-                                Animatoo.animateShrink(activity)
-                            }
-                        })
-                        .start()
+                ListeUtils.updateListaPersonalizzataAndFinish(activity!!, idLista, item.id, listPosition)
+//                Thread(
+//                        Runnable {
+//                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+//                            val listaPers = mDao.getListById(idLista)
+//                            if (listaPers?.lista != null) {
+//                                listaPers.lista!!.addCanto(item.id.toString(), listPosition)
+//                                mDao.updateLista(listaPers)
+//                                activity!!.setResult(CustomLists.RESULT_OK)
+//                                activity!!.finish()
+////                                activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//                                Animatoo.animateShrink(activity)
+//                            }
+//                        })
+//                        .start()
             }
 
-            activity!!.setResult(Activity.RESULT_OK)
-            activity!!.finish()
-//            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
-            Animatoo.animateShrink(activity)
+//            activity!!.setResult(Activity.RESULT_OK)
+//            activity!!.finish()
+////            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//            Animatoo.animateShrink(activity)
             true
         }
 

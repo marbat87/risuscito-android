@@ -1,11 +1,14 @@
 package it.cammino.risuscito.utils
 
+import android.app.Activity
 import android.content.Context
 import android.database.SQLException
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.snackbar.Snackbar
+import it.cammino.risuscito.CustomLists
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -79,6 +82,14 @@ object ListeUtils {
                     mDao.deleteListById(idLista)
                 })
                 .start()
+    }
+
+    fun addToListaDupAndFinish(activity: Activity, idLista: Int, listPosition: Int, idDaAgg: Int) {
+        AddToListaDupTaskWithFinish(activity, idLista, listPosition, idDaAgg).execute()
+    }
+
+    fun updateListaPersonalizzataAndFinish(activity: Activity, idLista: Int, idCanto: Int, listPosition: Int) {
+        UpdateListaPersonalizzataTaskWithFinish(activity, idLista, idCanto, listPosition).execute()
     }
 
     private class AddToListaNoDupTask internal constructor(fragment: Fragment, private val idLista: Int, private val listPosition: Int, private val idDaAgg: Int, private val replaceTag: String) : AsyncTask<Void, Void, String>() {
@@ -410,6 +421,56 @@ object ListeUtils {
             cronTemp.ultimaVisita = Date(java.lang.Long.parseLong(removedHistoryTimestamp))
             mDao.insertCronologia(cronTemp)
             return 0
+        }
+    }
+
+    private class AddToListaDupTaskWithFinish internal constructor(activity: Activity, private val idLista: Int, private val listPosition: Int, private val idDaAgg: Int) : AsyncTask<Void, Void, Boolean>() {
+
+        private val activityReference: WeakReference<Activity> = WeakReference(activity)
+
+        override fun doInBackground(vararg params: Void?): Boolean {
+            try {
+                val mDao = RisuscitoDatabase.getInstance(activityReference.get()!!).customListDao()
+                val position = CustomList()
+                position.id = idLista
+                position.position = listPosition
+                position.idCanto = idDaAgg
+                position.timestamp = Date(System.currentTimeMillis())
+                mDao.insertPosition(position)
+            } catch (e: SQLException) {
+                return false
+            }
+            return true
+        }
+
+        override fun onPostExecute(updated: Boolean) {
+            super.onPostExecute(updated)
+            activityReference.get()!!.setResult(if (updated) CustomLists.RESULT_OK else CustomLists.RESULT_KO)
+            activityReference.get()!!.finish()
+            Animatoo.animateShrink(activityReference.get()!!)
+        }
+    }
+
+    private class UpdateListaPersonalizzataTaskWithFinish internal constructor(activity: Activity, private val idLista: Int, private val idCanto: Int, private val listPosition: Int) : AsyncTask<Void, Void, Boolean>() {
+
+        private val activityReference: WeakReference<Activity> = WeakReference(activity)
+
+        override fun doInBackground(vararg p0: Void?): Boolean {
+            val mDao = RisuscitoDatabase.getInstance(activityReference.get()!!).listePersDao()
+            val listaPers = mDao.getListById(idLista)
+            if (listaPers?.lista != null) {
+                listaPers.lista!!.addCanto(idCanto.toString(), listPosition)
+                mDao.updateLista(listaPers)
+                return true
+            }
+            return false
+        }
+
+        override fun onPostExecute(updated: Boolean) {
+            super.onPostExecute(updated)
+            activityReference.get()!!.setResult(if (updated) CustomLists.RESULT_OK else CustomLists.RESULT_CANCELED)
+            activityReference.get()!!.finish()
+            Animatoo.animateShrink(activityReference.get()!!)
         }
     }
 

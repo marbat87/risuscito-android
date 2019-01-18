@@ -115,7 +115,8 @@ class ListaPersonalizzataFragment : Fragment() {
                                             .toString()))
                     val intent = Intent(activity, GeneralInsertSearch::class.java)
                     intent.putExtras(bundle)
-                    parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS + idLista)
+//                    parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS + idLista)
+                    parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS)
 //                    activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
                     Animatoo.animateShrink(activity)
                 }
@@ -422,6 +423,6 @@ class ListaPersonalizzataFragment : Fragment() {
 
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
-        private const val TAG_INSERT_PERS = 555
+        const val TAG_INSERT_PERS = 555
     }
 }

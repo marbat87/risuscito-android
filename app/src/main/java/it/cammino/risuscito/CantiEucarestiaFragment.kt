@@ -450,7 +450,7 @@ class CantiEucarestiaFragment : Fragment() {
 
     companion object {
 
-        private const val TAG_INSERT_EUCARESTIA = 444
+        const val TAG_INSERT_EUCARESTIA = 444
         private val TAG = CantiEucarestiaFragment::class.java.canonicalName
     }
 }
