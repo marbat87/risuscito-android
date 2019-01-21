@@ -13,6 +13,7 @@
     <string name="label_play" translatable="false">Play</string>
     <string name="label_restart" translatable="false">Restart</string>
     <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
+    <string name="server_client_id" translatable="false">9545803189-eikvm3ecah7d908r81kuogqpn34ipb4a.apps.googleusercontent.com</string>
 
 
     <string name="private_memory">Memoria privata</string>

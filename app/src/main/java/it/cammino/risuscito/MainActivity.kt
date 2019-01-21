@@ -1,6 +1,7 @@
 package it.cammino.risuscito
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -104,38 +105,38 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
     }
 
-    private val lastStepReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.v(TAG, "BROADCAST_LAST_STEP")
-                if (intent.getStringExtra("WHICH") != null) {
-                    val which = intent.getStringExtra("WHICH")
-                    Log.v(TAG, "NEXT_STEP: $which")
-                    if (which.equals("RESTORE", ignoreCase = true)) {
-                        dismissProgressDialog("RESTORE_RUNNING")
-                        if (intent.getBooleanExtra("RESULT", false))
-                            SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTART")
-                                    .title(R.string.general_message)
-                                    .content(R.string.gdrive_restore_success)
-                                    .positiveButton(android.R.string.ok)
-                                    .show()
-                    } else {
-                        dismissProgressDialog("BACKUP_RUNNING")
-                        if (intent.getBooleanExtra("RESULT", false))
-                            Snackbar.make(
-                                    findViewById(R.id.main_content),
-                                    R.string.gdrive_backup_success,
-                                    Snackbar.LENGTH_LONG)
-                                    .show()
-                    }
-                }
-            } catch (e: IllegalArgumentException) {
-                Log.e(TAG, e.localizedMessage, e)
-            }
-
-        }
-    }
+//    private val lastStepReceiver = object : BroadcastReceiver() {
+//        override fun onReceive(context: Context, intent: Intent) {
+//            // Implement UI change code here once notification is received
+//            try {
+//                Log.v(TAG, "BROADCAST_LAST_STEP")
+//                if (intent.getStringExtra("WHICH") != null) {
+//                    val which = intent.getStringExtra("WHICH")
+//                    Log.v(TAG, "NEXT_STEP: $which")
+//                    if (which.equals("RESTORE", ignoreCase = true)) {
+//                        dismissProgressDialog("RESTORE_RUNNING")
+//                        if (intent.getStringExtra("RESULT").isEmpty())
+//                            SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTART")
+//                                    .title(R.string.general_message)
+//                                    .content(R.string.gdrive_restore_success)
+//                                    .positiveButton(android.R.string.ok)
+//                                    .show()
+//                    } else {
+//                        dismissProgressDialog("BACKUP_RUNNING")
+//                        if (intent.getStringExtra("RESULT").isEmpty())
+//                            Snackbar.make(
+//                                    findViewById(R.id.main_content),
+//                                    R.string.gdrive_backup_success,
+//                                    Snackbar.LENGTH_LONG)
+//                                    .show()
+//                    }
+//                }
+//            } catch (e: IllegalArgumentException) {
+//                Log.e(TAG, e.localizedMessage, e)
+//            }
+//
+//        }
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.hasNavDrawer = true
@@ -195,7 +196,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
                 .requestScopes(Scope(Scopes.DRIVE_FILE), Scope(Scopes.DRIVE_FILE))
                 .build()
@@ -215,13 +216,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         // registra un receiver per ricevere la notifica di preparazione della registrazione
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(nextStepReceiver, IntentFilter("BROADCAST_NEXT_STEP"))
-        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(lastStepReceiver, IntentFilter("BROADCAST_LAST_STEP"))
+//        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(lastStepReceiver, IntentFilter("BROADCAST_LAST_STEP"))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
-        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(lastStepReceiver)
+//        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(lastStepReceiver)
     }
 
     public override fun onStart() {
@@ -901,7 +902,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         .progressIndeterminate(true)
                         .show()
                 backToHome()
-                BackupTask().execute()
+                BackupTask(this@MainActivity).execute()
             }
             "RESTORE_ASK" -> {
                 ProgressDialogFragment.Builder(this@MainActivity, null, "RESTORE_RUNNING")
@@ -910,7 +911,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         .progressIndeterminate(true)
                         .show()
                 backToHome()
-                RestoreTask().execute()
+                RestoreTask(this@MainActivity).execute()
             }
             "SIGNOUT" -> signOut()
             "REVOKE" -> revokeAccess()
@@ -981,38 +982,51 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private inner class BackupTask : AsyncTask<Void, Void, Boolean>() {
+    private inner class BackupTask internal constructor(activity: Activity) : AsyncTask<Void, Void, String>() {
 
-        override fun doInBackground(vararg sUrl: Void): Boolean {
+        private val activityReference: WeakReference<Activity> = WeakReference(activity)
+
+        override fun doInBackground(vararg sUrl: Void): String {
             return try {
                 checkDuplTosave(RisuscitoDatabase.dbName, "application/x-sqlite3", true)
                 val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
                 intentBroadcast.putExtra("WHICH", "BACKUP")
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 checkDuplTosave(PREF_DRIVE_FILE_NAME, "application/json", false)
-                true
+                ""
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: " + e.localizedMessage, e)
-                val error = "error: " + e.localizedMessage
-                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show()
-                false
+//                val error = "error: " + e.localizedMessage
+//                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show()
+                "error: " + e.localizedMessage
             }
         }
 
-        override fun onPostExecute(result: Boolean) {
+        override fun onPostExecute(result: String) {
             super.onPostExecute(result)
-            val intentBroadcast = Intent("BROADCAST_LAST_STEP")
-            intentBroadcast.putExtra("WHICH", "BACKUP")
-            intentBroadcast.putExtra("RESULT", result)
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+//            val intentBroadcast = Intent("BROADCAST_LAST_STEP")
+//            intentBroadcast.putExtra("WHICH", "BACKUP")
+//            intentBroadcast.putExtra("RESULT", result)
+//            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+            dismissProgressDialog("BACKUP_RUNNING")
+            if (result.isEmpty())
+                Snackbar.make(
+                        activityReference.get()!!.main_content,
+                        R.string.gdrive_backup_success,
+                        Snackbar.LENGTH_LONG)
+                        .show()
+            else
+                Snackbar.make(activityReference.get()!!.main_content, result, Snackbar.LENGTH_SHORT).show()
         }
     }
 
     @SuppressLint("StaticFieldLeak")
-    private inner class RestoreTask : AsyncTask<Void, Void, Boolean>() {
+    private inner class RestoreTask internal constructor(activity: Activity) : AsyncTask<Void, Void, String>() {
 
-        override fun doInBackground(vararg sUrl: Void): Boolean {
-            try {
+        private val activityReference: WeakReference<Activity> = WeakReference(activity)
+
+        override fun doInBackground(vararg sUrl: Void): String {
+            return try {
                 if (checkDupl(RisuscitoDatabase.dbName))
                     restoreNewDbBackup()
                 else
@@ -1021,21 +1035,25 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 intentBroadcast.putExtra("WHICH", "RESTORE")
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME)
-                return true
+                ""
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: " + e.localizedMessage, e)
-                val error = "error: " + e.localizedMessage
-                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show()
-                return false
+                //                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show()
+                "error: " + e.localizedMessage
             }
         }
 
-        override fun onPostExecute(result: Boolean) {
+        override fun onPostExecute(result: String) {
             super.onPostExecute(result)
-            val intentBroadcast = Intent("BROADCAST_LAST_STEP")
-            intentBroadcast.putExtra("WHICH", "RESTORE")
-            intentBroadcast.putExtra("RESULT", result)
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+            dismissProgressDialog("RESTORE_RUNNING")
+            if (result.isEmpty())
+                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTART")
+                        .title(R.string.general_message)
+                        .content(R.string.gdrive_restore_success)
+                        .positiveButton(android.R.string.ok)
+                        .show()
+            else
+                Snackbar.make(activityReference.get()!!.main_content, result, Snackbar.LENGTH_SHORT).show()
         }
     }
 
