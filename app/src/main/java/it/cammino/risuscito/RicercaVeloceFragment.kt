@@ -426,7 +426,10 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
-            if (isCancelled) return
+            if (isCancelled) {
+                fragmentReference.get()?.titoli?.clear()
+                return
+            }
             fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)

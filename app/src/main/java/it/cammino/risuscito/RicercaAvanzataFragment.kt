@@ -412,13 +412,19 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             var text: String
 
             for (aText in fragmentReference.get()!!.aTexts) {
-                if (isCancelled) return 0
+                if (isCancelled) {
+                    fragmentReference.get()!!.titoli.clear()
+                    return 0
+                }
 
                 if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
 
                 var found = true
                 for (word in words) {
-                    if (isCancelled) return 0
+                    if (isCancelled) {
+                        fragmentReference.get()!!.titoli.clear()
+                        return 0
+                    }
                     if (word.trim { it <= ' ' }.length > 1) {
                         text = word.trim { it <= ' ' }
                         text = text.toLowerCase(
@@ -432,7 +438,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                     }
                 }
 
-                if (found && !isCancelled) {
+                if (found) {
                     val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
                     val elenco = mDb.cantoDao().getCantiWithSource(aText[0]!!)
 
@@ -467,7 +473,10 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
-            if (isCancelled) return
+            if (isCancelled) {
+                fragmentReference.get()?.titoli?.clear()
+                return
+            }
             fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
