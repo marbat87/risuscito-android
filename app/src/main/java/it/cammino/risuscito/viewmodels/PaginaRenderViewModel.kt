@@ -17,4 +17,9 @@ class PaginaRenderViewModel : ViewModel() {
 
     var retrieveDone = false
 
+    var pagina: String? = null
+    var idCanto: Int = 0
+    var primaNota: String? = null
+    var primoBarre: String? = null
+
 }

@@ -48,7 +48,7 @@ class XmlImportService : IntentService("XmlImportService") {
     }
 
     private fun importData(data: Uri) {
-        Log.d(TAG, "importData: data = " + data.toString())
+        Log.d(TAG, "importData: data = $data")
         Log.d(TAG, "importData:  data.getScheme = " + data.scheme)
         val scheme = data.scheme
 

@@ -42,8 +42,6 @@
     <string name="no_record">Недійсна реєсстрація</string>
     <string name="about_subtitle">Версія для смартфонів/планшетів Android</string>
     <string name="dialog_delete_mp3">Ти впевнений, що хочеш видалити пісню з пам\'яті пристрою?</string>
-    <string name="confirm">ТАК</string>
-    <string name="dismiss">НІ</string>
     <string name="save_location_title">Стандартна пам\'ять</string>
     <string name="save_location_summary">Вкажіть, чи хочете, щоби завантажені файли були видимі іншим додаткам (наприкл. музичний програвач).</string>
     <string name="favorite_added">Додано до закладок</string>
@@ -134,7 +132,6 @@
     <string name="dialog_reset_list_title">Відновити список</string>
     <string name="aggiungi_rename">ПЕРЕЙМЕНУВАТИ</string>
     <string name="save_list_title">Зберегти список</string>
-    <string name="download_link_title">Завантажити або асоціювати локальний файл</string>
     <string name="dialog_delete_mp3_title">Видалити завантажений файл</string>
     <string name="dialog_delete_link_title">Від\'єднати локальний файл</string>
     <string name="only_link_title">Асоціювати локальний файл</string>
@@ -266,11 +263,6 @@
     <string name="show_offertorio_title">Євхаристія - принесення дарів</string>
     <string name="show_offertorio_summary">Включити пісню на принесення дарів для Євхаристії</string>
     <string name="canto_offertorio">На принесення дарів</string>
-    <string name="purchase_success">Платіж виконано успішно</string>
-    <string name="user_canceled">Транзакції була відмінена корисиувачем</string>
-    <string name="service_unavailable">"Послуга недоступна "</string>
-    <string name="object_invalid">Об\'єкт недоступний</string>
-    <string name="object_owned">Об\'єкт вже в розпорядженні</string>
     <string name="generic_removed">%1$s видалено</string>
     <string name="title_trabar_I">I</string>
     <string name="title_trabar_II">II</string>

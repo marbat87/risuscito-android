@@ -431,7 +431,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                     supportFragmentManager.transaction {
                                         if (!isOnTablet)
                                             setCustomAnimations(
-                                                    R.anim.slide_in_right, R.anim.slide_out_left)
+                                                    R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
                                         replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
                                     }
                                 }

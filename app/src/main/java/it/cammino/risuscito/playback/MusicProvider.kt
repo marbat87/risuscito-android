@@ -208,7 +208,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
         INITIALIZED
     }
 
-    fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
         // Raw height and width of image
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
@@ -228,7 +228,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
         return inSampleSize
     }
 
-    fun decodeSampledBitmapFromResource(
+    private fun decodeSampledBitmapFromResource(
             res: Resources,
             resId: Int,
             reqWidth: Int,

@@ -402,17 +402,17 @@ class ListaPersonalizzataFragment : Fragment() {
                         this,
                         Observer { listaPersonalizzataResult ->
                             Log.d(TAG, "onChanged")
-                            mCantiViewModel!!.posizioniList = listaPersonalizzataResult!!.map { it ->
+                            mCantiViewModel!!.posizioniList = listaPersonalizzataResult!!.map {
                                 it.withClickListener(click)
                                         .withLongClickListener(longClick)
                                         .withSelectedColor(themeUtils.primaryColorDark())
-                                        .listItem!!.forEach {
+                                        .listItem!!.forEach { it1 ->
                                     try {
-                                        it.titolo = resources.getString(LUtils.getResId(it.titolo!!, R.string::class.java))
-                                        it.pagina = resources.getString(LUtils.getResId(it.pagina!!, R.string::class.java))
-                                        it.source = resources.getString(LUtils.getResId(it.source!!, R.string::class.java))
+                                        it1.titolo = resources.getString(LUtils.getResId(it1.titolo!!, R.string::class.java))
+                                        it1.pagina = resources.getString(LUtils.getResId(it1.pagina!!, R.string::class.java))
+                                        it1.source = resources.getString(LUtils.getResId(it1.source!!, R.string::class.java))
                                     } catch (e: Exception) {
-                                        Log.d(TAG, "titolo ${it.titolo}")
+                                        Log.d(TAG, "titolo ${it1.titolo}")
                                     }
                                 }
                                 it

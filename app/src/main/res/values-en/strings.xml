@@ -42,8 +42,6 @@
     <string name="no_record">No available recording</string>
     <string name="about_subtitle">Version for Android smartphone/tablet</string>
     <string name="dialog_delete_mp3">Are you sure you want to delete the song from the memory of your device?</string>
-    <string name="confirm">YES</string>
-    <string name="dismiss">NO</string>
     <string name="save_location_title">Predefined memory</string>
     <string name="save_location_summary">Indicate if you want the downloaded files to appear visible to other applications (e.g music reader).</string>
     <string name="favorite_added">Added favourites</string>
@@ -134,7 +132,6 @@ You can add up to 30 elements.</string>
     <string name="dialog_reset_list_title">Reset the list</string>
     <string name="aggiungi_rename">RENAME</string>
     <string name="save_list_title">Save the list</string>
-    <string name="download_link_title">Download or associate local file</string>
     <string name="dialog_delete_mp3_title">Delete downloaded file</string>
     <string name="dialog_delete_link_title">Disconnect local file</string>
     <string name="only_link_title">Associate local file</string>
@@ -261,11 +258,6 @@ Do you want to proceed?</string>
     <string name="show_offertorio_title">Eucharist - Offertory</string>
     <string name="show_offertorio_summary">Enable the offertory song for the Eucharist</string>
     <string name="canto_offertorio">At the offertory</string>
-    <string name="purchase_success">Payment has been made successfully</string>
-    <string name="user_canceled">Transaction canceled by user</string>
-    <string name="service_unavailable">Service unavailable</string>
-    <string name="object_invalid">Item unavailable</string>
-    <string name="object_owned">Item owned yet</string>
     <string name="generic_removed">%1$s removed</string>
     <string name="title_trabar_I">1</string>
     <string name="title_trabar_II">2</string>

@@ -35,7 +35,7 @@ import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
-import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
+import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
@@ -204,7 +204,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         cantiRecycler!!.addItemDecoration(insetDivider)
-        cantiRecycler!!.itemAnimator = SlideLeftAlphaAnimator()
+        cantiRecycler!!.itemAnimator = SlideRightAlphaAnimator()
 
         // Creating new adapter object
         selectableAdapter = FastItemAdapter()
@@ -232,7 +232,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         chooseRecycler!!.addItemDecoration(insetDivider2)
-        chooseRecycler!!.itemAnimator = SlideLeftAlphaAnimator()
+        chooseRecycler!!.itemAnimator = SlideRightAlphaAnimator()
 
         activity!!.searchView.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

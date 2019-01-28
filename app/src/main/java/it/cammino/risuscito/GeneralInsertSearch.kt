@@ -1,12 +1,11 @@
 package it.cammino.risuscito
 
-import android.app.Activity
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import android.util.Log
-import android.view.MenuItem
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import it.cammino.risuscito.ui.ThemeableActivity
 import kotlinx.android.synthetic.main.activity_insert_search.*

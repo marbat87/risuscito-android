@@ -25,7 +25,7 @@ import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.listeners.OnLongClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
-import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
+import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
@@ -148,7 +148,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         history_recycler!!.addItemDecoration(insetDivider)
-        history_recycler!!.itemAnimator = SlideLeftAlphaAnimator()
+        history_recycler!!.itemAnimator = SlideRightAlphaAnimator()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
