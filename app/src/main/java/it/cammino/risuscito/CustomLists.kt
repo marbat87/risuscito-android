@@ -154,7 +154,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 val bundle = Bundle()
                 val mEditText = dialog.getInputField()
                 bundle.putString(
-                        "titolo", if (mEditText != null) dialog.getInputField()!!.text.toString() else "NULL")
+                        "titolo", mEditText.text.toString())
                 bundle.putBoolean("modifica", false)
                 mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
                 startActivityForResult(

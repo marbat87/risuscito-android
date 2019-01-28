@@ -338,7 +338,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             "RENAME" -> {
                 val mEditText = dialog.getInputField()
                 val mElement = mAdapter!!.adapterItems[mViewModel!!.positionToRename]
-                mElement.withName(mEditText!!.text.toString())
+                mElement.withName(mEditText.text.toString())
                 mAdapter!!.notifyAdapterItemChanged(mViewModel!!.positionToRename)
             }
             "ADD_POSITION" -> {
@@ -349,7 +349,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     elementi!!.clear()
                     elementi!!.add(
                             SwipeableItem()
-                                    .withName(mEditText!!.text.toString())
+                                    .withName(mEditText.text.toString())
                                     .withTouchHelper(touchHelper!!)
                                     .withIdentifier(Utility.random(0, 5000).toLong()))
                     mAdapter!!.add(elementi)
@@ -360,7 +360,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             .adapterItems
                             .add(
                                     SwipeableItem()
-                                            .withName(mEditText!!.text.toString())
+                                            .withName(mEditText.text.toString())
                                             .withTouchHelper(touchHelper!!)
                                             .withIdentifier(Utility.random(0, 5000).toLong()))
                     mAdapter!!.notifyAdapterItemInserted(mSize)
