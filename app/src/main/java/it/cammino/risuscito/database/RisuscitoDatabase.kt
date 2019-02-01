@@ -13,7 +13,7 @@ import it.cammino.risuscito.database.entities.*
 import java.sql.Date
 import java.sql.Timestamp
 
-@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 3, exportSchema = false)
+@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RisuscitoDatabase : RoomDatabase() {
 
@@ -403,6 +403,14 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = Migration3to4()
+
+        class Migration3to4 : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 3 to 4")
+                reinsertDefault(database)
+            }
+        }
 
         private fun reinsertDefault(database: SupportSQLiteDatabase) {
             Log.d(TAG, "reinsertDefault")
@@ -476,6 +484,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                     sInstance = Room.databaseBuilder(context.applicationContext, RisuscitoDatabase::class.java, dbName)
                             .addMigrations(MIGRATION_1_3)
                             .addMigrations(MIGRATION_2_3)
+                            .addMigrations(MIGRATION_3_4)
                             .addCallback(object : Callback() {
                                 /**
                                  * Called when the database is created for the first time. This is called after all the

@@ -27,6 +27,9 @@ interface ConsegnatiDao {
     @get:Query("SELECT A.*, coalesce(B.idConsegnato,0) as consegnato FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto")
     val choosen: List<CantoConsegnato>
 
+    @get:Query("SELECT * FROM consegnato")
+    val all: List<Consegnato>
+
     @Query("DELETE FROM consegnato")
     fun truncateTable()
 
