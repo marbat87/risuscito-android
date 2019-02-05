@@ -2,13 +2,14 @@
 <changelog bulletedList="true">
 
     <changelogversion
-        changeDate="Novembre 2018"
+        changeDate="Febbraio 2019"
         versionName="4.3.2">
         <changelogbug>Correzioni di bug</changelogbug>
         <changelogimprovement>Nuove animazioni</changelogimprovement>
         <changelogbug>Cambiato link audio del Cantico di Tobia</changelogbug>
         <changelogimprovement>Aggiunto il filtro per titolo nella selezione dei canti consegnati</changelogimprovement>
         <changelogbug>Aggiunto barrè mancante nel canto "Chi è colei"</changelogbug>
+        <changelogimprovement>Aggiunto nuovo canto "Eè paziente"</changelogimprovement>
     </changelogversion>
 
 </changelog>
