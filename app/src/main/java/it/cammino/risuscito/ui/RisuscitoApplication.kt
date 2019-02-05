@@ -2,8 +2,8 @@ package it.cammino.risuscito.ui
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import androidx.multidex.MultiDexApplication
 import android.widget.ImageView
+import androidx.multidex.MultiDexApplication
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
@@ -16,7 +16,11 @@ class RisuscitoApplication : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        RisuscitoDatabase.getInstance(this)
+        Thread(
+                Runnable {
+                    RisuscitoDatabase.getInstance(this).cantoDao().getCantoById(1)
+                }
+        ).start()
 
         // initialize and create the image loader logic
         DrawerImageLoader.init(
