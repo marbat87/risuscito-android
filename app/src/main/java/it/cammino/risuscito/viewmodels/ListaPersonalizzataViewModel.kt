@@ -1,16 +1,17 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import android.util.Log
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
+import it.cammino.risuscito.utils.ioThread
 
 
 class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(application) {
@@ -46,46 +47,45 @@ class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(
             }
             listaPersonalizzata = mListaPers.lista
             listaPersonalizzataTitle = mListaPers.titolo
-            Thread(
-                    Runnable {
-                        val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
+            ioThread {
+                val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
 
-                        for (cantoIndex in 0 until listaPersonalizzata!!.numPosizioni) {
-                            val list = ArrayList<PosizioneItem>()
-                            if (listaPersonalizzata!!.getCantoPosizione(cantoIndex).isNotEmpty()) {
+                for (cantoIndex in 0 until listaPersonalizzata!!.numPosizioni) {
+                    val list = ArrayList<PosizioneItem>()
+                    if (listaPersonalizzata!!.getCantoPosizione(cantoIndex).isNotEmpty()) {
 
-                                val mCantoDao = mDb!!.cantoDao()
+                        val mCantoDao = mDb!!.cantoDao()
 
-                                val cantoTemp = mCantoDao.getCantoById(
-                                        Integer.parseInt(
-                                                listaPersonalizzata!!.getCantoPosizione(cantoIndex)))
+                        val cantoTemp = mCantoDao.getCantoById(
+                                Integer.parseInt(
+                                        listaPersonalizzata!!.getCantoPosizione(cantoIndex)))
 
-                                list.add(
-                                        PosizioneItem(
-                                                cantoTemp.pagina!!,
-                                                cantoTemp.titolo!!,
-                                                cantoTemp.color!!,
-                                                cantoTemp.id,
-                                                cantoTemp.source!!,
-                                                ""))
-                            }
+                        list.add(
+                                PosizioneItem(
+                                        cantoTemp.pagina!!,
+                                        cantoTemp.titolo!!,
+                                        cantoTemp.color!!,
+                                        cantoTemp.id,
+                                        cantoTemp.source!!,
+                                        ""))
+                    }
 
-                            Log.d(TAG, "cantoIndex: $cantoIndex")
-                            val result = ListaPersonalizzataItem()
-                                    .withTitleItem(PosizioneTitleItem(
-                                            listaPersonalizzata!!.getNomePosizione(cantoIndex),
-                                            listaPersonalizzataId,
-                                            cantoIndex,
-                                            cantoIndex,
-                                            false))
-                                    .withListItem(list)
-                                    .withId(cantoIndex)
+                    Log.d(TAG, "cantoIndex: $cantoIndex")
+                    val result = ListaPersonalizzataItem()
+                            .withTitleItem(PosizioneTitleItem(
+                                    listaPersonalizzata!!.getNomePosizione(cantoIndex),
+                                    listaPersonalizzataId,
+                                    cantoIndex,
+                                    cantoIndex,
+                                    false))
+                            .withListItem(list)
+                            .withId(cantoIndex)
 
 
-                            mPosizioniList.add(result)
-                        }
-                        listaPersonalizzataResult.postValue(mPosizioniList)
-                    }).start()
+                    mPosizioniList.add(result)
+                }
+                listaPersonalizzataResult.postValue(mPosizioniList)
+            }
         }
     }
 

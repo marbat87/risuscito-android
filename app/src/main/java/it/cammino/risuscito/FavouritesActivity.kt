@@ -32,6 +32,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import kotlinx.android.synthetic.main.activity_favourites.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -202,18 +203,14 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         when (tag) {
             "FAVORITES_RESET" ->
                 // run the sentence in a new thread
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
-                            mDao.resetFavorites()
-                        })
-                        .start()
+                ioThread {
+                    val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
+                    mDao.resetFavorites()
+                }
         }
     }
 
     override fun onNegative(tag: String) {}
-
-//    override fun onNeutral(tag: String) {}
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {

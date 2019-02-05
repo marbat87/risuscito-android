@@ -17,7 +17,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(28)
         multiDexEnabled = true
-        versionCode = 4376
+        versionCode = 4377
         versionName = "4.3.2"
     }
 
@@ -29,6 +29,7 @@ android {
     lintOptions {
         isAbortOnError = false
         disable("PrivateResource")
+        disable("MissingTranslation")
     }
 
     buildTypes {
@@ -55,9 +56,9 @@ val roomVersion = "1.1.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.github.gabrielemariotti.changeloglib:changelog:2.1.0")
-    implementation("com.afollestad.material-dialogs:core:2.0.0-rc9")
-    implementation("com.afollestad.material-dialogs:input:2.0.0-rc9")
-    implementation("com.afollestad.material-dialogs:files:2.0.0-rc9")
+    implementation("com.afollestad.material-dialogs:core:2.0.0-rc10")
+    implementation("com.afollestad.material-dialogs:input:2.0.0-rc10")
+    implementation("com.afollestad.material-dialogs:files:2.0.0-rc10")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:6.1.2")
     implementation("com.mikepenz:crossfader:1.6.0")
@@ -73,8 +74,11 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:16.0.1")
-    implementation("com.google.android.gms:play-services-drive:16.0.0")
+//    implementation("com.google.android.gms:play-services-drive:16.0.0")
     implementation("com.google.firebase:firebase-core:16.0.6")
+    implementation ("com.google.firebase:firebase-firestore:18.0.0")
+    implementation ("com.google.firebase:firebase-storage:16.0.5")
+    implementation ("com.google.firebase:firebase-auth:16.1.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.8@aar") { isTransitive = true }
     implementation("com.afollestad:material-cab:1.3.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.3")

@@ -29,6 +29,7 @@ import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -378,16 +379,14 @@ class ListaPersonalizzataFragment : Fragment() {
     }
 
     private fun runUpdate() {
-        Thread(
-                Runnable {
-                    val listaNew = ListaPers()
-                    listaNew.lista = mCantiViewModel!!.listaPersonalizzata
-                    listaNew.id = idLista
-                    listaNew.titolo = mCantiViewModel!!.listaPersonalizzataTitle
-                    val mDao = RisuscitoDatabase.getInstance(this@ListaPersonalizzataFragment.mMainActivity!!).listePersDao()
-                    mDao.updateLista(listaNew)
-                })
-                .start()
+        ioThread {
+            val listaNew = ListaPers()
+            listaNew.lista = mCantiViewModel!!.listaPersonalizzata
+            listaNew.id = idLista
+            listaNew.titolo = mCantiViewModel!!.listaPersonalizzataTitle
+            val mDao = RisuscitoDatabase.getInstance(this@ListaPersonalizzataFragment.mMainActivity!!).listePersDao()
+            mDao.updateLista(listaNew)
+        }
     }
 
     private fun populateDb() {
