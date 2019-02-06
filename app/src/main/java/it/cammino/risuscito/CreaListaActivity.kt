@@ -47,6 +47,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import kotlinx.android.synthetic.main.activity_crea_lista.*
 import kotlinx.android.synthetic.main.hint_layout.*
@@ -222,16 +223,13 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 return true
             }
             R.id.action_save_list -> {
-                Thread(
-                        Runnable {
-                            if (saveList()) {
-                                setResult(Activity.RESULT_OK)
-                                finish()
-//                                overridePendingTransition(0, R.anim.slide_out_bottom)
-                                Animatoo.animateSlideDown(this@CreaListaActivity)
-                            }
-                        })
-                        .start()
+                ioThread {
+                    if (saveList()) {
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                        Animatoo.animateSlideDown(this@CreaListaActivity)
+                    }
+                }
                 return true
             }
             android.R.id.home -> {
@@ -242,7 +240,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             .content(R.string.save_list_question)
                             .positiveButton(R.string.save_exit_confirm)
                             .negativeButton(R.string.discard_exit_confirm)
-//                            .neutralButton(android.R.string.cancel)
                             .show()
                     return true
                 } else {
@@ -264,12 +261,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     .content(R.string.save_list_question)
                     .positiveButton(R.string.save_exit_confirm)
                     .negativeButton(R.string.discard_exit_confirm)
-//                    .neutralButton(android.R.string.cancel)
                     .show()
         } else {
             setResult(Activity.RESULT_CANCELED)
             finish()
-//            overridePendingTransition(0, R.anim.slide_out_bottom)
             Animatoo.animateSlideDown(this@CreaListaActivity)
         }
     }
@@ -379,21 +374,17 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
     override fun onNegative(tag: String, dialog: MaterialDialog) {}
 
-//    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
-
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
-            "SAVE_LIST" -> Thread(
-                    Runnable {
-                        if (saveList()) {
-                            setResult(Activity.RESULT_OK)
-                            finish()
-//                            overridePendingTransition(0, R.anim.slide_out_bottom)
-                            Animatoo.animateSlideDown(this@CreaListaActivity)
-                        }
-                    })
-                    .start()
+            "SAVE_LIST" ->
+                ioThread {
+                    if (saveList()) {
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                        Animatoo.animateSlideDown(this@CreaListaActivity)
+                    }
+                }
         }
     }
 
@@ -403,7 +394,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             "SAVE_LIST" -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()
-//                overridePendingTransition(0, R.anim.slide_out_bottom)
                 Animatoo.animateSlideDown(this@CreaListaActivity)
             }
         }

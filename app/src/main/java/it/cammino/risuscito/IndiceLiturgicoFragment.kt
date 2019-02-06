@@ -27,6 +27,7 @@ import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.LiturgicIndexViewModel
 import kotlinx.android.synthetic.main.layout_recycler.*
 import kotlinx.android.synthetic.main.simple_sub_item.view.*
@@ -59,14 +60,9 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "LITURGICO_REPLACE_2")
         sFragment?.setmCallback(this@IndiceLiturgicoFragment)
 
-        if (!isViewShown) {
-            Thread(
-                    Runnable {
-                        if (context != null)
-                            listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
-                    })
-                    .start()
-        }
+        if (!isViewShown)
+            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
+
         return rootView
     }
 
@@ -113,61 +109,59 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
         recycler_view!!.setHasFixedSize(true) // Size of RV will not change
         recycler_view!!.itemAnimator = SlideDownAlphaAnimator()
 
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(context!!).indiceLiturgicoDao()
-                    val canti = mDao.all
-                    mCantiViewModel!!.titoliList.clear()
-                    var subItems: MutableList<SimpleSubItem<*>> = LinkedList()
-                    var totCanti = 0
+        ioThread {
+            val mDao = RisuscitoDatabase.getInstance(context!!).indiceLiturgicoDao()
+            val canti = mDao.all
+            mCantiViewModel!!.titoliList.clear()
+            var subItems: MutableList<SimpleSubItem<*>> = LinkedList()
+            var totCanti = 0
 
-                    for (i in canti.indices) {
-                        val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
-                                .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].titolo, R.string::class.java)))
-                                .withPage(mActivity.resources.getString(LUtils.getResId(canti[i].pagina, R.string::class.java)))
-                                .withSource(mActivity.resources.getString(LUtils.getResId(canti[i].source, R.string::class.java)))
-                                .withColor(canti[i].color!!)
-                                .withId(canti[i].id)
+            for (i in canti.indices) {
+                val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
+                        .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].titolo, R.string::class.java)))
+                        .withPage(mActivity.resources.getString(LUtils.getResId(canti[i].pagina, R.string::class.java)))
+                        .withSource(mActivity.resources.getString(LUtils.getResId(canti[i].source, R.string::class.java)))
+                        .withColor(canti[i].color!!)
+                        .withId(canti[i].id)
 
-                        simpleItem
-                                .withContextMenuListener(this@IndiceLiturgicoFragment)
-                                .withOnItemClickListener(mOnClickListener)
-                        simpleItem.withIdentifier((i * 1000).toLong())
-                        subItems.add(simpleItem)
-                        totCanti++
+                simpleItem
+                        .withContextMenuListener(this@IndiceLiturgicoFragment)
+                        .withOnItemClickListener(mOnClickListener)
+                simpleItem.withIdentifier((i * 1000).toLong())
+                subItems.add(simpleItem)
+                totCanti++
 
-                        if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
-                            // serve a non mettere il divisore sull'ultimo elemento della lista
-                            simpleItem.withHasDivider(false)
-                            val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
-                            expandableItem
-                                    .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].nome, R.string::class.java)) + " ($totCanti)")
-                                    .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
-                                        if (mItem.isExpanded) {
-                                            Log.d(
-                                                    TAG,
-                                                    "onClick: " + recycler_view!!.getChildAdapterPosition(mView!!))
-                                            mLayoutManager!!.scrollToPositionWithOffset(
-                                                    recycler_view!!.getChildAdapterPosition(mView), 0)
-                                        }
-                                        false
-                                    })
-                                    .withIdentifier(canti[i].idIndice.toLong())
+                if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
+                    // serve a non mettere il divisore sull'ultimo elemento della lista
+                    simpleItem.withHasDivider(false)
+                    val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
+                    expandableItem
+                            .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].nome, R.string::class.java)) + " ($totCanti)")
+                            .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
+                                if (mItem.isExpanded) {
+                                    Log.d(
+                                            TAG,
+                                            "onClick: " + recycler_view!!.getChildAdapterPosition(mView!!))
+                                    mLayoutManager!!.scrollToPositionWithOffset(
+                                            recycler_view!!.getChildAdapterPosition(mView), 0)
+                                }
+                                false
+                            })
+                            .withIdentifier(canti[i].idIndice.toLong())
 
-                            @Suppress("INACCESSIBLE_TYPE")
-                            expandableItem.withSubItems(subItems)
-                            mCantiViewModel!!.titoliList.add(expandableItem)
-                            subItems = LinkedList()
-                            totCanti = 0
-                        } else {
-                            simpleItem.withHasDivider(true)
-                        }
-                    }
-                    FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoliList)
-                    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                    mAdapter.withSavedInstanceState(savedInstanceState)
-                })
-                .start()
+                    @Suppress("INACCESSIBLE_TYPE")
+                    expandableItem.withSubItems(subItems)
+                    mCantiViewModel!!.titoliList.add(expandableItem)
+                    subItems = LinkedList()
+                    totCanti = 0
+                } else {
+                    simpleItem.withHasDivider(true)
+                }
+            }
+            FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoliList)
+            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+            mAdapter.withSavedInstanceState(savedInstanceState)
+        }
     }
 
     /**
@@ -191,12 +185,7 @@ class IndiceLiturgicoFragment : HFFragment(), View.OnCreateContextMenuListener, 
             if (view != null) {
                 isViewShown = true
                 Log.d(javaClass.name, "VISIBLE")
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            listePersonalizzate = mDao.all
-                        })
-                        .start()
+                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
             } else
                 isViewShown = false
         }

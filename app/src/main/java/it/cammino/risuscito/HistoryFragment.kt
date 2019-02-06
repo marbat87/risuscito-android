@@ -31,6 +31,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_history.*
@@ -201,18 +202,14 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         Log.d(javaClass.name, "onPositive: $tag")
         when (tag) {
             "RESET_HISTORY" ->
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
-                            mDao.emptyCronologia()
-                        })
-                        .start()
+                ioThread {
+                    val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
+                    mDao.emptyCronologia()
+                }
         }
     }
 
     override fun onNegative(tag: String) {}
-
-//    override fun onNeutral(tag: String) {}
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {

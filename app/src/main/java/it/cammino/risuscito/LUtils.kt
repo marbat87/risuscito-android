@@ -20,6 +20,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.utils.ioThread
 import java.io.*
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -49,34 +50,28 @@ class LUtils private constructor(private val mActivity: Activity) {
     fun startActivityWithTransition(
             intent: Intent) {
         mActivity.startActivity(intent)
-//        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
         Animatoo.animateSlideLeft(mActivity)
 
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
-                    val cronologia = Cronologia()
-                    cronologia.idCanto = intent.extras!!.getInt("idCanto")
-                    mDao.insertCronologia(cronologia)
-                })
-                .start()
+        ioThread {
+            val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
+            val cronologia = Cronologia()
+            cronologia.idCanto = intent.extras!!.getInt("idCanto")
+            mDao.insertCronologia(cronologia)
+        }
     }
 
     fun startActivityWithFadeIn(intent: Intent) {
         mActivity.startActivity(intent)
-//        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on)
         Animatoo.animateZoom(mActivity)
     }
 
     fun closeActivityWithTransition() {
         mActivity.finish()
-//        mActivity.overridePendingTransition(0, R.anim.slide_out_right)
         Animatoo.animateSlideRight(mActivity)
     }
 
     internal fun closeActivityWithFadeOut() {
         mActivity.finish()
-//        mActivity.overridePendingTransition(0, R.anim.image_fade_out)
         Animatoo.animateZoom(mActivity)
 
     }

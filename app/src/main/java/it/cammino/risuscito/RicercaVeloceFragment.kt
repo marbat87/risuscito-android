@@ -29,6 +29,7 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.GenericIndexViewModel
 import kotlinx.android.synthetic.main.activity_general_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
@@ -80,14 +81,8 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "VELOCE_REPLACE_2")
         sFragment?.setmCallback(this@RicercaVeloceFragment)
 
-        if (!isViewShown) {
-            Thread(
-                    Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                        listePersonalizzate = mDao.all
-                    })
-                    .start()
-        }
+        if (!isViewShown)
+            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
 
         return rootView
     }
@@ -182,12 +177,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             if (view != null) {
                 isViewShown = true
                 Log.d(TAG, "VISIBLE")
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            listePersonalizzate = mDao.all
-                        })
-                        .start()
+                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
 
                 // to hide soft keyboard
                 (ContextCompat.getSystemService(context as Context, InputMethodManager::class.java) as InputMethodManager)

@@ -76,12 +76,7 @@ object ListeUtils {
     }
 
     fun cleanList(context: Context, idLista: Int) {
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(context).customListDao()
-                    mDao.deleteListById(idLista)
-                })
-                .start()
+        ioThread { RisuscitoDatabase.getInstance(context).customListDao().deleteListById(idLista) }
     }
 
     fun addToListaDupAndFinish(activity: Activity, idLista: Int, listPosition: Int, idDaAgg: Int) {

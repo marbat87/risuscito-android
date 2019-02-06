@@ -14,26 +14,27 @@ import android.view.ViewConfiguration
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.view.LayoutInflaterCompat
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.drive.Drive
-import com.google.android.gms.drive.DriveFile
-import com.google.android.gms.drive.DriveFolder
-import com.google.android.gms.drive.MetadataChangeSet
-import com.google.android.gms.drive.query.Filters
-import com.google.android.gms.drive.query.Query
-import com.google.android.gms.drive.query.SearchableField
 import com.google.android.gms.tasks.Tasks
-import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
+import com.google.firebase.storage.StorageReference
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.mikepenz.iconics.context.IconicsLayoutInflater2
-import it.cammino.risuscito.DatabaseCanti
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.dao.CantoDao
+import it.cammino.risuscito.database.entities.*
+import it.cammino.risuscito.database.serializer.DateTimeDeserializer
+import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.utils.ThemeUtils
 import java.io.*
+import java.sql.Date
 import java.util.*
 import java.util.concurrent.ExecutionException
 
@@ -42,18 +43,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
     protected var hasNavDrawer = false
     var themeUtils: ThemeUtils? = null
         private set
-
-    private val newDbPath: File?
-        get() {
-            Log.d(javaClass.name, "new dbpath:" + getDatabasePath(RisuscitoDatabase.dbName))
-            return getDatabasePath(RisuscitoDatabase.dbName)
-        }
-
-    private val oldDbPath: File
-        get() {
-            Log.d(javaClass.name, "old dbpath:" + getDatabasePath(DatabaseCanti.getDbName()))
-            return getDatabasePath(DatabaseCanti.getDbName())
-        }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         if (isMenuWorkaroundRequired) {
@@ -173,414 +162,280 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.attachBaseContext(mNewBase)
     }
 
-    private fun saveSharedPreferencesToFile(out: OutputStream): Boolean {
-        var res = false
-        var output: ObjectOutputStream? = null
-        try {
-            output = ObjectOutputStream(out)
-            val pref = PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity)
-            output.writeObject(pref.all)
-
-        } catch (e: IOException) {
-            val error = "saveSharedPreferencesToFile - IOException: " + e.localizedMessage
-            Log.e(javaClass.name, error, e)
-            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show()
-        } finally {
-            try {
-                if (output != null) {
-                    output.flush()
-                    output.close()
-                    res = true
-                }
-            } catch (e: IOException) {
-                val error = "saveSharedPreferencesToFile - IOException: " + e.localizedMessage
-                Log.e(javaClass.name, error, e)
-                Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show()
-            }
-
-        }
-        return res
-    }
-
-    private fun loadSharedPreferencesFromFile(`in`: InputStream) {
-        //        boolean res = false;
-        var input: ObjectInputStream? = null
-        try {
-            input = ObjectInputStream(`in`)
-            val prefEdit = PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity).edit()
-            prefEdit.clear()
-            val entries = input.readObject() as Map<*, *>
-            for ((key, v) in entries) {
-
-                when (v) {
-                    is Boolean -> prefEdit.putBoolean(key as String, v)
-                    is Float -> prefEdit.putFloat(key as String, v)
-                    is Int -> prefEdit.putInt(key as String, v)
-                    is Long -> prefEdit.putLong(key as String, v)
-                    is String -> prefEdit.putString(key as String, v)
-                }
-            }
-            prefEdit.apply()
-        } catch (e: ClassNotFoundException) {
-            val error = "loadSharedPreferencesFromFile - ClassNotFoundException: " + e.localizedMessage
-            Log.e(javaClass.name, error, e)
-            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show()
-        } catch (e: IOException) {
-            val error = "loadSharedPreferencesFromFile - IOException: " + e.localizedMessage
-            Log.e(javaClass.name, error, e)
-            Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show()
-        } finally {
-            try {
-                input?.close()
-            } catch (e: IOException) {
-                val error = "loadSharedPreferencesFromFile - IOException: " + e.localizedMessage
-                Log.e(javaClass.name, error, e)
-                Snackbar.make(findViewById(android.R.id.content), error, Snackbar.LENGTH_SHORT).show()
-            }
-
-        }
-    }
-
-    /**
-     * **************************************************************** controlla se il file è già
-     * esistente; se esiste lo cancella e poi lo ricrea
-     *
-     * @param titl file name
-     * @param mime file mime type (application/x-sqlite3)
-     */
-    @Throws(IOException::class, ExecutionException::class, InterruptedException::class, NoPermissioneException::class)
-    fun checkDuplTosave(titl: String?, mime: String, dataBase: Boolean) {
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        // Synchronously check for necessary permissions
-        checkDrivePermissions(account)
-
-        val client = Drive.getDriveResourceClient(this, account!!)
-        // task di recupero la cartella applicativa
-        val folder = Tasks.await(client.appFolder)
-
-        val file = newDbPath
-        if (folder != null && titl != null && (!dataBase || file != null)) {
-            // create content from file
-            Log.d(javaClass.name, "saveCheckDupl - dataBase? $dataBase")
-            Log.d(javaClass.name, "saveCheckDupl - title: $titl")
-            val query = Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, titl)).build()
-
-            // task di recupero metadata del file se già presente
-            val metadataBuffer = Tasks.await(client.query(query))
-
-            val count = metadataBuffer.count
-            Log.d(javaClass.name, "saveCheckDupl - Count files old: $count")
-            if (count > 0) {
-                for (i in 0..(count - 1)) {
-                    val mDriveId = metadataBuffer.get(i).driveId
-                    Log.d(javaClass.name, "saveCheckDupl - driveIdRetrieved: $mDriveId")
-                    Log.d(
-                            javaClass.name,
-                            "saveCheckDupl - filesize in cloud " + metadataBuffer.get(0).fileSize)
-//                    metadataBuffer.release()
-
-                    val mFile = mDriveId.asDriveFile()
-                    // task di cancellazione file eventualmente già presente
-                    Tasks.await(client.delete(mFile))
-                    Log.d(javaClass.name, "saveCheckDupl - deleted")
-                }
-            }
-            metadataBuffer.release()
-            saveToDrive(folder, titl, mime, file, dataBase)
-//            }
-        }
-    }
-
-    /**
-     * **************************************************************** create file in GOODrive
-     *
-     * @param titl file name
-     * @param mime file mime type (application/x-sqlite3)
-     * @param file file (with content) to create
-     */
-    @Throws(ExecutionException::class, InterruptedException::class, IOException::class, NoPermissioneException::class)
-    private fun saveToDrive(
-            driveFolder: DriveFolder?,
-            titl: String?,
-            mime: String?,
-            file: File?,
-            dataBase: Boolean) {
-        Log.d(javaClass.name, "saveToDrive - title: $titl / database? $dataBase / file ${file?.absolutePath}")
-
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        // Synchronously check for necessary permissions
-        checkDrivePermissions(account)
-
-        val client = Drive.getDriveResourceClient(this, account!!)
-        // task di recupero la cartella applicativa
-        if (driveFolder != null && titl != null && mime != null && (!dataBase || file != null)) {
-            // task di creazione content da file
-            val driveContents = Tasks.await(client.createContents())
-            if (dataBase) {
-                RisuscitoDatabase.getInstance(this).close()
-                RisuscitoDatabase.resetInstance()
-                driveContents.outputStream?.use { mOoS ->
-                    val inputStream = FileInputStream(file!!)
-                    val buf = ByteArray(4096)
-                    var intRead = inputStream.read(buf, 0, buf.size)
-                    while (intRead > 0) {
-                        mOoS.write(buf, 0, intRead)
-                        mOoS.flush()
-                        intRead = inputStream.read(buf, 0, buf.size)
-                    }
-                }
-            } else {
-                if (!saveSharedPreferencesToFile(driveContents.outputStream)) {
-                    return
-                }
-            }
-
-            // content's COOL, create metadata
-            val meta = MetadataChangeSet.Builder().setTitle(titl).setMimeType(mime).build()
-
-            // task di creazione file in Google Drive
-            val driveFile = Tasks.await(client.createFile(driveFolder, meta, driveContents))
-            if (driveFile != null) {
-                val metadata = Tasks.await(client.getMetadata(driveFile))
-                val mDriveId = metadata.driveId
-                Log.d(javaClass.name, "driveIdSaved: $mDriveId / size ${metadata.fileSize}")
-                val error = "saveToDrive - FILE CARICATO"
-                Log.d(javaClass.name, error)
-            }
-        }
-    }
-
-    /**
-     * **************************************************************** controlla se il file è già
-     * esistente; se esiste lo cancella e poi lo ricrea
-     *
-     * @param titl file name
-     */
-    @Throws(IOException::class, ExecutionException::class, InterruptedException::class, NoPermissioneException::class)
-    fun checkDupl(titl: String?): Boolean {
-        var fileFound = false
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        // Synchronously check for necessary permissions
-        checkDrivePermissions(account)
-
-        val client = Drive.getDriveResourceClient(this, account!!)
-        // task di recupero la cartella applicativa
-        val folder = Tasks.await(client.appFolder)
-        if (folder != null && titl != null) {
-            // create content from file
-            Log.d(javaClass.name, "checkDupl - title: $titl")
-            val query = Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, titl)).build()
-
-            // task di recupero metadata del file se già presente
-            val metadataBuffer = Tasks.await(client.query(query))
-
-            val count = metadataBuffer.count
-            metadataBuffer.release()
-            Log.d(javaClass.name, "checkDupl - Count files: $count")
-            fileFound = count > 0
-        }
-        return fileFound
-    }
-
-    @Throws(ExecutionException::class, InterruptedException::class, NoPermissioneException::class, IOException::class, NoBackupException::class)
-    fun restoreNewDbBackup() {
-        Log.d(
-                javaClass.name, "restoreNewDriveBackup - Db name: " + RisuscitoDatabase.dbName)
-        val query = Query.Builder()
-                .addFilter(Filters.eq(SearchableField.TITLE, RisuscitoDatabase.dbName))
-                .build()
-
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        // Synchronously check for necessary permissions
-        checkDrivePermissions(account)
-
-        val client = Drive.getDriveResourceClient(this, account!!)
-
-        val metadataBuffer = Tasks.await(client.query(query))
-
-        val count = metadataBuffer.count
-        Log.d(javaClass.name, "restoreNewDriveBackup - Count files backup: $count")
-        if (count > 0) {
-            val mDriveId = metadataBuffer.get(count - 1).driveId
-            Log.d(javaClass.name, "restoreNewDriveBackup - driveIdRetrieved: $mDriveId")
-            Log.d(
-                    javaClass.name,
-                    "restoreNewDriveBackup - filesize in cloud " + metadataBuffer.get(0).fileSize)
-            metadataBuffer.release()
-
-            RisuscitoDatabase.getInstance(this).close()
-
-            val mFile = mDriveId.asDriveFile()
-
-            val driveContents = Tasks.await(client.openFile(mFile, DriveFile.MODE_READ_ONLY))
-
-            var dbFile = newDbPath
-            val path = dbFile!!.path
-
-            Log.d(TAG, "dbFILE exists? ${dbFile.exists()}")
-
-            if (dbFile.exists())
-                dbFile.delete()
-
-            dbFile = File(path)
-            try {
-                val fos = FileOutputStream(dbFile)
-                val mOutput = BufferedOutputStream(fos)
-                val mInput = BufferedInputStream(driveContents.inputStream)
-
-                val buffer = ByteArray(1024)
-                var length = mInput.read(buffer)
-                while (length > 0) {
-                    mOutput.write(buffer, 0, length)
-                    length = mInput.read(buffer)
-                }
-                mOutput.flush()
-                mOutput.close()
-                mInput.close()
-            } catch (e: FileNotFoundException) {
-                client.discardContents(driveContents)
-                throw e
-            } catch (e: IOException) {
-                client.discardContents(driveContents)
-                throw e
-            }
-
-            RisuscitoDatabase.resetInstance()
-            RisuscitoDatabase.getInstance(this).recreateDB()
-        } else {
-            metadataBuffer.release()
-            throw NoBackupException()
-        }
-    }
-
-    @Throws(NoPermissioneException::class, ExecutionException::class, InterruptedException::class, IOException::class, NoBackupException::class)
-    fun restoreOldDriveBackup() {
-        Log.d(javaClass.name, "restoreOldDriveBackup - Db name: " + DatabaseCanti.getDbName())
-        val query = Query.Builder()
-                .addFilter(Filters.eq(SearchableField.TITLE, DatabaseCanti.getDbName()))
-                .build()
-
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        // Synchronously check for necessary permissions
-        checkDrivePermissions(account)
-
-        val client = Drive.getDriveResourceClient(this, account!!)
-
-        // esevuzione task per metadata da query
-        val metadataBuffer = Tasks.await(client.query(query))
-
-        val count = metadataBuffer.count
-        Log.d(javaClass.name, "restoreOldDriveBackup - Count files backup: $count")
-        if (count > 0) {
-            val mDriveId = metadataBuffer.get(count - 1).driveId
-            Log.d(javaClass.name, "restoreOldDriveBackup - driveIdRetrieved: $mDriveId")
-            Log.d(
-                    javaClass.name,
-                    "restoreOldDriveBackup - filesize in cloud " + metadataBuffer.get(0).fileSize)
-            metadataBuffer.release()
-
-            val mFile = mDriveId.asDriveFile()
-            // esecuzione task per recupero driveContent
-            val driveContents = Tasks.await(client.openFile(mFile, DriveFile.MODE_READ_ONLY))
-
-            var listaCanti = DatabaseCanti(this)
-            listaCanti.close()
-
-            var dbFile = oldDbPath
-            val path = dbFile.path
-
-            if (!dbFile.exists())
-
-                dbFile.delete()
-
-            dbFile = File(path)
-            try {
-                val fos = FileOutputStream(dbFile)
-                val bos = BufferedOutputStream(fos)
-                val `in` = BufferedInputStream(driveContents.inputStream)
-
-                val buffer = ByteArray(1024)
-                var n = `in`.read(buffer)
-                while (n > 0) {
-                    bos.write(buffer, 0, n)
-                    bos.flush()
-                    n = `in`.read(buffer)
-                }
-                bos.close()
-            } catch (e: FileNotFoundException) {
-                client.discardContents(driveContents)
-                throw e
-            } catch (e: IOException) {
-                client.discardContents(driveContents)
-                throw e
-            }
-
-            listaCanti = DatabaseCanti(this)
-            listaCanti.close()
-            client.discardContents(driveContents)
-
-            RisuscitoDatabase.getInstance(this).importFromOldDB(this)
-
-            checkDuplTosave(RisuscitoDatabase.dbName, "application/x-sqlite3", true)
-        } else {
-            metadataBuffer.release()
-            throw NoBackupException()
-        }
-    }
-
-    @Throws(NoPermissioneException::class, ExecutionException::class, InterruptedException::class, NoBackupException::class)
-    fun restoreDrivePrefBackup(title: String) {
-        Log.d(javaClass.name, "restoreDrivePrefBackup - pref title: $title")
-        val query = Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, title)).build()
-
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        // Synchronously check for necessary permissions
-        checkDrivePermissions(account)
-
-        val client = Drive.getDriveResourceClient(this, account!!)
-
-        val metadataBuffer = Tasks.await(client.query(query))
-
-        val count = metadataBuffer.count
-        Log.d(javaClass.name, "restoreDrivePrefBackup - Count files backup: $count")
-        if (count > 0) {
-            val mDriveId = metadataBuffer.get(count - 1).driveId
-            Log.d(javaClass.name, "restoreDrivePrefBackup - driveIdRetrieved: $mDriveId")
-            Log.d(
-                    javaClass.name,
-                    "restoreDrivePrefBackup - filesize in cloud " + metadataBuffer.get(0).fileSize)
-            metadataBuffer.release()
-
-            val mFile = mDriveId.asDriveFile()
-            val driveContents = Tasks.await(client.openFile(mFile, DriveFile.MODE_READ_ONLY))
-
-            loadSharedPreferencesFromFile(driveContents.inputStream)
-            client.discardContents(driveContents)
-        } else {
-            throw NoBackupException()
-        }
-    }
-
-    @Throws(NoPermissioneException::class)
-    private fun checkDrivePermissions(account: GoogleSignInAccount?) {
-        if (!GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE) || !GoogleSignIn.hasPermissions(account, Drive.SCOPE_APPFOLDER)) {
-            // Note: this launches a sign-in flow, however the code to detect
-            // the result of the sign-in flow and retry the API call is not
-            // shown here.
-            GoogleSignIn.requestPermissions(this, 9002, account, Drive.SCOPE_FILE, Drive.SCOPE_APPFOLDER)
-            throw NoPermissioneException()
-        }
-    }
-
-    inner class NoPermissioneException internal constructor() : Exception("no permission for drive SCOPE_FILE or SCOPE_APPFOLDER")
-
     inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))
+
+    inner class NoIdException internal constructor() : Exception("no ID linked to this Account")
 
     private fun setTaskDescriptionWrapper(themeUtils: ThemeUtils) {
         if (LUtils.hasP())
             setTaskDescriptionP(themeUtils)
         else if (LUtils.hasL())
             setTaskDescriptionL(themeUtils)
+    }
+
+    @Throws(ExecutionException::class, InterruptedException::class, NoIdException::class)
+    fun backupSharedPreferences(userId: String?, userEmail: String?) {
+        Log.d(TAG, "backupSharedPreferences $userId")
+
+        if (userId == null)
+            throw NoIdException()
+
+        val db = FirebaseFirestore.getInstance()
+
+        // Create a query against the collection.
+        val query = db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).whereEqualTo(FIREBASE_FIELD_USER_ID, userId)
+
+        val querySnapshot = Tasks.await(query.get())
+
+        Log.d(TAG, "querySnapshot.documents.size ${querySnapshot.documents.size}")
+
+        val usersPreferences = HashMap<String, Any>()
+        usersPreferences[FIREBASE_FIELD_USER_ID] = userId
+        usersPreferences[FIREBASE_FIELD_EMAIL] = userEmail ?: ""
+        usersPreferences[FIREBASE_FIELD_PREFERENCE] = PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity).all
+
+        if (querySnapshot.documents.size > 0) {
+            Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).document(querySnapshot.documents[0].id).delete())
+            Log.d(TAG, "existing deleted")
+
+            // Add a new document with a generated ID
+            val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
+            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
+
+        } else {
+            val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
+            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
+        }
+
+    }
+
+    @Throws(ExecutionException::class, InterruptedException::class, NoBackupException::class)
+    fun restoreSharedPreferences(userId: String?) {
+        Log.d(TAG, "backupSharedPreferences $userId")
+
+        if (userId == null)
+            throw NoIdException()
+
+        val db = FirebaseFirestore.getInstance()
+
+        // Create a query against the collection.
+        val query = db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).whereEqualTo(FIREBASE_FIELD_USER_ID, userId)
+
+        val querySnapshot = Tasks.await(query.get())
+
+        Log.d(TAG, "querySnapshot.documents.size ${querySnapshot.documents.size}")
+
+        if (querySnapshot.documents.size == 0)
+            throw NoBackupException()
+
+        val prefEdit = PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity).edit()
+        prefEdit.clear()
+
+        val entries = querySnapshot.documents[0].get(FIREBASE_FIELD_PREFERENCE) as HashMap<*, *>
+        for ((key, v) in entries) {
+            Log.d(TAG, "preference : $key / $v")
+            when (v) {
+                is Boolean -> prefEdit.putBoolean(key as String, v)
+                is Float -> prefEdit.putFloat(key as String, v)
+                is Int -> prefEdit.putInt(key as String, v)
+                is Long -> prefEdit.putInt(key as String, v.toInt())
+                is String -> prefEdit.putString(key as String, v)
+            }
+        }
+        prefEdit.apply()
+    }
+
+    @Throws(ExecutionException::class, InterruptedException::class, NoIdException::class, NoBackupException::class)
+    fun backupDatabase(userId: String?) {
+        Log.d(TAG, "backupDatabase $userId")
+
+        if (userId == null)
+            throw NoIdException()
+
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val risuscitoDb = RisuscitoDatabase.getInstance(this@ThemeableActivity)
+
+        //BACKUP CANTI
+        val cantoRef = deleteExistingFile(storageRef, CANTO_FILE_NAME, userId)
+        val backupList = risuscitoDb.cantoDao().backup
+        Log.d(TAG, "canto backup size ${backupList.size}")
+        putFileToFirebase(cantoRef, backupList, CANTO_FILE_NAME)
+
+        //BACKUP CUSTOM LISTS
+        val customListRef = deleteExistingFile(storageRef, CUSTOM_LIST_FILE_NAME, userId)
+        val customLists = risuscitoDb.customListDao().all
+        Log.d(TAG, "custom list size ${customLists.size}")
+        putFileToFirebase(customListRef, customLists, CUSTOM_LIST_FILE_NAME)
+
+        //BACKUP LISTE PERS
+        val listePersRef = deleteExistingFile(storageRef, LISTA_PERS_FILE_NAME, userId)
+        val listePers = risuscitoDb.listePersDao().all
+        Log.d(TAG, "listePers size ${listePers.size}")
+        putFileToFirebase(listePersRef, listePers, LISTA_PERS_FILE_NAME)
+
+        //BACKUP LOCAL LINK
+        val localLinkRef = deleteExistingFile(storageRef, LOCAL_LINK_FILE_NAME, userId)
+        val localLink = risuscitoDb.localLinksDao().all
+        Log.d(TAG, "localLink size ${localLink.size}")
+        putFileToFirebase(localLinkRef, localLink, LOCAL_LINK_FILE_NAME)
+
+        //BACKUP CONSEGNATI
+        val consegnatiRef = deleteExistingFile(storageRef, CONSEGNATO_FILE_NAME, userId)
+        val consegnati = risuscitoDb.consegnatiDao().all
+        Log.d(TAG, "consegnati size ${consegnati.size}")
+        putFileToFirebase(consegnatiRef, consegnati, CONSEGNATO_FILE_NAME)
+
+        //BACKUP CRONOLOGIA
+        val cronologiaRef = deleteExistingFile(storageRef, CRONOLOGIA_FILE_NAME, userId)
+        val cronologia = risuscitoDb.cronologiaDao().all
+        Log.d(TAG, "cronologia size ${cronologia.size}")
+        putFileToFirebase(cronologiaRef, cronologia, CRONOLOGIA_FILE_NAME)
+
+        Log.d(TAG, "BACKUP DB COMPLETATO")
+    }
+
+    private fun deleteExistingFile(storageRef: StorageReference, fileName: String, userId: String): StorageReference {
+        val fileRef = storageRef.child("database_$userId/$fileName.json")
+
+        try {
+            Tasks.await(fileRef.delete())
+            Log.d(TAG, "Backup esistente cancellato!")
+        } catch (e: ExecutionException) {
+            if (e.cause is StorageException && (e.cause as StorageException).errorCode == StorageException.ERROR_OBJECT_NOT_FOUND)
+                Log.d(TAG, "Backup non trovato!")
+            else
+                throw e
+        }
+        return fileRef
+    }
+
+    private fun putFileToFirebase(fileRef: StorageReference, jsonObject: Any, fileName: String) {
+        val gson = GsonBuilder().registerTypeAdapter(Date::class.java, DateTimeSerializer()).create()
+        Log.d(TAG, "=== List to JSON ===")
+        val jsonList: String = gson.toJson(jsonObject)
+        Log.d(TAG, jsonList)
+
+        val exportFile = File("${cacheDir.absolutePath}/$fileName.json")
+        Log.d(TAG, "listToXML: exportFile = " + exportFile.absolutePath)
+        val output = BufferedWriter(FileWriter(exportFile))
+        output.write(jsonList)
+        output.close()
+
+        val saveFile = Tasks.await(fileRef.putFile(exportFile.toUri()))
+        Log.d(TAG, "DocumentSnapshot added with path: ${saveFile.metadata!!.path}")
+    }
+
+    @Throws(InterruptedException::class, NoIdException::class, NoBackupException::class)
+    fun restoreDatabase(userId: String?) {
+        Log.d(TAG, "backupDatabase $userId")
+
+        if (userId == null)
+            throw NoIdException()
+
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val gson = GsonBuilder().registerTypeAdapter(Date::class.java, DateTimeDeserializer()).create()
+        val risuscitoDb = RisuscitoDatabase.getInstance(this@ThemeableActivity)
+
+        //RESTORE CANTI
+        val backupCanti: List<CantoDao.Backup> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CANTO_FILE_NAME, userId)), object : TypeToken<List<CantoDao.Backup>>() {}.type)
+
+        val cantoDao = risuscitoDb.cantoDao()
+        cantoDao.truncateTable()
+        Log.d(TAG, "Canto Truncated!")
+        cantoDao.insertCanto(Canto.defaultCantoData())
+        Log.d(TAG, "Canto default data inserted")
+        for (backup in backupCanti) {
+            Log.d(TAG, "backupCanto.id + ${backup.id} / backupCanto.savedTab ${backup.savedTab} / backupCanto.savedBarre ${backup.savedBarre}")
+            cantoDao.setBackup(
+                    backup.id,
+                    backup.zoom,
+                    backup.scrollX,
+                    backup.scrollY,
+                    backup.favorite,
+                    backup.savedTab,
+                    backup.savedBarre,
+                    backup.savedSpeed)
+        }
+
+
+        //RESTORE CUSTOM LIST
+        val backupCustomList: List<CustomList> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CUSTOM_LIST_FILE_NAME, userId)), object : TypeToken<List<CustomList>>() {}.type)
+
+        val customListDao = risuscitoDb.customListDao()
+        customListDao.truncateTable()
+        Log.d(TAG, "Custom List Truncated!")
+        for (backup in backupCustomList) {
+            Log.d(TAG, "backupCustomList.id + ${backup.id} / backupCustomList.position ${backup.position} / backupCustomList.idCanto ${backup.idCanto} / backupCustomList.timestamp ${backup.timestamp}")
+            customListDao.insertPosition(backup)
+        }
+
+
+        //RESTORE LISTA PERS
+        val backupListePers: List<ListaPers> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, LISTA_PERS_FILE_NAME, userId)), object : TypeToken<List<ListaPers>>() {}.type)
+
+        val listePersDao = risuscitoDb.listePersDao()
+        listePersDao.truncateTable()
+        Log.d(TAG, "Liste Pers Truncated!")
+        for (backup in backupListePers) {
+            Log.d(TAG, "backupListePers.id + ${backup.id} / backupCustomList.position ${backup.titolo}")
+            listePersDao.insertLista(backup)
+        }
+
+
+        //RESTORE LOCAL LINK
+        val backupLocalLink: List<LocalLink> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, LOCAL_LINK_FILE_NAME, userId)), object : TypeToken<List<LocalLink>>() {}.type)
+
+        val localLinkDao = risuscitoDb.localLinksDao()
+        localLinkDao.truncateTable()
+        Log.d(TAG, "Liste Pers Truncated!")
+        for (backup in backupLocalLink) {
+            Log.d(TAG, "backupLocalLink.idCanto + ${backup.idCanto} / backupLocalLink.localPath ${backup.localPath}")
+            localLinkDao.insertLocalLink(backup)
+        }
+
+
+        //RESTORE CONSEGNATI
+        val backupConsegnati: List<Consegnato> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CONSEGNATO_FILE_NAME, userId)), object : TypeToken<List<Consegnato>>() {}.type)
+
+        val consegnatiDao = risuscitoDb.consegnatiDao()
+        consegnatiDao.truncateTable()
+        Log.d(TAG, "Liste Pers Truncated!")
+        for (backup in backupConsegnati) {
+            Log.d(TAG, "backupConsegnati.idConsegnato + ${backup.idConsegnato} / backupConsegnati.idCanto ${backup.idCanto}")
+            consegnatiDao.insertConsegnati(backup)
+        }
+
+
+        //RESTORE CRONOLOGIA
+        val backupCronologia: List<Cronologia> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CRONOLOGIA_FILE_NAME, userId)), object : TypeToken<List<Cronologia>>() {}.type)
+
+        val cronologiaDao = risuscitoDb.cronologiaDao()
+        cronologiaDao.truncateTable()
+        Log.d(TAG, "Liste Pers Truncated!")
+        for (backup in backupCronologia) {
+            Log.d(TAG, "backupCronologia.idCanto + ${backup.idCanto} / backupCronologia.ultimaVisita ${backup.ultimaVisita}")
+            cronologiaDao.insertCronologia(backup)
+        }
+
+        Log.d(TAG, "RESTORE DB COMPLETATO")
+    }
+
+    private fun getFileFromFirebase(storageRef: StorageReference, fileName: String, userId: String): InputStream {
+        try {
+
+            val cantoRef = storageRef.child("database_$userId/$fileName.json")
+            val fileStream = Tasks.await(cantoRef.stream)
+            return fileStream.stream
+
+        } catch (e: ExecutionException) {
+            Log.e(TAG, e.localizedMessage, e)
+            if (e.cause is StorageException && (e.cause as StorageException).errorCode == StorageException.ERROR_OBJECT_NOT_FOUND)
+                throw NoBackupException()
+            else
+                throw e
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -598,6 +453,18 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     companion object {
         internal val TAG = ThemeableActivity::class.java.canonicalName
+
+        internal const val FIREBASE_FIELD_USER_ID = "userId"
+        internal const val FIREBASE_FIELD_PREFERENCE = "userPreferences"
+        internal const val FIREBASE_FIELD_EMAIL = "userEmail"
+        internal const val FIREBASE_COLLECTION_IMPOSTAZIONI = "Impostazioni"
+        internal const val CANTO_FILE_NAME = "Canto"
+        internal const val CUSTOM_LIST_FILE_NAME = "CustomList"
+        internal const val LISTA_PERS_FILE_NAME = "ListaPers"
+        internal const val LOCAL_LINK_FILE_NAME = "LocalLink"
+        internal const val CONSEGNATO_FILE_NAME = "Consegnato"
+        internal const val CRONOLOGIA_FILE_NAME = "Cronologia"
+
         val isMenuWorkaroundRequired: Boolean
             get() = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.KITKAT && ("LGE".equals(Build.MANUFACTURER, ignoreCase = true) || "E6710".equals(Build.DEVICE, ignoreCase = true))
 
