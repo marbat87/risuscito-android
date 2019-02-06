@@ -104,13 +104,11 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             true
         }
 
-//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
         cantoAdapter.withOnClickListener(mOnClickListener)
 
         matchedList.adapter = cantoAdapter
-//        val llm = LinearLayoutManager(context)
         val mMainActivity = activity as MainActivity?
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
@@ -194,10 +192,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        titoloDaAgg = v.text_title.findviewtext.toString()
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-//        menu.setHeaderTitle("Aggiungi canto a:")
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
@@ -271,12 +266,10 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                     return true
                 }
                 R.id.add_to_e_pane -> {
-//                    addToListaDup(2, 3)
                     ListeUtils.addToListaDup(this@RicercaVeloceFragment, 2, 3, mViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_vino -> {
-//                    addToListaDup(2, 4)
                     ListeUtils.addToListaDup(this@RicercaVeloceFragment, 2, 4, mViewModel!!.idDaAgg)
                     return true
                 }

@@ -168,7 +168,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
-                .requestScopes(Scope(Scopes.DRIVE_FILE), Scope(Scopes.DRIVE_FILE))
                 .build()
         // [END configure_signin]
 
@@ -241,11 +240,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .withActivity(this@MainActivity)
                 .withTranslucentStatusBar(!isOnTablet)
                 .withSelectionListEnabledForSingleProfile(false)
-//                .withHeaderBackground(
-//                        if (isOnTablet)
-//                            ColorDrawable(ContextCompat.getColor(this, R.color.floating_background))
-//                        else
-//                            ColorDrawable(themeUtils!!.primaryColor()))
                 .withSavedInstance(savedInstanceState)
                 .addProfiles(profile)
                 .withNameTypeface(mRegularFont!!)
@@ -769,13 +763,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             // Signed in successfully, show authenticated UI.
             acct = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
             firebaseAuthWithGoogle()
-//            PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, true) }
-//            if (mViewModel!!.showSnackbar) {
-//                Toast.makeText(this@MainActivity, getString(R.string.connected_as, acct!!.displayName), Toast.LENGTH_SHORT)
-//                        .show()
-//                mViewModel!!.showSnackbar = false
-//            }
-//            updateUI(true)
         } else {
             // Sign in failed, handle failure and update UI
             Toast.makeText(this@MainActivity, getString(
@@ -797,7 +784,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "firebaseAuthWithGoogle:success")
-//                        val user = auth.currentUser
                         PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, true) }
                         if (mViewModel!!.showSnackbar) {
                             Toast.makeText(this@MainActivity, getString(R.string.connected_as, acct!!.displayName), Toast.LENGTH_SHORT)
@@ -941,8 +927,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNegative(tag: String) {}
 
-//    override fun onNeutral(tag: String) {}
-
     private fun dismissProgressDialog(tag: String) {
         val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, tag)
         sFragment?.dismiss()
@@ -991,12 +975,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         override fun doInBackground(vararg sUrl: Void): String {
             return try {
-//                checkDuplTosave(RisuscitoDatabase.dbName, "application/x-sqlite3", true)
                 backupDatabase(acct!!.id)
                 val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
                 intentBroadcast.putExtra("WHICH", "BACKUP")
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-//                checkDuplTosave(PREF_DRIVE_FILE_NAME, "application/json", false)
                 backupSharedPreferences(acct!!.id, acct!!.email)
                 ""
             } catch (e: Exception) {
@@ -1026,20 +1008,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         override fun doInBackground(vararg sUrl: Void): String {
             return try {
-//                if (checkDupl(RisuscitoDatabase.dbName))
-//                    restoreNewDbBackup()
-//                else
-//                    restoreOldDriveBackup()
                 restoreDatabase(acct!!.id)
                 val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
                 intentBroadcast.putExtra("WHICH", "RESTORE")
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-//                restoreDrivePrefBackup(PREF_DRIVE_FILE_NAME)
                 restoreSharedPreferences(acct!!.id)
                 ""
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: " + e.localizedMessage, e)
-                //                Snackbar.make(findViewById(R.id.main_content), error, Snackbar.LENGTH_SHORT).show()
                 "error: " + e.localizedMessage
             }
         }
@@ -1082,7 +1058,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     companion object {
         /* Request code used to invoke sign in user interactions. */
         private const val RC_SIGN_IN = 9001
-        //        private const val PREF_DRIVE_FILE_NAME = "preferences_backup"
         private const val PROF_ID = 5428471L
         private val TAG = MainActivity::class.java.canonicalName
     }

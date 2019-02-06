@@ -37,7 +37,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
         private const val TAG = "RisuscitoDatabase"
 
-        const val dbName = "RisuscitoDB"
+        private const val dbName = "RisuscitoDB"
 
         // For Singleton instantiation
         private val LOCK = Any()

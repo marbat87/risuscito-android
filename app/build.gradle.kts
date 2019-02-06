@@ -17,8 +17,8 @@ android {
         minSdkVersion(16)
         targetSdkVersion(28)
         multiDexEnabled = true
-        versionCode = 4377
-        versionName = "4.3.2"
+        versionCode = 4400
+        versionName = "4.4.0"
     }
 
     compileOptions {
@@ -56,9 +56,9 @@ val roomVersion = "1.1.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.github.gabrielemariotti.changeloglib:changelog:2.1.0")
-    implementation("com.afollestad.material-dialogs:core:2.0.0-rc10")
-    implementation("com.afollestad.material-dialogs:input:2.0.0-rc10")
-    implementation("com.afollestad.material-dialogs:files:2.0.0-rc10")
+    implementation("com.afollestad.material-dialogs:core:2.0.0-rc11")
+    implementation("com.afollestad.material-dialogs:input:2.0.0-rc11")
+    implementation("com.afollestad.material-dialogs:files:2.0.0-rc11")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:6.1.2")
     implementation("com.mikepenz:crossfader:1.6.0")
@@ -74,7 +74,6 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:16.0.1")
-//    implementation("com.google.android.gms:play-services-drive:16.0.0")
     implementation("com.google.firebase:firebase-core:16.0.6")
     implementation ("com.google.firebase:firebase-firestore:18.0.0")
     implementation ("com.google.firebase:firebase-storage:16.0.5")

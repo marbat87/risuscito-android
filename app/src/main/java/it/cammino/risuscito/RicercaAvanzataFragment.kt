@@ -53,7 +53,6 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
     private var isViewShown = true
     private var titoli: MutableList<SimpleItem> = ArrayList()
     private var rootView: View? = null
-    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
     private var searchTask: SearchTask? = null
@@ -217,7 +216,6 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-//        menu.setHeaderTitle("Aggiungi canto a:")
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
@@ -292,14 +290,10 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                     true
                 }
                 R.id.add_to_e_pane -> {
-                    //          addToListaDup(2, 3);
-//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mViewModel!!.idDaAgg)
                     ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 3, mViewModel!!.idDaAgg)
                     true
                 }
                 R.id.add_to_e_vino -> {
-                    //          addToListaDup(2, 4);
-//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mViewModel!!.idDaAgg)
                     ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 4, mViewModel!!.idDaAgg)
                     true
                 }
