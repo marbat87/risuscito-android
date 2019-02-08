@@ -30,8 +30,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.Scopes
-import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -60,6 +58,7 @@ import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.common_circle_progress.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import java.lang.ref.WeakReference
@@ -424,7 +423,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             // create and build our crossfader (see the MiniDrawer is also builded in here, as the build
             // method returns the view to be used in the crossfader)
             crossFader = Crossfader<MyCrossfaderClass>()
-                    .withContent(findViewById<View>(R.id.main_frame))
+                    .withContent(main_frame)
                     .withFirst(drawer!!.slider, firstWidth)
                     .withSecond(mMiniDrawer!!.build(this), secondWidth)
                     .withSavedInstance(savedInstanceState)
@@ -702,11 +701,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     fun enableBottombar(enabled: Boolean) {
         if (!isOnTablet) {
             Log.d(TAG, "enableBottombar - enabled: $enabled")
-            val mBottomBar = findViewById<View>(R.id.bottom_bar)
             if (enabled)
-                mLUtils!!.animateIn(mBottomBar)
+                mLUtils!!.animateIn(bottom_bar)
             else
-                mBottomBar.visibility = View.GONE
+                mLUtils!!.animateOut(bottom_bar)
         }
     }
 

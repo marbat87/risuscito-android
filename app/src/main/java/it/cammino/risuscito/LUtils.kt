@@ -1,5 +1,7 @@
 package it.cammino.risuscito
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
@@ -14,10 +16,9 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import androidx.core.view.ViewCompat
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.animation.AnimationUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.utils.ioThread
@@ -190,18 +191,22 @@ class LUtils private constructor(private val mActivity: Activity) {
     // enters
     internal fun animateIn(view: View) {
         view.visibility = View.VISIBLE
-        ViewCompat.animate(view)
-                .setDuration(200)
-                .translationY(0f)
-                .setInterpolator(INTERPOLATOR)
-                .withLayer()
-                .setListener(null)
-                .start()
+        view.animate().translationY(0f).setInterpolator(AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L).setListener(null).start()
+    }
+
+    internal fun animateOut(view: View) {
+        view.animate().translationY(view.height.toFloat()).setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L).setListener(
+                object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        view.visibility = View.GONE
+                    }
+                }
+        ).start()
     }
 
     companion object {
 
-        private val INTERPOLATOR = FastOutSlowInInterpolator()
+        //        private val INTERPOLATOR = FastOutSlowInInterpolator()
         private const val FILE_FORMAT = ".risuscito"
         internal val TAG = LUtils::class.java.canonicalName
 
