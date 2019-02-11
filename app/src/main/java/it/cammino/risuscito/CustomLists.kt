@@ -41,6 +41,7 @@ import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.lista_pers_button.view.*
 import kotlinx.android.synthetic.main.tabs_layout.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
@@ -173,7 +174,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         when (tag) {
             "RESET_LIST" -> {
                 val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
-                mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
+                mView?.button_pulisci?.performClick()
+//                mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
             }
             "DELETE_LIST" ->
                 ioThread {
@@ -388,7 +390,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     val mView = mSectionsPagerAdapter!!
                             .getRegisteredFragment(view_pager.currentItem)
                             .view
-                    mView?.findViewById<View>(R.id.button_condividi)?.performClick()
+                    mView?.button_condividi?.performClick()
+//                    mView?.findViewById<View>(R.id.button_condividi)?.performClick()
                     true
                 }
                 R.id.fab_edit_lista -> {
@@ -427,10 +430,10 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
                     val mView = mSectionsPagerAdapter!!
-//                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
                             .getRegisteredFragment(view_pager.currentItem)
                             .view
-                    mView?.findViewById<View>(R.id.button_invia_file)!!.performClick()
+                    mView?.button_invia_file?.performClick()
+//                    mView?.findViewById<View>(R.id.button_invia_file)!!.performClick()
                     true
                 }
                 else -> {

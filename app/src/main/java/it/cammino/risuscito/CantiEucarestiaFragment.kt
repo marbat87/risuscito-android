@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -134,10 +133,11 @@ class CantiEucarestiaFragment : Fragment() {
         if (v.id == R.id.addCantoGenerico) {
             if (mSwhitchMode) {
                 MaterialCab.destroy()
-                ListeUtils.scambioConVuoto(this@CantiEucarestiaFragment, 2, posizioneDaCanc, idDaCanc, Integer.valueOf(
-                        (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                .text
-                                .toString()))
+//                ListeUtils.scambioConVuoto(this@CantiEucarestiaFragment, 2, posizioneDaCanc, idDaCanc, Integer.valueOf(
+//                        (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+//                                .text
+//                                .toString()))
+                ListeUtils.scambioConVuoto(this@CantiEucarestiaFragment, 2, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
             } else {
                 if (!MaterialCab.isActive) {
                     val bundle = Bundle()
@@ -145,25 +145,29 @@ class CantiEucarestiaFragment : Fragment() {
                     bundle.putInt("idLista", 2)
                     bundle.putInt(
                             "position",
-                            Integer.valueOf(
-                                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                            .text
-                                            .toString()))
+                            Integer.valueOf(parent.text_id_posizione.text.toString()))
+//                            Integer.valueOf(
+//                                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+//                                            .text
+//                                            .toString()))
                     startSubActivity(bundle)
                 }
             }
         } else {
             if (!mSwhitchMode)
                 if (MaterialCab.isActive) {
-                    posizioneDaCanc = Integer.valueOf(
-                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                    .text
-                                    .toString())
-                    idDaCanc = Integer.valueOf(
-                            (v.findViewById<View>(R.id.text_id_canto_card) as TextView)
-                                    .text
-                                    .toString())
-                    timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
+//                    posizioneDaCanc = Integer.valueOf(
+//                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+//                                    .text
+//                                    .toString())
+                    posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
+//                    idDaCanc = Integer.valueOf(
+//                            (v.findViewById<View>(R.id.text_id_canto_card) as TextView)
+//                                    .text
+//                                    .toString())
+                    idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
+//                    timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
+                    timestampDaCanc = v.text_timestamp.text.toString()
                     snackBarRimuoviCanto(v)
                 } else
                     openPagina(v)
@@ -182,11 +186,14 @@ class CantiEucarestiaFragment : Fragment() {
 
     private val longClick = View.OnLongClickListener { v ->
         val parent = v.parent.parent as View
-        posizioneDaCanc = Integer.valueOf(
-                (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())
-        idDaCanc = Integer.valueOf(
-                (v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())
-        timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
+//        posizioneDaCanc = Integer.valueOf(
+//                (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())
+        posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
+//        idDaCanc = Integer.valueOf(
+//                (v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())
+        idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
+//        timestampDaCanc = (v.findViewById<View>(R.id.text_timestamp) as TextView).text.toString()
+        timestampDaCanc = v.text_timestamp.text.toString()
         snackBarRimuoviCanto(v)
         true
     }
@@ -266,10 +273,12 @@ class CantiEucarestiaFragment : Fragment() {
     private fun openPagina(v: View) {
         val bundle = Bundle()
         bundle.putString(
-                "pagina", (v.findViewById<View>(R.id.text_source_canto) as TextView).text.toString())
+//                "pagina", (v.findViewById<View>(R.id.text_source_canto) as TextView).text.toString())
+                "pagina", v.text_source_canto.text.toString())
         bundle.putInt(
                 "idCanto",
-                Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString()))
+//                Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString()))
+                Integer.valueOf(v.text_id_canto_card.text.toString()))
 
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
