@@ -75,10 +75,10 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:16.0.1")
     implementation("com.google.firebase:firebase-core:16.0.7")
-    implementation ("com.google.firebase:firebase-firestore:18.0.0")
+    implementation ("com.google.firebase:firebase-firestore:18.0.1")
     implementation ("com.google.firebase:firebase-storage:16.0.5")
     implementation ("com.google.firebase:firebase-auth:16.1.0")
-    implementation("com.crashlytics.sdk.android:crashlytics:2.9.8@aar") { isTransitive = true }
+    implementation("com.crashlytics.sdk.android:crashlytics:2.9.9@aar") { isTransitive = true }
     implementation("com.afollestad:material-cab:1.3.1")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.3")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.12.0")

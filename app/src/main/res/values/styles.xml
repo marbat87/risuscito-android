@@ -94,6 +94,7 @@
 
     <style name="AppModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
+        <item name="android:background">@drawable/bg_bottom_sheet_dialog</item>
     </style>
 
     <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.MaterialComponents.Light">
