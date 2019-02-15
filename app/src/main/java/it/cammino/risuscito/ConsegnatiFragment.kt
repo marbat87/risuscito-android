@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -22,6 +23,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -33,7 +35,7 @@ import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
-import com.mikepenz.itemanimators.SlideLeftAlphaAnimator
+import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
@@ -42,8 +44,10 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.services.ConsegnatiSaverService
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.layout_consegnati.*
+import java.lang.ref.WeakReference
 
 class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
@@ -86,7 +90,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 enableBottombar(false)
                 selected_view!!.visibility = View.VISIBLE
                 enableFab(true)
-                mCantiViewModel!!.titoliChoose = ArrayList()
+//                mCantiViewModel!!.titoliChoose = ArrayList()
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
             }
@@ -141,7 +145,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     enableBottombar(false)
                     selected_view!!.visibility = View.VISIBLE
                     enableFab(true)
-                    mCantiViewModel!!.titoliChoose = ArrayList()
+//                    mCantiViewModel!!.titoliChoose = ArrayList()
                     true
                 }
                 R.id.confirm_changes -> {
@@ -156,6 +160,13 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     val mSelected = (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.selectedItems
                     val mSelectedId = mSelected.mapTo(ArrayList()) { it.id }
 
+                    //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
+                    mCantiViewModel!!.titoliChoose.forEach {
+                        if (it.isSelected)
+                            if (!mSelectedId.any { i -> i == it.id })
+                                mSelectedId.add(it.id)
+                    }
+
                     val intent = Intent(activity!!.applicationContext, ConsegnatiSaverService::class.java)
                     intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
                     activity!!.applicationContext.startService(intent)
@@ -163,7 +174,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 }
                 else -> false
             }
-
         }
 
         mLUtils = LUtils.getInstance(activity!!)
@@ -183,21 +193,18 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         // Creating new adapter object
         cantoAdapter.withOnClickListener(mOnClickListener)
-//        FastAdapterDiffUtil.set(cantoAdapter, mCantiViewModel!!.titoli)
         cantoAdapter.set(mCantiViewModel!!.titoli)
 
         cantiRecycler!!.adapter = cantoAdapter
-        val llm = if (mMainActivity!!.isGridLayout)
-            GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
-        else
-            LinearLayoutManager(context)
-        cantiRecycler!!.layoutManager = llm
+        val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
+        val llm = LinearLayoutManager(context)
+        cantiRecycler!!.layoutManager = if (mMainActivity!!.isGridLayout) glm else llm
         cantiRecycler!!.setHasFixedSize(true)
-        val insetDivider = DividerItemDecoration(context!!, llm.orientation)
+        val insetDivider = DividerItemDecoration(context!!, if (mMainActivity!!.isGridLayout) glm.orientation else llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         cantiRecycler!!.addItemDecoration(insetDivider)
-        cantiRecycler!!.itemAnimator = SlideLeftAlphaAnimator()
+        cantiRecycler!!.itemAnimator = SlideRightAlphaAnimator()
 
         // Creating new adapter object
         selectableAdapter = FastItemAdapter()
@@ -212,7 +219,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             true
         }
         selectableAdapter!!.withEventHook(CheckableItem.CheckBoxClickEvent())
-        selectableAdapter!!.set(mCantiViewModel!!.titoliChoose)
+        selectableAdapter!!.set(mCantiViewModel!!.titoliChooseFiltered)
 
         chooseRecycler!!.adapter = selectableAdapter
         val llm2 = if (mMainActivity!!.isGridLayout)
@@ -225,7 +232,31 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         chooseRecycler!!.addItemDecoration(insetDivider2)
-        chooseRecycler!!.itemAnimator = SlideLeftAlphaAnimator()
+        chooseRecycler!!.itemAnimator = SlideRightAlphaAnimator()
+
+        activity!!.searchView.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val simplifiedString = Utility.removeAccents(newText ?: "").toLowerCase()
+                Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
+                if (simplifiedString.isNotEmpty()) {
+                    mCantiViewModel!!.titoliChooseFiltered = mCantiViewModel!!.titoliChoose.filter { Utility.removeAccents(it.title!!.text.toString()).toLowerCase().contains(simplifiedString) }
+                    selectableAdapter!!.set(mCantiViewModel!!.titoliChooseFiltered)
+                } else
+                    mCantiViewModel!!.titoliChooseFiltered = mCantiViewModel!!.titoliChoose.sortedWith(compareBy { it.title.toString() })
+                return true
+            }
+
+            override fun onQueryTextCleared(): Boolean {
+                mCantiViewModel!!.titoliChooseFiltered = mCantiViewModel!!.titoliChoose.sortedWith(compareBy { it.title.toString() })
+                selectableAdapter!!.set(mCantiViewModel!!.titoliChooseFiltered)
+                return true
+            }
+
+        })
     }
 
     override fun onResume() {
@@ -267,9 +298,21 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         subscribeUiConsegnati()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.searchView?.closeSearch()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity, R.menu.help_menu, menu)
+        if (mCantiViewModel!!.editMode) {
+            IconicsMenuInflaterUtil.inflate(
+                    activity!!.menuInflater, activity, R.menu.consegnati_menu, menu)
+            val item = menu!!.findItem(R.id.action_search)
+            activity!!.searchView.setMenuItem(item)
+        } else
+            IconicsMenuInflaterUtil.inflate(
+                    activity!!.menuInflater, activity, R.menu.help_menu, menu)
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -292,36 +335,34 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mLUtils!!.startActivityWithTransition(intent)
     }
 
-    private fun updateChooseList() {
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(context!!).consegnatiDao()
-                    val canti = mDao.choosen
-                    @Suppress("SENSELESS_COMPARISON")
-                    @Suppress("SENSELESS_COMPARISON")
-                    if (canti != null && mCantiViewModel!!.titoliChoose.isEmpty()) {
-                        val newList = ArrayList<CheckableItem>()
-                        for (canto in canti) {
-                            val checkableItem = CheckableItem()
-                            newList.add(
-                                    checkableItem
-                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                            .withColor(canto.color!!)
-                                            .withSetSelected(canto.consegnato > 0)
-                                            .withId(canto.id)
-                            )
-                        }
-                        mCantiViewModel!!.titoliChoose = newList.sortedWith(compareBy { it.title.toString() })
-//                        FastAdapterDiffUtil.set(selectableAdapter!!, mCantiViewModel!!.titoliChoose)
-                        selectableAdapter!!.set(mCantiViewModel!!.titoliChoose)
-                    }
-                })
-                .start()
-    }
+//    private fun updateChooseList() {
+//        Thread(
+//                Runnable {
+//                    val mDao = RisuscitoDatabase.getInstance(context!!).consegnatiDao()
+//                    val canti = mDao.choosen
+////                    if (mCantiViewModel!!.titoliChoose.isEmpty()) {
+//                    val newList = ArrayList<CheckableItem>()
+//                    for (canto in canti) {
+//                        val checkableItem = CheckableItem()
+//                        newList.add(
+//                                checkableItem
+//                                        .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+//                                        .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+//                                        .withColor(canto.color!!)
+//                                        .withSetSelected(canto.consegnato > 0)
+//                                        .withId(canto.id)
+//                        )
+//                    }
+//                    mCantiViewModel!!.titoliChoose = newList.sortedWith(compareBy { it.title.toString() })
+//                    mCantiViewModel!!.titoliChooseFiltered = newList.sortedWith(compareBy { it.title.toString() })
+//                    selectableAdapter!!.notifyAdapterDataSetChanged()
+////                    selectableAdapter!!.set(mCantiViewModel!!.titoliChooseFiltered)
+////                    }
+//                })
+//                .start()
+//    }
 
     private fun getFab(): FloatingActionButton {
-//        return if (mMainActivity!!.isOnTablet) fab_pager else mMainActivity!!.getFab()
         return mMainActivity!!.getFab()
     }
 
@@ -330,6 +371,9 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             mBottomBar!!.visibility = if (enabled) View.VISIBLE else View.GONE
         else
             mMainActivity!!.enableBottombar(enabled)
+        if (!enabled)
+            activity?.searchView?.closeSearch()
+        activity?.invalidateOptionsMenu()
     }
 
     private fun enableFab(enabled: Boolean) {
@@ -344,7 +388,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .paddingDp(4)
         val onClick = View.OnClickListener {
             mCantiViewModel!!.editMode = true
-            updateChooseList()
+//            updateChooseList()
+            UpdateChooseListTask(this@ConsegnatiFragment).execute()
             selected_view!!.visibility = View.INVISIBLE
             chooseRecycler!!.visibility = View.VISIBLE
             enableBottombar(true)
@@ -361,7 +406,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun fabIntro() {
         TapTargetView.showFor(
@@ -455,6 +500,37 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 no_consegnati!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                             }
                         })
+    }
+
+    private class UpdateChooseListTask internal constructor(fragment: ConsegnatiFragment) : AsyncTask<Void, Void, Void>() {
+
+        private val fragmentReference: WeakReference<ConsegnatiFragment> = WeakReference(fragment)
+
+        override fun doInBackground(vararg sUrl: Void): Void? {
+
+            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).consegnatiDao()
+            val canti = mDao.choosen
+            val newList = ArrayList<CheckableItem>()
+            for (canto in canti) {
+                val checkableItem = CheckableItem()
+                newList.add(
+                        checkableItem
+                                .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                .withColor(canto.color!!)
+                                .withSetSelected(canto.consegnato > 0)
+                                .withId(canto.id)
+                )
+            }
+            fragmentReference.get()!!.mCantiViewModel!!.titoliChoose = newList.sortedWith(compareBy { it.title.toString() })
+            fragmentReference.get()!!.mCantiViewModel!!.titoliChooseFiltered = fragmentReference.get()!!.mCantiViewModel!!.titoliChoose.sortedWith(compareBy { it.title.toString() })
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            super.onPostExecute(result)
+            fragmentReference.get()!!.selectableAdapter!!.set(fragmentReference.get()!!.mCantiViewModel!!.titoliChooseFiltered)
+        }
     }
 
     companion object {

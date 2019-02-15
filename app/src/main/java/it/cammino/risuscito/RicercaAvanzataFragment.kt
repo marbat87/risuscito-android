@@ -15,7 +15,6 @@ import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -122,7 +121,6 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             true
         }
 
-//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
         cantoAdapter.withOnClickListener(mOnClickListener)
@@ -230,13 +228,16 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-        menu.setHeaderTitle("Aggiungi canto a:")
+//        menu.setHeaderTitle("Aggiungi canto a:")
+        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
-        for (i in listePersonalizzate!!.indices) {
-            val subMenu = menu.addSubMenu(
-                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
-            for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
-                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
+        if (listePersonalizzate != null) {
+            for (i in listePersonalizzate!!.indices) {
+                val subMenu = menu.addSubMenu(
+                        ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
+                for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
+                    subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
+                }
             }
         }
 
@@ -254,7 +255,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         return if (userVisibleHint) {
             when (item!!.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(context!!, rootView!!, mViewModel!!.idDaAgg)
+                    ListeUtils.addToFavorites(this@RicercaAvanzataFragment, mViewModel!!.idDaAgg)
                     true
                 }
                 R.id.add_to_p_iniziale -> {
@@ -303,12 +304,14 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                 }
                 R.id.add_to_e_pane -> {
                     //          addToListaDup(2, 3);
-                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mViewModel!!.idDaAgg)
+//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 3, mViewModel!!.idDaAgg)
                     true
                 }
                 R.id.add_to_e_vino -> {
                     //          addToListaDup(2, 4);
-                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mViewModel!!.idDaAgg)
+//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 4, mViewModel!!.idDaAgg)
                     true
                 }
                 R.id.add_to_e_fine -> {
@@ -326,43 +329,17 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                             listePersonalizzate!![mViewModel!!.idListaClick]
                                     .lista!!
                                     .addCanto(mViewModel!!.idDaAgg.toString(), mViewModel!!.idPosizioneClick)
-                            Thread(
-                                    Runnable {
-                                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                                        mDao.updateLista(listePersonalizzate!![mViewModel!!.idListaClick])
-                                        Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                                .show()
-                                    })
-                                    .start()
+                            ListeUtils.updateListaPersonalizzata(this@RicercaAvanzataFragment, listePersonalizzate!![mViewModel!!.idListaClick])
                         } else {
                             if (listePersonalizzate!![mViewModel!!.idListaClick]
                                             .lista!!
                                             .getCantoPosizione(mViewModel!!.idPosizioneClick) == mViewModel!!.idDaAgg.toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
-                                Thread(
-                                        Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context!!).cantoDao()
-                                            val cantoPresente = mDao.getCantoById(
-                                                    Integer.parseInt(
-                                                            listePersonalizzate!![mViewModel!!.idListaClick]
-                                                                    .lista!!
-                                                                    .getCantoPosizione(mViewModel!!.idPosizioneClick)))
-                                            SimpleDialogFragment.Builder(
-                                                    (activity as AppCompatActivity?)!!,
-                                                    this@RicercaAvanzataFragment,
-                                                    "AVANZATA_REPLACE")
-                                                    .title(R.string.dialog_replace_title)
-                                                    .content(
-                                                            getString(R.string.dialog_present_yet)
-                                                                    + " "
-                                                                    + cantoPresente.titolo
-                                                                    + getString(R.string.dialog_wonna_replace))
-                                                    .positiveButton(android.R.string.yes)
-                                                    .negativeButton(android.R.string.no)
-                                                    .show()
-                                        })
-                                        .start()
+                                ListeUtils.manageReplaceDialog(this@RicercaAvanzataFragment, Integer.parseInt(
+                                        listePersonalizzate!![mViewModel!!.idListaClick]
+                                                .lista!!
+                                                .getCantoPosizione(mViewModel!!.idPosizioneClick)), "AVANZATA_REPLACE")
                             }
                         }
                         true
@@ -387,32 +364,18 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                 listePersonalizzate!![mViewModel!!.idListaClick]
                         .lista!!
                         .addCanto(mViewModel!!.idDaAgg.toString(), mViewModel!!.idPosizioneClick)
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            mDao.updateLista(listePersonalizzate!![mViewModel!!.idListaClick])
-                            Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-                        })
-                        .start()
+                ListeUtils.updateListaPersonalizzata(this@RicercaAvanzataFragment, listePersonalizzate!![mViewModel!!.idListaClick])
             }
-            "AVANZATA_REPLACE_2" -> Thread(
-                    Runnable {
-                        val mCustomListDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                        mCustomListDao.updatePositionNoTimestamp(
-                                mViewModel!!.idDaAgg, mViewModel!!.idListaDaAgg, mViewModel!!.posizioneDaAgg)
-                        Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-                    })
-                    .start()
+            "AVANZATA_REPLACE_2" ->
+                ListeUtils.updatePosizione(this@RicercaAvanzataFragment, mViewModel!!.idDaAgg, mViewModel!!.idListaDaAgg, mViewModel!!.posizioneDaAgg)
         }
     }
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
-
     private fun ricercaStringa(s: String) {
-        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
-        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
+        val tempText = activity!!.tempTextField.text.toString()
+        if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
@@ -431,34 +394,9 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
     }
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        Thread(
-                Runnable {
-                    val titoloPresente = ListeUtils.addToListaNoDup(
-                            context!!,
-                            rootView!!,
-                            idLista,
-                            listPosition,
-//                            titoloDaAgg!!,
-                            mViewModel!!.idDaAgg)
-                    if (!titoloPresente.isEmpty()) {
-                        mViewModel!!.idListaDaAgg = idLista
-                        mViewModel!!.posizioneDaAgg = listPosition
-                        SimpleDialogFragment.Builder(
-                                (activity as AppCompatActivity?)!!,
-                                this@RicercaAvanzataFragment,
-                                "AVANZATA_REPLACE_2")
-                                .title(R.string.dialog_replace_title)
-                                .content(
-                                        getString(R.string.dialog_present_yet)
-                                                + " "
-                                                + titoloPresente
-                                                + getString(R.string.dialog_wonna_replace))
-                                .positiveButton(android.R.string.yes)
-                                .negativeButton(android.R.string.no)
-                                .show()
-                    }
-                })
-                .start()
+        mViewModel!!.idListaDaAgg = idLista
+        mViewModel!!.posizioneDaAgg = listPosition
+        ListeUtils.addToListaNoDup(this@RicercaAvanzataFragment, idLista, listPosition, mViewModel!!.idDaAgg, "AVANZATA_REPLACE_2")
     }
 
     private class SearchTask internal constructor(fragment: RicercaAvanzataFragment) : AsyncTask<String, Void, Int?>() {
@@ -474,13 +412,19 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             var text: String
 
             for (aText in fragmentReference.get()!!.aTexts) {
-                if (isCancelled) return 0
+                if (isCancelled) {
+                    fragmentReference.get()!!.titoli.clear()
+                    return 0
+                }
 
                 if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
 
                 var found = true
                 for (word in words) {
-                    if (isCancelled) return 0
+                    if (isCancelled) {
+                        fragmentReference.get()!!.titoli.clear()
+                        return 0
+                    }
                     if (word.trim { it <= ' ' }.length > 1) {
                         text = word.trim { it <= ' ' }
                         text = text.toLowerCase(
@@ -494,7 +438,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                     }
                 }
 
-                if (found && !isCancelled) {
+                if (found) {
                     val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
                     val elenco = mDb.cantoDao().getCantiWithSource(aText[0]!!)
 
@@ -529,7 +473,10 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
-            if (isCancelled) return
+            if (isCancelled) {
+                fragmentReference.get()?.titoli?.clear()
+                return
+            }
             fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)

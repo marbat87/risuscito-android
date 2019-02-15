@@ -17,19 +17,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.iconics.IconicsDrawable
 import it.cammino.risuscito.database.Posizione
-import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
@@ -37,7 +36,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
-import java.sql.Date
 
 class CantiEucarestiaFragment : Fragment() {
     private var mCantiViewModel: DefaultListaViewModel? = null
@@ -52,7 +50,6 @@ class CantiEucarestiaFragment : Fragment() {
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
     private var cantoAdapter: FastItemAdapter<ListaPersonalizzataItem>? = null
-    //    private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
@@ -136,17 +133,11 @@ class CantiEucarestiaFragment : Fragment() {
         val parent = v.parent.parent as View
         if (v.id == R.id.addCantoGenerico) {
             if (mSwhitchMode) {
-//                actionModeOk = true
                 MaterialCab.destroy()
-                Thread(
-                        Runnable {
-                            scambioConVuoto(
-                                    Integer.valueOf(
-                                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                                    .text
-                                                    .toString()))
-                        })
-                        .start()
+                ListeUtils.scambioConVuoto(this@CantiEucarestiaFragment, 2, posizioneDaCanc, idDaCanc, Integer.valueOf(
+                        (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
+                                .text
+                                .toString()))
             } else {
                 if (!MaterialCab.isActive) {
                     val bundle = Bundle()
@@ -177,18 +168,14 @@ class CantiEucarestiaFragment : Fragment() {
                 } else
                     openPagina(v)
             else {
-//                actionModeOk = true
                 MaterialCab.destroy()
-                Thread(
-                        Runnable {
-                            scambioCanto(
-                                    v,
-                                    Integer.valueOf(
-                                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-                                                    .text
-                                                    .toString()))
-                        })
-                        .start()
+                ListeUtils.scambioCanto(this@CantiEucarestiaFragment,
+                        2,
+                        posizioneDaCanc,
+                        idDaCanc,
+                        Integer.valueOf(parent.text_id_posizione.text.toString()),
+                        Integer.valueOf((v.text_id_canto_card).text.toString())
+                )
             }
         }
     }
@@ -241,12 +228,7 @@ class CantiEucarestiaFragment : Fragment() {
         subscribeUiFavorites()
 
         button_pulisci.setOnClickListener {
-            Thread(
-                    Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                        mDao.deleteListById(2)
-                    })
-                    .start()
+            ListeUtils.cleanList(context!!, 2)
         }
 
         button_condividi.setOnClickListener {
@@ -278,7 +260,7 @@ class CantiEucarestiaFragment : Fragment() {
         val intent = Intent(activity, GeneralInsertSearch::class.java)
         intent.putExtras(bundle)
         parentFragment!!.startActivityForResult(intent, TAG_INSERT_EUCARESTIA)
-        activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+        Animatoo.animateShrink(activity)
     }
 
     private fun openPagina(v: View) {
@@ -356,61 +338,6 @@ class CantiEucarestiaFragment : Fragment() {
         startCab(false)
     }
 
-    private fun scambioCanto(v: View, position: Int) {
-        val idNew = Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString())
-        if (idNew != idDaCanc || posizioneDaCanc != position) {
-            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-            if (mDao.checkExistsPosition(2, position, idDaCanc) > 0
-                    || mDao.checkExistsPosition(2, posizioneDaCanc, idNew) > 0) {
-                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-            } else {
-                val positionToDelete = mDao.getPositionSpecific(2, position, idNew)
-                mDao.deletePosition(positionToDelete)
-
-                val positionToInsert = CustomList()
-                positionToInsert.id = 2
-                positionToInsert.position = position
-                positionToInsert.idCanto = idDaCanc
-                positionToInsert.timestamp = positionToDelete.timestamp
-
-                mDao.updatePositionNoTimestamp(idNew, 2, posizioneDaCanc, idDaCanc)
-                mDao.insertPosition(positionToInsert)
-
-                Snackbar.make(
-                        activity!!.findViewById(R.id.main_content),
-                        R.string.switch_done,
-                        Snackbar.LENGTH_SHORT)
-                        .show()
-            }
-        } else {
-            Snackbar.make(rootView!!, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun scambioConVuoto(position: Int) {
-        val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-
-        if (mDao.checkExistsPosition(2, position, idDaCanc) > 0)
-            Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-        else {
-            val positionToDelete = mDao.getPositionSpecific(2, posizioneDaCanc, idDaCanc)
-            mDao.deletePosition(positionToDelete)
-
-            val positionToInsert = CustomList()
-            positionToInsert.id = 2
-            positionToInsert.position = position
-            positionToInsert.idCanto = idDaCanc
-            positionToInsert.timestamp = positionToDelete.timestamp
-            mDao.insertPosition(positionToInsert)
-
-            Snackbar.make(
-                    activity!!.findViewById(R.id.main_content),
-                    R.string.switch_done,
-                    Snackbar.LENGTH_SHORT)
-                    .show()
-        }
-    }
-
     private fun startCab(switchMode: Boolean) {
         mSwhitchMode = switchMode
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
@@ -435,46 +362,14 @@ class CantiEucarestiaFragment : Fragment() {
                         .sizeDp(24)
                         .paddingDp(2)
                         .colorRes(android.R.color.white)
-//                actionModeOk = false
             }
 
             onSelection { item ->
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        Thread(
-                                Runnable {
-                                    val positionToDelete = CustomList()
-                                    positionToDelete.id = 2
-                                    positionToDelete.position = posizioneDaCanc
-                                    positionToDelete.idCanto = idDaCanc
-                                    val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                                    mDao.deletePosition(positionToDelete)
-                                })
-                                .start()
-//                        actionModeOk = true
                         MaterialCab.destroy()
-                        Snackbar.make(
-                                activity!!.findViewById(R.id.main_content),
-                                R.string.song_removed,
-                                Snackbar.LENGTH_LONG)
-                                .setAction(
-                                        getString(android.R.string.cancel).toUpperCase()
-                                ) {
-                                    Thread(
-                                            Runnable {
-                                                val positionToInsert = CustomList()
-                                                positionToInsert.id = 2
-                                                positionToInsert.position = posizioneDaCanc
-                                                positionToInsert.idCanto = idDaCanc
-                                                positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc!!))
-                                                val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                                                mDao.insertPosition(positionToInsert)
-                                            })
-                                            .start()
-                                }
-                                .setActionTextColor(themeUtils.accentColor())
-                                .show()
+                        ListeUtils.removePositionWithUndo(this@CantiEucarestiaFragment, 2, posizioneDaCanc, idDaCanc, timestampDaCanc!!)
                         true
                     }
                     R.id.action_switch_item -> {
@@ -491,16 +386,13 @@ class CantiEucarestiaFragment : Fragment() {
             }
 
             onDestroy {
-                //                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 mSwhitchMode = false
-//                if (!actionModeOk) {
                 try {
                     posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
                     cantoAdapter!!.notifyItemChanged(longclickedPos)
                 } catch (e: Exception) {
                     Crashlytics.logException(e)
                 }
-//                }
                 true
             }
         }
@@ -558,7 +450,7 @@ class CantiEucarestiaFragment : Fragment() {
 
     companion object {
 
-        private const val TAG_INSERT_EUCARESTIA = 444
+        const val TAG_INSERT_EUCARESTIA = 444
         private val TAG = CantiEucarestiaFragment::class.java.canonicalName
     }
 }

@@ -49,54 +49,35 @@ class SimpleDialogFragment : DialogFragment() {
         if (!mBuilder.mAutoDismiss)
             dialog.noAutoDismiss()
 
-//        val dialogBuilder = MaterialDialog.Builder(activity!!)
-//                .autoDismiss(mBuilder.mAutoDismiss)
-
-//        if (mBuilder.mShowProgress)
-//            dialogBuilder.progress(mBuilder.mProgressIndeterminate, mBuilder.mProgressMax, false)
-
-//        if (mBuilder.mTitle != 0)
-//            dialogBuilder.title(mBuilder.mTitle)
-
         if (mBuilder.mContent != null)
             dialog.message(text = mBuilder.mContent!!)
-//            dialogBuilder.content(mBuilder.mContent!!)
 
         if (mBuilder.mPositiveButton != null) {
-//            dialogBuilder.positiveText(mBuilder.mPositiveButton!!)
-//                    .onPositive { _, _ -> mCallback!!.onPositive(mBuilder.mTag) }
             dialog.positiveButton(text = mBuilder.mPositiveButton) {
                 mCallback!!.onPositive(mBuilder.mTag)
             }
         }
 
         if (mBuilder.mNegativeButton != null) {
-//            dialogBuilder.negativeText(mBuilder.mNegativeButton!!)
-//                    .onNegative { _, _ -> mCallback!!.onNegative(mBuilder.mTag)
             dialog.negativeButton(text = mBuilder.mNegativeButton) {
                 mCallback!!.onNegative(mBuilder.mTag)
             }
         }
 
-        if (mBuilder.mNeutralButton != null) {
-//            dialogBuilder.neutralText(mBuilder.mNeutralButton!!)
-//                    .onNeutral { _, _ ->
-//                        mCallback!!.onNeutral(
-//                                mBuilder.mTag)
-//                    }
-            dialog.neutralButton(text = mBuilder.mNeutralButton) {
-                mCallback!!.onNeutral(mBuilder.mTag)
-            }
-        }
+//        if (mBuilder.mNeutralButton != null) {
+////            dialogBuilder.neutralText(mBuilder.mNeutralButton!!)
+////                    .onNeutral { _, _ ->
+////                        mCallback!!.onNeutral(
+////                                mBuilder.mTag)
+////                    }
+//            dialog.neutralButton(text = mBuilder.mNeutralButton) {
+//                mCallback!!.onNeutral(mBuilder.mTag)
+//            }
+//        }
 
         if (mBuilder.mCustomView != 0) {
-//            dialogBuilder.customView(mBuilder.mCustomView, false)
             dialog.customView(mBuilder.mCustomView)
         }
-
-//        dialogBuilder.typeface(ResourcesCompat.getFont(activity!!, R.font.googlesans_medium), ResourcesCompat.getFont(activity!!, R.font.googlesans_regular))
-
-//        val dialog = dialogBuilder.build()
 
         dialog.setCancelable(mBuilder.mCanceable)
 
@@ -148,7 +129,7 @@ class SimpleDialogFragment : DialogFragment() {
         internal var mContent: CharSequence? = null
         internal var mPositiveButton: CharSequence? = null
         internal var mNegativeButton: CharSequence? = null
-        internal var mNeutralButton: CharSequence? = null
+//        internal var mNeutralButton: CharSequence? = null
         internal var mCanceable = false
         internal var mAutoDismiss = true
         internal var mCanceListener = false
@@ -179,10 +160,10 @@ class SimpleDialogFragment : DialogFragment() {
             return this
         }
 
-        fun neutralButton(@StringRes text: Int): Builder {
-            mNeutralButton = this.mContext.resources.getText(text)
-            return this
-        }
+//        fun neutralButton(@StringRes text: Int): Builder {
+//            mNeutralButton = this.mContext.resources.getText(text)
+//            return this
+//        }
 
         fun setHasCancelListener(): Builder {
             mCanceListener = true
@@ -240,7 +221,7 @@ class SimpleDialogFragment : DialogFragment() {
     interface SimpleCallback {
         fun onPositive(tag: String)
         fun onNegative(tag: String)
-        fun onNeutral(tag: String)
+//        fun onNeutral(tag: String)
     }
 
     companion object {

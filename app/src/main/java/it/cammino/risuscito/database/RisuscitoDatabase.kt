@@ -13,7 +13,7 @@ import it.cammino.risuscito.database.entities.*
 import java.sql.Date
 import java.sql.Timestamp
 
-@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 3, exportSchema = false)
+@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RisuscitoDatabase : RoomDatabase() {
 
@@ -403,17 +403,52 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = Migration3to4()
+
+        class Migration3to4 : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 3 to 4")
+
+                val backup = ArrayList<CantoDao.Backup>()
+                val sql = "SELECT id, zoom, scrollX, scrollY, favorite, savedTab, savedBarre, savedSpeed FROM Canto ORDER by 1"
+                val cursor = database.query(sql)
+                cursor.moveToFirst()
+                while (!cursor.isAfterLast) {
+                    backup.add(CantoDao.Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)))
+                    cursor.moveToNext()
+                }
+                cursor.close()
+
+                // 2. EMPTY table
+                database.execSQL("DELETE FROM Canto")
+
+                //3. Prepopulate new table
+                Canto.defaultCantoData().forEach {
+                    database.execSQL("INSERT INTO Canto (id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedSpeed) " +
+                            "VALUES(" + it.id + ",'" + it.pagina + "','" + it.titolo + "','" + it.source + "'," + it.favorite + ",'" + it.color + "','" + it.link + "'," + it.zoom + "," + it.scrollX + "," + it.scrollY + ",'" + it.savedSpeed + "')")
+                }
+
+                //4. Restore backup
+                backup.forEach {
+                    database.execSQL("UPDATE Canto set zoom=" + it.zoom + ", scrollX=" + it.scrollX + ", scrollY=" + it.scrollY + ", favorite=" + it.favorite +
+                            ", savedTab=" + (if (it.savedTab != null) "'" + it.savedTab + "'" else "null") +
+                            ", savedBarre=" + (if (it.savedBarre != null) "'" + it.savedBarre + "'" else "null") +
+                            ",savedSpeed='" + it.savedSpeed + "' WHERE id=" + it.id)
+                }
+
+            }
+        }
 
         private fun reinsertDefault(database: SupportSQLiteDatabase) {
             Log.d(TAG, "reinsertDefault")
 
             // 1. backup table
-            val backup = ArrayList<Backup>()
+            val backup = ArrayList<CantoDao.Backup>()
             val sql = "SELECT id, zoom, scrollX, scrollY, favorite, savedTab, savedBarre, savedSpeed FROM Canto"
             val cursor = database.query(sql)
             cursor.moveToFirst()
-            for (i in 0 until cursor.count) {
-                backup.add(Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7)))
+            while (!cursor.isAfterLast) {
+                backup.add(CantoDao.Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)))
                 cursor.moveToNext()
             }
             cursor.close()
@@ -423,10 +458,18 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             database.execSQL("CREATE TABLE Canto (id INTEGER NOT NULL DEFAULT 0, pagina TEXT, titolo TEXT, source TEXT, favorite INTEGER NOT NULL DEFAULT 0, color TEXT, link TEXT, zoom INTEGER NOT NULL DEFAULT 0, scrollX INTEGER NOT NULL DEFAULT 0, scrollY INTEGER NOT NULL DEFAULT 0, savedTab TEXT, savedBarre TEXT, savedSpeed TEXT, PRIMARY KEY(id))")
 
             //3. Prepopulate new table
-            Canto.defaultCantoData().forEach { database.execSQL("INSERT INTO Canto VALUES(" + it.id + ",'" + it.pagina + "','" + it.titolo + "','" + it.source + "'," + it.favorite + ",'" + it.color + "','" + it.link + "'," + it.zoom + "," + it.scrollX + "," + it.scrollY + ",null,null,'" + it.savedSpeed + "')") }
+            Canto.defaultCantoData().forEach {
+                database.execSQL("INSERT INTO Canto (id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedSpeed) " +
+                        "VALUES(" + it.id + ",'" + it.pagina + "','" + it.titolo + "','" + it.source + "'," + it.favorite + ",'" + it.color + "','" + it.link + "'," + it.zoom + "," + it.scrollX + "," + it.scrollY + ",'" + it.savedSpeed + "')")
+            }
 
             //4. Restore backup
-            backup.forEach { database.execSQL("UPDATE Canto set zoom=" + it.zoom + ",scrollX=" + it.scrollX + ",scrollY=" + it.scrollY + ",favorite=" + it.favourite + ",savedTab=" + if (it.nota != null) "'" + it.nota + "'" else "null" + ",savedBarre=" + if (it.barre != null) "'" + it.barre + "'" else "null" + ",savedSpeed='" + it.speed + "' WHERE id=" + it.id) }
+            backup.forEach {
+                database.execSQL("UPDATE Canto set zoom=" + it.zoom + ", scrollX=" + it.scrollX + ", scrollY=" + it.scrollY + ", favorite=" + it.favorite +
+                        ", savedTab=" + (if (it.savedTab != null) "'" + it.savedTab + "'" else "null") +
+                        ", savedBarre=" + (if (it.savedBarre != null) "'" + it.savedBarre + "'" else "null") +
+                        ",savedSpeed='" + it.savedSpeed + "' WHERE id=" + it.id)
+            }
 
             // 5. Empty table SALMO
             database.execSQL("DELETE FROM Salmo")
@@ -474,8 +517,9 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 Log.d(TAG, "getInstance: NULL")
                 synchronized(LOCK) {
                     sInstance = Room.databaseBuilder(context.applicationContext, RisuscitoDatabase::class.java, dbName)
-                            .addMigrations(MIGRATION_1_3)
-                            .addMigrations(MIGRATION_2_3)
+                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4)
+//                            .addMigrations(MIGRATION_2_3)
+//                            .addMigrations(MIGRATION_3_4)
                             .addCallback(object : Callback() {
                                 /**
                                  * Called when the database is created for the first time. This is called after all the
@@ -502,7 +546,5 @@ abstract class RisuscitoDatabase : RoomDatabase() {
         }
 
     }
-
-    class Backup(val id: Int = 0, val zoom: Int = 0, val scrollX: Int = 0, val scrollY: Int = 0, val favourite: Int = 0, val nota: String?, val barre: String?, val speed: Int = 0)
 
 }

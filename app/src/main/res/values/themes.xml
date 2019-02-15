@@ -52,6 +52,7 @@
         <item name="md_font_title">@font/googlesans_medium</item>
         <item name="md_font_body">@font/googlesans_regular</item>
         <item name="md_font_button">@font/googlesans_medium</item>
+        <item name="tabStyle">@style/Risuscito_tabstyle</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme">

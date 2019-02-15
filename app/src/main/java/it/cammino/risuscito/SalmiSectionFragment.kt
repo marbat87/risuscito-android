@@ -1,22 +1,22 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import com.turingtechnologies.materialscrollbar.CustomIndicator
@@ -39,7 +39,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     private var mCantiViewModel: SalmiIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
-    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLastClickTime: Long = 0
@@ -62,8 +61,8 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         if (!isViewShown) {
             Thread(
                     Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                        listePersonalizzate = mDao.all
+                        if (context != null)
+                            listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
                     })
                     .start()
         }
@@ -91,7 +90,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
 
         val mMainActivity = activity as MainActivity?
 
-//        mAdapter = FastScrollIndicatorAdapter(2)
         mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
         FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
         val llm = LinearLayoutManager(context)
@@ -144,16 +142,16 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        titoloDaAgg = (v.findViewById<View>(R.id.text_title) as TextView).text.toString()
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-        menu.setHeaderTitle("Aggiungi canto a:")
+        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
-        for (i in listePersonalizzate!!.indices) {
-            val subMenu = menu.addSubMenu(
-                    ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
-            for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
-                subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
+        if (listePersonalizzate != null) {
+            for (i in listePersonalizzate!!.indices) {
+                val subMenu = menu.addSubMenu(
+                        ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
+                for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
+                    subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
+                }
             }
         }
 
@@ -171,7 +169,7 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         if (userVisibleHint) {
             when (item!!.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(context!!, rootView!!, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToFavorites(this@SalmiSectionFragment, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_p_iniziale -> {
@@ -219,11 +217,13 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                     return true
                 }
                 R.id.add_to_e_pane -> {
-                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
+//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(this@SalmiSectionFragment, 2, 3, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_vino -> {
-                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
+//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
+                    ListeUtils.addToListaDup(this@SalmiSectionFragment, 2, 4, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_fine -> {
@@ -242,44 +242,17 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                     .lista!!
                                     .addCanto(
                                             (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                            Thread(
-                                    Runnable {
-                                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                                        mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
-                                        Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT)
-                                                .show()
-                                    })
-                                    .start()
+                            ListeUtils.updateListaPersonalizzata(this@SalmiSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
                         } else {
                             if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
                                             .lista!!
                                             .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
                                 Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                             } else {
-                                Log.d(TAG, "id presente: " + mCantiViewModel!!.idPosizioneClick)
-                                Thread(
-                                        Runnable {
-                                            val mDao = RisuscitoDatabase.getInstance(context!!).cantoDao()
-                                            val cantoPresente = mDao.getCantoById(
-                                                    Integer.parseInt(
-                                                            listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                                                    .lista!!
-                                                                    .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)))
-                                            SimpleDialogFragment.Builder(
-                                                    (activity as AppCompatActivity?)!!,
-                                                    this@SalmiSectionFragment,
-                                                    "SALMI_REPLACE")
-                                                    .title(R.string.dialog_replace_title)
-                                                    .content(
-                                                            (getString(R.string.dialog_present_yet)
-                                                                    + " "
-                                                                    + resources.getString(LUtils.getResId(cantoPresente.titolo, R.string::class.java))
-                                                                    + getString(R.string.dialog_wonna_replace)))
-                                                    .positiveButton(android.R.string.yes)
-                                                    .negativeButton(android.R.string.no)
-                                                    .show()
-                                        })
-                                        .start()
+                                ListeUtils.manageReplaceDialog(this@SalmiSectionFragment, Integer.parseInt(
+                                        listePersonalizzate!![mCantiViewModel!!.idListaClick]
+                                                .lista!!
+                                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)), "SALMI_REPLACE")
                             }
                         }
                         return true
@@ -299,61 +272,21 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            mDao.updateLista(listePersonalizzate!![mCantiViewModel!!.idListaClick])
-                            Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-                        })
-                        .start()
+                ListeUtils.updateListaPersonalizzata(this@SalmiSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
             }
             "SALMI_REPLACE_2" ->
-                Thread(
-                        Runnable {
-                            val mCustomListDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                            mCustomListDao.updatePositionNoTimestamp(
-                                    mCantiViewModel!!.idDaAgg,
-                                    mCantiViewModel!!.idListaDaAgg,
-                                    mCantiViewModel!!.posizioneDaAgg)
-                            Snackbar.make(rootView!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-                        })
-                        .start()
+                ListeUtils.updatePosizione(this@SalmiSectionFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
         }
     }
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        Thread(
-                Runnable {
-                    val titoloPresente = ListeUtils.addToListaNoDup(
-                            context!!,
-                            rootView!!,
-                            idLista,
-                            listPosition,
-//                            titoloDaAgg!!,
-                            mCantiViewModel!!.idDaAgg)
-                    if (!titoloPresente.isEmpty()) {
-                        mCantiViewModel!!.idListaDaAgg = idLista
-                        mCantiViewModel!!.posizioneDaAgg = listPosition
-                        SimpleDialogFragment.Builder(
-                                (activity as AppCompatActivity?)!!,
-                                this@SalmiSectionFragment,
-                                "SALMI_REPLACE_2")
-                                .title(R.string.dialog_replace_title)
-                                .content(
-                                        (getString(R.string.dialog_present_yet)
-                                                + " "
-                                                + titoloPresente
-                                                + getString(R.string.dialog_wonna_replace)))
-                                .positiveButton(android.R.string.yes)
-                                .negativeButton(android.R.string.no)
-                                .show()
-                    }
-                })
-                .start()
+        mCantiViewModel!!.idListaDaAgg = idLista
+        mCantiViewModel!!.posizioneDaAgg = listPosition
+        ListeUtils.addToListaNoDup(this@SalmiSectionFragment, idLista, listPosition, mCantiViewModel!!.idDaAgg, "VELOCE_REPLACE_2")
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -374,21 +307,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                         Observer<List<SalmoCanto>> { canti ->
                             if (canti != null) {
                                 val newList = ArrayList<SimpleItem>()
-//                                for (canto in canti) {
-//                                    val sampleItem = SimpleItem()
-//                                    sampleItem
-//                                            .withTitle(resources.getString(resources.getIdentifier(canto.titoloSalmo,
-//                                                    "string", activity!!.packageName)))
-//                                            .withPage(resources.getString(resources.getIdentifier(canto.pagina,
-//                                                    "string", activity!!.packageName)))
-//                                            .withSource(resources.getString(resources.getIdentifier(canto.source,
-//                                                    "string", activity!!.packageName)))
-//                                            .withColor(canto.color!!)
-//                                            .withId(canto.id)
-//                                            .withNumSalmo(canto.numSalmo!!)
-//                                            .withContextMenuListener(this@SalmiSectionFragment)
-//                                    newList.add(sampleItem)
-//                                }
                                 canti.forEach {
                                     newList.add(
                                             SimpleItem()

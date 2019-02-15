@@ -48,7 +48,7 @@ class XmlImportService : IntentService("XmlImportService") {
     }
 
     private fun importData(data: Uri) {
-        Log.d(TAG, "importData: data = " + data.toString())
+        Log.d(TAG, "importData: data = $data")
         Log.d(TAG, "importData:  data.getScheme = " + data.scheme)
         val scheme = data.scheme
 
@@ -248,7 +248,7 @@ class XmlImportService : IntentService("XmlImportService") {
         val name = "XML Import"
         // The user-visible description of the channel.
         val description = "Importing selected XML"
-        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
+        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
         // Configure the notification channel.
         mChannel.description = description
         mChannel.setShowBadge(false)

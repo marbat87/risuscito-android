@@ -67,11 +67,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private var mDownload: Boolean = false
 
     private var mViewModel: PaginaRenderViewModel? = null
-    private var pagina: String? = null
-    private var idCanto: Int = 0
+    //    private var pagina: String? = null
+//    private var idCanto: Int = 0
     private var url: String? = null
-    private var primaNota: String? = null
-    private var primoBarre: String? = null
+    //    private var primaNota: String? = null
+//    private var primoBarre: String? = null
     private var personalUrl: String? = null
     private var localUrl: String? = null
     private var mLastPlaybackState: PlaybackStateCompat? = null
@@ -333,9 +333,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart: ")
-//        if (mMediaBrowser != null) {
-//            mMediaBrowser!!.connect()
-//        }
         try {
             mMediaBrowser?.connect()
         } catch (e: IllegalStateException) {
@@ -349,8 +346,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         if (mMediaBrowser != null) {
             mMediaBrowser!!.disconnect()
         }
-//        if (MediaControllerCompat.getMediaController(this) != null)
-//            MediaControllerCompat.getMediaController(this).unregisterCallback(mMediaControllerCallback)
         val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
         controller?.unregisterCallback(mMediaControllerCallback)
 
@@ -382,23 +377,26 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
-        pagina = bundle?.getCharSequence("pagina", "")?.toString()
-        idCanto = bundle?.getInt("idCanto") ?: 0
+        mViewModel!!.pagina = mViewModel!!.pagina
+                ?: bundle?.getCharSequence("pagina", "")?.toString()
+        mViewModel!!.idCanto = bundle?.getInt("idCanto") ?: return
 
-        DataRetrieverTask().execute(idCanto)
+//        DataRetrieverTask().execute(mViewModel!!.idCanto)
 
         try {
-            primaNota = CambioAccordi.recuperaPrimoAccordo(
-                    assets.open(pagina!! + ".htm"),
+            mViewModel!!.primaNota = mViewModel!!.primaNota ?: CambioAccordi.recuperaPrimoAccordo(
+                    assets.open(mViewModel!!.pagina!! + ".htm"),
                     ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                             .language)
-            primoBarre = cambioAccordi.recuperaBarre(
-                    assets.open(pagina!! + ".htm"),
+            mViewModel!!.primoBarre = mViewModel!!.primoBarre ?: cambioAccordi.recuperaBarre(
+                    assets.open(mViewModel!!.pagina!! + ".htm"),
                     ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                             .language)
         } catch (e: IOException) {
             Log.e(TAG, e.localizedMessage, e)
         }
+
+        DataRetrieverTask().execute(mViewModel!!.idCanto)
 
         music_seekbar.setOnSeekBarChangeListener(
                 object : SeekBar.OnSeekBarChangeListener {
@@ -444,7 +442,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             Log.d(TAG, "playPause: Button pressed, in state $state")
 
             if (state == PlaybackStateCompat.STATE_STOPPED || state == PlaybackStateCompat.STATE_NONE) {
-                playFromId(idCanto.toString())
+                playFromId(mViewModel!!.idCanto.toString())
             } else if (state == PlaybackStateCompat.STATE_PLAYING
                     || state == PlaybackStateCompat.STATE_BUFFERING
                     || state == PlaybackStateCompat.STATE_CONNECTING) {
@@ -522,7 +520,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         showScrolling(false)
                         mHandler.removeCallbacks(mScrollDown)
                     }
-                    saveZoom(true, false)
+                    saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
                     mLUtils!!.closeActivityWithTransition()
                     return true
                 } else {
@@ -530,8 +528,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             this@PaginaRenderActivity, this@PaginaRenderActivity, "SAVE_TAB")
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
-                            .positiveButton(android.R.string.yes)
-                            .negativeButton(android.R.string.no)
+                            .positiveButton(R.string.save_exit_confirm)
+                            .negativeButton(R.string.discard_exit_confirm)
                             .show()
                     return true
                 }
@@ -542,11 +540,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         .setCanceable()
                         .show()
                 val i = Intent(applicationContext, PdfExportService::class.java)
-                i.putExtra(PdfExportService.DATA_PRIMA_NOTA, primaNota)
+                i.putExtra(PdfExportService.DATA_PRIMA_NOTA, mViewModel!!.primaNota)
                 i.putExtra(PdfExportService.DATA_NOTA_CAMBIO, mViewModel!!.notaCambio)
-                i.putExtra(PdfExportService.DATA_PRIMO_BARRE, primoBarre)
+                i.putExtra(PdfExportService.DATA_PRIMO_BARRE, mViewModel!!.primoBarre)
                 i.putExtra(PdfExportService.DATA_BARRE_CAMBIO, mViewModel!!.barreCambio)
-                i.putExtra(PdfExportService.DATA_PAGINA, pagina)
+                i.putExtra(PdfExportService.DATA_PAGINA, mViewModel!!.pagina)
                 i.putExtra(
                         PdfExportService.DATA_LINGUA,
                         ThemeableActivity.getSystemLocalWrapper(resources.configuration)
@@ -555,7 +553,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 return true
             }
             R.id.action_help_canto -> {
-//                if (music_buttons.visibility == View.VISIBLE)
                 if (music_buttons.isVisible)
                     playIntroFull()
                 else
@@ -565,17 +562,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             R.id.action_save_tab -> {
                 if (!mViewModel!!.mCurrentCanto!!.savedTab.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
                     mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
-                    Thread(
-                            Runnable {
-                                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-                                Snackbar.make(
-                                        findViewById(android.R.id.content),
-                                        R.string.tab_saved,
-                                        Snackbar.LENGTH_SHORT)
-                                        .show()
-                            })
-                            .start()
+                    UpdateCantoTask().execute(1)
                 } else {
                     Snackbar.make(
                             findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
@@ -584,20 +571,19 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 return true
             }
             R.id.action_reset_tab -> {
-                mViewModel!!.notaCambio = primaNota
-                val convMap = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
+                mViewModel!!.notaCambio = mViewModel!!.primaNota
+                val convMap = cambioAccordi.diffSemiToni(mViewModel!!.primaNota, mViewModel!!.notaCambio)
                 var convMin: HashMap<String, String>? = null
                 if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                                 .language
                                 .equals("uk", ignoreCase = true))
-                    convMin = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
-                saveZoom(false, false)
+                    convMin = cambioAccordi.diffSemiToniMin(mViewModel!!.primaNota, mViewModel!!.notaCambio)
+                saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
                     val nuovoFile = cambiaAccordi(convMap, mViewModel!!.barreCambio, convMin, true)
                     if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
-                } else {
-                    cantoView.loadUrl("file:///android_asset/$pagina.htm")
-                }
+                } else
+                    cantoView.loadUrl("file:///android_asset/${mViewModel!!.pagina}.htm")
                 if (mViewModel!!.mCurrentCanto!!.zoom > 0)
                     cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
                 cantoView.webViewClient = MyWebViewClient()
@@ -606,17 +592,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             R.id.action_save_barre -> {
                 if (!mViewModel!!.mCurrentCanto!!.savedBarre.equals(mViewModel!!.barreCambio, ignoreCase = true)) {
                     mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
-                    Thread(
-                            Runnable {
-                                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
-                                mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-                                Snackbar.make(
-                                        findViewById(android.R.id.content),
-                                        R.string.barre_saved,
-                                        Snackbar.LENGTH_SHORT)
-                                        .show()
-                            })
-                            .start()
+                    UpdateCantoTask().execute(2)
                 } else {
                     Snackbar.make(
                             findViewById(android.R.id.content),
@@ -627,20 +603,19 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 return true
             }
             R.id.action_reset_barre -> {
-                mViewModel!!.barreCambio = primoBarre
-                val convMap1 = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
+                mViewModel!!.barreCambio = mViewModel!!.primoBarre
+                val convMap1 = cambioAccordi.diffSemiToni(mViewModel!!.primaNota, mViewModel!!.notaCambio)
                 var convMin1: HashMap<String, String>? = null
                 if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                                 .language
                                 .equals("uk", ignoreCase = true))
-                    convMin1 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
-                saveZoom(false, false)
+                    convMin1 = cambioAccordi.diffSemiToniMin(mViewModel!!.primaNota, mViewModel!!.notaCambio)
+                saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel!!.barreCambio, convMin1, true)
                     if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
-                } else {
-                    cantoView.loadUrl("file:///android_asset/$pagina.htm")
-                }
+                } else
+                    cantoView.loadUrl("file:///android_asset/${mViewModel!!.pagina}.htm")
                 if (mViewModel!!.mCurrentCanto!!.zoom > 0)
                     cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
                 cantoView.webViewClient = MyWebViewClient()
@@ -649,19 +624,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             else -> {
                 if (item.groupId == R.id.menu_gruppo_note) {
                     mViewModel!!.notaCambio = item.titleCondensed.toString()
-                    val convMap2 = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
+                    val convMap2 = cambioAccordi.diffSemiToni(mViewModel!!.primaNota, mViewModel!!.notaCambio)
                     var convMin2: HashMap<String, String>? = null
                     if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                                     .language
                                     .equals("uk", ignoreCase = true))
-                        convMin2 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
-                    saveZoom(false, false)
+                        convMin2 = cambioAccordi.diffSemiToniMin(mViewModel!!.primaNota, mViewModel!!.notaCambio)
+                    saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel!!.barreCambio, convMin2, true)
                         if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
-                    } else {
-                        cantoView.loadUrl("file:///android_asset/$pagina.htm")
-                    }
+                    } else
+                        cantoView.loadUrl("file:///android_asset/${mViewModel!!.pagina}.htm")
                     if (mViewModel!!.mCurrentCanto!!.zoom > 0)
                         cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
                     cantoView.webViewClient = MyWebViewClient()
@@ -669,19 +643,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 }
                 if (item.groupId == R.id.menu_gruppo_barre) {
                     mViewModel!!.barreCambio = item.titleCondensed.toString()
-                    val convMap3 = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
+                    val convMap3 = cambioAccordi.diffSemiToni(mViewModel!!.primaNota, mViewModel!!.notaCambio)
                     var convMin3: HashMap<String, String>? = null
                     if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                                     .language
                                     .equals("uk", ignoreCase = true))
-                        convMin3 = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
-                    saveZoom(false, false)
+                        convMin3 = cambioAccordi.diffSemiToniMin(mViewModel!!.primaNota, mViewModel!!.notaCambio)
+                    saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel!!.barreCambio, convMin3, true)
                         if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
-                    } else {
-                        cantoView.loadUrl("file:///android_asset/$pagina.htm")
-                    }
+                    } else
+                        cantoView.loadUrl("file:///android_asset/${mViewModel!!.pagina}.htm")
                     if (mViewModel!!.mCurrentCanto!!.zoom > 0)
                         cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
                     cantoView.webViewClient = MyWebViewClient()
@@ -709,15 +682,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 showScrolling(false)
                 mHandler.removeCallbacks(mScrollDown)
             }
-            saveZoom(true, false)
+            saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
             mLUtils!!.closeActivityWithTransition()
         } else {
             SimpleDialogFragment.Builder(
                     this@PaginaRenderActivity, this@PaginaRenderActivity, "SAVE_TAB")
                     .title(R.string.dialog_save_tab_title)
                     .content(R.string.dialog_save_tab)
-                    .positiveButton(android.R.string.yes)
-                    .negativeButton(android.R.string.no)
+                    .positiveButton(R.string.save_exit_confirm)
+                    .negativeButton(R.string.discard_exit_confirm)
                     .show()
         }
     }
@@ -766,13 +739,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     // recupera e setta il record per la registrazione
     private fun getRecordLink() {
-        url = if (mViewModel!!.mCurrentCanto!!.link != null && mViewModel!!.mCurrentCanto!!.link != "")
+        url = if (mViewModel!!.mCurrentCanto!!.link != null && !mViewModel!!.mCurrentCanto!!.link!!.isEmpty())
             getString(LUtils.getResId(mViewModel!!.mCurrentCanto!!.link, R.string::class.java))
         else
             ""
 
         val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).localLinksDao()
-        val localLink = mDao.getLocalLinkByCantoId(idCanto)
+        val localLink = mDao.getLocalLinkByCantoId(mViewModel!!.idCanto)
 
 //        personalUrl = if (localLink?.localPath != null && !localLink.localPath!!.isEmpty())
 //            localLink.localPath
@@ -795,12 +768,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
             }
 
-            Thread(
-                    Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(applicationContext).cantoDao()
-                        mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-                    })
-                    .start()
+            UpdateCantoTask().execute(0)
         }
     }
 
@@ -814,7 +782,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         var barreScritto = false
 
         try {
-            val br = BufferedReader(InputStreamReader(assets.open(pagina!! + ".htm"), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(assets.open(mViewModel!!.pagina!! + ".htm"), "UTF-8"))
 
             var line: String? = br.readLine()
 
@@ -863,8 +831,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         //                        Log.d(TAG, "notaCambio: " + notaCambio);
                         //                        Log.d(TAG, "primaNota: " + primaNota);
                         if (!notaHighlighed) {
-                            if (!primaNota!!.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
-                                if (Utility.isLowerCase(primaNota!![0])) {
+                            if (!mViewModel!!.primaNota!!.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
+                                if (Utility.isLowerCase(mViewModel!!.primaNota!![0])) {
                                     var notaCambioMin = mViewModel!!.notaCambio
                                     notaCambioMin = if (notaCambioMin!!.length == 1)
                                         notaCambioMin.toLowerCase()
@@ -885,7 +853,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     } else {
                         line = sb.toString()
                         if (!notaHighlighed) {
-                            if (!primaNota!!.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
+                            if (!mViewModel!!.primaNota!!.equals(mViewModel!!.notaCambio, ignoreCase = true)) {
                                 line = line.replaceFirst(mViewModel!!.notaCambio!!.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
                                         + mViewModel!!.notaCambio
                                         + "</SPAN>")
@@ -904,7 +872,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     if (line.contains("<H3>")) {
                         if (barre != null && barre != "0") {
                             if (!barreScritto) {
-                                val oldLine: String = if (higlightDiff && !barre.equals(primoBarre!!, ignoreCase = true)) {
+                                val oldLine: String = if (higlightDiff && !barre.equals(mViewModel!!.primoBarre!!, ignoreCase = true)) {
                                     ("<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
                                             + getString(R.string.barre_al_tasto, barre)
                                             + "</I></FONT></SPAN></H4>")
@@ -1029,7 +997,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                         .show()
                 stopMedia()
-                DeleteLinkTask().execute(idCanto)
+                DeleteLinkTask().execute(mViewModel!!.idCanto)
             }
             "DELETE_MP3" -> {
                 val fileToDelete = File(localUrl!!)
@@ -1076,7 +1044,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showScrolling(false)
                     mHandler.removeCallbacks(mScrollDown)
                 }
-                saveZoom(true, true)
+                saveZoom(andSpeedAlso = true, andSaveTabAlso = true)
                 mLUtils!!.closeActivityWithTransition()
             }
         }
@@ -1085,19 +1053,19 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onNegative(tag: String) {
         Log.d(TAG, "onNegative: $tag")
         when (tag) {
-            "DOWNLINK_CHOOSE" -> createFileChooser()
+//            "DOWNLINK_CHOOSE" -> createFileChooser()
             "SAVE_TAB" -> {
                 if (mViewModel!!.scrollPlaying) {
                     showScrolling(false)
                     mHandler.removeCallbacks(mScrollDown)
                 }
-                saveZoom(true, false)
+                saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
                 mLUtils!!.closeActivityWithTransition()
             }
         }
     }
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun createFileChooser() {
         if (EasyPermissions.hasPermissions(this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -1110,7 +1078,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 Snackbar.LENGTH_SHORT)
                                 .show()
                         stopMedia()
-                        InsertLinkTask().execute(idCanto.toString(), path)
+                        InsertLinkTask().execute(mViewModel!!.idCanto.toString(), path)
                     }
                     .show()
         } else AppSettingsDialog.Builder(this@PaginaRenderActivity).build().show()
@@ -1292,7 +1260,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun stopMedia() {
         Log.d(TAG, "stopMedia: ")
-        if (mLastPlaybackState!!.state != PlaybackStateCompat.STATE_STOPPED) {
+        if (mLastPlaybackState?.state != PlaybackStateCompat.STATE_STOPPED) {
             val controller = MediaControllerCompat.getMediaController(this)
             controller?.transportControls?.stop()
         }
@@ -1415,19 +1383,19 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             super.onPostExecute(integer)
             if (mViewModel!!.mCurrentCanto!!.savedTab == null) {
                 if (mViewModel!!.notaCambio == null) {
-                    mViewModel!!.notaCambio = primaNota
+                    mViewModel!!.notaCambio = mViewModel!!.primaNota
                     mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.notaCambio
                 } else
-                    mViewModel!!.mCurrentCanto!!.savedTab = primaNota
+                    mViewModel!!.mCurrentCanto!!.savedTab = mViewModel!!.primaNota
             } else if (mViewModel!!.notaCambio == null)
                 mViewModel!!.notaCambio = mViewModel!!.mCurrentCanto!!.savedTab
 
             if (mViewModel!!.mCurrentCanto!!.savedBarre == null) {
                 if (mViewModel!!.barreCambio == null) {
-                    mViewModel!!.barreCambio = primoBarre
+                    mViewModel!!.barreCambio = mViewModel!!.primoBarre
                     mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
                 } else
-                    mViewModel!!.mCurrentCanto!!.savedBarre = primoBarre
+                    mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.primoBarre
             } else {
                 //	    	Log.i("BARRESALVATO", barreSalvato);
                 if (mViewModel!!.barreCambio == null)
@@ -1438,17 +1406,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
                 cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
 
-            val convMap = cambioAccordi.diffSemiToni(primaNota, mViewModel!!.notaCambio)
+            val convMap = cambioAccordi.diffSemiToni(mViewModel!!.primaNota, mViewModel!!.notaCambio)
             var convMin: HashMap<String, String>? = null
             if (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                             .language
                             .equals("uk", ignoreCase = true))
-                convMin = cambioAccordi.diffSemiToniMin(primaNota, mViewModel!!.notaCambio)
+                convMin = cambioAccordi.diffSemiToniMin(mViewModel!!.primaNota, mViewModel!!.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel!!.barreCambio, convMin, true)
                 if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
             } else
-                cantoView.loadUrl("file:///android_asset/$pagina.htm")
+                cantoView.loadUrl("file:///android_asset/${mViewModel!!.pagina}.htm")
 
             val webSettings = cantoView.settings
             webSettings.useWideViewPort = true
@@ -1535,11 +1503,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
             mViewModel!!.mCurrentCanto!!.favorite = params[0]!!
             mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
-//            Snackbar.make(
-//                    findViewById(android.R.id.content),
-//                    if (params[0]!! == 1) R.string.favorite_added else R.string.favorite_removed,
-//                    Snackbar.LENGTH_SHORT)
-//                    .show()
             return params[0]
         }
 
@@ -1554,8 +1517,26 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
+    private inner class UpdateCantoTask : AsyncTask<Int, Void, Int>() {
+        override fun doInBackground(vararg params: Int?): Int? {
+            val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
+            mDao.updateCanto(mViewModel!!.mCurrentCanto!!)
+            return params[0]
+        }
+
+        override fun onPostExecute(integer: Int?) {
+            super.onPostExecute(integer)
+            if (integer != 0)
+                Snackbar.make(
+                        findViewById(android.R.id.content),
+                        if (integer == 1) R.string.tab_saved else R.string.barre_saved,
+                        Snackbar.LENGTH_SHORT)
+                        .show()
+        }
+    }
+
     private fun initFabOptions() {
-//        fab_canti.expansionMode = if (mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         fab_canti.expansionMode = if (mLUtils!!.isFabScrollingActive && mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         val iconColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.text_color_secondary)
         val backgroundColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background)
@@ -1588,36 +1569,74 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         .create()
         )
 
-        val text: String
-        val icon = IconicsDrawable(this@PaginaRenderActivity)
-                .color(iconColor)
-                .sizeDp(24)
-                .paddingDp(4)
+//        val text: String
+//        val icon = IconicsDrawable(this@PaginaRenderActivity)
+//                .color(iconColor)
+//                .sizeDp(24)
+//                .paddingDp(4)
         if (mDownload) {
-            text = if (personalUrl != "") {
+            val icon = IconicsDrawable(this@PaginaRenderActivity)
+                    .color(iconColor)
+                    .sizeDp(24)
+                    .paddingDp(4)
+            val text = if (personalUrl != "") {
                 icon.icon(CommunityMaterial.Icon2.cmd_link_variant_off)
                 getString(R.string.dialog_delete_link_title)
             } else {
                 icon.icon(CommunityMaterial.Icon.cmd_delete)
                 getString(R.string.fab_delete_unlink)
             }
+            fab_canti.addActionItem(
+                    SpeedDialActionItem.Builder(R.id.fab_delete_file, icon)
+                            .setLabel(text)
+                            .setFabBackgroundColor(backgroundColor)
+                            .setLabelBackgroundColor(backgroundColor)
+                            .setLabelColor(iconColor)
+                            .create()
+            )
         } else {
-            text = if (url != "") {
-                icon.icon(CommunityMaterial.Icon.cmd_download)
-                getString(R.string.save_file)
-            } else {
-                icon.icon(CommunityMaterial.Icon2.cmd_link_variant)
-                getString(R.string.only_link_title)
-            }
+//            text = if (url != "") {
+//                icon.icon(CommunityMaterial.Icon.cmd_download)
+//                getString(R.string.save_file)
+//            } else {
+//                icon.icon(CommunityMaterial.Icon2.cmd_link_variant)
+//                getString(R.string.only_link_title)
+//            }
+            if (url!!.isNotEmpty())
+                fab_canti.addActionItem(
+                        SpeedDialActionItem.Builder(R.id.fab_save_file, IconicsDrawable(this@PaginaRenderActivity)
+                                .icon(CommunityMaterial.Icon.cmd_download)
+                                .color(iconColor)
+                                .sizeDp(24)
+                                .paddingDp(4))
+                                .setLabel(getString(R.string.save_file))
+                                .setFabBackgroundColor(backgroundColor)
+                                .setLabelBackgroundColor(backgroundColor)
+                                .setLabelColor(iconColor)
+                                .create()
+                )
+            fab_canti.addActionItem(
+                    SpeedDialActionItem.Builder(R.id.fab_link_file, IconicsDrawable(this@PaginaRenderActivity)
+                            .icon(CommunityMaterial.Icon2.cmd_link_variant)
+                            .color(iconColor)
+                            .sizeDp(24)
+                            .paddingDp(4))
+                            .setLabel(getString(R.string.only_link_title))
+                            .setFabBackgroundColor(backgroundColor)
+                            .setLabelBackgroundColor(backgroundColor)
+                            .setLabelColor(iconColor)
+                            .create()
+            )
+
         }
-        fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_save_file, icon)
-                        .setLabel(text)
-                        .setFabBackgroundColor(backgroundColor)
-                        .setLabelBackgroundColor(backgroundColor)
-                        .setLabelColor(iconColor)
-                        .create()
-        )
+//        fab_canti.addActionItem(
+//                SpeedDialActionItem.Builder(R.id.fab_save_file, icon)
+//                        .setLabel(text)
+//                        .setFabBackgroundColor(backgroundColor)
+//                        .setLabelBackgroundColor(backgroundColor)
+//                        .setLabelColor(iconColor)
+//                        .create()
+//        )
 
         fab_canti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this@PaginaRenderActivity)
@@ -1637,12 +1656,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 R.id.fab_fullscreen_on -> {
                     fab_canti.close()
                     mHandler.removeCallbacks(mScrollDown)
-                    saveZoom(false, false)
+                    saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     val bundle = Bundle()
                     bundle.putString(Utility.URL_CANTO, cantoView.url)
                     bundle.putInt(Utility.SPEED_VALUE, speed_seekbar.progress)
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel!!.scrollPlaying)
-                    bundle.putInt(Utility.ID_CANTO, idCanto)
+                    bundle.putInt(Utility.ID_CANTO, mViewModel!!.idCanto)
 
                     val intent2 = Intent(this@PaginaRenderActivity, PaginaRenderFullScreen::class.java)
                     intent2.putExtras(bundle)
@@ -1656,56 +1675,96 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mViewModel!!.mostraAudio = mostraAudioBool.toString()
                     true
                 }
+                R.id.fab_delete_file -> {
+                    fab_canti.close()
+                    if (url!!.isNotEmpty() && personalUrl!!.isEmpty()) {
+                        SimpleDialogFragment.Builder(
+                                this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
+                                .title(R.string.dialog_delete_mp3_title)
+                                .content(R.string.dialog_delete_mp3)
+                                .positiveButton(R.string.delete_confirm)
+                                .negativeButton(android.R.string.no)
+                                .show()
+                    } else {
+                        SimpleDialogFragment.Builder(
+                                this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+                                .title(R.string.dialog_delete_link_title)
+                                .content(R.string.dialog_delete_link)
+                                .positiveButton(R.string.unlink_confirm)
+                                .negativeButton(android.R.string.no)
+                                .show()
+                    }
+                    true
+                }
                 R.id.fab_save_file -> {
                     fab_canti.close()
-                    if (!url!!.isEmpty()) {
-                        if (mDownload) {
-                            if (personalUrl!!.isEmpty()) {
-                                SimpleDialogFragment.Builder(
-                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
-                                        .title(R.string.dialog_delete_mp3_title)
-                                        .content(R.string.dialog_delete_mp3)
-                                        .positiveButton(android.R.string.yes)
-                                        .negativeButton(android.R.string.no)
-                                        .show()
-                            } else {
-                                SimpleDialogFragment.Builder(
-                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
-                                        .title(R.string.dialog_delete_link_title)
-                                        .content(R.string.dialog_delete_link)
-                                        .positiveButton(android.R.string.yes)
-                                        .negativeButton(android.R.string.no)
-                                        .show()
-                            }
-                        } else {
-                            SimpleDialogFragment.Builder(
-                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
-                                    .title(R.string.download_link_title)
-                                    .content(R.string.downlink_message)
-                                    .positiveButton(R.string.downlink_download)
-                                    .negativeButton(R.string.downlink_choose)
-                                    .neutralButton(android.R.string.cancel)
-                                    .show()
-                        }
-                    } else {
-                        if (mDownload) {
-                            SimpleDialogFragment.Builder(
-                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
-                                    .title(R.string.dialog_delete_link_title)
-                                    .content(R.string.dialog_delete_link)
-                                    .positiveButton(android.R.string.yes)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        } else {
-                            SimpleDialogFragment.Builder(
-                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
-                                    .title(R.string.only_link_title)
-                                    .content(R.string.only_link)
-                                    .positiveButton(android.R.string.yes)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        }
-                    }
+                    SimpleDialogFragment.Builder(
+                            this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
+                            .title(R.string.save_file)
+                            .content(R.string.download_message)
+                            .positiveButton(R.string.download_confirm)
+                            .negativeButton(android.R.string.no)
+//                            .neutralButton(android.R.string.cancel)
+                            .show()
+//                    if (!url!!.isEmpty()) {
+//                        if (mDownload) {
+//                            if (personalUrl!!.isEmpty()) {
+//                                SimpleDialogFragment.Builder(
+//                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
+//                                        .title(R.string.dialog_delete_mp3_title)
+//                                        .content(R.string.dialog_delete_mp3)
+//                                        .positiveButton(android.R.string.yes)
+//                                        .negativeButton(android.R.string.no)
+//                                        .show()
+//                            } else {
+//                                SimpleDialogFragment.Builder(
+//                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+//                                        .title(R.string.dialog_delete_link_title)
+//                                        .content(R.string.dialog_delete_link)
+//                                        .positiveButton(android.R.string.yes)
+//                                        .negativeButton(android.R.string.no)
+//                                        .show()
+//                            }
+//                        } else {
+//                            SimpleDialogFragment.Builder(
+//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
+//                                    .title(R.string.download_link_title)
+//                                    .content(R.string.downlink_message)
+//                                    .positiveButton(R.string.downlink_download)
+//                                    .negativeButton(R.string.downlink_choose)
+//                                    .neutralButton(android.R.string.cancel)
+//                                    .show()
+//                        }
+//                    } else {
+//                        if (mDownload) {
+//                            SimpleDialogFragment.Builder(
+//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+//                                    .title(R.string.dialog_delete_link_title)
+//                                    .content(R.string.dialog_delete_link)
+//                                    .positiveButton(android.R.string.yes)
+//                                    .negativeButton(android.R.string.no)
+//                                    .show()
+//                        } else {
+//                            SimpleDialogFragment.Builder(
+//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
+//                                    .title(R.string.only_link_title)
+//                                    .content(R.string.only_link)
+//                                    .positiveButton(android.R.string.yes)
+//                                    .negativeButton(android.R.string.no)
+//                                    .show()
+//                        }
+//                    }
+                    true
+                }
+                R.id.fab_link_file -> {
+                    fab_canti.close()
+                    SimpleDialogFragment.Builder(
+                            this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
+                            .title(R.string.only_link_title)
+                            .content(R.string.only_link)
+                            .positiveButton(R.string.associate_confirm)
+                            .negativeButton(android.R.string.no)
+                            .show()
                     true
                 }
                 R.id.fab_favorite -> {

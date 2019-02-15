@@ -1,6 +1,5 @@
 package it.cammino.risuscito
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
@@ -15,23 +14,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
 import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
-import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ListeUtils
 import kotlinx.android.synthetic.main.activity_insert_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
@@ -39,7 +36,6 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
-import java.sql.Date
 import java.text.Normalizer
 import java.util.regex.Pattern
 
@@ -110,45 +106,50 @@ class InsertAvanzataFragment : Fragment() {
             mLastClickTime = SystemClock.elapsedRealtime()
 
             if (fromAdd == 1) {
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-                            val position = CustomList()
-                            position.id = idLista
-                            position.position = listPosition
-                            position.idCanto = item.id
-                            position.timestamp = Date(System.currentTimeMillis())
-                            try {
-                                mDao.insertPosition(position)
-                            } catch (e: Exception) {
-                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT)
-                                        .show()
-                            }
-
-                            activity!!.setResult(Activity.RESULT_OK)
-                            activity!!.finish()
-                            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
-                        })
-                        .start()
+                ListeUtils.addToListaDupAndFinish(activity!!, idLista, listPosition, item.id)
+//                Thread(
+//                        Runnable {
+//                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
+//                            val position = CustomList()
+//                            position.id = idLista
+//                            position.position = listPosition
+//                            position.idCanto = item.id
+//                            position.timestamp = Date(System.currentTimeMillis())
+//                            try {
+//                                mDao.insertPosition(position)
+//                            } catch (e: Exception) {
+//                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT)
+//                                        .show()
+//                            }
+//
+//                            activity!!.setResult(Activity.RESULT_OK)
+//                            activity!!.finish()
+////                            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//                            Animatoo.animateShrink(activity)
+//                        })
+//                        .start()
             } else {
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            val listaPers = mDao.getListById(idLista)
-                            if (listaPers?.lista != null) {
-                                listaPers.lista!!.addCanto(item.id.toString(), listPosition)
-                                mDao.updateLista(listaPers)
-                                activity!!.setResult(Activity.RESULT_OK)
-                                activity!!.finish()
-                                activity!!.overridePendingTransition(0, R.anim.slide_out_right)
-                            }
-                        })
-                        .start()
+                ListeUtils.updateListaPersonalizzataAndFinish(activity!!, idLista, item.id, listPosition)
+//                Thread(
+//                        Runnable {
+//                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+//                            val listaPers = mDao.getListById(idLista)
+//                            if (listaPers?.lista != null) {
+//                                listaPers.lista!!.addCanto(item.id.toString(), listPosition)
+//                                mDao.updateLista(listaPers)
+//                                activity!!.setResult(CustomLists.RESULT_OK)
+//                                activity!!.finish()
+////                                activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//                                Animatoo.animateShrink(activity)
+//                            }
+//                        })
+//                        .start()
             }
 
-            activity!!.setResult(Activity.RESULT_OK)
-            activity!!.finish()
-            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//            activity!!.setResult(Activity.RESULT_OK)
+//            activity!!.finish()
+////            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
+//            Animatoo.animateShrink(activity)
             true
         }
 
@@ -173,7 +174,6 @@ class InsertAvanzataFragment : Fragment() {
         }
 
         // Creating new adapter object
-//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
 
@@ -218,7 +218,8 @@ class InsertAvanzataFragment : Fragment() {
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        ricercaStringa(s.toString(), consegnati_only_check.isChecked)
+                        if (consegnati_only_check != null)
+                            ricercaStringa(s.toString(), consegnati_only_check.isChecked)
                     }
                 }
         )
@@ -262,8 +263,10 @@ class InsertAvanzataFragment : Fragment() {
     }
 
     private fun ricercaStringa(s: String, onlyConsegnati: Boolean) {
-        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
-        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
+//        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
+        val tempText = activity!!.tempTextField.text.toString()
+//        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
+        if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
@@ -295,15 +298,20 @@ class InsertAvanzataFragment : Fragment() {
             var text: String
 
             for (aText in fragmentReference.get()!!.aTexts) {
-
                 Log.d(TAG, "doInBackground: isCancelled? $isCancelled")
-                if (isCancelled) return 0
+                if (isCancelled) {
+                    fragmentReference.get()?.titoli?.clear()
+                    return 0
+                }
 
                 if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
 
                 var found = true
                 for (word in words) {
-                    if (isCancelled) return 0
+                    if (isCancelled) {
+                        fragmentReference.get()?.titoli?.clear()
+                        return 0
+                    }
                     if (word.trim { it <= ' ' }.length > 1) {
                         text = word.trim { it <= ' ' }
                         text = text.toLowerCase(
@@ -319,7 +327,7 @@ class InsertAvanzataFragment : Fragment() {
 
                 Log.d(TAG, "doInBackground: isCancelled? $isCancelled")
 
-                if (found && !isCancelled) {
+                if (found) {
                     val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
                     val elenco: List<Canto>?
                     val onlyConsegnati = java.lang.Boolean.parseBoolean(params[1])
@@ -359,7 +367,10 @@ class InsertAvanzataFragment : Fragment() {
 
         override fun onPostExecute(result: Int?) {
             super.onPostExecute(result)
-            if (isCancelled) return
+            if (isCancelled) {
+                fragmentReference.get()?.titoli?.clear()
+                return
+            }
             fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)

@@ -2,9 +2,15 @@
 <changelog bulletedList="true">
 
     <changelogversion
-        changeDate="11 October 2018"
-        versionName="4.3.1">
+        changeDate="February 2019"
+        versionName="4.3.2">
+        <changelogimprovement>IMPORTANT: From the next app version (4.4.0) the settings backup/restore system will change and migrating the actual online backup won't be possible.
+        I reccomend you to keep on a phone/tablet the settings you need. After the update you will be able to backup them again with the new system (visually nothing will change).</changelogimprovement>
         <changelogbug>Bugfixes</changelogbug>
+        <changelogimprovement>New animations</changelogimprovement>
+        <changelogimprovement>Added title filter in "Handed over Songs" selection</changelogimprovement>
+        <changelogbug>Added missing Capo in song "who is she?"</changelogbug>
+        <changelogimprovement>Added the new song "He is patient"</changelogimprovement>
     </changelogversion>
 
 </changelog>

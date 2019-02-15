@@ -211,7 +211,7 @@ class InputTextDialogFragment : DialogFragment() {
     interface SimpleInputCallback {
         fun onPositive(tag: String, dialog: MaterialDialog)
         fun onNegative(tag: String, dialog: MaterialDialog)
-        fun onNeutral(tag: String, dialog: MaterialDialog)
+//        fun onNeutral(tag: String, dialog: MaterialDialog)
     }
 
     companion object {

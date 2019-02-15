@@ -77,15 +77,15 @@ class ProgressDialogFragment : DialogFragment() {
             dialog.customView(R.layout.indeterminate_progressbar)
         else {
             dialog.customView(R.layout.linear_progressbar)
-            dialog.getCustomView()?.findViewById<MaterialProgressBar>(R.id.working_progress)?.max = mBuilder.mProgressMax
-            dialog.getCustomView()?.findViewById<TextView>(R.id.md_minMax)?.visibility = if (mBuilder.mShowMinMax) View.VISIBLE else View.GONE
+            dialog.getCustomView().findViewById<MaterialProgressBar>(R.id.working_progress)?.max = mBuilder.mProgressMax
+            dialog.getCustomView().findViewById<TextView>(R.id.md_minMax)?.visibility = if (mBuilder.mShowMinMax) View.VISIBLE else View.GONE
         }
 
         if (mBuilder.mContent != null) {
-            dialog.getCustomView()?.findViewById<TextView>(R.id.md_content)?.visibility = View.VISIBLE
-            dialog.getCustomView()?.findViewById<TextView>(R.id.md_content)?.text = mBuilder.mContent
+            dialog.getCustomView().findViewById<TextView>(R.id.md_content)?.visibility = View.VISIBLE
+            dialog.getCustomView().findViewById<TextView>(R.id.md_content)?.text = mBuilder.mContent
         } else
-            dialog.getCustomView()?.findViewById<TextView>(R.id.md_content)?.visibility = View.GONE
+            dialog.getCustomView().findViewById<TextView>(R.id.md_content)?.visibility = View.GONE
 
         dialog.setCancelable(mBuilder.mCanceable)
 
@@ -103,7 +103,7 @@ class ProgressDialogFragment : DialogFragment() {
 
     @SuppressLint("CheckResult")
     fun setContent(@StringRes res: Int) {
-        (dialog as MaterialDialog).getCustomView()?.findViewById<TextView>(R.id.md_content)?.setText(res)
+        (dialog as MaterialDialog).getCustomView().findViewById<TextView>(R.id.md_content)?.setText(res)
     }
 
     fun setmCallback(callback: ProgressCallback) {
@@ -111,11 +111,11 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     fun setProgress(progress: Int) {
-        (dialog as MaterialDialog).getCustomView()?.findViewById<MaterialProgressBar>(R.id.working_progress)?.progress = progress
-        (dialog as MaterialDialog).getCustomView()?.findViewById<TextView>(R.id.md_label)?.text =
+        (dialog as MaterialDialog).getCustomView().findViewById<MaterialProgressBar>(R.id.working_progress)?.progress = progress
+        (dialog as MaterialDialog).getCustomView().findViewById<TextView>(R.id.md_label)?.text =
                 progressPercentFormat.format(
                         progress.toFloat() / builder!!.mProgressMax.toFloat())
-        (dialog as MaterialDialog).getCustomView()?.findViewById<TextView>(R.id.md_minMax)?.text =
+        (dialog as MaterialDialog).getCustomView().findViewById<TextView>(R.id.md_minMax)?.text =
                 String.format(progressNumberFormat, progress, builder!!.mProgressMax)
     }
 
@@ -230,7 +230,7 @@ class ProgressDialogFragment : DialogFragment() {
     interface ProgressCallback {
         fun onPositive(tag: String)
         fun onNegative(tag: String)
-        fun onNeutral(tag: String)
+//        fun onNeutral(tag: String)
     }
 
     companion object {

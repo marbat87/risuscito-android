@@ -16,6 +16,9 @@ interface CronologiaDao {
     @get:Query("SELECT A.*, B.ultimaVisita FROM canto A, cronologia B WHERE A.id = B.idCanto ORDER BY B.ultimaVisita DESC")
     val cronologia: List<CantoCronologia>
 
+    @get:Query("SELECT * FROM cronologia")
+    val all: List<Cronologia>
+
     @Query("DELETE FROM cronologia")
     fun truncateTable()
 

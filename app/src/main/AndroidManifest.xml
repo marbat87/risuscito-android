@@ -54,6 +54,7 @@
         <activity
             android:name="it.cammino.risuscito.ChangelogActivity"
             android:label="" />
+
         <service
             android:name="it.cammino.risuscito.services.ConsegnatiSaverService"
             android:enabled="true"
@@ -86,17 +87,14 @@
             android:excludeFromRecents="true"
             android:exported="true"
             android:theme="@style/RisuscitoTheme.Invisibile">
-            <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
+            <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="*"
                     android:mimeType="application/octet-stream"
-                    android:pathPattern=".*\\.risuscito"
-                    tools:ignore="GoogleAppIndexingUrlError" />
+                    android:pathPattern=".*\\.risuscito" />
             </intent-filter>
         </activity>
 

@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.snackbar.Snackbar
@@ -226,7 +227,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             if (saveList()) {
                                 setResult(Activity.RESULT_OK)
                                 finish()
-                                overridePendingTransition(0, R.anim.slide_out_bottom)
+//                                overridePendingTransition(0, R.anim.slide_out_bottom)
+                                Animatoo.animateSlideDown(this@CreaListaActivity)
                             }
                         })
                         .start()
@@ -238,15 +240,15 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             this@CreaListaActivity, this@CreaListaActivity, "SAVE_LIST")
                             .title(R.string.save_list_title)
                             .content(R.string.save_list_question)
-                            .positiveButton(R.string.confirm)
-                            .negativeButton(R.string.dismiss)
-                            .neutralButton(android.R.string.cancel)
+                            .positiveButton(R.string.save_exit_confirm)
+                            .negativeButton(R.string.discard_exit_confirm)
+//                            .neutralButton(android.R.string.cancel)
                             .show()
                     return true
                 } else {
                     setResult(Activity.RESULT_CANCELED)
                     finish()
-                    overridePendingTransition(0, R.anim.slide_out_bottom)
+                    Animatoo.animateSlideDown(this@CreaListaActivity)
                 }
                 return true
             }
@@ -260,14 +262,15 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             SimpleDialogFragment.Builder(this@CreaListaActivity, this@CreaListaActivity, "SAVE_LIST")
                     .title(R.string.save_list_title)
                     .content(R.string.save_list_question)
-                    .positiveButton(R.string.confirm)
-                    .negativeButton(R.string.dismiss)
-                    .neutralButton(android.R.string.cancel)
+                    .positiveButton(R.string.save_exit_confirm)
+                    .negativeButton(R.string.discard_exit_confirm)
+//                    .neutralButton(android.R.string.cancel)
                     .show()
         } else {
             setResult(Activity.RESULT_CANCELED)
             finish()
-            overridePendingTransition(0, R.anim.slide_out_bottom)
+//            overridePendingTransition(0, R.anim.slide_out_bottom)
+            Animatoo.animateSlideDown(this@CreaListaActivity)
         }
     }
 
@@ -335,7 +338,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             "RENAME" -> {
                 val mEditText = dialog.getInputField()
                 val mElement = mAdapter!!.adapterItems[mViewModel!!.positionToRename]
-                mElement.withName(mEditText!!.text.toString())
+                mElement.withName(mEditText.text.toString())
                 mAdapter!!.notifyAdapterItemChanged(mViewModel!!.positionToRename)
             }
             "ADD_POSITION" -> {
@@ -346,7 +349,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     elementi!!.clear()
                     elementi!!.add(
                             SwipeableItem()
-                                    .withName(mEditText!!.text.toString())
+                                    .withName(mEditText.text.toString())
                                     .withTouchHelper(touchHelper!!)
                                     .withIdentifier(Utility.random(0, 5000).toLong()))
                     mAdapter!!.add(elementi)
@@ -357,7 +360,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             .adapterItems
                             .add(
                                     SwipeableItem()
-                                            .withName(mEditText!!.text.toString())
+                                            .withName(mEditText.text.toString())
                                             .withTouchHelper(touchHelper!!)
                                             .withIdentifier(Utility.random(0, 5000).toLong()))
                     mAdapter!!.notifyAdapterItemInserted(mSize)
@@ -376,7 +379,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
     override fun onNegative(tag: String, dialog: MaterialDialog) {}
 
-    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
+//    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
 
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
@@ -386,7 +389,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                         if (saveList()) {
                             setResult(Activity.RESULT_OK)
                             finish()
-                            overridePendingTransition(0, R.anim.slide_out_bottom)
+//                            overridePendingTransition(0, R.anim.slide_out_bottom)
+                            Animatoo.animateSlideDown(this@CreaListaActivity)
                         }
                     })
                     .start()
@@ -399,12 +403,13 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             "SAVE_LIST" -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()
-                overridePendingTransition(0, R.anim.slide_out_bottom)
+//                overridePendingTransition(0, R.anim.slide_out_bottom)
+                Animatoo.animateSlideDown(this@CreaListaActivity)
             }
         }
     }
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
         if (modifica) Collections.swap(nomiCanti!!, oldPosition, newPosition) // change canto

@@ -2,7 +2,6 @@ package it.cammino.risuscito.utils
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
 import it.cammino.risuscito.R
@@ -50,12 +49,12 @@ class ThemeUtils(context: Activity) {
                 R.style.RisuscitoTheme
         }
 
-    val isLightTheme: Boolean
-        get() {
-            val color = primaryColor()
-            val a = 1 - (Color.red(color) * 0.299 + Color.green(color) * 0.587 + Color.blue(color) * 0.114) / 255
-            return a < 0.5
-        }
+//    val isLightTheme: Boolean
+//        get() {
+//            val color = primaryColor()
+//            val a = 1 - (Color.red(color) * 0.299 + Color.green(color) * 0.587 + Color.blue(color) * 0.114) / 255
+//            return a < 0.5
+//        }
 
     init {
         mContext = context
@@ -91,7 +90,7 @@ class ThemeUtils(context: Activity) {
         return mPrimaryDarkMap!![primaryColor()]!!
     }
 
-    fun accentColor(): Int {
+    private fun accentColor(): Int {
         val defaultColor = ContextCompat.getColor(mContext, R.color.theme_accent)
         return PreferenceManager.getDefaultSharedPreferences(mContext).getInt("new_accent_color", defaultColor)
     }

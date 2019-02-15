@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.vansuita.materialabout.builder.AboutBuilder
 import kotlinx.android.synthetic.main.about_layout.*
 
@@ -21,11 +22,8 @@ class AboutFragment : Fragment() {
         mMainActivity = activity as MainActivity?
 
         mMainActivity!!.enableFab(false)
-//        if (!mMainActivity!!.isOnTablet) {
         mMainActivity!!.enableBottombar(false)
         mMainActivity!!.enableBottombar(false)
-//        }
-//        activity!!.material_tabs.visibility = View.GONE
         mMainActivity!!.setTabVisible(false)
 
         return rootView
@@ -38,7 +36,8 @@ class AboutFragment : Fragment() {
 
         val mChangeLogClickListener = View.OnClickListener {
             startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
-            activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+//            activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+            Animatoo.animateSlideUp(activity)
         }
 
         about!!.addView(

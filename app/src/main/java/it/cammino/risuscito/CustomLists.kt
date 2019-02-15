@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.PagerAdapter
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -38,6 +39,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.tabs_layout.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
@@ -91,10 +93,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         super.onViewCreated(view, savedInstanceState)
         mSectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager)
         mMainActivity!!.enableBottombar(false)
-//        activity!!.view_pager!!.adapter = mSectionsPagerAdapter
         view_pager.adapter = mSectionsPagerAdapter
 
-//        tabs = activity!!.material_tabs
         tabs = mMainActivity!!.getMaterialTabs()
         tabs!!.visibility = View.VISIBLE
         tabs!!.setupWithViewPager(view_pager)
@@ -128,16 +128,22 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
      */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-//        mCustomListsViewModel!!.indexToShow = activity!!.view_pager!!.currentItem
         mCustomListsViewModel!!.indexToShow = view_pager.currentItem
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        //        Log.i(TAG, "requestCode: " + requestCode);
+        Log.i(TAG, "onActivityResult requestCode: $requestCode")
         super.onActivityResult(requestCode, resultCode, data)
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
             mCustomListsViewModel!!.indexToShow = mCustomListsViewModel!!.indDaModif
             movePage = true
+        }
+        if (requestCode == CantiParolaFragment.TAG_INSERT_PAROLA
+                || requestCode == CantiEucarestiaFragment.TAG_INSERT_EUCARESTIA
+                || requestCode == ListaPersonalizzataFragment.TAG_INSERT_PERS) {
+            Log.i(TAG, "onActivityResult resultCode: $resultCode")
+            if (resultCode == RESULT_OK || resultCode == RESULT_KO)
+                Snackbar.make(activity!!.main_content, if (resultCode == RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -148,25 +154,25 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 val bundle = Bundle()
                 val mEditText = dialog.getInputField()
                 bundle.putString(
-                        "titolo", if (mEditText != null) dialog.getInputField()!!.text.toString() else "NULL")
+                        "titolo", mEditText.text.toString())
                 bundle.putBoolean("modifica", false)
                 mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
                 startActivityForResult(
                         Intent(activity, CreaListaActivity::class.java).putExtras(bundle), TAG_CREA_LISTA)
-                activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+//                activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+                Animatoo.animateSlideUp(activity)
             }
         }
     }
 
     override fun onNegative(tag: String, dialog: MaterialDialog) {}
 
-    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
+//    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
 
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "RESET_LIST" -> {
-//                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(activity!!.view_pager!!.currentItem).view
                 val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
                 mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
             }
@@ -180,7 +186,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             mCustomListsViewModel!!.indexToShow = 0
                             movePage = true
                             Snackbar.make(
-                                    activity!!.findViewById(R.id.main_content),
+                                    activity!!.main_content,
                                     getString(R.string.list_removed)
                                             + mCustomListsViewModel!!.titoloDaCanc
                                             + "'!",
@@ -202,7 +208,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                                 })
                                                 .start()
                                     }
-                                    .setActionTextColor(themeUtils.accentColor())
                                     .show()
                         })
                         .start()
@@ -211,7 +216,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     override fun onNegative(tag: String) {}
 
-    override fun onNeutral(tag: String) {}
+//    override fun onNeutral(tag: String) {}
 
     private fun playIntro() {
         enableFab(true)
@@ -278,7 +283,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 idListe!![i] = list[i].id
                             }
                             mSectionsPagerAdapter!!.notifyDataSetChanged()
-//                            tabs!!.setupWithViewPager(activity!!.view_pager)
                             tabs!!.setupWithViewPager(view_pager)
                             if (movePage) {
                                 Handler().postDelayed(200) {
@@ -371,7 +375,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             (activity as AppCompatActivity?)!!, this@CustomLists, "RESET_LIST")
                             .title(R.string.dialog_reset_list_title)
                             .content(R.string.reset_list_question)
-                            .positiveButton(android.R.string.yes)
+                            .positiveButton(R.string.reset_confirm)
                             .negativeButton(android.R.string.no)
                             .show()
                     true
@@ -381,7 +385,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     InputTextDialogFragment.Builder(
                             (activity as AppCompatActivity?)!!, this@CustomLists, "NEW_LIST")
                             .title(R.string.lista_add_desc)
-                            .positiveButton(android.R.string.ok)
+                            .positiveButton(R.string.create_confirm)
                             .negativeButton(android.R.string.cancel)
                             .show()
                     true
@@ -389,7 +393,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_condividi -> {
                     closeFabMenu()
                     val mView = mSectionsPagerAdapter!!
-//                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
                             .getRegisteredFragment(view_pager.currentItem)
                             .view
                     mView?.findViewById<View>(R.id.button_condividi)?.performClick()
@@ -398,15 +401,14 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     val bundle = Bundle()
-//                    bundle.putInt("idDaModif", idListe!![activity!!.view_pager!!.currentItem - 2])
                     bundle.putInt("idDaModif", idListe!![view_pager.currentItem - 2])
                     bundle.putBoolean("modifica", true)
-//                    mCustomListsViewModel!!.indDaModif = activity!!.view_pager!!.currentItem
                     mCustomListsViewModel!!.indDaModif = view_pager.currentItem
                     startActivityForResult(
                             Intent(activity, CreaListaActivity::class.java).putExtras(bundle),
                             TAG_MODIFICA_LISTA)
-                    activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+//                    activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
+                    Animatoo.animateSlideUp(activity)
                     true
                 }
                 R.id.fab_delete_lista -> {
@@ -426,7 +428,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                         "DELETE_LIST")
                                         .title(R.string.action_remove_list)
                                         .content(R.string.delete_list_dialog)
-                                        .positiveButton(android.R.string.yes)
+                                        .positiveButton(R.string.delete_confirm)
                                         .negativeButton(android.R.string.no)
                                         .show()
                             })
@@ -459,6 +461,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     companion object {
         const val TAG_CREA_LISTA = 111
         const val TAG_MODIFICA_LISTA = 222
+        const val RESULT_OK = 0
+        const val RESULT_KO = -1
+        const val RESULT_CANCELED = -2
         private val TAG = CustomLists::class.java.canonicalName
     }
 }

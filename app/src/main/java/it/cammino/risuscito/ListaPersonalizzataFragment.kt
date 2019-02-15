@@ -19,6 +19,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
+import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
@@ -114,8 +115,10 @@ class ListaPersonalizzataFragment : Fragment() {
                                             .toString()))
                     val intent = Intent(activity, GeneralInsertSearch::class.java)
                     intent.putExtras(bundle)
-                    parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS + idLista)
-                    activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+//                    parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS + idLista)
+                    parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS)
+//                    activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
+                    Animatoo.animateShrink(activity)
                 }
             }
         } else {
@@ -341,7 +344,6 @@ class ListaPersonalizzataFragment : Fragment() {
                                     mCantiViewModel!!.listaPersonalizzata!!.addCanto(cantoDaCanc, posizioneDaCanc)
                                     runUpdate()
                                 }
-                                .setActionTextColor(themeUtils.accentColor())
                                 .show()
                         true
                     }
@@ -400,17 +402,17 @@ class ListaPersonalizzataFragment : Fragment() {
                         this,
                         Observer { listaPersonalizzataResult ->
                             Log.d(TAG, "onChanged")
-                            mCantiViewModel!!.posizioniList = listaPersonalizzataResult!!.map { it ->
+                            mCantiViewModel!!.posizioniList = listaPersonalizzataResult!!.map {
                                 it.withClickListener(click)
                                         .withLongClickListener(longClick)
                                         .withSelectedColor(themeUtils.primaryColorDark())
-                                        .listItem!!.forEach {
+                                        .listItem!!.forEach { it1 ->
                                     try {
-                                        it.titolo = resources.getString(LUtils.getResId(it.titolo!!, R.string::class.java))
-                                        it.pagina = resources.getString(LUtils.getResId(it.pagina!!, R.string::class.java))
-                                        it.source = resources.getString(LUtils.getResId(it.source!!, R.string::class.java))
+                                        it1.titolo = resources.getString(LUtils.getResId(it1.titolo!!, R.string::class.java))
+                                        it1.pagina = resources.getString(LUtils.getResId(it1.pagina!!, R.string::class.java))
+                                        it1.source = resources.getString(LUtils.getResId(it1.source!!, R.string::class.java))
                                     } catch (e: Exception) {
-                                        Log.d(TAG, "titolo ${it.titolo}")
+                                        Log.d(TAG, "titolo ${it1.titolo}")
                                     }
                                 }
                                 it
@@ -421,6 +423,6 @@ class ListaPersonalizzataFragment : Fragment() {
 
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
-        private const val TAG_INSERT_PERS = 555
+        const val TAG_INSERT_PERS = 555
     }
 }

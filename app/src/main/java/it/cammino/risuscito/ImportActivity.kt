@@ -33,7 +33,7 @@ class ImportActivity : AppCompatActivity() {
 
         val data = intent.data
         if (data != null) {
-            Log.d(TAG, "onCreate: data = " + data.toString())
+            Log.d(TAG, "onCreate: data = $data")
             Log.d(TAG, "onCreate: schema = " + data.scheme)
             intent.data = null
 //            val dialog = MaterialDialog.Builder(this)

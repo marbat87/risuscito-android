@@ -11,7 +11,6 @@
     <string name="search_name_text">Пошук</string>
     <string name="arg_search_text">Літургічний зміст</string>
     <string name="button_pulisci">ОЧИСТИТИ</string>
-    <string name="button_clean_list">Очистити список</string>
     <string name="always_on">Відкл. сплячий режим</string>
     <string name="always_on_summary">Не переходить на сплячий режим поки відкритий додаток.</string>
     <string name="title_activity_favourites">Закладки</string>
@@ -43,8 +42,6 @@
     <string name="no_record">Недійсна реєсстрація</string>
     <string name="about_subtitle">Версія для смартфонів/планшетів Android</string>
     <string name="dialog_delete_mp3">Ти впевнений, що хочеш видалити пісню з пам\'яті пристрою?</string>
-    <string name="confirm">ТАК</string>
-    <string name="dismiss">НІ</string>
     <string name="save_location_title">Стандартна пам\'ять</string>
     <string name="save_location_summary">Вкажіть, чи хочете, щоби завантажені файли були видимі іншим додаткам (наприкл. музичний програвач).</string>
     <string name="favorite_added">Додано до закладок</string>
@@ -123,9 +120,6 @@
     <string name="activity_homepage">Домашня сторінка</string>
     <string name="no_memory_writable">Пам\'ять не доступна або в режимі тільки читання</string>
     <string name="salmi_musica_index">Зміст псалмів з мелодіями</string>
-    <string name="downlink_message">Хочеш використати функцію завантаження інтернет запису, щоб можна було його прослуховувати без з\'єднання, або асоціювати існуючий файл mp3 з пристрою?</string>
-    <string name="downlink_download">ЗАВАНТАЖИТИ</string>
-    <string name="downlink_choose">АСОЦІЮВАТИ</string>
     <string name="only_link">Хочеш асоціювати існуючий файл mp3 з пам\'яті пристрою?</string>
     <string name="dialog_delete_link">Ти впевнений, що хочеш від\'єднати від існуючого файлу в пам\'яті? (Файл не буде видалено)</string>
     <string name="delink_delete">Файл від\'єднано</string>
@@ -138,7 +132,6 @@
     <string name="dialog_reset_list_title">Відновити список</string>
     <string name="aggiungi_rename">ПЕРЕЙМЕНУВАТИ</string>
     <string name="save_list_title">Зберегти список</string>
-    <string name="download_link_title">Завантажити або асоціювати локальний файл</string>
     <string name="dialog_delete_mp3_title">Видалити завантажений файл</string>
     <string name="dialog_delete_link_title">Від\'єднати локальний файл</string>
     <string name="only_link_title">Асоціювати локальний файл</string>
@@ -270,11 +263,6 @@
     <string name="show_offertorio_title">Євхаристія - принесення дарів</string>
     <string name="show_offertorio_summary">Включити пісню на принесення дарів для Євхаристії</string>
     <string name="canto_offertorio">На принесення дарів</string>
-    <string name="purchase_success">Платіж виконано успішно</string>
-    <string name="user_canceled">Транзакції була відмінена корисиувачем</string>
-    <string name="service_unavailable">"Послуга недоступна "</string>
-    <string name="object_invalid">Об\'єкт недоступний</string>
-    <string name="object_owned">Об\'єкт вже в розпорядженні</string>
     <string name="generic_removed">%1$s видалено</string>
     <string name="title_trabar_I">I</string>
     <string name="title_trabar_II">II</string>
@@ -283,14 +271,29 @@
     <string name="title_trabar_V">V</string>
     <string name="title_trabar_VI">VI</string>
     <string name="title_trabar_VII">VII</string>
-    <string name="consegnati_only">Look only for those delivered</string>
-    <string name="permission_ok">Permission granted</string>
-    <string name="night_theme_title">Dark Theme</string>
-    <string name="night_theme_desc">Enables the Dark Theme</string>
+    <string name="consegnati_only">Шукати тільки у вручених</string>
+    <string name="permission_ok">Дозвіл наданий</string>
+    <string name="night_theme_title">Темна тема</string>
+    <string name="night_theme_desc">Ввімкнути темну тему</string>
     <plurals name="item_selected">
         <item quantity="one">%1$d обраний</item>
+        <item quantity="other">%1$d обраний</item>
         <item quantity="few">%1$d обраний</item>
         <item quantity="many">%1$d обраний</item>
-        <item quantity="other">%1$d обраний</item>
     </plurals>
+    <string name="download_message">Хочеш використати функцію завантаження дорожки з інтернету?</string>
+    <string name="download_confirm">завантажити</string>
+    <string name="associate_confirm">асоціювати</string>
+    <string name="save_exit_confirm">зберегти і вийти</string>
+    <string name="discard_exit_confirm">скасувати і вийти</string>
+    <string name="replace_confirm">замінити</string>
+    <string name="reset_confirm">скинути</string>
+    <string name="delete_confirm">видалити</string>
+    <string name="clear_confirm">почистити</string>
+    <string name="backup_confirm">бекап</string>
+    <string name="restore_confirm">відновити</string>
+    <string name="disconnect_confirm">роз\'єднати</string>
+    <string name="unlink_confirm">від\'єднати</string>
+    <string name="create_confirm">створити</string>
+    <string name="title_filter">фільтрувати за назвою</string>
 </resources>

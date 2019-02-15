@@ -124,7 +124,7 @@ class DownloadService : IntentService("DownloadService") {
                 LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
                 Log.e(javaClass.toString(), e.localizedMessage, e)
                 Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
-                Log.e(TAG, "Sending broadcast notification: " + DATA_ERROR + ": " + e.toString())
+                Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $e")
                 val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
                 intentBroadcast.putExtra(DATA_ERROR, e.toString())
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
