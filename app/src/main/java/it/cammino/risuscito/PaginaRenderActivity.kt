@@ -761,7 +761,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mViewModel!!.mCurrentCanto!!.scrollX = cantoView.scrollX
             mViewModel!!.mCurrentCanto!!.scrollY = cantoView.scrollY
 
-            if (andSpeedAlso) mViewModel!!.mCurrentCanto!!.savedSpeed = mViewModel!!.speedValue
+            if (andSpeedAlso) mViewModel!!.mCurrentCanto!!.savedSpeed = mViewModel!!.speedValue ?: "2"
 
             if (andSaveTabAlso) {
                 mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
@@ -1432,7 +1432,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             if (mViewModel!!.speedValue == null) {
                 //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
-                speed_seekbar.progress = Integer.valueOf(mViewModel!!.mCurrentCanto!!.savedSpeed!!)
+                speed_seekbar.progress = Integer.valueOf(mViewModel!!.mCurrentCanto!!.savedSpeed ?: "2")
             } else {
                 //	    	Log.i("ROTAZIONE", "setto " + speedValue);
                 speed_seekbar.progress = Integer.valueOf(mViewModel!!.speedValue!!)
