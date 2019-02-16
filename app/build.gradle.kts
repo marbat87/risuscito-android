@@ -17,8 +17,8 @@ android {
         minSdkVersion(16)
         targetSdkVersion(28)
         multiDexEnabled = true
-        versionCode = 4379
-        versionName = "4.3.2"
+        versionCode = 4380
+        versionName = "4.3.3"
     }
 
     compileOptions {

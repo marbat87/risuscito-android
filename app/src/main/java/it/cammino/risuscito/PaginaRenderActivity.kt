@@ -396,8 +396,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             Log.e(TAG, e.localizedMessage, e)
         }
 
-        DataRetrieverTask().execute(mViewModel!!.idCanto)
-
         music_seekbar.setOnSeekBarChangeListener(
                 object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -434,6 +432,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 })
 
         showScrolling(false)
+
+        DataRetrieverTask().execute(mViewModel!!.idCanto)
 
         play_song.setOnClickListener {
             val controller = MediaControllerCompat.getMediaController(this)
@@ -761,7 +761,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mViewModel!!.mCurrentCanto!!.scrollX = cantoView.scrollX
             mViewModel!!.mCurrentCanto!!.scrollY = cantoView.scrollY
 
-            if (andSpeedAlso) mViewModel!!.mCurrentCanto!!.savedSpeed = mViewModel!!.speedValue ?: "2"
+            if (andSpeedAlso) mViewModel!!.mCurrentCanto!!.savedSpeed = mViewModel!!.speedValue
+                    ?: "2"
 
             if (andSaveTabAlso) {
                 mViewModel!!.mCurrentCanto!!.savedBarre = mViewModel!!.barreCambio
@@ -1053,7 +1054,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onNegative(tag: String) {
         Log.d(TAG, "onNegative: $tag")
         when (tag) {
-//            "DOWNLINK_CHOOSE" -> createFileChooser()
             "SAVE_TAB" -> {
                 if (mViewModel!!.scrollPlaying) {
                     showScrolling(false)
@@ -1064,8 +1064,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
         }
     }
-
-//    override fun onNeutral(tag: String) {}
 
     private fun createFileChooser() {
         if (EasyPermissions.hasPermissions(this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -1083,12 +1081,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     .show()
         } else AppSettingsDialog.Builder(this@PaginaRenderActivity).build().show()
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE)
-//    }
 
     private fun playIntroSmall() {
         music_controls.visibility = View.VISIBLE
@@ -1430,13 +1422,16 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 cantoView.setInitialScale(mViewModel!!.mCurrentCanto!!.zoom)
             cantoView.webViewClient = MyWebViewClient()
 
-            if (mViewModel!!.speedValue == null) {
-                //	    	Log.i("SONO APPENA ENTRATO", "setto " + savedSpeed);
-                speed_seekbar.progress = Integer.valueOf(mViewModel!!.mCurrentCanto!!.savedSpeed ?: "2")
-            } else {
-                //	    	Log.i("ROTAZIONE", "setto " + speedValue);
+            if (mViewModel!!.speedValue == null)
+                try {
+                    speed_seekbar.progress = Integer.valueOf(mViewModel!!.mCurrentCanto!!.savedSpeed
+                            ?: "2")
+                } catch (e: NumberFormatException) {
+                    Log.e(TAG, "savedSpeed ${mViewModel!!.mCurrentCanto!!.savedSpeed}", e)
+                    speed_seekbar.progress = 2
+                }
+            else
                 speed_seekbar.progress = Integer.valueOf(mViewModel!!.speedValue!!)
-            }
 
             //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
             if (mViewModel!!.scrollPlaying) {
@@ -1569,11 +1564,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         .create()
         )
 
-//        val text: String
-//        val icon = IconicsDrawable(this@PaginaRenderActivity)
-//                .color(iconColor)
-//                .sizeDp(24)
-//                .paddingDp(4)
         if (mDownload) {
             val icon = IconicsDrawable(this@PaginaRenderActivity)
                     .color(iconColor)
@@ -1595,13 +1585,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .create()
             )
         } else {
-//            text = if (url != "") {
-//                icon.icon(CommunityMaterial.Icon.cmd_download)
-//                getString(R.string.save_file)
-//            } else {
-//                icon.icon(CommunityMaterial.Icon2.cmd_link_variant)
-//                getString(R.string.only_link_title)
-//            }
             if (url!!.isNotEmpty())
                 fab_canti.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_save_file, IconicsDrawable(this@PaginaRenderActivity)
@@ -1629,14 +1612,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             )
 
         }
-//        fab_canti.addActionItem(
-//                SpeedDialActionItem.Builder(R.id.fab_save_file, icon)
-//                        .setLabel(text)
-//                        .setFabBackgroundColor(backgroundColor)
-//                        .setLabelBackgroundColor(backgroundColor)
-//                        .setLabelColor(iconColor)
-//                        .create()
-//        )
 
         fab_canti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this@PaginaRenderActivity)
@@ -1704,56 +1679,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
                             .negativeButton(android.R.string.no)
-//                            .neutralButton(android.R.string.cancel)
                             .show()
-//                    if (!url!!.isEmpty()) {
-//                        if (mDownload) {
-//                            if (personalUrl!!.isEmpty()) {
-//                                SimpleDialogFragment.Builder(
-//                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
-//                                        .title(R.string.dialog_delete_mp3_title)
-//                                        .content(R.string.dialog_delete_mp3)
-//                                        .positiveButton(android.R.string.yes)
-//                                        .negativeButton(android.R.string.no)
-//                                        .show()
-//                            } else {
-//                                SimpleDialogFragment.Builder(
-//                                        this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
-//                                        .title(R.string.dialog_delete_link_title)
-//                                        .content(R.string.dialog_delete_link)
-//                                        .positiveButton(android.R.string.yes)
-//                                        .negativeButton(android.R.string.no)
-//                                        .show()
-//                            }
-//                        } else {
-//                            SimpleDialogFragment.Builder(
-//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
-//                                    .title(R.string.download_link_title)
-//                                    .content(R.string.downlink_message)
-//                                    .positiveButton(R.string.downlink_download)
-//                                    .negativeButton(R.string.downlink_choose)
-//                                    .neutralButton(android.R.string.cancel)
-//                                    .show()
-//                        }
-//                    } else {
-//                        if (mDownload) {
-//                            SimpleDialogFragment.Builder(
-//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
-//                                    .title(R.string.dialog_delete_link_title)
-//                                    .content(R.string.dialog_delete_link)
-//                                    .positiveButton(android.R.string.yes)
-//                                    .negativeButton(android.R.string.no)
-//                                    .show()
-//                        } else {
-//                            SimpleDialogFragment.Builder(
-//                                    this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
-//                                    .title(R.string.only_link_title)
-//                                    .content(R.string.only_link)
-//                                    .positiveButton(android.R.string.yes)
-//                                    .negativeButton(android.R.string.no)
-//                                    .show()
-//                        }
-//                    }
                     true
                 }
                 R.id.fab_link_file -> {

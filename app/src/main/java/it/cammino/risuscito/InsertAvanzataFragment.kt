@@ -317,9 +317,10 @@ class InsertAvanzataFragment : Fragment() {
                         text = text.toLowerCase(
                                 ThemeableActivity.getSystemLocalWrapper(
                                         fragmentReference.get()!!.activity!!.resources.configuration))
-                        val nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD)
-                        val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
-                        text = pattern.matcher(nfdNormalizedString).replaceAll("")
+//                        val nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD)
+//                        val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
+//                        text = pattern.matcher(nfdNormalizedString).replaceAll("")
+                        text = Utility.removeAccents(text)
 
                         if (!aText[1]!!.contains(text)) found = false
                     }

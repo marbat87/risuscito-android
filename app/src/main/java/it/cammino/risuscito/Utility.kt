@@ -6,11 +6,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Environment
-import androidx.core.content.ContextCompat
 import android.util.Log
+import androidx.core.content.ContextCompat
 import java.io.File
 import java.text.Normalizer
 import java.util.*
+import java.util.regex.Pattern
 
 object Utility {
 
@@ -177,6 +178,7 @@ object Utility {
 
     internal fun removeAccents(value: String): String {
         val normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
-        return normalized.replace("[^\\p{ASCII}]".toRegex(), "")
+        val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
+        return pattern.matcher(normalized).replaceAll("")
     }
 }
