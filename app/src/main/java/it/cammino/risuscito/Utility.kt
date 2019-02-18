@@ -60,26 +60,6 @@ object Utility {
             return Environment.MEDIA_MOUNTED == state || Environment.MEDIA_MOUNTED_READ_ONLY == state
         }
 
-    // metodo che duplica tutti gli apici presenti nella stringa
-    fun duplicaApostrofi(input: String): String {
-
-        var result = input
-        var massimo = result.length - 1
-        val apice = '\''
-
-        var i = 0
-        while (i <= massimo) {
-            if (result[i] == apice) {
-                result = result.substring(0, i + 1) + apice + result.substring(i + 1)
-                massimo++
-                i++
-            }
-            i++
-        }
-
-        return result
-    }
-
     internal fun isOnline(activity: Activity): Boolean {
         val cm = ContextCompat.getSystemService(activity as Context, ConnectivityManager::class.java) as ConnectivityManager
         val netInfo = cm.activeNetworkInfo

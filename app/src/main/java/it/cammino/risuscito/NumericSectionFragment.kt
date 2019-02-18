@@ -28,6 +28,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.NumericIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
@@ -58,14 +59,9 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "NUMERIC_REPLACE_2")
         sFragment?.setmCallback(this@NumericSectionFragment)
 
-        if (!isViewShown) {
-            Thread(
-                    Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                        listePersonalizzate = mDao.all
-                    })
-                    .start()
-        }
+        if (!isViewShown)
+            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
+
         return rootView
     }
 
@@ -130,12 +126,7 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
             if (view != null) {
                 isViewShown = true
                 Log.d(javaClass.name, "VISIBLE")
-                Thread(
-                        Runnable {
-                            if (context != null)
-                                listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
-                        })
-                        .start()
+                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
             } else
                 isViewShown = false
         }
@@ -223,12 +214,10 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                 return true
             }
             R.id.add_to_e_pane -> {
-//                ListeUtils.addToListaDup(context!!, rootView!!, 2, /3, mCantiViewModel!!.idDaAgg)
                 ListeUtils.addToListaDup(this@NumericSectionFragment, 2, 3, mCantiViewModel!!.idDaAgg)
                 return true
             }
             R.id.add_to_e_vino -> {
-//                ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
                 ListeUtils.addToListaDup(this@NumericSectionFragment, 2, 4, mCantiViewModel!!.idDaAgg)
                 return true
             }

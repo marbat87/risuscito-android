@@ -38,8 +38,10 @@ import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.lista_pers_button.view.*
 import kotlinx.android.synthetic.main.tabs_layout.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
@@ -167,56 +169,49 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     override fun onNegative(tag: String, dialog: MaterialDialog) {}
 
-//    override fun onNeutral(tag: String, dialog: MaterialDialog) {}
-
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "RESET_LIST" -> {
                 val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
-                mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
+                mView?.button_pulisci?.performClick()
+//                mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
             }
             "DELETE_LIST" ->
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            val listToDelete = ListaPers()
-                            listToDelete.id = mCustomListsViewModel!!.idDaCanc
-                            mDao.deleteList(listToDelete)
-                            mCustomListsViewModel!!.indexToShow = 0
-                            movePage = true
-                            Snackbar.make(
-                                    activity!!.main_content,
-                                    getString(R.string.list_removed)
-                                            + mCustomListsViewModel!!.titoloDaCanc
-                                            + "'!",
-                                    Snackbar.LENGTH_LONG)
-                                    .setAction(
-                                            getString(android.R.string.cancel).toUpperCase()
-                                    ) {
-                                        mCustomListsViewModel!!.indexToShow = mCustomListsViewModel!!.listaDaCanc + 2
-                                        movePage = true
-                                        Thread(
-                                                Runnable {
-                                                    val mListePersDao = RisuscitoDatabase.getInstance(context!!)
-                                                            .listePersDao()
-                                                    val listaToRestore = ListaPers()
-                                                    listaToRestore.id = mCustomListsViewModel!!.idDaCanc
-                                                    listaToRestore.titolo = mCustomListsViewModel!!.titoloDaCanc
-                                                    listaToRestore.lista = mCustomListsViewModel!!.celebrazioneDaCanc
-                                                    mListePersDao.insertLista(listaToRestore)
-                                                })
-                                                .start()
-                                    }
-                                    .show()
-                        })
-                        .start()
+                ioThread {
+                    val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+                    val listToDelete = ListaPers()
+                    listToDelete.id = mCustomListsViewModel!!.idDaCanc
+                    mDao.deleteList(listToDelete)
+                    mCustomListsViewModel!!.indexToShow = 0
+                    movePage = true
+                    Snackbar.make(
+                            activity!!.main_content,
+                            getString(R.string.list_removed)
+                                    + mCustomListsViewModel!!.titoloDaCanc
+                                    + "'!",
+                            Snackbar.LENGTH_LONG)
+                            .setAction(
+                                    getString(android.R.string.cancel).toUpperCase()
+                            ) {
+                                mCustomListsViewModel!!.indexToShow = mCustomListsViewModel!!.listaDaCanc + 2
+                                movePage = true
+                                ioThread {
+                                    val mListePersDao = RisuscitoDatabase.getInstance(context!!)
+                                            .listePersDao()
+                                    val listaToRestore = ListaPers()
+                                    listaToRestore.id = mCustomListsViewModel!!.idDaCanc
+                                    listaToRestore.titolo = mCustomListsViewModel!!.titoloDaCanc
+                                    listaToRestore.lista = mCustomListsViewModel!!.celebrazioneDaCanc
+                                    mListePersDao.insertLista(listaToRestore)
+                                }
+                            }
+                            .show()
+                }
         }
     }
 
     override fun onNegative(tag: String) {}
-
-//    override fun onNeutral(tag: String) {}
 
     private fun playIntro() {
         enableFab(true)
@@ -395,7 +390,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     val mView = mSectionsPagerAdapter!!
                             .getRegisteredFragment(view_pager.currentItem)
                             .view
-                    mView?.findViewById<View>(R.id.button_condividi)?.performClick()
+                    mView?.button_condividi?.performClick()
+//                    mView?.findViewById<View>(R.id.button_condividi)?.performClick()
                     true
                 }
                 R.id.fab_edit_lista -> {
@@ -407,41 +403,37 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     startActivityForResult(
                             Intent(activity, CreaListaActivity::class.java).putExtras(bundle),
                             TAG_MODIFICA_LISTA)
-//                    activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
                     Animatoo.animateSlideUp(activity)
                     true
                 }
                 R.id.fab_delete_lista -> {
                     closeFabMenu()
-//                    mCustomListsViewModel!!.listaDaCanc = activity!!.view_pager!!.currentItem - 2
                     mCustomListsViewModel!!.listaDaCanc = view_pager.currentItem - 2
                     mCustomListsViewModel!!.idDaCanc = idListe!![mCustomListsViewModel!!.listaDaCanc]
-                    Thread(
-                            Runnable {
-                                val mDao = RisuscitoDatabase.getInstance(activity!!).listePersDao()
-                                val lista = mDao.getListById(mCustomListsViewModel!!.idDaCanc)
-                                mCustomListsViewModel!!.titoloDaCanc = lista?.titolo
-                                mCustomListsViewModel!!.celebrazioneDaCanc = lista?.lista
-                                SimpleDialogFragment.Builder(
-                                        (activity as AppCompatActivity?)!!,
-                                        this@CustomLists,
-                                        "DELETE_LIST")
-                                        .title(R.string.action_remove_list)
-                                        .content(R.string.delete_list_dialog)
-                                        .positiveButton(R.string.delete_confirm)
-                                        .negativeButton(android.R.string.no)
-                                        .show()
-                            })
-                            .start()
+                    ioThread {
+                        val mDao = RisuscitoDatabase.getInstance(activity!!).listePersDao()
+                        val lista = mDao.getListById(mCustomListsViewModel!!.idDaCanc)
+                        mCustomListsViewModel!!.titoloDaCanc = lista?.titolo
+                        mCustomListsViewModel!!.celebrazioneDaCanc = lista?.lista
+                        SimpleDialogFragment.Builder(
+                                (activity as AppCompatActivity?)!!,
+                                this@CustomLists,
+                                "DELETE_LIST")
+                                .title(R.string.action_remove_list)
+                                .content(R.string.delete_list_dialog)
+                                .positiveButton(R.string.delete_confirm)
+                                .negativeButton(android.R.string.no)
+                                .show()
+                    }
                     true
                 }
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
                     val mView = mSectionsPagerAdapter!!
-//                            .getRegisteredFragment(activity!!.view_pager!!.currentItem)
                             .getRegisteredFragment(view_pager.currentItem)
                             .view
-                    mView?.findViewById<View>(R.id.button_invia_file)!!.performClick()
+                    mView?.button_invia_file?.performClick()
+//                    mView?.findViewById<View>(R.id.button_invia_file)!!.performClick()
                     true
                 }
                 else -> {

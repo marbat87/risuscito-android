@@ -5,3 +5,7 @@
 app/app.iml
 app/build
 .idea/caches/
+app/release/
+app/src/main/res/values-sw600dp-night/
+app/src/main/res/values-v17/
+app/src/release/

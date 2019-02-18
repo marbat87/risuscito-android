@@ -27,6 +27,7 @@ import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ArgumentIndexViewModel
 import kotlinx.android.synthetic.main.layout_recycler.*
 import kotlinx.android.synthetic.main.simple_sub_item.view.*
@@ -59,14 +60,9 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
         fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "ARGUMENT_REPLACE_2")
         fragment?.setmCallback(this@ArgumentsSectionFragment)
 
-        if (!isViewShown) {
-            Thread(
-                    Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                        listePersonalizzate = mDao.all
-                    })
-                    .start()
-        }
+        if (!isViewShown)
+            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
+
         return rootView
     }
 
@@ -114,62 +110,60 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
             true
         }
 
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(context!!).argomentiDao()
-                    val canti = mDao.all
-                    mCantiViewModel!!.titoliList.clear()
-                    var subItems: LinkedList<SimpleSubItem<*>> = LinkedList()
-                    var totCanti = 0
+        ioThread {
+            val mDao = RisuscitoDatabase.getInstance(context!!).argomentiDao()
+            val canti = mDao.all
+            mCantiViewModel!!.titoliList.clear()
+            var subItems: LinkedList<SimpleSubItem<*>> = LinkedList()
+            var totCanti = 0
 
-                    for (i in canti.indices) {
-                        val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
-                                .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].titolo, R.string::class.java)))
-                                .withPage(mActivity.resources.getString(LUtils.getResId(canti[i].pagina, R.string::class.java)))
-                                .withSource(mActivity.resources.getString(LUtils.getResId(canti[i].source, R.string::class.java)))
-                                .withColor(canti[i].color!!)
-                                .withId(canti[i].id)
+            for (i in canti.indices) {
+                val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
+                        .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].titolo, R.string::class.java)))
+                        .withPage(mActivity.resources.getString(LUtils.getResId(canti[i].pagina, R.string::class.java)))
+                        .withSource(mActivity.resources.getString(LUtils.getResId(canti[i].source, R.string::class.java)))
+                        .withColor(canti[i].color!!)
+                        .withId(canti[i].id)
 
-                        simpleItem
-                                .withContextMenuListener(this@ArgumentsSectionFragment)
-                                .withOnItemClickListener(mOnClickListener)
-                        simpleItem.withIdentifier((i * 1000).toLong())
-                        subItems.add(simpleItem)
-                        totCanti++
+                simpleItem
+                        .withContextMenuListener(this@ArgumentsSectionFragment)
+                        .withOnItemClickListener(mOnClickListener)
+                simpleItem.withIdentifier((i * 1000).toLong())
+                subItems.add(simpleItem)
+                totCanti++
 
-                        if ((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento)) {
-                            // serve a non mettere il divisore sull'ultimo elemento della lista
-                            simpleItem.withHasDivider(false)
-                            val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
-                            expandableItem
-                                    .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)) + " ($totCanti)")
-                                    .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
-                                        if (mItem.isExpanded) {
-                                            Log.d(
-                                                    TAG,
-                                                    "onClick: " + recycler_view!!.getChildAdapterPosition(mView!!))
-                                            mLayoutManager!!.scrollToPositionWithOffset(
-                                                    recycler_view!!.getChildAdapterPosition(mView), 0)
-                                        }
-                                        false
-                                    })
-                                    .withIdentifier(canti[i].idArgomento.toLong())
+                if ((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento)) {
+                    // serve a non mettere il divisore sull'ultimo elemento della lista
+                    simpleItem.withHasDivider(false)
+                    val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
+                    expandableItem
+                            .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)) + " ($totCanti)")
+                            .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
+                                if (mItem.isExpanded) {
+                                    Log.d(
+                                            TAG,
+                                            "onClick: " + recycler_view!!.getChildAdapterPosition(mView!!))
+                                    mLayoutManager!!.scrollToPositionWithOffset(
+                                            recycler_view!!.getChildAdapterPosition(mView), 0)
+                                }
+                                false
+                            })
+                            .withIdentifier(canti[i].idArgomento.toLong())
 
-                            @Suppress("INACCESSIBLE_TYPE")
-                            expandableItem.withSubItems(subItems)
-                            mCantiViewModel!!.titoliList.add(expandableItem)
-                            subItems = LinkedList()
-                            totCanti = 0
-                        } else {
-                            simpleItem.withHasDivider(true)
-                        }
-                    }
+                    @Suppress("INACCESSIBLE_TYPE")
+                    expandableItem.withSubItems(subItems)
+                    mCantiViewModel!!.titoliList.add(expandableItem)
+                    subItems = LinkedList()
+                    totCanti = 0
+                } else {
+                    simpleItem.withHasDivider(true)
+                }
+            }
 
-                    FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoliList)
-                    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                    mAdapter.withSavedInstanceState(savedInstanceState)
-                })
-                .start()
+            FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoliList)
+            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+            mAdapter.withSavedInstanceState(savedInstanceState)
+        }
     }
 
     /**
@@ -193,12 +187,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
             if (view != null) {
                 isViewShown = true
                 Log.d(TAG, "VISIBLE")
-                Thread(
-                        Runnable {
-                            if (context != null)
-                                listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
-                        })
-                        .start()
+                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
             } else
                 isViewShown = false
         }
@@ -294,12 +283,10 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                     return true
                 }
                 R.id.add_to_e_pane -> {
-//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
                     ListeUtils.addToListaDup(this@ArgumentsSectionFragment, 2, 3, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_vino -> {
-//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
                     ListeUtils.addToListaDup(this@ArgumentsSectionFragment, 2, 4, mCantiViewModel!!.idDaAgg)
                     return true
                 }

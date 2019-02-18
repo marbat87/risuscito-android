@@ -28,6 +28,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.AlphabeticIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
@@ -63,15 +64,9 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
         fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "ALPHA_REPLACE_2")
         fragment?.setmCallback(this@AlphabeticSectionFragment)
 
-        if (!isViewShown) {
-            Thread(
-                    Runnable {
-                        if (context != null)
-                            listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all
+        if (!isViewShown)
+            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
 
-                    })
-                    .start()
-        }
         return rootView
     }
 
@@ -129,12 +124,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
             if (view != null) {
                 isViewShown = true
                 Log.d(TAG, "VISIBLE")
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            listePersonalizzate = mDao.all
-                        })
-                        .start()
+                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
             } else
                 isViewShown = false
         }

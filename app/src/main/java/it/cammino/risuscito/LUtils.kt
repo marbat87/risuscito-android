@@ -1,5 +1,7 @@
 package it.cammino.risuscito
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
@@ -14,12 +16,12 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import androidx.core.view.ViewCompat
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.animation.AnimationUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.utils.ioThread
 import java.io.*
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -49,34 +51,28 @@ class LUtils private constructor(private val mActivity: Activity) {
     fun startActivityWithTransition(
             intent: Intent) {
         mActivity.startActivity(intent)
-//        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
         Animatoo.animateSlideLeft(mActivity)
 
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
-                    val cronologia = Cronologia()
-                    cronologia.idCanto = intent.extras!!.getInt("idCanto")
-                    mDao.insertCronologia(cronologia)
-                })
-                .start()
+        ioThread {
+            val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
+            val cronologia = Cronologia()
+            cronologia.idCanto = intent.extras!!.getInt("idCanto")
+            mDao.insertCronologia(cronologia)
+        }
     }
 
     fun startActivityWithFadeIn(intent: Intent) {
         mActivity.startActivity(intent)
-//        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on)
         Animatoo.animateZoom(mActivity)
     }
 
     fun closeActivityWithTransition() {
         mActivity.finish()
-//        mActivity.overridePendingTransition(0, R.anim.slide_out_right)
         Animatoo.animateSlideRight(mActivity)
     }
 
     internal fun closeActivityWithFadeOut() {
         mActivity.finish()
-//        mActivity.overridePendingTransition(0, R.anim.image_fade_out)
         Animatoo.animateZoom(mActivity)
 
     }
@@ -195,18 +191,22 @@ class LUtils private constructor(private val mActivity: Activity) {
     // enters
     internal fun animateIn(view: View) {
         view.visibility = View.VISIBLE
-        ViewCompat.animate(view)
-                .setDuration(200)
-                .translationY(0f)
-                .setInterpolator(INTERPOLATOR)
-                .withLayer()
-                .setListener(null)
-                .start()
+        view.animate().translationY(0f).setInterpolator(AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L).setListener(null).start()
+    }
+
+    internal fun animateOut(view: View) {
+        view.animate().translationY(view.height.toFloat()).setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L).setListener(
+                object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        view.visibility = View.GONE
+                    }
+                }
+        ).start()
     }
 
     companion object {
 
-        private val INTERPOLATOR = FastOutSlowInInterpolator()
+        //        private val INTERPOLATOR = FastOutSlowInInterpolator()
         private const val FILE_FORMAT = ".risuscito"
         internal val TAG = LUtils::class.java.canonicalName
 

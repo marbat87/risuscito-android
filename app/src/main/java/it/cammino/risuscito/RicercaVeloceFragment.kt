@@ -29,6 +29,7 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.GenericIndexViewModel
 import kotlinx.android.synthetic.main.activity_general_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
@@ -80,14 +81,8 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "VELOCE_REPLACE_2")
         sFragment?.setmCallback(this@RicercaVeloceFragment)
 
-        if (!isViewShown) {
-            Thread(
-                    Runnable {
-                        val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                        listePersonalizzate = mDao.all
-                    })
-                    .start()
-        }
+        if (!isViewShown)
+            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
 
         return rootView
     }
@@ -109,13 +104,11 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             true
         }
 
-//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
         cantoAdapter.withOnClickListener(mOnClickListener)
 
         matchedList.adapter = cantoAdapter
-//        val llm = LinearLayoutManager(context)
         val mMainActivity = activity as MainActivity?
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
@@ -182,12 +175,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             if (view != null) {
                 isViewShown = true
                 Log.d(TAG, "VISIBLE")
-                Thread(
-                        Runnable {
-                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-                            listePersonalizzate = mDao.all
-                        })
-                        .start()
+                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
 
                 // to hide soft keyboard
                 (ContextCompat.getSystemService(context as Context, InputMethodManager::class.java) as InputMethodManager)
@@ -204,10 +192,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        titoloDaAgg = v.text_title.findviewtext.toString()
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-//        menu.setHeaderTitle("Aggiungi canto a:")
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
         if (listePersonalizzate != null) {
@@ -281,12 +266,10 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                     return true
                 }
                 R.id.add_to_e_pane -> {
-//                    addToListaDup(2, 3)
                     ListeUtils.addToListaDup(this@RicercaVeloceFragment, 2, 3, mViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_vino -> {
-//                    addToListaDup(2, 4)
                     ListeUtils.addToListaDup(this@RicercaVeloceFragment, 2, 4, mViewModel!!.idDaAgg)
                     return true
                 }

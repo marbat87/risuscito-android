@@ -8,6 +8,7 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.utils.ioThread
 
 
 @Suppress("unused")
@@ -16,11 +17,9 @@ class RisuscitoApplication : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        Thread(
-                Runnable {
-                    RisuscitoDatabase.getInstance(this).cantoDao().getCantoById(1)
-                }
-        ).start()
+        ioThread {
+            RisuscitoDatabase.getInstance(this).cantoDao().getCantoById(1)
+        }
 
         // initialize and create the image loader logic
         DrawerImageLoader.init(
