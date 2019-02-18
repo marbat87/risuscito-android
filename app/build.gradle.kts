@@ -94,7 +94,7 @@ dependencies {
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("androidx.core:core-ktx:1.0.1")
     implementation("androidx.fragment:fragment-ktx:1.0.0")
-    implementation("com.github.turing-tech:MaterialScrollBar:13.2.5")
+    implementation("com.github.turing-tech:MaterialScrollBar:13.3.2")
     implementation("com.leinardi.android:speed-dial:2.0.1")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation ("com.github.Ferfalk:SimpleSearchView:0.1.3")

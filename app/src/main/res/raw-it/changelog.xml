@@ -2,17 +2,10 @@
 <changelog bulletedList="true">
 
     <changelogversion
-        changeDate="Febbraio 2019"
-        versionName="4.3.3">
-        <changelogimprovement>IMPORTANTE: Dalla prossima versione dell'app(4.4.0) sarà cambiato il sistema di backup/ripristino delle impostazioni e non sarà possibile migrare l'attuale salvataggio online.
-            Vi consiglio di mantenere su un telefono/tablet le impostazioni che vi interessano. Dopo l'aggiornamento potreste nuovamente effettuare il backup col nuovo sistema (visivamente non cambia nulla).</changelogimprovement>
-        <changelogbug>Correzioni di bug</changelogbug>
-        <changelogimprovement>Nuove animazioni</changelogimprovement>
-        <changelogbug>Cambiato link audio del Cantico di Tobia</changelogbug>
-        <changelogimprovement>Aggiunto il filtro per titolo nella selezione dei canti consegnati</changelogimprovement>
-        <changelogbug>Aggiunto barrè mancante nel canto "Chi è colei"</changelogbug>
-        <changelogimprovement>Aggiunto nuovo canto "E' paziente"</changelogimprovement>
-        <changelogbug>Corretta la ricerca veloce in Ucraino</changelogbug>
+        changeDate="Marzo 2019"
+        versionName="4.4.0">
+        <changelogimprovement>IMPORTANTE: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le modifiche sono solo "sotto il cofano". Puoi caricare un nuovo backup da uno dei tuoi dispositivi.</changelogimprovement>
+        <changelogbug>Bugfixes</changelogbug>
     </changelogversion>
 
 </changelog>

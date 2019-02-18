@@ -2,6 +2,13 @@
 <changelog bulletedList="true">
 
     <changelogversion
+        changeDate="Marzo 2019"
+        versionName="4.4.0">
+        <changelogimprovement>IMPORTANTE: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le modifiche sono solo "sotto il cofano". Puoi caricare un nuovo backup da uno dei tuoi dispositivi.</changelogimprovement>
+        <changelogbug>Bugfixes</changelogbug>
+    </changelogversion>
+
+    <changelogversion
         changeDate="Febbraio 2019"
         versionName="4.3.3">
         <changelogimprovement>IMPORTANTE: Dalla prossima versione dell'app(4.4.0) sarà cambiato il sistema di backup/ripristino delle impostazioni e non sarà possibile migrare l'attuale salvataggio online.
