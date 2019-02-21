@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.appbar.AppBarLayout
+import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.ChangelogViewModel
 import kotlinx.android.synthetic.main.changelog_layout.*
@@ -33,6 +34,10 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
         else
             Utility.setupTransparentTints(
                     this@ChangelogActivity, themeUtils!!.primaryColorDark(), false)
+
+        ChangelogBuilder()
+                .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
+                .buildAndSetup(aboutText) // second parameter defines, if the dialog has a dark or light theme
     }
 
     override fun onBackPressed() {

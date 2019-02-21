@@ -192,6 +192,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val usersPreferences = HashMap<String, Any>()
         usersPreferences[FIREBASE_FIELD_USER_ID] = userId
         usersPreferences[FIREBASE_FIELD_EMAIL] = userEmail ?: ""
+        usersPreferences[FIREBASE_FIELD_TIMESTAMP] = Date(System.currentTimeMillis())
         usersPreferences[FIREBASE_FIELD_PREFERENCE] = PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity).all
 
         if (querySnapshot.documents.size > 0) {
@@ -457,6 +458,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         internal const val FIREBASE_FIELD_USER_ID = "userId"
         internal const val FIREBASE_FIELD_PREFERENCE = "userPreferences"
         internal const val FIREBASE_FIELD_EMAIL = "userEmail"
+        internal const val FIREBASE_FIELD_TIMESTAMP = "timestamp"
         internal const val FIREBASE_COLLECTION_IMPOSTAZIONI = "Impostazioni"
         internal const val CANTO_FILE_NAME = "Canto"
         internal const val CUSTOM_LIST_FILE_NAME = "CustomList"

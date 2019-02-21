@@ -55,7 +55,6 @@ val lifecycleVersion = "1.1.1"
 val roomVersion = "1.1.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.github.gabrielemariotti.changeloglib:changelog:2.1.0")
     implementation("com.afollestad.material-dialogs:core:2.0.0")
     implementation("com.afollestad.material-dialogs:input:2.0.0")
     implementation("com.afollestad.material-dialogs:files:2.0.0")
@@ -98,4 +97,5 @@ dependencies {
     implementation("com.leinardi.android:speed-dial:2.0.1")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation ("com.github.Ferfalk:SimpleSearchView:0.1.3")
+    implementation ("com.github.MFlisar:changelog:1.1.2")
 }

@@ -1,11 +1,599 @@
 <?xml version="1.0" encoding="utf-8"?>
-<changelog bulletedList="true">
+<changelog>
 
-    <changelogversion
-        changeDate="March 2019"
+    <release versionCode="4400"
+        date="March 2019"
         versionName="4.4.0">
-        <changelogimprovement>IMPORTANT: New Backup/Restore system, visually the procedure is the same, changes are only "under the hood". The old backup has been lost, you can upload a new one.</changelogimprovement>
-        <changelogbug>Bugfixes</changelogbug>
-    </changelogversion>
+        <new>IMPORTANT: New Backup/Restore system, visually the procedure is the same, changes are only "under the hood". The old backup has been lost, you can upload a new one.</new>
+        <bugfix>Bugfixes</bugfix>
+    </release>
+
+    <release versionCode="0"
+        date="February 2019"
+        versionName="4.3.3">
+        <new>IMPORTANTE: Dalla prossima versione dell'app(4.4.0) sarà cambiato il sistema di backup/ripristino delle impostazioni e non sarà possibile migrare l'attuale salvataggio online.
+            Vi consiglio di mantenere su un telefono/tablet le impostazioni che vi interessano. Dopo l'aggiornamento potreste nuovamente effettuare il backup col nuovo sistema (visivamente non cambia nulla).</new>
+        <bugfix>Bugfixes</bugfix>
+        <new>New animations</new>
+        <new>Added title filter in "Handed over Songs" selection</new>
+        <bugfix>Added missing Capo in song "who is she?"</bugfix>
+        <new>Added the new song "He is patient"</new>
+        <bugfix>Fixed quick search in Ukrainian</bugfix>
+    </release>
+
+    <release versionCode="0"
+        date="11 October 2018"
+        versionName="4.3.1">
+        <bugfix>Bugfixes</bugfix>
+    </release>
+
+    <release versionCode="0"
+        date="September 2018"
+        versionName="4.3.0">
+        <new>[b]Added English translation![/b]</new>
+        <new>Both Android Oreo and Pie compatibility</new>
+        <new>New Application Icon</new>
+        <new>Implemented Adaptive Icon for Android Oreo ([a
+            href="https://developer.android.com/preview/features/adaptive-icons.html"]Android
+            Developer[/a])
+        </new>
+        <new>New About page (At the bottom of side menu)</new>
+        <new>New style for tutorials</new>
+        <bugfix>Fixed page numbers for last Italian songs</bugfix>
+        <info>Various "under-the-hood" code fixes</info>
+        <bugfix>Fixed a bug in PDF export for Ukrainian language</bugfix>
+        <new>Improved List Creation management</new>
+        <new>Modified style of indexes and lists</new>
+        <new>New tablet layout</new>
+        <new>Searched text is bold in the results list of fast search
+        </new>
+        <new>Completely refactored music playback</new>
+        <new>Added Dark Theme</new>
+        <new>Started adjustment for Material Design and new Font
+        </new>
+        <info>[b]Min Android version required is now 4.1[/b]
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="February 2017"
+        versionName="4.2.1">
+        <new>Now requires Android 4.0 or upper (API 14)</new>
+        <new>Adde new song "Come pecora che vede"</new>
+        <new>Added the option to enable offertory song</new>
+    </release>
+
+    <release versionCode="0"
+        date="August 2016"
+        versionName="4.1.0">
+        <new>Updated some icons</new>
+        <new>New lateral drawer with a gmail-style on tables</new>
+        <new>Added funcionality to export and import personal custom lists
+        </new>
+        <new>Added Android 7 Nougat compability</new>
+        <new>Improved result of fast search function</new>
+        <new>New style for addition options of Floating Action Buttons
+        </new>
+        <info>[b]NEXT RELEASE[/b] Planned dropping compatibility for Android 2.3
+            Gingerbread (check your version in Settings -> Device/Phone Info), because it is an
+            outdated version
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="23 April 2016"
+        versionName="4.0.1">
+        <new>Backup/restore all your preferences and settings on GDrive
+        </new>
+        <new>Refactored audio management, with notification and lockscreen controls
+            (may depend on Android version) and Android Wear controls
+        </new>
+        <bugfix>Possible fix for crashes on Samsung and Wiko devices with Android 4.2.2
+        </bugfix>
+        <info>Various songs fixed</info>
+        <info>Expanded all songs, removing "2 times" or "repeat"</info>
+    </release>
+
+    <release versionCode="0"
+        date="20 Novembre 2015"
+        versionName="3.6.0">
+        <info>Compabilità con Android Marshmallow</info>
+        <info>Ora nella pagina del canto, il primo accordo e/o il barrè vengono evidenziati
+            in caso di variazione rispetto all\'originale
+        </info>
+        <info>Nuovo stile per lo scroller rapido</info>
+        <info>Correzione su cambio accordi in Ucraino</info>
+        <info>Nuova grafica per la sezione di scelta registrazione da collegare
+        </info>
+        <info>Pulizia generale del codice</info>
+    </release>
+
+    <release versionCode="0"
+        date="15 Settembre 2015"
+        versionName="3.5.1">
+        <info>Fix per arresto anomalo su Android 4.0.X (spero)</info>
+        <info>Miglioramenti delle dimensioni e degli stili dei popup su tablet
+        </info>
+        <info>Miglioramenti grafici vari per adeguamento al Material Design di Google
+        </info>
+        <info>Pagina del canto: Spostata la funzione "aggiungi a preferiti" nella nuova
+            "FloatingToolbar"
+        </info>
+        <info>Pagina del canto: Aggiunta nuovamente la percentuale di velocità di
+            scorrimento sempre visibile
+        </info>
+        <info>Pagina del canto: Aggiunto tempo di esecuzione della registrazione e barra
+            per scorrerla velocemente
+        </info>
+        <info>Liste personalizzate: spostate le funzioni di modifica lista nella nuova
+            "FloatingToolbar"
+        </info>
+        <info>Liste personalizzate: Ora si possono scambiare i canti tra le varie posizioni
+            (tieni premuto per aprire il menù apposito)
+        </info>
+        <info>Liste personalizzate: Quando si sta cercando un canto da inserire, ora si può
+            visualizzarlo prima di inserirlo
+        </info>
+        <info>Preferiti: Ora è possibile rimuovere più preferiti in una volta
+        </info>
+        <info>Nuova sezione "Cronologia" con lo storico dei canti visualizzati
+        </info>
+        <info>Nuova sezione "Canti Consegnati" in cui è possibile segnarsi i canti che sono
+            stati consegnati dai propri catechisti
+        </info>
+        <info>Nuove stile per le guide di spiegazione delle funzioni</info>
+    </release>
+
+    <release versionCode="0"
+        date="05 Aprile 2015"
+        versionName="3.4.0">
+        <info>Aggiunta la lingua Ucraina (grazie a Luca Convalle)</info>
+        <info>Corretti ulteriori innumerevoli testi e accordi (grazie a Daniele Marco Di
+            Molfetta)
+        </info>
+        <info>Questa sarà l'ultima release a supportare Android 2.2.
+            I prossimi rilasci non saranno più compatibili con tale versione e quindi, chi la
+            possiede (0.7% degli utenti dell'app),
+            non riceverà più gli aggiornamenti. Questo perchè ormai Android 2.2 è software del
+            2010-2011 e rende impossibile
+            utilizzare alcune novità che le nuove versioni includono. Chi ha installato
+            l'applicazione, potrà comunque
+            continuare ad utilizzarla.
+            Per visualizzare la propria versione, solitamente bisogna andare su "Impostazioni" (del
+            telefono) --> "Info sul telefono".
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="07 Marzo 2015"
+        versionName="3.3.0">
+        <info>Reinseriti i temi! Possibilità di scegliere tra vari colori per il tema
+            principale e quello di risalto
+        </info>
+        <info>Correzione per non cancellare le liste predefinite con gli aggiornamenti
+        </info>
+        <info>Aggiunta opzione per mostrare/nascondere di default la barra di riproduzione
+            audio
+        </info>
+        <info>Aggiunto l'Indice Liturgico (grazie a Daniele Marco Di Molfetta)
+        </info>
+        <info>Corretti innumerevoli testi e accordi (grazie a Daniele Marco Di Molfetta)
+        </info>
+        <info>Fix per arresti anomali su alcuni dispositivi LG con tasto menù fisico
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="14 Febbraio 2015"
+        versionName="3.2.1">
+        <info>Aggiunte etichette nei pulsanti della pagina del canto</info>
+        <info>Possibile fix per crash su Galaxy Tab 10.1 e Android 4.1</info>
+        <info>Fix vari</info>
+        <info>Nuova grafica per collegare le registrazioni locali</info>
+        <info>Aggiornate alcune registrazioni</info>
+    </release>
+
+    <release versionCode="0"
+        date="31 Gennaio 2015"
+        versionName="3.2.0">
+        <info>Corretto un bug nello scroller dell'elenco alfabetico</info>
+        <info>Nuova grafica per tutte le liste dei canti e scroller rapidi</info>
+        <info>Leggera correzione dello stile del drawer</info>
+        <info>Correzioni di testi e accordi vari</info>
+        <info>Aggiunto il Santo per l'Eucarestia (opzionale)</info>
+        <info>Adeguato lo stile dei changelog</info>
+        <info>Rimosso il vecchio controllo a schermo dello zoom nei canti</info>
+        <info>Aggiunta la possibilità di nascondere solo la barra di riproduzione audio
+        </info>
+        <info>Bugfix vari</info>
+        <info>Cambiata la registrazione di "Benedici anima mia il Signore (Cantico di
+            Tobia) (Tb 13)"
+        </info>
+        <info>Il salvataggio nella memoria pubblica, d'ora in poi salva i file in
+            /Music/Risuscitò/
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="03 Gennaio 2015"
+        versionName="3.1.0">
+        <info>Aggiunto il canto alla pace per la celebrazione della Parola (attivabile
+            dalle impostazioni)
+        </info>
+        <info>Corretto un bug nel popolamento dei menù "aggiungi a":
+            ora compaiono anche le posizioni opzionali (canto alla pace per la Parola
+            e seconda lettura per l'Eucraestia)
+        </info>
+        <info>Corretto un bug negli switch delle impostazioni</info>
+        <info>Cambiato il colore degli effetti di pressione (effetto "ripple" su Android
+            Lollipop)
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="20 Dicembre 2014"
+        versionName="3.0.0">
+        <info>Il codice è stato completamente rivisto per alleggerire l'applicazione
+        </info>
+        <info>Più material design!</info>
+        <info>Al momento è presente un solo tema, come quello base del playstore. Verrà
+            valutato in seguito se riaggiungere i temi.
+        </info>
+        <info>Corretti alcuni testi e titoli</info>
+        <info>Aggiunto il nuovo canto "Il Messia leone per vincere"</info>
+        <info>Nuova modalità tutto schermo per i canti</info>
+        <info>Corretto grave bug nei risultati della ricerca avanzata</info>
+    </release>
+
+    <release versionCode="0"
+        date="11 Novembre 2014"
+        versionName="2.7.1">
+        <info>Risolto un crash nella ricerca canti</info>
+    </release>
+
+    <release versionCode="0"
+        date="03 Novembre 2014"
+        versionName="2.7.0">
+        <info>Corretto un comportamento indesiderato nei campi di testo</info>
+        <info>Corretti i canti: "La voce del mio amato" - "Signore, non punirmi nel tuo
+            sdegno" - "A te Signore con la mia voce" - "Ti vedranno i re" - "Se siete risorti con
+            Cristo"
+        </info>
+        <info>Correzioni nella modifica titoli esistenti della creazione liste
+            personalizzate
+        </info>
+        <info>Ora digitando testo nella ricerca veloce, esso viene riportato anche nella
+            ricerca avanzata, e viceversa
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="15 Settembre 2014"
+        versionName="2.6.8">
+        <info>Ristrutturata la pagina di creazione liste</info>
+        <info>Aggiunta la possibililtà di rinominare le proprie liste personalizzate
+            (entrare in modifica)
+        </info>
+        <info>Nuovi floating button nelle liste personalizzate e nella creazione/modifica
+            lista
+        </info>
+        <info>Adeguata la grafica dei TAB al material design</info>
+        <info>Cambiato la grafica dei pulsanti di ricerca</info>
+        <info>Nuove animazioni di transizione tra le pagine</info>
+        <info>Corretti gli accordi di "Canto dei liberati" e "Preconio Pasquale"
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="28 Agosto 2014"
+        versionName="2.6.5">
+        <info>Rinnovata la grafica con 6 temi ispirati al Google Material Design
+        </info>
+        <info>System bar colorata a seconda del tema (Solo per versioni di Android da 4.4
+            Kikat in su)
+        </info>
+        <info>Menù laterale in stile google play store</info>
+        <info>Possibile correzione per un crash all'avvio su alcuni dispositivi
+        </info>
+        <info>Aggiunta la possibilità di associare mp3 propri per la riproduzione (stesso
+            pulsante del download brano)
+        </info>
+        <info>Aggiunto l'indice dei salmi musicati (quarta scheda nella sezione degli
+            indici)
+        </info>
+        <info>Corretto il testo di "Davanti agli angeli"</info>
+        <info>Corretto il testo di "Preghiera litanica penitenziale"</info>
+        <info>Corretto il titolo dell'inno alla Kenosis</info>
+        <info>Corretto il bug che costringeva ad uscire e rientrare nel canto per poterlo
+            riascoltare, una volta terminata la riproduzione
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="24 Luglio 2014"
+        versionName="2.5.4">
+        <info>Rivoluzionata completamente la struttura e la grafica: nuovo menù laterale
+            apribile anche con swype da sx e nuove icone!
+        </info>
+        <info>Corretti gli accordi di "Acclamate al Signore"</info>
+        <info>Ritardata la prima apertura della guida nei canti, per impedire un errore nei
+            dispositivi con caricamento lento
+        </info>
+        <info>Modificata la descrizione dell'impostazione "Memoria predefinita"
+        </info>
+        <info>Inserito il numero di canti salvati come preferiti, nel menù laterale
+        </info>
+        <info>Settato di default il font Roboto Condensed</info>
+        <info>Corretto il testo di "Maria madre della Chiesa"</info>
+        <info>Corretto crash nella guida (pagina iniziale e creazione lista) su Android
+            3.1
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="30 Giugno 2014"
+        versionName="2.4.8">
+        <info>Corretto il testo dell'acclamazione al vangelo del tempo di Quaresima
+        </info>
+        <info>Sostituita l'immagine della home del programma (Thanks to: Stefano Cavanna)
+        </info>
+        <info>Aumentato l'intervallo della velocità di scroll automatico dei canti
+        </info>
+        <info>Aggiunto l'export in PDF dei canti con gli accordi modificati (all'interno di
+            un canto: opzioni-->esporta PDF)
+        </info>
+        <info>Aggiunta la strofa mancante nel canto "Fino a quando"</info>
+        <info>Aggiunto lo scroller veloce nell'indice alfabetico e per pagina
+        </info>
+        <info>Aggiunto il numero di pagina in tutti gli indici</info>
+        <info>Corretto un possibile crash nella guida della creazione lista
+            personalizzata
+        </info>
+        <info>Completati i ritornelli abbreviati nei canti</info>
+        <info>Bugfix vari</info>
+        <info>Cambiato il colore degli accordi</info>
+        <info>Da questa versione sarà aperto anche il canale BETA. Per farne parte, occorre
+            avere un profilo Google Plus e richiedere l'accesso scrivendo un'email allo
+            sviluppatore.
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="06 Giugno 2014"
+        versionName="2.4.2">
+        <info>Inserita la parte mancante del ritornello di "Benedici anima mia, Jahvè"
+        </info>
+        <info>Corretto un crash che occorreva quando non si sceglieva nessun tema
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="06 Giugno 2014"
+        versionName="2.4.1">
+        <info>Corretti testo e accordi di alcuni canti</info>
+        <info>Uniformati i popup su tutte le versioni di Android</info>
+        <info>Inserito il cambio tema nelle impostazioni, con possibilità di scelta tra:
+            Misto (il tema classico), Chiaro, Scuro!
+        </info>
+        <info>Cambiato lo stile del changelog</info>
+    </release>
+
+    <release versionCode="0"
+        date="15 Maggio 2014"
+        versionName="2.3.0">
+        <info>Inserito lo scroll automatico del testo dei canti, con velocità impostabile e
+            memorizzata automaticamente all'uscita dal canto!
+        </info>
+        <info>Corretto l'errore ortografico nel titolo dell'inno dei vespri da pasqua a
+            pentecoste e rimossa la registrazione errata (purtroppo quella corretta non è
+            disponibile)
+        </info>
+        <info>Aggiunto il barrè al settimo tasto</info>
+        <info>Aggiunta la ricerca avanzata anche nell'inserimento dei canti nelle liste
+            predefinite/personalizzate
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="4 Maggio 2014"
+        versionName="2.2.0">
+        <info>Aggiunta la possibilità di cambiare e salvare la posizione del barrè!
+        </info>
+        <info>Rimesso il canto "Una gran señal" in azzurro</info>
+        <info>Unite le due parti di: "Preconio pasquale", "Non morirò", "Eli, Eli, lammà
+            sabactani?"
+        </info>
+        <info>Aggiornati i link di alcune registrazioni</info>
+        <info>Portato a 30 il numero massimo di elementi delle liste personalizzate
+        </info>
+        <info>Ora modificando una lista personalizzata non si perdono i canti scelti
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="4 Aprile 2014"
+        versionName="2.1.0">
+        <info>Migliorati i risultati della ricerca avanzata</info>
+        <info>Inserito il menù "Aggiungi a..." anche nella ricerca</info>
+        <info>Corretti alcuni testi dei canti</info>
+        <info>Aggiunta la possibilità di rinominare le posizioni, nella creazione lista
+            (tenendo premuto)
+        </info>
+        <info>Aggiunta guida dettagliata all'apertura della creazione lista</info>
+        <info>Corretta l'apertura del popup all'uscita dalla creazione lista (premendo il
+            tasto indietro)
+        </info>
+        <info>Rimosso lo swype-to-remove dalla lista dei preferiti (capitava troppo spesso
+            di rimuovere i canti per errore)
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="26 Marzo 2014"
+        versionName="2.0.0">
+        <info>Riscritti da zero tutti i canti, per garantire un corretto allineamento degli
+            accordi!
+        </info>
+        <info>Aggiunta la possibilità di cambiare e salvare la tonalità degli accordi
+        </info>
+        <info>Fix vari</info>
+    </release>
+
+    <release versionCode="0"
+        date="21 Febbraio 2014"
+        versionName="1.7.2">
+        <info>Aggiunta la possibilità di modificare le liste personalizzate</info>
+        <info>Correzione per evitare il crash per chi ha aggiornato direttamente dalla
+            versione 1.5.0 o inferiore
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="19 Febbraio 2014"
+        versionName="1.7.1">
+        <info>Corretto bug nelle liste personalizzate su Android JellyBean</info>
+    </release>
+
+    <release versionCode="0"
+        date="19 Febbraio 2014"
+        versionName="1.7.0">
+        <info>Aggiunta la creazione delle liste personalizzate! È presente il pulsante
+            "crea" nella barra in alto, all'interno della sezione delle liste predefinite. Una volta
+            scelto il nome della lista e delle varie 'posizioni' per i canti, essa comparirà assieme
+            alle liste predefinite.
+        </info>
+        <info>Corretta una label errata nel menu "aggiungi a..."</info>
+        <info>Correzioni varie</info>
+    </release>
+
+    <release versionCode="0"
+        date="8 Febbraio 2014"
+        versionName="1.6.3">
+        <info>Aggiustamento del layout della schermata principale (l'ultimo tasto non era
+            visibile su dispositivi con schermo piccolo)
+        </info>
+        <info>Risoluzione di alcuni arresti anomali nella ricerca avanzata. Grazie per le
+            segnalazioni, continuate così :)
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="6 Febbraio 2014"
+        versionName="1.6.1">
+        <info>Nuova funzione di [b]ricerca nel testo dei canti[/b], disponibile nel nuovo
+            tab "Ricerca Avanzata", insieme alla ricerca veloce nel titolo
+        </info>
+        <info>Possibilità di aggiungere i canti ad una lista o ai preferiti, direttamente
+            dagli indici (tieni premuto)
+        </info>
+        <info>Aggiunto il canto alla seconda lettura per l'Eucarestia (attivabile dalle
+            impostazioni)
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="1 Febbraio 2014"
+        versionName="1.5.0">
+        <info>Aggiunto il salvataggio automatico dello zoom all'interno di ogni canto!
+        </info>
+        <info>Ora è possibile aggiungere quanti canti si desidera alla frazione del pane e
+            al vino
+        </info>
+        <info>Aggiunti i numeri della pagine nei risultati delle ricerche per titolo
+        </info>
+        <info>Possibile soluzione per arresto anomalo su Galaxy Note 10.1 (da verificare)
+        </info>
+        <info>Fix vari</info>
+    </release>
+
+    <release versionCode="0"
+        date="16 Gennaio 2014"
+        versionName="1.4.0">
+        <info>Aggiunto il canto mancante "Ave, o Maria, colomba incorrotta"</info>
+        <info>Aggiunta la possibilità di salvare le registrazioni in memoria, per poterle
+            riascoltare senza necessità di connessione internet: è presente il pulsante nella pagina
+            del canto
+        </info>
+        <info>Fix vari</info>
+    </release>
+
+    <release versionCode="0"
+        date="5 Gennaio 2014"
+        versionName="1.3.1">
+        <info>Corretto un possibile crash alla chiusura degli indici (per piacere mettete
+            un commento su cosa e quando vi è successo quando segnalate un arresto anomalo)
+        </info>
+        <info>Pausa automatica della riproduzione alla ricezione di una chiamata
+        </info>
+        <info>Abbassamento temporaneo del volume in caso di notifiche</info>
+        <info>Aggiunti i canti più recenti: Una gran senal (versione con ritornello in
+            Spagnolo e strofe in Italiano), Se siete risorti con Cristo, Resurrexit, Ecco il mio
+            servo
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="5 Dicembre 2013"
+        versionName="1.3.0">
+        <info>Canti in versione HTML!! Niente più canti sfocati e dimensione
+            dell'applicazione notevolmente diminuita!
+        </info>
+        <info>Corretto il layout nelle liste predefinite: ora il pulsante "PULISCI LISTA" è
+            sempre visibile
+        </info>
+        <info>Nuova modalità di eliminazione nella lista dei preferiti: swype a sinistra o
+            destra
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="23 Novembre 2013"
+        versionName="1.2.0">
+        <info>Aggiunte le registrazioni dei canti, avviabili tramite appositi comandi
+            all'interno delle pagine dei canti! (Leggi la NOTA2 sotto)
+        </info>
+        <info>Cambiata l'icona dei preferiti, dalla stella al cuore</info>
+        <info>Rimosso il link ai preferiti nella pagina del canto, per evitare dei cicli di
+            apertura infiniti
+        </info>
+        <info>Sostituito il pulsante "INVIA LISTA" con la condivisione standard nella barra
+            in alto
+        </info>
+        <info>Aggiunti tutti i metodi di condivisione che supportano l'invio di testo,
+            [b]Whatsapp[/b] compreso!
+        </info>
+        <info>Risolto il bug che non permetteva di condividere le liste per messaggio su
+            Android 4.4
+        </info>
+    </release>
+
+    <release versionCode="0"
+        date="7 Novembre 2013"
+        versionName="1.1.1">
+        <info>Aggiunto doppio tap per zoomare sui canti</info>
+        <info>Il menù "preferiti" ora è sempre visibile nella action bar (tranne nelle
+            impostazioni)
+        </info>
+        <info>UI in tema HOLO anche per le versioni precedenti ad Honeycomb</info>
+        <info>Il tasto indietro nella barra di navigazione, ora porta alla pagina genitore
+            e non più sempre alla Home
+        </info>
+        <info>Aggiunto il colore dei canti in tutte le liste</info>
+    </release>
+
+    <release versionCode="0"
+        date="24 Ottobre 2013"
+        versionName="1.0.0">
+        <info>First Release</info>
+        <info>[b]NOTA[/b]: Questa applicazione è completamente gratuita e priva di
+            pubblicità, fatta senza scopi di lucro.
+        </info>
+        <info>[b]NOTA2:[/b]Le registrazioni dei canti sono prese dal sito
+            www.resuscicanti.com e richiedono, ovviamente, una connessione ad internet attiva per
+            poter essere ascoltati. [u]A tutti i fratelli, ricordo comunque che i canti registrati
+            da Kiko o altri catechisti, sono puramente indicativi. Vi invito, quindi, ad attenervi
+            principalmente alla versione trasmessa dai vostri catechisti, qualora possibile.[/u]
+        </info>
+    </release>
 
 </changelog>

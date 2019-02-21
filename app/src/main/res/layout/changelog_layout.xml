@@ -73,13 +73,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <it.gmariotti.changelibs.library.view.ChangeLogRecyclerView
+        <!--<it.gmariotti.changelibs.library.view.ChangeLogRecyclerView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--risuscito:changeLogFileResourceId="@raw/changelog_full"-->
+            <!--risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"-->
+            <!--risuscito:rowLayoutId="@layout/changelogrow_material_layout"-->
+            <!--android:id="@+id/aboutText" />-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/aboutText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            risuscito:changeLogFileResourceId="@raw/changelog_full"
-            risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"
-            risuscito:rowLayoutId="@layout/changelogrow_material_layout"
-            android:id="@+id/aboutText" />
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

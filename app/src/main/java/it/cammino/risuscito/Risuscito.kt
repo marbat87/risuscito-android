@@ -1,32 +1,33 @@
 package it.cammino.risuscito
 
+import android.annotation.TargetApi
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager.NameNotFoundException
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.snackbar.Snackbar
-import it.cammino.risuscito.dialogs.SimpleDialogFragment
+import com.michaelflisar.changelog.ChangelogBuilder
+import it.cammino.risuscito.utils.ThemeUtils
 import kotlinx.android.synthetic.main.activity_risuscito.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.PermissionRequest
 
-class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissions.PermissionCallbacks {
+class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private var mMainActivity: MainActivity? = null
-    private var thisVersion: String? = null
+    //    private var thisVersion: String? = null
     private var rootView: View? = null
     private val signInVisibility = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -53,35 +54,35 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         mMainActivity!!.enableFab(false)
         mMainActivity!!.enableBottombar(false)
 
-        val sp = PreferenceManager.getDefaultSharedPreferences(context)
+//        val sp = PreferenceManager.getDefaultSharedPreferences(context)
 
         // get version numbers
-        val lastVersion = sp.getString(VERSION_KEY, NO_VERSION)
-        //        String thisVersion;
-        Log.d("Changelog", "lastVersion: " + lastVersion!!)
-        try {
-            thisVersion = activity!!
-                    .packageManager
-                    .getPackageInfo(activity!!.packageName, 0)
-                    .versionName
-        } catch (e: NameNotFoundException) {
-            thisVersion = NO_VERSION
-            Log.d("Changelog", "could not get version name from manifest!")
-            e.printStackTrace()
-        }
-
-        Log.d("Changelog", "thisVersion: " + thisVersion!!)
-
-        if (thisVersion != lastVersion) {
-            SimpleDialogFragment.Builder(
-                    (activity as AppCompatActivity?)!!, this@Risuscito, "CHANGELOG")
-                    .title(R.string.dialog_change_title)
-                    .setCustomView(R.layout.dialog_changelogview)
-                    .positiveButton(android.R.string.ok)
-                    .setHasCancelListener()
-                    .setCanceable()
-                    .show()
-        }
+//        val lastVersion = sp.getString(VERSION_KEY, NO_VERSION)
+//        //        String thisVersion;
+//        Log.d("Changelog", "lastVersion: " + lastVersion!!)
+//        try {
+//            thisVersion = activity!!
+//                    .packageManager
+//                    .getPackageInfo(activity!!.packageName, 0)
+//                    .versionName
+//        } catch (e: NameNotFoundException) {
+//            thisVersion = NO_VERSION
+//            Log.d("Changelog", "could not get version name from manifest!")
+//            e.printStackTrace()
+//        }
+//
+//        Log.d("Changelog", "thisVersion: " + thisVersion!!)
+//
+//        if (thisVersion != lastVersion) {
+//            SimpleDialogFragment.Builder(
+//                    (activity as AppCompatActivity?)!!, this@Risuscito, "CHANGELOG")
+//                    .title(R.string.dialog_change_title)
+//                    .setCustomView(R.layout.dialog_changelogview)
+//                    .positiveButton(android.R.string.ok)
+//                    .setHasCancelListener()
+//                    .setCanceable()
+//                    .show()
+//        }
 
         Log.d(
                 TAG,
@@ -110,14 +111,24 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
             mMainActivity!!.setShowSnackbar()
             mMainActivity!!.signIn()
         }
+
+        Log.d(TAG, "getVersionCodeWrapper(): ${getVersionCodeWrapper()}")
+
+        ChangelogBuilder()
+                .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
+                .withMinVersionToShow(getVersionCodeWrapper())     // provide a number and the log will only show changelog rows for versions equal or higher than this number
+                .withManagedShowOnStart(context!!.getSharedPreferences("com.michaelflisar.changelog", 0).getInt("changelogVersion", -1) != -1)  // library will take care to show activity/dialog only if the changelog has new infos and will only show this new infos
+                .withTitle(getString(R.string.dialog_change_title)) // provide a custom title if desired, default one is "Changelog <VERSION>"
+                .withOkButtonLabel(getString(android.R.string.ok)) // provide a custom ok button text if desired, default one is "OK"
+                .buildAndShowDialog(mMainActivity, ThemeUtils.isDarkMode(mMainActivity!!)) // second parameter defines, if the dialog has a dark or light theme
     }
 
     override fun onResume() {
         super.onResume()
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
-        val fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "CHANGELOG")
-        fragment?.setmCallback(this@Risuscito)
+//        val fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "CHANGELOG")
+//        fragment?.setmCallback(this@Risuscito)
     }
 
     override fun onDestroy() {
@@ -130,18 +141,16 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
         setHasOptionsMenu(true)
     }
 
-    override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: $tag")
-        when (tag) {
-            "CHANGELOG" -> {
-                PreferenceManager.getDefaultSharedPreferences(context).edit { putString(VERSION_KEY, thisVersion) }
-            }
-        }
-    }
+//    override fun onPositive(tag: String) {
+//        Log.d(TAG, "onPositive: $tag")
+//        when (tag) {
+//            "CHANGELOG" -> {
+//                PreferenceManager.getDefaultSharedPreferences(context).edit { putString(VERSION_KEY, thisVersion) }
+//            }
+//        }
+//    }
 
-    override fun onNegative(tag: String) {}
-
-//    override fun onNeutral(tag: String) {}
+//    override fun onNegative(tag: String) {}
 
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -179,11 +188,34 @@ class Risuscito : Fragment(), SimpleDialogFragment.SimpleCallback, EasyPermissio
                 .show()
     }
 
+    @TargetApi(Build.VERSION_CODES.P)
+    private fun getVersionCodeP(): Int {
+        return activity!!
+                .packageManager
+                .getPackageInfo(activity!!.packageName, 0)
+                .longVersionCode.toInt()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun getVersionCodeLegacy(): Int {
+        return activity!!
+                .packageManager
+                .getPackageInfo(activity!!.packageName, 0)
+                .versionCode
+    }
+
+    private fun getVersionCodeWrapper(): Int {
+        return if (LUtils.hasP())
+            getVersionCodeP()
+        else
+            getVersionCodeLegacy()
+    }
+
     companion object {
         private val TAG = Risuscito::class.java.canonicalName
         const val BROADCAST_SIGNIN_VISIBLE = "it.cammino.risuscito.signin.SIGNIN_VISIBLE"
         const val DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE"
-        private const val VERSION_KEY = "PREFS_VERSION_KEY"
-        private const val NO_VERSION = ""
+//        private const val VERSION_KEY = "PREFS_VERSION_KEY"
+//        private const val NO_VERSION = ""
     }
 }
