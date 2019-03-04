@@ -64,17 +64,6 @@ class SimpleDialogFragment : DialogFragment() {
             }
         }
 
-//        if (mBuilder.mNeutralButton != null) {
-////            dialogBuilder.neutralText(mBuilder.mNeutralButton!!)
-////                    .onNeutral { _, _ ->
-////                        mCallback!!.onNeutral(
-////                                mBuilder.mTag)
-////                    }
-//            dialog.neutralButton(text = mBuilder.mNeutralButton) {
-//                mCallback!!.onNeutral(mBuilder.mTag)
-//            }
-//        }
-
         if (mBuilder.mCustomView != 0) {
             dialog.customView(mBuilder.mCustomView)
         }
@@ -129,7 +118,6 @@ class SimpleDialogFragment : DialogFragment() {
         internal var mContent: CharSequence? = null
         internal var mPositiveButton: CharSequence? = null
         internal var mNegativeButton: CharSequence? = null
-//        internal var mNeutralButton: CharSequence? = null
         internal var mCanceable = false
         internal var mAutoDismiss = true
         internal var mCanceListener = false
@@ -159,11 +147,6 @@ class SimpleDialogFragment : DialogFragment() {
             mNegativeButton = this.mContext.resources.getText(text)
             return this
         }
-
-//        fun neutralButton(@StringRes text: Int): Builder {
-//            mNeutralButton = this.mContext.resources.getText(text)
-//            return this
-//        }
 
         fun setHasCancelListener(): Builder {
             mCanceListener = true
@@ -221,7 +204,6 @@ class SimpleDialogFragment : DialogFragment() {
     interface SimpleCallback {
         fun onPositive(tag: String)
         fun onNegative(tag: String)
-//        fun onNeutral(tag: String)
     }
 
     companion object {

@@ -101,8 +101,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         if (mCallback != null) {
             mCallback!!.onPlaybackStatusChanged(state)
         }
-        // prova perchè al completamento della registrazione, il successivo play ripartiva dalla fine
-        //        mCurrentPosition = getCurrentStreamPosition();
         mCurrentPosition = 0
         // Give up Audio focus
         giveUpAudioFocus()
@@ -155,9 +153,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
                     mMediaPlayer!!.setDataSource(fileInputStream.fd)
                     fileInputStream.close()
                 }
-
-                //                Log.d(TAG, "play: " + source);
-                //                mMediaPlayer.setDataSource(source);
 
                 // Starts preparing the media player in the background. When
                 // it's done, it will call our OnPreparedListener (that is,
@@ -229,8 +224,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     /** Try to get the system audio focus.  */
     private fun tryToGetAudioFocus() {
         Log.d(TAG, "tryToGetAudioFocus")
-//        val result = mAudioManager.requestAudioFocus(
-//                this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
         val result = requestAudioFocus()
         mAudioFocus = if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
             AUDIO_FOCUSED
@@ -241,7 +234,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     /** Give up the audio focus.  */
     private fun giveUpAudioFocus() {
         Log.d(TAG, "giveUpAudioFocus")
-//        if (mAudioManager.abandonAudioFocus(this) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
         if (abandonAudioFocus() == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             mAudioFocus = AUDIO_NO_FOCUS_NO_DUCK
         }
@@ -426,10 +418,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setStreamTypeLollipop() {
-//        val mPlaybackAttributes = AudioAttributes.Builder()
-//                .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
-//                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
-//                .build()
         mMediaPlayer!!.setAudioAttributes(mPlaybackAttributes!!)
     }
 

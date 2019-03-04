@@ -208,12 +208,10 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                     return true
                 }
                 R.id.add_to_e_pane -> {
-//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 3, mCantiViewModel!!.idDaAgg)
                     ListeUtils.addToListaDup(this@SalmiSectionFragment, 2, 3, mCantiViewModel!!.idDaAgg)
                     return true
                 }
                 R.id.add_to_e_vino -> {
-//                    ListeUtils.addToListaDup(context!!, rootView!!, 2, 4, mCantiViewModel!!.idDaAgg)
                     ListeUtils.addToListaDup(this@SalmiSectionFragment, 2, 4, mCantiViewModel!!.idDaAgg)
                     return true
                 }

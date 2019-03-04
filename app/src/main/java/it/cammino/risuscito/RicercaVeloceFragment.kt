@@ -45,7 +45,6 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     private var isViewShown = true
     private var rootView: View? = null
     private var titoli: MutableList<SimpleItem> = ArrayList()
-    //    private var titoloDaAgg: String? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var searchTask: SearchTask? = null
     private var mLUtils: LUtils? = null

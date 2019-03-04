@@ -179,7 +179,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                         .title(R.string.dialog_reset_favorites_title)
                         .content(R.string.dialog_reset_favorites_desc)
                         .positiveButton(R.string.clear_confirm)
-                        .negativeButton(android.R.string.no)
+                        .negativeButton(android.R.string.cancel)
                         .show()
                 return true
             }

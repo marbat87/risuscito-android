@@ -109,4 +109,13 @@
         <item name="android:popupBackground">@color/floating_background</item>
     </style>
 
+    <style name="RisuscitoAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert" >
+        <item name="android:buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito</item>
+        <item name="android:windowBackground">@drawable/dialog_material_background</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito">
+        <item name="fontFamily">@font/googlesans_medium</item>
+    </style>
+
 </resources>

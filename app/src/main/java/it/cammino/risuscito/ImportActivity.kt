@@ -36,28 +36,6 @@ class ImportActivity : AppCompatActivity() {
             Log.d(TAG, "onCreate: data = $data")
             Log.d(TAG, "onCreate: schema = " + data.scheme)
             intent.data = null
-//            val dialog = MaterialDialog.Builder(this)
-//                    .title(R.string.app_name)
-//                    .content(R.string.dialog_import)
-//                    .positiveText(android.R.string.yes)
-//                    .negativeText(android.R.string.no)
-//                    .onPositive { _, _ ->
-//                        val i = Intent(this@ImportActivity, XmlImportService::class.java)
-//                        i.action = XmlImportService.ACTION_URL
-//                        i.data = data
-//                        startService(i)
-//                    }
-//                    .onNegative { _, _ -> finish() }
-//                    .show()
-//            dialog.setOnKeyListener(DialogInterface.OnKeyListener { arg0, keyCode, event ->
-//                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-//                    arg0.dismiss()
-//                    finish()
-//                    return@OnKeyListener true
-//                }
-//                false
-//            })
-//            dialog.setCancelable(false)
             MaterialDialog(this)
                     .show {
                         title(R.string.app_name)
@@ -68,7 +46,7 @@ class ImportActivity : AppCompatActivity() {
                             i.data = data
                             startService(i)
                         }
-                        negativeButton(android.R.string.no) {
+                        negativeButton(android.R.string.cancel) {
                             finish()
                         }
                         cancelable(false)
@@ -115,14 +93,11 @@ class ImportActivity : AppCompatActivity() {
             Locale.setDefault(locale)
             ThemeableActivity.setSystemLocalWrapper(config, locale)
         } else {
-//            val mEditor = sp.edit()
             val mLanguage: String = when (ThemeableActivity.getSystemLocalWrapper(mNewBase.resources.configuration).language) {
                 "uk" -> "uk"
                 "en" -> "en"
                 else -> "it"
             }
-//            mEditor.putString(Utility.SYSTEM_LANGUAGE, mLanguage)
-//            mEditor.apply()
             sp.edit { putString(Utility.SYSTEM_LANGUAGE, mLanguage) }
             val locale = Locale(mLanguage)
             Locale.setDefault(locale)
@@ -150,8 +125,6 @@ class ImportActivity : AppCompatActivity() {
             mNewBase.resources.updateConfiguration(config, mNewBase.resources.displayMetrics)
         }
 
-        //Calligraphy
-//        super.attachBaseContext(ViewPumpContextWrapper.wrap(mNewBase))
         super.attachBaseContext(mNewBase)
     }
 

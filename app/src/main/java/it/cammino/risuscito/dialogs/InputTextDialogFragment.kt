@@ -8,10 +8,12 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
+import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onShow
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import java.io.Serializable
@@ -43,11 +45,9 @@ class InputTextDialogFragment : DialogFragment() {
         if (mCallback == null)
             mCallback = mBuilder.mListener
 
-//        val dialogBuilder = MaterialDialog.Builder(activity!!)
-//                .input("", if (mBuilder.mPrefill != null) mBuilder.mPrefill else "", false) { _, _ -> }
-//                .autoDismiss(mBuilder.mAutoDismiss)
         val dialog = MaterialDialog(activity!!)
-                .input(prefill = if (mBuilder.mPrefill != null) mBuilder.mPrefill else "", inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
+                .input(prefill = mBuilder.mPrefill
+                        ?: "", inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
 
         if (mBuilder.mTitle != 0)
             dialog.title(res = mBuilder.mTitle)
@@ -69,37 +69,8 @@ class InputTextDialogFragment : DialogFragment() {
             }
         }
 
-
-//        if (mBuilder.mTitle != 0)
-//            dialogBuilder.title(mBuilder.mTitle)
-
-//        if (mBuilder.mPositiveButton != null) {
-//            dialogBuilder.positiveText(mBuilder.mPositiveButton!!)
-//                    .onPositive(object : MaterialDialog.SingleButtonCallback {
-//                        override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-//                            Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
-//                            mCallback!!.onPositive(mBuilder.mTag, dialog)
-//                        }
-//                    })
-//        }
-
-//        if (mBuilder.mNegativeButton != null) {
-//            dialogBuilder.negativeText(mBuilder.mNegativeButton!!)
-//                    .onNegative { dialog, _ -> mCallback!!.onNegative(mBuilder.mTag, dialog) }
-//        }
-
-//        dialogBuilder.typeface(ResourcesCompat.getFont(activity!!, R.font.googlesans_medium), ResourcesCompat.getFont(activity!!, R.font.googlesans_regular))
-
-//        val dialog = dialogBuilder.build()
-
-        val mEditText = dialog.getInputField()
-        if (mEditText != null) {
-
-            if (mBuilder.mPrefill != null)
-                mEditText.selectAll()
-
-//            mEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-
+        dialog.onShow {
+            it.getInputField().selectAll()
         }
 
         dialog.setCancelable(mBuilder.mCanceable)
@@ -200,10 +171,9 @@ class InputTextDialogFragment : DialogFragment() {
     }
 
     fun show(context: AppCompatActivity): InputTextDialogFragment {
-        val builder = builder
-        if (builder != null) {
-            dismissIfNecessary(context, builder.mTag)
-            show(context.supportFragmentManager, builder.mTag)
+        builder?.let {
+            dismissIfNecessary(context, it.mTag)
+            show(context.supportFragmentManager, it.mTag)
         }
         return this
     }
@@ -211,7 +181,6 @@ class InputTextDialogFragment : DialogFragment() {
     interface SimpleInputCallback {
         fun onPositive(tag: String, dialog: MaterialDialog)
         fun onNegative(tag: String, dialog: MaterialDialog)
-//        fun onNeutral(tag: String, dialog: MaterialDialog)
     }
 
     companion object {
@@ -220,6 +189,8 @@ class InputTextDialogFragment : DialogFragment() {
             val frag = context.supportFragmentManager.findFragmentByTag(tag)
             return if (frag != null && frag is InputTextDialogFragment) frag else null
         }
+
+        private val TAG = InputTextDialogFragment::class.java.canonicalName
     }
 
 }

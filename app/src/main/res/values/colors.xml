@@ -24,8 +24,6 @@
     <!-- Material DEFAULT drawer colors -->
     <color name="material_drawer_selected">#E8E8E8</color>
     <color name="material_drawer_selected_text">#2196F3</color>
-    <!--<color name="material_drawer_header_selection_text">@color/primary_text_default_material_dark</color>-->
-    <!--<color name="material_drawer_header_selection_subtext">@color/secondary_text_default_material_dark</color>-->
 
     <color name="text_color_primary">@color/primary_text_default_material_light</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_light</color>

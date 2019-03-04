@@ -23,17 +23,11 @@ class GeneralSearch : Fragment() {
         val mMainActivity = activity as MainActivity?
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_search)
 
-//        activity!!.view_pager!!.adapter = SectionsPagerAdapter(childFragmentManager)
         view_pager.adapter = SectionsPagerAdapter(childFragmentManager)
 
         mMainActivity.setTabVisible(true)
-//        val tabs = activity!!.material_tabs
-//        val tabs = mMainActivity.getMaterialTabs()
-//        tabs.visibility = View.VISIBLE
         mMainActivity.enableFab(false)
-//        if (!mMainActivity.isOnTablet) mMainActivity.enableBottombar(false)
         mMainActivity.enableBottombar(false)
-//        tabs.setupWithViewPager(view_pager)
         mMainActivity.getMaterialTabs().setupWithViewPager(view_pager)
     }
 

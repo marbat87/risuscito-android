@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -399,8 +401,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
     }
 
-//    override fun onNeutral(tag: String) {}
-
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
         if (modifica) Collections.swap(nomiCanti!!, oldPosition, newPosition) // change canto
         Collections.swap(mAdapter!!.adapterItems, oldPosition, newPosition) // change position
@@ -562,23 +562,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 }
             }
 
-//            mAdapter!!.notifyDataSetChanged()
-//
-//            if (mViewModel!!.tempTitle.isEmpty()) {
-//                textfieldTitle.setText(titoloLista)
-//                collapsingToolbarLayout.title = titoloLista
-//            } else {
-//                textfieldTitle.setText(mViewModel!!.tempTitle)
-//                collapsingToolbarLayout.title = mViewModel!!.tempTitle
-//            }
-
             return 0
         }
-
-//        override fun onPreExecute() {
-//            super.onPreExecute()
-////            mAdapter!!.clear()
-//        }
 
         override fun onPostExecute(result: Int?) {
             mAdapter!!.set(elementi)

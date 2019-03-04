@@ -27,7 +27,6 @@ import pub.devrel.easypermissions.PermissionRequest
 class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private var mMainActivity: MainActivity? = null
-    //    private var thisVersion: String? = null
     private var rootView: View? = null
     private val signInVisibility = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -53,36 +52,6 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
 
         mMainActivity!!.enableFab(false)
         mMainActivity!!.enableBottombar(false)
-
-//        val sp = PreferenceManager.getDefaultSharedPreferences(context)
-
-        // get version numbers
-//        val lastVersion = sp.getString(VERSION_KEY, NO_VERSION)
-//        //        String thisVersion;
-//        Log.d("Changelog", "lastVersion: " + lastVersion!!)
-//        try {
-//            thisVersion = activity!!
-//                    .packageManager
-//                    .getPackageInfo(activity!!.packageName, 0)
-//                    .versionName
-//        } catch (e: NameNotFoundException) {
-//            thisVersion = NO_VERSION
-//            Log.d("Changelog", "could not get version name from manifest!")
-//            e.printStackTrace()
-//        }
-//
-//        Log.d("Changelog", "thisVersion: " + thisVersion!!)
-//
-//        if (thisVersion != lastVersion) {
-//            SimpleDialogFragment.Builder(
-//                    (activity as AppCompatActivity?)!!, this@Risuscito, "CHANGELOG")
-//                    .title(R.string.dialog_change_title)
-//                    .setCustomView(R.layout.dialog_changelogview)
-//                    .positiveButton(android.R.string.ok)
-//                    .setHasCancelListener()
-//                    .setCanceable()
-//                    .show()
-//        }
 
         Log.d(
                 TAG,
@@ -117,7 +86,7 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
         ChangelogBuilder()
                 .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
                 .withMinVersionToShow(getVersionCodeWrapper())     // provide a number and the log will only show changelog rows for versions equal or higher than this number
-                .withManagedShowOnStart(context!!.getSharedPreferences("com.michaelflisar.changelog", 0).getInt("changelogVersion", -1) != -1)  // library will take care to show activity/dialog only if the changelog has new infos and will only show this new infos
+                .withManagedShowOnStart(false)  // library will take care to show activity/dialog only if the changelog has new infos and will only show this new infos
                 .withTitle(getString(R.string.dialog_change_title)) // provide a custom title if desired, default one is "Changelog <VERSION>"
                 .withOkButtonLabel(getString(android.R.string.ok)) // provide a custom ok button text if desired, default one is "OK"
                 .buildAndShowDialog(mMainActivity, ThemeUtils.isDarkMode(mMainActivity!!)) // second parameter defines, if the dialog has a dark or light theme
@@ -127,8 +96,6 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
         super.onResume()
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
-//        val fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "CHANGELOG")
-//        fragment?.setmCallback(this@Risuscito)
     }
 
     override fun onDestroy() {
@@ -140,17 +107,6 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
     }
-
-//    override fun onPositive(tag: String) {
-//        Log.d(TAG, "onPositive: $tag")
-//        when (tag) {
-//            "CHANGELOG" -> {
-//                PreferenceManager.getDefaultSharedPreferences(context).edit { putString(VERSION_KEY, thisVersion) }
-//            }
-//        }
-//    }
-
-//    override fun onNegative(tag: String) {}
 
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -215,7 +171,5 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
         private val TAG = Risuscito::class.java.canonicalName
         const val BROADCAST_SIGNIN_VISIBLE = "it.cammino.risuscito.signin.SIGNIN_VISIBLE"
         const val DATA_VISIBLE = "it.cammino.risuscito.signin.data.DATA_VISIBLE"
-//        private const val VERSION_KEY = "PREFS_VERSION_KEY"
-//        private const val NO_VERSION = ""
     }
 }

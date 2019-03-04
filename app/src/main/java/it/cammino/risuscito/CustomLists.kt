@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.PagerAdapter
+import com.afollestad.materialcab.MaterialCab
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
@@ -175,7 +176,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
             "RESET_LIST" -> {
                 val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
                 mView?.button_pulisci?.performClick()
-//                mView?.findViewById<View>(R.id.button_pulisci)?.performClick()
             }
             "DELETE_LIST" ->
                 ioThread {
@@ -371,7 +371,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             .title(R.string.dialog_reset_list_title)
                             .content(R.string.reset_list_question)
                             .positiveButton(R.string.reset_confirm)
-                            .negativeButton(android.R.string.no)
+                            .negativeButton(android.R.string.cancel)
                             .show()
                     true
                 }
@@ -391,7 +391,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             .getRegisteredFragment(view_pager.currentItem)
                             .view
                     mView?.button_condividi?.performClick()
-//                    mView?.findViewById<View>(R.id.button_condividi)?.performClick()
                     true
                 }
                 R.id.fab_edit_lista -> {
@@ -422,7 +421,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 .title(R.string.action_remove_list)
                                 .content(R.string.delete_list_dialog)
                                 .positiveButton(R.string.delete_confirm)
-                                .negativeButton(android.R.string.no)
+                                .negativeButton(android.R.string.cancel)
                                 .show()
                     }
                     true
@@ -433,7 +432,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             .getRegisteredFragment(view_pager.currentItem)
                             .view
                     mView?.button_invia_file?.performClick()
-//                    mView?.findViewById<View>(R.id.button_invia_file)!!.performClick()
                     true
                 }
                 else -> {
@@ -444,6 +442,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         }
 
         val click = View.OnClickListener {
+            MaterialCab.destroy()
             toggleFabMenu()
         }
 

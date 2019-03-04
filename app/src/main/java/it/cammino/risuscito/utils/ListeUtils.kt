@@ -130,7 +130,7 @@ object ListeUtils {
                                             + titoloPresente
                                             + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace)))
                             .positiveButton(R.string.replace_confirm)
-                            .negativeButton(android.R.string.no)
+                            .negativeButton(android.R.string.cancel)
                             .show()
                 } else
                     Snackbar.make(fragmentReference.get()!!.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
@@ -262,7 +262,7 @@ object ListeUtils {
                                     + fragmentReference.get()!!.resources.getString(LUtils.getResId(titoloPresente, R.string::class.java))
                                     + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace)))
                     .positiveButton(R.string.replace_confirm)
-                    .negativeButton(android.R.string.no)
+                    .negativeButton(android.R.string.cancel)
                     .show()
         }
     }

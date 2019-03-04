@@ -94,14 +94,10 @@ class ListaPersonalizzataFragment : Fragment() {
         if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
         mLastClickTime = SystemClock.elapsedRealtime()
         val parent = v.parent.parent as View
-//        if (parent.findViewById<View>(R.id.addCantoGenerico).isVisible) {
         if (parent.addCantoGenerico.isVisible) {
             if (mSwhitchMode) {
                 scambioConVuoto(
                         Integer.valueOf(parent.text_id_posizione.text.toString()))
-//                                (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-//                                        .text
-//                                        .toString()))
             } else {
                 if (!MaterialCab.isActive) {
                     val bundle = Bundle()
@@ -110,14 +106,9 @@ class ListaPersonalizzataFragment : Fragment() {
                     bundle.putInt(
                             "position",
                             Integer.valueOf(parent.text_id_posizione.text.toString()))
-//                                    (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-//                                            .text
-//                                            .toString()))
                     val intent = Intent(activity, GeneralInsertSearch::class.java)
                     intent.putExtras(bundle)
-//                    parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS + idLista)
                     parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS)
-//                    activity!!.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
                     Animatoo.animateShrink(activity)
                 }
             }
@@ -125,18 +116,12 @@ class ListaPersonalizzataFragment : Fragment() {
             if (!mSwhitchMode)
                 if (MaterialCab.isActive) {
                     posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
-//                            (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-//                                    .text
-//                                    .toString())
                     snackBarRimuoviCanto(v)
                 } else
                     openPagina(v)
             else {
                 scambioCanto(
                         Integer.valueOf(parent.text_id_posizione.text.toString()))
-//                                (parent.findViewById<View>(R.id.text_id_posizione) as TextView)
-//                                        .text
-//                                        .toString()))
             }
         }
     }
@@ -144,7 +129,6 @@ class ListaPersonalizzataFragment : Fragment() {
     private val longClick = OnLongClickListener { v ->
         val parent = v.parent.parent as View
         posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
-//                (parent.findViewById<View>(R.id.text_id_posizione) as TextView).text.toString())
         snackBarRimuoviCanto(v)
         true
     }
@@ -209,7 +193,6 @@ class ListaPersonalizzataFragment : Fragment() {
                 bottomSheetDialog.show(fragmentManager!!, null)
             } else
                 Snackbar.make(
-//                        activity!!.findViewById(R.id.main_content),
                         activity!!.main_content,
                         R.string.xml_error,
                         Snackbar.LENGTH_LONG)
@@ -247,11 +230,7 @@ class ListaPersonalizzataFragment : Fragment() {
         // visualizzare
         val bundle = Bundle()
         bundle.putString("pagina", v.text_source_canto.text.toString())
-//                "pagina", (v.findViewById<View>(R.id.text_source_canto) as TextView).text.toString())
         bundle.putInt("idCanto", Integer.valueOf(v.text_id_canto_card.text.toString()))
-//                "idCanto",
-//                Integer.valueOf((v.findViewById<View>(R.id.text_id_canto_card) as TextView).text.toString()))
-
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
         mLUtils!!.startActivityWithTransition(intent)
@@ -280,7 +259,6 @@ class ListaPersonalizzataFragment : Fragment() {
             actionModeOk = true
             MaterialCab.destroy()
             Snackbar.make(
-//                    activity!!.findViewById(R.id.main_content),
                     activity!!.main_content,
                     R.string.switch_done,
                     Snackbar.LENGTH_SHORT)
@@ -302,7 +280,6 @@ class ListaPersonalizzataFragment : Fragment() {
         actionModeOk = true
         MaterialCab.destroy()
         Snackbar.make(
-//                activity!!.findViewById(R.id.main_content),
                 activity!!.main_content,
                 R.string.switch_done,
                 Snackbar.LENGTH_SHORT)
@@ -338,7 +315,6 @@ class ListaPersonalizzataFragment : Fragment() {
                         actionModeOk = true
                         MaterialCab.destroy()
                         Snackbar.make(
-//                                activity!!.findViewById(R.id.main_content),
                                 activity!!.main_content,
                                 R.string.song_removed,
                                 Snackbar.LENGTH_LONG)

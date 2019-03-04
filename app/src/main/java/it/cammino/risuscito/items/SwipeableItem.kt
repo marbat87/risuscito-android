@@ -104,7 +104,6 @@ class SwipeableItem : AbstractItem<SwipeableItem, SwipeableItem.ViewHolder>(), I
         holder.swipedAction!!.text = null
         holder.swipedText!!.text = null
         holder.swipedActionRunnable = null
-//        holder.mDragHandler = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

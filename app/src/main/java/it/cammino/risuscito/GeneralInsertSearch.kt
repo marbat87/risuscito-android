@@ -57,7 +57,6 @@ class GeneralInsertSearch : ThemeableActivity() {
             android.R.id.home -> {
                 setResult(CustomLists.RESULT_CANCELED)
                 finish()
-//                overridePendingTransition(0, R.anim.slide_out_right)
                 Animatoo.animateShrink(this@GeneralInsertSearch)
                 return true
             }
@@ -69,7 +68,6 @@ class GeneralInsertSearch : ThemeableActivity() {
         Log.d(TAG, "onBackPressed: ")
         setResult(CustomLists.RESULT_CANCELED)
         finish()
-//        overridePendingTransition(0, R.anim.slide_out_right)
         Animatoo.animateShrink(this@GeneralInsertSearch)
     }
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4400"
+    <release versionCode="4401"
         date="Marzo 2019"
         versionName="4.4.0">
-        <new>IMPORTANTE: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le
+        <new>[b]IMPORTANTE[/b]: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le
             modifiche sono solo "sotto il cofano". Puoi caricare un nuovo backup da uno dei tuoi
             dispositivi.
         </new>

@@ -28,6 +28,7 @@ import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.dao.Backup
 import it.cammino.risuscito.database.dao.CantoDao
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
@@ -340,7 +341,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val risuscitoDb = RisuscitoDatabase.getInstance(this@ThemeableActivity)
 
         //RESTORE CANTI
-        val backupCanti: List<CantoDao.Backup> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CANTO_FILE_NAME, userId)), object : TypeToken<List<CantoDao.Backup>>() {}.type)
+        val backupCanti: List<Backup> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CANTO_FILE_NAME, userId)), object : TypeToken<List<Backup>>() {}.type)
 
         val cantoDao = risuscitoDb.cantoDao()
         cantoDao.truncateTable()

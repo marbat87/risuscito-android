@@ -17,7 +17,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(28)
         multiDexEnabled = true
-        versionCode = 4400
+        versionCode = 4401
         versionName = "4.4.0"
     }
 
@@ -55,9 +55,9 @@ val lifecycleVersion = "1.1.1"
 val roomVersion = "1.1.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.afollestad.material-dialogs:core:2.0.0")
-    implementation("com.afollestad.material-dialogs:input:2.0.0")
-    implementation("com.afollestad.material-dialogs:files:2.0.0")
+    implementation("com.afollestad.material-dialogs:core:2.0.3")
+    implementation("com.afollestad.material-dialogs:input:2.0.3")
+    implementation("com.afollestad.material-dialogs:files:2.0.3")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:6.1.2")
     implementation("com.mikepenz:crossfader:1.6.0")
@@ -74,8 +74,8 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:16.0.1")
     implementation("com.google.firebase:firebase-core:16.0.7")
-    implementation ("com.google.firebase:firebase-firestore:18.0.1")
-    implementation ("com.google.firebase:firebase-storage:16.0.5")
+    implementation ("com.google.firebase:firebase-firestore:18.1.0")
+    implementation ("com.google.firebase:firebase-storage:16.1.0")
     implementation ("com.google.firebase:firebase-auth:16.1.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.9@aar") { isTransitive = true }
     implementation("com.afollestad:material-cab:1.3.1")
@@ -97,5 +97,5 @@ dependencies {
     implementation("com.leinardi.android:speed-dial:2.0.1")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation ("com.github.Ferfalk:SimpleSearchView:0.1.3")
-    implementation ("com.github.MFlisar:changelog:1.1.2")
+    implementation ("com.github.MFlisar:changelog:1.1.4")
 }

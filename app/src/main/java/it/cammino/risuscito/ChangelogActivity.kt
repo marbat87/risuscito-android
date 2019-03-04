@@ -43,7 +43,6 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
         finish()
-//        overridePendingTransition(0, R.anim.slide_out_bottom)
         Animatoo.animateSlideDown(this@ChangelogActivity)
     }
 
@@ -51,7 +50,6 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
         return when (item.itemId) {
             android.R.id.home -> {
                 finish()
-//                overridePendingTransition(0, R.anim.slide_out_bottom)
                 Animatoo.animateSlideDown(this@ChangelogActivity)
                 true
             }

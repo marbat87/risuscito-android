@@ -80,46 +80,11 @@ class InsertVeloceFragment : Fragment() {
             if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
             mLastClickTime = SystemClock.elapsedRealtime()
 
-            if (fromAdd == 1) {
+            if (fromAdd == 1)
                 ListeUtils.addToListaDupAndFinish(activity!!, idLista, listPosition, item.id)
-//                Thread(
-//                        Runnable {
-//                            val mDao = RisuscitoDatabase.getInstance(context!!).customListDao()
-//                            val position = CustomList()
-//                            position.id = idLista
-//                            position.position = listPosition
-//                            position.idCanto = item.id
-//                            position.timestamp = Date(System.currentTimeMillis())
-//                            try {
-//                                mDao.insertPosition(position)
-//                            } catch (e: Exception) {
-//                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT)
-//                                        .show()
-//                            }
-//
-//                            activity!!.setResult(Activity.RESULT_OK)
-//                            activity!!.finish()
-////                            activity!!.overridePendingTransition(0, R.anim.slide_out_right)
-//                            Animatoo.animateShrink(activity)
-//                        })
-//                        .start()
-            } else {
+            else
                 ListeUtils.updateListaPersonalizzataAndFinish(activity!!, idLista, item.id, listPosition)
-//                Thread(
-//                        Runnable {
-//                            val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
-//                            val listaPers = mDao.getListById(idLista)
-//                            if (listaPers?.lista != null) {
-//                                listaPers.lista!!.addCanto(item.id.toString(), listPosition)
-//                                mDao.updateLista(listaPers)
-//                                activity!!.setResult(Activity.RESULT_OK)
-//                                activity!!.finish()
-////                                activity!!.overridePendingTransition(0, R.anim.slide_out_right)
-//                                Animatoo.animateShrink(activity)
-//                            }
-//                        })
-//                        .start()
-            }
+
             true
         }
 
@@ -143,7 +108,6 @@ class InsertVeloceFragment : Fragment() {
             }
         }
 
-//        titoli = ArrayList()
         cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
 
@@ -235,9 +199,7 @@ class InsertVeloceFragment : Fragment() {
     }
 
     private fun ricercaStringa(s: String, onlyConsegnati: Boolean) {
-//        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
         val tempText = activity!!.tempTextField.text.toString()
-//        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
         if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi

@@ -90,7 +90,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 enableBottombar(false)
                 selected_view!!.visibility = View.VISIBLE
                 enableFab(true)
-//                mCantiViewModel!!.titoliChoose = ArrayList()
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
             }
@@ -145,7 +144,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     enableBottombar(false)
                     selected_view!!.visibility = View.VISIBLE
                     enableFab(true)
-//                    mCantiViewModel!!.titoliChoose = ArrayList()
                     true
                 }
                 R.id.confirm_changes -> {
@@ -335,33 +333,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mLUtils!!.startActivityWithTransition(intent)
     }
 
-//    private fun updateChooseList() {
-//        Thread(
-//                Runnable {
-//                    val mDao = RisuscitoDatabase.getInstance(context!!).consegnatiDao()
-//                    val canti = mDao.choosen
-////                    if (mCantiViewModel!!.titoliChoose.isEmpty()) {
-//                    val newList = ArrayList<CheckableItem>()
-//                    for (canto in canti) {
-//                        val checkableItem = CheckableItem()
-//                        newList.add(
-//                                checkableItem
-//                                        .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-//                                        .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-//                                        .withColor(canto.color!!)
-//                                        .withSetSelected(canto.consegnato > 0)
-//                                        .withId(canto.id)
-//                        )
-//                    }
-//                    mCantiViewModel!!.titoliChoose = newList.sortedWith(compareBy { it.title.toString() })
-//                    mCantiViewModel!!.titoliChooseFiltered = newList.sortedWith(compareBy { it.title.toString() })
-//                    selectableAdapter!!.notifyAdapterDataSetChanged()
-////                    selectableAdapter!!.set(mCantiViewModel!!.titoliChooseFiltered)
-////                    }
-//                })
-//                .start()
-//    }
-
     private fun getFab(): FloatingActionButton {
         return mMainActivity!!.getFab()
     }
@@ -388,7 +359,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .paddingDp(4)
         val onClick = View.OnClickListener {
             mCantiViewModel!!.editMode = true
-//            updateChooseList()
             UpdateChooseListTask(this@ConsegnatiFragment).execute()
             selected_view!!.visibility = View.INVISIBLE
             chooseRecycler!!.visibility = View.VISIBLE
@@ -405,8 +375,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onPositive(tag: String) {}
 
     override fun onNegative(tag: String) {}
-
-//    override fun onNeutral(tag: String) {}
 
     private fun fabIntro() {
         TapTargetView.showFor(

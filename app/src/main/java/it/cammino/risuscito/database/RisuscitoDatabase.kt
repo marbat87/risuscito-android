@@ -66,12 +66,12 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 3 to 4")
 
-                val backup = ArrayList<CantoDao.Backup>()
+                val backup = ArrayList<Backup>()
                 val sql = "SELECT id, zoom, scrollX, scrollY, favorite, savedTab, savedBarre, savedSpeed FROM Canto ORDER by 1"
                 val cursor = database.query(sql)
                 cursor.moveToFirst()
                 while (!cursor.isAfterLast) {
-                    backup.add(CantoDao.Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)))
+                    backup.add(Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)))
                     cursor.moveToNext()
                 }
                 cursor.close()
@@ -100,12 +100,12 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             Log.d(TAG, "reinsertDefault")
 
             // 1. backup table
-            val backup = ArrayList<CantoDao.Backup>()
+            val backup = ArrayList<Backup>()
             val sql = "SELECT id, zoom, scrollX, scrollY, favorite, savedTab, savedBarre, savedSpeed FROM Canto"
             val cursor = database.query(sql)
             cursor.moveToFirst()
             while (!cursor.isAfterLast) {
-                backup.add(CantoDao.Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)))
+                backup.add(Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)))
                 cursor.moveToNext()
             }
             cursor.close()

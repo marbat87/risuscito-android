@@ -21,8 +21,6 @@
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
         <item name="customSelectorRoundAccent">@drawable/custom_selector_round_accent</item>
 
-        <!--<item name="md_medium_font">Roboto-Medium.ttf</item>-->
-        <!--<item name="md_regular_font">Roboto-Regular.ttf</item>-->
         <item name="md_corner_radius">16dp</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
@@ -53,6 +51,7 @@
         <item name="md_font_body">@font/googlesans_regular</item>
         <item name="md_font_button">@font/googlesans_medium</item>
         <item name="tabStyle">@style/Risuscito_tabstyle</item>
+        <item name="android:alertDialogTheme">@style/RisuscitoAlertDialogTheme</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme">

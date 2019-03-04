@@ -67,11 +67,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private var mDownload: Boolean = false
 
     private var mViewModel: PaginaRenderViewModel? = null
-    //    private var pagina: String? = null
-//    private var idCanto: Int = 0
     private var url: String? = null
-    //    private var primaNota: String? = null
-//    private var primoBarre: String? = null
     private var personalUrl: String? = null
     private var localUrl: String? = null
     private var mLastPlaybackState: PlaybackStateCompat? = null
@@ -380,8 +376,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         mViewModel!!.pagina = mViewModel!!.pagina
                 ?: bundle?.getCharSequence("pagina", "")?.toString()
         mViewModel!!.idCanto = bundle?.getInt("idCanto") ?: return
-
-//        DataRetrieverTask().execute(mViewModel!!.idCanto)
 
         try {
             mViewModel!!.primaNota = mViewModel!!.primaNota ?: CambioAccordi.recuperaPrimoAccordo(
@@ -747,10 +741,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).localLinksDao()
         val localLink = mDao.getLocalLinkByCantoId(mViewModel!!.idCanto)
 
-//        personalUrl = if (localLink?.localPath != null && !localLink.localPath!!.isEmpty())
-//            localLink.localPath
-//        else
-//            ""
         personalUrl = localLink?.localPath ?: ""
     }
 
@@ -1658,7 +1648,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .title(R.string.dialog_delete_mp3_title)
                                 .content(R.string.dialog_delete_mp3)
                                 .positiveButton(R.string.delete_confirm)
-                                .negativeButton(android.R.string.no)
+                                .negativeButton(android.R.string.cancel)
                                 .show()
                     } else {
                         SimpleDialogFragment.Builder(
@@ -1666,7 +1656,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .title(R.string.dialog_delete_link_title)
                                 .content(R.string.dialog_delete_link)
                                 .positiveButton(R.string.unlink_confirm)
-                                .negativeButton(android.R.string.no)
+                                .negativeButton(android.R.string.cancel)
                                 .show()
                     }
                     true
@@ -1678,7 +1668,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .title(R.string.save_file)
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
-                            .negativeButton(android.R.string.no)
+                            .negativeButton(android.R.string.cancel)
                             .show()
                     true
                 }
@@ -1689,7 +1679,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .title(R.string.only_link_title)
                             .content(R.string.only_link)
                             .positiveButton(R.string.associate_confirm)
-                            .negativeButton(android.R.string.no)
+                            .negativeButton(android.R.string.cancel)
                             .show()
                     true
                 }

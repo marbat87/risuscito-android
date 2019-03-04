@@ -25,7 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.transaction
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -41,7 +40,7 @@ import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.crossfader.Crossfader
-import com.mikepenz.crossfader.view.ICrossFadeSlidingPaneLayout
+import com.mikepenz.crossfader.view.CrossFadeSlidingPaneLayout
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.materialdrawer.*
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
@@ -70,6 +69,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     var drawer: Drawer? = null
         private set
     private var mMiniDrawer: MiniDrawer? = null
+    private lateinit var profileIcon: IconicsDrawable
     private var crossFader: Crossfader<*>? = null
     private var mAccountHeader: AccountHeader? = null
     var isOnTablet: Boolean = false
@@ -122,6 +122,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .color(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
+
+        profileIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon.cmd_account_circle)
+                .color(themeUtils!!.primaryColor())
+                .sizeDp(48)
 
         risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
         risuscito_toolbar!!.navigationIcon = icon
@@ -230,7 +235,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val profile = ProfileDrawerItem()
                 .withName("")
                 .withEmail("")
-                .withIcon(R.mipmap.profile_picture)
+                .withIcon(profileIcon)
                 .withIdentifier(PROF_ID)
                 .withTypeface(mRegularFont)
 
@@ -252,7 +257,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .title(R.string.gdrive_backup)
                                 .content(R.string.gdrive_backup_content)
                                 .positiveButton(R.string.backup_confirm)
-                                .negativeButton(android.R.string.no)
+                                .negativeButton(android.R.string.cancel)
                                 .show()
                     } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gdrive_restore.toLong()) {
                         SimpleDialogFragment.Builder(
@@ -260,7 +265,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .title(R.string.gdrive_restore)
                                 .content(R.string.gdrive_restore_content)
                                 .positiveButton(R.string.restore_confirm)
-                                .negativeButton(android.R.string.no)
+                                .negativeButton(android.R.string.cancel)
                                 .show()
                     } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gplus_signout.toLong()) {
                         SimpleDialogFragment.Builder(
@@ -268,7 +273,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .title(R.string.gplus_signout)
                                 .content(R.string.dialog_acc_disconn_text)
                                 .positiveButton(R.string.disconnect_confirm)
-                                .negativeButton(android.R.string.no)
+                                .negativeButton(android.R.string.cancel)
                                 .show()
                     } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gplus_revoke.toLong()) {
                         SimpleDialogFragment.Builder(
@@ -276,7 +281,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .title(R.string.gplus_revoke)
                                 .content(R.string.dialog_acc_revoke_text)
                                 .positiveButton(R.string.disconnect_confirm)
-                                .negativeButton(android.R.string.no)
+                                .negativeButton(android.R.string.cancel)
                                 .show()
                     }
 
@@ -422,7 +427,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             // create and build our crossfader (see the MiniDrawer is also builded in here, as the build
             // method returns the view to be used in the crossfader)
-            crossFader = Crossfader<MyCrossfaderClass>()
+            crossFader = Crossfader<CrossFadeSlidingPaneLayout>()
                     .withContent(main_frame)
                     .withFirst(drawer!!.slider, firstWidth)
                     .withSecond(mMiniDrawer!!.build(this), secondWidth)
@@ -822,7 +827,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 profile = ProfileDrawerItem()
                         .withName(acct!!.displayName)
                         .withEmail(acct!!.email)
-                        .withIcon(R.mipmap.profile_picture)
+                        .withIcon(profileIcon)
                         .withIdentifier(PROF_ID)
                         .withTypeface(mRegularFont)
             }
@@ -852,7 +857,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             val profile = ProfileDrawerItem()
                     .withName("")
                     .withEmail("")
-                    .withIcon(R.mipmap.profile_picture)
+                    .withIcon(profileIcon)
                     .withIdentifier(PROF_ID)
                     .withTypeface(mRegularFont)
             if (mAccountHeader!!.profiles.size > 1) {
@@ -1030,11 +1035,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             else
                 Snackbar.make(activityReference.get()!!.main_content, result, Snackbar.LENGTH_LONG).show()
         }
-    }
-
-    private inner class MyCrossfaderClass(context: Context) : SlidingPaneLayout(context), ICrossFadeSlidingPaneLayout {
-        override fun setCanSlide(canSlide: Boolean) {}
-        override fun setOffset(slideOffset: Float) {}
     }
 
     private fun backToHome(exitAlso: Boolean) {

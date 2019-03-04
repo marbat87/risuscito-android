@@ -80,12 +80,6 @@ class ProgressDialogFragment : DialogFragment() {
             dialog.getCustomView().md_content_linear.text = mBuilder.mContent ?: ""
         }
 
-//        if (mBuilder.mContent != null) {
-//            dialog.getCustomView().findViewById<TextView>(R.id.md_content)?.visibility = View.VISIBLE
-//            dialog.getCustomView().findViewById<TextView>(R.id.md_content)?.text = mBuilder.mContent
-//        } else
-//            dialog.getCustomView().findViewById<TextView>(R.id.md_content)?.visibility = View.GONE
-
         dialog.setCancelable(mBuilder.mCanceable)
 
         dialog.setOnKeyListener(DialogInterface.OnKeyListener
@@ -102,7 +96,6 @@ class ProgressDialogFragment : DialogFragment() {
 
     @SuppressLint("CheckResult")
     fun setContent(@StringRes res: Int) {
-//        (dialog as MaterialDialog).getCustomView().findViewById<TextView>(R.id.md_content)?.setText(res)
         (dialog as MaterialDialog).getCustomView().md_content_indeterminate.setText(res)
     }
 
