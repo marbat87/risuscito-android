@@ -194,11 +194,13 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
-        if (listePersonalizzate != null) {
-            for (i in listePersonalizzate!!.indices) {
-                val subMenu = menu.addSubMenu(ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].titolo)
-                for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
-                    subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
+//        if (listePersonalizzate != null) {
+        listePersonalizzate?.let {
+            for (i in it.indices) {
+                val subMenu = menu.addSubMenu(
+                        ID_FITTIZIO, Menu.NONE, 10 + i, it[i].lista!!.name)
+                for (k in 0 until it[i].lista!!.numPosizioni) {
+                    subMenu.add(100 + i, k, k, it[i].lista!!.getNomePosizione(k))
                 }
             }
         }

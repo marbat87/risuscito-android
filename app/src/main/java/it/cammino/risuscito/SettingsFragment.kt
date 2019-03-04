@@ -29,7 +29,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         mMainActivity = activity as MainActivity?
-        if (mMainActivity != null) mMainActivity!!.setupToolbarTitle(R.string.title_activity_settings)
+        mMainActivity!!.setupToolbarTitle(R.string.title_activity_settings)
 
         mMainActivity!!.setTabVisible(false)
         mMainActivity!!.enableFab(false)
@@ -88,16 +88,18 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 val i = activity!!.baseContext
                         .packageManager
                         .getLaunchIntentForPackage(activity!!.baseContext.packageName)
-                if (i != null) {
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    i.putExtra(Utility.DB_RESET, true)
+//                if (i != null) {
+                i?.let {
+                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    it.putExtra(Utility.DB_RESET, true)
                     val currentLang = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                             .language
-                    i.putExtra(
+                    it.putExtra(
                             Utility.CHANGE_LANGUAGE,
                             currentLang + "-" + sharedPreferences.getString(s, ""))
+                    startActivity(it)
                 }
-                startActivity(i)
+//                startActivity(i)
             }
         }
         if (s == Utility.SCREEN_ON) LUtils.getInstance(activity!!).checkScreenAwake()
