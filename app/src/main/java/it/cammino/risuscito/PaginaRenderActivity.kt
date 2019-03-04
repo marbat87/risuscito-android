@@ -733,7 +733,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     // recupera e setta il record per la registrazione
     private fun getRecordLink() {
-        url = if (mViewModel!!.mCurrentCanto!!.link != null && !mViewModel!!.mCurrentCanto!!.link!!.isEmpty())
+        url = if (!mViewModel!!.mCurrentCanto!!.link.isNullOrEmpty())
             getString(LUtils.getResId(mViewModel!!.mCurrentCanto!!.link, R.string::class.java))
         else
             ""
@@ -1332,7 +1332,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             music_buttons.visibility = if (Utility.isOnline(this) || mDownload) View.VISIBLE else View.INVISIBLE
             no_connection.visibility = if (Utility.isOnline(this) || mDownload) View.INVISIBLE else View.VISIBLE
         } else {
-            mDownload = !personalUrl!!.isEmpty()
+            mDownload = personalUrl!!.isNotEmpty()
             // Se c'è una registrazione locale mostro i pulsanti
             music_buttons.visibility = if (mDownload) View.VISIBLE else View.INVISIBLE
             no_record.visibility = if (mDownload) View.INVISIBLE else View.VISIBLE

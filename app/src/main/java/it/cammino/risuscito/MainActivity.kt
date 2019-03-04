@@ -504,7 +504,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val mDao = RisuscitoDatabase.getInstance(this@MainActivity).cantoDao()
         val canti = mDao.allByName
         for (canto in canti) {
-            if (canto.savedTab != null && !canto.savedTab!!.isEmpty()) {
+            if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
                         TAG,
                         "convertTabs: "
@@ -544,7 +544,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val mDao = RisuscitoDatabase.getInstance(this@MainActivity).cantoDao()
         val canti = mDao.allByName
         for (canto in canti) {
-            if (canto.savedTab != null && !canto.savedTab!!.isEmpty()) {
+            if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
                         TAG,
                         "convertiBarre: "

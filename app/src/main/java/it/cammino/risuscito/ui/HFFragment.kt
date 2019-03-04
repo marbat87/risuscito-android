@@ -18,7 +18,7 @@ open class HFFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewCreated = true
-        if (savedInstanceState != null && savedInstanceState.containsKey("android:user_visible_hint")) {
+        if (savedInstanceState?.containsKey("android:user_visible_hint") == true) {
             super.setUserVisibleHint(mIsVisibleToUser)
         }
     }

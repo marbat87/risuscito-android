@@ -129,10 +129,9 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
         super.bindView(viewHolder, payloads)
 
         //set the text for the name
-        if (filter != null && !filter!!.isEmpty()) {
+        if (!filter.isNullOrEmpty()) {
             val mPosition = normalizedTitle!!.toLowerCase().indexOf(filter!!)
             if (mPosition >= 0) {
-//                val highlighted = title!!.text.toString().replace(("(?i)(" + title!!.text.toString().substring(mPosition, mPosition + filter!!.length) + ")").toRegex(), "<b>$1</b>")
                 val stringTitle = title!!.text.toString()
                 val highlighted = StringBuilder(if (mPosition > 0) stringTitle.substring(0, mPosition) else "")
                         .append("<b>")

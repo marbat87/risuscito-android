@@ -52,14 +52,16 @@ class SimpleDialogFragment : DialogFragment() {
         if (mBuilder.mContent != null)
             dialog.message(text = mBuilder.mContent!!)
 
-        if (mBuilder.mPositiveButton != null) {
-            dialog.positiveButton(text = mBuilder.mPositiveButton) {
+//        if (mBuilder.mPositiveButton != null) {
+        mBuilder.mPositiveButton?.let {
+            dialog.positiveButton(text = it) {
                 mCallback!!.onPositive(mBuilder.mTag)
             }
         }
 
-        if (mBuilder.mNegativeButton != null) {
-            dialog.negativeButton(text = mBuilder.mNegativeButton) {
+//        if (mBuilder.mNegativeButton != null) {
+        mBuilder.mNegativeButton?.let {
+            dialog.negativeButton(text = it) {
                 mCallback!!.onNegative(mBuilder.mTag)
             }
         }
@@ -106,7 +108,7 @@ class SimpleDialogFragment : DialogFragment() {
     override fun onCancel(dialog: DialogInterface?) {
         super.onCancel(dialog)
         val mBuilder = builder
-        if (mBuilder != null && mBuilder.mCanceListener)
+        if (mBuilder?.mCanceListener == true)
             mCallback!!.onPositive(mBuilder.mTag)
     }
 
@@ -185,18 +187,19 @@ class SimpleDialogFragment : DialogFragment() {
 
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
-        if (frag != null) {
-            (frag as DialogFragment).dismiss()
+//        if (frag != null) {
+        frag?.let {
+            (it as DialogFragment).dismiss()
             context.supportFragmentManager.beginTransaction()
-                    .remove(frag).commit()
+                    .remove(it).commit()
         }
     }
 
     fun show(context: AppCompatActivity): SimpleDialogFragment {
         val builder = builder
-        if (builder != null) {
-            dismissIfNecessary(context, builder.mTag)
-            show(context.supportFragmentManager, builder.mTag)
+        builder?.let {
+            dismissIfNecessary(context, it.mTag)
+            show(context.supportFragmentManager, it.mTag)
         }
         return this
     }

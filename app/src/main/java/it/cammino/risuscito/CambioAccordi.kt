@@ -68,7 +68,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
 
         var language = ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
                 .language
-        if (mLanguage != null && !mLanguage.isEmpty()) language = mLanguage
+        if (!mLanguage.isNullOrEmpty()) language = mLanguage
 
         Log.v(TAG, "diffSemiToni: language $language")
 

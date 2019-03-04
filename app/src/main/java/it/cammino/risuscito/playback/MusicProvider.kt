@@ -152,16 +152,16 @@ class MusicProvider internal constructor(private val mContext: Context) {
                 var url = if (LUtils.getResId(canto.link, R.string::class.java) != - 1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link
                 if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
-                    if (!Utility.retrieveMediaFileLink(mContext, url!!, true).isEmpty())
+                    if (Utility.retrieveMediaFileLink(mContext, url!!, true).isNotEmpty())
                         url = Utility.retrieveMediaFileLink(mContext, url, true)
                 } else {
-                    if (!Utility.retrieveMediaFileLink(mContext, url!!, false).isEmpty())
+                    if (Utility.retrieveMediaFileLink(mContext, url!!, false).isNotEmpty())
                         url = Utility.retrieveMediaFileLink(mContext, url, false)
                 }
 
                 Log.v(TAG, "retrieveMedia: " + canto.id + " / " + mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)) + " / " + url)
 
-                if (!url.isEmpty()) {
+                if (url.isNotEmpty()) {
                     temp = MediaMetadataCompat.Builder()
                             .putString(
                                     MediaMetadataCompat.METADATA_KEY_MEDIA_ID, canto.id.toString())

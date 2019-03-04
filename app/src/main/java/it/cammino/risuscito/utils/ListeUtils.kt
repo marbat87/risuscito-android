@@ -96,11 +96,11 @@ object ListeUtils {
             val listeDao = db.customListDao()
             val cantoDao = db.cantoDao()
             val idPresente = listeDao.getIdByPosition(idLista, listPosition)
-            if (idPresente != null) {
-                return if (idDaAgg == idPresente)
+            idPresente?.let {
+                return if (idDaAgg == it)
                     CANTO_PRESENTE
                 else
-                    fragmentReference.get()!!.resources.getString(LUtils.getResId(cantoDao.getCantoById(idPresente).titolo, R.string::class.java))
+                    fragmentReference.get()!!.resources.getString(LUtils.getResId(cantoDao.getCantoById(it).titolo, R.string::class.java))
             }
 
             val position = CustomList()

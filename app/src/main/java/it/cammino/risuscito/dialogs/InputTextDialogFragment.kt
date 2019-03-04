@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.KeyEvent
-import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
@@ -55,15 +54,17 @@ class InputTextDialogFragment : DialogFragment() {
         if (!mBuilder.mAutoDismiss)
             dialog.noAutoDismiss()
 
-        if (mBuilder.mPositiveButton != null) {
-            dialog.positiveButton(text = mBuilder.mPositiveButton) { mDialog ->
+//        if (mBuilder.mPositiveButton != null) {
+        mBuilder.mPositiveButton?.let {
+            dialog.positiveButton(text = it) { mDialog ->
                 Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
                 mCallback!!.onPositive(mBuilder.mTag, mDialog)
             }
         }
 
-        if (mBuilder.mNegativeButton != null) {
-            dialog.negativeButton(text = mBuilder.mNegativeButton) { mDialog ->
+//        if (mBuilder.mNegativeButton != null) {
+        mBuilder.mNegativeButton?.let {
+            dialog.negativeButton(text = it) { mDialog ->
                 Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
                 mCallback!!.onNegative(mBuilder.mTag, mDialog)
             }
@@ -163,10 +164,11 @@ class InputTextDialogFragment : DialogFragment() {
 
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
-        if (frag != null) {
-            (frag as DialogFragment).dismiss()
+//        if (frag != null) {
+        frag?.let {
+            (it as DialogFragment).dismiss()
             context.supportFragmentManager.beginTransaction()
-                    .remove(frag).commit()
+                    .remove(it).commit()
         }
     }
 

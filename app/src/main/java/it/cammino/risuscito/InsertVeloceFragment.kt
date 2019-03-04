@@ -132,8 +132,8 @@ class InsertVeloceFragment : Fragment() {
         }
 
         consegnati_only_check.setOnCheckedChangeListener { _, isChecked ->
-            if (!textfieldRicerca.text.toString().isEmpty())
-                ricercaStringa(textfieldRicerca?.text.toString(), isChecked)
+            if (textfieldRicerca.text.toString().isNotEmpty())
+                ricercaStringa(textfieldRicerca.text.toString(), isChecked)
         }
 
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->

@@ -65,8 +65,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
                 ?.let { list.removeAt(it) }
 
-        if (lastAppInfo != null)
-            list.add(0, lastAppInfo)
+        lastAppInfo?.let { list.add(0, it) }
 
         val mList = list.map { BottomSheetItem().withItem(it) }
 
@@ -74,8 +73,8 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
 
             val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)
-            if (intent != null) {
-                val newIntent = intent.clone() as Intent
+            intent?.let {
+                val newIntent = it.clone() as Intent
                 newIntent.component = name
                 activity!!.startActivity(newIntent)
                 dialog.dismiss()

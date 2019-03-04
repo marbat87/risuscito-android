@@ -152,9 +152,7 @@ class SwipeableItem : AbstractItem<SwipeableItem, SwipeableItem.ViewHolder>(), I
             swipedAction = view.swiped_action
             mDragHandler = view.drag_image
             swipedAction!!.setOnClickListener {
-                if (swipedActionRunnable != null) {
-                    swipedActionRunnable!!.run()
-                }
+                swipedActionRunnable?.run()
             }
         }
     }
