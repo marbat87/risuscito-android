@@ -97,5 +97,5 @@ dependencies {
     implementation("com.leinardi.android:speed-dial:2.0.1")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation ("com.github.Ferfalk:SimpleSearchView:0.1.3")
-    implementation ("com.github.MFlisar:changelog:1.1.4")
+    implementation ("com.github.MFlisar:changelog:1.1.5")
 }
