@@ -17,7 +17,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(28)
         multiDexEnabled = true
-        versionCode = 4401
+        versionCode = 4402
         versionName = "4.4.0"
     }
 
