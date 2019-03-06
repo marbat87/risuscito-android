@@ -61,7 +61,8 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     } else {
         null
     }
-    private val mFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//    private val mFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    private val mFocusRequest = if (LUtils.hasO()) {
         AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
                 .setAudioAttributes(mPlaybackAttributes!!)
                 .setAcceptsDelayedFocusGain(true)

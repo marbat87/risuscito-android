@@ -1,24 +1,20 @@
 package it.cammino.risuscito.services
 
-import android.annotation.TargetApi
 import android.app.IntentService
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
+import android.util.Log
+import android.util.Xml
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import android.util.Log
-import android.util.Xml
 import com.crashlytics.android.Crashlytics
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import org.xml.sax.helpers.XMLFilterImpl
@@ -56,7 +52,8 @@ class XmlImportService : IntentService("XmlImportService") {
         mNotificationManager.cancelAll()
         var mNotification: Notification
 
-        if (LUtils.hasO()) createChannel()
+//        if (LUtils.hasO()) createChannel()
+        Utility.createNotificationChannelWrapper(applicationContext, CHANNEL_ID, "XML Import", "Importing selected XML")
 
         mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
@@ -239,22 +236,22 @@ class XmlImportService : IntentService("XmlImportService") {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
-    private fun createChannel() {
-        val mNotificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        // The id of the channel.
-        //        String id = CHANNEL_ID;
-        // The user-visible name of the channel.
-        val name = "XML Import"
-        // The user-visible description of the channel.
-        val description = "Importing selected XML"
-        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
-        // Configure the notification channel.
-        mChannel.description = description
-        mChannel.setShowBadge(false)
-        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-        mNotificationManager.createNotificationChannel(mChannel)
-    }
+//    @TargetApi(Build.VERSION_CODES.O)
+//    private fun createChannel() {
+//        val mNotificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        // The id of the channel.
+//        //        String id = CHANNEL_ID;
+//        // The user-visible name of the channel.
+//        val name = "XML Import"
+//        // The user-visible description of the channel.
+//        val description = "Importing selected XML"
+//        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
+//        // Configure the notification channel.
+//        mChannel.description = description
+//        mChannel.setShowBadge(false)
+//        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+//        mNotificationManager.createNotificationChannel(mChannel)
+//    }
 
     private class Position {
         lateinit var name: String

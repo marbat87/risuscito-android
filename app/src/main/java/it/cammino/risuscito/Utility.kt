@@ -1,7 +1,11 @@
 package it.cammino.risuscito
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.Activity
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
@@ -160,5 +164,20 @@ object Utility {
         val normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
         val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
         return pattern.matcher(normalized).replaceAll("")
+    }
+
+    fun createNotificationChannelWrapper(applicationContext: Context, channelId: String, name: String, description: String) {
+        if (LUtils.hasO()) createNotificationChannel(applicationContext, channelId, name, description)
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(applicationContext: Context, channelId: String, name: String, description: String) {
+        val mNotificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val mChannel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_LOW)
+        // Configure the notification channel.
+        mChannel.description = description
+        mChannel.setShowBadge(false)
+        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        mNotificationManager.createNotificationChannel(mChannel)
     }
 }

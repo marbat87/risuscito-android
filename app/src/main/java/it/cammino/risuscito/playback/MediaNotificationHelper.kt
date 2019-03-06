@@ -2,18 +2,15 @@ package it.cammino.risuscito.playback
 
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.media.session.MediaButtonReceiver
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 
 /**
  * Helper class for building Media style Notifications from a
@@ -27,8 +24,9 @@ internal object MediaNotificationHelper {
                            mediaSession: MediaSessionCompat): Notification? {
 
         //Crezione notification channel per Android O
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            createChannel(context)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+//            createChannel(context)
+        Utility.createNotificationChannelWrapper(context, CHANNEL_ID, "Media playback", "Media playback controls")
 
         val controller = mediaSession.controller
         val mMetadata = controller.metadata
@@ -84,20 +82,20 @@ internal object MediaNotificationHelper {
         return notificationBuilder.build()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createChannel(context: Context) {
-        val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        // The id of the channel.
-        //        String id = CHANNEL_ID;
-        // The user-visible name of the channel.
-        val name = "Media playback"
-        // The user-visible description of the channel.
-        val description = "Media playback controls"
-        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
-        // Configure the notification channel.
-        mChannel.description = description
-        mChannel.setShowBadge(false)
-        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-        mNotificationManager.createNotificationChannel(mChannel)
-    }
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    private fun createChannel(context: Context) {
+//        val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        // The id of the channel.
+//        //        String id = CHANNEL_ID;
+//        // The user-visible name of the channel.
+//        val name = "Media playback"
+//        // The user-visible description of the channel.
+//        val description = "Media playback controls"
+//        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
+//        // Configure the notification channel.
+//        mChannel.description = description
+//        mChannel.setShowBadge(false)
+//        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+//        mNotificationManager.createNotificationChannel(mChannel)
+//    }
 }// Helper utility class; do not instantiate.
