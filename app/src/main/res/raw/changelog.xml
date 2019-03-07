@@ -4,7 +4,7 @@
     <release versionCode="4403"
         date="March 2019"
         versionName="4.4.0">
-        <new>[b]IMPORTANT[/b]: New Backup/Restore system, visually the procedure is the same, changes are only "under the hood". The old backup has been lost, you can upload a new one.</new>
+        <new>[b]IMPORTANT[/b]: New Backup/Restore system, visually the procedure is the same, changes are only "under the hood". The old backup has been lost, you can upload a new one</new>
         <bugfix>Bugfixes</bugfix>
     </release>
 

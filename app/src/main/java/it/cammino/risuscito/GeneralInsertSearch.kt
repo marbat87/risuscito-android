@@ -16,8 +16,8 @@ class GeneralInsertSearch : ThemeableActivity() {
     private var fromAdd: Int = 0
     private var idLista: Int = 0
     private var listPosition: Int = 0
-    var isOnTablet: Boolean = false
-        private set
+    //    var isOnTablet: Boolean = false
+//        private set
     var hasThreeColumns: Boolean = false
         private set
     var isGridLayout: Boolean = false
@@ -41,10 +41,10 @@ class GeneralInsertSearch : ThemeableActivity() {
         view_pager.adapter = SectionsPagerAdapter(supportFragmentManager)
 
         val mLUtils = LUtils.getInstance(this@GeneralInsertSearch)
-        isOnTablet = mLUtils.isOnTablet
+//        isOnTablet = mLUtils.isOnTablet
         hasThreeColumns = mLUtils.hasThreeColumns
         isGridLayout = mLUtils.isGridLayout
-        if (isOnTablet)
+        if (mLUtils.isOnTablet)
             tabletToolbarBackground?.setBackgroundColor(themeUtils!!.primaryColor())
         else
             material_tabs.setBackgroundColor(themeUtils!!.primaryColor())
