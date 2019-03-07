@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4402"
+    <release versionCode="4432"
         date="Marzo 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANTE[/b]: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le
             modifiche sono solo "sotto il cofano". Puoi caricare un nuovo backup da uno dei tuoi
-            dispositivi.
+            dispositivi
         </new>
         <bugfix>Bugfixes</bugfix>
+        <info>Cambiato link del canto "Perchè le genti congiurano"</info>
     </release>
 
     <release versionCode="0"

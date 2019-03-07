@@ -76,13 +76,13 @@ object Utility {
             link
         else {
             return when {
-                link.indexOf(".com") > 0 -> {
+                link.indexOf("resuscicanti") > 0 -> {
                     val start = link.indexOf(".com/")
                     link.substring(start + 5).replace("%20".toRegex(), "_")
                 }
-                link.indexOf("ITALIANO/") > 0 -> {
-                    val start = link.indexOf("ITALIANO/")
-                    link.substring(start + 9).replace("%20".toRegex(), "_")
+                link.indexOf("marbat87") > 0 -> {
+                    val start = link.indexOf("audio/")
+                    link.substring(start + 6).replace("%20".toRegex(), "_")
                 }
                 else -> link
             }
@@ -95,13 +95,13 @@ object Utility {
             link
         else {
             when {
-                link.indexOf(".com") > 0 -> {
+                link.indexOf("resuscicanti") > 0 -> {
                     val start = link.indexOf(".com/")
                     link.substring(start + 5)
                 }
-                link.indexOf("ITALIANO/") > 0 -> {
-                    val start = link.indexOf("ITALIANO/")
-                    link.substring(start + 9)
+                link.indexOf("marbat87") > 0 -> {
+                    val start = link.indexOf("audio/")
+                    link.substring(start + 6)
                 }
                 else -> link
             }
