@@ -917,7 +917,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     .content(R.string.download_running)
                     .progressIndeterminate(false)
                     .progressMax(100)
-                    .positiveButton(android.R.string.cancel)
+                    .positiveButton(R.string.cancel)
                     .show()
             val i = Intent(applicationContext, DownloadService::class.java)
             i.action = DownloadService.ACTION_DOWNLOAD
@@ -939,7 +939,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .content(R.string.download_running)
                 .progressIndeterminate(false)
                 .progressMax(100)
-                .positiveButton(android.R.string.cancel)
+                .positiveButton(R.string.cancel)
                 .show()
         val i = Intent(applicationContext, DownloadService::class.java)
         i.action = DownloadService.ACTION_DOWNLOAD
@@ -1648,7 +1648,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .title(R.string.dialog_delete_mp3_title)
                                 .content(R.string.dialog_delete_mp3)
                                 .positiveButton(R.string.delete_confirm)
-                                .negativeButton(android.R.string.cancel)
+                                .negativeButton(R.string.cancel)
                                 .show()
                     } else {
                         SimpleDialogFragment.Builder(
@@ -1656,7 +1656,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .title(R.string.dialog_delete_link_title)
                                 .content(R.string.dialog_delete_link)
                                 .positiveButton(R.string.unlink_confirm)
-                                .negativeButton(android.R.string.cancel)
+                                .negativeButton(R.string.cancel)
                                 .show()
                     }
                     true
@@ -1668,7 +1668,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .title(R.string.save_file)
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
-                            .negativeButton(android.R.string.cancel)
+                            .negativeButton(R.string.cancel)
                             .show()
                     true
                 }
@@ -1679,7 +1679,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .title(R.string.only_link_title)
                             .content(R.string.only_link)
                             .positiveButton(R.string.associate_confirm)
-                            .negativeButton(android.R.string.cancel)
+                            .negativeButton(R.string.cancel)
                             .show()
                     true
                 }

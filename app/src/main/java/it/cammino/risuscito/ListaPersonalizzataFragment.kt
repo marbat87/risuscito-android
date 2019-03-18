@@ -319,7 +319,7 @@ class ListaPersonalizzataFragment : Fragment() {
                                 R.string.song_removed,
                                 Snackbar.LENGTH_LONG)
                                 .setAction(
-                                        getString(android.R.string.cancel).toUpperCase()
+                                        getString(R.string.cancel).toUpperCase()
                                 ) {
                                     mCantiViewModel!!.listaPersonalizzata!!.addCanto(cantoDaCanc, posizioneDaCanc)
                                     runUpdate()

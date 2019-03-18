@@ -88,7 +88,7 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
                 .withMinVersionToShow(getVersionCodeWrapper())     // provide a number and the log will only show changelog rows for versions equal or higher than this number
                 .withManagedShowOnStart(context!!.getSharedPreferences("com.michaelflisar.changelog", 0).getInt("changelogVersion", -1) != -1)  // library will take care to show activity/dialog only if the changelog has new infos and will only show this new infos
                 .withTitle(getString(R.string.dialog_change_title)) // provide a custom title if desired, default one is "Changelog <VERSION>"
-                .withOkButtonLabel(getString(android.R.string.ok)) // provide a custom ok button text if desired, default one is "OK"
+                .withOkButtonLabel(getString(R.string.ok)) // provide a custom ok button text if desired, default one is "OK"
                 .buildAndShowDialog(mMainActivity, ThemeUtils.isDarkMode(mMainActivity!!)) // second parameter defines, if the dialog has a dark or light theme
     }
 

@@ -305,4 +305,8 @@
     <string name="unlink_confirm">scollega</string>
     <string name="create_confirm">crea</string>
     <string name="title_filter">filtra per titolo</string>
+    <string name="cancel">annulla</string>
+    <string name="ok">OK</string>
+    <string name="import_confirm">importa</string>
 </resources>
+

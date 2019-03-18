@@ -179,7 +179,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                         .title(R.string.dialog_reset_history_title)
                         .content(R.string.dialog_reset_history_desc)
                         .positiveButton(R.string.clear_confirm)
-                        .negativeButton(android.R.string.cancel)
+                        .negativeButton(R.string.cancel)
                         .show()
                 return true
             }

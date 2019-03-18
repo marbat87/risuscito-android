@@ -289,4 +289,7 @@ Do you want to proceed?</string>
     <string name="unlink_confirm">disconnect</string>
     <string name="create_confirm">create</string>
     <string name="title_filter">filter by title</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="import_confirm">import</string>
 </resources>

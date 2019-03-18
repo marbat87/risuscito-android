@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
+import android.os.SystemClock
 import android.preference.PreferenceManager
 import android.util.Log
 import android.util.SparseArray
@@ -55,6 +56,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     private var mMainActivity: MainActivity? = null
     private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
+    var snackBar: Snackbar? = null
+    private var mLastClickTime: Long = 0
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils!!
@@ -162,7 +165,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
                 startActivityForResult(
                         Intent(activity, CreaListaActivity::class.java).putExtras(bundle), TAG_CREA_LISTA)
-//                activity!!.overridePendingTransition(R.anim.slide_in_bottom, R.anim.hold_on)
                 Animatoo.animateSlideUp(activity)
             }
         }
@@ -192,8 +194,11 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                     + "'!",
                             Snackbar.LENGTH_LONG)
                             .setAction(
-                                    getString(android.R.string.cancel).toUpperCase()
+                                    getString(R.string.cancel).toUpperCase()
                             ) {
+                                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
+                                    return@setAction
+                                mLastClickTime = SystemClock.elapsedRealtime()
                                 mCustomListsViewModel!!.indexToShow = mCustomListsViewModel!!.listaDaCanc + 2
                                 movePage = true
                                 ioThread {
@@ -205,8 +210,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                     listaToRestore.lista = mCustomListsViewModel!!.celebrazioneDaCanc
                                     mListePersDao.insertLista(listaToRestore)
                                 }
-                            }
-                            .show()
+                            }.show()
                 }
         }
     }
@@ -371,7 +375,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             .title(R.string.dialog_reset_list_title)
                             .content(R.string.reset_list_question)
                             .positiveButton(R.string.reset_confirm)
-                            .negativeButton(android.R.string.cancel)
+                            .negativeButton(R.string.cancel)
                             .show()
                     true
                 }
@@ -381,7 +385,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             (activity as AppCompatActivity?)!!, this@CustomLists, "NEW_LIST")
                             .title(R.string.lista_add_desc)
                             .positiveButton(R.string.create_confirm)
-                            .negativeButton(android.R.string.cancel)
+                            .negativeButton(R.string.cancel)
                             .show()
                     true
                 }
@@ -421,7 +425,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 .title(R.string.action_remove_list)
                                 .content(R.string.delete_list_dialog)
                                 .positiveButton(R.string.delete_confirm)
-                                .negativeButton(android.R.string.cancel)
+                                .negativeButton(R.string.cancel)
                                 .show()
                     }
                     true

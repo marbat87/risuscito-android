@@ -296,4 +296,7 @@
     <string name="unlink_confirm">від\'єднати</string>
     <string name="create_confirm">створити</string>
     <string name="title_filter">фільтрувати за назвою</string>
+    <string name="cancel">скасувати</string>
+    <string name="ok">OK</string>
+    <string name="import_confirm">імпортувати</string>
 </resources>

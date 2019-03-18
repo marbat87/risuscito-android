@@ -110,7 +110,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     .title(R.string.posizione_rename)
                     .prefill(item.name.text.toString())
                     .positiveButton(R.string.aggiungi_rename)
-                    .negativeButton(android.R.string.cancel)
+                    .negativeButton(R.string.cancel)
                     .show()
             false
         }
@@ -188,7 +188,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     this@CreaListaActivity, this@CreaListaActivity, "ADD_POSITION")
                     .title(R.string.posizione_add_desc)
                     .positiveButton(R.string.aggiungi_confirm)
-                    .negativeButton(android.R.string.cancel)
+                    .negativeButton(R.string.cancel)
                     .show()
         }
 

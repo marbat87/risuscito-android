@@ -40,13 +40,13 @@ class ImportActivity : AppCompatActivity() {
                     .show {
                         title(R.string.app_name)
                         message(R.string.dialog_import)
-                        positiveButton(android.R.string.yes) {
+                        positiveButton(R.string.import_confirm) {
                             val i = Intent(this@ImportActivity, XmlImportService::class.java)
                             i.action = XmlImportService.ACTION_URL
                             i.data = data
                             startService(i)
                         }
-                        negativeButton(android.R.string.cancel) {
+                        negativeButton(R.string.cancel) {
                             finish()
                         }
                         cancelable(false)

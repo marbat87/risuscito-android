@@ -130,7 +130,7 @@ object ListeUtils {
                                             + titoloPresente
                                             + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace)))
                             .positiveButton(R.string.replace_confirm)
-                            .negativeButton(android.R.string.cancel)
+                            .negativeButton(R.string.cancel)
                             .show()
                 } else
                     Snackbar.make(fragmentReference.get()!!.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
@@ -199,7 +199,7 @@ object ListeUtils {
             super.onPostExecute(result)
             if (withUndo)
                 Snackbar.make(fragmentReference.get()!!.view!!, fragmentReference.get()!!.resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
-                        .setAction(fragmentReference.get()!!.getString(android.R.string.cancel).toUpperCase()) {
+                        .setAction(fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()) {
                             for (removedItem in mRemovedItems)
                                 UpdateFavoriteTask(fragmentReference.get()!!, false, removedItem.id).execute()
                         }.show()
@@ -262,7 +262,7 @@ object ListeUtils {
                                     + fragmentReference.get()!!.resources.getString(LUtils.getResId(titoloPresente, R.string::class.java))
                                     + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace)))
                     .positiveButton(R.string.replace_confirm)
-                    .negativeButton(android.R.string.cancel)
+                    .negativeButton(R.string.cancel)
                     .show()
         }
     }
@@ -356,7 +356,7 @@ object ListeUtils {
                     R.string.song_removed,
                     Snackbar.LENGTH_LONG)
                     .setAction(
-                            fragmentReference.get()!!.getString(android.R.string.cancel).toUpperCase()
+                            fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()
                     ) {
                         ReinsertPositionTask(fragmentReference.get()!!, idLista, posizioneDaCanc, idDaCanc, timestampDaCanc).execute()
                     }
@@ -397,7 +397,7 @@ object ListeUtils {
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
             Snackbar.make(fragmentReference.get()!!.view!!, fragmentReference.get()!!.resources.getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
-                    .setAction(fragmentReference.get()!!.getString(android.R.string.cancel).toUpperCase()) {
+                    .setAction(fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()) {
                         for (removedItem in mRemovedItems)
                             UpdateHistoryTask(fragmentReference.get()!!, removedItem.id, removedItem.timestamp!!.text.toString()).execute()
                     }.show()
