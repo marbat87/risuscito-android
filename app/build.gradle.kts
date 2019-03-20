@@ -51,13 +51,11 @@ android {
 
 val supportVersion = "1.0.0"
 val preferenceFixVersion = "1.0.0"
-val lifecycleVersion = "1.1.1"
-val roomVersion = "1.1.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.afollestad.material-dialogs:core:2.1.0")
-    implementation("com.afollestad.material-dialogs:input:2.1.0")
-    implementation("com.afollestad.material-dialogs:files:2.1.0")
+    implementation("com.afollestad.material-dialogs:core:2.3.0")
+    implementation("com.afollestad.material-dialogs:input:2.3.0")
+    implementation("com.afollestad.material-dialogs:files:2.3.0")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:6.1.2")
     implementation("com.mikepenz:crossfader:1.6.0")
@@ -88,7 +86,6 @@ dependencies {
     implementation("pub.devrel:easypermissions:3.0.0")
     implementation("androidx.room:room-runtime:2.0.0")
     kapt("androidx.room:room-compiler:2.0.0")
-    // ViewModel and LiveData
     implementation("androidx.lifecycle:lifecycle-extensions:2.0.0")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("androidx.core:core-ktx:1.0.1")
