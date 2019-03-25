@@ -20,10 +20,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
-import com.mikepenz.fastadapter.listeners.OnClickListener
-import com.mikepenz.fastadapter.listeners.OnLongClickListener
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
@@ -40,6 +38,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mFavoritesViewModel: FavoritesViewModel? = null
     private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
+    private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
@@ -83,58 +82,67 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity!!.enableBottombar(false)
         mMainActivity!!.enableFab(false)
 
-        val mOnPreClickListener = OnClickListener<SimpleItem> { _, _, _, i ->
-            Log.d(TAG, "onClick: 2")
+        cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
+            var consume = false
             if (MaterialCab.isActive) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
-                    return@OnClickListener true
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    cantoAdapter
+                            .getAdapterItem(position)
+                            .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
+                    cantoAdapter.notifyAdapterItemChanged(position)
+//                    if ((cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))?.selectedItems!!.size == 0)
+                    if (selectExtension?.selectedItems!!.size == 0)
+                        MaterialCab.destroy()
+                    else
+                        startCab()
+                }
+                consume = true
+            }
+            consume
+        }
+
+        cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            var consume = false
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                cantoAdapter
-                        .getAdapterItem(i)
-                        .withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected)
-                cantoAdapter.notifyAdapterItemChanged(i)
-                if ((cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))?.selectedItems!!.size == 0)
-                    MaterialCab.destroy()
-                else
-                    startCab()
-                return@OnClickListener true
+                val bundle = Bundle()
+                bundle.putCharSequence("pagina", item.source!!.text)
+                bundle.putInt("idCanto", item.id)
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle)
+                consume = true
             }
-            false
+            consume
         }
 
-        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source!!.text)
-            bundle.putInt("idCanto", item.id)
-
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle)
+        cantoAdapter.onPreLongClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
+            if (!MaterialCab.isActive) {
+                if (!mMainActivity!!.isOnTablet)
+                    activity!!.toolbar_layout!!.setExpanded(true, true)
+                cantoAdapter.getAdapterItem(position).isSelected = true
+                cantoAdapter.notifyAdapterItemChanged(position)
+                startCab()
+            }
             true
         }
 
-        val mOnPreLongClickListener = OnLongClickListener<SimpleItem> { _, _, _, i ->
-            if (MaterialCab.isActive) return@OnLongClickListener true
-            if (!mMainActivity!!.isOnTablet) {
-                activity!!.toolbar_layout!!.setExpanded(true, true)
-            }
-            cantoAdapter.getAdapterItem(i).withSetSelected(true)
-            cantoAdapter.notifyAdapterItemChanged(i)
-            startCab()
-            true
-        }
+        selectExtension = SelectExtension(cantoAdapter)
+        selectExtension!!.isSelectable = true
+        selectExtension!!.multiSelect = true
+        selectExtension!!.selectOnLongClick = true
+        selectExtension!!.deleteAllSelectedItems()
 
         cantoAdapter
-                .withSelectable(true)
-                .withMultiSelect(true)
-                .withSelectOnLongClick(true)
-                .withOnPreClickListener(mOnPreClickListener)
-                .withOnClickListener(mOnClickListener)
-                .withOnPreLongClickListener(mOnPreLongClickListener)
+//                .withSelectable(true)
+//                .withMultiSelect(true)
+//                .withSelectOnLongClick(true)
+//                .withOnPreClickListener(mOnPreClickListener)
+//                .withOnClickListener(mOnClickListener)
+//                .withOnPreLongClickListener(mOnPreLongClickListener)
                 .setHasStableIds(true)
-        FastAdapterDiffUtil.set(cantoAdapter, mFavoritesViewModel!!.titoli)
-        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deleteAllSelectedItems()
+//        FastAdapterDiffUtil[cantoAdapter.itemAdapter] = mFavoritesViewModel!!.titoli
+//        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deleteAllSelectedItems()
 
         favouritesList!!.adapter = cantoAdapter
         val llm = if (mMainActivity!!.isGridLayout)
@@ -165,8 +173,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity, R.menu.clean_list_menu, menu)
-        menu!!.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
+                activity!!.menuInflater, activity!!, R.menu.clean_list_menu, menu!!)
+        menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -213,7 +221,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+            //            val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+            val itemSelectedCount = selectExtension!!
                     .selectedItems
                     .size
             title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
@@ -231,7 +240,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        ListeUtils.removeFavoritesWithUndo(this@FavouritesActivity, (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+//                        ListeUtils.removeFavoritesWithUndo(this@FavouritesActivity, (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
+                        ListeUtils.removeFavoritesWithUndo(this@FavouritesActivity, selectExtension!!
                                 .selectedItems)
                         actionModeOk = true
                         MaterialCab.destroy()
@@ -245,7 +255,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 if (!actionModeOk) {
                     try {
-                        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+//                        (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!.deselect()
+                        selectExtension!!.deselect()
                     } catch (e: Exception) {
                         Crashlytics.logException(e)
                     }
@@ -281,7 +292,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                                     )
                                 }
                                 mFavoritesViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
-                                FastAdapterDiffUtil.set(cantoAdapter, mFavoritesViewModel!!.titoli)
+                                cantoAdapter.set(mFavoritesViewModel!!.titoli)
+//                                FastAdapterDiffUtil[cantoAdapter.itemAdapter] = mFavoritesViewModel!!.titoli
                                 no_favourites!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                                 activity!!.invalidateOptionsMenu()
                             }

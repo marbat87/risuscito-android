@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
@@ -39,12 +39,12 @@ import java.lang.ref.WeakReference
 
 class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
-    internal lateinit var cantoAdapter: FastItemAdapter<SimpleItem>
+    internal val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
 
     // create boolean for fetching data
     private var isViewShown = true
     private var rootView: View? = null
-    private var titoli: MutableList<SimpleItem> = ArrayList()
+    private val titoli: MutableList<SimpleItem> = ArrayList()
     private var listePersonalizzate: List<ListaPers>? = null
     private var searchTask: SearchTask? = null
     private var mLUtils: LUtils? = null
@@ -91,21 +91,21 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         consegnati_only_view.visibility = View.GONE
         ricerca_subtitle.text = getString(R.string.fast_search_subtitle)
 
-        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source!!.text)
-            bundle.putInt("idCanto", item.id)
-
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle)
-            true
+        cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            var consume = false
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                val bundle = Bundle()
+                bundle.putCharSequence("pagina", item.source!!.text)
+                bundle.putInt("idCanto", item.id)
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle)
+                consume = true
+            }
+            consume
         }
 
-        cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
-        cantoAdapter.withOnClickListener(mOnClickListener)
 
         matchedList.adapter = cantoAdapter
         val mMainActivity = activity as MainActivity?
@@ -153,21 +153,6 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         mActivity = activity as Activity
     }
 
-    /**
-     * Set a hint to the system about whether this fragment's UI is currently visible to the user.
-     * This hint defaults to true and is persistent across fragment instance state save and restore.
-     *
-     *
-     *
-     *
-     *
-     * An app may set this to false to indicate that the fragment's UI is scrolled out of
-     * visibility or is otherwise not directly visible to the user. This may be used by the system to
-     * prioritize operations such as fragment lifecycle updates or loader ordering behavior.
-     *
-     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
-     * false if it is not.
-     */
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
@@ -194,7 +179,6 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
-//        if (listePersonalizzate != null) {
         listePersonalizzate?.let {
             for (i in it.indices) {
                 val subMenu = menu.addSubMenu(
@@ -382,10 +366,10 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                     .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
                     .forEach {
                         if (isCancelled) {
-                            fragmentReference.get()!!.titoli.clear()
+                            fragmentReference.get()?.titoli?.clear()
                             return 0
                         }
-                        fragmentReference.get()!!.titoli.add(
+                        fragmentReference.get()?.titoli?.add(
                                 SimpleItem()
                                         .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
                                         .withColor(it.color!!)
@@ -414,7 +398,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
                 fragmentReference.get()?.titoli?.clear()
                 return
             }
-            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
+            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli!!.toList())
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE

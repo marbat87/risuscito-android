@@ -20,9 +20,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.crashlytics.android.Crashlytics
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.listeners.OnClickListener
-import com.mikepenz.fastadapter.listeners.OnLongClickListener
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
@@ -36,11 +35,11 @@ import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_history.*
 
-@Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private var mCronologiaViewModel: CronologiaViewModel? = null
     private var cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
+    private var selectExtension: SelectExtension<SimpleHistoryItem>? = null
 
     private var actionModeOk: Boolean = false
 
@@ -81,62 +80,70 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity!!.enableBottombar(false)
         mMainActivity!!.enableFab(false)
 
-        val mOnPreClickListener = OnClickListener<SimpleHistoryItem> { _, iAdapter, item, i ->
-            Log.d(TAG, "mOnPreClickListener: MaterialCab.isActive ${MaterialCab.isActive}")
+        cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
+            var consume = false
             if (MaterialCab.isActive) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY_SELECTION)
-                    return@OnClickListener true
-                mLastClickTime = SystemClock.elapsedRealtime()
-
-                cantoAdapter
-                        .getAdapterItem(i)
-                        .withSetSelected(!cantoAdapter.getAdapterItem(i).isSelected)
-                cantoAdapter.notifyAdapterItemChanged(i)
-                if ((cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
-                                .selectedItems
-                                .size == 0)
-                    MaterialCab.destroy()
-                else
-                    startCab()
-                return@OnClickListener true
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    cantoAdapter
+                            .getAdapterItem(position)
+                            .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
+                    cantoAdapter.notifyAdapterItemChanged(position)
+//                    if ((cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))?.selectedItems!!.size == 0)
+                    if (selectExtension?.selectedItems!!.size == 0)
+                        MaterialCab.destroy()
+                    else
+                        startCab()
+                }
+                consume = true
             }
-            false
+            consume
         }
 
-        val mOnClickListener = OnClickListener<SimpleHistoryItem> { mView, _, item, _ ->
-            Log.d(TAG, "mOnClickListener: MaterialCab.isActive ${MaterialCab.isActive}")
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source!!.text)
-            bundle.putInt("idCanto", item.id)
 
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle)
-            true
+        cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, item: SimpleHistoryItem, _: Int ->
+            var consume = false
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                val bundle = Bundle()
+                bundle.putCharSequence("pagina", item.source!!.text)
+                bundle.putInt("idCanto", item.id)
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle)
+                consume = true
+            }
+            consume
         }
 
-        val mOnPreLongClickListener = OnLongClickListener<SimpleHistoryItem> { _, _, _, i ->
-            if (MaterialCab.isActive) return@OnLongClickListener true
-            if (!mMainActivity!!.isOnTablet)
-                activity!!.toolbar_layout!!.setExpanded(true, true)
-            cantoAdapter.getAdapterItem(i).withSetSelected(true)
-            cantoAdapter.notifyAdapterItemChanged(i)
-            startCab()
+        cantoAdapter.onPreLongClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
+            if (!MaterialCab.isActive) {
+                if (!mMainActivity!!.isOnTablet)
+                    activity!!.toolbar_layout!!.setExpanded(true, true)
+                cantoAdapter.getAdapterItem(position).isSelected = true
+                cantoAdapter.notifyAdapterItemChanged(position)
+                startCab()
+            }
             true
         }
 
         cantoAdapter
-                .withSelectable(true)
-                .withMultiSelect(true)
-                .withSelectOnLongClick(true)
-                .withOnPreClickListener(mOnPreClickListener)
-                .withOnClickListener(mOnClickListener)
-                .withOnPreLongClickListener(mOnPreLongClickListener)
+//                .withSelectable(true)
+//                .withMultiSelect(true)
+//                .withSelectOnLongClick(true)
+//                .withOnPreClickListener(mOnPreClickListener)
+//                .withOnClickListener(mOnClickListener)
+//                .withOnPreLongClickListener(mOnPreLongClickListener)
                 .setHasStableIds(true)
         cantoAdapter.set(mCronologiaViewModel!!.titoli)
-        (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::
-        class.java))!!.deleteAllSelectedItems()
+
+        selectExtension = SelectExtension(cantoAdapter)
+        selectExtension!!.isSelectable = true
+        selectExtension!!.multiSelect = true
+        selectExtension!!.selectOnLongClick = true
+        selectExtension!!.deleteAllSelectedItems()
+
+//        (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::
+//        class.java))!!.deleteAllSelectedItems()
 
         history_recycler!!.adapter = cantoAdapter
         val llm = if (mMainActivity!!.isGridLayout)
@@ -166,8 +173,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity, R.menu.clean_list_menu, menu)
-        menu!!.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
+                activity!!.menuInflater, activity!!, R.menu.clean_list_menu, menu!!)
+        menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -213,7 +220,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+            //            val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+            val itemSelectedCount = selectExtension!!
                     .selectedItems
                     .size
             title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
@@ -231,7 +239,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        ListeUtils.removeHistoriesWithUndo(this@HistoryFragment, (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
+                        ListeUtils.removeHistoriesWithUndo(this@HistoryFragment, selectExtension!!
                                 .selectedItems)
                         actionModeOk = true
                         MaterialCab.destroy()
@@ -241,11 +249,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 }
             }
 
-            onDestroy { cab ->
+            onDestroy {
                 Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 if (!actionModeOk) {
                     try {
-                        (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!.deselect()
+                        selectExtension!!.deselect()
                     } catch (e: Exception) {
                         Crashlytics.logException(e)
                     }

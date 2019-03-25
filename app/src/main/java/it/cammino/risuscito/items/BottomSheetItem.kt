@@ -9,7 +9,7 @@ import com.mikepenz.fastadapter.items.AbstractItem
 import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.bottom_item.view.*
 
-class BottomSheetItem : AbstractItem<BottomSheetItem, BottomSheetItem.ViewHolder>() {
+class BottomSheetItem : AbstractItem<BottomSheetItem.ViewHolder>() {
 
     var item: ResolveInfo? = null
         private set
@@ -24,30 +24,28 @@ class BottomSheetItem : AbstractItem<BottomSheetItem, BottomSheetItem.ViewHolder
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_bottom_item_id
-    }
+    override val type: Int
+        get() = R.id.fastadapter_bottom_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.bottom_item
-    }
+    override val layoutRes: Int
+        get() = R.layout.bottom_item
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
-        val pm = viewHolder.itemView.context.packageManager
-        viewHolder.mIcon!!.setImageDrawable(item!!.loadIcon(pm))
-        viewHolder.mLabel!!.text = item!!.loadLabel(pm)
+        val pm = holder.itemView.context.packageManager
+        holder.mIcon!!.setImageDrawable(item!!.loadIcon(pm))
+        holder.mLabel!!.text = item!!.loadLabel(pm)
 
     }
 

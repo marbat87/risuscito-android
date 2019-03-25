@@ -1,6 +1,7 @@
 package it.cammino.risuscito
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -20,9 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.colorInt
+import com.mikepenz.iconics.paddingDp
+import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.typeface.library.communitymaterial.CommunityMaterial
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem
@@ -134,7 +138,9 @@ class CantiParolaFragment : Fragment() {
                     val bundle = Bundle()
                     bundle.putInt("fromAdd", 1)
                     bundle.putInt("idLista", 1)
-                    bundle.putInt("position", Integer.valueOf(parent.text_id_posizione.text.toString()))
+                    bundle.putInt(
+                            "position",
+                            Integer.valueOf(parent.text_id_posizione.text.toString()))
                     startSubActivity(bundle)
                 }
             }
@@ -246,7 +252,6 @@ class CantiParolaFragment : Fragment() {
         val bundle = Bundle()
         bundle.putString("pagina", v.text_source_canto.text.toString())
         bundle.putInt("idCanto", Integer.valueOf(v.text_id_canto_card.text.toString()))
-
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
         mLUtils!!.startActivityWithTransition(intent)
@@ -332,11 +337,11 @@ class CantiParolaFragment : Fragment() {
                 menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon2.cmd_shuffle)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(android.R.color.white)
+                        .colorInt(Color.WHITE)
                 menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(android.R.color.white)
+                        .colorInt(Color.WHITE)
             }
 
             onSelection { item ->

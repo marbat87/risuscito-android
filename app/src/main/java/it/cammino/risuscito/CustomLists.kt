@@ -31,8 +31,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.colorInt
+import com.mikepenz.iconics.paddingDp
+import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.typeface.library.communitymaterial.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -56,7 +59,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     private var mMainActivity: MainActivity? = null
     private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
-    var snackBar: Snackbar? = null
     private var mLastClickTime: Long = 0
 
     private val themeUtils: ThemeUtils
@@ -116,7 +118,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity, R.menu.help_menu, menu)
+                activity!!.menuInflater, activity!!, R.menu.help_menu, menu!!)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -362,7 +364,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     fun initFabOptions(customList: Boolean) {
         val icon = IconicsDrawable(activity!!)
                 .icon(CommunityMaterial.Icon2.cmd_plus)
-                .color(Color.WHITE)
+                .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4)
 

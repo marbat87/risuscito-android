@@ -23,8 +23,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
@@ -44,7 +44,7 @@ import java.lang.ref.WeakReference
 
 class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
-    internal lateinit var cantoAdapter: FastItemAdapter<SimpleItem>
+    internal val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private lateinit var aTexts: Array<Array<String?>>
 
     // create boolean for fetching data
@@ -100,21 +100,23 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         consegnati_only_view.visibility = View.GONE
         ricerca_subtitle.text = getString(R.string.advanced_search_subtitle)
 
-        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source!!.text)
-            bundle.putInt("idCanto", item.id)
-
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle)
-            true
+        cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            var consume = false
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                val bundle = Bundle()
+                bundle.putCharSequence("pagina", item.source!!.text)
+                bundle.putInt("idCanto", item.id)
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle)
+                consume = true
+            }
+            consume
         }
 
-        cantoAdapter = FastItemAdapter()
+//        cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
-        cantoAdapter.withOnClickListener(mOnClickListener)
+//        cantoAdapter.withOnClickListener(mOnClickListener)
 
         matchedList.adapter = cantoAdapter
         val mMainActivity = activity as MainActivity?
@@ -457,7 +459,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                 fragmentReference.get()?.titoli?.clear()
                 return
             }
-            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
+            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli!!.toList())
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE

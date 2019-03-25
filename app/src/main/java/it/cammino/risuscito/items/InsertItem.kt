@@ -16,7 +16,7 @@ import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.row_item_to_insert.view.*
 
 @Suppress("unused")
-class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
+class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
@@ -74,7 +74,7 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
 
     fun withId(id: Int): InsertItem {
         this.id = id
-        super.withIdentifier(id.toLong())
+        identifier = id.toLong()
         return this
     }
 
@@ -107,29 +107,27 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_insert_item_id
-    }
+    override val type: Int
+        get() = R.id.fastadapter_insert_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.row_item_to_insert
-    }
+    override val layoutRes: Int
+        get() = R.layout.row_item_to_insert
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
         //set the text for the name
-        if (!filter.isNullOrEmpty()) {
+        if (filter != null && !filter!!.isEmpty()) {
             val mPosition = normalizedTitle!!.toLowerCase().indexOf(filter!!)
             if (mPosition >= 0) {
                 val stringTitle = title!!.text.toString()
@@ -138,14 +136,14 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
                         .append(stringTitle.substring(mPosition, mPosition + filter!!.length))
                         .append("</b>")
                         .append(stringTitle.substring(mPosition + filter!!.length))
-                viewHolder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                holder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted.toString())
             } else
-                StringHolder.applyTo(title, viewHolder.mTitle)
+                StringHolder.applyTo(title, holder.mTitle)
         } else
-            StringHolder.applyTo(title, viewHolder.mTitle)
+            StringHolder.applyTo(title, holder.mTitle)
         //set the text for the description or hide
-        StringHolder.applyToOrHide(page, viewHolder.mPage)
-        val bgShape = viewHolder.mPage!!.background as GradientDrawable
+        StringHolder.applyToOrHide(page, holder.mPage)
+        val bgShape = holder.mPage!!.background as GradientDrawable
         bgShape.setColor(color!!.colorInt)
 
     }

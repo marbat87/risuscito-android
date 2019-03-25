@@ -8,6 +8,6 @@ import java.util.ArrayList
 
 class ArgumentIndexViewModel(application: Application) : GenericIndexViewModel(application) {
 
-    var titoliList: ArrayList<IItem<*, *>> = ArrayList()
+    var titoliList: ArrayList<IItem<*>> = ArrayList()
 
 }

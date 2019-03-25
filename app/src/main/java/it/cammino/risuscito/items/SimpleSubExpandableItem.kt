@@ -1,135 +1,120 @@
 package it.cammino.risuscito.items
 
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import com.mikepenz.fastadapter.IExpandable
-import com.mikepenz.fastadapter.IItem
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.IClickable
 import com.mikepenz.fastadapter.ISubItem
-import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
-import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialdrawer.holder.StringHolder
 import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.list_group_item.view.*
 
-@Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA", "unused")
-class SimpleSubExpandableItem<Parent, SubItem> : AbstractExpandableItem<SimpleSubExpandableItem<Parent, SubItem>, SimpleSubExpandableItem.ViewHolder, SubItem>() where Parent : IItem<*, *>, Parent : IExpandable<*, *>, SubItem : IItem<*, *>, SubItem : ISubItem<*, *> {
+@Suppress("unused")
+class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.ViewHolder>(), IClickable<SimpleSubExpandableItem>, ISubItem<SimpleSubExpandableItem.ViewHolder> {
 
-    var title: StringHolder? = null
-        private set
+    private var title: StringHolder? = null
     private var subTitle: StringHolder? = null
+    var position: Int = 0
+        private set
 
-    private var mOnClickListener: OnClickListener<SimpleSubExpandableItem<Parent, SubItem>>? = null
-    // we define a clickListener in here so we can directly animate
-    private val onClickListener = OnClickListener<SimpleSubExpandableItem<Parent, SubItem>> { v, adapter, item, position ->
-        if (item.subItems != null) {
-            if (!item.isExpanded) {
-                ViewCompat.animate(v!!.group_indicator).rotation(180f).start()
-            } else {
-                ViewCompat.animate(v!!.group_indicator).rotation(0f).start()
-            }
+    private var mOnClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = null
 
-            return@OnClickListener mOnClickListener == null || mOnClickListener!!.onClick(v, adapter, item, position)
+    override var onItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = { v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int ->
+        if (!item.isExpanded) {
+            ViewCompat.animate(v!!.group_indicator).rotation(180f).start()
+        } else {
+            ViewCompat.animate(v!!.group_indicator).rotation(0f).start()
+        }
+        mOnClickListener?.invoke(v, adapter, item, position) ?: true
+    }
+        set(onClickListener) {
+            this.mOnClickListener = onClickListener // on purpose
+            field = onClickListener
         }
 
-        mOnClickListener != null && mOnClickListener!!.onClick(v, adapter, item, position)
-    }
+    override var onPreItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = null
 
-    fun withTitle(title: String): SimpleSubExpandableItem<Parent, SubItem> {
+    fun withTitle(title: String): SimpleSubExpandableItem {
         this.title = StringHolder(title)
         return this
     }
 
-    fun withTitle(@StringRes titleRes: Int): SimpleSubExpandableItem<Parent, SubItem> {
+    fun withTitle(@StringRes titleRes: Int): SimpleSubExpandableItem {
         this.title = StringHolder(titleRes)
         return this
     }
 
-    fun withSubTitle(subTitle: String): SimpleSubExpandableItem<Parent, SubItem> {
+    fun withSubTitle(subTitle: String): SimpleSubExpandableItem {
         this.subTitle = StringHolder(subTitle)
         return this
     }
 
-    fun withSubTitle(@StringRes subTitleRes: Int): SimpleSubExpandableItem<Parent, SubItem> {
+    fun withSubTitle(@StringRes subTitleRes: Int): SimpleSubExpandableItem {
         this.subTitle = StringHolder(subTitleRes)
         return this
     }
 
-    fun getOnClickListener(): OnClickListener<SimpleSubExpandableItem<Parent, SubItem>>? {
-        return mOnClickListener
-    }
-
-    fun withOnClickListener(
-            mOnClickListener: OnClickListener<SimpleSubExpandableItem<Parent, SubItem>>): SimpleSubExpandableItem<Parent, SubItem> {
-        this.mOnClickListener = mOnClickListener
+    fun withPosition(position: Int): SimpleSubExpandableItem {
+        this.position = position
         return this
     }
 
-    /**
-     * we overwrite the item specific click listener so we can automatically animate within the item
-     *
-     * @return the FastAdapter.OnClickListener
-     */
-    override fun getOnItemClickListener(): OnClickListener<SimpleSubExpandableItem<Parent, SubItem>> {
-        return onClickListener
-    }
-
-    override fun isSelectable(): Boolean {
-        // this might not be true for your application
-        return subItems == null
-    }
+    override//this might not be true for your application
+    var isSelectable: Boolean
+        get() = false
+        set(value) {
+            super.isSelectable = value
+        }
 
     /**
      * defines the type defining this item. must be unique. preferably an id
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_expandable_item_id
-    }
+    override val type: Int
+        get() = R.id.fastadapter_expandable_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.list_group_item
-    }
+    override val layoutRes: Int
+        get() = R.layout.list_group_item
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
         // get the context
-        val ctx = viewHolder.itemView.context
+        val ctx = holder.itemView.context
 
         // set the background for the item
         ViewCompat.setBackground(
-                viewHolder.view,
+                holder.view,
                 FastAdapterUIUtils.getRippleDrawable(
-                        //            color.getColorInt(), ContextCompat.getColor(ctx, R.color.ripple_color),
-                        // 10));
                         ContextCompat.getColor(ctx, R.color.floating_background),
                         ContextCompat.getColor(ctx, R.color.ripple_color),
                         10))
         // set the text for the name
-        StringHolder.applyTo(title, viewHolder.mTitle)
-        StringHolder.applyToOrHide(subTitle, viewHolder.mSubTitle)
+        StringHolder.applyTo(title, holder.mTitle)
+        StringHolder.applyToOrHide(subTitle, holder.mSubTitle)
 
         if (isExpanded)
-            viewHolder.mIndicator!!.rotation = 0f
+            holder.mIndicator!!.rotation = 0f
         else
-            viewHolder.mIndicator!!.rotation = 180f
+            holder.mIndicator!!.rotation = 180f
     }
 
     override fun unbindView(holder: ViewHolder) {

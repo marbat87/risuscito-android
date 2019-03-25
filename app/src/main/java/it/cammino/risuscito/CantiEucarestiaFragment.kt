@@ -1,6 +1,7 @@
 package it.cammino.risuscito
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -18,9 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
+import com.mikepenz.iconics.*
+import com.mikepenz.iconics.typeface.library.communitymaterial.CommunityMaterial
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem
@@ -250,8 +251,11 @@ class CantiEucarestiaFragment : Fragment() {
 
     private fun openPagina(v: View) {
         val bundle = Bundle()
-        bundle.putString("pagina", v.text_source_canto.text.toString())
-        bundle.putInt("idCanto", Integer.valueOf(v.text_id_canto_card.text.toString()))
+        bundle.putString(
+                "pagina", v.text_source_canto.text.toString())
+        bundle.putInt(
+                "idCanto",
+                Integer.valueOf(v.text_id_canto_card.text.toString()))
 
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundle)
@@ -339,11 +343,11 @@ class CantiEucarestiaFragment : Fragment() {
                 menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon2.cmd_shuffle)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(android.R.color.white)
+                        .colorInt(Color.WHITE)
                 menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
                         .sizeDp(24)
                         .paddingDp(2)
-                        .colorRes(android.R.color.white)
+                        .colorInt(Color.WHITE)
             }
 
             onSelection { item ->

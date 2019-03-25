@@ -17,8 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
-import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.mikepenz.fastadapter.IAdapter
 import com.turingtechnologies.materialscrollbar.CustomIndicator
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -35,7 +34,7 @@ import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
-    private var mAdapter: FastScrollIndicatorAdapter<SimpleItem> = FastScrollIndicatorAdapter(1)
+    private var mAdapter: FastScrollIndicatorAdapter = FastScrollIndicatorAdapter(1)
 
     private var mCantiViewModel: NumericIndexViewModel? = null
     // create boolean for fetching data
@@ -72,22 +71,26 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source!!.text)
-            bundle.putInt("idCanto", item.id)
 
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle)
-            true
+        mAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            var consume = false
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                val bundle = Bundle()
+                bundle.putCharSequence("pagina", item.source!!.text)
+                bundle.putInt("idCanto", item.id)
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle)
+                consume = true
+            }
+            consume
         }
 
         val mMainActivity = activity as MainActivity?
 
-        mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
-        FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
+        mAdapter.setHasStableIds(true)
+//        FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
+        mAdapter.set(mCantiViewModel!!.titoli)
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         cantiList!!.layoutManager = if (mMainActivity.isGridLayout) glm else llm
@@ -142,13 +145,12 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
         mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
-//        if (listePersonalizzate != null) {
-        listePersonalizzate?.let {
-            for (i in it.indices) {
+        if (listePersonalizzate != null) {
+            for (i in listePersonalizzate!!.indices) {
                 val subMenu = menu.addSubMenu(
-                        ID_FITTIZIO, Menu.NONE, 10 + i, it[i].lista!!.name)
-                for (k in 0 until it[i].lista!!.numPosizioni) {
-                    subMenu.add(100 + i, k, k, it[i].lista!!.getNomePosizione(k))
+                        ID_FITTIZIO, Menu.NONE, 10 + i, listePersonalizzate!![i].lista!!.name)
+                for (k in 0 until listePersonalizzate!![i].lista!!.numPosizioni) {
+                    subMenu.add(100 + i, k, k, listePersonalizzate!![i].lista!!.getNomePosizione(k))
                 }
             }
         }
@@ -307,7 +309,8 @@ class NumericSectionFragment : HFFragment(), View.OnCreateContextMenuListener, S
                                             )
                                         }
                                 mCantiViewModel!!.titoli = newList
-                                FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
+//                                FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
+                                mAdapter.set(mCantiViewModel!!.titoli)
                                 dragScrollBar.setIndicator(CustomIndicator(context), true)
                                 dragScrollBar.setAutoHide(false)
                             }

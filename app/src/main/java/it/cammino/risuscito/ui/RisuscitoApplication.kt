@@ -28,9 +28,9 @@ class RisuscitoApplication : MultiDexApplication() {
                         Picasso.get().load(uri).placeholder(placeholder).into(imageView)
                     }
 
-                    override fun cancel(imageView: ImageView?) {
-                        Picasso.get().cancelRequest(imageView!!)
-                    }
+//                    override fun cancel(imageView: ImageView?) {
+//                        Picasso.get().cancelRequest(imageView!!)
+//                    }
                 })
     }
 }

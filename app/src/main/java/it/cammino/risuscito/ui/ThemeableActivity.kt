@@ -10,6 +10,7 @@ import android.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.ViewConfiguration
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -23,7 +24,6 @@ import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.mikepenz.iconics.context.IconicsLayoutInflater2
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -65,8 +65,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         setTaskDescriptionWrapper(themeUtils!!)
 
         // Iconic
-        LayoutInflaterCompat.setFactory2(
-                layoutInflater, IconicsLayoutInflater2(delegate))
+        layoutInflater.setIconicsFactory(delegate)
         super.onCreate(savedInstanceState)
     }
 
@@ -502,6 +501,15 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 ThemeableActivity.setSystemLocale(config, locale)
             else
                 ThemeableActivity.setSystemLocaleLegacy(config, locale)
+        }
+    }
+
+    private fun LayoutInflater.setIconicsFactory(appCompatDelegate: AppCompatDelegate) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LayoutInflaterCompat.setFactory2(this, IconicsLayoutInflater2(appCompatDelegate))
+        } else {
+            @Suppress("DEPRECATION")
+            LayoutInflaterCompat.setFactory(this, IconicsLayoutInflater(appCompatDelegate))
         }
     }
 }

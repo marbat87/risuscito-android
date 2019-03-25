@@ -2,22 +2,19 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
-import com.mikepenz.fastadapter.FastAdapter
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
-import com.mikepenz.fastadapter.listeners.ClickEventHook
-import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.checkable_row_item.view.*
 
-class CheckableItem : AbstractItem<CheckableItem, CheckableItem.ViewHolder>() {
+class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
@@ -60,7 +57,7 @@ class CheckableItem : AbstractItem<CheckableItem, CheckableItem.ViewHolder>() {
 
     fun withId(id: Int): CheckableItem {
         this.id = id
-        super.withIdentifier(id.toLong())
+        identifier = id.toLong()
         return this
     }
 
@@ -69,34 +66,32 @@ class CheckableItem : AbstractItem<CheckableItem, CheckableItem.ViewHolder>() {
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_checkable_item_id
-    }
+    override val type: Int
+        get() = R.id.fastadapter_checkable_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.checkable_row_item
-    }
+    override val layoutRes: Int
+        get() = R.layout.checkable_row_item
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
-        viewHolder.checkBox!!.isChecked = isSelected
+        holder.checkBox!!.isChecked = isSelected
 
         // set the text for the name
-        StringHolder.applyTo(title, viewHolder.mTitle)
+        StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
-        StringHolder.applyToOrHide(page, viewHolder.mPage)
-        val bgShape = viewHolder.mPage!!.background as GradientDrawable
+        StringHolder.applyToOrHide(page, holder.mPage)
+        val bgShape = holder.mPage!!.background as GradientDrawable
         bgShape.setColor(color!!.colorInt)
     }
 
@@ -124,14 +119,14 @@ class CheckableItem : AbstractItem<CheckableItem, CheckableItem.ViewHolder>() {
         }
     }
 
-    class CheckBoxClickEvent : ClickEventHook<CheckableItem>() {
-        override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
-            return (viewHolder as? CheckableItem.ViewHolder)?.checkBox
-        }
-
-        override fun onClick(
-                v: View, position: Int, fastAdapter: FastAdapter<CheckableItem>, item: CheckableItem) {
-            fastAdapter.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java)!!.toggleSelection(position)
-        }
-    }
+//    class CheckBoxClickEvent : ClickEventHook<CheckableItem>() {
+//        override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
+//            return (viewHolder as? CheckableItem.ViewHolder)?.checkBox
+//        }
+//
+//        override fun onClick(
+//                v: View, position: Int, fastAdapter: FastAdapter<CheckableItem>, item: CheckableItem) {
+//            fastAdapter.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java)!!.toggleSelection(position)
+//        }
+//    }
 }

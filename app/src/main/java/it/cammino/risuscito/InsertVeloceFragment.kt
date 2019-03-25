@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.FastAdapter
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
-import com.mikepenz.fastadapter.listeners.OnClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.InsertItem
@@ -34,9 +34,9 @@ import java.lang.ref.WeakReference
 
 class InsertVeloceFragment : Fragment() {
 
-    internal lateinit var cantoAdapter: FastItemAdapter<InsertItem>
+    internal val cantoAdapter: FastItemAdapter<InsertItem> = FastItemAdapter()
 
-    private var titoli: MutableList<InsertItem> = ArrayList()
+    private val titoli: MutableList<InsertItem> = ArrayList()
     private var searchTask: SearchTask? = null
     private var rootView: View? = null
     private var fromAdd: Int = 0
@@ -76,24 +76,26 @@ class InsertVeloceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ricerca_subtitle.text = getString(R.string.fast_search_subtitle)
-        val mOnClickListener = OnClickListener<InsertItem> { _, _, item, _ ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
-            mLastClickTime = SystemClock.elapsedRealtime()
 
-            if (fromAdd == 1)
-                ListeUtils.addToListaDupAndFinish(activity!!, idLista, listPosition, item.id)
-            else
-                ListeUtils.updateListaPersonalizzataAndFinish(activity!!, idLista, item.id, listPosition)
+        cantoAdapter.onClickListener = { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
 
+                if (fromAdd == 1) {
+                    ListeUtils.addToListaDupAndFinish(activity!!, idLista, listPosition, item.id)
+                } else {
+                    ListeUtils.updateListaPersonalizzataAndFinish(activity!!, idLista, item.id, listPosition)
+                }
+            }
             true
         }
 
-        val hookListener = object : ClickEventHook<InsertItem>() {
+        cantoAdapter.addEventHook(object : ClickEventHook<InsertItem>() {
             override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
                 return (viewHolder as? InsertItem.ViewHolder)?.mPreview
             }
 
-            override fun onClick(view: View, i: Int, fastAdapter: FastAdapter<InsertItem>, item: InsertItem) {
+            override fun onClick(v: View, position: Int, fastAdapter: FastAdapter<InsertItem>, item: InsertItem) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return
                 mLastClickTime = SystemClock.elapsedRealtime()
 
@@ -106,12 +108,9 @@ class InsertVeloceFragment : Fragment() {
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 startSubActivity(bundle)
             }
-        }
+        })
 
-        cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
-
-        cantoAdapter.withOnClickListener(mOnClickListener).withEventHook(hookListener)
 
         matchedList.adapter = cantoAdapter
         val mMainActivity = activity as GeneralInsertSearch?
@@ -242,10 +241,10 @@ class InsertVeloceFragment : Fragment() {
                     .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
                     .forEach {
                         if (isCancelled) {
-                            fragmentReference.get()!!.titoli.clear()
+                            fragmentReference.get()?.titoli?.clear()
                             return 0
                         }
-                        fragmentReference.get()!!.titoli.add(
+                        fragmentReference.get()?.titoli?.add(
                                 InsertItem()
                                         .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
                                         .withColor(it.color!!)
@@ -273,7 +272,7 @@ class InsertVeloceFragment : Fragment() {
                 fragmentReference.get()?.titoli?.clear()
                 return
             }
-            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli)
+            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli!!.toList())
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE

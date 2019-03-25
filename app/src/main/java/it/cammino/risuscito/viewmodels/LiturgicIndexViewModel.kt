@@ -6,5 +6,5 @@ import java.util.*
 
 class LiturgicIndexViewModel(application: Application) : GenericIndexViewModel(application) {
 
-    var titoliList: ArrayList<IItem<*, *>> = ArrayList()
+    var titoliList: ArrayList<IItem<*>> = ArrayList()
 }

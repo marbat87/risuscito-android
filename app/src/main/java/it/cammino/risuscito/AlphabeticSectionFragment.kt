@@ -17,8 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
-import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.mikepenz.fastadapter.IAdapter
 import com.turingtechnologies.materialscrollbar.CustomIndicator
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -35,7 +34,7 @@ import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
 
-    private var mAdapter: FastScrollIndicatorAdapter<SimpleItem> = FastScrollIndicatorAdapter(0)
+    private var mAdapter: FastScrollIndicatorAdapter = FastScrollIndicatorAdapter(0)
     private var mCantiViewModel: AlphabeticIndexViewModel? = null
     // create boolean for fetching data
     private var isViewShown = true
@@ -77,21 +76,25 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source!!.text)
-            bundle.putInt("idCanto", item.id)
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle)
-            true
+        mAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            var consume = false
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                val bundle = Bundle()
+                bundle.putCharSequence("pagina", item.source!!.text)
+                bundle.putInt("idCanto", item.id)
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle)
+                consume = true
+            }
+            consume
         }
 
         val mMainActivity = activity as MainActivity?
 
-        mAdapter.withOnClickListener(mOnClickListener).setHasStableIds(true)
-        FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
+        mAdapter.setHasStableIds(true)
+//        mAdapter.onClickListener = mOnClickListener
+        mAdapter.set(mCantiViewModel!!.titoli)
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
         cantiList!!.layoutManager = if (mMainActivity.isGridLayout) glm else llm
@@ -306,7 +309,7 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                                             )
                                         }
                                 mCantiViewModel!!.titoli = newList
-                                FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
+                                mAdapter.set(mCantiViewModel!!.titoli)
                                 dragScrollBar.setIndicator(CustomIndicator(context), true)
                                 dragScrollBar.setAutoHide(false)
                             }

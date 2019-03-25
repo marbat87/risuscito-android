@@ -12,8 +12,8 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.LUtils
@@ -21,7 +21,7 @@ import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 @Suppress("unused")
-class SimpleItem : AbstractItem<SimpleItem, SimpleItem.ViewHolder>() {
+class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
@@ -108,7 +108,7 @@ class SimpleItem : AbstractItem<SimpleItem, SimpleItem.ViewHolder>() {
 
     fun withId(id: Int): SimpleItem {
         this.id = id
-        super.withIdentifier(id.toLong())
+        identifier = id.toLong()
         return this
     }
 
@@ -131,38 +131,32 @@ class SimpleItem : AbstractItem<SimpleItem, SimpleItem.ViewHolder>() {
         return this
     }
 
-    override fun getIdentifier(): Long {
-        return id.toLong()
-    }
-
     /**
      * defines the type defining this item. must be unique. preferably an id
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_simple_item_id
-    }
+    override val type: Int
+        get() = R.id.fastadapter_simple_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.simple_row_item
-    }
+    override val layoutRes: Int
+        get() = R.layout.simple_row_item
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
         // get the context
-        val ctx = viewHolder.itemView.context
+        val ctx = holder.itemView.context
 
         // set the text for the name
         if (!filter.isNullOrEmpty()) {
@@ -174,40 +168,40 @@ class SimpleItem : AbstractItem<SimpleItem, SimpleItem.ViewHolder>() {
                         .append(stringTitle.substring(mPosition, mPosition + filter!!.length))
                         .append("</b>")
                         .append(stringTitle.substring(mPosition + filter!!.length))
-                viewHolder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                holder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted.toString())
             } else
-                StringHolder.applyTo(title, viewHolder.mTitle)
+                StringHolder.applyTo(title, holder.mTitle)
         } else
-            StringHolder.applyTo(title, viewHolder.mTitle)
+            StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
-        StringHolder.applyToOrHide(page, viewHolder.mPage)
+        StringHolder.applyToOrHide(page, holder.mPage)
         ViewCompat.setBackground(
-                viewHolder.view,
+                holder.view,
                 FastAdapterUIUtils.getSelectableBackground(
                         ctx,
-                        ContextCompat.getColor(viewHolder.itemView.context, R.color.ripple_color),
+                        ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
                         true))
 
         if (isSelected) {
-            viewHolder.mPage!!.visibility = View.INVISIBLE
-            viewHolder.mPageSelected!!.visibility = View.VISIBLE
-            val bgShape = viewHolder.mPageSelected!!.background as GradientDrawable
+            holder.mPage!!.visibility = View.INVISIBLE
+            holder.mPageSelected!!.visibility = View.VISIBLE
+            val bgShape = holder.mPageSelected!!.background as GradientDrawable
             bgShape.setColor(selectedColor!!.colorInt)
         } else {
-            val bgShape = viewHolder.mPage!!.background as GradientDrawable
+            val bgShape = holder.mPage!!.background as GradientDrawable
             bgShape.setColor(color!!.colorInt)
-            viewHolder.mPage!!.visibility = View.VISIBLE
-            viewHolder.mPageSelected!!.visibility = View.INVISIBLE
+            holder.mPage!!.visibility = View.VISIBLE
+            holder.mPageSelected!!.visibility = View.INVISIBLE
         }
 
-        viewHolder.mId!!.text = id.toString()
+        holder.mId!!.text = id.toString()
 
         if (createContextMenuListener != null) {
-            (viewHolder.itemView.context as Activity).registerForContextMenu(viewHolder.itemView)
-            viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
+            (holder.itemView.context as Activity).registerForContextMenu(holder.itemView)
+            holder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
         }
 
-        viewHolder.itemView.setTag(com.mikepenz.fastadapter.R.id.fastadapter_item, id)
+        holder.itemView.setTag(com.mikepenz.fastadapter.R.id.fastadapter_item, id)
     }
 
     override fun unbindView(holder: ViewHolder) {

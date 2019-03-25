@@ -13,12 +13,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.IItem
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
-import com.mikepenz.fastadapter.expandable.ExpandableExtension
-import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.mikepenz.fastadapter.ISubItem
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.adapters.GenericFastItemAdapter
+import com.mikepenz.fastadapter.expandable.getExpandableExtension
 import com.mikepenz.itemanimators.SlideDownAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -42,8 +44,10 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
-    private var mAdapter: FastItemAdapter<IItem<*, *>> = FastItemAdapter()
-    private var mLayoutManager: LinearLayoutManager? = null
+    private var mAdapter: GenericFastItemAdapter = FastItemAdapter()
+    //    private var mLayoutManager: LinearLayoutManager? = null
+    var llm: LinearLayoutManager? = null
+    private var glm: GridLayoutManager? = null
     private var mLastClickTime: Long = 0
     private lateinit var mActivity: Activity
 
@@ -74,14 +78,13 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val itemExpandableExtension = ExpandableExtension<IItem<*, *>>()
-        itemExpandableExtension.withOnlyOneExpandedItem(true)
-        mAdapter.addExtension(itemExpandableExtension)
+        val itemExpandableExtension = mAdapter.getExpandableExtension()
+        itemExpandableExtension.isOnlyOneExpandedItem = true
 
         val mMainActivity = mActivity as MainActivity?
         if (mMainActivity!!.isGridLayout) {
-            mLayoutManager = GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
-            (mLayoutManager as GridLayoutManager).spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            glm = GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+            glm!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return when (mAdapter.getItemViewType(position)) {
                         R.id.fastadapter_expandable_item_id -> if (mMainActivity.hasThreeColumns) 3 else 2
@@ -90,35 +93,42 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                     }
                 }
             }
-        } else
-            mLayoutManager = LinearLayoutManager(context)
-        recycler_view!!.layoutManager = mLayoutManager
+            recycler_view!!.layoutManager = glm
+        } else {
+            llm = LinearLayoutManager(context)
+            recycler_view!!.layoutManager = llm
+        }
+//        recycler_view!!.layoutManager = mLayoutManager
 
         recycler_view!!.adapter = mAdapter
         recycler_view!!.setHasFixedSize(true) // Size of RV will not change
         recycler_view!!.itemAnimator = SlideDownAlphaAnimator()
 
-        val mOnClickListener = OnClickListener<SimpleSubItem<*>> { _, _, item, _ ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener false
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source!!.text)
-            bundle.putInt("idCanto", item.id)
-
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle)
-            true
+        mAdapter.onClickListener = { _: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+            var consume = false
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                val bundle = Bundle()
+                bundle.putCharSequence("pagina", (item as SimpleSubItem).source!!.text)
+                bundle.putInt("idCanto", item.id)
+                // lancia l'activity che visualizza il canto passando il parametro creato
+                startSubActivity(bundle)
+                consume = true
+            }
+            Log.d(TAG, "onClickListener consume $consume")
+            consume
         }
 
         ioThread {
             val mDao = RisuscitoDatabase.getInstance(context!!).argomentiDao()
             val canti = mDao.all
             mCantiViewModel!!.titoliList.clear()
-            var subItems: LinkedList<SimpleSubItem<*>> = LinkedList()
+            var subItems = LinkedList<ISubItem<*>>()
             var totCanti = 0
+            var totListe = 0
 
             for (i in canti.indices) {
-                val simpleItem = SimpleSubItem<SimpleSubItem<*>>()
+                val simpleItem = SimpleSubItem()
                         .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].titolo, R.string::class.java)))
                         .withPage(mActivity.resources.getString(LUtils.getResId(canti[i].pagina, R.string::class.java)))
                         .withSource(mActivity.resources.getString(LUtils.getResId(canti[i].source, R.string::class.java)))
@@ -127,31 +137,31 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
                 simpleItem
                         .withContextMenuListener(this@ArgumentsSectionFragment)
-                        .withOnItemClickListener(mOnClickListener)
-                simpleItem.withIdentifier((i * 1000).toLong())
+                simpleItem.identifier = (i * 1000).toLong()
                 subItems.add(simpleItem)
                 totCanti++
 
                 if ((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento)) {
                     // serve a non mettere il divisore sull'ultimo elemento della lista
                     simpleItem.withHasDivider(false)
-                    val expandableItem = SimpleSubExpandableItem<SimpleSubExpandableItem<*, *>, SimpleSubItem<*>>()
+                    val expandableItem = SimpleSubExpandableItem()
                     expandableItem
                             .withTitle(mActivity.resources.getString(LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)) + " ($totCanti)")
-                            .withOnClickListener(OnClickListener { mView, _, mItem, _ ->
-                                if (mItem.isExpanded) {
-                                    Log.d(
-                                            TAG,
-                                            "onClick: " + recycler_view!!.getChildAdapterPosition(mView!!))
-                                    mLayoutManager!!.scrollToPositionWithOffset(
-                                            recycler_view!!.getChildAdapterPosition(mView), 0)
-                                }
-                                false
-                            })
-                            .withIdentifier(canti[i].idArgomento.toLong())
+                            .withPosition(totListe++)
+                            .onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
+                        if (!item.isExpanded) {
+                            if (mMainActivity.isGridLayout)
+                                glm!!.scrollToPositionWithOffset(
+                                        item.position, 0)
+                            else
+                                llm!!.scrollToPositionWithOffset(
+                                        item.position, 0)
+                        }
+                        false
+                    }
+                    expandableItem.identifier = canti[i].idArgomento.toLong()
 
-                    @Suppress("INACCESSIBLE_TYPE")
-                    expandableItem.withSubItems(subItems)
+                    expandableItem.subItems = subItems
                     mCantiViewModel!!.titoliList.add(expandableItem)
                     subItems = LinkedList()
                     totCanti = 0
@@ -160,8 +170,8 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                 }
             }
 
-            FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoliList)
-            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+            itemExpandableExtension.expand()
+            mAdapter.set(mCantiViewModel!!.titoliList)
             mAdapter.withSavedInstanceState(savedInstanceState)
         }
     }
@@ -196,7 +206,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
     override fun onSaveInstanceState(outState: Bundle) {
         var mOutState = outState
         if (userVisibleHint) {
-            mOutState = mAdapter.saveInstanceState(mOutState)
+            mOutState = mAdapter.saveInstanceState(mOutState)!!
         }
         super.onSaveInstanceState(mOutState)
     }
