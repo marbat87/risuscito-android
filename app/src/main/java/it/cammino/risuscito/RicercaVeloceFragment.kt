@@ -327,7 +327,7 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     override fun onNegative(tag: String) {}
 
     private fun ricercaStringa(s: String) {
-        val tempText = activity!!.tempTextField.text.toString()
+        val tempText = activity?.tempTextField?.text?.toString() ?: ""
         if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi

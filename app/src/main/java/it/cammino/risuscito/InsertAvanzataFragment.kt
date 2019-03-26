@@ -223,9 +223,7 @@ class InsertAvanzataFragment : Fragment() {
     }
 
     private fun ricercaStringa(s: String, onlyConsegnati: Boolean) {
-//        val tempText = (activity!!.findViewById(R.id.tempTextField) as EditText).text.toString()
-        val tempText = activity!!.tempTextField.text.toString()
-//        if (tempText != s) (activity!!.findViewById(R.id.tempTextField) as EditText).setText(s)
+        val tempText = activity?.tempTextField?.text?.toString() ?: ""
         if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi

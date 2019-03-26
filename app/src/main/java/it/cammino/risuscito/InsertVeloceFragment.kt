@@ -198,7 +198,7 @@ class InsertVeloceFragment : Fragment() {
     }
 
     private fun ricercaStringa(s: String, onlyConsegnati: Boolean) {
-        val tempText = activity!!.tempTextField.text.toString()
+        val tempText = activity?.tempTextField?.text?.toString() ?: ""
         if (tempText != s) activity!!.tempTextField.setText(s)
 
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
