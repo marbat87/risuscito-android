@@ -61,7 +61,7 @@ class InsertAvanzataFragment : Fragment() {
         listPosition = bundle.getInt("position")
 
         try {
-            val `in`: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
+            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
                     activity!!.resources.configuration)
                     .language) {
                 "uk" -> activity!!.assets.open("fileout_uk.xml")
@@ -69,8 +69,8 @@ class InsertAvanzataFragment : Fragment() {
                 else -> activity!!.assets.open("fileout_new.xml")
             }
             val parser = CantiXmlParser()
-            aTexts = parser.parse(`in`)
-            `in`.close()
+            aTexts = parser.parse(inputStream)
+            inputStream.close()
         } catch (e: XmlPullParserException) {
             e.printStackTrace()
         } catch (e: IOException) {
