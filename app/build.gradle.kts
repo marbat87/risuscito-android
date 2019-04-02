@@ -17,7 +17,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(28)
         multiDexEnabled = true
-        versionCode = 4404
+        versionCode = 4405
         versionName = "4.4.0"
     }
 
@@ -76,7 +76,7 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:16.0.1")
     implementation("com.google.firebase:firebase-core:16.0.8")
-    implementation ("com.google.firebase:firebase-firestore:18.1.0")
+    implementation ("com.google.firebase:firebase-firestore:18.2.0")
     implementation ("com.google.firebase:firebase-storage:16.1.0")
     implementation ("com.google.firebase:firebase-auth:16.2.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.9@aar") { isTransitive = true }

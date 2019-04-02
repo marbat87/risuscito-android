@@ -52,6 +52,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.util.DrawerUIUtils
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
@@ -295,6 +296,65 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 })
                 .build()
 
+        val tintList = DrawerUIUtils.getTextColorStateList(ContextCompat.getColor(this@MainActivity, R.color.material_drawer_primary_icon), themeUtils!!.primaryColor())
+        val drawerIconSize = 48
+        val drawerIconPadding = 2
+        val selectedColor = themeUtils!!.primaryColor()
+
+        val homeIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon2.cmd_home)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        homeIcon.setTintList(tintList)
+
+        val searchIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon2.cmd_magnify)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        searchIcon.setTintList(tintList)
+
+        val indexIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon2.cmd_view_list)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        indexIcon.setTintList(tintList)
+
+        val listeIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon2.cmd_view_carousel)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        listeIcon.setTintList(tintList)
+
+        val favoritesIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon2.cmd_heart)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        favoritesIcon.setTintList(tintList)
+
+        val consegnatiIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon.cmd_clipboard_check)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        consegnatiIcon.setTintList(tintList)
+
+        val historyIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon2.cmd_history)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        historyIcon.setTintList(tintList)
+
+        val settingsIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon2.cmd_settings)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        settingsIcon.setTintList(tintList)
+
+        val infoIcon = IconicsDrawable(this)
+                .icon(CommunityMaterial.Icon2.cmd_information_outline)
+                .sizeDp(drawerIconSize)
+                .paddingDp(drawerIconPadding)
+        infoIcon.setTintList(tintList)
+
         val mDrawerBuilder = DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(risuscito_toolbar!!)
@@ -303,67 +363,67 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .addDrawerItems(
                         PrimaryDrawerItem()
                                 .withName(R.string.activity_homepage)
-                                .withIcon(CommunityMaterial.Icon2.cmd_home)
+                                .withIcon(homeIcon)
                                 .withIdentifier(R.id.navigation_home.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(hemeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.search_name_text)
-                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
+                                .withIcon(searchIcon)
                                 .withIdentifier(R.id.navigation_search.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_general_index)
-                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
+                                .withIcon(indexIcon)
                                 .withIdentifier(R.id.navigation_indexes.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_custom_lists)
-                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
+                                .withIcon(listeIcon)
                                 .withIdentifier(R.id.navitagion_lists.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.action_favourites)
-                                .withIcon(CommunityMaterial.Icon2.cmd_heart)
+                                .withIcon(favoritesIcon)
                                 .withIdentifier(R.id.navigation_favorites.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_consegnati)
-                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
+                                .withIcon(consegnatiIcon)
                                 .withIdentifier(R.id.navigation_consegnati.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_history)
-                                .withIcon(CommunityMaterial.Icon2.cmd_history)
+                                .withIcon(historyIcon)
                                 .withIdentifier(R.id.navigation_history.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_settings)
-                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
+                                .withIcon(settingsIcon)
                                 .withIdentifier(R.id.navigation_settings.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         DividerDrawerItem(),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_about)
-                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
+                                .withIcon(infoIcon)
                                 .withIdentifier(R.id.navigation_changelog.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+//                                .withSelectedIconColor(themeUtils!!.primaryColor())
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont))
                 .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                     override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {

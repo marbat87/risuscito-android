@@ -119,14 +119,4 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
         }
     }
 
-//    class CheckBoxClickEvent : ClickEventHook<CheckableItem>() {
-//        override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
-//            return (viewHolder as? CheckableItem.ViewHolder)?.checkBox
-//        }
-//
-//        override fun onClick(
-//                v: View, position: Int, fastAdapter: FastAdapter<CheckableItem>, item: CheckableItem) {
-//            fastAdapter.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java)!!.toggleSelection(position)
-//        }
-//    }
 }
