@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -77,9 +78,11 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             aTexts = parser.parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {
-            e.printStackTrace()
+            Log.e(TAG, "Error:", e)
+            Crashlytics.logException(e)
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e(TAG, "Error:", e)
+            Crashlytics.logException(e)
         }
 
         mLUtils = LUtils.getInstance(activity!!)

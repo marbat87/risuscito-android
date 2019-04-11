@@ -57,9 +57,9 @@ val supportVersion = "1.0.0"
 val preferenceFixVersion = "1.0.0"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.afollestad.material-dialogs:core:2.6.0")
-    implementation("com.afollestad.material-dialogs:input:2.6.0")
-    implementation("com.afollestad.material-dialogs:files:2.6.0")
+    implementation("com.afollestad.material-dialogs:core:2.7.0")
+    implementation("com.afollestad.material-dialogs:input:2.7.0")
+    implementation("com.afollestad.material-dialogs:files:2.7.0")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:7.0.0-beta01")
     implementation("com.mikepenz:crossfader:1.6.0")
@@ -78,7 +78,7 @@ dependencies {
     implementation("com.google.firebase:firebase-core:16.0.8")
     implementation ("com.google.firebase:firebase-firestore:18.2.0")
     implementation ("com.google.firebase:firebase-storage:16.1.0")
-    implementation ("com.google.firebase:firebase-auth:16.2.0")
+    implementation ("com.google.firebase:firebase-auth:16.2.1")
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.9@aar") { isTransitive = true }
     implementation("com.afollestad:material-cab:1.3.1")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.3")

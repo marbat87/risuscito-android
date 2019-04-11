@@ -2,6 +2,7 @@ package it.cammino.risuscito
 
 import android.content.Context
 import android.util.Log
+import com.crashlytics.android.Crashlytics
 import it.cammino.risuscito.ui.ThemeableActivity
 import java.io.BufferedReader
 import java.io.InputStream
@@ -237,7 +238,8 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                 Log.v(TAG, "recuperaPrimoAccordo - risultato: $primaNota")
                 return primaNota.toString()
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                Log.e(TAG, "Error:", ex)
+                Crashlytics.logException(ex)
                 return ""
             }
 

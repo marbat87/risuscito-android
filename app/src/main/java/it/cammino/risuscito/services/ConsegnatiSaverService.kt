@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
+import com.crashlytics.android.Crashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
 
@@ -43,8 +44,8 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
                 intentBroadcast.putExtra(DATA_DONE, i)
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
             } catch (e: Exception) {
-                Log.e(javaClass.toString(), "ERRORE INSERT:")
-                e.printStackTrace()
+                Log.e(TAG, "ERRORE INSERT:", e)
+                Crashlytics.logException(e)
             }
 
         }

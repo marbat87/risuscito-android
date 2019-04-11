@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -72,9 +73,11 @@ class InsertAvanzataFragment : Fragment() {
             aTexts = parser.parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {
-            e.printStackTrace()
+            Log.e(TAG, "Error:", e)
+            Crashlytics.logException(e)
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e(TAG, "Error:", e)
+            Crashlytics.logException(e)
         }
 
         activity!!.tempTextField
