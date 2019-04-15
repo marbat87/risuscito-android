@@ -110,7 +110,7 @@ class GeneralInsertSearch : ThemeableActivity() {
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-            val l = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+            val l = getSystemLocalWrapper(resources.configuration)
             return when (position) {
                 0 -> getString(R.string.fast_search_title).toUpperCase(l)
                 1 -> getString(R.string.advanced_search_title).toUpperCase(l)

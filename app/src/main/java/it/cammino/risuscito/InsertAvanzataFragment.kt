@@ -16,6 +16,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,11 +27,11 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
-import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.database.CantoConsegnato
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.viewmodels.InsertSearchViewModel
 import kotlinx.android.synthetic.main.activity_insert_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
@@ -43,7 +45,6 @@ class InsertAvanzataFragment : Fragment() {
     internal val cantoAdapter: FastItemAdapter<InsertItem> = FastItemAdapter()
     private lateinit var aTexts: Array<Array<String?>>
 
-    private var titoli: List<InsertItem> = ArrayList()
     private var rootView: View? = null
     private var fromAdd: Int = 0
     private var idLista: Int = 0
@@ -52,9 +53,13 @@ class InsertAvanzataFragment : Fragment() {
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
+    private var mViewModel: InsertSearchViewModel? = null
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.ricerca_tab_layout, container, false)
+
+        mViewModel = ViewModelProviders.of(this).get(InsertSearchViewModel::class.java)
 
         val bundle = arguments
         fromAdd = bundle!!.getInt("fromAdd")
@@ -95,6 +100,9 @@ class InsertAvanzataFragment : Fragment() {
                         })
 
         mLUtils = LUtils.getInstance(activity!!)
+
+        populateDb()
+        subscribeUiFavorites()
 
         return rootView
     }
@@ -137,10 +145,7 @@ class InsertAvanzataFragment : Fragment() {
         })
 
         // Creating new adapter object
-//        cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
-
-//        cantoAdapter.addEventHook(hookListener)
 
         matchedList.adapter = cantoAdapter
         val mMainActivity = activity as GeneralInsertSearch?
@@ -237,7 +242,7 @@ class InsertAvanzataFragment : Fragment() {
             searchTask!!.execute(textfieldRicerca.text.toString(), onlyConsegnati.toString())
         } else {
             if (s.isEmpty()) {
-                if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
+                if (searchTask != null && searchTask!!.status == Status.RUNNING)
                     searchTask!!.cancel(true)
                 search_no_results.visibility = View.GONE
                 cantoAdapter.clear()
@@ -246,11 +251,13 @@ class InsertAvanzataFragment : Fragment() {
         }
     }
 
-    private class SearchTask internal constructor(fragment: InsertAvanzataFragment) : AsyncTask<String, Void, Int>() {
+    private class SearchTask internal constructor(fragment: InsertAvanzataFragment) : AsyncTask<String, Void, ArrayList<InsertItem>>() {
 
         private val fragmentReference: WeakReference<InsertAvanzataFragment> = WeakReference(fragment)
 
-        override fun doInBackground(vararg params: String): Int? {
+        override fun doInBackground(vararg params: String): ArrayList<InsertItem> {
+
+            val titoliResult = ArrayList<InsertItem>()
 
             Log.d(TAG, "STRINGA: " + params[0])
 
@@ -258,32 +265,23 @@ class InsertAvanzataFragment : Fragment() {
 
             var text: String
 
-            val tempList = ArrayList<InsertItem>()
             for (aText in fragmentReference.get()!!.aTexts) {
                 Log.d(TAG, "doInBackground: isCancelled? $isCancelled")
-                if (isCancelled) {
-//                    fragmentReference.get()?.titoli?.clear()
-                    fragmentReference.get()?.titoli = ArrayList()
-                    return 0
-                }
+                if (isCancelled)
+                    return titoliResult
 
                 if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
 
                 var found = true
                 for (word in words) {
-                    if (isCancelled) {
-//                        fragmentReference.get()?.titoli?.clear()
-                        fragmentReference.get()?.titoli = ArrayList()
-                        return 0
-                    }
+                    if (isCancelled)
+                        return titoliResult
+
                     if (word.trim { it <= ' ' }.length > 1) {
                         text = word.trim { it <= ' ' }
                         text = text.toLowerCase(
                                 ThemeableActivity.getSystemLocalWrapper(
                                         fragmentReference.get()!!.activity!!.resources.configuration))
-//                        val nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD)
-//                        val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
-//                        text = pattern.matcher(nfdNormalizedString).replaceAll("")
                         text = Utility.removeAccents(text)
 
                         if (!aText[1]!!.contains(text)) found = false
@@ -293,36 +291,19 @@ class InsertAvanzataFragment : Fragment() {
                 Log.d(TAG, "doInBackground: isCancelled? $isCancelled")
 
                 if (found) {
-                    val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
-                    val elenco: List<Canto>?
                     val onlyConsegnati = java.lang.Boolean.parseBoolean(params[1])
-                    elenco = if (onlyConsegnati)
-                        mDb.cantoDao().getCantiWithSourceOnlyConsegnati(aText[0]!!)
-                    else
-                        mDb.cantoDao().getCantiWithSource(aText[0]!!)
-
-                    elenco?.sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
-                            ?.forEach {
+                    fragmentReference.get()!!.mViewModel!!.titoli.sortedBy { it.title.toString() }
+                            .filter { it.undecodedSource == aText[0]!! && (!onlyConsegnati || it.consegnato == 1) }
+                            .forEach {
                                 if (isCancelled) {
-//                                    fragmentReference.get()!!.titoli.clear()
-                                    fragmentReference.get()!!.titoli = ArrayList()
-                                    return 0
+                                    return titoliResult
                                 }
-//                                fragmentReference.get()!!.titoli.add(
-                                tempList.add(
-                                        InsertItem()
-                                                .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
-                                                .withColor(it.color!!)
-                                                .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
-                                                .withId(it.id)
-                                                .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.source, R.string::class.java)))
-                                )
+                                titoliResult.add(it)
                             }
 
                 }
             }
-            fragmentReference.get()!!.titoli = tempList
-            return 0
+            return titoliResult
         }
 
         override fun onPreExecute() {
@@ -330,26 +311,49 @@ class InsertAvanzataFragment : Fragment() {
             if (isCancelled) return
             fragmentReference.get()?.search_no_results?.visibility = View.GONE
             fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
-//            fragmentReference.get()?.titoli?.clear()
-            fragmentReference.get()?.titoli = ArrayList()
 
         }
 
-        override fun onPostExecute(result: Int?) {
-            super.onPostExecute(result)
-            if (isCancelled) {
-//                fragmentReference.get()?.titoli?.clear()
-                fragmentReference.get()?.titoli = ArrayList()
-                return
-            }
-            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli
-                    ?: ArrayList())
+        override fun onPostExecute(titoliResult: ArrayList<InsertItem>) {
+            super.onPostExecute(titoliResult)
+            if (isCancelled) return
+            fragmentReference.get()?.cantoAdapter?.set(titoliResult)
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE
             else
                 View.GONE
         }
+    }
+
+    private fun populateDb() {
+        mViewModel!!.createDb()
+    }
+
+    private fun subscribeUiFavorites() {
+        mViewModel!!
+                .indexResult!!
+                .observe(
+                        this,
+                        Observer<List<CantoConsegnato>> { canti ->
+                            if (canti != null) {
+                                val newList = ArrayList<InsertItem>()
+                                canti.sortedBy { resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+                                        .forEach {
+                                            newList.add(
+                                                    InsertItem()
+                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                                            .withColor(it.color!!)
+                                                            .withId(it.id)
+                                                            .withUndecodedSource(it.source ?: "")
+                                                            .withConsegnato(it.consegnato)
+                                            )
+                                        }
+                                mViewModel!!.titoli = newList
+                            }
+                        })
     }
 
     companion object {

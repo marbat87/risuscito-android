@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,12 +26,13 @@ import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
-import it.cammino.risuscito.viewmodels.GenericIndexViewModel
+import it.cammino.risuscito.viewmodels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_general_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
@@ -44,20 +46,20 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
     // create boolean for fetching data
     private var isViewShown = true
     private var rootView: View? = null
-    private val titoli: MutableList<SimpleItem> = ArrayList()
+    //    private val titoli: MutableList<SimpleItem> = ArrayList()
     private var listePersonalizzate: List<ListaPers>? = null
     private var searchTask: SearchTask? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
     private lateinit var mActivity: Activity
 
-    private var mViewModel: GenericIndexViewModel? = null
+    private var mViewModel: SearchViewModel? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.ricerca_tab_layout, container, false)
 
-        mViewModel = ViewModelProviders.of(this).get<GenericIndexViewModel>(GenericIndexViewModel::class.java)
+        mViewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
 
         activity!!.tempTextField
                 .addTextChangedListener(
@@ -82,6 +84,9 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
 
         if (!isViewShown)
             ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
+
+        populateDb()
+        subscribeUiFavorites()
 
         return rootView
     }
@@ -347,11 +352,13 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
         }
     }
 
-    private class SearchTask internal constructor(fragment: RicercaVeloceFragment) : AsyncTask<String, Void, Int>() {
+    private class SearchTask internal constructor(fragment: RicercaVeloceFragment) : AsyncTask<String, Void, ArrayList<SimpleItem>>() {
 
         private val fragmentReference: WeakReference<RicercaVeloceFragment> = WeakReference(fragment)
 
-        override fun doInBackground(vararg sSearchText: String): Int? {
+        override fun doInBackground(vararg sSearchText: String): ArrayList<SimpleItem>? {
+
+            val titoliResult = ArrayList<SimpleItem>()
 
             Log.d(TAG, "STRINGA: " + sSearchText[0])
             val s = sSearchText[0]
@@ -359,29 +366,14 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             val stringa = Utility.removeAccents(s).toLowerCase()
             Log.d(TAG, "onTextChanged: stringa $stringa")
 
-            val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
-            val elenco = mDb.cantoDao().allByName
-
-            elenco.filter { Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))).toLowerCase().contains(stringa) }
-                    .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+            fragmentReference.get()!!.mViewModel!!.titoli.sortedBy { it.title.toString() }
+                    .filter { Utility.removeAccents(it.title.toString()).toLowerCase().contains(stringa) }
                     .forEach {
-                        if (isCancelled) {
-                            fragmentReference.get()?.titoli?.clear()
-                            return 0
-                        }
-                        fragmentReference.get()?.titoli?.add(
-                                SimpleItem()
-                                        .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
-                                        .withColor(it.color!!)
-                                        .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
-                                        .withId(it.id)
-                                        .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.source, R.string::class.java)))
-                                        .withNormalizedTitle(Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))))
-                                        .withFilter(stringa)
-                                        .withContextMenuListener(fragmentReference.get() as RicercaVeloceFragment)
-                        )
+                        if (isCancelled) return titoliResult
+                        titoliResult.add(it.withFilter(stringa))
                     }
-            return 0
+
+            return titoliResult
         }
 
         override fun onPreExecute() {
@@ -389,22 +381,48 @@ class RicercaVeloceFragment : Fragment(), View.OnCreateContextMenuListener, Simp
             if (isCancelled) return
             fragmentReference.get()?.search_no_results?.visibility = View.GONE
             fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
-            fragmentReference.get()?.titoli?.clear()
         }
 
-        override fun onPostExecute(result: Int?) {
-            super.onPostExecute(result)
-            if (isCancelled) {
-                fragmentReference.get()?.titoli?.clear()
-                return
-            }
-            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli!!.toList())
+        override fun onPostExecute(titoliResult: ArrayList<SimpleItem>) {
+            super.onPostExecute(titoliResult)
+            if (isCancelled) return
+            fragmentReference.get()?.cantoAdapter?.set(titoliResult)
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE
             else
                 View.GONE
         }
+    }
+
+    private fun populateDb() {
+        mViewModel!!.createDb()
+    }
+
+    private fun subscribeUiFavorites() {
+        mViewModel!!
+                .indexResult!!
+                .observe(
+                        this,
+                        Observer<List<Canto>> { canti ->
+                            if (canti != null) {
+                                val newList = ArrayList<SimpleItem>()
+                                canti.sortedBy { resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+                                        .forEach {
+                                            newList.add(
+                                                    SimpleItem()
+                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                                            .withColor(it.color!!)
+                                                            .withNormalizedTitle(Utility.removeAccents(resources.getString(LUtils.getResId(it.titolo, R.string::class.java))))
+                                                            .withId(it.id)
+                                                            .withContextMenuListener(this@RicercaVeloceFragment)
+                                            )
+                                        }
+                                mViewModel!!.titoli = newList
+                            }
+                        })
     }
 
     companion object {

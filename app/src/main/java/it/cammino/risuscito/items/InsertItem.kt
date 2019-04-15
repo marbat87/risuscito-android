@@ -24,12 +24,16 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
         private set
     var source: StringHolder? = null
         private set
+    var undecodedSource: String? = null
+        private set
     var color: ColorHolder? = null
         private set
     private var numSalmo: Int = 0
     private var normalizedTitle: String? = null
     private var filter: String? = null
     var id: Int = 0
+        private set
+    var consegnato: Int = 0
         private set
 
     fun withTitle(title: String): InsertItem {
@@ -62,6 +66,11 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
         return this
     }
 
+    fun withUndecodedSource(undecodedSource: String): InsertItem {
+        this.undecodedSource = undecodedSource
+        return this
+    }
+
     fun withColor(color: String): InsertItem {
         this.color = ColorHolder.fromColor(Color.parseColor(color))
         return this
@@ -69,6 +78,11 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
 
     fun withColor(@ColorRes colorRes: Int): InsertItem {
         this.color = ColorHolder.fromColorRes(colorRes)
+        return this
+    }
+
+    fun withConsegnato(consegnato: Int): InsertItem {
+        this.consegnato = consegnato
         return this
     }
 
@@ -127,7 +141,7 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
         super.bindView(holder, payloads)
 
         //set the text for the name
-        if (filter != null && !filter!!.isEmpty()) {
+        if (filter != null && filter!!.isNotEmpty()) {
             val mPosition = normalizedTitle!!.toLowerCase().indexOf(filter!!)
             if (mPosition >= 0) {
                 val stringTitle = title!!.text.toString()

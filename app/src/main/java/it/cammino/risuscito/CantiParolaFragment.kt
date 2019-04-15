@@ -26,7 +26,7 @@ import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.colorInt
 import com.mikepenz.iconics.paddingDp
 import com.mikepenz.iconics.sizeDp
-import com.mikepenz.iconics.typeface.library.communitymaterial.CommunityMaterial
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem

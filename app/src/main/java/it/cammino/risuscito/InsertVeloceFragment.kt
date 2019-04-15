@@ -15,6 +15,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,10 +25,10 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
-import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.database.CantoConsegnato
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.viewmodels.InsertSearchViewModel
 import kotlinx.android.synthetic.main.activity_insert_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
@@ -36,7 +38,6 @@ class InsertVeloceFragment : Fragment() {
 
     internal val cantoAdapter: FastItemAdapter<InsertItem> = FastItemAdapter()
 
-    private val titoli: MutableList<InsertItem> = ArrayList()
     private var searchTask: SearchTask? = null
     private var rootView: View? = null
     private var fromAdd: Int = 0
@@ -45,9 +46,13 @@ class InsertVeloceFragment : Fragment() {
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
+    private var mViewModel: InsertSearchViewModel? = null
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.ricerca_tab_layout, container, false)
+
+        mViewModel = ViewModelProviders.of(this).get(InsertSearchViewModel::class.java)
 
         val bundle = arguments
         fromAdd = bundle!!.getInt("fromAdd")
@@ -69,6 +74,9 @@ class InsertVeloceFragment : Fragment() {
                         })
 
         mLUtils = LUtils.getInstance(activity!!)
+
+        populateDb()
+        subscribeUiFavorites()
 
         return rootView
     }
@@ -218,44 +226,29 @@ class InsertVeloceFragment : Fragment() {
         }
     }
 
-    private class SearchTask internal constructor(fragment: InsertVeloceFragment) : AsyncTask<String, Void, Int>() {
+    private class SearchTask internal constructor(fragment: InsertVeloceFragment) : AsyncTask<String, Void, ArrayList<InsertItem>>() {
 
         private val fragmentReference: WeakReference<InsertVeloceFragment> = WeakReference(fragment)
 
-        override fun doInBackground(vararg sParam: String): Int? {
+        override fun doInBackground(vararg sParam: String): ArrayList<InsertItem> {
+
+            val titoliResult = ArrayList<InsertItem>()
 
             Log.d(javaClass.name, "STRINGA: " + sParam[0])
 
             val stringa = Utility.removeAccents(sParam[0]).toLowerCase()
             Log.d(javaClass.name, "onTextChanged: stringa $stringa")
 
-            val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
-            val elenco: List<Canto>
             val onlyConsegnati = java.lang.Boolean.parseBoolean(sParam[1])
-            elenco = if (onlyConsegnati)
-                mDb.cantoDao().allByNameOnlyConsegnati
-            else
-                mDb.cantoDao().allByName
 
-            elenco.filter { Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))).toLowerCase().contains(stringa) }
-                    .sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+            fragmentReference.get()!!.mViewModel!!.titoli.sortedBy { it.title.toString() }
+                    .filter { Utility.removeAccents(it.title.toString()).toLowerCase().contains(stringa) && (!onlyConsegnati || it.consegnato == 1) }
                     .forEach {
-                        if (isCancelled) {
-                            fragmentReference.get()?.titoli?.clear()
-                            return 0
-                        }
-                        fragmentReference.get()?.titoli?.add(
-                                InsertItem()
-                                        .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
-                                        .withColor(it.color!!)
-                                        .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
-                                        .withId(it.id)
-                                        .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.source, R.string::class.java)))
-                                        .withNormalizedTitle(Utility.removeAccents(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java))))
-                                        .withFilter(stringa)
-                        )
+                        if (isCancelled) return titoliResult
+                        titoliResult.add(it.withFilter(stringa))
                     }
-            return 0
+
+            return titoliResult
         }
 
         override fun onPreExecute() {
@@ -263,22 +256,48 @@ class InsertVeloceFragment : Fragment() {
             if (isCancelled) return
             fragmentReference.get()?.search_no_results?.visibility = View.GONE
             fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
-            fragmentReference.get()?.titoli?.clear()
         }
 
-        override fun onPostExecute(result: Int?) {
-            super.onPostExecute(result)
-            if (isCancelled) {
-                fragmentReference.get()?.titoli?.clear()
-                return
-            }
-            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli!!.toList())
+        override fun onPostExecute(titoliResult: ArrayList<InsertItem>) {
+            super.onPostExecute(titoliResult)
+            if (isCancelled) return
+            fragmentReference.get()?.cantoAdapter?.set(titoliResult)
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE
             else
                 View.GONE
         }
+    }
+
+    private fun populateDb() {
+        mViewModel!!.createDb()
+    }
+
+    private fun subscribeUiFavorites() {
+        mViewModel!!
+                .indexResult!!
+                .observe(
+                        this,
+                        Observer<List<CantoConsegnato>> { canti ->
+                            if (canti != null) {
+                                val newList = ArrayList<InsertItem>()
+                                canti.sortedBy { resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+                                        .forEach {
+                                            newList.add(
+                                                    InsertItem()
+                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                                            .withColor(it.color!!)
+                                                            .withNormalizedTitle(Utility.removeAccents(resources.getString(LUtils.getResId(it.titolo, R.string::class.java))))
+                                                            .withId(it.id)
+                                                            .withConsegnato(it.consegnato)
+                                            )
+                                        }
+                                mViewModel!!.titoli = newList
+                            }
+                        })
     }
 
     companion object {

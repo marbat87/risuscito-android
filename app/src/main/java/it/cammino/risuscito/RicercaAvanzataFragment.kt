@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -27,13 +28,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
-import it.cammino.risuscito.viewmodels.GenericIndexViewModel
+import it.cammino.risuscito.viewmodels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_general_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
@@ -50,7 +52,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     // create boolean for fetching data
     private var isViewShown = true
-    private var titoli: MutableList<SimpleItem> = ArrayList()
+    //    private var titoli: MutableList<SimpleItem> = ArrayList()
     private var rootView: View? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
@@ -58,13 +60,13 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
     private var mLastClickTime: Long = 0
     private lateinit var mActivity: Activity
 
-    private var mViewModel: GenericIndexViewModel? = null
+    private var mViewModel: SearchViewModel? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.ricerca_tab_layout, container, false)
 
-        mViewModel = ViewModelProviders.of(this).get(GenericIndexViewModel::class.java)
+        mViewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
 
         try {
             val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
@@ -95,6 +97,9 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         if (!isViewShown)
             ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
 
+        populateDb()
+        subscribeUiFavorites()
+
         return rootView
     }
 
@@ -117,11 +122,10 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             consume
         }
 
-//        cantoAdapter = FastItemAdapter()
         cantoAdapter.setHasStableIds(true)
-//        cantoAdapter.withOnClickListener(mOnClickListener)
 
         matchedList.adapter = cantoAdapter
+//        cantoAdapter.set(titoli)
         val mMainActivity = activity as MainActivity?
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
@@ -221,7 +225,6 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
         menu.setHeaderTitle(getString(R.string.select_canto) + ":")
 
-//        if (listePersonalizzate != null) {
         listePersonalizzate?.let {
             for (i in it.indices) {
                 val subMenu = menu.addSubMenu(
@@ -371,7 +374,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             searchTask!!.execute(textfieldRicerca.text.toString())
         } else {
             if (s.isEmpty()) {
-                if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
+                if (searchTask != null && searchTask!!.status == Status.RUNNING)
                     searchTask!!.cancel(true)
                 search_no_results.visibility = View.GONE
                 cantoAdapter.clear()
@@ -386,11 +389,13 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         ListeUtils.addToListaNoDup(this@RicercaAvanzataFragment, idLista, listPosition, mViewModel!!.idDaAgg, "AVANZATA_REPLACE_2")
     }
 
-    private class SearchTask internal constructor(fragment: RicercaAvanzataFragment) : AsyncTask<String, Void, Int?>() {
+    private class SearchTask internal constructor(fragment: RicercaAvanzataFragment) : AsyncTask<String, Void, ArrayList<SimpleItem>>() {
 
         private val fragmentReference: WeakReference<RicercaAvanzataFragment> = WeakReference(fragment)
 
-        override fun doInBackground(vararg sSearchText: String): Int? {
+        override fun doInBackground(vararg sSearchText: String): ArrayList<SimpleItem> {
+
+            val titoliResult = ArrayList<SimpleItem>()
 
             Log.d(TAG, "STRINGA: " + sSearchText[0])
 
@@ -399,19 +404,14 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             var text: String
 
             for (aText in fragmentReference.get()!!.aTexts) {
-                if (isCancelled) {
-                    fragmentReference.get()!!.titoli.clear()
-                    return 0
-                }
+                if (isCancelled) return titoliResult
 
                 if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
 
                 var found = true
                 for (word in words) {
-                    if (isCancelled) {
-                        fragmentReference.get()!!.titoli.clear()
-                        return 0
-                    }
+                    if (isCancelled) return titoliResult
+
                     if (word.trim { it <= ' ' }.length > 1) {
                         text = word.trim { it <= ' ' }
                         text = text.toLowerCase(
@@ -424,28 +424,18 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                 }
 
                 if (found) {
-                    val mDb = RisuscitoDatabase.getInstance(fragmentReference.get()!!.activity as Context)
-                    val elenco = mDb.cantoDao().getCantiWithSource(aText[0]!!)
+                    Log.d(TAG, "aText[0]: ${aText[0]}")
 
-                    elenco?.sortedBy { fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
-                            ?.forEach {
-                                if (isCancelled) {
-                                    fragmentReference.get()!!.titoli.clear()
-                                    return 0
-                                }
-                                fragmentReference.get()!!.titoli.add(
-                                        SimpleItem()
-                                                .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
-                                                .withColor(it.color!!)
-                                                .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
-                                                .withId(it.id)
-                                                .withSource(fragmentReference.get()!!.resources.getString(LUtils.getResId(it.source, R.string::class.java)))
-                                                .withContextMenuListener(fragmentReference.get() as RicercaAvanzataFragment)
-                                )
+                    fragmentReference.get()!!.mViewModel!!.titoli.sortedBy { it.title.toString() }
+                            .filter { it.undecodedSource == aText[0]!! }
+                            .forEach {
+                                if (isCancelled) return titoliResult
+                                titoliResult.add(it)
                             }
+
                 }
             }
-            return 0
+            return titoliResult
         }
 
         override fun onPreExecute() {
@@ -453,22 +443,48 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             if (isCancelled) return
             fragmentReference.get()?.search_no_results?.visibility = View.GONE
             fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
-            fragmentReference.get()?.titoli?.clear()
         }
 
-        override fun onPostExecute(result: Int?) {
-            super.onPostExecute(result)
-            if (isCancelled) {
-                fragmentReference.get()?.titoli?.clear()
-                return
-            }
-            fragmentReference.get()?.cantoAdapter?.set(fragmentReference.get()?.titoli!!.toList())
+        override fun onPostExecute(titoliResult: ArrayList<SimpleItem>) {
+            super.onPostExecute(titoliResult)
+            if (isCancelled) return
+            fragmentReference.get()?.cantoAdapter?.set(titoliResult)
             fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
             fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
                 View.VISIBLE
             else
                 View.GONE
         }
+    }
+
+    private fun populateDb() {
+        mViewModel!!.createDb()
+    }
+
+    private fun subscribeUiFavorites() {
+        mViewModel!!
+                .indexResult!!
+                .observe(
+                        this,
+                        Observer<List<Canto>> { canti ->
+                            if (canti != null) {
+                                val newList = ArrayList<SimpleItem>()
+                                canti.sortedBy { resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
+                                        .forEach {
+                                            newList.add(
+                                                    SimpleItem()
+                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
+                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
+                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
+                                                            .withColor(it.color!!)
+                                                            .withId(it.id)
+                                                            .withUndecodedSource(it.source ?: "")
+                                                            .withContextMenuListener(this@RicercaAvanzataFragment)
+                                            )
+                                        }
+                                mViewModel!!.titoli = newList
+                            }
+                        })
     }
 
     companion object {

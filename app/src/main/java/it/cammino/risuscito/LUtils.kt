@@ -245,7 +245,7 @@ class LUtils private constructor(private val mActivity: Activity) {
         }
 
         fun fromHtmlWrapper(input: String): Spanned {
-            return if (LUtils.hasN())
+            return if (hasN())
                 fromHtml(input)
             else
                 fromHtmlLegacy(input)

@@ -10,13 +10,11 @@ import android.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.ViewConfiguration
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.core.net.toUri
-import androidx.core.view.LayoutInflaterCompat
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -24,6 +22,7 @@ import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.mikepenz.iconics.utils.setIconicsFactory
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -117,7 +116,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (language.isNotEmpty()) {
             val locale = Locale(language)
             Locale.setDefault(locale)
-            ThemeableActivity.setSystemLocalWrapper(config, locale)
+            setSystemLocalWrapper(config, locale)
         } else {
             val mLanguage = when (getSystemLocalWrapper(mNewBase.resources.configuration).language) {
                 "uk" -> "uk"
@@ -128,7 +127,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
             sp.edit { putString(Utility.SYSTEM_LANGUAGE, mLanguage) }
             val locale = Locale(mLanguage)
             Locale.setDefault(locale)
-            ThemeableActivity.setSystemLocalWrapper(config, locale)
+            setSystemLocalWrapper(config, locale)
         }// non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua
         // selezionabile oppure IT se non presente
 
@@ -467,7 +466,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         internal const val CRONOLOGIA_FILE_NAME = "Cronologia"
 
         val isMenuWorkaroundRequired: Boolean
-            get() = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.KITKAT && ("LGE".equals(Build.MANUFACTURER, ignoreCase = true) || "E6710".equals(Build.DEVICE, ignoreCase = true))
+            get() = Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && ("LGE".equals(Build.MANUFACTURER, ignoreCase = true) || "E6710".equals(Build.DEVICE, ignoreCase = true))
 
         @Suppress("DEPRECATION")
         private fun getSystemLocaleLegacy(config: Configuration): Locale {
@@ -481,9 +480,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         fun getSystemLocalWrapper(config: Configuration): Locale {
             return if (LUtils.hasN())
-                ThemeableActivity.getSystemLocale(config)
+                getSystemLocale(config)
             else
-                ThemeableActivity.getSystemLocaleLegacy(config)
+                getSystemLocaleLegacy(config)
         }
 
         @Suppress("DEPRECATION")
@@ -498,18 +497,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         fun setSystemLocalWrapper(config: Configuration, locale: Locale) {
             if (LUtils.hasN())
-                ThemeableActivity.setSystemLocale(config, locale)
+                setSystemLocale(config, locale)
             else
-                ThemeableActivity.setSystemLocaleLegacy(config, locale)
-        }
-    }
-
-    private fun LayoutInflater.setIconicsFactory(appCompatDelegate: AppCompatDelegate) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LayoutInflaterCompat.setFactory2(this, IconicsLayoutInflater2(appCompatDelegate))
-        } else {
-            @Suppress("DEPRECATION")
-            LayoutInflaterCompat.setFactory(this, IconicsLayoutInflater(appCompatDelegate))
+                setSystemLocaleLegacy(config, locale)
         }
     }
 }

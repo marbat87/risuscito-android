@@ -35,7 +35,7 @@ import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.colorInt
 import com.mikepenz.iconics.paddingDp
 import com.mikepenz.iconics.sizeDp
-import com.mikepenz.iconics.typeface.library.communitymaterial.CommunityMaterial
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers

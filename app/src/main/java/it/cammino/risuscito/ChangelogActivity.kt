@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.appbar.AppBarLayout
@@ -80,7 +79,7 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
         if (mViewModel!!.appBarIsExpanded)
             Utility.setupTransparentTints(
                     this@ChangelogActivity,
-                    ContextCompat.getColor(this@ChangelogActivity, android.R.color.transparent),
+                    Color.TRANSPARENT,
                     false)
         else
             Utility.setupTransparentTints(

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4405"
+    <release versionCode="4406"
         date="April 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANTE[/b]: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le

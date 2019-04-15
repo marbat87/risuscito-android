@@ -39,7 +39,7 @@ import com.mikepenz.fastadapter.swipe.SimpleSwipeCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
 import com.mikepenz.iconics.*
-import com.mikepenz.iconics.typeface.library.communitymaterial.CommunityMaterial
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -86,7 +86,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         val leaveBehindDrawable = IconicsDrawable(this@CreaListaActivity)
                 .icon(CommunityMaterial.Icon.cmd_delete)
-                .colorRes(android.R.color.white)
+                .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
 

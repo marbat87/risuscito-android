@@ -21,7 +21,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.iconics.*
-import com.mikepenz.iconics.typeface.library.communitymaterial.CommunityMaterial
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem

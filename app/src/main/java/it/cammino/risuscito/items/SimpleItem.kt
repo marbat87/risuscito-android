@@ -29,6 +29,8 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
         private set
     var source: StringHolder? = null
         private set
+    var undecodedSource: String? = null
+        private set
     var color: ColorHolder? = null
         private set
     var numSalmo: Int = 0
@@ -68,6 +70,11 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 
     fun withSource(@StringRes srcRes: Int): SimpleItem {
         this.source = StringHolder(srcRes)
+        return this
+    }
+
+    fun withUndecodedSource(undecodedSource: String): SimpleItem {
+        this.undecodedSource = undecodedSource
         return this
     }
 

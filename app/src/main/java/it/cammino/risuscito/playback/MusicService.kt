@@ -225,21 +225,21 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     override fun onGetRoot(clientPackageName: String,
-                           clientUid: Int, rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? {
+                           clientUid: Int, rootHints: Bundle?): BrowserRoot? {
         // Verify the client is authorized to browse media and return the root that
         // makes the most sense here. In this example we simply verify the package name
         // is the same as ours, but more complicated checks, and responses, are possible
         return if (clientPackageName != packageName) {
             // Allow the client to connect, but not browse, by returning an empty root
-            MediaBrowserServiceCompat.BrowserRoot(MusicProvider.MEDIA_ID_EMPTY_ROOT, null)
-        } else MediaBrowserServiceCompat.BrowserRoot(MusicProvider.MEDIA_ID_EMPTY_ROOT, null)
+            BrowserRoot(MusicProvider.MEDIA_ID_EMPTY_ROOT, null)
+        } else BrowserRoot(MusicProvider.MEDIA_ID_EMPTY_ROOT, null)
         /* Per non far restituire nessuna lista è stata sostituita l'istruzione
             return new BrowserRoot(MEDIA_ID_ROOT, null);
          */
     }
 
     override fun onLoadChildren(parentMediaId: String,
-                                result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
+                                result: Result<List<MediaBrowserCompat.MediaItem>>) {
         Log.d(TAG, "OnLoadChildren: parentMediaId=$parentMediaId")
 
         if (!mMusicProvider!!.isInitialized) {
@@ -268,7 +268,7 @@ class MusicService : MediaBrowserServiceCompat() {
      * initialized.
      */
     private fun loadChildrenImpl(parentMediaId: String,
-                                 result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
+                                 result: Result<List<MediaBrowserCompat.MediaItem>>) {
         val mediaItems = ArrayList<MediaBrowserCompat.MediaItem>()
 
         when (parentMediaId) {

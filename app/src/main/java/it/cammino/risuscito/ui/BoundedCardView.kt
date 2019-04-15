@@ -29,13 +29,13 @@ class BoundedCardView : CardView {
         val measuredWidth = MeasureSpec.getSize(mWidthMeasureSpec)
         //        Log.d(getClass().getName(), "onMeasure: boundedWidth " + boundedWidth);
         //        Log.d(getClass().getName(), "onMeasure: measuredWidth " + measuredWidth);
-        if (boundedWidth in 1..(measuredWidth - 1)) {
+        if (boundedWidth in 1 until measuredWidth) {
             val measureMode = MeasureSpec.getMode(mWidthMeasureSpec)
             mWidthMeasureSpec = MeasureSpec.makeMeasureSpec(boundedWidth, measureMode)
         }
         // Adjust height as necessary
         val measuredHeight = MeasureSpec.getSize(mHeightMeasureSpec)
-        if (boundedHeight in 1..(measuredHeight - 1)) {
+        if (boundedHeight in 1 until measuredHeight) {
             val measureMode = MeasureSpec.getMode(mHeightMeasureSpec)
             mHeightMeasureSpec = MeasureSpec.makeMeasureSpec(boundedHeight, measureMode)
         }

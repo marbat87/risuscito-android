@@ -17,7 +17,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(28)
         multiDexEnabled = true
-        versionCode = 4405
+        versionCode = 4406
         versionName = "4.4.0"
     }
 
@@ -63,7 +63,8 @@ dependencies {
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:7.0.0-beta01")
     implementation("com.mikepenz:crossfader:1.6.0")
-    implementation("com.mikepenz:community-material-typeface:2.7.94.2-kotlin@aar")
+    implementation ("com.mikepenz:iconics-core:4.0.0-rc01")
+    implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.google.android.material:material:$supportVersion")
     implementation("androidx.legacy:legacy-support-v4:$supportVersion")
