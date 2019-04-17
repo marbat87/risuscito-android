@@ -16,7 +16,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
@@ -178,7 +179,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (userId == null)
             throw NoIdException()
 
-        val db = FirebaseFirestore.getInstance()
+        val db = Firebase.firestore
 
         // Create a query against the collection.
         val query = db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).whereEqualTo(FIREBASE_FIELD_USER_ID, userId)
@@ -196,15 +197,16 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (querySnapshot.documents.size > 0) {
             Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).document(querySnapshot.documents[0].id).delete())
             Log.d(TAG, "existing deleted")
-
-            // Add a new document with a generated ID
-            val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
-            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
-
-        } else {
-            val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
-            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
         }
+
+        // Add a new document with a generated ID
+        val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
+        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
+
+//        } else {
+//            val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
+//            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
+//        }
 
     }
 
@@ -215,7 +217,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (userId == null)
             throw NoIdException()
 
-        val db = FirebaseFirestore.getInstance()
+        val db = Firebase.firestore
 
         // Create a query against the collection.
         val query = db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).whereEqualTo(FIREBASE_FIELD_USER_ID, userId)
