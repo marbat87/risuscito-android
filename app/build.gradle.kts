@@ -50,6 +50,7 @@ android {
 
     packagingOptions {
         exclude("META-INF/library-core_release.kotlin_module")
+        exclude("META-INF/atomicfu.kotlin_module")
     }
 }
 
