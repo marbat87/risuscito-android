@@ -295,64 +295,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 })
                 .build()
 
-//        val tintList = DrawerUIUtils.getTextColorStateList(ContextCompat.getColor(this@MainActivity, R.color.material_drawer_primary_icon), themeUtils!!.primaryColor())
-//        val drawerIconSize = 48
-//        val drawerIconPadding = 2
         val selectedColor = themeUtils!!.primaryColor()
-
-//        val homeIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon2.cmd_home)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        homeIcon.setTintList(tintList)
-
-//        val searchIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon2.cmd_magnify)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        searchIcon.setTintList(tintList)
-
-//        val indexIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon2.cmd_view_list)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        indexIcon.setTintList(tintList)
-
-//        val listeIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon2.cmd_view_carousel)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        listeIcon.setTintList(tintList)
-
-//        val favoritesIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon2.cmd_heart)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        favoritesIcon.setTintList(tintList)
-
-//        val consegnatiIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon.cmd_clipboard_check)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        consegnatiIcon.setTintList(tintList)
-
-//        val historyIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon2.cmd_history)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        historyIcon.setTintList(tintList)
-
-//        val settingsIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon2.cmd_settings)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        settingsIcon.setTintList(tintList)
-
-//        val infoIcon = IconicsDrawable(this)
-//                .icon(CommunityMaterial.Icon2.cmd_information_outline)
-//                .sizeDp(drawerIconSize)
-//                .paddingDp(drawerIconPadding)
-//        infoIcon.setTintList(tintList)
 
         val mDrawerBuilder = DrawerBuilder()
                 .withActivity(this)
@@ -870,6 +813,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun updateUI(signedIn: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, signedIn) }
         val intentBroadcast = Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE)
         Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn)
         intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)

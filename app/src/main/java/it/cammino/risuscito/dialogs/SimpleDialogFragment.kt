@@ -52,14 +52,12 @@ class SimpleDialogFragment : DialogFragment() {
         if (mBuilder.mContent != null)
             dialog.message(text = mBuilder.mContent!!)
 
-//        if (mBuilder.mPositiveButton != null) {
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) {
                 mCallback!!.onPositive(mBuilder.mTag)
             }
         }
 
-//        if (mBuilder.mNegativeButton != null) {
         mBuilder.mNegativeButton?.let {
             dialog.negativeButton(text = it) {
                 mCallback!!.onNegative(mBuilder.mTag)
@@ -180,14 +178,14 @@ class SimpleDialogFragment : DialogFragment() {
 
         fun show(): SimpleDialogFragment {
             val dialog = build()
-            dialog.show(mContext)
+            if (!mContext.isFinishing)
+                dialog.show(mContext)
             return dialog
         }
     }
 
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
-//        if (frag != null) {
         frag?.let {
             (it as DialogFragment).dismiss()
             context.supportFragmentManager.beginTransaction()

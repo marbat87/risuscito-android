@@ -56,14 +56,12 @@ class ProgressDialogFragment : DialogFragment() {
         if (!mBuilder.mAutoDismiss)
             dialog.noAutoDismiss()
 
-//        if (mBuilder.mPositiveButton != null && mCallback != null) {
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) {
                 mCallback!!.onPositive(mBuilder.mTag)
             }
         }
 
-//        if (mBuilder.mNegativeButton != null && mCallback != null) {
         mBuilder.mNegativeButton?.let {
             dialog.negativeButton(text = it) {
                 mCallback!!.onNegative(mBuilder.mTag)
@@ -191,14 +189,14 @@ class ProgressDialogFragment : DialogFragment() {
 
         fun show(): ProgressDialogFragment {
             val dialog = build()
-            dialog.show(mContext)
+            if (!mContext.isFinishing)
+                dialog.show(mContext)
             return dialog
         }
     }
 
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
-//        if (frag != null) {
         frag?.let {
             (it as DialogFragment).dismiss()
             context.supportFragmentManager.beginTransaction()

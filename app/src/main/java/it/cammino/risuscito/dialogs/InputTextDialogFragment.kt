@@ -54,7 +54,6 @@ class InputTextDialogFragment : DialogFragment() {
         if (!mBuilder.mAutoDismiss)
             dialog.noAutoDismiss()
 
-//        if (mBuilder.mPositiveButton != null) {
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) { mDialog ->
                 Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
@@ -62,7 +61,6 @@ class InputTextDialogFragment : DialogFragment() {
             }
         }
 
-//        if (mBuilder.mNegativeButton != null) {
         mBuilder.mNegativeButton?.let {
             dialog.negativeButton(text = it) { mDialog ->
                 Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
@@ -157,14 +155,14 @@ class InputTextDialogFragment : DialogFragment() {
 
         fun show(): InputTextDialogFragment {
             val dialog = build()
-            dialog.show(mContext)
+            if (!mContext.isFinishing)
+                dialog.show(mContext)
             return dialog
         }
     }
 
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
-//        if (frag != null) {
         frag?.let {
             (it as DialogFragment).dismiss()
             context.supportFragmentManager.beginTransaction()
