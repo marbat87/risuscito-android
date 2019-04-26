@@ -6,8 +6,11 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
 import kotlinx.android.synthetic.main.activity_insert_search.*
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 
@@ -16,16 +19,18 @@ class GeneralInsertSearch : ThemeableActivity() {
     private var fromAdd: Int = 0
     private var idLista: Int = 0
     private var listPosition: Int = 0
-    //    var isOnTablet: Boolean = false
-//        private set
     var hasThreeColumns: Boolean = false
         private set
     var isGridLayout: Boolean = false
         private set
 
+    private var mViewModel: GeneralIndexViewModel? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_insert_search)
+
+        mViewModel = ViewModelProviders.of(this).get(GeneralIndexViewModel::class.java)
 
         risuscito_toolbar.setBackgroundColor(themeUtils!!.primaryColor())
         risuscito_toolbar.title = getString(R.string.title_activity_inserisci_titolo)
@@ -41,15 +46,24 @@ class GeneralInsertSearch : ThemeableActivity() {
         view_pager.adapter = SectionsPagerAdapter(supportFragmentManager)
 
         val mLUtils = LUtils.getInstance(this@GeneralInsertSearch)
-//        isOnTablet = mLUtils.isOnTablet
         hasThreeColumns = mLUtils.hasThreeColumns
         isGridLayout = mLUtils.isGridLayout
         if (mLUtils.isOnTablet)
             tabletToolbarBackground?.setBackgroundColor(themeUtils!!.primaryColor())
         else
             material_tabs.setBackgroundColor(themeUtils!!.primaryColor())
+        if (savedInstanceState == null) {
+            val pref = PreferenceManager.getDefaultSharedPreferences(this@GeneralInsertSearch)
+            view_pager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0")!!)
+        } else
+            view_pager.currentItem = mViewModel!!.pageViewed
         material_tabs.setupWithViewPager(view_pager)
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mViewModel!!.pageViewed = view_pager.currentItem
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

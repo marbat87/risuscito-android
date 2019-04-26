@@ -29,6 +29,7 @@ object Utility {
     internal const val SHOW_PACE = "mostra_canto_pace"
     internal const val SAVE_LOCATION = "memoria_salvataggio_scelta"
     internal const val DEFAULT_INDEX = "indice_predefinito"
+    internal const val DEFAULT_SEARCH = "ricerca_predefinita"
     internal const val SHOW_SANTO = "mostra_santo"
     internal const val SHOW_AUDIO = "mostra_audio"
     internal const val SIGNED_IN = "signed_id"

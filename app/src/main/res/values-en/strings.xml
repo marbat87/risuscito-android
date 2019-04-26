@@ -292,4 +292,6 @@ Do you want to proceed?</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="import_confirm">import</string>
+    <string name="default_search_title">Predefined search</string>
+    <string name="default_search_summary">Indicate which search type must open on entering the function</string>
 </resources>

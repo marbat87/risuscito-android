@@ -173,6 +173,7 @@ class LUtils private constructor(private val mActivity: Activity) {
     fun convertIntPreferences() {
         convert(Utility.DEFAULT_INDEX)
         convert(Utility.SAVE_LOCATION)
+        convert(Utility.DEFAULT_SEARCH)
     }
 
     private fun convert(prefName: String) {
