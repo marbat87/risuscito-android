@@ -118,4 +118,8 @@
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
+    <style name="material_popup_theme" parent="Widget.MPM.Menu">
+        <item name="android:popupBackground">@drawable/material_popup_bg</item>
+    </style>
+
 </resources>

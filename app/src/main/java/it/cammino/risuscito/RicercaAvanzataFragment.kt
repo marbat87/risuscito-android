@@ -7,12 +7,12 @@ import android.os.AsyncTask
 import android.os.AsyncTask.Status
 import android.os.Bundle
 import android.os.SystemClock
-import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.*
-import android.view.ContextMenu.ContextMenuInfo
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crashlytics.android.Crashlytics
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -38,14 +37,13 @@ import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SearchViewModel
 import kotlinx.android.synthetic.main.activity_general_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
-import kotlinx.android.synthetic.main.simple_row_item.view.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
 
-class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     internal val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private lateinit var aTexts: Array<Array<String?>>
@@ -122,10 +120,15 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
             consume
         }
 
+        cantoAdapter.onLongClickListener = { v: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            mViewModel!!.idDaAgg = item.id
+            mViewModel!!.popupMenu(this@RicercaAvanzataFragment, v!!, "AVANZATA_REPLACE", "AVANZATA_REPLACE_2", listePersonalizzate)
+            true
+        }
+
         cantoAdapter.setHasStableIds(true)
 
         matchedList.adapter = cantoAdapter
-//        cantoAdapter.set(titoli)
         val mMainActivity = activity as MainActivity?
         val llm = if (mMainActivity!!.isGridLayout)
             GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
@@ -221,125 +224,125 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         super.onDestroy()
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-        mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
+//    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
+//        mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
+//        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
+//
+//        listePersonalizzate?.let {
+//            for (i in it.indices) {
+//                val subMenu = menu.addSubMenu(
+//                        ID_FITTIZIO, Menu.NONE, 10 + i, it[i].lista!!.name)
+//                for (k in 0 until it[i].lista!!.numPosizioni) {
+//                    subMenu.add(100 + i, k, k, it[i].lista!!.getNomePosizione(k))
+//                }
+//            }
+//        }
+//
+//        val inflater = mActivity.menuInflater
+//        inflater.inflate(R.menu.add_to, menu)
+//
+//        val pref = PreferenceManager.getDefaultSharedPreferences(mActivity)
+//        menu.findItem(R.id.add_to_p_pace).isVisible = pref.getBoolean(Utility.SHOW_PACE, false)
+//        menu.findItem(R.id.add_to_e_seconda).isVisible = pref.getBoolean(Utility.SHOW_SECONDA, false)
+//        menu.findItem(R.id.add_to_e_offertorio).isVisible = pref.getBoolean(Utility.SHOW_OFFERTORIO, false)
+//        menu.findItem(R.id.add_to_e_santo).isVisible = pref.getBoolean(Utility.SHOW_SANTO, false)
+//    }
 
-        listePersonalizzate?.let {
-            for (i in it.indices) {
-                val subMenu = menu.addSubMenu(
-                        ID_FITTIZIO, Menu.NONE, 10 + i, it[i].lista!!.name)
-                for (k in 0 until it[i].lista!!.numPosizioni) {
-                    subMenu.add(100 + i, k, k, it[i].lista!!.getNomePosizione(k))
-                }
-            }
-        }
-
-        val inflater = mActivity.menuInflater
-        inflater.inflate(R.menu.add_to, menu)
-
-        val pref = PreferenceManager.getDefaultSharedPreferences(mActivity)
-        menu.findItem(R.id.add_to_p_pace).isVisible = pref.getBoolean(Utility.SHOW_PACE, false)
-        menu.findItem(R.id.add_to_e_seconda).isVisible = pref.getBoolean(Utility.SHOW_SECONDA, false)
-        menu.findItem(R.id.add_to_e_offertorio).isVisible = pref.getBoolean(Utility.SHOW_OFFERTORIO, false)
-        menu.findItem(R.id.add_to_e_santo).isVisible = pref.getBoolean(Utility.SHOW_SANTO, false)
-    }
-
-    override fun onContextItemSelected(item: MenuItem?): Boolean {
-        return if (userVisibleHint) {
-            when (item!!.itemId) {
-                R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(this@RicercaAvanzataFragment, mViewModel!!.idDaAgg)
-                    true
-                }
-                R.id.add_to_p_iniziale -> {
-                    addToListaNoDup(1, 1)
-                    true
-                }
-                R.id.add_to_p_prima -> {
-                    addToListaNoDup(1, 2)
-                    true
-                }
-                R.id.add_to_p_seconda -> {
-                    addToListaNoDup(1, 3)
-                    true
-                }
-                R.id.add_to_p_terza -> {
-                    addToListaNoDup(1, 4)
-                    true
-                }
-                R.id.add_to_p_pace -> {
-                    addToListaNoDup(1, 6)
-                    true
-                }
-                R.id.add_to_p_fine -> {
-                    addToListaNoDup(1, 5)
-                    true
-                }
-                R.id.add_to_e_iniziale -> {
-                    addToListaNoDup(2, 1)
-                    true
-                }
-                R.id.add_to_e_seconda -> {
-                    addToListaNoDup(2, 6)
-                    true
-                }
-                R.id.add_to_e_pace -> {
-                    addToListaNoDup(2, 2)
-                    true
-                }
-                R.id.add_to_e_offertorio -> {
-                    addToListaNoDup(2, 8)
-                    true
-                }
-                R.id.add_to_e_santo -> {
-                    addToListaNoDup(2, 7)
-                    true
-                }
-                R.id.add_to_e_pane -> {
-                    ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 3, mViewModel!!.idDaAgg)
-                    true
-                }
-                R.id.add_to_e_vino -> {
-                    ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 4, mViewModel!!.idDaAgg)
-                    true
-                }
-                R.id.add_to_e_fine -> {
-                    addToListaNoDup(2, 5)
-                    true
-                }
-                else -> {
-                    mViewModel!!.idListaClick = item.groupId
-                    mViewModel!!.idPosizioneClick = item.itemId
-                    if (mViewModel!!.idListaClick != ID_FITTIZIO && mViewModel!!.idListaClick >= 100) {
-                        mViewModel!!.idListaClick -= 100
-                        if (listePersonalizzate!![mViewModel!!.idListaClick]
-                                        .lista!!
-                                        .getCantoPosizione(mViewModel!!.idPosizioneClick) == "") {
-                            listePersonalizzate!![mViewModel!!.idListaClick]
-                                    .lista!!
-                                    .addCanto(mViewModel!!.idDaAgg.toString(), mViewModel!!.idPosizioneClick)
-                            ListeUtils.updateListaPersonalizzata(this@RicercaAvanzataFragment, listePersonalizzate!![mViewModel!!.idListaClick])
-                        } else {
-                            if (listePersonalizzate!![mViewModel!!.idListaClick]
-                                            .lista!!
-                                            .getCantoPosizione(mViewModel!!.idPosizioneClick) == mViewModel!!.idDaAgg.toString()) {
-                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-                            } else {
-                                ListeUtils.manageReplaceDialog(this@RicercaAvanzataFragment, Integer.parseInt(
-                                        listePersonalizzate!![mViewModel!!.idListaClick]
-                                                .lista!!
-                                                .getCantoPosizione(mViewModel!!.idPosizioneClick)), "AVANZATA_REPLACE")
-                            }
-                        }
-                        true
-                    } else
-                        super.onContextItemSelected(item)
-                }
-            }
-        } else
-            false
-    }
+//    override fun onContextItemSelected(item: MenuItem?): Boolean {
+//        return if (userVisibleHint) {
+//            when (item!!.itemId) {
+//                R.id.add_to_favorites -> {
+//                    ListeUtils.addToFavorites(this@RicercaAvanzataFragment, mViewModel!!.idDaAgg)
+//                    true
+//                }
+//                R.id.add_to_p_iniziale -> {
+//                    addToListaNoDup(1, 1)
+//                    true
+//                }
+//                R.id.add_to_p_prima -> {
+//                    addToListaNoDup(1, 2)
+//                    true
+//                }
+//                R.id.add_to_p_seconda -> {
+//                    addToListaNoDup(1, 3)
+//                    true
+//                }
+//                R.id.add_to_p_terza -> {
+//                    addToListaNoDup(1, 4)
+//                    true
+//                }
+//                R.id.add_to_p_pace -> {
+//                    addToListaNoDup(1, 6)
+//                    true
+//                }
+//                R.id.add_to_p_fine -> {
+//                    addToListaNoDup(1, 5)
+//                    true
+//                }
+//                R.id.add_to_e_iniziale -> {
+//                    addToListaNoDup(2, 1)
+//                    true
+//                }
+//                R.id.add_to_e_seconda -> {
+//                    addToListaNoDup(2, 6)
+//                    true
+//                }
+//                R.id.add_to_e_pace -> {
+//                    addToListaNoDup(2, 2)
+//                    true
+//                }
+//                R.id.add_to_e_offertorio -> {
+//                    addToListaNoDup(2, 8)
+//                    true
+//                }
+//                R.id.add_to_e_santo -> {
+//                    addToListaNoDup(2, 7)
+//                    true
+//                }
+//                R.id.add_to_e_pane -> {
+//                    ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 3, mViewModel!!.idDaAgg)
+//                    true
+//                }
+//                R.id.add_to_e_vino -> {
+//                    ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 4, mViewModel!!.idDaAgg)
+//                    true
+//                }
+//                R.id.add_to_e_fine -> {
+//                    addToListaNoDup(2, 5)
+//                    true
+//                }
+//                else -> {
+//                    mViewModel!!.idListaClick = item.groupId
+//                    mViewModel!!.idPosizioneClick = item.itemId
+//                    if (mViewModel!!.idListaClick != ID_FITTIZIO && mViewModel!!.idListaClick >= 100) {
+//                        mViewModel!!.idListaClick -= 100
+//                        if (listePersonalizzate!![mViewModel!!.idListaClick]
+//                                        .lista!!
+//                                        .getCantoPosizione(mViewModel!!.idPosizioneClick) == "") {
+//                            listePersonalizzate!![mViewModel!!.idListaClick]
+//                                    .lista!!
+//                                    .addCanto(mViewModel!!.idDaAgg.toString(), mViewModel!!.idPosizioneClick)
+//                            ListeUtils.updateListaPersonalizzata(this@RicercaAvanzataFragment, listePersonalizzate!![mViewModel!!.idListaClick])
+//                        } else {
+//                            if (listePersonalizzate!![mViewModel!!.idListaClick]
+//                                            .lista!!
+//                                            .getCantoPosizione(mViewModel!!.idPosizioneClick) == mViewModel!!.idDaAgg.toString()) {
+//                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+//                            } else {
+//                                ListeUtils.manageReplaceDialog(this@RicercaAvanzataFragment, Integer.parseInt(
+//                                        listePersonalizzate!![mViewModel!!.idListaClick]
+//                                                .lista!!
+//                                                .getCantoPosizione(mViewModel!!.idPosizioneClick)), "AVANZATA_REPLACE")
+//                            }
+//                        }
+//                        true
+//                    } else
+//                        super.onContextItemSelected(item)
+//                }
+//            }
+//        } else
+//            false
+//    }
 
     private fun startSubActivity(bundle: Bundle) {
         val intent = Intent(activity!!.applicationContext, PaginaRenderActivity::class.java)
@@ -383,11 +386,11 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
         }
     }
 
-    private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        mViewModel!!.idListaDaAgg = idLista
-        mViewModel!!.posizioneDaAgg = listPosition
-        ListeUtils.addToListaNoDup(this@RicercaAvanzataFragment, idLista, listPosition, mViewModel!!.idDaAgg, "AVANZATA_REPLACE_2")
-    }
+//    private fun addToListaNoDup(idLista: Int, listPosition: Int) {
+//        mViewModel!!.idListaDaAgg = idLista
+//        mViewModel!!.posizioneDaAgg = listPosition
+//        ListeUtils.addToListaNoDup(this@RicercaAvanzataFragment, idLista, listPosition, mViewModel!!.idDaAgg, "AVANZATA_REPLACE_2")
+//    }
 
     private class SearchTask internal constructor(fragment: RicercaAvanzataFragment) : AsyncTask<String, Void, ArrayList<SimpleItem>>() {
 
@@ -479,7 +482,7 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
                                                             .withColor(it.color!!)
                                                             .withId(it.id)
                                                             .withUndecodedSource(it.source ?: "")
-                                                            .withContextMenuListener(this@RicercaAvanzataFragment)
+//                                                            .withContextMenuListener(this@RicercaAvanzataFragment)
                                             )
                                         }
                                 mViewModel!!.titoli = newList
@@ -489,6 +492,6 @@ class RicercaAvanzataFragment : Fragment(), View.OnCreateContextMenuListener, Si
 
     companion object {
         private val TAG = RicercaAvanzataFragment::class.java.canonicalName
-        private const val ID_FITTIZIO = 99999999
+//        private const val ID_FITTIZIO = 99999999
     }
 }

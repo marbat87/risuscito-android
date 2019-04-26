@@ -5,16 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
-import android.preference.PreferenceManager
 import android.util.Log
-import android.view.*
-import android.view.ContextMenu.ContextMenuInfo
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.ISubItem
@@ -32,10 +31,9 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ArgumentIndexViewModel
 import kotlinx.android.synthetic.main.layout_recycler.*
-import kotlinx.android.synthetic.main.simple_sub_item.view.*
 import java.util.*
 
-class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+class ArgumentsSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
     private var mCantiViewModel: ArgumentIndexViewModel? = null
 
@@ -45,7 +43,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
     private var mAdapter: GenericFastItemAdapter = FastItemAdapter()
-    //    private var mLayoutManager: LinearLayoutManager? = null
     var llm: LinearLayoutManager? = null
     private var glm: GridLayoutManager? = null
     private var mLastClickTime: Long = 0
@@ -98,7 +95,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
             llm = LinearLayoutManager(context)
             recycler_view!!.layoutManager = llm
         }
-//        recycler_view!!.layoutManager = mLayoutManager
 
         recycler_view!!.adapter = mAdapter
         recycler_view!!.setHasFixedSize(true) // Size of RV will not change
@@ -119,6 +115,14 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
             consume
         }
 
+        mAdapter.onLongClickListener = { v: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+            if (item is SimpleSubItem) {
+                mCantiViewModel!!.idDaAgg = item.id
+                mCantiViewModel!!.popupMenu(this@ArgumentsSectionFragment, v!!, "ARGUMENT_REPLACE", "ARGUMENT_REPLACE_2", listePersonalizzate)
+            }
+            true
+        }
+
         ioThread {
             val mDao = RisuscitoDatabase.getInstance(context!!).argomentiDao()
             val canti = mDao.all
@@ -135,8 +139,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
                         .withColor(canti[i].color!!)
                         .withId(canti[i].id)
 
-                simpleItem
-                        .withContextMenuListener(this@ArgumentsSectionFragment)
                 simpleItem.identifier = (i * 1000).toLong()
                 subItems.add(simpleItem)
                 totCanti++
@@ -217,129 +219,6 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
         mLUtils!!.startActivityWithTransition(intent)
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-        mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
-
-//        if (listePersonalizzate != null) {
-        listePersonalizzate?.let {
-            for (i in it.indices) {
-                val subMenu = menu.addSubMenu(
-                        ID_FITTIZIO, Menu.NONE, 10 + i, it[i].lista!!.name)
-                for (k in 0 until it[i].lista!!.numPosizioni) {
-                    subMenu.add(100 + i, k, k, it[i].lista!!.getNomePosizione(k))
-                }
-            }
-        }
-
-        val inflater = mActivity.menuInflater
-        inflater.inflate(R.menu.add_to, menu)
-
-        val pref = PreferenceManager.getDefaultSharedPreferences(mActivity)
-        menu.findItem(R.id.add_to_p_pace).isVisible = pref.getBoolean(Utility.SHOW_PACE, false)
-        menu.findItem(R.id.add_to_e_seconda).isVisible = pref.getBoolean(Utility.SHOW_SECONDA, false)
-        menu.findItem(R.id.add_to_e_offertorio).isVisible = pref.getBoolean(Utility.SHOW_OFFERTORIO, false)
-        menu.findItem(R.id.add_to_e_santo).isVisible = pref.getBoolean(Utility.SHOW_SANTO, false)
-    }
-
-    override fun onContextItemSelected(item: MenuItem?): Boolean {
-        if (userVisibleHint) {
-            when (item!!.itemId) {
-                R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(this@ArgumentsSectionFragment, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_p_iniziale -> {
-                    addToListaNoDup(1, 1)
-                    return true
-                }
-                R.id.add_to_p_prima -> {
-                    addToListaNoDup(1, 2)
-                    return true
-                }
-                R.id.add_to_p_seconda -> {
-                    addToListaNoDup(1, 3)
-                    return true
-                }
-                R.id.add_to_p_terza -> {
-                    addToListaNoDup(1, 4)
-                    return true
-                }
-                R.id.add_to_p_pace -> {
-                    addToListaNoDup(1, 6)
-                    return true
-                }
-                R.id.add_to_p_fine -> {
-                    addToListaNoDup(1, 5)
-                    return true
-                }
-                R.id.add_to_e_iniziale -> {
-                    addToListaNoDup(2, 1)
-                    return true
-                }
-                R.id.add_to_e_seconda -> {
-                    addToListaNoDup(2, 6)
-                    return true
-                }
-                R.id.add_to_e_pace -> {
-                    addToListaNoDup(2, 2)
-                    return true
-                }
-                R.id.add_to_e_offertorio -> {
-                    addToListaNoDup(2, 8)
-                    return true
-                }
-                R.id.add_to_e_santo -> {
-                    addToListaNoDup(2, 7)
-                    return true
-                }
-                R.id.add_to_e_pane -> {
-                    ListeUtils.addToListaDup(this@ArgumentsSectionFragment, 2, 3, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_e_vino -> {
-                    ListeUtils.addToListaDup(this@ArgumentsSectionFragment, 2, 4, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_e_fine -> {
-                    addToListaNoDup(2, 5)
-                    return true
-                }
-                else -> {
-                    mCantiViewModel!!.idListaClick = item.groupId
-                    mCantiViewModel!!.idPosizioneClick = item.itemId
-                    if (mCantiViewModel!!.idListaClick != ID_FITTIZIO && mCantiViewModel!!.idListaClick >= 100) {
-                        mCantiViewModel!!.idListaClick -= 100
-
-                        if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                        .lista!!
-                                        .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
-                            listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista!!
-                                    .addCanto(
-                                            (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                            ListeUtils.updateListaPersonalizzata(this@ArgumentsSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
-                        } else {
-                            if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                            .lista!!
-                                            .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
-                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-                            } else {
-                                ListeUtils.manageReplaceDialog(this@ArgumentsSectionFragment, Integer.parseInt(
-                                        listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                                .lista!!
-                                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)), "ARGUMENT_REPLACE")
-                            }
-                        }
-                        return true
-                    } else
-                        return super.onContextItemSelected(item)
-                }
-            }
-        } else
-            return false
-    }
-
     override fun onPositive(tag: String) {
         when (tag) {
             "ARGUMENT_REPLACE" -> {
@@ -355,14 +234,7 @@ class ArgumentsSectionFragment : HFFragment(), View.OnCreateContextMenuListener,
 
     override fun onNegative(tag: String) {}
 
-    private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        mCantiViewModel!!.idListaDaAgg = idLista
-        mCantiViewModel!!.posizioneDaAgg = listPosition
-        ListeUtils.addToListaNoDup(this@ArgumentsSectionFragment, idLista, listPosition, mCantiViewModel!!.idDaAgg, "ARGUMENT_REPLACE_2")
-    }
-
     companion object {
         private val TAG = ArgumentsSectionFragment::class.java.canonicalName
-        private const val ID_FITTIZIO = 99999999
     }
 }

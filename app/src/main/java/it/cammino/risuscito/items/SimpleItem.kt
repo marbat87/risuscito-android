@@ -1,6 +1,5 @@
 package it.cammino.risuscito.items
 
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.Log
@@ -41,7 +40,7 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
     var id: Int = 0
         private set
 
-    private var createContextMenuListener: View.OnCreateContextMenuListener? = null
+//    private var createContextMenuListener: View.OnCreateContextMenuListener? = null
 
     fun withTitle(title: String): SimpleItem {
         this.title = StringHolder(title)
@@ -133,10 +132,10 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
         return this
     }
 
-    fun withContextMenuListener(listener: View.OnCreateContextMenuListener): SimpleItem {
-        this.createContextMenuListener = listener
-        return this
-    }
+//    fun withContextMenuListener(listener: View.OnCreateContextMenuListener): SimpleItem {
+//        this.createContextMenuListener = listener
+//        return this
+//    }
 
     /**
      * defines the type defining this item. must be unique. preferably an id
@@ -203,10 +202,10 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 
         holder.mId!!.text = id.toString()
 
-        if (createContextMenuListener != null) {
-            (holder.itemView.context as Activity).registerForContextMenu(holder.itemView)
-            holder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
-        }
+//        if (createContextMenuListener != null) {
+//            (holder.itemView.context as Activity).registerForContextMenu(holder.itemView)
+//            holder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
+//        }
 
         holder.itemView.setTag(com.mikepenz.fastadapter.R.id.fastadapter_item, id)
     }

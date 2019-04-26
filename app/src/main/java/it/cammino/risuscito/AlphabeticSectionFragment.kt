@@ -5,10 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
-import android.preference.PreferenceManager
 import android.util.Log
-import android.view.*
-import android.view.ContextMenu.ContextMenuInfo
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IAdapter
 import com.turingtechnologies.materialscrollbar.CustomIndicator
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
@@ -30,9 +29,8 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.AlphabeticIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
-import kotlinx.android.synthetic.main.simple_row_item.view.*
 
-class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+class AlphabeticSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
     private var mAdapter: FastScrollIndicatorAdapter = FastScrollIndicatorAdapter(0)
     private var mCantiViewModel: AlphabeticIndexViewModel? = null
@@ -90,10 +88,15 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
             consume
         }
 
+        mAdapter.onLongClickListener = { v: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            mCantiViewModel!!.idDaAgg = item.id
+            mCantiViewModel!!.popupMenu(this@AlphabeticSectionFragment, v!!, "ALPHA_REPLACE", "ALPHA_REPLACE_2", listePersonalizzate)
+            true
+        }
+
         val mMainActivity = activity as MainActivity?
 
         mAdapter.setHasStableIds(true)
-//        mAdapter.onClickListener = mOnClickListener
         mAdapter.set(mCantiViewModel!!.titoli)
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
@@ -139,129 +142,6 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
         mLUtils!!.startActivityWithTransition(intent)
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-        mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
-
-//        if (listePersonalizzate != null) {
-        listePersonalizzate?.let {
-            for (i in it.indices) {
-                val subMenu = menu.addSubMenu(
-                        ID_FITTIZIO, Menu.NONE, 10 + i, it[i].lista!!.name)
-                for (k in 0 until it[i].lista!!.numPosizioni) {
-                    subMenu.add(100 + i, k, k, it[i].lista!!.getNomePosizione(k))
-                }
-            }
-        }
-        val inflater = mActivity.menuInflater
-        inflater.inflate(R.menu.add_to, menu)
-
-        val pref = PreferenceManager.getDefaultSharedPreferences(mActivity)
-        menu.findItem(R.id.add_to_p_pace).isVisible = pref.getBoolean(Utility.SHOW_PACE, false)
-        menu.findItem(R.id.add_to_e_seconda).isVisible = pref.getBoolean(Utility.SHOW_SECONDA, false)
-        menu.findItem(R.id.add_to_e_offertorio).isVisible = pref.getBoolean(Utility.SHOW_OFFERTORIO, false)
-        menu.findItem(R.id.add_to_e_santo).isVisible = pref.getBoolean(Utility.SHOW_SANTO, false)
-    }
-
-    override fun onContextItemSelected(item: MenuItem?): Boolean {
-        Log.d(TAG, "onContextItemSelected: " + item!!.itemId)
-        if (userVisibleHint) {
-            when (item.itemId) {
-                R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(this@AlphabeticSectionFragment, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_p_iniziale -> {
-                    addToListaNoDup(1, 1)
-                    return true
-                }
-                R.id.add_to_p_prima -> {
-                    addToListaNoDup(1, 2)
-                    return true
-                }
-                R.id.add_to_p_seconda -> {
-                    addToListaNoDup(1, 3)
-                    return true
-                }
-                R.id.add_to_p_terza -> {
-                    addToListaNoDup(1, 4)
-                    return true
-                }
-                R.id.add_to_p_pace -> {
-                    addToListaNoDup(1, 6)
-                    return true
-                }
-                R.id.add_to_p_fine -> {
-                    addToListaNoDup(1, 5)
-                    return true
-                }
-                R.id.add_to_e_iniziale -> {
-                    addToListaNoDup(2, 1)
-                    return true
-                }
-                R.id.add_to_e_seconda -> {
-                    addToListaNoDup(2, 6)
-                    return true
-                }
-                R.id.add_to_e_pace -> {
-                    addToListaNoDup(2, 2)
-                    return true
-                }
-                R.id.add_to_e_offertorio -> {
-                    addToListaNoDup(2, 8)
-                    return true
-                }
-                R.id.add_to_e_santo -> {
-                    addToListaNoDup(2, 7)
-                    return true
-                }
-                R.id.add_to_e_pane -> {
-                    ListeUtils.addToListaDup(this@AlphabeticSectionFragment, 2, 3, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_e_vino -> {
-                    ListeUtils.addToListaDup(this@AlphabeticSectionFragment, 2, 4, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_e_fine -> {
-                    addToListaNoDup(2, 5)
-                    return true
-                }
-                else -> {
-                    mCantiViewModel!!.idListaClick = item.groupId
-                    mCantiViewModel!!.idPosizioneClick = item.itemId
-                    if (mCantiViewModel!!.idListaClick != ID_FITTIZIO && mCantiViewModel!!.idListaClick >= 100) {
-                        mCantiViewModel!!.idListaClick -= 100
-
-                        if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                        .lista!!
-                                        .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
-                            listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista!!
-                                    .addCanto(
-                                            (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                            ListeUtils.updateListaPersonalizzata(this@AlphabeticSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
-                        } else {
-                            if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                            .lista!!
-                                            .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
-                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-                            } else {
-                                ListeUtils.manageReplaceDialog(this@AlphabeticSectionFragment, Integer.parseInt(
-                                        listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                                .lista!!
-                                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)), "ALPHA_REPLACE")
-                            }
-                        }
-                        return true
-                    } else
-                        return super.onContextItemSelected(item)
-                }
-            }
-        } else
-            return false
-    }
-
     override fun onPositive(tag: String) {
         Log.d(javaClass.name, "onPositive: $tag")
         when (tag) {
@@ -277,12 +157,6 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
     }
 
     override fun onNegative(tag: String) {}
-
-    private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        mCantiViewModel!!.idListaDaAgg = idLista
-        mCantiViewModel!!.posizioneDaAgg = listPosition
-        ListeUtils.addToListaNoDup(this@AlphabeticSectionFragment, idLista, listPosition, mCantiViewModel!!.idDaAgg, "ALPHA_REPLACE_2")
-    }
 
     private fun populateDb() {
         mCantiViewModel!!.createDb()
@@ -305,7 +179,6 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
                                                             .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
                                                             .withColor(it.color!!)
                                                             .withId(it.id)
-                                                            .withContextMenuListener(this@AlphabeticSectionFragment)
                                             )
                                         }
                                 mCantiViewModel!!.titoli = newList
@@ -318,7 +191,6 @@ class AlphabeticSectionFragment : HFFragment(), View.OnCreateContextMenuListener
 
     companion object {
         private val TAG = AlphabeticSectionFragment::class.java.canonicalName
-        private const val ID_FITTIZIO = 99999999
     }
 
 }

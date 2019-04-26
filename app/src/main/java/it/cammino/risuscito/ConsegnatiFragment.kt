@@ -139,12 +139,10 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             when (menuItem.itemId) {
                 R.id.select_none -> {
                     selectExtension!!.deselect()
-//                    (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.deselect()
                     true
                 }
                 R.id.select_all -> {
                     selectExtension!!.select()
-//                    (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.select()
                     true
                 }
                 R.id.cancel_change -> {
@@ -164,7 +162,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             .progressMax(selectableAdapter.itemCount)
                             .show()
 
-//                    val mSelected = (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.selectedItems
                     val mSelected = selectExtension!!.selectedItems
                     val mSelectedId = mSelected.mapTo(ArrayList()) { it.id }
 
@@ -216,7 +213,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         cantiRecycler!!.itemAnimator = SlideRightAlphaAnimator()
 
         // Creating new adapter object
-//        selectableAdapter = FastItemAdapter()
         selectExtension = SelectExtension(selectableAdapter)
         selectExtension!!.isSelectable = true
         selectableAdapter.setHasStableIds(true)
@@ -278,11 +274,25 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
 
         })
+
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        view.setOnKeyListener { _, keyCode, _ ->
+            var managed = false
+            if (keyCode == KeyEvent.KEYCODE_BACK && mCantiViewModel!!.editMode) {
+                mCantiViewModel!!.editMode = false
+                chooseRecycler!!.visibility = View.INVISIBLE
+                enableBottombar(false)
+                selected_view!!.visibility = View.VISIBLE
+                enableFab(true)
+                managed = true
+            }
+            managed
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        //    Log.d(getClass().getName(), "onResume: ");
         LocalBroadcastManager.getInstance(activity!!)
                 .registerReceiver(
                         positionBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED))
@@ -510,7 +520,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
                                 .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
                                 .withColor(canto.color!!)
-//                                .withSetSelected(canto.consegnato > 0)
                                 .withId(canto.id)
                 )
             }

@@ -5,10 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
-import android.preference.PreferenceManager
 import android.util.Log
-import android.view.*
-import android.view.ContextMenu.ContextMenuInfo
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IAdapter
 import com.turingtechnologies.materialscrollbar.CustomIndicator
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
@@ -30,9 +29,8 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SalmiIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
-import kotlinx.android.synthetic.main.simple_row_item.view.*
 
-class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, SimpleDialogFragment.SimpleCallback {
+class SalmiSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
     private var mAdapter: FastScrollIndicatorAdapter = FastScrollIndicatorAdapter(2)
 
@@ -86,10 +84,15 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
             consume
         }
 
+        mAdapter.onLongClickListener = { v: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            mCantiViewModel!!.idDaAgg = item.id
+            mCantiViewModel!!.popupMenu(this@SalmiSectionFragment, v!!, "SALMI_REPLACE", "SALMI_REPLACE_2", listePersonalizzate)
+            true
+        }
+
         val mMainActivity = activity as MainActivity?
 
         mAdapter.setHasStableIds(true)
-//        FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
         mAdapter.set(mCantiViewModel!!.titoli)
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
@@ -135,128 +138,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
         mLUtils!!.startActivityWithTransition(intent)
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-        mCantiViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
-
-//        if (listePersonalizzate != null) {
-        listePersonalizzate?.let {
-            for (i in it.indices) {
-                val subMenu = menu.addSubMenu(
-                        ID_FITTIZIO, Menu.NONE, 10 + i, it[i].lista!!.name)
-                for (k in 0 until it[i].lista!!.numPosizioni) {
-                    subMenu.add(100 + i, k, k, it[i].lista!!.getNomePosizione(k))
-                }
-            }
-        }
-
-        val inflater = mActivity.menuInflater
-        inflater.inflate(R.menu.add_to, menu)
-
-        val pref = PreferenceManager.getDefaultSharedPreferences(mActivity)
-        menu.findItem(R.id.add_to_p_pace).isVisible = pref.getBoolean(Utility.SHOW_PACE, false)
-        menu.findItem(R.id.add_to_e_seconda).isVisible = pref.getBoolean(Utility.SHOW_SECONDA, false)
-        menu.findItem(R.id.add_to_e_offertorio).isVisible = pref.getBoolean(Utility.SHOW_OFFERTORIO, false)
-        menu.findItem(R.id.add_to_e_santo).isVisible = pref.getBoolean(Utility.SHOW_SANTO, false)
-    }
-
-    override fun onContextItemSelected(item: MenuItem?): Boolean {
-        if (userVisibleHint) {
-            when (item!!.itemId) {
-                R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(this@SalmiSectionFragment, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_p_iniziale -> {
-                    addToListaNoDup(1, 1)
-                    return true
-                }
-                R.id.add_to_p_prima -> {
-                    addToListaNoDup(1, 2)
-                    return true
-                }
-                R.id.add_to_p_seconda -> {
-                    addToListaNoDup(1, 3)
-                    return true
-                }
-                R.id.add_to_p_terza -> {
-                    addToListaNoDup(1, 4)
-                    return true
-                }
-                R.id.add_to_p_pace -> {
-                    addToListaNoDup(1, 6)
-                    return true
-                }
-                R.id.add_to_p_fine -> {
-                    addToListaNoDup(1, 5)
-                    return true
-                }
-                R.id.add_to_e_iniziale -> {
-                    addToListaNoDup(2, 1)
-                    return true
-                }
-                R.id.add_to_e_seconda -> {
-                    addToListaNoDup(2, 6)
-                    return true
-                }
-                R.id.add_to_e_pace -> {
-                    addToListaNoDup(2, 2)
-                    return true
-                }
-                R.id.add_to_e_offertorio -> {
-                    addToListaNoDup(2, 8)
-                    return true
-                }
-                R.id.add_to_e_santo -> {
-                    addToListaNoDup(2, 7)
-                    return true
-                }
-                R.id.add_to_e_pane -> {
-                    ListeUtils.addToListaDup(this@SalmiSectionFragment, 2, 3, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_e_vino -> {
-                    ListeUtils.addToListaDup(this@SalmiSectionFragment, 2, 4, mCantiViewModel!!.idDaAgg)
-                    return true
-                }
-                R.id.add_to_e_fine -> {
-                    addToListaNoDup(2, 5)
-                    return true
-                }
-                else -> {
-                    mCantiViewModel!!.idListaClick = item.groupId
-                    mCantiViewModel!!.idPosizioneClick = item.itemId
-                    if (mCantiViewModel!!.idListaClick != ID_FITTIZIO && mCantiViewModel!!.idListaClick >= 100) {
-                        mCantiViewModel!!.idListaClick -= 100
-                        if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                        .lista!!
-                                        .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == "") {
-                            listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                    .lista!!
-                                    .addCanto(
-                                            (mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                            ListeUtils.updateListaPersonalizzata(this@SalmiSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
-                        } else {
-                            if (listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                            .lista!!
-                                            .getCantoPosizione(mCantiViewModel!!.idPosizioneClick) == (mCantiViewModel!!.idDaAgg).toString()) {
-                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-                            } else {
-                                ListeUtils.manageReplaceDialog(this@SalmiSectionFragment, Integer.parseInt(
-                                        listePersonalizzate!![mCantiViewModel!!.idListaClick]
-                                                .lista!!
-                                                .getCantoPosizione(mCantiViewModel!!.idPosizioneClick)), "SALMI_REPLACE")
-                            }
-                        }
-                        return true
-                    } else
-                        return super.onContextItemSelected(item)
-                }
-            }
-        } else
-            return false
-    }
-
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: " +
                 tag)
@@ -273,14 +154,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     }
 
     override fun onNegative(tag: String) {}
-
-//    override fun onNeutral(tag: String) {}
-
-    private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-        mCantiViewModel!!.idListaDaAgg = idLista
-        mCantiViewModel!!.posizioneDaAgg = listPosition
-        ListeUtils.addToListaNoDup(this@SalmiSectionFragment, idLista, listPosition, mCantiViewModel!!.idDaAgg, "VELOCE_REPLACE_2")
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -309,11 +182,9 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
                                                     .withColor(it.color!!)
                                                     .withId(it.id)
                                                     .withNumSalmo(it.numSalmo!!)
-                                                    .withContextMenuListener(this@SalmiSectionFragment)
                                     )
                                 }
                                 mCantiViewModel!!.titoli = newList
-//                                FastAdapterDiffUtil.set(mAdapter, mCantiViewModel!!.titoli)
                                 mAdapter.set(mCantiViewModel!!.titoli)
                                 dragScrollBar.setIndicator(CustomIndicator(context), true)
                                 dragScrollBar.setAutoHide(false)
@@ -322,7 +193,6 @@ class SalmiSectionFragment : HFFragment(), View.OnCreateContextMenuListener, Sim
     }
 
     companion object {
-        private const val ID_FITTIZIO = 99999999
         private val TAG = SalmiSectionFragment::class.java.canonicalName
     }
 }

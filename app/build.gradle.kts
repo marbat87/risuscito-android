@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+
 plugins {
     id("com.android.application")
     id("io.fabric")
@@ -24,6 +26,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         setTargetCompatibility(JavaVersion.VERSION_1_8)
+    }
+
+    (kotlinOptions as KotlinJvmOptions).apply {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     lintOptions {
@@ -56,11 +62,12 @@ android {
 
 val supportVersion = "1.0.0"
 val preferenceFixVersion = "1.0.0"
+val fastAdapterVersion = "4.0.0-rc04"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.afollestad.material-dialogs:core:2.8.0")
-    implementation("com.afollestad.material-dialogs:input:2.8.0")
-    implementation("com.afollestad.material-dialogs:files:2.8.0")
+    implementation("com.afollestad.material-dialogs:core:2.8.1")
+    implementation("com.afollestad.material-dialogs:input:2.8.1")
+    implementation("com.afollestad.material-dialogs:files:2.8.1")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:7.0.0-beta01")
     implementation("com.mikepenz:crossfader:1.6.0")
@@ -85,12 +92,12 @@ dependencies {
     implementation("com.afollestad:material-cab:1.3.1")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.3")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.12.0")
-    implementation("com.mikepenz:fastadapter:4.0.0-rc03")
-    implementation("com.mikepenz:fastadapter-extensions-drag:4.0.0-rc03")
-    implementation("com.mikepenz:fastadapter-extensions-swipe:4.0.0-rc03")
-    implementation("com.mikepenz:fastadapter-extensions-expandable:4.0.0-rc03")
-    implementation("com.mikepenz:fastadapter-extensions-ui:4.0.0-rc03")
-    implementation("com.mikepenz:fastadapter-extensions-utils:4.0.0-rc03")
+    implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
+    implementation("com.mikepenz:fastadapter-extensions-drag:$fastAdapterVersion")
+    implementation("com.mikepenz:fastadapter-extensions-swipe:$fastAdapterVersion")
+    implementation("com.mikepenz:fastadapter-extensions-expandable:$fastAdapterVersion")
+    implementation("com.mikepenz:fastadapter-extensions-ui:$fastAdapterVersion")
+    implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation("pub.devrel:easypermissions:3.0.0")
     implementation("androidx.room:room-runtime:2.0.0")
@@ -104,4 +111,5 @@ dependencies {
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation ("com.github.Ferfalk:SimpleSearchView:0.1.3")
     implementation ("com.github.MFlisar:changelog:1.1.5")
+    implementation ("com.github.zawadz88.materialpopupmenu:material-popup-menu:3.3.0")
 }
