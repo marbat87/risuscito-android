@@ -7,6 +7,7 @@
         <new>[b]IMPORTANT[/b]: New Backup/Restore system, visually the procedure is the same, changes are only "under the hood". The old backup has been removed, you must upload a new one</new>
         <bugfix>Bugfixes</bugfix>
         <new>New option to choose the predefined search</new>
+        <new>Added the new song Hymn to Christ Light (1967)</new>
     </release>
 
     <release versionCode="0"
