@@ -3,7 +3,6 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import android.view.Gravity
 import android.view.View
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
 import androidx.preference.PreferenceManager
@@ -29,42 +28,34 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
 
     fun popupMenu(fragment: Fragment, view: View, dialogTag: String, dialogTag2: String, listePersonalizzate: List<ListaPers>?) {
         val popupMenu = popupMenu {
-            style = R.style.material_popup_theme
             dropdownGravity = Gravity.END
             section {
                 title = fragment.getString(R.string.select_canto) + ":"
                 item {
                     labelRes = R.string.title_activity_favourites
                     callback = {
-                        //optional
                         ListeUtils.addToFavorites(fragment, idDaAgg)
                     }
                 }
-                customItem {
-                    layoutResId = R.layout.material_popup_submenu
-                    viewBoundCallback = { view ->
-                        view.findViewById<TextView>(R.id.item_label).text = fragment.getString(R.string.title_activity_canti_parola)
-                    }
+                item {
+                    labelRes = R.string.title_activity_canti_parola
+                    hasNestedItems = true
                     callback = {
                         subPopupMenu(fragment.getString(R.string.title_activity_canti_parola), 1, view, 0, fragment, dialogTag, dialogTag2, listePersonalizzate)
                     }
                 }
-                customItem {
-                    layoutResId = R.layout.material_popup_submenu
-                    viewBoundCallback = { view ->
-                        view.findViewById<TextView>(R.id.item_label).text = fragment.getString(R.string.title_activity_canti_eucarestia)
-                    }
+                item {
+                    labelRes = R.string.title_activity_canti_eucarestia
+                    hasNestedItems = true
                     callback = {
                         subPopupMenu(fragment.getString(R.string.title_activity_canti_eucarestia), 2, view, 0, fragment, dialogTag, dialogTag2, listePersonalizzate)
                     }
                 }
                 listePersonalizzate?.let {
                     for (i in it.indices) {
-                        customItem {
-                            layoutResId = R.layout.material_popup_submenu
-                            viewBoundCallback = { view ->
-                                view.findViewById<TextView>(R.id.item_label).text = it[i].lista!!.name
-                            }
+                        item {
+                            label = it[i].lista!!.name
+                            hasNestedItems = true
                             callback = {
                                 subPopupMenu(it[i].lista!!.name!!, 3, view, i, fragment, dialogTag, dialogTag2, listePersonalizzate)
                             }
@@ -79,7 +70,6 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
     private fun subPopupMenu(menuTitle: String, tipoLista: Int, mView: View, idLista: Int, fragment: Fragment, dialogTag: String, dialogTag2: String, listePersonalizzate: List<ListaPers>?) {
         val pref = PreferenceManager.getDefaultSharedPreferences(fragment.context)
         val popupMenu = popupMenu {
-            style = R.style.material_popup_theme
             dropdownGravity = Gravity.END
             section {
                 title = menuTitle
