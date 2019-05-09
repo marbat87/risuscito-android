@@ -284,7 +284,7 @@ object ListeUtils {
                 positionToInsert.id = idLista
                 positionToInsert.position = newPosition
                 positionToInsert.idCanto = idDaCanc
-                positionToInsert.timestamp = positionToDelete.timestamp
+                positionToInsert.timestamp = Date(System.currentTimeMillis())
                 mDao.insertPosition(positionToInsert)
                 false
             }
