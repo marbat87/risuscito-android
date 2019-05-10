@@ -7,11 +7,15 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import android.view.View
+import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import it.cammino.risuscito.utils.ThemeUtils
 import java.io.File
 import java.text.Normalizer
 import java.util.*
@@ -148,9 +152,18 @@ object Utility {
 
     @SuppressLint("NewApi")
     fun setupTransparentTints(context: Activity, color: Int, hasNavDrawer: Boolean) {
-
         if (!hasNavDrawer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             context.window.statusBarColor = color
+    }
+
+    @SuppressLint("NewApi")
+    fun setupNavBarColor(context: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.background_material_dark else R.color.background_material_light))
+            context.window.navigationBarColor = Color.TRANSPARENT
+        }
     }
 
     internal fun random(start: Int, end: Int): Int {

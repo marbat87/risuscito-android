@@ -59,8 +59,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
                     AppCompatDelegate.MODE_NIGHT_NO)
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(
-                this@ThemeableActivity, themeUtils!!.primaryColorDark(), hasNavDrawer)
+        Utility.setupTransparentTints(this, themeUtils!!.primaryColorDark(), hasNavDrawer)
+        Utility.setupNavBarColor(this)
 
         setTaskDescriptionWrapper(themeUtils!!)
 
