@@ -63,11 +63,12 @@ android {
 val supportVersion = "1.0.0"
 val preferenceFixVersion = "1.0.0"
 val fastAdapterVersion = "4.0.0-rc04"
+val materialDialogsVersion = "3.0.0-alpha1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.afollestad.material-dialogs:core:2.8.1")
-    implementation("com.afollestad.material-dialogs:input:2.8.1")
-    implementation("com.afollestad.material-dialogs:files:2.8.1")
+    implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
+    implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
+    implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:7.0.0-beta01")
     implementation("com.mikepenz:crossfader:1.6.0")

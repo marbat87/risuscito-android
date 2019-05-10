@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
+import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -89,9 +91,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             .getAdapterItem(position)
                             .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
                     cantoAdapter.notifyAdapterItemChanged(position)
-//                    if ((cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))?.selectedItems!!.size == 0)
                     if (selectExtension?.selectedItems!!.size == 0)
-                        MaterialCab.destroy()
+                        destroy()
                     else
                         startCab()
                 }
@@ -100,16 +101,13 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             consume
         }
 
-
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, item: SimpleHistoryItem, _: Int ->
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                val bundle = Bundle()
-                bundle.putCharSequence("pagina", item.source!!.text)
-                bundle.putInt("idCanto", item.id)
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle)
+                val intent = Intent(activity, PaginaRenderActivity::class.java)
+                intent.putExtras(bundleOf("pagina" to item.source!!.text, "idCanto" to item.id))
+                mLUtils!!.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -126,24 +124,14 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             true
         }
 
-        cantoAdapter
-//                .withSelectable(true)
-//                .withMultiSelect(true)
-//                .withSelectOnLongClick(true)
-//                .withOnPreClickListener(mOnPreClickListener)
-//                .withOnClickListener(mOnClickListener)
-//                .withOnPreLongClickListener(mOnPreLongClickListener)
-                .setHasStableIds(true)
-        cantoAdapter.set(mCronologiaViewModel!!.titoli)
+        cantoAdapter.setHasStableIds(true)
+//        cantoAdapter.set(mCronologiaViewModel!!.titoli)
 
         selectExtension = SelectExtension(cantoAdapter)
         selectExtension!!.isSelectable = true
         selectExtension!!.multiSelect = true
         selectExtension!!.selectOnLongClick = true
         selectExtension!!.deleteAllSelectedItems()
-
-//        (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::
-//        class.java))!!.deleteAllSelectedItems()
 
         history_recycler!!.adapter = cantoAdapter
         val llm = if (mMainActivity!!.isGridLayout)
@@ -167,7 +155,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     override fun onDestroy() {
-        if (MaterialCab.isActive) MaterialCab.destroy()
+        destroy()
         super.onDestroy()
     }
 
@@ -199,12 +187,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         return false
     }
 
-    private fun startSubActivity(bundle: Bundle) {
-        val intent = Intent(activity, PaginaRenderActivity::class.java)
-        intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent)
-    }
-
     override fun onPositive(tag: String) {
         Log.d(javaClass.name, "onPositive: $tag")
         when (tag) {
@@ -220,7 +202,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            //            val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleHistoryItem>>(SelectExtension::class.java))!!
             val itemSelectedCount = selectExtension!!
                     .selectedItems
                     .size
@@ -242,7 +223,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                         ListeUtils.removeHistoriesWithUndo(this@HistoryFragment, selectExtension!!
                                 .selectedItems)
                         actionModeOk = true
-                        MaterialCab.destroy()
+                        destroy()
                         true
                     }
                     else -> false
