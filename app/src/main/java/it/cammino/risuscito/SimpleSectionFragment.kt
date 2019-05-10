@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -20,22 +21,19 @@ import com.mikepenz.fastadapter.IAdapter
 import com.turingtechnologies.materialscrollbar.CustomIndicator
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
-import it.cammino.risuscito.viewmodels.NumericIndexViewModel
+import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
 
-class NumericSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
+class SimpleSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
-    private var mAdapter: FastScrollIndicatorAdapter = FastScrollIndicatorAdapter(1)
-
-    private var mCantiViewModel: NumericIndexViewModel? = null
-    // create boolean for fetching data
+    private lateinit var mAdapter: FastScrollIndicatorAdapter
+    private var mCantiViewModel: SimpleIndexViewModel? = null
     private var isViewShown = true
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
@@ -43,18 +41,36 @@ class NumericSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
     private var mLastClickTime: Long = 0
     private lateinit var mActivity: Activity
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        populateDb()
+        subscribeUiFavorites()
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.index_list_fragment, container, false)
 
-        mCantiViewModel = ViewModelProviders.of(this).get<NumericIndexViewModel>(NumericIndexViewModel::class.java)
+        mCantiViewModel = ViewModelProviders.of(this).get(SimpleIndexViewModel::class.java)
+        if (mCantiViewModel!!.tipoLista == -1) mCantiViewModel!!.tipoLista = arguments!!.getInt("tipoLista", 0)
 
         mLUtils = LUtils.getInstance(activity!!)
+        mAdapter = FastScrollIndicatorAdapter(mCantiViewModel!!.tipoLista, context!!)
 
-        var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "NUMERIC_REPLACE")
-        sFragment?.setmCallback(this@NumericSectionFragment)
-        sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "NUMERIC_REPLACE_2")
-        sFragment?.setmCallback(this@NumericSectionFragment)
+        var fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, when (mCantiViewModel!!.tipoLista) {
+            0 -> ALPHA_REPLACE
+            1 -> NUMERIC_REPLACE
+            2 -> SALMI_REPLACE
+            else -> ""
+        })
+        fragment?.setmCallback(this@SimpleSectionFragment)
+        fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, when (mCantiViewModel!!.tipoLista) {
+            0 -> ALPHA_REPLACE_2
+            1 -> NUMERIC_REPLACE_2
+            2 -> SALMI_REPLACE_2
+            else -> ""
+        })
+        fragment?.setmCallback(this@SimpleSectionFragment)
 
         if (!isViewShown)
             ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
@@ -69,16 +85,17 @@ class NumericSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                val bundle = Bundle()
-                bundle.putCharSequence("pagina", item.source!!.text)
-                bundle.putInt("idCanto", item.id)
                 // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle)
+                val intent = Intent(activity, PaginaRenderActivity::class.java)
+                intent.putExtras(bundleOf(
+                        "pagina" to item.source!!.getText(context),
+                        "idCanto" to item.id
+                ))
+                mLUtils!!.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -86,7 +103,11 @@ class NumericSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
 
         mAdapter.onLongClickListener = { v: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             mCantiViewModel!!.idDaAgg = item.id
-            mCantiViewModel!!.popupMenu(this@NumericSectionFragment, v!!, "NUMERIC_REPLACE", "NUMERIC_REPLACE_2", listePersonalizzate)
+            when (mCantiViewModel!!.tipoLista) {
+                0 -> mCantiViewModel!!.popupMenu(this@SimpleSectionFragment, v!!, ALPHA_REPLACE, ALPHA_REPLACE_2, listePersonalizzate)
+                1 -> mCantiViewModel!!.popupMenu(this@SimpleSectionFragment, v!!, NUMERIC_REPLACE, NUMERIC_REPLACE_2, listePersonalizzate)
+                2 -> mCantiViewModel!!.popupMenu(this@SimpleSectionFragment, v!!, SALMI_REPLACE, SALMI_REPLACE_2, listePersonalizzate)
+            }
             true
         }
 
@@ -100,62 +121,33 @@ class NumericSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
         cantiList!!.setHasFixedSize(true)
         cantiList!!.adapter = mAdapter
         val insetDivider = DividerItemDecoration(context!!, (if (mMainActivity.isGridLayout) glm else llm).orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
+        insetDivider.setDrawable(ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
         cantiList!!.addItemDecoration(insetDivider)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        populateDb()
-        subscribeUiFavorites()
-    }
-
-    /**
-     * Set a hint to the system about whether this fragment's UI is currently visible to the user.
-     * This hint defaults to true and is persistent across fragment instance state save and restore.
-     *
-     *
-     *
-     *
-     *
-     * An app may set this to false to indicate that the fragment's UI is scrolled out of
-     * visibility or is otherwise not directly visible to the user. This may be used by the system to
-     * prioritize operations such as fragment lifecycle updates or loader ordering behavior.
-     *
-     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
-     * false if it is not.
-     */
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
             if (view != null) {
                 isViewShown = true
-                Log.d(javaClass.name, "VISIBLE")
+                Log.d(TAG, "VISIBLE")
                 ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
             } else
                 isViewShown = false
         }
     }
 
-    private fun startSubActivity(bundle: Bundle) {
-        val intent = Intent(activity, PaginaRenderActivity::class.java)
-        intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent)
-    }
-
     override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: $tag")
-        Log.d(TAG, "onPositive: $tag")
+        Log.d(javaClass.name, "onPositive: $tag")
         when (tag) {
-            "NUMERIC_REPLACE" -> {
+            ALPHA_REPLACE, NUMERIC_REPLACE, SALMI_REPLACE -> {
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(this@NumericSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this@SimpleSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
             }
-            "NUMERIC_REPLACE_2" ->
-                ListeUtils.updatePosizione(this@NumericSectionFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
+            ALPHA_REPLACE_2, NUMERIC_REPLACE_2, SALMI_REPLACE_2 ->
+                ListeUtils.updatePosizione(this@SimpleSectionFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
         }
     }
 
@@ -167,24 +159,17 @@ class NumericSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
 
     private fun subscribeUiFavorites() {
         mCantiViewModel!!
-                .indexResult!!
+                .itemsResult!!
                 .observe(
                         this,
-                        Observer<List<Canto>> { canti ->
+                        Observer<List<SimpleItem>> { canti ->
                             if (canti != null) {
-                                val newList = ArrayList<SimpleItem>()
-                                canti.sortedBy { resources.getString(LUtils.getResId(it.pagina, R.string::class.java)).toInt() }
-                                        .forEach {
-                                            newList.add(
-                                                    SimpleItem()
-                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
-                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
-                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
-                                                            .withColor(it.color!!)
-                                                            .withId(it.id)
-                                            )
-                                        }
-                                mCantiViewModel!!.titoli = newList
+                                when (mCantiViewModel!!.tipoLista) {
+                                    0 -> mCantiViewModel!!.titoli = canti.sortedBy { it.title!!.getText(context) }
+                                    1 -> mCantiViewModel!!.titoli = canti.sortedBy { it.page!!.getText(context).toInt() }
+                                    2 -> mCantiViewModel!!.titoli = canti
+                                    else -> mCantiViewModel!!.titoli = canti
+                                }
                                 mAdapter.set(mCantiViewModel!!.titoli)
                                 dragScrollBar.setIndicator(CustomIndicator(context), true)
                                 dragScrollBar.setAutoHide(false)
@@ -193,9 +178,19 @@ class NumericSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
     }
 
     companion object {
-        private val TAG = NumericSectionFragment::class.java.canonicalName
+        private const val ALPHA_REPLACE = "ALPHA_REPLACE"
+        private const val ALPHA_REPLACE_2 = "ALPHA_REPLACE_2"
+        private const val NUMERIC_REPLACE = "NUMERIC_REPLACE"
+        private const val NUMERIC_REPLACE_2 = "NUMERIC_REPLACE_2"
+        private const val SALMI_REPLACE = "SALMI_REPLACE"
+        private const val SALMI_REPLACE_2 = "SALMI_REPLACE_2"
+        private val TAG = SimpleSectionFragment::class.java.canonicalName
+
+        fun newInstance(tipoLista: Int): SimpleSectionFragment {
+            val f = SimpleSectionFragment()
+            f.arguments = bundleOf("tipoLista" to tipoLista)
+            return f
+        }
     }
 
 }
-
-
