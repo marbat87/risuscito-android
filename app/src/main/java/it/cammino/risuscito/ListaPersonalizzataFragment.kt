@@ -12,12 +12,14 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
+import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
@@ -41,7 +43,6 @@ class ListaPersonalizzataFragment : Fragment() {
     private lateinit var cantoDaCanc: String
 
     private var mCantiViewModel: ListaPersonalizzataViewModel? = null
-    // create boolean for fetching data
     private var isViewShown = true
     private var posizioneDaCanc: Int = 0
     private var rootView: View? = null
@@ -100,14 +101,10 @@ class ListaPersonalizzataFragment : Fragment() {
                         Integer.valueOf(parent.text_id_posizione.text.toString()))
             } else {
                 if (!MaterialCab.isActive) {
-                    val bundle = Bundle()
-                    bundle.putInt("fromAdd", 0)
-                    bundle.putInt("idLista", idLista)
-                    bundle.putInt(
-                            "position",
-                            Integer.valueOf(parent.text_id_posizione.text.toString()))
                     val intent = Intent(activity, GeneralInsertSearch::class.java)
-                    intent.putExtras(bundle)
+                    intent.putExtras(bundleOf("fromAdd" to 0,
+                            "idLista" to idLista,
+                            "position" to Integer.valueOf(parent.text_id_posizione.text.toString())))
                     parentFragment!!.startActivityForResult(intent, TAG_INSERT_PERS)
                     Animatoo.animateShrink(activity)
                 }
@@ -153,7 +150,7 @@ class ListaPersonalizzataFragment : Fragment() {
         idLista = arguments!!.getInt("idLista")
 
         if (!isViewShown) {
-            if (MaterialCab.isActive) MaterialCab.destroy()
+            destroy()
             val fab1 = (parentFragment as CustomLists).getFab()
             fab1.show()
             (parentFragment as CustomLists).initFabOptions(true)
@@ -205,7 +202,7 @@ class ListaPersonalizzataFragment : Fragment() {
         if (isVisibleToUser) {
             if (view != null) {
                 isViewShown = true
-                if (MaterialCab.isActive) MaterialCab.destroy()
+                destroy()
                 val fab1 = (parentFragment as CustomLists).getFab()
                 fab1.show()
                 (parentFragment as CustomLists).initFabOptions(true)
@@ -215,7 +212,7 @@ class ListaPersonalizzataFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        if (MaterialCab.isActive) MaterialCab.destroy()
+        destroy()
         super.onDestroy()
     }
 
@@ -228,16 +225,14 @@ class ListaPersonalizzataFragment : Fragment() {
     private fun openPagina(v: View) {
         // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da
         // visualizzare
-        val bundle = Bundle()
-        bundle.putString("pagina", v.text_source_canto.text.toString())
-        bundle.putInt("idCanto", Integer.valueOf(v.text_id_canto_card.text.toString()))
         val intent = Intent(activity, PaginaRenderActivity::class.java)
-        intent.putExtras(bundle)
+        intent.putExtras(bundleOf("pagina" to v.text_source_canto.text.toString(),
+                "idCanto" to Integer.valueOf(v.text_id_canto_card.text.toString())))
         mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun snackBarRimuoviCanto(view: View) {
-        if (MaterialCab.isActive) MaterialCab.destroy()
+        destroy()
         val parent = view.parent.parent as View
         longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())
         longClickedChild = Integer.valueOf(view.item_tag.text.toString())
@@ -257,7 +252,7 @@ class ListaPersonalizzataFragment : Fragment() {
             runUpdate()
 
             actionModeOk = true
-            MaterialCab.destroy()
+            destroy()
             Snackbar.make(
                     activity!!.main_content,
                     R.string.switch_done,
@@ -278,7 +273,7 @@ class ListaPersonalizzataFragment : Fragment() {
         runUpdate()
 
         actionModeOk = true
-        MaterialCab.destroy()
+        destroy()
         Snackbar.make(
                 activity!!.main_content,
                 R.string.switch_done,
@@ -313,7 +308,7 @@ class ListaPersonalizzataFragment : Fragment() {
                         mCantiViewModel!!.listaPersonalizzata!!.removeCanto(posizioneDaCanc)
                         runUpdate()
                         actionModeOk = true
-                        MaterialCab.destroy()
+                        destroy()
                         Snackbar.make(
                                 activity!!.main_content,
                                 R.string.song_removed,

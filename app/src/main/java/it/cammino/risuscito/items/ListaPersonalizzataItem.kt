@@ -154,7 +154,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
             if (createClickListener != null) holder.addCanto!!.setOnClickListener(createClickListener)
         }
 
-        holder.idLista!!.text = titleItem!!.idLista.toString()
+//        holder.idLista!!.text = titleItem!!.idLista.toString()
         holder.idPosizione!!.text = titleItem!!.idPosizione.toString()
         holder.nomePosizione!!.text = titleItem!!.titoloPosizione
         holder.tag!!.text = titleItem!!.tag.toString()
@@ -162,7 +162,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.idLista!!.text = null
+//        holder.idLista!!.text = null
         holder.idPosizione!!.text = null
         holder.nomePosizione!!.text = null
         holder.tag!!.text = null
@@ -175,7 +175,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
     /** our ViewHolder  */
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
 
-        var idLista: TextView? = null
+//        var idLista: TextView? = null
         var idPosizione: TextView? = null
         var nomePosizione: TextView? = null
         var addCanto: View? = null
@@ -183,7 +183,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
         var list: LinearLayout? = null
 
         init {
-            idLista = itemView.text_id_lista
+//            idLista = itemView.text_id_lista
             idPosizione = itemView.text_id_posizione
             nomePosizione = itemView.titoloPosizioneGenerica
             addCanto = itemView.addCantoGenerico

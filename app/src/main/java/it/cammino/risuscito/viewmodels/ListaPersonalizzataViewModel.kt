@@ -74,7 +74,6 @@ class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(
                     val result = ListaPersonalizzataItem()
                             .withTitleItem(PosizioneTitleItem(
                                     listaPersonalizzata!!.getNomePosizione(cantoIndex),
-                                    listaPersonalizzataId,
                                     cantoIndex,
                                     cantoIndex,
                                     false))

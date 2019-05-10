@@ -13,12 +13,13 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
+import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -42,10 +43,9 @@ import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
 
-class CantiParolaFragment : Fragment() {
+class ListaPredefinitaFragment : Fragment() {
 
     private var mCantiViewModel: DefaultListaViewModel? = null
-    // create boolean for fetching data
     private var isViewShown = true
     private var posizioneDaCanc: Int = 0
     private var idDaCanc: Int = 0
@@ -73,48 +73,102 @@ class CantiParolaFragment : Fragment() {
 
             val l = ThemeableActivity.getSystemLocalWrapper(activity!!.resources.configuration)
             val result = StringBuilder()
-            result
-                    .append("-- ")
-                    .append(getString(R.string.title_activity_canti_parola).toUpperCase(l))
-                    .append(" --\n")
+            var progressivePos = 0
 
-            result.append(resources.getString(R.string.canto_iniziale).toUpperCase(l))
-            result.append("\n")
+            when (mCantiViewModel!!.defaultListaId) {
+                1 -> {
+                    result
+                            .append("-- ")
+                            .append(getString(R.string.title_activity_canti_parola).toUpperCase(l))
+                            .append(" --\n")
 
-            result.append(getTitoloToSendFromPosition(0))
-            result.append("\n")
-            result.append(resources.getString(R.string.prima_lettura).toUpperCase(l))
-            result.append("\n")
+                    result.append(resources.getString(R.string.canto_iniziale).toUpperCase(l))
+                    result.append("\n")
 
-            result.append(getTitoloToSendFromPosition(1))
-            result.append("\n")
-            result.append(resources.getString(R.string.seconda_lettura).toUpperCase(l))
-            result.append("\n")
+                    result.append(getTitoloToSendFromPosition(progressivePos++))
+                    result.append("\n")
+                    result.append(resources.getString(R.string.prima_lettura).toUpperCase(l))
+                    result.append("\n")
 
-            result.append(getTitoloToSendFromPosition(2))
-            result.append("\n")
-            result.append(resources.getString(R.string.terza_lettura).toUpperCase(l))
-            result.append("\n")
+                    result.append(getTitoloToSendFromPosition(progressivePos++))
+                    result.append("\n")
+                    result.append(resources.getString(R.string.seconda_lettura).toUpperCase(l))
+                    result.append("\n")
 
-            result.append(getTitoloToSendFromPosition(3))
-            result.append("\n")
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+                    result.append(getTitoloToSendFromPosition(progressivePos++))
+                    result.append("\n")
+                    result.append(resources.getString(R.string.terza_lettura).toUpperCase(l))
+                    result.append("\n")
 
-            if (pref.getBoolean(Utility.SHOW_PACE, false)) {
-                result.append(resources.getString(R.string.canto_pace).toUpperCase(l))
-                result.append("\n")
+                    result.append(getTitoloToSendFromPosition(progressivePos++))
+                    result.append("\n")
+                    val pref = PreferenceManager.getDefaultSharedPreferences(context)
 
-                result.append(getTitoloToSendFromPosition(4))
-                result.append("\n")
-                result.append(resources.getString(R.string.canto_fine).toUpperCase(l))
-                result.append("\n")
+                    if (pref.getBoolean(Utility.SHOW_PACE, false)) {
+                        result.append(resources.getString(R.string.canto_pace).toUpperCase(l))
+                        result.append("\n")
 
-                result.append(getTitoloToSendFromPosition(5))
-            } else {
-                result.append(resources.getString(R.string.canto_fine).toUpperCase(l))
-                result.append("\n")
+                        result.append(getTitoloToSendFromPosition(progressivePos++))
+                        result.append("\n")
+                    }
+                    result.append(resources.getString(R.string.canto_fine).toUpperCase(l))
+                    result.append("\n")
 
-                result.append(getTitoloToSendFromPosition(4))
+                    result.append(getTitoloToSendFromPosition(progressivePos))
+                }
+                2 -> {
+                    result
+                            .append("-- ")
+                            .append(getString(R.string.title_activity_canti_eucarestia).toUpperCase(l))
+                            .append(" --")
+                    result.append("\n")
+                    result.append(resources.getString(R.string.canto_iniziale).toUpperCase(l))
+                    result.append("\n")
+
+                    result.append(getTitoloToSendFromPosition(progressivePos++))
+                    result.append("\n")
+                    val pref = PreferenceManager.getDefaultSharedPreferences(context)
+                    if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
+                        result.append(resources.getString(R.string.seconda_lettura).toUpperCase(l))
+                        result.append("\n")
+
+                        result.append(getTitoloToSendFromPosition(progressivePos++))
+                        result.append("\n")
+                    }
+                    result.append(resources.getString(R.string.canto_pace).toUpperCase(l))
+                    result.append("\n")
+
+                    result.append(getTitoloToSendFromPosition(progressivePos++))
+                    result.append("\n")
+                    if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false)) {
+                        result.append(resources.getString(R.string.canto_offertorio).toUpperCase(l))
+                        result.append("\n")
+
+                        result.append(getTitoloToSendFromPosition(progressivePos++))
+                        result.append("\n")
+                    }
+                    if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
+                        result.append(resources.getString(R.string.santo).toUpperCase(l))
+                        result.append("\n")
+
+                        result.append(getTitoloToSendFromPosition(progressivePos++))
+                        result.append("\n")
+                    }
+                    result.append(resources.getString(R.string.canto_pane).toUpperCase(l))
+                    result.append("\n")
+
+                    result.append(getTitoloToSendFromPosition(progressivePos++))
+                    result.append("\n")
+                    result.append(resources.getString(R.string.canto_vino).toUpperCase(l))
+                    result.append("\n")
+
+                    result.append(getTitoloToSendFromPosition(progressivePos++))
+                    result.append("\n")
+                    result.append(resources.getString(R.string.canto_fine).toUpperCase(l))
+                    result.append("\n")
+
+                    result.append(getTitoloToSendFromPosition(progressivePos))
+                }
             }
 
             return result.toString()
@@ -129,19 +183,22 @@ class CantiParolaFragment : Fragment() {
         if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
         mLastClickTime = SystemClock.elapsedRealtime()
         val parent = v.parent.parent as View
-        if (parent.addCantoGenerico.isVisible) {
+        if (v.id == R.id.addCantoGenerico) {
             if (mSwhitchMode) {
-                MaterialCab.destroy()
-                ListeUtils.scambioConVuoto(this@CantiParolaFragment, 1, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
+                destroy()
+                ListeUtils.scambioConVuoto(this@ListaPredefinitaFragment, mCantiViewModel!!.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
             } else {
                 if (!MaterialCab.isActive) {
-                    val bundle = Bundle()
-                    bundle.putInt("fromAdd", 1)
-                    bundle.putInt("idLista", 1)
-                    bundle.putInt(
-                            "position",
-                            Integer.valueOf(parent.text_id_posizione.text.toString()))
-                    startSubActivity(bundle)
+                    val intent = Intent(activity, GeneralInsertSearch::class.java)
+                    intent.putExtras(bundleOf("fromAdd" to 1,
+                            "idLista" to mCantiViewModel!!.defaultListaId,
+                            "position" to Integer.valueOf(parent.text_id_posizione.text.toString())))
+                    parentFragment!!.startActivityForResult(intent, when (mCantiViewModel!!.defaultListaId) {
+                        1 -> TAG_INSERT_PAROLA
+                        2 -> TAG_INSERT_EUCARESTIA
+                        else -> TAG_INSERT_PAROLA
+                    })
+                    Animatoo.animateShrink(activity)
                 }
             }
         } else {
@@ -151,12 +208,17 @@ class CantiParolaFragment : Fragment() {
                     idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
                     timestampDaCanc = v.text_timestamp.text.toString()
                     snackBarRimuoviCanto(v)
-                } else
-                    openPagina(v)
+                } else {
+                    //apri canto
+                    val intent = Intent(activity, PaginaRenderActivity::class.java)
+                    intent.putExtras(bundleOf("pagina" to v.text_source_canto.text.toString(),
+                            "idCanto" to Integer.valueOf(v.text_id_canto_card.text.toString())))
+                    mLUtils!!.startActivityWithTransition(intent)
+                }
             else {
-                MaterialCab.destroy()
-                ListeUtils.scambioCanto(this@CantiParolaFragment,
-                        1,
+                destroy()
+                ListeUtils.scambioCanto(this@ListaPredefinitaFragment,
+                        mCantiViewModel!!.defaultListaId,
                         posizioneDaCanc,
                         idDaCanc,
                         Integer.valueOf(parent.text_id_posizione.text.toString()),
@@ -180,6 +242,7 @@ class CantiParolaFragment : Fragment() {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
 
         mCantiViewModel = ViewModelProviders.of(this).get(DefaultListaViewModel::class.java)
+        if (mCantiViewModel!!.defaultListaId == -1) mCantiViewModel!!.defaultListaId = arguments!!.getInt("indiceLista", 0)
 
         mMainActivity = activity as MainActivity?
 
@@ -187,9 +250,7 @@ class CantiParolaFragment : Fragment() {
         mSwhitchMode = false
 
         if (!isViewShown) {
-            if (MaterialCab.isActive) MaterialCab.destroy()
-            val fab1 = (parentFragment as CustomLists).getFab()
-            fab1.show()
+            destroy()
             (parentFragment as CustomLists).initFabOptions(false)
         }
 
@@ -212,7 +273,7 @@ class CantiParolaFragment : Fragment() {
         subscribeUiFavorites()
 
         button_pulisci.setOnClickListener {
-            ListeUtils.cleanList(context!!, 1)
+            ListeUtils.cleanList(context!!, mCantiViewModel!!.defaultListaId)
         }
 
         button_condividi.setOnClickListener {
@@ -226,7 +287,7 @@ class CantiParolaFragment : Fragment() {
         if (isVisibleToUser) {
             if (view != null) {
                 isViewShown = true
-                if (MaterialCab.isActive) MaterialCab.destroy()
+                destroy()
                 (parentFragment as CustomLists).initFabOptions(false)
 
             } else
@@ -235,26 +296,8 @@ class CantiParolaFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        if (MaterialCab.isActive) MaterialCab.destroy()
+        destroy()
         super.onDestroy()
-    }
-
-    private fun startSubActivity(bundle: Bundle) {
-        val intent = Intent(activity, GeneralInsertSearch::class.java)
-        intent.putExtras(bundle)
-        parentFragment!!.startActivityForResult(intent, TAG_INSERT_PAROLA)
-        Animatoo.animateShrink(activity)
-    }
-
-    private fun openPagina(v: View) {
-        // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da
-        // visualizzare
-        val bundle = Bundle()
-        bundle.putString("pagina", v.text_source_canto.text.toString())
-        bundle.putInt("idCanto", Integer.valueOf(v.text_id_canto_card.text.toString()))
-        val intent = Intent(activity, PaginaRenderActivity::class.java)
-        intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun getCantofromPosition(
@@ -274,10 +317,12 @@ class CantiParolaFragment : Fragment() {
         return ListaPersonalizzataItem()
                 .withTitleItem(PosizioneTitleItem(
                         titoloPosizione,
-                        1,
                         position,
                         tag,
-                        false))
+                        when (mCantiViewModel!!.defaultListaId) {
+                            2 -> (position == 4 || position == 3)
+                            else -> false
+                        }))
                 .withListItem(list)
                 .withClickListener(click)
                 .withLongClickListener(longClick)
@@ -309,7 +354,7 @@ class CantiParolaFragment : Fragment() {
     }
 
     private fun snackBarRimuoviCanto(view: View) {
-        if (MaterialCab.isActive) MaterialCab.destroy()
+        destroy()
         val parent = view.parent.parent as View
         longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())
         longClickedChild = Integer.valueOf(view.item_tag.text.toString())
@@ -348,8 +393,8 @@ class CantiParolaFragment : Fragment() {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        MaterialCab.destroy()
-                        ListeUtils.removePositionWithUndo(this@CantiParolaFragment, 1, posizioneDaCanc, idDaCanc, timestampDaCanc!!)
+                        destroy()
+                        ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel!!.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc!!)
                         true
                     }
                     R.id.action_switch_item -> {
@@ -380,7 +425,6 @@ class CantiParolaFragment : Fragment() {
     }
 
     private fun populateDb() {
-        mCantiViewModel!!.defaultListaId = 1
         mCantiViewModel!!.createDb()
     }
 
@@ -390,32 +434,74 @@ class CantiParolaFragment : Fragment() {
                 .observe(
                         this,
                         Observer<List<Posizione>> { mCanti ->
-                            Log.d(TAG, "onChanged")
                             var progressiveTag = 0
-                            posizioniList.clear()
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
-
                             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-                            if (pref.getBoolean(Utility.SHOW_PACE, false))
-                                posizioniList.add(
-                                        getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
+                            posizioniList.clear()
 
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                            when (mCantiViewModel!!.defaultListaId) {
+                                1 -> {
+                                    posizioniList.add(
+                                            getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+                                    posizioniList.add(
+                                            getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
+                                    posizioniList.add(
+                                            getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
+                                    posizioniList.add(
+                                            getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
 
+                                    if (pref.getBoolean(Utility.SHOW_PACE, false))
+                                        posizioniList.add(
+                                                getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
+
+                                    posizioniList.add(
+                                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                                }
+                                2 -> {
+                                    posizioniList.add(
+                                            getCantofromPosition(
+                                                    mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+
+                                    if (pref.getBoolean(Utility.SHOW_SECONDA, false))
+                                        posizioniList.add(
+                                                getCantofromPosition(
+                                                        mCanti, getString(R.string.seconda_lettura), 6, progressiveTag++))
+
+                                    posizioniList.add(
+                                            getCantofromPosition(
+                                                    mCanti, getString(R.string.canto_pace), 2, progressiveTag++))
+
+                                    if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
+                                        posizioniList.add(
+                                                getCantofromPosition(
+                                                        mCanti, getString(R.string.canto_offertorio), 8, progressiveTag++))
+
+                                    if (pref.getBoolean(Utility.SHOW_SANTO, false))
+                                        posizioniList.add(
+                                                getCantofromPosition(mCanti, getString(R.string.santo), 7, progressiveTag++))
+
+                                    posizioniList.add(
+                                            getCantofromPosition(
+                                                    mCanti, getString(R.string.canto_pane), 3, progressiveTag++))
+                                    posizioniList.add(
+                                            getCantofromPosition(
+                                                    mCanti, getString(R.string.canto_vino), 4, progressiveTag++))
+                                    posizioniList.add(
+                                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                                }
+                            }
                             cantoAdapter!!.set(posizioniList)
                         })
     }
 
     companion object {
         const val TAG_INSERT_PAROLA = 333
-        private val TAG = CantiParolaFragment::class.java.canonicalName
+        const val TAG_INSERT_EUCARESTIA = 444
+        private val TAG = ListaPredefinitaFragment::class.java.canonicalName
+
+        fun newInstance(indiceLista: Int): ListaPredefinitaFragment {
+            val f = ListaPredefinitaFragment()
+            f.arguments = bundleOf("indiceLista" to indiceLista)
+            return f
+        }
     }
 }

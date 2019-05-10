@@ -12,8 +12,7 @@ class DefaultListaViewModel(application: Application) : AndroidViewModel(applica
 
     var cantiResult: LiveData<List<Posizione>>? = null
         private set
-
-    var defaultListaId: Int = 0
+    var defaultListaId: Int = -1
 
     private var mDb: RisuscitoDatabase? = null
 
