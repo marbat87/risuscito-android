@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -25,7 +26,6 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
-import it.cammino.risuscito.database.CantoConsegnato
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.InsertSearchViewModel
@@ -106,15 +106,9 @@ class InsertVeloceFragment : Fragment() {
             override fun onClick(v: View, position: Int, fastAdapter: FastAdapter<InsertItem>, item: InsertItem) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return
                 mLastClickTime = SystemClock.elapsedRealtime()
-
-                // crea un bundle e ci mette il parametro "pagina", contente il nome del file della
-                // pagina da visualizzare
-                val bundle = Bundle()
-                bundle.putString("pagina", item.source.toString())
-                bundle.putInt("idCanto", item.id)
-
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle)
+                val intent = Intent(activity!!.applicationContext, PaginaRenderActivity::class.java)
+                intent.putExtras(bundleOf("pagina" to item.source!!.getText(context), "idCanto" to item.id))
+                mLUtils!!.startActivityWithTransition(intent)
             }
         })
 
@@ -168,21 +162,6 @@ class InsertVeloceFragment : Fragment() {
 
     }
 
-    /**
-     * Set a hint to the system about whether this fragment's UI is currently visible to the user.
-     * This hint defaults to true and is persistent across fragment instance state save and restore.
-     *
-     *
-     *
-     *
-     *
-     * An app may set this to false to indicate that the fragment's UI is scrolled out of
-     * visibility or is otherwise not directly visible to the user. This may be used by the system to
-     * prioritize operations such as fragment lifecycle updates or loader ordering behavior.
-     *
-     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
-     * false if it is not.
-     */
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isResumed && isVisibleToUser) {
@@ -197,12 +176,6 @@ class InsertVeloceFragment : Fragment() {
         super.onDestroy()
         if (searchTask != null && searchTask!!.status == AsyncTask.Status.RUNNING)
             searchTask!!.cancel(true)
-    }
-
-    private fun startSubActivity(bundle: Bundle) {
-        val intent = Intent(activity!!.applicationContext, PaginaRenderActivity::class.java)
-        intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun ricercaStringa(s: String, onlyConsegnati: Boolean) {
@@ -241,8 +214,8 @@ class InsertVeloceFragment : Fragment() {
 
             val onlyConsegnati = java.lang.Boolean.parseBoolean(sParam[1])
 
-            fragmentReference.get()!!.mViewModel!!.titoli.sortedBy { it.title.toString() }
-                    .filter { Utility.removeAccents(it.title.toString()).toLowerCase().contains(stringa) && (!onlyConsegnati || it.consegnato == 1) }
+            fragmentReference.get()!!.mViewModel!!.titoli.sortedBy { it.title!!.getText(fragmentReference.get()!!.context) }
+                    .filter { Utility.removeAccents(it.title!!.getText(fragmentReference.get()!!.context)).toLowerCase().contains(stringa) && (!onlyConsegnati || it.consegnato == 1) }
                     .forEach {
                         if (isCancelled) return titoliResult
                         titoliResult.add(it.withFilter(stringa))
@@ -276,26 +249,12 @@ class InsertVeloceFragment : Fragment() {
 
     private fun subscribeUiFavorites() {
         mViewModel!!
-                .indexResult!!
+                .itemsResult!!
                 .observe(
                         this,
-                        Observer<List<CantoConsegnato>> { canti ->
+                        Observer<List<InsertItem>> { canti ->
                             if (canti != null) {
-                                val newList = ArrayList<InsertItem>()
-                                canti.sortedBy { resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
-                                        .forEach {
-                                            newList.add(
-                                                    InsertItem()
-                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
-                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
-                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
-                                                            .withColor(it.color!!)
-                                                            .withNormalizedTitle(Utility.removeAccents(resources.getString(LUtils.getResId(it.titolo, R.string::class.java))))
-                                                            .withId(it.id)
-                                                            .withConsegnato(it.consegnato)
-                                            )
-                                        }
-                                mViewModel!!.titoli = newList
+                                mViewModel!!.titoli = canti.sortedBy { it.title!!.getText(context) }
                             }
                         })
     }

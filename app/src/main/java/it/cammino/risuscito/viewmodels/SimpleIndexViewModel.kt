@@ -34,6 +34,7 @@ class SimpleIndexViewModel(application: Application) : GenericIndexViewModel(app
                                         .withSource(LUtils.getResId(it.source, R.string::class.java))
                                         .withColor(it.color!!)
                                         .withId(it.id)
+                                        .withUndecodedSource(it.source ?: "")
                         )
                     }
                     newList

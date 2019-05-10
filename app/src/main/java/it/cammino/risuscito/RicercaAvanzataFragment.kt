@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -27,14 +28,13 @@ import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
-import it.cammino.risuscito.viewmodels.SearchViewModel
+import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import kotlinx.android.synthetic.main.activity_general_search.*
 import kotlinx.android.synthetic.main.ricerca_tab_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
@@ -48,9 +48,7 @@ class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback 
     internal val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private lateinit var aTexts: Array<Array<String?>>
 
-    // create boolean for fetching data
     private var isViewShown = true
-    //    private var titoli: MutableList<SimpleItem> = ArrayList()
     private var rootView: View? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
@@ -58,13 +56,14 @@ class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback 
     private var mLastClickTime: Long = 0
     private lateinit var mActivity: Activity
 
-    private var mViewModel: SearchViewModel? = null
+    private var mViewModel: SimpleIndexViewModel? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.ricerca_tab_layout, container, false)
 
-        mViewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
+        mViewModel = ViewModelProviders.of(this).get(SimpleIndexViewModel::class.java)
+        if (mViewModel!!.tipoLista == -1) mViewModel!!.tipoLista = 0
 
         try {
             val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
@@ -110,11 +109,9 @@ class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback 
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                val bundle = Bundle()
-                bundle.putCharSequence("pagina", item.source!!.text)
-                bundle.putInt("idCanto", item.id)
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle)
+                val intent = Intent(activity!!.applicationContext, PaginaRenderActivity::class.java)
+                intent.putExtras(bundleOf("pagina" to item.source!!.getText(context), "idCanto" to item.id))
+                mLUtils!!.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -187,21 +184,6 @@ class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback 
         mActivity = activity as Activity
     }
 
-    /**
-     * Set a hint to the system about whether this fragment's UI is currently visible to the user.
-     * This hint defaults to true and is persistent across fragment instance state save and restore.
-     *
-     *
-     *
-     *
-     *
-     * An app may set this to false to indicate that the fragment's UI is scrolled out of
-     * visibility or is otherwise not directly visible to the user. This may be used by the system to
-     * prioritize operations such as fragment lifecycle updates or loader ordering behavior.
-     *
-     * @param isVisibleToUser true if this fragment's UI is currently visible to the user (default),
-     * false if it is not.
-     */
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
@@ -222,132 +204,6 @@ class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback 
         Log.d(TAG, "onDestroy")
         if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
         super.onDestroy()
-    }
-
-//    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
-//        mViewModel!!.idDaAgg = Integer.valueOf(v.text_id_canto.text.toString())
-//        menu.setHeaderTitle(getString(R.string.select_canto) + ":")
-//
-//        listePersonalizzate?.let {
-//            for (i in it.indices) {
-//                val subMenu = menu.addSubMenu(
-//                        ID_FITTIZIO, Menu.NONE, 10 + i, it[i].lista!!.name)
-//                for (k in 0 until it[i].lista!!.numPosizioni) {
-//                    subMenu.add(100 + i, k, k, it[i].lista!!.getNomePosizione(k))
-//                }
-//            }
-//        }
-//
-//        val inflater = mActivity.menuInflater
-//        inflater.inflate(R.menu.add_to, menu)
-//
-//        val pref = PreferenceManager.getDefaultSharedPreferences(mActivity)
-//        menu.findItem(R.id.add_to_p_pace).isVisible = pref.getBoolean(Utility.SHOW_PACE, false)
-//        menu.findItem(R.id.add_to_e_seconda).isVisible = pref.getBoolean(Utility.SHOW_SECONDA, false)
-//        menu.findItem(R.id.add_to_e_offertorio).isVisible = pref.getBoolean(Utility.SHOW_OFFERTORIO, false)
-//        menu.findItem(R.id.add_to_e_santo).isVisible = pref.getBoolean(Utility.SHOW_SANTO, false)
-//    }
-
-//    override fun onContextItemSelected(item: MenuItem?): Boolean {
-//        return if (userVisibleHint) {
-//            when (item!!.itemId) {
-//                R.id.add_to_favorites -> {
-//                    ListeUtils.addToFavorites(this@RicercaAvanzataFragment, mViewModel!!.idDaAgg)
-//                    true
-//                }
-//                R.id.add_to_p_iniziale -> {
-//                    addToListaNoDup(1, 1)
-//                    true
-//                }
-//                R.id.add_to_p_prima -> {
-//                    addToListaNoDup(1, 2)
-//                    true
-//                }
-//                R.id.add_to_p_seconda -> {
-//                    addToListaNoDup(1, 3)
-//                    true
-//                }
-//                R.id.add_to_p_terza -> {
-//                    addToListaNoDup(1, 4)
-//                    true
-//                }
-//                R.id.add_to_p_pace -> {
-//                    addToListaNoDup(1, 6)
-//                    true
-//                }
-//                R.id.add_to_p_fine -> {
-//                    addToListaNoDup(1, 5)
-//                    true
-//                }
-//                R.id.add_to_e_iniziale -> {
-//                    addToListaNoDup(2, 1)
-//                    true
-//                }
-//                R.id.add_to_e_seconda -> {
-//                    addToListaNoDup(2, 6)
-//                    true
-//                }
-//                R.id.add_to_e_pace -> {
-//                    addToListaNoDup(2, 2)
-//                    true
-//                }
-//                R.id.add_to_e_offertorio -> {
-//                    addToListaNoDup(2, 8)
-//                    true
-//                }
-//                R.id.add_to_e_santo -> {
-//                    addToListaNoDup(2, 7)
-//                    true
-//                }
-//                R.id.add_to_e_pane -> {
-//                    ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 3, mViewModel!!.idDaAgg)
-//                    true
-//                }
-//                R.id.add_to_e_vino -> {
-//                    ListeUtils.addToListaDup(this@RicercaAvanzataFragment, 2, 4, mViewModel!!.idDaAgg)
-//                    true
-//                }
-//                R.id.add_to_e_fine -> {
-//                    addToListaNoDup(2, 5)
-//                    true
-//                }
-//                else -> {
-//                    mViewModel!!.idListaClick = item.groupId
-//                    mViewModel!!.idPosizioneClick = item.itemId
-//                    if (mViewModel!!.idListaClick != ID_FITTIZIO && mViewModel!!.idListaClick >= 100) {
-//                        mViewModel!!.idListaClick -= 100
-//                        if (listePersonalizzate!![mViewModel!!.idListaClick]
-//                                        .lista!!
-//                                        .getCantoPosizione(mViewModel!!.idPosizioneClick) == "") {
-//                            listePersonalizzate!![mViewModel!!.idListaClick]
-//                                    .lista!!
-//                                    .addCanto(mViewModel!!.idDaAgg.toString(), mViewModel!!.idPosizioneClick)
-//                            ListeUtils.updateListaPersonalizzata(this@RicercaAvanzataFragment, listePersonalizzate!![mViewModel!!.idListaClick])
-//                        } else {
-//                            if (listePersonalizzate!![mViewModel!!.idListaClick]
-//                                            .lista!!
-//                                            .getCantoPosizione(mViewModel!!.idPosizioneClick) == mViewModel!!.idDaAgg.toString()) {
-//                                Snackbar.make(rootView!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-//                            } else {
-//                                ListeUtils.manageReplaceDialog(this@RicercaAvanzataFragment, Integer.parseInt(
-//                                        listePersonalizzate!![mViewModel!!.idListaClick]
-//                                                .lista!!
-//                                                .getCantoPosizione(mViewModel!!.idPosizioneClick)), "AVANZATA_REPLACE")
-//                            }
-//                        }
-//                        true
-//                    } else
-//                        super.onContextItemSelected(item)
-//                }
-//            }
-//        } else
-//            false
-//    }
-
-    private fun startSubActivity(bundle: Bundle) {
-        val intent = Intent(activity!!.applicationContext, PaginaRenderActivity::class.java)
-        intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent)
     }
 
     override fun onPositive(tag: String) {
@@ -386,12 +242,6 @@ class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback 
         }
     }
 
-//    private fun addToListaNoDup(idLista: Int, listPosition: Int) {
-//        mViewModel!!.idListaDaAgg = idLista
-//        mViewModel!!.posizioneDaAgg = listPosition
-//        ListeUtils.addToListaNoDup(this@RicercaAvanzataFragment, idLista, listPosition, mViewModel!!.idDaAgg, "AVANZATA_REPLACE_2")
-//    }
-
     private class SearchTask internal constructor(fragment: RicercaAvanzataFragment) : AsyncTask<String, Void, ArrayList<SimpleItem>>() {
 
         private val fragmentReference: WeakReference<RicercaAvanzataFragment> = WeakReference(fragment)
@@ -429,7 +279,7 @@ class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback 
                 if (found) {
                     Log.d(TAG, "aText[0]: ${aText[0]}")
 
-                    fragmentReference.get()!!.mViewModel!!.titoli.sortedBy { it.title.toString() }
+                    fragmentReference.get()!!.mViewModel!!.titoli.sortedBy { it.title!!.getText(fragmentReference.get()!!.context) }
                             .filter { it.undecodedSource == aText[0]!! }
                             .forEach {
                                 if (isCancelled) return titoliResult
@@ -466,32 +316,17 @@ class RicercaAvanzataFragment : Fragment(), SimpleDialogFragment.SimpleCallback 
 
     private fun subscribeUiFavorites() {
         mViewModel!!
-                .indexResult!!
+                .itemsResult!!
                 .observe(
                         this,
-                        Observer<List<Canto>> { canti ->
+                        Observer<List<SimpleItem>> { canti ->
                             if (canti != null) {
-                                val newList = ArrayList<SimpleItem>()
-                                canti.sortedBy { resources.getString(LUtils.getResId(it.titolo, R.string::class.java)) }
-                                        .forEach {
-                                            newList.add(
-                                                    SimpleItem()
-                                                            .withTitle(resources.getString(LUtils.getResId(it.titolo, R.string::class.java)))
-                                                            .withPage(resources.getString(LUtils.getResId(it.pagina, R.string::class.java)))
-                                                            .withSource(resources.getString(LUtils.getResId(it.source, R.string::class.java)))
-                                                            .withColor(it.color!!)
-                                                            .withId(it.id)
-                                                            .withUndecodedSource(it.source ?: "")
-//                                                            .withContextMenuListener(this@RicercaAvanzataFragment)
-                                            )
-                                        }
-                                mViewModel!!.titoli = newList
+                                mViewModel!!.titoli = canti.sortedBy { it.title!!.getText(context) }
                             }
                         })
     }
 
     companion object {
         private val TAG = RicercaAvanzataFragment::class.java.canonicalName
-//        private const val ID_FITTIZIO = 99999999
     }
 }

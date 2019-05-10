@@ -30,7 +30,7 @@ import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import kotlinx.android.synthetic.main.index_list_fragment.*
 
-class SimpleSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
+class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
     private lateinit var mAdapter: FastScrollIndicatorAdapter
     private var mCantiViewModel: SimpleIndexViewModel? = null
@@ -63,14 +63,14 @@ class SimpleSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback 
             2 -> SALMI_REPLACE
             else -> ""
         })
-        fragment?.setmCallback(this@SimpleSectionFragment)
+        fragment?.setmCallback(this@SimpleIndexFragment)
         fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, when (mCantiViewModel!!.tipoLista) {
             0 -> ALPHA_REPLACE_2
             1 -> NUMERIC_REPLACE_2
             2 -> SALMI_REPLACE_2
             else -> ""
         })
-        fragment?.setmCallback(this@SimpleSectionFragment)
+        fragment?.setmCallback(this@SimpleIndexFragment)
 
         if (!isViewShown)
             ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
@@ -104,9 +104,9 @@ class SimpleSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback 
         mAdapter.onLongClickListener = { v: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             mCantiViewModel!!.idDaAgg = item.id
             when (mCantiViewModel!!.tipoLista) {
-                0 -> mCantiViewModel!!.popupMenu(this@SimpleSectionFragment, v!!, ALPHA_REPLACE, ALPHA_REPLACE_2, listePersonalizzate)
-                1 -> mCantiViewModel!!.popupMenu(this@SimpleSectionFragment, v!!, NUMERIC_REPLACE, NUMERIC_REPLACE_2, listePersonalizzate)
-                2 -> mCantiViewModel!!.popupMenu(this@SimpleSectionFragment, v!!, SALMI_REPLACE, SALMI_REPLACE_2, listePersonalizzate)
+                0 -> mCantiViewModel!!.popupMenu(this@SimpleIndexFragment, v!!, ALPHA_REPLACE, ALPHA_REPLACE_2, listePersonalizzate)
+                1 -> mCantiViewModel!!.popupMenu(this@SimpleIndexFragment, v!!, NUMERIC_REPLACE, NUMERIC_REPLACE_2, listePersonalizzate)
+                2 -> mCantiViewModel!!.popupMenu(this@SimpleIndexFragment, v!!, SALMI_REPLACE, SALMI_REPLACE_2, listePersonalizzate)
             }
             true
         }
@@ -144,10 +144,10 @@ class SimpleSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback 
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(this@SimpleSectionFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this@SimpleIndexFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
             }
             ALPHA_REPLACE_2, NUMERIC_REPLACE_2, SALMI_REPLACE_2 ->
-                ListeUtils.updatePosizione(this@SimpleSectionFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
+                ListeUtils.updatePosizione(this@SimpleIndexFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
         }
     }
 
@@ -184,10 +184,10 @@ class SimpleSectionFragment : HFFragment(), SimpleDialogFragment.SimpleCallback 
         private const val NUMERIC_REPLACE_2 = "NUMERIC_REPLACE_2"
         private const val SALMI_REPLACE = "SALMI_REPLACE"
         private const val SALMI_REPLACE_2 = "SALMI_REPLACE_2"
-        private val TAG = SimpleSectionFragment::class.java.canonicalName
+        private val TAG = SimpleIndexFragment::class.java.canonicalName
 
-        fun newInstance(tipoLista: Int): SimpleSectionFragment {
-            val f = SimpleSectionFragment()
+        fun newInstance(tipoLista: Int): SimpleIndexFragment {
+            val f = SimpleIndexFragment()
             f.arguments = bundleOf("tipoLista" to tipoLista)
             return f
         }

@@ -17,6 +17,7 @@ import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 @Suppress("unused")
@@ -35,12 +36,9 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
     var numSalmo: Int = 0
         private set
     private var selectedColor: ColorHolder? = null
-    private var normalizedTitle: String? = null
     private var filter: String? = null
     var id: Int = 0
         private set
-
-//    private var createContextMenuListener: View.OnCreateContextMenuListener? = null
 
     fun withTitle(title: String): SimpleItem {
         this.title = StringHolder(title)
@@ -99,11 +97,6 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 
     fun withSelectedColorRes(@ColorRes selectedColorRes: Int): SimpleItem {
         this.selectedColor = ColorHolder.fromColorRes(selectedColorRes)
-        return this
-    }
-
-    fun withNormalizedTitle(normTitle: String): SimpleItem {
-        this.normalizedTitle = normTitle
         return this
     }
 
@@ -166,9 +159,10 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 
         // set the text for the name
         if (!filter.isNullOrEmpty()) {
-            val mPosition = normalizedTitle!!.toLowerCase().indexOf(filter!!)
+            val normalizedTitle = Utility.removeAccents(title!!.getText(holder.itemView.context))
+            val mPosition = normalizedTitle.toLowerCase().indexOf(filter!!)
             if (mPosition >= 0) {
-                val stringTitle = title!!.text.toString()
+                val stringTitle = title!!.getText(holder.itemView.context)
                 val highlighted = StringBuilder(if (mPosition > 0) stringTitle.substring(0, mPosition) else "")
                         .append("<b>")
                         .append(stringTitle.substring(mPosition, mPosition + filter!!.length))

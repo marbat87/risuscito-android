@@ -55,12 +55,12 @@ class GeneralIndex : Fragment() {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> SimpleSectionFragment.newInstance(0)
-                1 -> SimpleSectionFragment.newInstance(1)
+                0 -> SimpleIndexFragment.newInstance(0)
+                1 -> SimpleIndexFragment.newInstance(1)
                 2 -> ArgumentsSectionFragment()
-                3 -> SimpleSectionFragment.newInstance(2)
+                3 -> SimpleIndexFragment.newInstance(2)
                 4 -> IndiceLiturgicoFragment()
-                else -> SimpleSectionFragment.newInstance(0)
+                else -> SimpleIndexFragment.newInstance(0)
             }
         }
 
