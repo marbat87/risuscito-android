@@ -164,6 +164,7 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
                         this,
                         Observer<List<SimpleItem>> { canti ->
                             if (canti != null) {
+                                Log.d(TAG, "variazione canti")
                                 when (mCantiViewModel!!.tipoLista) {
                                     0 -> mCantiViewModel!!.titoli = canti.sortedBy { it.title!!.getText(context) }
                                     1 -> mCantiViewModel!!.titoli = canti.sortedBy { it.page!!.getText(context).toInt() }

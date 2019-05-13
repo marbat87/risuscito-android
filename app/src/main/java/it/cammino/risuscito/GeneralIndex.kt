@@ -57,10 +57,10 @@ class GeneralIndex : Fragment() {
             return when (position) {
                 0 -> SimpleIndexFragment.newInstance(0)
                 1 -> SimpleIndexFragment.newInstance(1)
-                2 -> ArgumentsSectionFragment()
+                2 -> SectionedIndexFragment.newInstance(0)
                 3 -> SimpleIndexFragment.newInstance(2)
-                4 -> IndiceLiturgicoFragment()
-                else -> SimpleIndexFragment.newInstance(0)
+                4 -> SectionedIndexFragment.newInstance(1)
+                else -> SimpleIndexFragment.newInstance(1)
             }
         }
 

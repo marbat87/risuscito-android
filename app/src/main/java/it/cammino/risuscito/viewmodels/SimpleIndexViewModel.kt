@@ -3,6 +3,7 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.mikepenz.fastadapter.IItem
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -12,6 +13,7 @@ class SimpleIndexViewModel(application: Application) : GenericIndexViewModel(app
 
     var itemsResult: LiveData<List<SimpleItem>>? = null
         private set
+    var titoliList: ArrayList<IItem<*>> = ArrayList()
     //-1 come valore per indicare che non è mai stato settato ancora (fragment appena creato)
     var tipoLista: Int = -1
 

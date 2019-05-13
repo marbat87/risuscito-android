@@ -19,8 +19,10 @@ import kotlinx.android.synthetic.main.list_group_item.view.*
 @Suppress("unused")
 class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.ViewHolder>(), IClickable<SimpleSubExpandableItem>, ISubItem<SimpleSubExpandableItem.ViewHolder> {
 
-    private var title: StringHolder? = null
+    var title: StringHolder? = null
+        private set
     private var subTitle: StringHolder? = null
+    private var totItems: Int = 0
     var position: Int = 0
         private set
 
@@ -66,6 +68,11 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
         return this
     }
 
+    fun witTotItems(totItems: Int): SimpleSubExpandableItem {
+        this.totItems = totItems
+        return this
+    }
+
     override//this might not be true for your application
     var isSelectable: Boolean
         get() = false
@@ -108,7 +115,9 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
                         ContextCompat.getColor(ctx, R.color.ripple_color),
                         10))
         // set the text for the name
-        StringHolder.applyTo(title, holder.mTitle)
+        val newTitle = "${title!!.getText(holder.view.context)} ($totItems)"
+        holder.mTitle!!.text = newTitle
+//        StringHolder.applyTo(title, holder.mTitle)
         StringHolder.applyToOrHide(subTitle, holder.mSubTitle)
 
         if (isExpanded)
