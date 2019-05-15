@@ -4,11 +4,11 @@
     <dimen name="activity_min_margin">5dip</dimen>
     <dimen name="myListPreferredItemMargin">16dip</dimen>
     <dimen name="myListPreferredTextMarginStart">72dip</dimen>
-    <dimen name="myListPreferredItemHeightSmall">48dip</dimen>
+    <!--<dimen name="myListPreferredItemHeightSmall">48dip</dimen>-->
     <dimen name="myListPreferredItemHeightMedium">56dip</dimen>
     <dimen name="myListPreferredItemHeightLarge">72dip</dimen>
     <dimen name="max_bottomsheet_width">380dp</dimen>
-    <dimen name="min_button_margin">10dip</dimen>
+    <!--<dimen name="min_button_margin">10dip</dimen>-->
 
     <dimen name="button_playbar_padding">14dp</dimen>
     <dimen name="fab_margin_coord">16dp</dimen>
@@ -25,8 +25,8 @@
 
     <dimen name="custom_peek_height">335dp</dimen>
 
-    <dimen name="raised_button_default_elevation">2dp</dimen>
-    <dimen name="raised_button_pressed_elevation">8dp</dimen>
+    <!--<dimen name="raised_button_default_elevation">2dp</dimen>-->
+    <!--<dimen name="raised_button_pressed_elevation">8dp</dimen>-->
 
     <dimen name="about_appbarlayout_height">200dp</dimen>
 

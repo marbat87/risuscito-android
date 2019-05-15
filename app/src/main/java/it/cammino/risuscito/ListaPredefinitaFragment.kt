@@ -189,7 +189,7 @@ class ListaPredefinitaFragment : Fragment() {
                 ListeUtils.scambioConVuoto(this@ListaPredefinitaFragment, mCantiViewModel!!.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
             } else {
                 if (!MaterialCab.isActive) {
-                    val intent = Intent(activity, GeneralInsertSearch::class.java)
+                    val intent = Intent(activity, InsertActivity::class.java)
                     intent.putExtras(bundleOf("fromAdd" to 1,
                             "idLista" to mCantiViewModel!!.defaultListaId,
                             "position" to Integer.valueOf(parent.text_id_posizione.text.toString())))

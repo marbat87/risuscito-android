@@ -47,7 +47,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
         <activity
-            android:name="it.cammino.risuscito.GeneralInsertSearch"
+            android:name="it.cammino.risuscito.InsertActivity"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.CreaListaActivity"

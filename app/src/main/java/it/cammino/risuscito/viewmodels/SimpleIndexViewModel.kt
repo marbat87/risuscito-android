@@ -7,6 +7,7 @@ import com.mikepenz.fastadapter.IItem
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem
 
 class SimpleIndexViewModel(application: Application) : GenericIndexViewModel(application) {
@@ -16,6 +17,10 @@ class SimpleIndexViewModel(application: Application) : GenericIndexViewModel(app
     var titoliList: ArrayList<IItem<*>> = ArrayList()
     //-1 come valore per indicare che non è mai stato settato ancora (fragment appena creato)
     var tipoLista: Int = -1
+    var advancedSearch: Boolean = false
+    var consegnatiOnly: Boolean = false
+    var insertItemsResult: LiveData<List<InsertItem>>? = null
+        private set
 
     fun createDb() {
         mDb = RisuscitoDatabase.getInstance(getApplication())
@@ -53,6 +58,23 @@ class SimpleIndexViewModel(application: Application) : GenericIndexViewModel(app
                                         .withColor(it.color!!)
                                         .withId(it.id)
                                         .withNumSalmo(it.numSalmo!!)
+                        )
+                    }
+                    newList
+                }
+            3 ->
+                insertItemsResult = Transformations.map(mDb!!.consegnatiDao().liveChoosen) { canti ->
+                    val newList = ArrayList<InsertItem>()
+                    canti.forEach {
+                        newList.add(
+                                InsertItem()
+                                        .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
+                                        .withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                                        .withSource(LUtils.getResId(it.source, R.string::class.java))
+                                        .withColor(it.color!!)
+                                        .withId(it.id)
+                                        .withUndecodedSource(it.source ?: "")
+                                        .withConsegnato(it.consegnato)
                         )
                     }
                     newList

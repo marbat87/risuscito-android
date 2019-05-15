@@ -17,6 +17,7 @@ import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.simple_sub_item.view.*
 
+@Suppress("unused")
 class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpandable<SimpleSubItem.ViewHolder> {
 
     var title: StringHolder? = null

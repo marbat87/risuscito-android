@@ -381,7 +381,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             if (!isOnTablet)
                                 toolbar_layout!!.setExpanded(true, true)
                         } else if (drawerItem.identifier == R.id.navigation_search.toLong()) {
-                            fragment = GeneralSearch()
+                            fragment = SearchFragment()
                         } else if (drawerItem.identifier == R.id.navigation_indexes.toLong()) {
                             fragment = GeneralIndex()
                         } else if (drawerItem.identifier == R.id.navitagion_lists.toLong()) {

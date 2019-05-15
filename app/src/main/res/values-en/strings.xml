@@ -10,7 +10,7 @@
     <string name="page_order_text">Page index</string>
     <string name="search_name_text">Song searching</string>
     <string name="arg_search_text">Analytical index</string>
-    <string name="button_pulisci">CLEAR</string>
+    <!--<string name="button_pulisci">CLEAR</string>-->
     <string name="always_on">No standby</string>
     <string name="always_on_summary">It prevents the display to move to standby inside the application.</string>
     <string name="title_activity_favourites">Favorites</string>

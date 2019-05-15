@@ -101,7 +101,7 @@ class ListaPersonalizzataFragment : Fragment() {
                         Integer.valueOf(parent.text_id_posizione.text.toString()))
             } else {
                 if (!MaterialCab.isActive) {
-                    val intent = Intent(activity, GeneralInsertSearch::class.java)
+                    val intent = Intent(activity, InsertActivity::class.java)
                     intent.putExtras(bundleOf("fromAdd" to 0,
                             "idLista" to idLista,
                             "position" to Integer.valueOf(parent.text_id_posizione.text.toString())))

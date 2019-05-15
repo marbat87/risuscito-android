@@ -25,7 +25,7 @@
     <string name="page_order_text">Indice per pagina</string>
     <string name="search_name_text">Ricerca canto</string>
     <string name="arg_search_text">Indice per argomento</string>
-    <string name="button_pulisci">PULISCI</string>
+    <!--<string name="button_pulisci">PULISCI</string>-->
     <string name="always_on">No standby</string>
     <string name="always_on_summary">Impedisce allo schermo di andare in standby all\'interno dell\'applicazione.</string>
     <string name="title_activity_favourites">Preferiti</string>

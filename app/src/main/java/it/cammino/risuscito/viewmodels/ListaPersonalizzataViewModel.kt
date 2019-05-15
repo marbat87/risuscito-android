@@ -26,7 +26,7 @@ class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(
 
     private var listaPersonalizzataMediator: MediatorLiveData<ListaPers> = MediatorLiveData()
 
-    var mDb: RisuscitoDatabase? = null
+    private var mDb: RisuscitoDatabase? = null
         private set
 
     fun createDb() {

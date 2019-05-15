@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,12 +16,6 @@
 
         <include layout="@layout/risuscito_toolbar_noelevation" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/material_tabs"
-            style="@style/Risuscito_tabstyle"
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
@@ -28,21 +23,107 @@
         android:layout_height="match_parent"
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ricerca_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center"
+                android:paddingStart="@dimen/myListPreferredItemMargin"
+                android:paddingLeft="@dimen/myListPreferredItemMargin"
+                android:paddingEnd="@dimen/myListPreferredItemMargin"
+                android:paddingRight="@dimen/myListPreferredItemMargin"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                tools:text="@string/fast_search_subtitle" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/myListPreferredItemHeightMedium">
+
+                <FrameLayout
+                    android:id="@+id/more_options"
+                    android:layout_width="@dimen/myListPreferredItemHeightMedium"
+                    android:layout_height="@dimen/myListPreferredItemHeightMedium"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:soundEffectsEnabled="true">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:scaleType="fitCenter"
+                        risuscito:ico_color="?android:textColorSecondary"
+                        risuscito:ico_icon="cmd-dots-vertical"
+                        risuscito:ico_padding="2dp"
+                        risuscito:ico_size="24dp"
+                        tools:ignore="MissingPrefix" />
+
+                </FrameLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/activity_min_margin"
+                    android:layout_marginLeft="@dimen/activity_min_margin"
+                    android:layout_toStartOf="@id/more_options"
+                    android:layout_toLeftOf="@id/more_options"
+                    android:gravity="center"
+                    android:hint="@string/search_hint"
+                    risuscito:boxBackgroundMode="outline">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textfieldRicerca"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include layout="@layout/tinted_progressbar" />
+
+                <TextView
+                    android:id="@+id/search_no_results"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="10dip"
+                    android:text="@string/search_no_results"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/matchedList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fadeScrollbars="true"
+                    android:scrollbars="vertical"
+                    risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+            </FrameLayout>
+
+        </LinearLayout>
 
         <include layout="@layout/common_shadow_no_behavior" />
 
     </FrameLayout>
-
-    <EditText
-        android:id="@+id/tempTextField"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@null"
-        android:inputType="none"
-        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

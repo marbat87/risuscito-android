@@ -57,7 +57,7 @@ import java.lang.ref.WeakReference
 
 class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
-    internal var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
+    private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
 
     private var mCantiViewModel: ConsegnatiViewModel? = null
     private var rootView: View? = null
