@@ -78,7 +78,10 @@
                     android:layout_toLeftOf="@id/more_options"
                     android:gravity="center"
                     android:hint="@string/search_hint"
-                    risuscito:boxBackgroundMode="outline">
+                    android:paddingStart="@dimen/activity_min_margin"
+                    android:paddingLeft="@dimen/activity_min_margin"
+                    risuscito:boxBackgroundMode="outline"
+                    tools:ignore="RtlSymmetry">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/textfieldRicerca"

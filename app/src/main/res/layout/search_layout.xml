@@ -29,34 +29,37 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:soundEffectsEnabled="true"
-            android:background="?attr/customSelectorRoundAccent" >
+            android:background="?attr/customSelectorRoundAccent"
+            android:soundEffectsEnabled="true">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
                 risuscito:ico_color="?android:textColorSecondary"
                 risuscito:ico_icon="cmd-dots-vertical"
-                risuscito:ico_size="24dp"
                 risuscito:ico_padding="2dp"
-                android:scaleType="fitCenter"
-                tools:ignore="MissingPrefix"
-                android:contentDescription="@null" />
+                risuscito:ico_size="24dp"
+                tools:ignore="MissingPrefix" />
 
         </FrameLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_marginStart="@dimen/activity_min_margin"
             android:layout_marginLeft="@dimen/activity_min_margin"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:layout_toLeftOf="@id/more_options"
             android:layout_toStartOf="@id/more_options"
+            android:layout_toLeftOf="@id/more_options"
+            android:gravity="center"
             android:hint="@string/search_hint"
-            risuscito:boxBackgroundMode="outline">
+            android:paddingStart="@dimen/activity_min_margin"
+            android:paddingLeft="@dimen/activity_min_margin"
+            risuscito:boxBackgroundMode="outline"
+            tools:ignore="RtlSymmetry">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/textfieldRicerca"

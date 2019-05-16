@@ -63,7 +63,7 @@ android {
 val supportVersion = "1.0.0"
 val preferenceFixVersion = "1.0.0"
 val fastAdapterVersion = "4.0.0-rc04"
-val materialDialogsVersion = "3.0.0-alpha1"
+val materialDialogsVersion = "3.0.0-alpha2"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
