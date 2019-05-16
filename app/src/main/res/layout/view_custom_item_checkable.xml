@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.MPM.Item"
     android:id="@+id/checkable_container"
+    style="@style/Widget.MPM.Item"
     android:layout_width="match_parent"
     android:layout_height="@dimen/mpm_popup_menu_item_height"
     android:clickable="true"
@@ -12,9 +11,7 @@
     android:paddingStart="@dimen/mpm_popup_menu_item_padding_horizontal"
     android:paddingLeft="@dimen/mpm_popup_menu_item_padding_horizontal"
     android:paddingEnd="@dimen/mpm_popup_menu_item_padding_horizontal"
-    android:paddingRight="@dimen/mpm_popup_menu_item_padding_horizontal"
-    tools:ignore="UseCompoundDrawables"
-    tools:theme="@style/Widget.MPM.Menu">
+    android:paddingRight="@dimen/mpm_popup_menu_item_padding_horizontal">
 
     <TextView
         android:id="@+id/customItemText"
