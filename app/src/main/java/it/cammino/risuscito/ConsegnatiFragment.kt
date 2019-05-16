@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -189,11 +190,12 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                val bundle = Bundle()
-                bundle.putCharSequence("pagina", item.source!!.text)
-                bundle.putInt("idCanto", item.id)
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                startSubActivity(bundle)
+                val intent = Intent(activity, PaginaRenderActivity::class.java)
+                intent.putExtras(bundleOf(
+                        "pagina" to item.source!!.getText(context),
+                        "idCanto" to item.id
+                ))
+                mLUtils!!.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -227,7 +229,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         selectableAdapter.addEventHook(object : ClickEventHook<CheckableItem>() {
             override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
-                return (viewHolder as? CheckableItem.ViewHolder)?.checkBox
+                return (viewHolder as? CheckableItem.ViewHolder)?.checkBox as View
             }
 
             override fun onClick(
@@ -325,7 +327,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
-        populateDb()
         subscribeUiConsegnati()
     }
 
@@ -358,12 +359,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
         return false
-    }
-
-    private fun startSubActivity(bundle: Bundle) {
-        val intent = Intent(activity, PaginaRenderActivity::class.java)
-        intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun getFab(): FloatingActionButton {
@@ -473,30 +468,15 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .start()
     }
 
-    private fun populateDb() {
-        mCantiViewModel!!.createDb()
-    }
-
     private fun subscribeUiConsegnati() {
         mCantiViewModel!!
-                .indexResult
+                .mIndexResult!!
                 .observe(
                         this,
                         Observer { cantos ->
                             Log.d(TAG, "onChanged: " + (cantos != null))
                             if (cantos != null) {
-                                val newList = ArrayList<SimpleItem>()
-                                for (canto in cantos) {
-                                    val simpleItem = SimpleItem()
-                                    simpleItem
-                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-                                            .withColor(canto.color!!)
-                                            .withId(canto.id)
-                                    newList.add(simpleItem)
-                                }
-                                mCantiViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
+                                mCantiViewModel!!.titoli = cantos.sortedWith(compareBy { it.title!!.getText(context) })
                                 cantoAdapter.set(mCantiViewModel!!.titoli)
                                 no_consegnati!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                             }

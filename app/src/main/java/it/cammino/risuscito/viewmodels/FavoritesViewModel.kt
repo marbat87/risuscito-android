@@ -13,15 +13,10 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     var titoli: List<SimpleItem> = ArrayList()
     var mFavoritesResult: LiveData<List<Canto>>? = null
         private set
-    private var mDb: RisuscitoDatabase? = null
 
-    fun createDb() {
-        mDb = RisuscitoDatabase.getInstance(getApplication())
-        // Receive changes
-        subscribeToDbChanges()
+    init {
+        val mDb = RisuscitoDatabase.getInstance(getApplication())
+        mFavoritesResult = mDb.favoritesDao().liveFavorites
     }
 
-    private fun subscribeToDbChanges() {
-        mFavoritesResult = mDb!!.favoritesDao().liveFavorites
-    }
 }

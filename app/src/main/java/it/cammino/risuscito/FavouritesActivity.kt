@@ -153,7 +153,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
-        populateDb()
         subscribeUiFavorites()
     }
 
@@ -249,10 +248,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
     }
 
-
-    private fun populateDb() {
-        mFavoritesViewModel!!.createDb()
-    }
 
     private fun subscribeUiFavorites() {
         mFavoritesViewModel!!

@@ -385,7 +385,7 @@ class ListaPersonalizzataFragment : Fragment() {
                                         it1.pagina = resources.getString(LUtils.getResId(it1.pagina!!, R.string::class.java))
                                         it1.source = resources.getString(LUtils.getResId(it1.source!!, R.string::class.java))
                                     } catch (e: Exception) {
-                                        Log.d(TAG, "titolo ${it1.titolo}")
+                                        Log.e(TAG, "titolo ${it1.titolo}", e)
                                     }
                                 }
                                 it
