@@ -150,7 +150,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
-        populateDb()
         subscribeUiHistory()
     }
 
@@ -242,10 +241,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 true
             }
         }
-    }
-
-    private fun populateDb() {
-        mCronologiaViewModel!!.createDb()
     }
 
     private fun subscribeUiHistory() {

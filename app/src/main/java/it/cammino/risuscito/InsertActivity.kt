@@ -43,6 +43,7 @@ import it.cammino.risuscito.ui.makeClearableEditText
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
+import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import kotlinx.android.synthetic.main.search_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
@@ -82,8 +83,8 @@ class InsertActivity : ThemeableActivity() {
         idLista = bundle.getInt("idLista")
         listPosition = bundle.getInt("position")
 
-        mViewModel = ViewModelProviders.of(this).get(SimpleIndexViewModel::class.java)
-        if (mViewModel.tipoLista == -1) mViewModel.tipoLista = 3
+        val args = Bundle().apply { putInt("tipoLista", 3) }
+        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(this@InsertActivity)
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0")!!)
@@ -221,7 +222,6 @@ class InsertActivity : ThemeableActivity() {
             popupMenu.show(this@InsertActivity, it)
         }
 
-        populateDb()
         subscribeUiFavorites()
     }
 
@@ -348,10 +348,6 @@ class InsertActivity : ThemeableActivity() {
             else
                 View.GONE
         }
-    }
-
-    private fun populateDb() {
-        mViewModel.createDb()
     }
 
     private fun subscribeUiFavorites() {

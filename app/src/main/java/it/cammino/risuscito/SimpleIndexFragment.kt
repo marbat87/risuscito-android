@@ -28,6 +28,7 @@ import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
+import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.index_list_fragment.*
 
 class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
@@ -43,7 +44,6 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        populateDb()
         subscribeUiFavorites()
     }
 
@@ -51,8 +51,8 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.index_list_fragment, container, false)
 
-        mCantiViewModel = ViewModelProviders.of(this).get(SimpleIndexViewModel::class.java)
-        if (mCantiViewModel!!.tipoLista == -1) mCantiViewModel!!.tipoLista = arguments!!.getInt("tipoLista", 0)
+        val args = Bundle().apply { putInt("tipoLista", arguments!!.getInt("tipoLista", 0)) }
+        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(SimpleIndexViewModel::class.java)
 
         mLUtils = LUtils.getInstance(activity!!)
         mAdapter = FastScrollIndicatorAdapter(mCantiViewModel!!.tipoLista, context!!)
@@ -152,10 +152,6 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     override fun onNegative(tag: String) {}
-
-    private fun populateDb() {
-        mCantiViewModel!!.createDb()
-    }
 
     private fun subscribeUiFavorites() {
         mCantiViewModel!!

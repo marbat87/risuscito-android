@@ -37,6 +37,7 @@ import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
+import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.generic_card_item.view.*
@@ -45,7 +46,7 @@ import kotlinx.android.synthetic.main.lista_pers_button.*
 
 class ListaPredefinitaFragment : Fragment() {
 
-    private var mCantiViewModel: DefaultListaViewModel? = null
+    private lateinit var mCantiViewModel: DefaultListaViewModel
     private var isViewShown = true
     private var posizioneDaCanc: Int = 0
     private var idDaCanc: Int = 0
@@ -75,7 +76,7 @@ class ListaPredefinitaFragment : Fragment() {
             val result = StringBuilder()
             var progressivePos = 0
 
-            when (mCantiViewModel!!.defaultListaId) {
+            when (mCantiViewModel.defaultListaId) {
                 1 -> {
                     result
                             .append("-- ")
@@ -186,14 +187,14 @@ class ListaPredefinitaFragment : Fragment() {
         if (v.id == R.id.addCantoGenerico) {
             if (mSwhitchMode) {
                 destroy()
-                ListeUtils.scambioConVuoto(this@ListaPredefinitaFragment, mCantiViewModel!!.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
+                ListeUtils.scambioConVuoto(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
             } else {
                 if (!MaterialCab.isActive) {
                     val intent = Intent(activity, InsertActivity::class.java)
                     intent.putExtras(bundleOf("fromAdd" to 1,
-                            "idLista" to mCantiViewModel!!.defaultListaId,
+                            "idLista" to mCantiViewModel.defaultListaId,
                             "position" to Integer.valueOf(parent.text_id_posizione.text.toString())))
-                    parentFragment!!.startActivityForResult(intent, when (mCantiViewModel!!.defaultListaId) {
+                    parentFragment!!.startActivityForResult(intent, when (mCantiViewModel.defaultListaId) {
                         1 -> TAG_INSERT_PAROLA
                         2 -> TAG_INSERT_EUCARESTIA
                         else -> TAG_INSERT_PAROLA
@@ -218,7 +219,7 @@ class ListaPredefinitaFragment : Fragment() {
             else {
                 destroy()
                 ListeUtils.scambioCanto(this@ListaPredefinitaFragment,
-                        mCantiViewModel!!.defaultListaId,
+                        mCantiViewModel.defaultListaId,
                         posizioneDaCanc,
                         idDaCanc,
                         Integer.valueOf(parent.text_id_posizione.text.toString()),
@@ -241,8 +242,8 @@ class ListaPredefinitaFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
 
-        mCantiViewModel = ViewModelProviders.of(this).get(DefaultListaViewModel::class.java)
-        if (mCantiViewModel!!.defaultListaId == -1) mCantiViewModel!!.defaultListaId = arguments!!.getInt("indiceLista", 0)
+        val args = Bundle().apply { putInt("tipoLista", arguments!!.getInt("indiceLista", 0)) }
+        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(DefaultListaViewModel::class.java)
 
         mMainActivity = activity as MainActivity?
 
@@ -269,11 +270,10 @@ class ListaPredefinitaFragment : Fragment() {
         // Setting the layoutManager
         recycler_list!!.layoutManager = LinearLayoutManager(activity)
 
-        populateDb()
         subscribeUiFavorites()
 
         button_pulisci.setOnClickListener {
-            ListeUtils.cleanList(context!!, mCantiViewModel!!.defaultListaId)
+            ListeUtils.cleanList(context!!, mCantiViewModel.defaultListaId)
         }
 
         button_condividi.setOnClickListener {
@@ -319,7 +319,7 @@ class ListaPredefinitaFragment : Fragment() {
                         titoloPosizione,
                         position,
                         tag,
-                        when (mCantiViewModel!!.defaultListaId) {
+                        when (mCantiViewModel.defaultListaId) {
                             2 -> (position == 4 || position == 3)
                             else -> false
                         }))
@@ -394,7 +394,7 @@ class ListaPredefinitaFragment : Fragment() {
                 when (item.itemId) {
                     R.id.action_remove_item -> {
                         destroy()
-                        ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel!!.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc!!)
+                        ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc!!)
                         true
                     }
                     R.id.action_switch_item -> {
@@ -424,12 +424,8 @@ class ListaPredefinitaFragment : Fragment() {
         }
     }
 
-    private fun populateDb() {
-        mCantiViewModel!!.createDb()
-    }
-
     private fun subscribeUiFavorites() {
-        mCantiViewModel!!
+        mCantiViewModel
                 .cantiResult!!
                 .observe(
                         this,
@@ -438,7 +434,7 @@ class ListaPredefinitaFragment : Fragment() {
                             val pref = PreferenceManager.getDefaultSharedPreferences(context)
                             posizioniList.clear()
 
-                            when (mCantiViewModel!!.defaultListaId) {
+                            when (mCantiViewModel.defaultListaId) {
                                 1 -> {
                                     posizioniList.add(
                                             getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))

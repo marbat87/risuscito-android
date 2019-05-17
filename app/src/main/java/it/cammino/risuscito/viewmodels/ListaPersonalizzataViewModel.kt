@@ -1,6 +1,7 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
+import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
@@ -14,7 +15,7 @@ import it.cammino.risuscito.objects.PosizioneTitleItem
 import it.cammino.risuscito.utils.ioThread
 
 
-class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(application) {
+class ListaPersonalizzataViewModel(application: Application, args: Bundle) : AndroidViewModel(application) {
 
     var posizioniList: List<ListaPersonalizzataItem> = ArrayList()
     var listaPersonalizzataId: Int = 0
@@ -26,17 +27,10 @@ class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(
 
     private var listaPersonalizzataMediator: MediatorLiveData<ListaPers> = MediatorLiveData()
 
-    private var mDb: RisuscitoDatabase? = null
-        private set
-
-    fun createDb() {
-        mDb = RisuscitoDatabase.getInstance(getApplication())
-        // Receive changes
-        subscribeToDbChanges()
-    }
-
-    private fun subscribeToDbChanges() {
-        val listaPers = mDb!!.listePersDao().getLiveListById(listaPersonalizzataId)
+    init {
+        listaPersonalizzataId = args.getInt("tipoLista")
+        val mDb = RisuscitoDatabase.getInstance(getApplication())
+        val listaPers = mDb.listePersDao().getLiveListById(listaPersonalizzataId)
         listaPersonalizzataMediator.addSource(listaPers!!) { mListaPers ->
             listaPersonalizzataMediator.postValue(mListaPers)
         }
@@ -54,7 +48,7 @@ class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(
                     val list = ArrayList<PosizioneItem>()
                     if (listaPersonalizzata!!.getCantoPosizione(cantoIndex).isNotEmpty()) {
 
-                        val mCantoDao = mDb!!.cantoDao()
+                        val mCantoDao = mDb.cantoDao()
 
                         val cantoTemp = mCantoDao.getCantoById(
                                 Integer.parseInt(

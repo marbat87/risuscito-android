@@ -44,6 +44,7 @@ import it.cammino.risuscito.ui.makeClearableEditText
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
+import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.search_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import kotlinx.android.synthetic.main.view_custom_item_checkable.view.*
@@ -73,8 +74,8 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity = activity as MainActivity?
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_search)
 
-        mViewModel = ViewModelProviders.of(this).get(SimpleIndexViewModel::class.java)
-        if (mViewModel.tipoLista == -1) mViewModel.tipoLista = 0
+        val args = Bundle().apply { putInt("tipoLista", 0) }
+        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0")!!)
@@ -109,7 +110,6 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
 
-        populateDb()
         subscribeUiFavorites()
 
         return rootView
@@ -331,10 +331,6 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             else
                 View.GONE
         }
-    }
-
-    private fun populateDb() {
-        mViewModel.createDb()
     }
 
     private fun subscribeUiFavorites() {

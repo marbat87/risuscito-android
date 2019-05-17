@@ -30,6 +30,7 @@ import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
+import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.layout_recycler.*
 import java.util.*
 
@@ -46,14 +47,13 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
     private var glm: GridLayoutManager? = null
     private var mLastClickTime: Long = 0
     private lateinit var mActivity: MainActivity
-//    private var mSavedInstanceState: Bundle? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.layout_recycler, container, false)
 
-        mCantiViewModel = ViewModelProviders.of(this).get(SimpleIndexViewModel::class.java)
-        if (mCantiViewModel.tipoLista == -1) mCantiViewModel.tipoLista = arguments!!.getInt("tipoLista", 0)
+        val args = Bundle().apply { putInt("tipoLista", arguments!!.getInt("tipoLista", 0)) }
+        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(SimpleIndexViewModel::class.java)
 
         mLUtils = LUtils.getInstance(activity!!)
 
@@ -80,13 +80,6 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
         super.onAttach(context)
         mActivity = activity as MainActivity
     }
-
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//        mSavedInstanceState = savedInstanceState
-//        populateDb()
-//        subscribeUiFavorites()
-//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -297,30 +290,6 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
     }
 
     override fun onNegative(tag: String) {}
-
-//    private fun populateDb() {
-//        mCantiViewModel!!.createDb()
-//    }
-
-//    private fun subscribeUiFavorites() {
-//        mCantiViewModel!!
-//                .itemsResult!!
-//                .observe(
-//                        this,
-//                        Observer<List<IItem<*>>> { canti ->
-//                            if (canti != null) {
-//                                Log.d(TAG, "variazione canti")
-//                                var position = 0
-//                                mCantiViewModel!!.titoliList = canti.sortedBy { (it as SimpleSubExpandableItem).title!!.getText(context) }
-//                                mCantiViewModel!!.titoliList.forEach { titolo ->
-//                                    (titolo as SimpleSubExpandableItem).withPosition(position++)
-//                                    titolo.subItems.sortBy { (it as SimpleSubItem).title!!.getText(context) }
-//                                }
-//                                mAdapter.set(mCantiViewModel!!.titoliList)
-//                                mSavedInstanceState?.let { mAdapter.withSavedInstanceState(it) }
-//                            }
-//                        })
-//    }
 
     companion object {
         private val TAG = SectionedIndexFragment::class.java.canonicalName

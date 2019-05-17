@@ -108,7 +108,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         tabs!!.visibility = View.VISIBLE
         tabs!!.setupWithViewPager(view_pager)
 
-        populateDb()
         subscribeUiFavorites()
     }
 
@@ -261,10 +260,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             }
                         })
                 .start()
-    }
-
-    private fun populateDb() {
-        mCustomListsViewModel!!.createDb()
     }
 
     private fun subscribeUiFavorites() {
