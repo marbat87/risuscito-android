@@ -10,7 +10,6 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.snackbar.Snackbar
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
-import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem
@@ -26,7 +25,6 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
     var idPosizioneClick: Int = 0
     var titoli: List<SimpleItem> = ArrayList()
     var titoliInsert: List<InsertItem> = ArrayList()
-    internal var mDb: RisuscitoDatabase? = null
 
     fun popupMenu(fragment: Fragment, view: View, dialogTag: String, dialogTag2: String, listePersonalizzate: List<ListaPers>?) {
         val popupMenu = popupMenu {

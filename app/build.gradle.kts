@@ -63,7 +63,7 @@ android {
 val supportVersion = "1.0.0"
 val preferenceFixVersion = "1.0.0"
 val fastAdapterVersion = "4.0.0-rc04"
-val materialDialogsVersion = "3.0.0-alpha2"
+val materialDialogsVersion = "3.0.0-beta2"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
@@ -72,7 +72,7 @@ dependencies {
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:7.0.0-beta01")
     implementation("com.mikepenz:crossfader:1.6.0")
-    implementation ("com.mikepenz:iconics-core:4.0.0-rc01")
+    implementation ("com.mikepenz:iconics-core:4.0.0-rc02")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.google.android.material:material:$supportVersion")
