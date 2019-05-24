@@ -32,8 +32,6 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         private set
     private var isHasDivider = false
 
-//    private var createContextMenuListener: View.OnCreateContextMenuListener? = null
-
     fun withTitle(title: String): SimpleSubItem {
         this.title = StringHolder(title)
         return this
@@ -78,11 +76,6 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         this.id = id
         return this
     }
-
-//    fun withContextMenuListener(listener: View.OnCreateContextMenuListener): SimpleSubItem {
-//        this.createContextMenuListener = listener
-//        return this
-//    }
 
     fun withHasDivider(hasDivider: Boolean): SimpleSubItem {
         this.isHasDivider = hasDivider
@@ -142,10 +135,6 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
 
         holder.mItemDivider!!.visibility = if (isHasDivider) View.VISIBLE else View.INVISIBLE
 
-//        if (createContextMenuListener != null) {
-//            (holder.itemView.context as Activity).registerForContextMenu(holder.itemView)
-//            holder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
-//        }
     }
 
     override fun unbindView(holder: ViewHolder) {

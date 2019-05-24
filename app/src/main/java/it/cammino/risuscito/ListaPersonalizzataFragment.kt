@@ -72,10 +72,10 @@ class ListaPersonalizzataFragment : Fragment() {
                 if (!mCantiViewModel.listaPersonalizzata!!.getCantoPosizione(i).equals("", ignoreCase = true)) {
                     for (tempItem in mCantiViewModel.posizioniList[i].listItem!!) {
                         result
-                                .append(tempItem.titolo)
+                                .append(tempItem.title!!.getText(context))
                                 .append(" - ")
                                 .append(getString(R.string.page_contracted))
-                                .append(tempItem.pagina)
+                                .append(tempItem.page!!.getText(context))
                         result.append("\n")
                     }
                 } else {
@@ -363,7 +363,7 @@ class ListaPersonalizzataFragment : Fragment() {
 
     private fun subscribeUiChanges() {
         mCantiViewModel
-                .listaPersonalizzataResult
+                .listaPersonalizzataResult!!
                 .observe(
                         this,
                         Observer { listaPersonalizzataResult ->
@@ -372,20 +372,12 @@ class ListaPersonalizzataFragment : Fragment() {
                                 it.withClickListener(click)
                                         .withLongClickListener(longClick)
                                         .withSelectedColor(themeUtils.primaryColorDark())
-                                        .listItem!!.forEach { it1 ->
-                                    try {
-                                        it1.titolo = resources.getString(LUtils.getResId(it1.titolo!!, R.string::class.java))
-                                        it1.pagina = resources.getString(LUtils.getResId(it1.pagina!!, R.string::class.java))
-                                        it1.source = resources.getString(LUtils.getResId(it1.source!!, R.string::class.java))
-                                    } catch (e: Exception) {
-                                        Log.e(TAG, "titolo ${it1.titolo}", e)
-                                    }
-                                }
                                 it
                             }
                             cantoAdapter.set(mCantiViewModel.posizioniList)
                         })
     }
+
 
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName

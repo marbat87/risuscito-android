@@ -1,6 +1,5 @@
 package it.cammino.risuscito.items
 
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
@@ -39,8 +38,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
     var id: Int = 0
         private set
 
-    private var createContextMenuListener: View.OnCreateContextMenuListener? = null
-
     fun withTitle(title: String): SimpleHistoryItem {
         this.title = StringHolder(title)
         return this
@@ -63,11 +60,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
 
     fun withTimestamp(timestamp: String): SimpleHistoryItem {
         this.timestamp = StringHolder(timestamp)
-        return this
-    }
-
-    fun withTimestamp(@StringRes timestampRes: Int): SimpleHistoryItem {
-        this.timestamp = StringHolder(timestampRes)
         return this
     }
 
@@ -109,11 +101,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
 
     fun withSelectedColorRes(@ColorRes selectedColorRes: Int): SimpleHistoryItem {
         this.selectedColor = ColorHolder.fromColorRes(selectedColorRes)
-        return this
-    }
-
-    fun withContextMenuListener(listener: View.OnCreateContextMenuListener): SimpleHistoryItem {
-        this.createContextMenuListener = listener
         return this
     }
 
@@ -188,11 +175,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
             holder.mTimestamp!!.visibility = View.VISIBLE
         } else
             holder.mTimestamp!!.visibility = View.GONE
-
-        if (createContextMenuListener != null) {
-            (holder.itemView.context as Activity).registerForContextMenu(holder.itemView)
-            holder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
-        }
     }
 
     override fun unbindView(holder: ViewHolder) {

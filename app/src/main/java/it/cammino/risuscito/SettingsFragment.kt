@@ -88,7 +88,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 val i = activity!!.baseContext
                         .packageManager
                         .getLaunchIntentForPackage(activity!!.baseContext.packageName)
-//                if (i != null) {
                 i?.let {
                     it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     it.putExtra(Utility.DB_RESET, true)
@@ -99,7 +98,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                             currentLang + "-" + sharedPreferences.getString(s, ""))
                     startActivity(it)
                 }
-//                startActivity(i)
             }
         }
         if (s == Utility.SCREEN_ON) LUtils.getInstance(activity!!).checkScreenAwake()

@@ -305,13 +305,13 @@ class ListaPredefinitaFragment : Fragment() {
         val list = posizioni!!
                 .filter { it.position == position }
                 .map {
-                    PosizioneItem(
-                            resources.getString(LUtils.getResId(it.pagina!!, R.string::class.java)),
-                            resources.getString(LUtils.getResId(it.titolo!!, R.string::class.java)),
-                            it.color!!,
-                            it.id,
-                            resources.getString(LUtils.getResId(it.source!!, R.string::class.java)),
-                            (it.timestamp!!.time).toString())
+                    PosizioneItem()
+                            .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
+                            .withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                            .withSource(LUtils.getResId(it.source, R.string::class.java))
+                            .withColor(it.color!!)
+                            .withId(it.id)
+                            .withTimestamp(it.timestamp!!.time.toString())
                 }
 
         return ListaPersonalizzataItem()
@@ -339,10 +339,10 @@ class ListaPredefinitaFragment : Fragment() {
         if (items!!.isNotEmpty()) {
             for (tempItem in items) {
                 result
-                        .append(tempItem.titolo)
+                        .append(tempItem.title!!.getText(context))
                         .append(" - ")
                         .append(getString(R.string.page_contracted))
-                        .append(tempItem.pagina)
+                        .append(tempItem.page!!.getText(context))
                 result.append("\n")
             }
         } else {

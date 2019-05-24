@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
+import com.mikepenz.materialize.holder.StringHolder
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.objects.PosizioneItem
@@ -118,11 +119,11 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
 
                 val cantoView = itemView.cantoGenericoContainer
 
-                itemView.text_title.text = canto.titolo
-                itemView.text_page.text = canto.pagina
+                StringHolder.applyTo(canto.title, itemView.text_title)
+                StringHolder.applyTo(canto.page, itemView.text_page)
+                StringHolder.applyTo(canto.source, itemView.text_source_canto)
+                StringHolder.applyTo(canto.timestamp, itemView.text_timestamp)
                 itemView.text_id_canto_card.text = canto.idCanto.toString()
-                itemView.text_source_canto.text = canto.source
-                itemView.text_timestamp.text = canto.timestamp
                 itemView.item_tag.text = i.toString()
                 @Suppress("DEPRECATION")
                 UIUtils.setBackground(
@@ -139,7 +140,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                     cantoView.isSelected = true
                 } else {
                     val bgShape = itemView.text_page.background as GradientDrawable
-                    bgShape.setColor(Color.parseColor(canto.colore))
+                    bgShape.setColor(canto.color!!.colorInt)
                     itemView.text_page.visibility = View.VISIBLE
                     itemView.selected_mark.visibility = View.INVISIBLE
                     cantoView.isSelected = false
@@ -154,7 +155,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
             if (createClickListener != null) holder.addCanto!!.setOnClickListener(createClickListener)
         }
 
-//        holder.idLista!!.text = titleItem!!.idLista.toString()
         holder.idPosizione!!.text = titleItem!!.idPosizione.toString()
         holder.nomePosizione!!.text = titleItem!!.titoloPosizione
         holder.tag!!.text = titleItem!!.tag.toString()
@@ -162,7 +162,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-//        holder.idLista!!.text = null
         holder.idPosizione!!.text = null
         holder.nomePosizione!!.text = null
         holder.tag!!.text = null
@@ -175,7 +174,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
     /** our ViewHolder  */
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
 
-//        var idLista: TextView? = null
         var idPosizione: TextView? = null
         var nomePosizione: TextView? = null
         var addCanto: View? = null
@@ -183,7 +181,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
         var list: LinearLayout? = null
 
         init {
-//            idLista = itemView.text_id_lista
             idPosizione = itemView.text_id_posizione
             nomePosizione = itemView.titoloPosizioneGenerica
             addCanto = itemView.addCantoGenerico
