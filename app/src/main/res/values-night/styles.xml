@@ -9,4 +9,9 @@
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
+    <style name="material_popup_theme" parent="Widget.MPM.Menu.Dark">
+        <item name="android:popupBackground">@drawable/material_popup_bg</item>
+        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Dark</item>
+    </style>
+
 </resources>

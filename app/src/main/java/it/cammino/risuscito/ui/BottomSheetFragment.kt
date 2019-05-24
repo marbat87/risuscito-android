@@ -13,8 +13,8 @@ import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.items.BottomSheetItem
@@ -69,7 +69,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
         val mList = list.map { BottomSheetItem().withItem(it) }
 
-        val mOnClickListener = OnClickListener<BottomSheetItem> { _, _, item, _ ->
+        val mOnClickListener = { _: View?, _: IAdapter<BottomSheetItem>, item: BottomSheetItem, _: Int ->
             PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
 
             val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)
@@ -84,7 +84,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
         val adapter = FastItemAdapter<BottomSheetItem>()
         adapter.add(mList)
-        adapter.withOnClickListener(mOnClickListener)
+        adapter.onClickListener = mOnClickListener
         shareList.adapter = adapter
         shareList.layoutManager = GridLayoutManager(activity, 3)
     }

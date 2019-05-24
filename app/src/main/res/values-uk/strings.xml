@@ -10,7 +10,7 @@
     <string name="page_order_text">Зміст по сторінкам</string>
     <string name="search_name_text">Пошук</string>
     <string name="arg_search_text">Літургічний зміст</string>
-    <string name="button_pulisci">ОЧИСТИТИ</string>
+    <!--<string name="button_pulisci">ОЧИСТИТИ</string>-->
     <string name="always_on">Відкл. сплячий режим</string>
     <string name="always_on_summary">Не переходить на сплячий режим поки відкритий додаток.</string>
     <string name="title_activity_favourites">Закладки</string>
@@ -298,5 +298,7 @@
     <string name="title_filter">фільтрувати за назвою</string>
     <string name="cancel">скасувати</string>
     <string name="ok">OK</string>
-    <string name="import_confirm">імпортувати</string>
+    <string name="import_confirm">Імпортувати</string>
+    <string name="default_search_title">Пошук за замовчуванням</string>
+    <string name="default_search_summary">Визначте, який вид пошуку має вікриватись за замовчуванням, коли відкриваєте додаток</string>
 </resources>

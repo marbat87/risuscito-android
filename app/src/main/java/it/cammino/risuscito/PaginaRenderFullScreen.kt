@@ -9,8 +9,11 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.postDelayed
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.colorInt
+import com.mikepenz.iconics.paddingDp
+import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -47,7 +50,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
 
         val icon = IconicsDrawable(this@PaginaRenderFullScreen)
                 .icon(CommunityMaterial.Icon.cmd_fullscreen_exit)
-                .color(Color.WHITE)
+                .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
         fab_fullscreen_off.setImageDrawable(icon)

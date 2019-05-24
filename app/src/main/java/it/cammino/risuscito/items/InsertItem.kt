@@ -13,10 +13,11 @@ import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import kotlinx.android.synthetic.main.row_item_to_insert.view.*
 
 @Suppress("unused")
-class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
+class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
@@ -24,12 +25,15 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
         private set
     var source: StringHolder? = null
         private set
+    var undecodedSource: String? = null
+        private set
     var color: ColorHolder? = null
         private set
     private var numSalmo: Int = 0
-    private var normalizedTitle: String? = null
     private var filter: String? = null
     var id: Int = 0
+        private set
+    var consegnato: Int = 0
         private set
 
     fun withTitle(title: String): InsertItem {
@@ -62,6 +66,11 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
         return this
     }
 
+    fun withUndecodedSource(undecodedSource: String): InsertItem {
+        this.undecodedSource = undecodedSource
+        return this
+    }
+
     fun withColor(color: String): InsertItem {
         this.color = ColorHolder.fromColor(Color.parseColor(color))
         return this
@@ -72,9 +81,14 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
         return this
     }
 
+    fun withConsegnato(consegnato: Int): InsertItem {
+        this.consegnato = consegnato
+        return this
+    }
+
     fun withId(id: Int): InsertItem {
         this.id = id
-        super.withIdentifier(id.toLong())
+        identifier = id.toLong()
         return this
     }
 
@@ -92,11 +106,6 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
         return this
     }
 
-    fun withNormalizedTitle(normTitle: String): InsertItem {
-        this.normalizedTitle = normTitle
-        return this
-    }
-
     fun withFilter(filter: String): InsertItem {
         this.filter = filter
         return this
@@ -107,45 +116,44 @@ class InsertItem : AbstractItem<InsertItem, InsertItem.ViewHolder>() {
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_insert_item_id
-    }
+    override val type: Int
+        get() = R.id.fastadapter_insert_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.row_item_to_insert
-    }
+    override val layoutRes: Int
+        get() = R.layout.row_item_to_insert
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
         //set the text for the name
         if (!filter.isNullOrEmpty()) {
-            val mPosition = normalizedTitle!!.toLowerCase().indexOf(filter!!)
+            val normalizedTitle = Utility.removeAccents(title!!.getText(holder.itemView.context))
+            val mPosition = normalizedTitle.toLowerCase().indexOf(filter!!)
             if (mPosition >= 0) {
-                val stringTitle = title!!.text.toString()
+                val stringTitle = title!!.getText(holder.itemView.context)
                 val highlighted = StringBuilder(if (mPosition > 0) stringTitle.substring(0, mPosition) else "")
                         .append("<b>")
                         .append(stringTitle.substring(mPosition, mPosition + filter!!.length))
                         .append("</b>")
                         .append(stringTitle.substring(mPosition + filter!!.length))
-                viewHolder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                holder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted.toString())
             } else
-                StringHolder.applyTo(title, viewHolder.mTitle)
+                StringHolder.applyTo(title, holder.mTitle)
         } else
-            StringHolder.applyTo(title, viewHolder.mTitle)
+            StringHolder.applyTo(title, holder.mTitle)
         //set the text for the description or hide
-        StringHolder.applyToOrHide(page, viewHolder.mPage)
-        val bgShape = viewHolder.mPage!!.background as GradientDrawable
+        StringHolder.applyToOrHide(page, holder.mPage)
+        val bgShape = holder.mPage!!.background as GradientDrawable
         bgShape.setColor(color!!.colorInt)
 
     }

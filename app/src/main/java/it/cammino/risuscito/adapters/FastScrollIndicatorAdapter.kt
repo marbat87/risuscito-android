@@ -1,25 +1,20 @@
 package it.cammino.risuscito.adapters
 
-import com.mikepenz.fastadapter.IItem
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import android.content.Context
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.turingtechnologies.materialscrollbar.ICustomAdapter
 import it.cammino.risuscito.items.SimpleItem
 
-class FastScrollIndicatorAdapter<Item : IItem<*, *>>(private val mIndicator: Int) : FastItemAdapter<Item>(), ICustomAdapter {
-
-//    companion object {
-//        private val TAG = FastScrollIndicatorAdapter::class.java.canonicalName
-//    }
+class FastScrollIndicatorAdapter(private val mIndicator: Int, private val mContext: Context) : FastItemAdapter<SimpleItem>(), ICustomAdapter {
 
     override fun getCustomStringForElement(position: Int): String {
-//        Log.d(TAG, "getSectionName: position $position")
-        val item = getAdapterItem(position)
-//        Log.d(TAG, "getSectionName: " + (item as SimpleItem).title!!.text)
+        val item = getItem(position)
         return when (mIndicator) {
-            0 -> (item as SimpleItem).title!!.text.toString().substring(0, 1).toUpperCase()
-            1 -> (item as SimpleItem).page!!.text.toString()
-            2 -> (item as SimpleItem).numSalmo.toString()
-            else -> (item as SimpleItem).title!!.text.toString().substring(0, 1).toUpperCase()
+            0 -> item!!.title!!.getText(mContext).substring(0, 1).toUpperCase()
+            1 -> item!!.page!!.getText(mContext)
+            2 -> item!!.numSalmo.toString()
+            else -> item!!.title!!.getText(mContext).substring(0, 1).toUpperCase()
         }
     }
+
 }

@@ -14,6 +14,7 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -21,7 +22,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.PagerAdapter
-import com.afollestad.materialcab.MaterialCab
+import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
@@ -31,8 +32,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.colorInt
+import com.mikepenz.iconics.paddingDp
+import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -56,7 +60,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     private var mMainActivity: MainActivity? = null
     private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
-    var snackBar: Snackbar? = null
     private var mLastClickTime: Long = 0
 
     private val themeUtils: ThemeUtils
@@ -105,7 +108,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         tabs!!.visibility = View.VISIBLE
         tabs!!.setupWithViewPager(view_pager)
 
-        populateDb()
         subscribeUiFavorites()
     }
 
@@ -116,7 +118,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity, R.menu.help_menu, menu)
+                activity!!.menuInflater, activity!!, R.menu.help_menu, menu!!)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -144,8 +146,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
             mCustomListsViewModel!!.indexToShow = mCustomListsViewModel!!.indDaModif
             movePage = true
         }
-        if (requestCode == CantiParolaFragment.TAG_INSERT_PAROLA
-                || requestCode == CantiEucarestiaFragment.TAG_INSERT_EUCARESTIA
+        if (requestCode == ListaPredefinitaFragment.TAG_INSERT_PAROLA
+                || requestCode == ListaPredefinitaFragment.TAG_INSERT_EUCARESTIA
                 || requestCode == ListaPersonalizzataFragment.TAG_INSERT_PERS) {
             Log.i(TAG, "onActivityResult resultCode: $resultCode")
             if (resultCode == RESULT_OK || resultCode == RESULT_KO)
@@ -157,14 +159,10 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             "NEW_LIST" -> {
-                val bundle = Bundle()
                 val mEditText = dialog.getInputField()
-                bundle.putString(
-                        "titolo", mEditText.text.toString())
-                bundle.putBoolean("modifica", false)
                 mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
                 startActivityForResult(
-                        Intent(activity, CreaListaActivity::class.java).putExtras(bundle), TAG_CREA_LISTA)
+                        Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf("titolo" to mEditText.text.toString(), "modifica" to false)), TAG_CREA_LISTA)
                 Animatoo.animateSlideUp(activity)
             }
         }
@@ -264,10 +262,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 .start()
     }
 
-    private fun populateDb() {
-        mCustomListsViewModel!!.createDb()
-    }
-
     private fun subscribeUiFavorites() {
         mCustomListsViewModel!!
                 .customListResult!!
@@ -298,13 +292,11 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> CantiParolaFragment()
-                1 -> CantiEucarestiaFragment()
+                0 -> ListaPredefinitaFragment.newInstance(1)
+                1 -> ListaPredefinitaFragment.newInstance(2)
                 else -> {
-                    val bundle = Bundle()
-                    bundle.putInt("idLista", idListe!![position - 2])
                     val listaPersFrag = ListaPersonalizzataFragment()
-                    listaPersFrag.arguments = bundle
+                    listaPersFrag.arguments = bundleOf("idLista" to idListe!![position - 2])
                     listaPersFrag
                 }
             }
@@ -362,7 +354,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     fun initFabOptions(customList: Boolean) {
         val icon = IconicsDrawable(activity!!)
                 .icon(CommunityMaterial.Icon2.cmd_plus)
-                .color(Color.WHITE)
+                .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4)
 
@@ -399,12 +391,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 }
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
-                    val bundle = Bundle()
-                    bundle.putInt("idDaModif", idListe!![view_pager.currentItem - 2])
-                    bundle.putBoolean("modifica", true)
                     mCustomListsViewModel!!.indDaModif = view_pager.currentItem
                     startActivityForResult(
-                            Intent(activity, CreaListaActivity::class.java).putExtras(bundle),
+                            Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf("idDaModif" to idListe!![view_pager.currentItem - 2], "modifica" to true)),
                             TAG_MODIFICA_LISTA)
                     Animatoo.animateSlideUp(activity)
                     true
@@ -446,7 +435,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         }
 
         val click = View.OnClickListener {
-            MaterialCab.destroy()
+            destroy()
             toggleFabMenu()
         }
 

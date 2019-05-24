@@ -38,10 +38,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.crossfader.Crossfader
 import com.mikepenz.crossfader.view.CrossFadeSlidingPaneLayout
 import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.colorInt
+import com.mikepenz.iconics.paddingDp
+import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.materialdrawer.*
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -65,11 +68,11 @@ import java.util.*
 
 class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private var mViewModel: MainActivityViewModel? = null
+    private lateinit var profileIcon: IconicsDrawable
     private var mLUtils: LUtils? = null
     var drawer: Drawer? = null
         private set
     private var mMiniDrawer: MiniDrawer? = null
-    private lateinit var profileIcon: IconicsDrawable
     private var crossFader: Crossfader<*>? = null
     private var mAccountHeader: AccountHeader? = null
     var isOnTablet: Boolean = false
@@ -119,13 +122,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         val icon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon2.cmd_menu)
-                .color(Color.WHITE)
+                .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
 
         profileIcon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_account_circle)
-                .color(themeUtils!!.primaryColor())
+                .colorInt(themeUtils!!.primaryColor())
                 .sizeDp(48)
 
         risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
@@ -248,47 +251,51 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .addProfiles(profile)
                 .withNameTypeface(mRegularFont!!)
                 .withEmailTypeface(mRegularFont!!)
-                .withOnAccountHeaderListener { _, mProfile, _ ->
-                    // sample usage of the onProfileChanged listener
-                    // if the clicked item has the identifier 1 add a new profile ;)
-                    if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gdrive_backup.toLong()) {
-                        SimpleDialogFragment.Builder(
-                                this@MainActivity, this@MainActivity, "BACKUP_ASK")
-                                .title(R.string.gdrive_backup)
-                                .content(R.string.gdrive_backup_content)
-                                .positiveButton(R.string.backup_confirm)
-                                .negativeButton(R.string.cancel)
-                                .show()
-                    } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gdrive_restore.toLong()) {
-                        SimpleDialogFragment.Builder(
-                                this@MainActivity, this@MainActivity, "RESTORE_ASK")
-                                .title(R.string.gdrive_restore)
-                                .content(R.string.gdrive_restore_content)
-                                .positiveButton(R.string.restore_confirm)
-                                .negativeButton(R.string.cancel)
-                                .show()
-                    } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gplus_signout.toLong()) {
-                        SimpleDialogFragment.Builder(
-                                this@MainActivity, this@MainActivity, "SIGNOUT")
-                                .title(R.string.gplus_signout)
-                                .content(R.string.dialog_acc_disconn_text)
-                                .positiveButton(R.string.disconnect_confirm)
-                                .negativeButton(R.string.cancel)
-                                .show()
-                    } else if (mProfile is IDrawerItem<*, *> && mProfile.getIdentifier() == R.id.gplus_revoke.toLong()) {
-                        SimpleDialogFragment.Builder(
-                                this@MainActivity, this@MainActivity, "REVOKE")
-                                .title(R.string.gplus_revoke)
-                                .content(R.string.dialog_acc_revoke_text)
-                                .positiveButton(R.string.disconnect_confirm)
-                                .negativeButton(R.string.cancel)
-                                .show()
-                    }
+                .withOnAccountHeaderListener(object : AccountHeader.OnAccountHeaderListener {
+                    override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {
+                        // sample usage of the onProfileChanged listener
+                        // if the clicked item has the identifier 1 add a new profile ;)
+                        if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gdrive_backup.toLong()) {
+                            SimpleDialogFragment.Builder(
+                                    this@MainActivity, this@MainActivity, "BACKUP_ASK")
+                                    .title(R.string.gdrive_backup)
+                                    .content(R.string.gdrive_backup_content)
+                                    .positiveButton(R.string.backup_confirm)
+                                    .negativeButton(android.R.string.no)
+                                    .show()
+                        } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gdrive_restore.toLong()) {
+                            SimpleDialogFragment.Builder(
+                                    this@MainActivity, this@MainActivity, "RESTORE_ASK")
+                                    .title(R.string.gdrive_restore)
+                                    .content(R.string.gdrive_restore_content)
+                                    .positiveButton(R.string.restore_confirm)
+                                    .negativeButton(android.R.string.no)
+                                    .show()
+                        } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gplus_signout.toLong()) {
+                            SimpleDialogFragment.Builder(
+                                    this@MainActivity, this@MainActivity, "SIGNOUT")
+                                    .title(R.string.gplus_signout)
+                                    .content(R.string.dialog_acc_disconn_text)
+                                    .positiveButton(R.string.disconnect_confirm)
+                                    .negativeButton(android.R.string.no)
+                                    .show()
+                        } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gplus_revoke.toLong()) {
+                            SimpleDialogFragment.Builder(
+                                    this@MainActivity, this@MainActivity, "REVOKE")
+                                    .title(R.string.gplus_revoke)
+                                    .content(R.string.dialog_acc_revoke_text)
+                                    .positiveButton(R.string.disconnect_confirm)
+                                    .negativeButton(android.R.string.no)
+                                    .show()
+                        }
 
-                    // false if you have not consumed the event and it should close the drawer
-                    false
-                }
+                        // false if you have not consumed the event and it should close the drawer
+                        return false
+                    }
+                })
                 .build()
+
+        val selectedColor = themeUtils!!.primaryColor()
 
         val mDrawerBuilder = DrawerBuilder()
                 .withActivity(this)
@@ -300,115 +307,114 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .withName(R.string.activity_homepage)
                                 .withIcon(CommunityMaterial.Icon2.cmd_home)
                                 .withIdentifier(R.id.navigation_home.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.search_name_text)
                                 .withIcon(CommunityMaterial.Icon2.cmd_magnify)
                                 .withIdentifier(R.id.navigation_search.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_general_index)
                                 .withIcon(CommunityMaterial.Icon2.cmd_view_list)
                                 .withIdentifier(R.id.navigation_indexes.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_custom_lists)
                                 .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
                                 .withIdentifier(R.id.navitagion_lists.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.action_favourites)
                                 .withIcon(CommunityMaterial.Icon2.cmd_heart)
                                 .withIdentifier(R.id.navigation_favorites.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_consegnati)
                                 .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
                                 .withIdentifier(R.id.navigation_consegnati.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_history)
                                 .withIcon(CommunityMaterial.Icon2.cmd_history)
                                 .withIdentifier(R.id.navigation_history.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_settings)
                                 .withIcon(CommunityMaterial.Icon2.cmd_settings)
                                 .withIdentifier(R.id.navigation_settings.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont),
                         DividerDrawerItem(),
                         PrimaryDrawerItem()
                                 .withName(R.string.title_activity_about)
                                 .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
                                 .withIdentifier(R.id.navigation_changelog.toLong())
-                                .withSelectedIconColor(themeUtils!!.primaryColor())
-                                .withSelectedTextColor(themeUtils!!.primaryColor())
+                                .withSelectedIconColor(selectedColor)
+                                .withSelectedTextColor(selectedColor)
                                 .withTypeface(mMediumFont))
-                .withOnDrawerItemClickListener(
-                        Drawer.OnDrawerItemClickListener { _, _, drawerItem ->
-                            // check if the drawerItem is set.
-                            // there are different reasons for the drawerItem to be null
-                            // --> click on the header
-                            // --> click on the footer
-                            // those items don't contain a drawerItem
+                .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        // check if the drawerItem is set.
+                        // there are different reasons for the drawerItem to be null
+                        // --> click on the header
+                        // --> click on the footer
+                        // those items don't contain a drawerItem
 
-                            if (drawerItem != null) {
-                                val fragment: Fragment
-                                if (drawerItem.identifier == R.id.navigation_home.toLong()) {
-                                    fragment = Risuscito()
-                                    if (!isOnTablet)
-                                        toolbar_layout!!.setExpanded(true, true)
-                                } else if (drawerItem.identifier == R.id.navigation_search.toLong()) {
-                                    fragment = GeneralSearch()
-                                } else if (drawerItem.identifier == R.id.navigation_indexes.toLong()) {
-                                    fragment = GeneralIndex()
-                                } else if (drawerItem.identifier == R.id.navitagion_lists.toLong()) {
-                                    fragment = CustomLists()
-                                } else if (drawerItem.identifier == R.id.navigation_favorites.toLong()) {
-                                    fragment = FavouritesActivity()
-                                } else if (drawerItem.identifier == R.id.navigation_settings.toLong()) {
-                                    fragment = SettingsFragment()
-                                } else if (drawerItem.identifier == R.id.navigation_changelog.toLong()) {
-                                    fragment = AboutFragment()
-                                } else if (drawerItem.identifier == R.id.navigation_consegnati.toLong()) {
-                                    fragment = ConsegnatiFragment()
-                                } else if (drawerItem.identifier == R.id.navigation_history.toLong()) {
-                                    fragment = HistoryFragment()
-                                } else
-                                    return@OnDrawerItemClickListener true
+                        val fragment: Fragment
+                        if (drawerItem.identifier == R.id.navigation_home.toLong()) {
+                            fragment = Risuscito()
+                            if (!isOnTablet)
+                                toolbar_layout!!.setExpanded(true, true)
+                        } else if (drawerItem.identifier == R.id.navigation_search.toLong()) {
+                            fragment = SearchFragment()
+                        } else if (drawerItem.identifier == R.id.navigation_indexes.toLong()) {
+                            fragment = GeneralIndex()
+                        } else if (drawerItem.identifier == R.id.navitagion_lists.toLong()) {
+                            fragment = CustomLists()
+                        } else if (drawerItem.identifier == R.id.navigation_favorites.toLong()) {
+                            fragment = FavouritesActivity()
+                        } else if (drawerItem.identifier == R.id.navigation_settings.toLong()) {
+                            fragment = SettingsFragment()
+                        } else if (drawerItem.identifier == R.id.navigation_changelog.toLong()) {
+                            fragment = AboutFragment()
+                        } else if (drawerItem.identifier == R.id.navigation_consegnati.toLong()) {
+                            fragment = ConsegnatiFragment()
+                        } else if (drawerItem.identifier == R.id.navigation_history.toLong()) {
+                            fragment = HistoryFragment()
+                        } else
+                            return true
 
-                                // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-                                val myFragment = supportFragmentManager
-                                        .findFragmentByTag(drawerItem.identifier.toString())
-                                if (myFragment == null || !myFragment.isVisible) {
-                                    supportFragmentManager.transaction {
-                                        if (!isOnTablet)
-                                            setCustomAnimations(
-                                                    R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
-                                        replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
-                                    }
-                                }
-
-                                if (isOnTablet) mMiniDrawer!!.setSelection(drawerItem.identifier)
+                        // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+                        val myFragment = supportFragmentManager
+                                .findFragmentByTag(drawerItem.identifier.toString())
+                        if (myFragment == null || !myFragment.isVisible) {
+                            supportFragmentManager.transaction {
+                                if (!isOnTablet)
+                                    setCustomAnimations(
+                                            R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
+                                replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
                             }
-                            isOnTablet
-                        })
+                        }
+
+                        if (isOnTablet) mMiniDrawer!!.setSelection(drawerItem.identifier)
+                        return isOnTablet
+                    }
+                })
                 .withGenerateMiniDrawer(isOnTablet)
                 .withSavedInstance(savedInstanceState)
                 .withTranslucentStatusBar(!isOnTablet)
@@ -417,7 +423,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             drawer = mDrawerBuilder.buildView()
             // the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
             mMiniDrawer = drawer!!
-                    .miniDrawer
+                    .miniDrawer!!
                     .withEnableSelectedMiniDrawerItemBackground(true)
                     .withIncludeSecondaryDrawerItems(true)
 
@@ -609,7 +615,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_pulisci, IconicsDrawable(this@MainActivity)
                             .icon(CommunityMaterial.Icon.cmd_eraser_variant)
-                            .color(iconColor)
+                            .colorInt(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
                             .setLabel(getString(R.string.dialog_reset_list_title))
@@ -622,7 +628,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista, IconicsDrawable(this@MainActivity)
                             .icon(CommunityMaterial.Icon2.cmd_plus)
-                            .color(iconColor)
+                            .colorInt(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
                             .setLabel(getString(R.string.action_add_list))
@@ -635,7 +641,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi, IconicsDrawable(this@MainActivity)
                             .icon(CommunityMaterial.Icon2.cmd_share_variant)
-                            .color(iconColor)
+                            .colorInt(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
                             .setLabel(getString(R.string.action_share))
@@ -649,7 +655,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_condividi_file, IconicsDrawable(this@MainActivity)
                                 .icon(CommunityMaterial.Icon.cmd_attachment)
-                                .color(iconColor)
+                                .colorInt(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
                                 .setLabel(getString(R.string.action_share_file))
@@ -662,7 +668,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista, IconicsDrawable(this@MainActivity)
                                 .icon(CommunityMaterial.Icon2.cmd_pencil)
-                                .color(iconColor)
+                                .colorInt(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
                                 .setLabel(getString(R.string.action_edit_list))
@@ -675,7 +681,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_delete_lista, IconicsDrawable(this@MainActivity)
                                 .icon(CommunityMaterial.Icon.cmd_delete)
-                                .color(iconColor)
+                                .colorInt(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
                                 .setLabel(getString(R.string.action_remove_list))
@@ -807,6 +813,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun updateUI(signedIn: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, signedIn) }
         val intentBroadcast = Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE)
         Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn)
         intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)
@@ -833,7 +840,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             }
             // Create the AccountHeader
             mAccountHeader!!.updateProfile(profile)
-            if (mAccountHeader!!.profiles.size == 1) {
+            if (mAccountHeader!!.profiles!!.size == 1) {
                 mAccountHeader!!.addProfiles(
                         ProfileSettingDrawerItem()
                                 .withName(getString(R.string.gdrive_backup))
@@ -860,7 +867,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     .withIcon(profileIcon)
                     .withIdentifier(PROF_ID)
                     .withTypeface(mRegularFont)
-            if (mAccountHeader!!.profiles.size > 1) {
+            if (mAccountHeader!!.profiles!!.size > 1) {
                 mAccountHeader!!.removeProfile(1)
                 mAccountHeader!!.removeProfile(1)
                 mAccountHeader!!.removeProfile(1)

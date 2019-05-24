@@ -3277,6 +3277,20 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
+            mCanto = Canto()
+            mCanto.id = 236
+            mCanto.pagina = "inno_cristo_luce_page"
+            mCanto.titolo = "inno_cristo_luce_title"
+            mCanto.source = "inno_cristo_luce_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "inno_cristo_luce_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
             return cantiList
         }
 

@@ -2,14 +2,17 @@ package it.cammino.risuscito.database
 
 import android.content.Context
 import android.util.Log
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import it.cammino.risuscito.database.dao.*
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.utils.ioThread
 
-@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 4, exportSchema = false)
+@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 5, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RisuscitoDatabase : RoomDatabase() {
 
@@ -65,34 +68,16 @@ abstract class RisuscitoDatabase : RoomDatabase() {
         class Migration3to4 : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 3 to 4")
+                reinsertDefaultOnlyCanti(database)
+            }
+        }
 
-                val backup = ArrayList<Backup>()
-                val sql = "SELECT id, zoom, scrollX, scrollY, favorite, savedTab, savedBarre, savedSpeed FROM Canto ORDER by 1"
-                val cursor = database.query(sql)
-                cursor.moveToFirst()
-                while (!cursor.isAfterLast) {
-                    backup.add(Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)))
-                    cursor.moveToNext()
-                }
-                cursor.close()
+        private val MIGRATION_4_5 = Migration4to5()
 
-                // 2. EMPTY table
-                database.execSQL("DELETE FROM Canto")
-
-                //3. Prepopulate new table
-                Canto.defaultCantoData().forEach {
-                    database.execSQL("INSERT INTO Canto (id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedSpeed) " +
-                            "VALUES(" + it.id + ",'" + it.pagina + "','" + it.titolo + "','" + it.source + "'," + it.favorite + ",'" + it.color + "','" + it.link + "'," + it.zoom + "," + it.scrollX + "," + it.scrollY + ",'" + it.savedSpeed + "')")
-                }
-
-                //4. Restore backup
-                backup.forEach {
-                    database.execSQL("UPDATE Canto set zoom=" + it.zoom + ", scrollX=" + it.scrollX + ", scrollY=" + it.scrollY + ", favorite=" + it.favorite +
-                            ", savedTab=" + (if (it.savedTab != null) "'" + it.savedTab + "'" else "null") +
-                            ", savedBarre=" + (if (it.savedBarre != null) "'" + it.savedBarre + "'" else "null") +
-                            ",savedSpeed='" + it.savedSpeed + "' WHERE id=" + it.id)
-                }
-
+        class Migration4to5 : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 4 to 5")
+                reinsertDefaultOnlyCanti(database)
             }
         }
 
@@ -154,6 +139,35 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
         }
 
+        private fun reinsertDefaultOnlyCanti(database: SupportSQLiteDatabase) {
+            val backup = ArrayList<Backup>()
+            val sql = "SELECT id, zoom, scrollX, scrollY, favorite, savedTab, savedBarre, savedSpeed FROM Canto ORDER by 1"
+            val cursor = database.query(sql)
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                backup.add(Backup(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)))
+                cursor.moveToNext()
+            }
+            cursor.close()
+
+            // 2. EMPTY table
+            database.execSQL("DELETE FROM Canto")
+
+            //3. Prepopulate new table
+            Canto.defaultCantoData().forEach {
+                database.execSQL("INSERT INTO Canto (id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedSpeed) " +
+                        "VALUES(" + it.id + ",'" + it.pagina + "','" + it.titolo + "','" + it.source + "'," + it.favorite + ",'" + it.color + "','" + it.link + "'," + it.zoom + "," + it.scrollX + "," + it.scrollY + ",'" + it.savedSpeed + "')")
+            }
+
+            //4. Restore backup
+            backup.forEach {
+                database.execSQL("UPDATE Canto set zoom=" + it.zoom + ", scrollX=" + it.scrollX + ", scrollY=" + it.scrollY + ", favorite=" + it.favorite +
+                        ", savedTab=" + (if (it.savedTab != null) "'" + it.savedTab + "'" else "null") +
+                        ", savedBarre=" + (if (it.savedBarre != null) "'" + it.savedBarre + "'" else "null") +
+                        ",savedSpeed='" + it.savedSpeed + "' WHERE id=" + it.id)
+            }
+        }
+
         /** The only instance  */
         private var sInstance: RisuscitoDatabase? = null
 
@@ -170,7 +184,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 Log.d(TAG, "getInstance: NULL")
                 synchronized(LOCK) {
                     sInstance = Room.databaseBuilder(context.applicationContext, RisuscitoDatabase::class.java, dbName)
-                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4)
+                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                             .addCallback(object : Callback() {
                                 /**
                                  * Called when the database is created for the first time. This is called after all the

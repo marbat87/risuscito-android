@@ -37,11 +37,108 @@
                 android:elevation="@dimen/design_appbar_elevation"
                 tools:targetApi="lollipop" />
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/view_pager"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="48dp" />
+                android:layout_marginTop="48dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/ricerca_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/myListPreferredItemMargin"
+                    android:paddingLeft="@dimen/myListPreferredItemMargin"
+                    android:paddingEnd="@dimen/myListPreferredItemMargin"
+                    android:paddingRight="@dimen/myListPreferredItemMargin"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                    tools:text="@string/fast_search_subtitle" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/myListPreferredItemHeightMedium">
+
+                    <FrameLayout
+                        android:id="@+id/more_options"
+                        android:layout_width="@dimen/myListPreferredItemHeightMedium"
+                        android:layout_height="@dimen/myListPreferredItemHeightMedium"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:background="?attr/customSelectorRoundAccent"
+                        android:soundEffectsEnabled="true">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:scaleType="fitCenter"
+                            risuscito:ico_color="?android:textColorSecondary"
+                            risuscito:ico_icon="cmd-dots-vertical"
+                            risuscito:ico_padding="2dp"
+                            risuscito:ico_size="24dp"
+                            tools:ignore="MissingPrefix" />
+
+                    </FrameLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="@dimen/activity_min_margin"
+                        android:layout_marginLeft="@dimen/activity_min_margin"
+                        android:layout_toStartOf="@id/more_options"
+                        android:layout_toLeftOf="@id/more_options"
+                        android:gravity="center"
+                        android:hint="@string/search_hint"
+                        android:paddingStart="@dimen/activity_min_margin"
+                        android:paddingLeft="@dimen/activity_min_margin"
+                        risuscito:boxBackgroundMode="outline"
+                        tools:ignore="RtlSymmetry">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textfieldRicerca"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:scrollHorizontally="true" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </RelativeLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <include layout="@layout/tinted_progressbar" />
+
+                    <TextView
+                        android:id="@+id/search_no_results"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="10dip"
+                        android:text="@string/search_no_results"
+                        android:textColor="?android:textColorSecondary"
+                        android:textSize="15sp"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/matchedList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fadeScrollbars="true"
+                        android:scrollbars="vertical"
+                        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+                </FrameLayout>
+
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"

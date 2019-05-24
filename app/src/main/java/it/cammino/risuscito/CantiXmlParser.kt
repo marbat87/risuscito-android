@@ -59,8 +59,7 @@ internal class CantiXmlParser {
             if (parser.eventType != XmlPullParser.START_TAG) {
                 continue
             }
-            val name = parser.name
-            when (name) {
+            when (parser.name) {
                 TITOLO -> title = readTitle(parser)
                 TESTO -> summary = readSummary(parser)
                 else -> skip(parser)

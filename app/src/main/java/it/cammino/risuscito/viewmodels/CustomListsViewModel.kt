@@ -25,15 +25,9 @@ class CustomListsViewModel(application: Application) : AndroidViewModel(applicat
     var customListResult: LiveData<List<ListaPers>>? = null
         private set
 
-    private var mDb: RisuscitoDatabase? = null
-
-    fun createDb() {
-        mDb = RisuscitoDatabase.getInstance(getApplication())
-        // Receive changes
-        subscribeToDbChanges()
+    init {
+        val mDb = RisuscitoDatabase.getInstance(getApplication())
+        customListResult = mDb.listePersDao().liveAll
     }
 
-    private fun subscribeToDbChanges() {
-        customListResult = mDb!!.listePersDao().liveAll
-    }
 }

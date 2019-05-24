@@ -3,27 +3,20 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-
-import java.util.ArrayList
-
 import it.cammino.risuscito.database.CantoCronologia
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.SimpleHistoryItem
+import java.util.*
 
 class CronologiaViewModel(application: Application) : AndroidViewModel(application) {
 
     var titoli: ArrayList<SimpleHistoryItem> = ArrayList()
     var cronologiaCanti: LiveData<List<CantoCronologia>>? = null
         private set
-    private var mDb: RisuscitoDatabase? = null
 
-    fun createDb() {
-        mDb = RisuscitoDatabase.getInstance(getApplication())
-        // Receive changes
-        subscribeToDbChanges()
+    init {
+        val mDb = RisuscitoDatabase.getInstance(getApplication())
+        cronologiaCanti = mDb.cronologiaDao().liveCronologia
     }
 
-    private fun subscribeToDbChanges() {
-        cronologiaCanti = mDb!!.cronologiaDao().liveCronologia
-    }
 }

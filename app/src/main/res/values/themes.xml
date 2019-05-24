@@ -53,6 +53,7 @@
         <item name="md_color_button_text">?colorAccent</item>
         <item name="tabStyle">@style/Risuscito_tabstyle</item>
         <item name="android:alertDialogTheme">@style/RisuscitoAlertDialogTheme</item>
+        <item name="materialPopupMenuStyle">@style/material_popup_theme</item>
     </style>
 
     <style name="RisuscitoTheme" parent="Theme.MyTheme">

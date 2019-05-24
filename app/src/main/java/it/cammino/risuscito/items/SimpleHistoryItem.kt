@@ -1,17 +1,16 @@
 package it.cammino.risuscito.items
 
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.view.View
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
-import android.widget.TextView
-import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import com.mikepenz.materialize.util.UIUtils
@@ -23,7 +22,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 @Suppress("unused")
-class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.ViewHolder>() {
+class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
@@ -38,8 +37,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.View
     private var selectedColor: ColorHolder? = null
     var id: Int = 0
         private set
-
-    private var createContextMenuListener: View.OnCreateContextMenuListener? = null
 
     fun withTitle(title: String): SimpleHistoryItem {
         this.title = StringHolder(title)
@@ -66,11 +63,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.View
         return this
     }
 
-    fun withTimestamp(@StringRes timestampRes: Int): SimpleHistoryItem {
-        this.timestamp = StringHolder(timestampRes)
-        return this
-    }
-
     fun withSource(src: String): SimpleHistoryItem {
         this.source = StringHolder(src)
         return this
@@ -93,6 +85,7 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.View
 
     fun withId(id: Int): SimpleHistoryItem {
         this.id = id
+        identifier = id.toLong()
         return this
     }
 
@@ -111,75 +104,63 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.View
         return this
     }
 
-    fun withContextMenuListener(listener: View.OnCreateContextMenuListener): SimpleHistoryItem {
-        this.createContextMenuListener = listener
-        return this
-    }
-
     /**
      * defines the type defining this item. must be unique. preferably an id
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_history_item_id
-    }
-
-    override fun getIdentifier(): Long {
-        return id.toLong()
-    }
+    override val type: Int
+        get() = R.id.fastadapter_history_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.row_item_history
-    }
+    override val layoutRes: Int
+        get() = R.layout.row_item_history
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
         // get the context
-        val ctx = viewHolder.itemView.context
+        val ctx = holder.itemView.context
 
         // set the text for the name
-        StringHolder.applyTo(title, viewHolder.mTitle)
+        StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
-        StringHolder.applyToOrHide(page, viewHolder.mPage)
+        StringHolder.applyToOrHide(page, holder.mPage)
 
         @Suppress("DEPRECATION")
         UIUtils.setBackground(
-                viewHolder.view,
+                holder.view,
                 FastAdapterUIUtils.getSelectableBackground(
                         ctx,
-                        ContextCompat.getColor(viewHolder.itemView.context, R.color.ripple_color),
+                        ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
                         true))
 
         if (isSelected) {
-            viewHolder.mPage!!.visibility = View.INVISIBLE
-            viewHolder.mPageSelected!!.visibility = View.VISIBLE
-            val bgShape = viewHolder.mPageSelected!!.background as GradientDrawable
+            holder.mPage!!.visibility = View.INVISIBLE
+            holder.mPageSelected!!.visibility = View.VISIBLE
+            val bgShape = holder.mPageSelected!!.background as GradientDrawable
             bgShape.setColor(selectedColor!!.colorInt)
         } else {
-            val bgShape = viewHolder.mPage!!.background as GradientDrawable
+            val bgShape = holder.mPage!!.background as GradientDrawable
             bgShape.setColor(color!!.colorInt)
-            viewHolder.mPage!!.visibility = View.VISIBLE
-            viewHolder.mPageSelected!!.visibility = View.INVISIBLE
+            holder.mPage!!.visibility = View.VISIBLE
+            holder.mPageSelected!!.visibility = View.INVISIBLE
         }
 
-        viewHolder.mId!!.text = id.toString()
+        holder.mId!!.text = id.toString()
 
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
             val df = DateFormat.getDateTimeInstance(
-//                    DateFormat.SHORT, DateFormat.MEDIUM, ctx.resources.configuration.locale)
                     DateFormat.SHORT, DateFormat.MEDIUM, ThemeableActivity.getSystemLocalWrapper(ctx.resources.configuration))
             val tempTimestamp: String
 
@@ -190,15 +171,10 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.View
                 df.format(dateTimestamp)
             } else
                 df.format(dateTimestamp)
-            viewHolder.mTimestamp!!.text = tempTimestamp
-            viewHolder.mTimestamp!!.visibility = View.VISIBLE
+            holder.mTimestamp!!.text = tempTimestamp
+            holder.mTimestamp!!.visibility = View.VISIBLE
         } else
-            viewHolder.mTimestamp!!.visibility = View.GONE
-
-        if (createContextMenuListener != null) {
-            (viewHolder.itemView.context as Activity).registerForContextMenu(viewHolder.itemView)
-            viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
-        }
+            holder.mTimestamp!!.visibility = View.GONE
     }
 
     override fun unbindView(holder: ViewHolder) {

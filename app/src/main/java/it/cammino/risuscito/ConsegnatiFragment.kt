@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -23,17 +24,23 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.listeners.OnClickListener
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.listeners.ClickEventHook
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.colorInt
+import com.mikepenz.iconics.paddingDp
+import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -51,11 +58,12 @@ import java.lang.ref.WeakReference
 
 class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
-    internal var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
+    private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
 
     private var mCantiViewModel: ConsegnatiViewModel? = null
     private var rootView: View? = null
-    private var selectableAdapter: FastItemAdapter<CheckableItem>? = null
+    private var selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
+    private var selectExtension: SelectExtension<CheckableItem>? = null
     private var mBottomBar: BottomAppBar? = null
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
@@ -127,15 +135,15 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mBottomBar!!.menu.clear()
         IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity, R.menu.consegnati, mBottomBar!!.menu, false)
+                activity!!.menuInflater, activity!!, R.menu.consegnati, mBottomBar!!.menu, false)
         mBottomBar!!.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.select_none -> {
-                    (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.deselect()
+                    selectExtension!!.deselect()
                     true
                 }
                 R.id.select_all -> {
-                    (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.select()
+                    selectExtension!!.select()
                     true
                 }
                 R.id.cancel_change -> {
@@ -152,10 +160,10 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             (activity as AppCompatActivity?)!!, null, "CONSEGNATI_SAVING")
                             .content(R.string.save_consegnati_running)
                             .progressIndeterminate(false)
-                            .progressMax(selectableAdapter!!.itemCount)
+                            .progressMax(selectableAdapter.itemCount)
                             .show()
 
-                    val mSelected = (selectableAdapter!!.getExtension<SelectExtension<CheckableItem>>(SelectExtension::class.java))!!.selectedItems
+                    val mSelected = selectExtension!!.selectedItems
                     val mSelectedId = mSelected.mapTo(ArrayList()) { it.id }
 
                     //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
@@ -178,19 +186,21 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mBottomBar!!.setBackgroundColor(themeUtils.primaryColor())
 
-        val mOnClickListener = OnClickListener<SimpleItem> { _, _, item, _ ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener true
-            mLastClickTime = SystemClock.elapsedRealtime()
-            val bundle = Bundle()
-            bundle.putCharSequence("pagina", item.source!!.text)
-            bundle.putInt("idCanto", item.id)
-            // lancia l'activity che visualizza il canto passando il parametro creato
-            startSubActivity(bundle)
-            true
+        cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            var consume = false
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                val intent = Intent(activity, PaginaRenderActivity::class.java)
+                intent.putExtras(bundleOf(
+                        "pagina" to item.source!!.getText(context),
+                        "idCanto" to item.id
+                ))
+                mLUtils!!.startActivityWithTransition(intent)
+                consume = true
+            }
+            consume
         }
 
-        // Creating new adapter object
-        cantoAdapter.withOnClickListener(mOnClickListener)
         cantoAdapter.set(mCantiViewModel!!.titoli)
 
         cantiRecycler!!.adapter = cantoAdapter
@@ -205,19 +215,30 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         cantiRecycler!!.itemAnimator = SlideRightAlphaAnimator()
 
         // Creating new adapter object
-        selectableAdapter = FastItemAdapter()
-        selectableAdapter!!.withSelectable(true).setHasStableIds(true)
+        selectExtension = SelectExtension(selectableAdapter)
+        selectExtension!!.isSelectable = true
+        selectableAdapter.setHasStableIds(true)
 
-        // init the ClickListenerHelper which simplifies custom click listeners on views of the Adapter
-        selectableAdapter!!.withOnPreClickListener { _, _, _, position ->
-            selectableAdapter!!
+        selectableAdapter.onPreClickListener = { _: View?, _: IAdapter<CheckableItem>, _: CheckableItem, position: Int ->
+            selectableAdapter
                     .getAdapterItem(position)
-                    .withSetSelected(!selectableAdapter!!.getAdapterItem(position).isSelected)
-            selectableAdapter!!.notifyAdapterItemChanged(position)
+                    .isSelected = !selectableAdapter.getAdapterItem(position).isSelected
+            selectableAdapter.notifyAdapterItemChanged(position)
             true
         }
-        selectableAdapter!!.withEventHook(CheckableItem.CheckBoxClickEvent())
-        selectableAdapter!!.set(mCantiViewModel!!.titoliChooseFiltered)
+
+        selectableAdapter.addEventHook(object : ClickEventHook<CheckableItem>() {
+            override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
+                return (viewHolder as? CheckableItem.ViewHolder)?.checkBox as View
+            }
+
+            override fun onClick(
+                    v: View, position: Int, fastAdapter: FastAdapter<CheckableItem>, item: CheckableItem) {
+                selectExtension!!.toggleSelection(position)
+            }
+        })
+
+        selectableAdapter.set(mCantiViewModel!!.titoliChooseFiltered)
 
         chooseRecycler!!.adapter = selectableAdapter
         val llm2 = if (mMainActivity!!.isGridLayout)
@@ -242,7 +263,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
                     mCantiViewModel!!.titoliChooseFiltered = mCantiViewModel!!.titoliChoose.filter { Utility.removeAccents(it.title!!.text.toString()).toLowerCase().contains(simplifiedString) }
-                    selectableAdapter!!.set(mCantiViewModel!!.titoliChooseFiltered)
+                    selectableAdapter.set(mCantiViewModel!!.titoliChooseFiltered)
                 } else
                     mCantiViewModel!!.titoliChooseFiltered = mCantiViewModel!!.titoliChoose.sortedWith(compareBy { it.title.toString() })
                 return true
@@ -250,16 +271,30 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
             override fun onQueryTextCleared(): Boolean {
                 mCantiViewModel!!.titoliChooseFiltered = mCantiViewModel!!.titoliChoose.sortedWith(compareBy { it.title.toString() })
-                selectableAdapter!!.set(mCantiViewModel!!.titoliChooseFiltered)
+                selectableAdapter.set(mCantiViewModel!!.titoliChooseFiltered)
                 return true
             }
 
         })
+
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        view.setOnKeyListener { _, keyCode, _ ->
+            var managed = false
+            if (keyCode == KeyEvent.KEYCODE_BACK && mCantiViewModel!!.editMode) {
+                mCantiViewModel!!.editMode = false
+                chooseRecycler!!.visibility = View.INVISIBLE
+                enableBottombar(false)
+                selected_view!!.visibility = View.VISIBLE
+                enableFab(true)
+                managed = true
+            }
+            managed
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        //    Log.d(getClass().getName(), "onResume: ");
         LocalBroadcastManager.getInstance(activity!!)
                 .registerReceiver(
                         positionBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED))
@@ -292,7 +327,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
-        populateDb()
         subscribeUiConsegnati()
     }
 
@@ -304,12 +338,12 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         if (mCantiViewModel!!.editMode) {
             IconicsMenuInflaterUtil.inflate(
-                    activity!!.menuInflater, activity, R.menu.consegnati_menu, menu)
-            val item = menu!!.findItem(R.id.action_search)
+                    activity!!.menuInflater, activity!!, R.menu.consegnati_menu, menu!!)
+            val item = menu.findItem(R.id.action_search)
             activity!!.searchView.setMenuItem(item)
         } else
             IconicsMenuInflaterUtil.inflate(
-                    activity!!.menuInflater, activity, R.menu.help_menu, menu)
+                    activity!!.menuInflater, activity!!, R.menu.help_menu, menu!!)
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -325,12 +359,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
         return false
-    }
-
-    private fun startSubActivity(bundle: Bundle) {
-        val intent = Intent(activity, PaginaRenderActivity::class.java)
-        intent.putExtras(bundle)
-        mLUtils!!.startActivityWithTransition(intent)
     }
 
     private fun getFab(): FloatingActionButton {
@@ -354,7 +382,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private fun initFab() {
         val icon = IconicsDrawable(activity!!)
                 .icon(CommunityMaterial.Icon2.cmd_pencil)
-                .color(Color.WHITE)
+                .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4)
         val onClick = View.OnClickListener {
@@ -440,30 +468,15 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .start()
     }
 
-    private fun populateDb() {
-        mCantiViewModel!!.createDb()
-    }
-
     private fun subscribeUiConsegnati() {
         mCantiViewModel!!
-                .indexResult
+                .mIndexResult!!
                 .observe(
                         this,
                         Observer { cantos ->
                             Log.d(TAG, "onChanged: " + (cantos != null))
                             if (cantos != null) {
-                                val newList = ArrayList<SimpleItem>()
-                                for (canto in cantos) {
-                                    val simpleItem = SimpleItem()
-                                    simpleItem
-                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-                                            .withColor(canto.color!!)
-                                            .withId(canto.id)
-                                    newList.add(simpleItem)
-                                }
-                                mCantiViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
+                                mCantiViewModel!!.titoli = cantos.sortedWith(compareBy { it.title!!.getText(context) })
                                 cantoAdapter.set(mCantiViewModel!!.titoli)
                                 no_consegnati!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                             }
@@ -481,12 +494,12 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             val newList = ArrayList<CheckableItem>()
             for (canto in canti) {
                 val checkableItem = CheckableItem()
+                checkableItem.isSelected = canto.consegnato > 0
                 newList.add(
                         checkableItem
                                 .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
                                 .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
                                 .withColor(canto.color!!)
-                                .withSetSelected(canto.consegnato > 0)
                                 .withId(canto.id)
                 )
             }
@@ -497,7 +510,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         override fun onPostExecute(result: Void?) {
             super.onPostExecute(result)
-            fragmentReference.get()!!.selectableAdapter!!.set(fragmentReference.get()!!.mCantiViewModel!!.titoliChooseFiltered)
+            fragmentReference.get()!!.selectableAdapter.set(fragmentReference.get()!!.mCantiViewModel!!.titoliChooseFiltered)
         }
     }
 

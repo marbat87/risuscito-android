@@ -72,6 +72,15 @@
             android:entryValues="@array/pref_default_index_values"
             android:key="indice_predefinito" />
 
+        <!--suppress AndroidElementNotAllowed -->
+        <SimpleMenuPreference
+            android:defaultValue="0"
+            android:title="@string/default_search_title"
+            android:summary="@string/default_search_summary"
+            android:entries="@array/pref_default_search_entries"
+            android:entryValues="@array/pref_default_search_values"
+            android:key="ricerca_predefinita" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/system">

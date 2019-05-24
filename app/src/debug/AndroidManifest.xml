@@ -47,7 +47,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="" />
         <activity
-            android:name="it.cammino.risuscito.GeneralInsertSearch"
+            android:name="it.cammino.risuscito.InsertActivity"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.CreaListaActivity"
@@ -119,6 +119,10 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
 
     </application>
 

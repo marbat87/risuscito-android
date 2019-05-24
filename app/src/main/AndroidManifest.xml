@@ -46,7 +46,7 @@
             android:name="it.cammino.risuscito.PaginaRenderFullScreen"
             android:label="" />
         <activity
-            android:name="it.cammino.risuscito.GeneralInsertSearch"
+            android:name="it.cammino.risuscito.InsertActivity"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.CreaListaActivity"
