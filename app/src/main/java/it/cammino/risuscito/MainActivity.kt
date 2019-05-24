@@ -91,15 +91,15 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         override fun onReceive(context: Context, intent: Intent) {
             // Implement UI change code here once notification is received
             try {
-                Log.v(TAG, "BROADCAST_NEXT_STEP")
-                if (intent.getStringExtra("WHICH") != null) {
-                    val which = intent.getStringExtra("WHICH")
-                    Log.v(TAG, "NEXT_STEP: $which")
-                    if (which.equals("RESTORE", ignoreCase = true)) {
-                        val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, "RESTORE_RUNNING")
+                Log.v(TAG, BROADCAST_NEXT_STEP)
+                if (intent.getStringExtra(WHICH) != null) {
+                    val which = intent.getStringExtra(WHICH)
+                    Log.v(TAG, "$BROADCAST_NEXT_STEP: $which")
+                    if (which.equals(RESTORE, ignoreCase = true)) {
+                        val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, RESTORE_RUNNING)
                         sFragment?.setContent(R.string.restoring_settings)
                     } else {
-                        val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, "BACKUP_RUNNING")
+                        val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, BACKUP_RUNNING)
                         sFragment?.setContent(R.string.backup_settings)
                     }
                 }
@@ -117,8 +117,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
 
-        mRegularFont = ResourcesCompat.getFont(this@MainActivity, R.font.googlesans_regular)
-        mMediumFont = ResourcesCompat.getFont(this@MainActivity, R.font.googlesans_medium)
+        mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
+        mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
         val icon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon2.cmd_menu)
@@ -138,10 +138,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
-            TranslationTask(this@MainActivity).execute()
+            TranslationTask(this).execute()
         }
 
-        mLUtils = LUtils.getInstance(this@MainActivity)
+        mLUtils = LUtils.getInstance(this)
         isOnTablet = mLUtils!!.isOnTablet
         Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
         hasThreeColumns = mLUtils!!.hasThreeColumns
@@ -187,14 +187,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        setDialogCallback("BACKUP_ASK")
-        setDialogCallback("RESTORE_ASK")
-        setDialogCallback("SIGNOUT")
-        setDialogCallback("REVOKE")
-        setDialogCallback("RESTART")
+        setDialogCallback(BACKUP_ASK)
+        setDialogCallback(RESTORE_ASK)
+        setDialogCallback(SIGNOUT)
+        setDialogCallback(REVOKE)
+        setDialogCallback(RESTART)
 
         // registra un receiver per ricevere la notifica di preparazione della registrazione
-        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(nextStepReceiver, IntentFilter("BROADCAST_NEXT_STEP"))
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(nextStepReceiver, IntentFilter(BROADCAST_NEXT_STEP))
     }
 
     override fun onDestroy() {
@@ -244,7 +244,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         // Create the AccountHeader
         mAccountHeader = AccountHeaderBuilder()
-                .withActivity(this@MainActivity)
+                .withActivity(this)
                 .withTranslucentStatusBar(!isOnTablet)
                 .withSelectionListEnabledForSingleProfile(false)
                 .withSavedInstance(savedInstanceState)
@@ -257,7 +257,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         // if the clicked item has the identifier 1 add a new profile ;)
                         if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gdrive_backup.toLong()) {
                             SimpleDialogFragment.Builder(
-                                    this@MainActivity, this@MainActivity, "BACKUP_ASK")
+                                    this@MainActivity, this@MainActivity, BACKUP_ASK)
                                     .title(R.string.gdrive_backup)
                                     .content(R.string.gdrive_backup_content)
                                     .positiveButton(R.string.backup_confirm)
@@ -265,7 +265,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                     .show()
                         } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gdrive_restore.toLong()) {
                             SimpleDialogFragment.Builder(
-                                    this@MainActivity, this@MainActivity, "RESTORE_ASK")
+                                    this@MainActivity, this@MainActivity, RESTORE_ASK)
                                     .title(R.string.gdrive_restore)
                                     .content(R.string.gdrive_restore_content)
                                     .positiveButton(R.string.restore_confirm)
@@ -273,7 +273,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                     .show()
                         } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gplus_signout.toLong()) {
                             SimpleDialogFragment.Builder(
-                                    this@MainActivity, this@MainActivity, "SIGNOUT")
+                                    this@MainActivity, this@MainActivity, SIGNOUT)
                                     .title(R.string.gplus_signout)
                                     .content(R.string.dialog_acc_disconn_text)
                                     .positiveButton(R.string.disconnect_confirm)
@@ -281,7 +281,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                     .show()
                         } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gplus_revoke.toLong()) {
                             SimpleDialogFragment.Builder(
-                                    this@MainActivity, this@MainActivity, "REVOKE")
+                                    this@MainActivity, this@MainActivity, REVOKE)
                                     .title(R.string.gplus_revoke)
                                     .content(R.string.dialog_acc_revoke_text)
                                     .positiveButton(R.string.disconnect_confirm)
@@ -507,7 +507,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val mappa = HashMap<String, String>()
         for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
 
-        val mDao = RisuscitoDatabase.getInstance(this@MainActivity).cantoDao()
+        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
         val canti = mDao.allByName
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
@@ -547,7 +547,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val mappa = HashMap<String, String>()
         for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
 
-        val mDao = RisuscitoDatabase.getInstance(this@MainActivity).cantoDao()
+        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
         val canti = mDao.allByName
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
@@ -609,11 +609,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         if (optionMenu) {
             fab_pager.expansionMode = if (mLUtils!!.isFabScrollingActive) (if (mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
-            val iconColor = ContextCompat.getColor(this@MainActivity, R.color.text_color_secondary)
-            val backgroundColor = ContextCompat.getColor(this@MainActivity, R.color.floating_background)
+            val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
+            val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 
             fab_pager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_pulisci, IconicsDrawable(this@MainActivity)
+                    SpeedDialActionItem.Builder(R.id.fab_pulisci, IconicsDrawable(this)
                             .icon(CommunityMaterial.Icon.cmd_eraser_variant)
                             .colorInt(iconColor)
                             .sizeDp(24)
@@ -626,7 +626,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             )
 
             fab_pager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_add_lista, IconicsDrawable(this@MainActivity)
+                    SpeedDialActionItem.Builder(R.id.fab_add_lista, IconicsDrawable(this)
                             .icon(CommunityMaterial.Icon2.cmd_plus)
                             .colorInt(iconColor)
                             .sizeDp(24)
@@ -639,7 +639,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             )
 
             fab_pager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_condividi, IconicsDrawable(this@MainActivity)
+                    SpeedDialActionItem.Builder(R.id.fab_condividi, IconicsDrawable(this)
                             .icon(CommunityMaterial.Icon2.cmd_share_variant)
                             .colorInt(iconColor)
                             .sizeDp(24)
@@ -653,7 +653,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             if (customList) {
                 fab_pager.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_condividi_file, IconicsDrawable(this@MainActivity)
+                        SpeedDialActionItem.Builder(R.id.fab_condividi_file, IconicsDrawable(this)
                                 .icon(CommunityMaterial.Icon.cmd_attachment)
                                 .colorInt(iconColor)
                                 .sizeDp(24)
@@ -666,7 +666,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 )
 
                 fab_pager.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_edit_lista, IconicsDrawable(this@MainActivity)
+                        SpeedDialActionItem.Builder(R.id.fab_edit_lista, IconicsDrawable(this)
                                 .icon(CommunityMaterial.Icon2.cmd_pencil)
                                 .colorInt(iconColor)
                                 .sizeDp(24)
@@ -679,7 +679,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 )
 
                 fab_pager.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_delete_lista, IconicsDrawable(this@MainActivity)
+                        SpeedDialActionItem.Builder(R.id.fab_delete_lista, IconicsDrawable(this)
                                 .icon(CommunityMaterial.Icon.cmd_delete)
                                 .colorInt(iconColor)
                                 .sizeDp(24)
@@ -733,8 +733,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .signOut()
                 .addOnCompleteListener {
                     updateUI(false)
-                    PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
-                    Toast.makeText(this@MainActivity, R.string.disconnected, Toast.LENGTH_SHORT)
+                    PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
+                    Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                             .show()
                 }
     }
@@ -746,8 +746,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .revokeAccess()
                 .addOnCompleteListener {
                     updateUI(false)
-                    PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, false) }
-                    Toast.makeText(this@MainActivity, R.string.disconnected, Toast.LENGTH_SHORT)
+                    PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
+                    Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                             .show()
                 }
     }
@@ -770,11 +770,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "handleSignInResult:" + task.isSuccessful)
         if (task.isSuccessful) {
             // Signed in successfully, show authenticated UI.
-            acct = GoogleSignIn.getLastSignedInAccount(this@MainActivity)
+            acct = GoogleSignIn.getLastSignedInAccount(this)
             firebaseAuthWithGoogle()
         } else {
             // Sign in failed, handle failure and update UI
-            Toast.makeText(this@MainActivity, getString(
+            Toast.makeText(this, getString(
                     R.string.login_failed,
                     -1,
                     task.exception!!.localizedMessage), Toast.LENGTH_SHORT)
@@ -793,9 +793,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "firebaseAuthWithGoogle:success")
-                        PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, true) }
+                        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, true) }
                         if (mViewModel!!.showSnackbar) {
-                            Toast.makeText(this@MainActivity, getString(R.string.connected_as, acct!!.displayName), Toast.LENGTH_SHORT)
+                            Toast.makeText(this, getString(R.string.connected_as, acct!!.displayName), Toast.LENGTH_SHORT)
                                     .show()
                             mViewModel!!.showSnackbar = false
                         }
@@ -803,7 +803,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
-                        Toast.makeText(this@MainActivity, getString(
+                        Toast.makeText(this, getString(
                                 R.string.login_failed,
                                 -1,
                                 task.exception!!.localizedMessage), Toast.LENGTH_SHORT)
@@ -813,7 +813,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun updateUI(signedIn: Boolean) {
-        PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit { putBoolean(Utility.SIGNED_IN, signedIn) }
+        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, signedIn) }
         val intentBroadcast = Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE)
         Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn)
         intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)
@@ -894,27 +894,27 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: TAG $tag")
         when (tag) {
-            "BACKUP_ASK" -> {
-                ProgressDialogFragment.Builder(this@MainActivity, null, "BACKUP_RUNNING")
+            BACKUP_ASK -> {
+                ProgressDialogFragment.Builder(this, null, BACKUP_RUNNING)
                         .title(R.string.backup_running)
                         .content(R.string.backup_database)
                         .progressIndeterminate(true)
                         .show()
                 backToHome(false)
-                BackupTask(this@MainActivity).execute()
+                BackupTask(this).execute()
             }
-            "RESTORE_ASK" -> {
-                ProgressDialogFragment.Builder(this@MainActivity, null, "RESTORE_RUNNING")
+            RESTORE_ASK -> {
+                ProgressDialogFragment.Builder(this, null, RESTORE_RUNNING)
                         .title(R.string.restore_running)
                         .content(R.string.restoring_database)
                         .progressIndeterminate(true)
                         .show()
                 backToHome(false)
-                RestoreTask(this@MainActivity).execute()
+                RestoreTask(this).execute()
             }
-            "SIGNOUT" -> signOut()
-            "REVOKE" -> revokeAccess()
-            "RESTART" -> {
+            SIGNOUT -> signOut()
+            REVOKE -> revokeAccess()
+            RESTART -> {
                 val i = baseContext
                         .packageManager
                         .getLaunchIntentForPackage(baseContext.packageName)
@@ -938,13 +938,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onNegative(tag: String) {}
 
     private fun dismissProgressDialog(tag: String) {
-        val sFragment = ProgressDialogFragment.findVisible(this@MainActivity, tag)
+        val sFragment = ProgressDialogFragment.findVisible(this, tag)
         sFragment?.dismiss()
     }
 
     private fun setDialogCallback(tag: String) {
-        val sFragment = SimpleDialogFragment.findVisible(this@MainActivity, tag)
-        sFragment?.setmCallback(this@MainActivity)
+        val sFragment = SimpleDialogFragment.findVisible(this, tag)
+        sFragment?.setmCallback(this)
     }
 
     private class TranslationTask internal constructor(activity: MainActivity) : AsyncTask<Void, Void, Void>() {
@@ -986,8 +986,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         override fun doInBackground(vararg sUrl: Void): String {
             return try {
                 backupDatabase(acct!!.id)
-                val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
-                intentBroadcast.putExtra("WHICH", "BACKUP")
+                val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
+                intentBroadcast.putExtra(WHICH, "BACKUP")
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 backupSharedPreferences(acct!!.id, acct!!.email)
                 ""
@@ -999,7 +999,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         override fun onPostExecute(result: String) {
             super.onPostExecute(result)
-            dismissProgressDialog("BACKUP_RUNNING")
+            dismissProgressDialog(BACKUP_RUNNING)
             if (result.isEmpty())
                 Snackbar.make(
                         activityReference.get()!!.main_content,
@@ -1019,8 +1019,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         override fun doInBackground(vararg sUrl: Void): String {
             return try {
                 restoreDatabase(acct!!.id)
-                val intentBroadcast = Intent("BROADCAST_NEXT_STEP")
-                intentBroadcast.putExtra("WHICH", "RESTORE")
+                val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
+                intentBroadcast.putExtra(WHICH, RESTORE)
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 restoreSharedPreferences(acct!!.id)
                 ""
@@ -1032,9 +1032,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         override fun onPostExecute(result: String) {
             super.onPostExecute(result)
-            dismissProgressDialog("RESTORE_RUNNING")
+            dismissProgressDialog(RESTORE_RUNNING)
             if (result.isEmpty())
-                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, "RESTART")
+                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, RESTART)
                         .title(R.string.general_message)
                         .content(R.string.gdrive_restore_success)
                         .positiveButton(R.string.ok)
@@ -1042,6 +1042,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             else
                 Snackbar.make(activityReference.get()!!.main_content, result, Snackbar.LENGTH_LONG).show()
         }
+
     }
 
     private fun backToHome(exitAlso: Boolean) {
@@ -1064,6 +1065,16 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         /* Request code used to invoke sign in user interactions. */
         private const val RC_SIGN_IN = 9001
         private const val PROF_ID = 5428471L
+        private const val BROADCAST_NEXT_STEP = "BROADCAST_NEXT_STEP"
+        private const val WHICH = "WHICH"
+        private const val RESTORE_RUNNING = "RESTORE_RUNNING"
+        private const val BACKUP_RUNNING = "BACKUP_RUNNING"
+        private const val BACKUP_ASK = "BACKUP_ASK"
+        private const val RESTORE_ASK = "RESTORE_ASK"
+        private const val SIGNOUT = "SIGNOUT"
+        private const val REVOKE = "REVOKE"
+        private const val RESTART = "RESTART"
+        private const val RESTORE = "RESTORE"
         private val TAG = MainActivity::class.java.canonicalName
     }
 }
