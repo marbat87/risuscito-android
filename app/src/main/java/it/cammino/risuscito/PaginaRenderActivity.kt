@@ -110,7 +110,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                 }
                 PlaybackStateCompat.STATE_ERROR -> {
-                    val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "BUFFERING")
+                    val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, BUFFERING)
                     sFragment?.dismiss()
                     stopSeekbarUpdate()
                     music_seekbar.progress = 0
@@ -124,7 +124,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .show()
                 }
                 PlaybackStateCompat.STATE_PLAYING -> {
-                    val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "BUFFERING")
+                    val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, BUFFERING)
                     sFragment?.dismiss()
                     scheduleSeekbarUpdate()
                     showPlaying(true)
@@ -199,7 +199,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.v(TAG, "BROADCAST_DOWNLOAD_PROGRESS")
                 Log.v(TAG, "DATA_PROGRESS: " + intent.getIntExtra(DownloadService.DATA_PROGRESS, 0))
-                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
+                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, DOWNLOAD_MP3)
                 sFragment?.setProgress(intent.getIntExtra(DownloadService.DATA_PROGRESS, 0))
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
@@ -212,7 +212,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             // Implement UI change code here once notification is received
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_COMPLETED")
-                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
+                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, DOWNLOAD_MP3)
                 sFragment?.dismiss()
                 val pref = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
                 val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")!!)
@@ -247,7 +247,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_ERROR")
                 Log.d(TAG, "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR))
-                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
+                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, DOWNLOAD_MP3)
                 sFragment?.dismiss()
                 Snackbar.make(
                         findViewById(android.R.id.content),
@@ -267,7 +267,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             // Implement UI change code here once notification is received
             Log.d(TAG, "BROADCAST_EXPORT_COMPLETED")
             Log.d(TAG, "DATA_PDF_PATH: " + intent.getStringExtra(PdfExportService.DATA_PDF_PATH))
-            val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "EXPORT_PDF")
+            val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, EXPORT_PDF)
             sFragment?.dismiss()
             val localPDFPath = intent.getStringExtra(PdfExportService.DATA_PDF_PATH)
             val file = File(localPDFPath)
@@ -294,11 +294,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun onReceive(context: Context, intent: Intent) {
             // Implement UI change code here once notification is received
             try {
-                Log.d(TAG, "BROADCAST_EXPORT_ERROR")
+                Log.d(TAG, PdfExportService.BROADCAST_EXPORT_ERROR)
                 Log.d(
                         TAG,
-                        "DATA_EXPORT_ERROR: " + intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR))
-                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "EXPORT_PDF")
+                        "$PdfExportService.DATA_EXPORT_ERROR: ${intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)}")
+                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, EXPORT_PDF)
                 sFragment?.dismiss()
                 Snackbar.make(
                         findViewById(android.R.id.content),
@@ -345,7 +345,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         if (mMediaBrowser != null) {
             mMediaBrowser!!.disconnect()
         }
-        val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
+        val controller = MediaControllerCompat.getMediaController(this)
         controller?.unregisterCallback(mMediaControllerCallback)
 
     }
@@ -356,16 +356,16 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         mViewModel = ViewModelProviders.of(this).get(PaginaRenderViewModel::class.java)
 
-        mRegularFont = ResourcesCompat.getFont(this@PaginaRenderActivity, R.font.googlesans_regular)
+        mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
-        risuscito_toolbar.setBackgroundColor(themeUtils!!.primaryColor())
-        bottom_bar.setBackgroundColor(themeUtils!!.primaryColor())
+        risuscito_toolbar.setBackgroundColor(themeUtils.primaryColor())
+        bottom_bar.setBackgroundColor(themeUtils.primaryColor())
         setSupportActionBar(risuscito_toolbar)
         supportActionBar!!.setTitle(R.string.canto_title_activity)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        mLUtils = LUtils.getInstance(this@PaginaRenderActivity)
+        mLUtils = LUtils.getInstance(this)
 
         val icon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon2.cmd_plus)
@@ -467,18 +467,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
         mostraAudioBool = java.lang.Boolean.parseBoolean(mViewModel!!.mostraAudio)
 
-        val sFragment1 = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLOAD_MP3")
-        sFragment1?.setmCallback(this@PaginaRenderActivity)
-        var sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DELETE_LINK")
-        sFragment?.setmCallback(this@PaginaRenderActivity)
-        sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
-        sFragment?.setmCallback(this@PaginaRenderActivity)
-        sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "DELETE_MP3")
-        sFragment?.setmCallback(this@PaginaRenderActivity)
-        sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "ONLY_LINK")
-        sFragment?.setmCallback(this@PaginaRenderActivity)
-        sFragment = SimpleDialogFragment.findVisible(this@PaginaRenderActivity, "SAVE_TAB")
-        sFragment?.setmCallback(this@PaginaRenderActivity)
+        val sFragment1 = ProgressDialogFragment.findVisible(this, DOWNLOAD_MP3)
+        sFragment1?.setmCallback(this)
+        var sFragment = SimpleDialogFragment.findVisible(this, DELETE_LINK)
+        sFragment?.setmCallback(this)
+        sFragment = SimpleDialogFragment.findVisible(this, DOWNLINK_CHOOSE)
+        sFragment?.setmCallback(this)
+        sFragment = SimpleDialogFragment.findVisible(this, DELETE_MP3)
+        sFragment?.setmCallback(this)
+        sFragment = SimpleDialogFragment.findVisible(this, ONLY_LINK)
+        sFragment?.setmCallback(this)
+        sFragment = SimpleDialogFragment.findVisible(this, "SAVE_TAB")
+        sFragment?.setmCallback(this)
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
@@ -489,9 +489,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         IconicsMenuInflaterUtil.inflate(
-                menuInflater, this@PaginaRenderActivity, R.menu.canto, menu, true)
+                menuInflater, this, R.menu.canto, menu, true)
         super.onCreateOptionsMenu(menu)
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
+        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false))
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
             Handler().postDelayed(1500) {
@@ -522,7 +522,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     return true
                 } else {
                     SimpleDialogFragment.Builder(
-                            this@PaginaRenderActivity, this@PaginaRenderActivity, "SAVE_TAB")
+                            this, this, "SAVE_TAB")
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
                             .positiveButton(R.string.save_exit_confirm)
@@ -531,7 +531,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     return true
                 }
             R.id.action_exp_pdf -> {
-                ProgressDialogFragment.Builder(this@PaginaRenderActivity, null, "EXPORT_PDF")
+                ProgressDialogFragment.Builder(this, null, EXPORT_PDF)
                         .content(R.string.export_running)
                         .progressIndeterminate(true)
                         .setCanceable()
@@ -683,7 +683,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mLUtils!!.closeActivityWithTransition()
         } else {
             SimpleDialogFragment.Builder(
-                    this@PaginaRenderActivity, this@PaginaRenderActivity, "SAVE_TAB")
+                    this, this, "SAVE_TAB")
                     .title(R.string.dialog_save_tab_title)
                     .content(R.string.dialog_save_tab)
                     .positiveButton(R.string.save_exit_confirm)
@@ -741,7 +741,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         else
             ""
 
-        val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).localLinksDao()
+        val mDao = RisuscitoDatabase.getInstance(this).localLinksDao()
         val localLink = mDao.getLocalLinkByCantoId(mViewModel!!.idCanto)
 
         personalUrl = localLink?.localPath ?: ""
@@ -916,7 +916,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     .absolutePath
                     + "/Risuscitò/"
                     + Utility.filterMediaLinkNew(url!!))
-            ProgressDialogFragment.Builder(this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLOAD_MP3")
+            ProgressDialogFragment.Builder(this, this, DOWNLOAD_MP3)
                     .content(R.string.download_running)
                     .progressIndeterminate(false)
                     .progressMax(100)
@@ -937,8 +937,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun startInternalDownload() {
-        val localFilePath = this@PaginaRenderActivity.filesDir.toString() + "/" + Utility.filterMediaLink(url!!)
-        ProgressDialogFragment.Builder(this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLOAD_MP3")
+        val localFilePath = this.filesDir.toString() + "/" + Utility.filterMediaLink(url!!)
+        ProgressDialogFragment.Builder(this, this, DOWNLOAD_MP3)
                 .content(R.string.download_running)
                 .progressIndeterminate(false)
                 .progressMax(100)
@@ -954,11 +954,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun showPlaying(started: Boolean) {
         Log.d(TAG, "showPlaying: ")
-        val icon = IconicsDrawable(this@PaginaRenderActivity)
+        val icon = IconicsDrawable(this)
                 .icon(if (started) CommunityMaterial.Icon2.cmd_pause else CommunityMaterial.Icon2.cmd_play)
                 .colorInt(
                         ContextCompat.getColor(
-                                this@PaginaRenderActivity,
+                                this,
                                 R.color.text_color_secondary
                         ))
                 .sizeDp(24)
@@ -969,7 +969,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun showScrolling(scrolling: Boolean) {
-        val icon = IconicsDrawable(this@PaginaRenderActivity)
+        val icon = IconicsDrawable(this)
                 .icon(
                         if (scrolling)
                             CommunityMaterial.Icon2.cmd_pause_circle_outline
@@ -985,15 +985,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
-            "DOWNLOAD_MP3" -> LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
-            "DELETE_LINK" -> {
+            DOWNLOAD_MP3 -> LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
+            DELETE_LINK -> {
                 Snackbar.make(
                         findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                         .show()
                 stopMedia()
                 DeleteLinkTask().execute(mViewModel!!.idCanto)
             }
-            "DELETE_MP3" -> {
+            DELETE_MP3 -> {
                 val fileToDelete = File(localUrl!!)
                 if (fileToDelete.delete()) {
                     if (fileToDelete.absolutePath.contains("/Risuscit")) {
@@ -1012,16 +1012,16 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 refreshCatalog()
                 RecordStateCheckerTask().execute()
             }
-            "DOWNLINK_CHOOSE" -> {
-                val pref = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
+            DOWNLINK_CHOOSE -> {
+                val pref = PreferenceManager.getDefaultSharedPreferences(this)
                 val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")!!)
                 if (saveLocation == 1) {
                     if (EasyPermissions.hasPermissions(
-                                    this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                                    this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
                     // Have permission, do the thing!
                         startExternalDownload()
                     else {
-                        PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putString(Utility.SAVE_LOCATION, "0") }
+                        PreferenceManager.getDefaultSharedPreferences(this).edit { putString(Utility.SAVE_LOCATION, "0") }
                         Snackbar.make(
                                 findViewById(android.R.id.content),
                                 R.string.forced_private,
@@ -1032,7 +1032,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 } else
                     startInternalDownload()
             }
-            "ONLY_LINK" -> createFileChooser()
+            ONLY_LINK -> createFileChooser()
             "SAVE_TAB" -> {
                 if (mViewModel!!.scrollPlaying) {
                     showScrolling(false)
@@ -1059,8 +1059,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun createFileChooser() {
-        if (EasyPermissions.hasPermissions(this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            MaterialDialog(this@PaginaRenderActivity)
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            MaterialDialog(this)
                     .fileChooser(filter = { it.isDirectory || it.extension.toLowerCase() == "mp3" }) { _, file ->
                         val path = file.absolutePath
                         Snackbar.make(
@@ -1072,12 +1072,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         InsertLinkTask().execute(mViewModel!!.idCanto.toString(), path)
                     }
                     .show()
-        } else AppSettingsDialog.Builder(this@PaginaRenderActivity).build().show()
+        } else AppSettingsDialog.Builder(this).build().show()
     }
 
     private fun playIntroSmall() {
         music_controls.visibility = View.VISIBLE
-        TapTargetSequence(this@PaginaRenderActivity)
+        TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
@@ -1087,7 +1087,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1100,7 +1100,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_barre_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1112,7 +1112,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_scroll_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1124,7 +1124,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1149,7 +1149,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun playIntroFull() {
         music_controls.visibility = View.VISIBLE
-        TapTargetSequence(this@PaginaRenderActivity)
+        TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
@@ -1159,7 +1159,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1172,7 +1172,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_barre_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1184,7 +1184,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_audio_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1196,7 +1196,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_scroll_desc))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1208,7 +1208,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
+                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1252,7 +1252,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playFromId(id: String) {
-        ProgressDialogFragment.Builder(this@PaginaRenderActivity, null, "BUFFERING")
+        ProgressDialogFragment.Builder(this, null, BUFFERING)
                 .content(R.string.wait)
                 .progressIndeterminate(true)
                 .setCanceable()
@@ -1307,24 +1307,24 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         // c'è la registrazione online
         if (!url!!.equals("", ignoreCase = true)) {
             // controllo se ho scaricato un file in locale
-            val pref = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
+            val pref = PreferenceManager.getDefaultSharedPreferences(this)
             val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")!!)
             if (saveLocation == 1) {
                 localUrl = if (EasyPermissions.hasPermissions(
-                                this@PaginaRenderActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // Have permission, do the thing!
-                    Utility.retrieveMediaFileLink(this@PaginaRenderActivity, url!!, true)
+                    Utility.retrieveMediaFileLink(this, url!!, true)
                 } else {
-                    PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putString(Utility.SAVE_LOCATION, "0") }
+                    PreferenceManager.getDefaultSharedPreferences(this).edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
                             findViewById(android.R.id.content),
                             getString(R.string.external_storage_denied),
                             Snackbar.LENGTH_SHORT)
                             .show()
-                    Utility.retrieveMediaFileLink(this@PaginaRenderActivity, url!!, false)
+                    Utility.retrieveMediaFileLink(this, url!!, false)
                 }
             } else
-                localUrl = Utility.retrieveMediaFileLink(this@PaginaRenderActivity, url!!, false)
+                localUrl = Utility.retrieveMediaFileLink(this, url!!, false)
 
             mDownload = !(localUrl!!.equals("", ignoreCase = true) && personalUrl!!.equals("", ignoreCase = true))
 
@@ -1526,13 +1526,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun initFabOptions() {
         fab_canti.expansionMode = if (mLUtils!!.isFabScrollingActive && mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
-        val iconColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.text_color_secondary)
-        val backgroundColor = ContextCompat.getColor(this@PaginaRenderActivity, R.color.floating_background)
+        val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
+        val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 
         fab_canti.clearActionItems()
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_fullscreen_on, IconicsDrawable(this@PaginaRenderActivity)
+                SpeedDialActionItem.Builder(R.id.fab_fullscreen_on, IconicsDrawable(this)
                         .icon(CommunityMaterial.Icon.cmd_fullscreen)
                         .colorInt(iconColor)
                         .sizeDp(24)
@@ -1545,7 +1545,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         )
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_sound_off, IconicsDrawable(this@PaginaRenderActivity)
+                SpeedDialActionItem.Builder(R.id.fab_sound_off, IconicsDrawable(this)
                         .icon(if (mostraAudioBool) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset)
                         .colorInt(iconColor)
                         .sizeDp(24)
@@ -1558,7 +1558,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         )
 
         if (mDownload) {
-            val icon = IconicsDrawable(this@PaginaRenderActivity)
+            val icon = IconicsDrawable(this)
                     .colorInt(iconColor)
                     .sizeDp(24)
                     .paddingDp(4)
@@ -1580,7 +1580,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         } else {
             if (url!!.isNotEmpty())
                 fab_canti.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_save_file, IconicsDrawable(this@PaginaRenderActivity)
+                        SpeedDialActionItem.Builder(R.id.fab_save_file, IconicsDrawable(this)
                                 .icon(CommunityMaterial.Icon.cmd_download)
                                 .colorInt(iconColor)
                                 .sizeDp(24)
@@ -1592,7 +1592,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .create()
                 )
             fab_canti.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_link_file, IconicsDrawable(this@PaginaRenderActivity)
+                    SpeedDialActionItem.Builder(R.id.fab_link_file, IconicsDrawable(this)
                             .icon(CommunityMaterial.Icon2.cmd_link_variant)
                             .colorInt(iconColor)
                             .sizeDp(24)
@@ -1607,7 +1607,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this@PaginaRenderActivity)
+                SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this)
                         .icon(if (mViewModel!!.mCurrentCanto!!.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart)
                         .colorInt(iconColor)
                         .sizeDp(24)
@@ -1631,7 +1631,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel!!.scrollPlaying)
                     bundle.putInt(Utility.ID_CANTO, mViewModel!!.idCanto)
 
-                    val intent2 = Intent(this@PaginaRenderActivity, PaginaRenderFullScreen::class.java)
+                    val intent2 = Intent(this, PaginaRenderFullScreen::class.java)
                     intent2.putExtras(bundle)
                     mLUtils!!.startActivityWithFadeIn(intent2)
                     true
@@ -1647,7 +1647,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     fab_canti.close()
                     if (url!!.isNotEmpty() && personalUrl!!.isEmpty()) {
                         SimpleDialogFragment.Builder(
-                                this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_MP3")
+                                this, this, DELETE_MP3)
                                 .title(R.string.dialog_delete_mp3_title)
                                 .content(R.string.dialog_delete_mp3)
                                 .positiveButton(R.string.delete_confirm)
@@ -1655,7 +1655,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .show()
                     } else {
                         SimpleDialogFragment.Builder(
-                                this@PaginaRenderActivity, this@PaginaRenderActivity, "DELETE_LINK")
+                                this, this, DELETE_LINK)
                                 .title(R.string.dialog_delete_link_title)
                                 .content(R.string.dialog_delete_link)
                                 .positiveButton(R.string.unlink_confirm)
@@ -1667,7 +1667,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 R.id.fab_save_file -> {
                     fab_canti.close()
                     SimpleDialogFragment.Builder(
-                            this@PaginaRenderActivity, this@PaginaRenderActivity, "DOWNLINK_CHOOSE")
+                            this, this, DOWNLINK_CHOOSE)
                             .title(R.string.save_file)
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
@@ -1678,7 +1678,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 R.id.fab_link_file -> {
                     fab_canti.close()
                     SimpleDialogFragment.Builder(
-                            this@PaginaRenderActivity, this@PaginaRenderActivity, "ONLY_LINK")
+                            this, this, ONLY_LINK)
                             .title(R.string.only_link_title)
                             .content(R.string.only_link)
                             .positiveButton(R.string.associate_confirm)
@@ -1703,5 +1703,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         internal val TAG = PaginaRenderActivity::class.java.canonicalName
         private const val PROGRESS_UPDATE_INTERNAL: Long = 1000
         private const val PROGRESS_UPDATE_INITIAL_INTERVAL: Long = 100
+        private const val EXPORT_PDF = "EXPORT_PDF"
+        private const val ONLY_LINK = "ONLY_LINK"
+        private const val DOWNLINK_CHOOSE = "DOWNLINK_CHOOSE"
+        private const val DELETE_LINK = "DELETE_LINK"
+        private const val DOWNLOAD_MP3 = "DOWNLOAD_MP3"
+        private const val DELETE_MP3 = "DELETE_MP3"
+        private const val BUFFERING = "BUFFERING"
     }
 }

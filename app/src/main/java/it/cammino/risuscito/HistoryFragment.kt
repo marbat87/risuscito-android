@@ -50,7 +50,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mLastClickTime: Long = 0
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils!!
+        get() = (activity as MainActivity).themeUtils
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -74,6 +74,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
 
+        val sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, RESET_HISTORY)
+        sFragment?.setmCallback(this)
         return rootView
     }
 
@@ -125,7 +127,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         cantoAdapter.setHasStableIds(true)
-//        cantoAdapter.set(mCronologiaViewModel!!.titoli)
 
         selectExtension = SelectExtension(cantoAdapter)
         selectExtension!!.isSelectable = true
@@ -169,7 +170,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         when (item!!.itemId) {
             R.id.list_reset -> {
                 SimpleDialogFragment.Builder(
-                        (activity as AppCompatActivity?)!!, this@HistoryFragment, "RESET_HISTORY")
+                        (activity as AppCompatActivity?)!!, this, RESET_HISTORY)
                         .title(R.string.dialog_reset_history_title)
                         .content(R.string.dialog_reset_history_desc)
                         .positiveButton(R.string.clear_confirm)
@@ -189,7 +190,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onPositive(tag: String) {
         Log.d(javaClass.name, "onPositive: $tag")
         when (tag) {
-            "RESET_HISTORY" ->
+            RESET_HISTORY ->
                 ioThread {
                     val mDao = RisuscitoDatabase.getInstance(context!!).cronologiaDao()
                     mDao.emptyCronologia()
@@ -273,5 +274,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     companion object {
         private val TAG = HistoryFragment::class.java.canonicalName
+        private const val RESET_HISTORY = "RESET_HISTORY"
     }
 }

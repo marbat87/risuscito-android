@@ -24,8 +24,6 @@ internal object MediaNotificationHelper {
                            mediaSession: MediaSessionCompat): Notification? {
 
         //Crezione notification channel per Android O
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-//            createChannel(context)
         Utility.createNotificationChannelWrapper(context, CHANNEL_ID, "Media playback", "Media playback controls")
 
         val controller = mediaSession.controller
@@ -82,20 +80,4 @@ internal object MediaNotificationHelper {
         return notificationBuilder.build()
     }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun createChannel(context: Context) {
-//        val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        // The id of the channel.
-//        //        String id = CHANNEL_ID;
-//        // The user-visible name of the channel.
-//        val name = "Media playback"
-//        // The user-visible description of the channel.
-//        val description = "Media playback controls"
-//        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
-//        // Configure the notification channel.
-//        mChannel.description = description
-//        mChannel.setShowBadge(false)
-//        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-//        mNotificationManager.createNotificationChannel(mChannel)
-//    }
 }// Helper utility class; do not instantiate.

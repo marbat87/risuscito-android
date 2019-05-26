@@ -73,12 +73,12 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         override fun onReceive(context: Context, intent: Intent) {
             // Implement UI change code here once notification is received
             try {
-                Log.d(javaClass.name, "BROADCAST_SINGLE_COMPLETED")
+                Log.d(javaClass.name, ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED)
                 Log.d(
                         javaClass.name,
-                        "DATA_DONE: " + intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0))
+                        "$ConsegnatiSaverService.DATA_DONE: ${intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0)}")
                 val fragment = ProgressDialogFragment.findVisible(
-                        (activity as AppCompatActivity?)!!, "CONSEGNATI_SAVING")
+                        (activity as AppCompatActivity?)!!, CONSEGNATI_SAVING)
                 fragment?.setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0))
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
@@ -92,7 +92,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             try {
                 Log.d(javaClass.name, "BROADCAST_SAVING_COMPLETED")
                 val fragment = ProgressDialogFragment.findVisible(
-                        (activity as AppCompatActivity?)!!, "CONSEGNATI_SAVING")
+                        (activity as AppCompatActivity?)!!, CONSEGNATI_SAVING)
                 fragment?.dismiss()
                 chooseRecycler!!.visibility = View.GONE
                 enableBottombar(false)
@@ -106,7 +106,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils!!
+        get() = (activity as MainActivity).themeUtils
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -157,7 +157,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 R.id.confirm_changes -> {
                     mCantiViewModel!!.editMode = false
                     ProgressDialogFragment.Builder(
-                            (activity as AppCompatActivity?)!!, null, "CONSEGNATI_SAVING")
+                            (activity as AppCompatActivity?)!!, null, CONSEGNATI_SAVING)
                             .content(R.string.save_consegnati_running)
                             .progressIndeterminate(false)
                             .progressMax(selectableAdapter.itemCount)
@@ -387,7 +387,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 .paddingDp(4)
         val onClick = View.OnClickListener {
             mCantiViewModel!!.editMode = true
-            UpdateChooseListTask(this@ConsegnatiFragment).execute()
+            UpdateChooseListTask(this).execute()
             selected_view!!.visibility = View.INVISIBLE
             chooseRecycler!!.visibility = View.VISIBLE
             enableBottombar(true)
@@ -516,5 +516,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     companion object {
         private val TAG = ConsegnatiFragment::class.java.canonicalName
+        private const val CONSEGNATI_SAVING = "CONSEGNATI_SAVING"
     }
 }

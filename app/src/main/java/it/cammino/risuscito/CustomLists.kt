@@ -63,7 +63,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     private var mLastClickTime: Long = 0
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils!!
+        get() = (activity as MainActivity).themeUtils
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -82,12 +82,12 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
         movePage = savedInstanceState != null
 
-        val iFragment = InputTextDialogFragment.findVisible((activity as AppCompatActivity?)!!, "NEW_LIST")
-        iFragment?.setmCallback(this@CustomLists)
-        var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "RESET_LIST")
-        sFragment?.setmCallback(this@CustomLists)
-        sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "DELETE_LIST")
-        sFragment?.setmCallback(this@CustomLists)
+        val iFragment = InputTextDialogFragment.findVisible((activity as AppCompatActivity?)!!, NEW_LIST)
+        iFragment?.setmCallback(this)
+        var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, RESET_LIST)
+        sFragment?.setmCallback(this)
+        sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, DELETE_LIST)
+        sFragment?.setmCallback(this)
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         Log.d(
@@ -158,7 +158,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     override fun onPositive(tag: String, dialog: MaterialDialog) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
-            "NEW_LIST" -> {
+            NEW_LIST -> {
                 val mEditText = dialog.getInputField()
                 mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
                 startActivityForResult(
@@ -173,11 +173,11 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
-            "RESET_LIST" -> {
+            RESET_LIST -> {
                 val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
                 mView?.button_pulisci?.performClick()
             }
-            "DELETE_LIST" ->
+            DELETE_LIST ->
                 ioThread {
                     val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
                     val listToDelete = ListaPers()
@@ -363,7 +363,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_pulisci -> {
                     closeFabMenu()
                     SimpleDialogFragment.Builder(
-                            (activity as AppCompatActivity?)!!, this@CustomLists, "RESET_LIST")
+                            (activity as AppCompatActivity?)!!, this, RESET_LIST)
                             .title(R.string.dialog_reset_list_title)
                             .content(R.string.reset_list_question)
                             .positiveButton(R.string.reset_confirm)
@@ -374,7 +374,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_add_lista -> {
                     closeFabMenu()
                     InputTextDialogFragment.Builder(
-                            (activity as AppCompatActivity?)!!, this@CustomLists, "NEW_LIST")
+                            (activity as AppCompatActivity?)!!, this, NEW_LIST)
                             .title(R.string.lista_add_desc)
                             .positiveButton(R.string.create_confirm)
                             .negativeButton(R.string.cancel)
@@ -409,8 +409,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                         mCustomListsViewModel!!.celebrazioneDaCanc = lista?.lista
                         SimpleDialogFragment.Builder(
                                 (activity as AppCompatActivity?)!!,
-                                this@CustomLists,
-                                "DELETE_LIST")
+                                this,
+                                DELETE_LIST)
                                 .title(R.string.action_remove_list)
                                 .content(R.string.delete_list_dialog)
                                 .positiveButton(R.string.delete_confirm)
@@ -448,6 +448,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         const val RESULT_OK = 0
         const val RESULT_KO = -1
         const val RESULT_CANCELED = -2
+        private const val RESET_LIST = "RESET_LIST"
+        private const val NEW_LIST = "NEW_LIST"
+        private const val DELETE_LIST = "DELETE_LIST"
         private val TAG = CustomLists::class.java.canonicalName
     }
 }

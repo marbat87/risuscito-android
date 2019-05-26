@@ -37,7 +37,7 @@ import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import kotlinx.android.synthetic.main.activity_favourites.*
 import kotlinx.android.synthetic.main.activity_main.*
 
-class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
+class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mFavoritesViewModel: FavoritesViewModel? = null
     private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
@@ -47,7 +47,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mLastClickTime: Long = 0
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils!!
+        get() = (activity as MainActivity).themeUtils
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -73,8 +73,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
 
-        val sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, "FAVORITES_RESET")
-        sFragment?.setmCallback(this@FavouritesActivity)
+        val sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, FAVORITES_RESET)
+        sFragment?.setmCallback(this)
         return rootView
     }
 
@@ -172,7 +172,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
         when (item!!.itemId) {
             R.id.list_reset -> {
                 SimpleDialogFragment.Builder(
-                        (activity as AppCompatActivity?)!!, this@FavouritesActivity, "FAVORITES_RESET")
+                        (activity as AppCompatActivity?)!!, this, FAVORITES_RESET)
                         .title(R.string.dialog_reset_favorites_title)
                         .content(R.string.dialog_reset_favorites_desc)
                         .positiveButton(R.string.clear_confirm)
@@ -192,7 +192,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onPositive(tag: String) {
         Log.d(javaClass.name, "onPositive: $tag")
         when (tag) {
-            "FAVORITES_RESET" ->
+            FAVORITES_RESET ->
                 // run the sentence in a new thread
                 ioThread {
                     val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
@@ -205,7 +205,6 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            //            val itemSelectedCount = (cantoAdapter.getExtension<SelectExtension<SimpleItem>>(SelectExtension::class.java))!!
             val itemSelectedCount = selectExtension!!
                     .selectedItems
                     .size
@@ -224,7 +223,7 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        ListeUtils.removeFavoritesWithUndo(this@FavouritesActivity, selectExtension!!
+                        ListeUtils.removeFavoritesWithUndo(this@FavoritesFragment, selectExtension!!
                                 .selectedItems)
                         actionModeOk = true
                         destroy()
@@ -278,7 +277,8 @@ class FavouritesActivity : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     companion object {
-        private val TAG = FavouritesActivity::class.java.canonicalName
+        private val TAG = FavoritesFragment::class.java.canonicalName
+        private const val FAVORITES_RESET = "FAVORITES_RESET"
     }
 
 }

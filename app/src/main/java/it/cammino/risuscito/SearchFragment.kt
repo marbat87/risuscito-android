@@ -104,9 +104,9 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mLUtils = LUtils.getInstance(activity!!)
 
         var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, SEARCH_REPLACE)
-        sFragment?.setmCallback(this@SearchFragment)
+        sFragment?.setmCallback(this)
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, SEARCH_REPLACE_2)
-        sFragment?.setmCallback(this@SearchFragment)
+        sFragment?.setmCallback(this)
 
         ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
 
@@ -138,7 +138,7 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         cantoAdapter.onLongClickListener = { v: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             mViewModel.idDaAgg = item.id
-            mViewModel.popupMenu(this@SearchFragment, v!!, SEARCH_REPLACE, SEARCH_REPLACE_2, listePersonalizzate)
+            mViewModel.popupMenu(this, v!!, SEARCH_REPLACE, SEARCH_REPLACE_2, listePersonalizzate)
             true
         }
 
@@ -224,10 +224,10 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 listePersonalizzate!![mViewModel.idListaClick]
                         .lista!!
                         .addCanto(mViewModel.idDaAgg.toString(), mViewModel.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(this@SearchFragment, listePersonalizzate!![mViewModel.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this, listePersonalizzate!![mViewModel.idListaClick])
             }
             SEARCH_REPLACE_2 ->
-                ListeUtils.updatePosizione(this@SearchFragment, mViewModel.idDaAgg, mViewModel.idListaDaAgg, mViewModel.posizioneDaAgg)
+                ListeUtils.updatePosizione(this, mViewModel.idDaAgg, mViewModel.idListaDaAgg, mViewModel.posizioneDaAgg)
         }
     }
 
@@ -237,7 +237,7 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
             if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
-            searchTask = SearchTask(this@SearchFragment)
+            searchTask = SearchTask(this)
             searchTask!!.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch)
         } else {
             if (s.isEmpty()) {

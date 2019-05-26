@@ -62,13 +62,13 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
             1 -> LITURGICO_REPLACE
             else -> ""
         })
-        sFragment?.setmCallback(this@SectionedIndexFragment)
+        sFragment?.setmCallback(this)
         sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, when (mCantiViewModel.tipoLista) {
             0 -> ARGUMENT_REPLACE_2
             1 -> LITURGICO_REPLACE_2
             else -> ""
         })
-        sFragment?.setmCallback(this@SectionedIndexFragment)
+        sFragment?.setmCallback(this)
 
         if (!isViewShown)
             ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
@@ -102,8 +102,8 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
             if (item is SimpleSubItem) {
                 mCantiViewModel.idDaAgg = item.id
                 when (mCantiViewModel.tipoLista) {
-                    0 -> mCantiViewModel.popupMenu(this@SectionedIndexFragment, v!!, ARGUMENT_REPLACE, ARGUMENT_REPLACE_2, listePersonalizzate)
-                    1 -> mCantiViewModel.popupMenu(this@SectionedIndexFragment, v!!, LITURGICO_REPLACE, LITURGICO_REPLACE_2, listePersonalizzate)
+                    0 -> mCantiViewModel.popupMenu(this, v!!, ARGUMENT_REPLACE, ARGUMENT_REPLACE_2, listePersonalizzate)
+                    1 -> mCantiViewModel.popupMenu(this, v!!, LITURGICO_REPLACE, LITURGICO_REPLACE_2, listePersonalizzate)
                 }
             }
             true
@@ -278,14 +278,14 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
-            "LITURGICO_REPLACE" -> {
+            ARGUMENT_REPLACE, LITURGICO_REPLACE -> {
                 listePersonalizzate!![mCantiViewModel.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(this@SectionedIndexFragment, listePersonalizzate!![mCantiViewModel.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this, listePersonalizzate!![mCantiViewModel.idListaClick])
             }
-            "LITURGICO_REPLACE_2" ->
-                ListeUtils.updatePosizione(this@SectionedIndexFragment, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
+            ARGUMENT_REPLACE_2, LITURGICO_REPLACE_2 ->
+                ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
         }
     }
 

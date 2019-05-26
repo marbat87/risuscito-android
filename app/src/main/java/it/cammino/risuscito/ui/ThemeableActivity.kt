@@ -41,7 +41,7 @@ import java.util.concurrent.ExecutionException
 abstract class ThemeableActivity : AppCompatActivity() {
 
     protected var hasNavDrawer = false
-    var themeUtils: ThemeUtils? = null
+    lateinit var themeUtils: ThemeUtils
         private set
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +51,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         themeUtils = ThemeUtils(this)
         val mLUtils = LUtils.getInstance(this)
         mLUtils.convertIntPreferences()
-        setTheme(themeUtils!!.current)
+        setTheme(themeUtils.current)
         AppCompatDelegate.setDefaultNightMode(
                 if (ThemeUtils.isDarkMode(this))
                     AppCompatDelegate.MODE_NIGHT_YES
@@ -59,10 +59,10 @@ abstract class ThemeableActivity : AppCompatActivity() {
                     AppCompatDelegate.MODE_NIGHT_NO)
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(this, themeUtils!!.primaryColorDark(), hasNavDrawer)
+        Utility.setupTransparentTints(this, themeUtils.primaryColorDark(), hasNavDrawer)
         Utility.setupNavBarColor(this)
 
-        setTaskDescriptionWrapper(themeUtils!!)
+        setTaskDescriptionWrapper(themeUtils)
 
         // Iconic
         layoutInflater.setIconicsFactory(delegate)
@@ -192,7 +192,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         usersPreferences[FIREBASE_FIELD_USER_ID] = userId
         usersPreferences[FIREBASE_FIELD_EMAIL] = userEmail ?: ""
         usersPreferences[FIREBASE_FIELD_TIMESTAMP] = Date(System.currentTimeMillis())
-        usersPreferences[FIREBASE_FIELD_PREFERENCE] = PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity).all
+        usersPreferences[FIREBASE_FIELD_PREFERENCE] = PreferenceManager.getDefaultSharedPreferences(this).all
 
         if (querySnapshot.documents.size > 0) {
             Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).document(querySnapshot.documents[0].id).delete())
@@ -202,11 +202,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         // Add a new document with a generated ID
         val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
-
-//        } else {
-//            val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
-//            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
-//        }
 
     }
 
@@ -229,7 +224,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (querySnapshot.documents.size == 0)
             throw NoBackupException()
 
-        val prefEdit = PreferenceManager.getDefaultSharedPreferences(this@ThemeableActivity).edit()
+        val prefEdit = PreferenceManager.getDefaultSharedPreferences(this).edit()
         prefEdit.clear()
 
         val entries = querySnapshot.documents[0].get(FIREBASE_FIELD_PREFERENCE) as HashMap<*, *>
@@ -255,7 +250,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
-        val risuscitoDb = RisuscitoDatabase.getInstance(this@ThemeableActivity)
+        val risuscitoDb = RisuscitoDatabase.getInstance(this)
 
         //BACKUP CANTI
         val cantoRef = deleteExistingFile(storageRef, CANTO_FILE_NAME, userId)
@@ -337,7 +332,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
         val gson = GsonBuilder().registerTypeAdapter(Date::class.java, DateTimeDeserializer()).create()
-        val risuscitoDb = RisuscitoDatabase.getInstance(this@ThemeableActivity)
+        val risuscitoDb = RisuscitoDatabase.getInstance(this)
 
         //RESTORE CANTI
         val backupCanti: List<Backup> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CANTO_FILE_NAME, userId)), object : TypeToken<List<Backup>>() {}.type)

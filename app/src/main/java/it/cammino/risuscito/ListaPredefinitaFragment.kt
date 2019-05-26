@@ -177,7 +177,7 @@ class ListaPredefinitaFragment : Fragment() {
 
     private val themeUtils: ThemeUtils
         get() {
-            return (activity as MainActivity).themeUtils!!
+            return (activity as MainActivity).themeUtils
         }
 
     private val click = OnClickListener { v ->
@@ -187,7 +187,7 @@ class ListaPredefinitaFragment : Fragment() {
         if (v.id == R.id.addCantoGenerico) {
             if (mSwhitchMode) {
                 destroy()
-                ListeUtils.scambioConVuoto(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
+                ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
             } else {
                 if (!MaterialCab.isActive) {
                     val intent = Intent(activity, InsertActivity::class.java)
@@ -218,7 +218,7 @@ class ListaPredefinitaFragment : Fragment() {
                 }
             else {
                 destroy()
-                ListeUtils.scambioCanto(this@ListaPredefinitaFragment,
+                ListeUtils.scambioCanto(this,
                         mCantiViewModel.defaultListaId,
                         posizioneDaCanc,
                         idDaCanc,

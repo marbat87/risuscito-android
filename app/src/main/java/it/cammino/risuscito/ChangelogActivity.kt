@@ -26,13 +26,13 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        collapsingToolbarLayout!!.setContentScrimColor(themeUtils!!.primaryColor())
+        collapsingToolbarLayout!!.setContentScrimColor(themeUtils.primaryColor())
 
         if (mViewModel!!.appBarIsExpanded)
-            Utility.setupTransparentTints(this@ChangelogActivity, Color.TRANSPARENT, false)
+            Utility.setupTransparentTints(this, Color.TRANSPARENT, false)
         else
             Utility.setupTransparentTints(
-                    this@ChangelogActivity, themeUtils!!.primaryColorDark(), false)
+                    this, themeUtils.primaryColorDark(), false)
 
         ChangelogBuilder()
                 .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
@@ -42,14 +42,14 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
         finish()
-        Animatoo.animateSlideDown(this@ChangelogActivity)
+        Animatoo.animateSlideDown(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
                 finish()
-                Animatoo.animateSlideDown(this@ChangelogActivity)
+                Animatoo.animateSlideDown(this)
                 true
             }
             else -> false
@@ -78,12 +78,12 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
         mViewModel!!.appBarIsExpanded = verticalOffset >= -100
         if (mViewModel!!.appBarIsExpanded)
             Utility.setupTransparentTints(
-                    this@ChangelogActivity,
+                    this,
                     Color.TRANSPARENT,
                     false)
         else
             Utility.setupTransparentTints(
-                    this@ChangelogActivity, themeUtils!!.primaryColorDark(), false)
+                    this, themeUtils.primaryColorDark(), false)
     }
 
     companion object {

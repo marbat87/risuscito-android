@@ -128,10 +128,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         profileIcon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_account_circle)
-                .colorInt(themeUtils!!.primaryColor())
+                .colorInt(themeUtils.primaryColor())
                 .sizeDp(48)
 
-        risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
+        risuscito_toolbar!!.setBackgroundColor(themeUtils.primaryColor())
         risuscito_toolbar!!.navigationIcon = icon
         setSupportActionBar(risuscito_toolbar)
 
@@ -150,12 +150,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
 
         if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            window.statusBarColor = themeUtils!!.primaryColorDark()
+            window.statusBarColor = themeUtils.primaryColorDark()
 
         if (isOnTablet)
-            tabletToolbarBackground!!.setBackgroundColor(themeUtils!!.primaryColor())
+            tabletToolbarBackground!!.setBackgroundColor(themeUtils.primaryColor())
         else
-            material_tabs!!.setBackgroundColor(themeUtils!!.primaryColor())
+            material_tabs!!.setBackgroundColor(themeUtils.primaryColor())
 
         setupNavDrawer(savedInstanceState)
 
@@ -166,8 +166,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
         if (!isOnTablet) toolbar_layout!!.setExpanded(true, false)
 
-        searchView.setBackIconColor(themeUtils!!.primaryColor())
-        searchView.setBackgroundColor(themeUtils!!.primaryColor())
+        searchView.setBackIconColor(themeUtils.primaryColor())
+        searchView.setBackgroundColor(themeUtils.primaryColor())
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -295,7 +295,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 })
                 .build()
 
-        val selectedColor = themeUtils!!.primaryColor()
+        val selectedColor = themeUtils.primaryColor()
 
         val mDrawerBuilder = DrawerBuilder()
                 .withActivity(this)
@@ -387,7 +387,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         } else if (drawerItem.identifier == R.id.navitagion_lists.toLong()) {
                             fragment = CustomLists()
                         } else if (drawerItem.identifier == R.id.navigation_favorites.toLong()) {
-                            fragment = FavouritesActivity()
+                            fragment = FavoritesFragment()
                         } else if (drawerItem.identifier == R.id.navigation_settings.toLong()) {
                             fragment = SettingsFragment()
                         } else if (drawerItem.identifier == R.id.navigation_changelog.toLong()) {
@@ -455,7 +455,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     .setShadowResourceRight(R.drawable.material_drawer_shadow_right)
         } else {
             drawer = mDrawerBuilder.build()
-            drawer!!.drawerLayout.setStatusBarBackgroundColor(themeUtils!!.primaryColorDark())
+            drawer!!.drawerLayout.setStatusBarBackgroundColor(themeUtils.primaryColorDark())
         }
     }
 

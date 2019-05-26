@@ -63,14 +63,14 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
             2 -> SALMI_REPLACE
             else -> ""
         })
-        fragment?.setmCallback(this@SimpleIndexFragment)
+        fragment?.setmCallback(this)
         fragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, when (mCantiViewModel!!.tipoLista) {
             0 -> ALPHA_REPLACE_2
             1 -> NUMERIC_REPLACE_2
             2 -> SALMI_REPLACE_2
             else -> ""
         })
-        fragment?.setmCallback(this@SimpleIndexFragment)
+        fragment?.setmCallback(this)
 
         if (!isViewShown)
             ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
@@ -104,9 +104,9 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         mAdapter.onLongClickListener = { v: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             mCantiViewModel!!.idDaAgg = item.id
             when (mCantiViewModel!!.tipoLista) {
-                0 -> mCantiViewModel!!.popupMenu(this@SimpleIndexFragment, v!!, ALPHA_REPLACE, ALPHA_REPLACE_2, listePersonalizzate)
-                1 -> mCantiViewModel!!.popupMenu(this@SimpleIndexFragment, v!!, NUMERIC_REPLACE, NUMERIC_REPLACE_2, listePersonalizzate)
-                2 -> mCantiViewModel!!.popupMenu(this@SimpleIndexFragment, v!!, SALMI_REPLACE, SALMI_REPLACE_2, listePersonalizzate)
+                0 -> mCantiViewModel!!.popupMenu(this, v!!, ALPHA_REPLACE, ALPHA_REPLACE_2, listePersonalizzate)
+                1 -> mCantiViewModel!!.popupMenu(this, v!!, NUMERIC_REPLACE, NUMERIC_REPLACE_2, listePersonalizzate)
+                2 -> mCantiViewModel!!.popupMenu(this, v!!, SALMI_REPLACE, SALMI_REPLACE_2, listePersonalizzate)
             }
             true
         }
@@ -144,10 +144,10 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
                 listePersonalizzate!![mCantiViewModel!!.idListaClick]
                         .lista!!
                         .addCanto((mCantiViewModel!!.idDaAgg).toString(), mCantiViewModel!!.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(this@SimpleIndexFragment, listePersonalizzate!![mCantiViewModel!!.idListaClick])
+                ListeUtils.updateListaPersonalizzata(this, listePersonalizzate!![mCantiViewModel!!.idListaClick])
             }
             ALPHA_REPLACE_2, NUMERIC_REPLACE_2, SALMI_REPLACE_2 ->
-                ListeUtils.updatePosizione(this@SimpleIndexFragment, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
+                ListeUtils.updatePosizione(this, mCantiViewModel!!.idDaAgg, mCantiViewModel!!.idListaDaAgg, mCantiViewModel!!.posizioneDaAgg)
         }
     }
 

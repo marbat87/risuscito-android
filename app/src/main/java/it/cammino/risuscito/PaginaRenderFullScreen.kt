@@ -36,7 +36,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     private var mLUtils: LUtils? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mLUtils = LUtils.getInstance(this@PaginaRenderFullScreen)
+        mLUtils = LUtils.getInstance(this)
         mLUtils!!.goFullscreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagina_render_fullscreen)
@@ -48,7 +48,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         scrollPlaying = bundle.getBoolean(Utility.SCROLL_PLAYING)
         idCanto = bundle.getInt(Utility.ID_CANTO)
 
-        val icon = IconicsDrawable(this@PaginaRenderFullScreen)
+        val icon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_fullscreen_exit)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)

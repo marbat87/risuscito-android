@@ -89,7 +89,7 @@ class ListaPersonalizzataFragment : Fragment() {
         }
 
     private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils!!
+        get() = (activity as MainActivity).themeUtils
 
     private val click = OnClickListener { v ->
         if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
@@ -356,7 +356,7 @@ class ListaPersonalizzataFragment : Fragment() {
             listaNew.lista = mCantiViewModel.listaPersonalizzata
             listaNew.id = mCantiViewModel.listaPersonalizzataId
             listaNew.titolo = mCantiViewModel.listaPersonalizzataTitle
-            val mDao = RisuscitoDatabase.getInstance(this@ListaPersonalizzataFragment.mMainActivity!!).listePersDao()
+            val mDao = RisuscitoDatabase.getInstance(this.mMainActivity!!).listePersDao()
             mDao.updateLista(listaNew)
         }
     }

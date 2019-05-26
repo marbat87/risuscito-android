@@ -72,7 +72,7 @@ class InsertActivity : ThemeableActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_insert_search)
 
-        risuscito_toolbar.setBackgroundColor(themeUtils!!.primaryColor())
+        risuscito_toolbar.setBackgroundColor(themeUtils.primaryColor())
         risuscito_toolbar.title = getString(R.string.title_activity_inserisci_titolo)
         setSupportActionBar(risuscito_toolbar)
 
@@ -86,7 +86,7 @@ class InsertActivity : ThemeableActivity() {
         val args = Bundle().apply { putInt("tipoLista", 3) }
         mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
-            val pref = PreferenceManager.getDefaultSharedPreferences(this@InsertActivity)
+            val pref = PreferenceManager.getDefaultSharedPreferences(this)
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0")!!)
             mViewModel.advancedSearch = currentItem != 0
         }
@@ -109,9 +109,9 @@ class InsertActivity : ThemeableActivity() {
             Crashlytics.logException(e)
         }
 
-        mLUtils = LUtils.getInstance(this@InsertActivity)
+        mLUtils = LUtils.getInstance(this)
 
-        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(this@InsertActivity).listePersDao().all }
+        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(this).listePersDao().all }
 
         ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
@@ -120,9 +120,9 @@ class InsertActivity : ThemeableActivity() {
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 if (listaPredefinita == 1) {
-                    ListeUtils.addToListaDupAndFinish(this@InsertActivity, idLista, listPosition, item.id)
+                    ListeUtils.addToListaDupAndFinish(this, idLista, listPosition, item.id)
                 } else {
-                    ListeUtils.updateListaPersonalizzataAndFinish(this@InsertActivity, idLista, item.id, listPosition)
+                    ListeUtils.updateListaPersonalizzataAndFinish(this, idLista, item.id, listPosition)
                 }
                 consume = true
             }
@@ -147,17 +147,17 @@ class InsertActivity : ThemeableActivity() {
 
         matchedList.adapter = cantoAdapter
         val llm = if (mLUtils!!.isGridLayout)
-            GridLayoutManager(this@InsertActivity, if (mLUtils!!.hasThreeColumns) 3 else 2)
+            GridLayoutManager(this, if (mLUtils!!.hasThreeColumns) 3 else 2)
         else
-            LinearLayoutManager(this@InsertActivity)
+            LinearLayoutManager(this)
         matchedList.layoutManager = llm
         matchedList.setHasFixedSize(true)
-        val insetDivider = DividerItemDecoration(this@InsertActivity, llm.orientation)
+        val insetDivider = DividerItemDecoration(this, llm.orientation)
         insetDivider.setDrawable(
-                ContextCompat.getDrawable(this@InsertActivity, R.drawable.material_inset_divider)!!)
+                ContextCompat.getDrawable(this, R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
 
-        val icon = IconicsDrawable(this@InsertActivity)
+        val icon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon.cmd_close_circle)
                 .colorRes(R.color.text_color_secondary)
                 .sizeDp(32)
@@ -168,7 +168,7 @@ class InsertActivity : ThemeableActivity() {
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                (ContextCompat.getSystemService(this@InsertActivity, InputMethodManager::class.java) as InputMethodManager)
+                (ContextCompat.getSystemService(this, InputMethodManager::class.java) as InputMethodManager)
                         .hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
                 return@setOnKeyListener true
             }
@@ -219,7 +219,7 @@ class InsertActivity : ThemeableActivity() {
                     }
                 }
             }
-            popupMenu.show(this@InsertActivity, it)
+            popupMenu.show(this, it)
         }
 
         subscribeUiFavorites()
@@ -230,7 +230,7 @@ class InsertActivity : ThemeableActivity() {
             android.R.id.home -> {
                 setResult(CustomLists.RESULT_CANCELED)
                 finish()
-                Animatoo.animateShrink(this@InsertActivity)
+                Animatoo.animateShrink(this)
                 return true
             }
         }
@@ -247,14 +247,14 @@ class InsertActivity : ThemeableActivity() {
         Log.d(TAG, "onBackPressed: ")
         setResult(CustomLists.RESULT_CANCELED)
         finish()
-        Animatoo.animateShrink(this@InsertActivity)
+        Animatoo.animateShrink(this)
     }
 
     private fun ricercaStringa(s: String) {
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
             if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
-            searchTask = SearchTask(this@InsertActivity)
+            searchTask = SearchTask(this)
             searchTask!!.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch, mViewModel.consegnatiOnly)
         } else {
             if (s.isEmpty()) {
@@ -357,7 +357,7 @@ class InsertActivity : ThemeableActivity() {
                         this,
                         Observer<List<InsertItem>> { canti ->
                             if (canti != null) {
-                                mViewModel.titoliInsert = canti.sortedBy { it.title!!.getText(this@InsertActivity) }
+                                mViewModel.titoliInsert = canti.sortedBy { it.title!!.getText(this) }
                             }
                         })
     }
