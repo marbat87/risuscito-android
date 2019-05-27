@@ -98,8 +98,7 @@ class InsertActivity : ThemeableActivity() {
                 "en" -> assets.open("fileout_en.xml")
                 else -> assets.open("fileout_new.xml")
             }
-            val parser = CantiXmlParser()
-            aTexts = parser.parse(inputStream)
+            aTexts = CantiXmlParser().parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {
             Log.e(TAG, "Error:", e)

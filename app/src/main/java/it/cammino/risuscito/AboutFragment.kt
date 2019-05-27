@@ -21,10 +21,10 @@ class AboutFragment : Fragment() {
 
         mMainActivity = activity as MainActivity?
 
-        mMainActivity!!.enableFab(false)
-        mMainActivity!!.enableBottombar(false)
-        mMainActivity!!.enableBottombar(false)
-        mMainActivity!!.setTabVisible(false)
+        mMainActivity?.enableFab(false)
+        mMainActivity?.enableBottombar(false)
+        mMainActivity?.enableBottombar(false)
+        mMainActivity?.setTabVisible(false)
 
         return rootView
     }
@@ -32,14 +32,14 @@ class AboutFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity!!.setupToolbarTitle(R.string.title_activity_about)
+        mMainActivity?.setupToolbarTitle(R.string.title_activity_about)
 
         val mChangeLogClickListener = View.OnClickListener {
             startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
             Animatoo.animateSlideUp(activity)
         }
 
-        about!!.addView(
+        about?.addView(
                 AboutBuilder.with(mMainActivity)
                         .setAppIcon(R.drawable.ic_launcher_144dp)
                         .setAppName(R.string.app_name)

@@ -90,8 +90,7 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 "en" -> activity!!.assets.open("fileout_en.xml")
                 else -> activity!!.assets.open("fileout_new.xml")
             }
-            val parser = CantiXmlParser()
-            aTexts = parser.parse(inputStream)
+            aTexts = CantiXmlParser().parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {
             Log.e(TAG, "Error:", e)

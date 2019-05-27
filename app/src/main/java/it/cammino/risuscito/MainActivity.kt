@@ -420,8 +420,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .withSavedInstance(savedInstanceState)
                 .withTranslucentStatusBar(!isOnTablet)
 
-        drawer = mDrawerBuilder.buildView()
         if (isOnTablet) {
+            drawer = mDrawerBuilder.buildView()
             // the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
             mMiniDrawer = drawer!!
                     .miniDrawer!!
@@ -455,6 +455,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     .getCrossFadeSlidingPaneLayout()
                     .setShadowResourceRight(R.drawable.material_drawer_shadow_right)
         } else {
+            drawer = mDrawerBuilder.build()
             drawer!!.drawerLayout.setStatusBarBackgroundColor(themeUtils.primaryColorDark())
         }
     }

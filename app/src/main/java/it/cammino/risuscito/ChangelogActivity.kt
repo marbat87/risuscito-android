@@ -24,11 +24,11 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
 
         setSupportActionBar(risuscito_toolbar)
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        collapsingToolbarLayout!!.setContentScrimColor(themeUtils.primaryColor())
+        collapsingToolbarLayout?.setContentScrimColor(themeUtils.primaryColor())
 
-        if (mViewModel!!.appBarIsExpanded)
+        if (mViewModel?.appBarIsExpanded == true)
             Utility.setupTransparentTints(this, Color.TRANSPARENT, false)
         else
             Utility.setupTransparentTints(
@@ -58,12 +58,12 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
 
     public override fun onResume() {
         super.onResume()
-        appbarlayout!!.addOnOffsetChangedListener(this)
+        appbarlayout?.addOnOffsetChangedListener(this)
     }
 
     public override fun onStop() {
         super.onStop()
-        appbarlayout!!.removeOnOffsetChangedListener(this)
+        appbarlayout?.removeOnOffsetChangedListener(this)
     }
 
     /**
@@ -75,8 +75,8 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
      * @param verticalOffset the vertical offset for the parent [AppBarLayout], in px
      */
     override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
-        mViewModel!!.appBarIsExpanded = verticalOffset >= -100
-        if (mViewModel!!.appBarIsExpanded)
+        mViewModel?.appBarIsExpanded = verticalOffset >= -100
+        if (mViewModel?.appBarIsExpanded == true)
             Utility.setupTransparentTints(
                     this,
                     Color.TRANSPARENT,
