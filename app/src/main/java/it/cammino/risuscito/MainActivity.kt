@@ -73,7 +73,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     var drawer: Drawer? = null
         private set
     private var mMiniDrawer: MiniDrawer? = null
-    private var crossFader: Crossfader<*>? = null
+    var crossFader: Crossfader<*>? = null
+        private set
     private var mAccountHeader: AccountHeader? = null
     var isOnTablet: Boolean = false
         private set
@@ -419,8 +420,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .withSavedInstance(savedInstanceState)
                 .withTranslucentStatusBar(!isOnTablet)
 
+        drawer = mDrawerBuilder.buildView()
         if (isOnTablet) {
-            drawer = mDrawerBuilder.buildView()
             // the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
             mMiniDrawer = drawer!!
                     .miniDrawer!!
@@ -454,7 +455,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     .getCrossFadeSlidingPaneLayout()
                     .setShadowResourceRight(R.drawable.material_drawer_shadow_right)
         } else {
-            drawer = mDrawerBuilder.build()
             drawer!!.drawerLayout.setStatusBarBackgroundColor(themeUtils.primaryColorDark())
         }
     }
@@ -472,13 +472,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
 
         if (isOnTablet) {
-            if (crossFader != null && crossFader!!.isCrossFaded()) {
-                crossFader!!.crossFade()
+            if (crossFader?.isCrossFaded() == true) {
+                crossFader?.crossFade()
                 return
             }
         } else {
-            if (drawer != null && drawer!!.isDrawerOpen) {
-                drawer!!.closeDrawer()
+            if (drawer?.isDrawerOpen == true) {
+                drawer?.closeDrawer()
                 return
             }
         }
@@ -929,7 +929,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected: " + item.itemId)
         if (isOnTablet && item.itemId == android.R.id.home) {
-            crossFader!!.crossFade()
+            crossFader?.crossFade()
             return true
         }
         return super.onOptionsItemSelected(item)

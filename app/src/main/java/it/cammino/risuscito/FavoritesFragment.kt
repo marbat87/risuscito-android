@@ -28,6 +28,7 @@ import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
@@ -38,7 +39,7 @@ import kotlinx.android.synthetic.main.activity_favourites.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
-    private var mFavoritesViewModel: FavoritesViewModel? = null
+    private lateinit var mFavoritesViewModel: FavoritesViewModel
     private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
@@ -55,14 +56,14 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mFavoritesViewModel = ViewModelProviders.of(this).get(FavoritesViewModel::class.java)
 
-        mMainActivity = activity as MainActivity?
-        Log.d(TAG, "onCreateView: isOnTablet " + mMainActivity!!.isOnTablet)
+        mMainActivity = requireActivity() as MainActivity
+        Log.d(TAG, "onCreateView: isOnTablet " + mMainActivity?.isOnTablet)
 
-        mMainActivity!!.setupToolbarTitle(R.string.title_activity_favourites)
+        mMainActivity?.setupToolbarTitle(R.string.title_activity_favourites)
 
-        mMainActivity!!.setTabVisible(false)
+        mMainActivity?.setTabVisible(false)
 
-        mLUtils = LUtils.getInstance(activity!!)
+        mLUtils = LUtils.getInstance(requireActivity())
 
         if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.PREFERITI_OPEN, false)) {
@@ -73,7 +74,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
 
-        val sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, FAVORITES_RESET)
+        val sFragment = SimpleDialogFragment.findVisible(requireActivity() as AppCompatActivity, FAVORITES_RESET)
         sFragment?.setmCallback(this)
         return rootView
     }
@@ -81,8 +82,8 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity!!.enableBottombar(false)
-        mMainActivity!!.enableFab(false)
+        mMainActivity?.enableBottombar(false)
+        mMainActivity?.enableFab(false)
 
         cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
             var consume = false
@@ -93,7 +94,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             .getAdapterItem(position)
                             .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
                     cantoAdapter.notifyAdapterItemChanged(position)
-                    if (selectExtension?.selectedItems!!.size == 0)
+                    if (selectExtension?.selectedItems?.size == 0)
                         destroy()
                     else
                         startCab()
@@ -109,8 +110,8 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to item.source!!.text, "idCanto" to item.id))
-                mLUtils!!.startActivityWithTransition(intent)
+                intent.putExtras(bundleOf("pagina" to item.source?.text, "idCanto" to item.id))
+                mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -118,8 +119,8 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         cantoAdapter.onPreLongClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
             if (!MaterialCab.isActive) {
-                if (!mMainActivity!!.isOnTablet)
-                    activity!!.toolbar_layout!!.setExpanded(true, true)
+                if (mMainActivity?.isOnTablet != true)
+                    mMainActivity?.toolbar_layout?.setExpanded(true, true)
                 cantoAdapter.getAdapterItem(position).isSelected = true
                 cantoAdapter.notifyAdapterItemChanged(position)
                 startCab()
@@ -128,25 +129,25 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         selectExtension = SelectExtension(cantoAdapter)
-        selectExtension!!.isSelectable = true
-        selectExtension!!.multiSelect = true
-        selectExtension!!.selectOnLongClick = true
-        selectExtension!!.deleteAllSelectedItems()
+        selectExtension?.isSelectable = true
+        selectExtension?.multiSelect = true
+        selectExtension?.selectOnLongClick = true
+        selectExtension?.deleteAllSelectedItems()
 
         cantoAdapter.setHasStableIds(true)
 
-        favouritesList!!.adapter = cantoAdapter
-        val llm = if (mMainActivity!!.isGridLayout)
-            GridLayoutManager(context, if (mMainActivity!!.hasThreeColumns) 3 else 2)
+        favouritesList?.adapter = cantoAdapter
+        val llm = if (mMainActivity?.isGridLayout == true)
+            GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         else
             LinearLayoutManager(context)
-        favouritesList!!.layoutManager = llm
-        favouritesList!!.setHasFixedSize(true)
-        val insetDivider = DividerItemDecoration(context!!, llm.orientation)
+        favouritesList?.layoutManager = llm
+        favouritesList?.setHasFixedSize(true)
+        val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         insetDivider.setDrawable(
-                ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
-        favouritesList!!.addItemDecoration(insetDivider)
-        favouritesList!!.itemAnimator = SlideRightAlphaAnimator()
+                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        favouritesList?.addItemDecoration(insetDivider)
+        favouritesList?.itemAnimator = SlideRightAlphaAnimator()
 
     }
 
@@ -162,22 +163,25 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity!!, R.menu.clean_list_menu, menu!!)
-        menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
+        menu?.let {
+            IconicsMenuInflaterUtil.inflate(
+                    requireActivity().menuInflater, requireContext(), R.menu.clean_list_menu, it)
+            it.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item!!.itemId) {
+        when (item?.itemId) {
             R.id.list_reset -> {
-                SimpleDialogFragment.Builder(
-                        (activity as AppCompatActivity?)!!, this, FAVORITES_RESET)
-                        .title(R.string.dialog_reset_favorites_title)
-                        .content(R.string.dialog_reset_favorites_desc)
-                        .positiveButton(R.string.clear_confirm)
-                        .negativeButton(R.string.cancel)
-                        .show()
+                mMainActivity?.let {
+                    SimpleDialogFragment.Builder(it, this, FAVORITES_RESET)
+                            .title(R.string.dialog_reset_favorites_title)
+                            .content(R.string.dialog_reset_favorites_desc)
+                            .positiveButton(R.string.clear_confirm)
+                            .negativeButton(R.string.cancel)
+                            .show()
+                }
                 return true
             }
             R.id.action_help -> {
@@ -195,7 +199,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             FAVORITES_RESET ->
                 // run the sentence in a new thread
                 ioThread {
-                    val mDao = RisuscitoDatabase.getInstance(context!!).favoritesDao()
+                    val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
                     mDao.resetFavorites()
                 }
         }
@@ -205,9 +209,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            val itemSelectedCount = selectExtension!!
-                    .selectedItems
-                    .size
+            val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
             title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
             popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
             contentInsetStartRes(R.dimen.mcab_default_content_inset)
@@ -223,8 +225,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        ListeUtils.removeFavoritesWithUndo(this@FavoritesFragment, selectExtension!!
-                                .selectedItems)
+                        ListeUtils.removeFavoritesWithUndo(this@FavoritesFragment, selectExtension?.selectedItems!!)
                         actionModeOk = true
                         destroy()
                         true
@@ -237,7 +238,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 if (!actionModeOk) {
                     try {
-                        selectExtension!!.deselect()
+                        selectExtension?.deselect()
                     } catch (e: Exception) {
                         Crashlytics.logException(e)
                     }
@@ -249,31 +250,29 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
 
     private fun subscribeUiFavorites() {
-        mFavoritesViewModel!!
-                .mFavoritesResult!!
-                .observe(
-                        this,
-                        Observer { canti ->
-                            Log.d(TAG, "onChanged: a")
-                            if (canti != null) {
-                                val newList = ArrayList<SimpleItem>()
-                                for (canto in canti) {
-                                    newList.add(
-                                            SimpleItem()
-                                                    .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                                    .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                                    .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-                                                    .withColor(canto.color!!)
-                                                    .withId(canto.id)
-                                                    .withSelectedColor(themeUtils.primaryColorDark())
-                                    )
-                                }
-                                mFavoritesViewModel!!.titoli = newList.sortedWith(compareBy { it.title.toString() })
-                                cantoAdapter.set(mFavoritesViewModel!!.titoli)
-                                no_favourites!!.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-                                activity!!.invalidateOptionsMenu()
-                            }
-                        })
+        mFavoritesViewModel.mFavoritesResult?.observe(
+                this,
+                Observer { canti ->
+                    Log.d(TAG, "onChanged: a")
+                    if (canti != null) {
+                        val newList = ArrayList<SimpleItem>()
+                        for (canto in canti) {
+                            newList.add(
+                                    SimpleItem()
+                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
+                                            .withColor(canto.color ?: Canto.BIANCO)
+                                            .withId(canto.id)
+                                            .withSelectedColor(themeUtils.primaryColorDark())
+                            )
+                        }
+                        mFavoritesViewModel.titoli = newList.sortedWith(compareBy { it.title.toString() })
+                        cantoAdapter.set(mFavoritesViewModel.titoli)
+                        no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+                        activity?.invalidateOptionsMenu()
+                    }
+                })
     }
 
     companion object {

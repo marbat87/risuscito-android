@@ -29,18 +29,9 @@
             risuscito:cardCornerRadius="0dp"
             risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/material_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_gravity="top"
-                android:elevation="@dimen/design_appbar_elevation"
-                tools:targetApi="lollipop" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="48dp"
                 android:orientation="vertical">
 
                 <TextView
