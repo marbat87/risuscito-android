@@ -477,7 +477,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         sFragment?.setmCallback(this)
         sFragment = SimpleDialogFragment.findVisible(this, ONLY_LINK)
         sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible(this, "SAVE_TAB")
+        sFragment = SimpleDialogFragment.findVisible(this, SAVE_TAB)
         sFragment?.setmCallback(this)
 
         // Connect a media browser just to get the media session token. There are other ways
@@ -522,7 +522,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     return true
                 } else {
                     SimpleDialogFragment.Builder(
-                            this, this, "SAVE_TAB")
+                            this, this, SAVE_TAB)
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
                             .positiveButton(R.string.save_exit_confirm)
@@ -683,7 +683,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mLUtils!!.closeActivityWithTransition()
         } else {
             SimpleDialogFragment.Builder(
-                    this, this, "SAVE_TAB")
+                    this, this, SAVE_TAB)
                     .title(R.string.dialog_save_tab_title)
                     .content(R.string.dialog_save_tab)
                     .positiveButton(R.string.save_exit_confirm)
@@ -1033,7 +1033,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     startInternalDownload()
             }
             ONLY_LINK -> createFileChooser()
-            "SAVE_TAB" -> {
+            SAVE_TAB -> {
                 if (mViewModel!!.scrollPlaying) {
                     showScrolling(false)
                     mHandler.removeCallbacks(mScrollDown)
@@ -1047,7 +1047,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onNegative(tag: String) {
         Log.d(TAG, "onNegative: $tag")
         when (tag) {
-            "SAVE_TAB" -> {
+            SAVE_TAB -> {
                 if (mViewModel!!.scrollPlaying) {
                     showScrolling(false)
                     mHandler.removeCallbacks(mScrollDown)
@@ -1710,5 +1710,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val DOWNLOAD_MP3 = "DOWNLOAD_MP3"
         private const val DELETE_MP3 = "DELETE_MP3"
         private const val BUFFERING = "BUFFERING"
+        private const val SAVE_TAB = "SAVE_TAB"
     }
 }
