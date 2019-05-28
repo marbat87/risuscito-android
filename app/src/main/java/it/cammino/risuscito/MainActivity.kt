@@ -441,7 +441,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             // define the crossfader to be used with the miniDrawer. This is required to be able to
             // automatically toggle open / close
-            mMiniDrawer?.withCrossFader(CrossfadeWrapper(crossFader as Crossfader<*>))
+            mMiniDrawer?.withCrossFader(CrossfadeWrapper(crossFader))
 
             // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
             // define the other one
@@ -579,8 +579,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             if (fab_pager?.isOpen == true)
                 fab_pager?.close()
             else {
-                val params = fab_pager?.layoutParams as CoordinatorLayout.LayoutParams
-                params.behavior = if (mLUtils?.isFabScrollingActive == true) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
+                val params = fab_pager?.layoutParams as? CoordinatorLayout.LayoutParams
+                params?.behavior = if (mLUtils?.isFabScrollingActive == true) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
                 fab_pager.requestLayout()
                 fab_pager.show()
             }
