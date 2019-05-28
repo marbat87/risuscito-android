@@ -76,9 +76,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
 
-//        titoliListe = arrayOfNulls(0)
-//        idListe = IntArray(0)
-
         movePage = savedInstanceState != null
 
         val iFragment = InputTextDialogFragment.findVisible(mMainActivity, NEW_LIST)
@@ -365,24 +362,28 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {
                 R.id.fab_pulisci -> {
-                    closeFabMenu()
-                    SimpleDialogFragment.Builder(
-                            mMainActivity!!, this, RESET_LIST)
-                            .title(R.string.dialog_reset_list_title)
-                            .content(R.string.reset_list_question)
-                            .positiveButton(R.string.reset_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+                    mMainActivity?.let { mActivity ->
+                        closeFabMenu()
+                        SimpleDialogFragment.Builder(
+                                mActivity, this, RESET_LIST)
+                                .title(R.string.dialog_reset_list_title)
+                                .content(R.string.reset_list_question)
+                                .positiveButton(R.string.reset_confirm)
+                                .negativeButton(R.string.cancel)
+                                .show()
+                    }
                     true
                 }
                 R.id.fab_add_lista -> {
-                    closeFabMenu()
-                    InputTextDialogFragment.Builder(
-                            mMainActivity!!, this, NEW_LIST)
-                            .title(R.string.lista_add_desc)
-                            .positiveButton(R.string.create_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+                    mMainActivity?.let { mActivity ->
+                        closeFabMenu()
+                        InputTextDialogFragment.Builder(
+                                mActivity, this, NEW_LIST)
+                                .title(R.string.lista_add_desc)
+                                .positiveButton(R.string.create_confirm)
+                                .negativeButton(R.string.cancel)
+                                .show()
+                    }
                     true
                 }
                 R.id.fab_condividi -> {
@@ -401,23 +402,25 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     true
                 }
                 R.id.fab_delete_lista -> {
-                    closeFabMenu()
-                    mCustomListsViewModel.listaDaCanc = view_pager.currentItem - 2
-                    mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
-                    ioThread {
-                        val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-                        val lista = mDao.getListById(mCustomListsViewModel.idDaCanc)
-                        mCustomListsViewModel.titoloDaCanc = lista?.titolo
-                        mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
-                        SimpleDialogFragment.Builder(
-                                mMainActivity!!,
-                                this,
-                                DELETE_LIST)
-                                .title(R.string.action_remove_list)
-                                .content(R.string.delete_list_dialog)
-                                .positiveButton(R.string.delete_confirm)
-                                .negativeButton(R.string.cancel)
-                                .show()
+                    mMainActivity?.let { mActivity ->
+                        closeFabMenu()
+                        mCustomListsViewModel.listaDaCanc = view_pager.currentItem - 2
+                        mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
+                        ioThread {
+                            val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+                            val lista = mDao.getListById(mCustomListsViewModel.idDaCanc)
+                            mCustomListsViewModel.titoloDaCanc = lista?.titolo
+                            mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
+                            SimpleDialogFragment.Builder(
+                                    mActivity,
+                                    this,
+                                    DELETE_LIST)
+                                    .title(R.string.action_remove_list)
+                                    .content(R.string.delete_list_dialog)
+                                    .positiveButton(R.string.delete_confirm)
+                                    .negativeButton(R.string.cancel)
+                                    .show()
+                        }
                     }
                     true
                 }

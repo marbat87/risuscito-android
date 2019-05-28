@@ -46,13 +46,13 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
     private var llm: LinearLayoutManager? = null
     private var glm: GridLayoutManager? = null
     private var mLastClickTime: Long = 0
-    private lateinit var mActivity: MainActivity
+    private var mActivity: MainActivity? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.layout_recycler, container, false)
 
-        val args = Bundle().apply { putInt("tipoLista", arguments?.getInt("tipoLista", 0) ?: 0) }
+        val args = Bundle().apply { putInt(TIPO_LISTA, arguments?.getInt(TIPO_LISTA, 0) ?: 0) }
         mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
 
         mLUtils = LUtils.getInstance(requireActivity())
@@ -78,7 +78,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        mActivity = activity as MainActivity
+        mActivity = activity as MainActivity?
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,7 +113,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
             if (item is SimpleSubExpandableItem) {
                 Log.i(TAG, "item.position ${item.position}")
                 if (!item.isExpanded) {
-                    if (mActivity.isGridLayout)
+                    if (mActivity?.isGridLayout == true)
                         glm?.scrollToPositionWithOffset(
                                 item.position, 0)
                     else
@@ -124,13 +124,12 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
             false
         }
 
-        val mMainActivity = mActivity as MainActivity?
-        if (mMainActivity?.isGridLayout == true) {
-            glm = GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+        if (mActivity?.isGridLayout == true) {
+            glm = GridLayoutManager(context, if (mActivity?.hasThreeColumns == true) 3 else 2)
             glm?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return when (mAdapter.getItemViewType(position)) {
-                        R.id.fastadapter_expandable_item_id -> if (mMainActivity.hasThreeColumns) 3 else 2
+                        R.id.fastadapter_expandable_item_id -> if (mActivity?.hasThreeColumns == true) 3 else 2
                         R.id.fastadapter_sub_item_id -> 1
                         else -> -1
                     }
@@ -177,7 +176,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                                     .withPosition(totListe++)
                                     .onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                 if (!item.isExpanded) {
-                                    if (mMainActivity?.isGridLayout == true)
+                                    if (mActivity?.isGridLayout == true)
                                         glm?.scrollToPositionWithOffset(
                                                 item.position, 0)
                                     else
@@ -189,7 +188,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                             expandableItem.identifier = canti[i].idArgomento.toLong()
 
                             expandableItem.subItems = subItems
-                            expandableItem.subItems.sortBy { (it as SimpleSubItem).title?.getText(context) }
+                            expandableItem.subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
                             mCantiViewModel.titoliList.add(expandableItem)
                             subItems = LinkedList()
                             totCanti = 0
@@ -227,7 +226,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                                     .withPosition(totListe++)
                                     .onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                 if (!item.isExpanded) {
-                                    if (mMainActivity?.isGridLayout == true)
+                                    if (mActivity?.isGridLayout == true)
                                         glm?.scrollToPositionWithOffset(
                                                 item.position, 0)
                                     else
@@ -239,7 +238,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                             expandableItem.identifier = canti[i].idIndice.toLong()
 
                             expandableItem.subItems = subItems
-                            expandableItem.subItems.sortBy { (it as SimpleSubItem).title?.getText(context) }
+                            expandableItem.subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
                             mCantiViewModel.titoliList.add(expandableItem)
                             subItems = LinkedList()
                             totCanti = 0
@@ -249,7 +248,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                     }
                 }
             }
-            mCantiViewModel.titoliList.sortBy { (it as SimpleSubExpandableItem).title?.getText(context) }
+            mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(context) }
             mAdapter.set(mCantiViewModel.titoliList)
             mAdapter.withSavedInstanceState(savedInstanceState)
         }
@@ -298,10 +297,11 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
         private const val ARGUMENT_REPLACE_2 = "ARGUMENT_REPLACE_2"
         private const val LITURGICO_REPLACE = "LITURGICO_REPLACE"
         private const val LITURGICO_REPLACE_2 = "LITURGICO_REPLACE_2"
+        private const val TIPO_LISTA = "tipoLista"
 
         fun newInstance(tipoLista: Int): SectionedIndexFragment {
             val f = SectionedIndexFragment()
-            f.arguments = bundleOf("tipoLista" to tipoLista)
+            f.arguments = bundleOf(TIPO_LISTA to tipoLista)
             return f
         }
     }

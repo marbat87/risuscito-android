@@ -38,7 +38,7 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
-    private lateinit var mActivity: MainActivity
+    private var mActivity: MainActivity? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -49,7 +49,7 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.index_list_fragment, container, false)
 
-        val args = Bundle().apply { putInt("tipoLista", arguments?.getInt("tipoLista", 0) ?: 0) }
+        val args = Bundle().apply { putInt(TIPO_LISTA, arguments?.getInt(TIPO_LISTA, 0) ?: 0) }
         mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
 
         mLUtils = LUtils.getInstance(requireActivity())
@@ -78,7 +78,7 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        mActivity = activity as MainActivity
+        mActivity = activity as MainActivity?
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,16 +109,14 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
             true
         }
 
-        val mMainActivity = activity as MainActivity?
-
         mAdapter.setHasStableIds(true)
         mAdapter.set(mCantiViewModel.titoli)
         val llm = LinearLayoutManager(context)
-        val glm = GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
-        cantiList?.layoutManager = if (mMainActivity?.isGridLayout == true) glm else llm
+        val glm = GridLayoutManager(context, if (mActivity?.hasThreeColumns == true) 3 else 2)
+        cantiList?.layoutManager = if (mActivity?.isGridLayout == true) glm else llm
         cantiList?.setHasFixedSize(true)
         cantiList?.adapter = mAdapter
-        val insetDivider = DividerItemDecoration(requireContext(), (if (mMainActivity?.isGridLayout == true) glm else llm).orientation)
+        val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
         insetDivider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
         cantiList?.addItemDecoration(insetDivider)
     }
@@ -176,11 +174,12 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         private const val NUMERIC_REPLACE_2 = "NUMERIC_REPLACE_2"
         private const val SALMI_REPLACE = "SALMI_REPLACE"
         private const val SALMI_REPLACE_2 = "SALMI_REPLACE_2"
+        private const val TIPO_LISTA = "tipoLista"
         private val TAG = SimpleIndexFragment::class.java.canonicalName
 
         fun newInstance(tipoLista: Int): SimpleIndexFragment {
             val f = SimpleIndexFragment()
-            f.arguments = bundleOf("tipoLista" to tipoLista)
+            f.arguments = bundleOf(TIPO_LISTA to tipoLista)
             return f
         }
     }

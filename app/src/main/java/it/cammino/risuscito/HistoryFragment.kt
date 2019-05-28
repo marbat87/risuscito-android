@@ -223,7 +223,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        ListeUtils.removeHistoriesWithUndo(this@HistoryFragment, selectExtension?.selectedItems)
+                        removeHistories()
                         actionModeOk = true
                         destroy()
                         true
@@ -244,6 +244,10 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 true
             }
         }
+    }
+
+    private fun removeHistories() {
+        ListeUtils.removeHistoriesWithUndo(this, selectExtension?.selectedItems)
     }
 
     private fun subscribeUiHistory() {

@@ -207,6 +207,10 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNegative(tag: String) {}
 
+    private fun removeFavorites() {
+        ListeUtils.removeFavoritesWithUndo(this, selectExtension?.selectedItems)
+    }
+
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
             val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
@@ -225,7 +229,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        ListeUtils.removeFavoritesWithUndo(this@FavoritesFragment, selectExtension?.selectedItems)
+                        removeFavorites()
                         actionModeOk = true
                         destroy()
                         true
@@ -247,7 +251,6 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
     }
-
 
     private fun subscribeUiFavorites() {
         mFavoritesViewModel.mFavoritesResult?.observe(

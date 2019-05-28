@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.snackbar.Snackbar
+import io.multifunctions.letCheckNull
 import it.cammino.risuscito.CustomLists
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
@@ -92,48 +93,51 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg params: Void?): String? {
-            val db = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!)
-            val listeDao = db.customListDao()
-            val cantoDao = db.cantoDao()
-            val idPresente = listeDao.getIdByPosition(idLista, listPosition)
-            idPresente?.let {
-                return if (idDaAgg == it)
-                    CANTO_PRESENTE
-                else
-                    fragmentReference.get()!!.resources.getString(LUtils.getResId(cantoDao.getCantoById(it).titolo, R.string::class.java))
+            fragmentReference.get()?.let { fragment ->
+                val db = RisuscitoDatabase.getInstance(fragment.requireContext())
+                val listeDao = db.customListDao()
+                val cantoDao = db.cantoDao()
+                val idPresente = listeDao.getIdByPosition(idLista, listPosition)
+                idPresente?.let {
+                    return if (idDaAgg == it)
+                        CANTO_PRESENTE
+                    else
+                        fragment.resources.getString(LUtils.getResId(cantoDao.getCantoById(it).titolo, R.string::class.java))
+                }
+
+                val position = CustomList()
+                position.id = idLista
+                position.position = listPosition
+                position.idCanto = idDaAgg
+                position.timestamp = Date(System.currentTimeMillis())
+                listeDao.insertPosition(position)
             }
-
-            val position = CustomList()
-            position.id = idLista
-            position.position = listPosition
-            position.idCanto = idDaAgg
-            position.timestamp = Date(System.currentTimeMillis())
-            listeDao.insertPosition(position)
-
             return ""
         }
 
         override fun onPostExecute(titoloPresente: String?) {
             super.onPostExecute(titoloPresente)
-            if (titoloPresente != null && titoloPresente == CANTO_PRESENTE) {
-                Snackbar.make(fragmentReference.get()!!.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-            } else
-                if (titoloPresente != null && titoloPresente.isNotEmpty()) {
-                    SimpleDialogFragment.Builder(
-                            (fragmentReference.get()!!.activity as AppCompatActivity?)!!,
-                            fragmentReference.get()!! as SimpleDialogFragment.SimpleCallback,
-                            replaceTag)
-                            .title(R.string.dialog_replace_title)
-                            .content(
-                                    (fragmentReference.get()!!.getString(R.string.dialog_present_yet)
-                                            + " "
-                                            + titoloPresente
-                                            + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace)))
-                            .positiveButton(R.string.replace_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+            fragmentReference.get()?.let {
+                if (titoloPresente != null && titoloPresente == CANTO_PRESENTE) {
+                    Snackbar.make(it.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                 } else
-                    Snackbar.make(fragmentReference.get()!!.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+                    if (titoloPresente != null && titoloPresente.isNotEmpty()) {
+                        SimpleDialogFragment.Builder(
+                                it.requireActivity() as AppCompatActivity,
+                                it as SimpleDialogFragment.SimpleCallback,
+                                replaceTag)
+                                .title(R.string.dialog_replace_title)
+                                .content(
+                                        (it.getString(R.string.dialog_present_yet)
+                                                + " "
+                                                + titoloPresente
+                                                + it.getString(R.string.dialog_wonna_replace)))
+                                .positiveButton(R.string.replace_confirm)
+                                .negativeButton(R.string.cancel)
+                                .show()
+                    } else
+                        Snackbar.make(it.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -142,26 +146,31 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg params: Void?): Boolean {
-            try {
-                val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).customListDao()
-                val position = CustomList()
-                position.id = idLista
-                position.position = listPosition
-                position.idCanto = idDaAgg
-                position.timestamp = Date(System.currentTimeMillis())
-                mDao.insertPosition(position)
-            } catch (e: SQLException) {
-                return false
+            fragmentReference.get()?.let {
+                try {
+                    val mDao = RisuscitoDatabase.getInstance(it.requireContext()).customListDao()
+                    val position = CustomList()
+                    position.id = idLista
+                    position.position = listPosition
+                    position.idCanto = idDaAgg
+                    position.timestamp = Date(System.currentTimeMillis())
+                    mDao.insertPosition(position)
+                } catch (e: SQLException) {
+                    return false
+                }
+                return true
             }
-            return true
+            return false
         }
 
         override fun onPostExecute(updated: Boolean) {
             super.onPostExecute(updated)
-            if (updated)
-                Snackbar.make(fragmentReference.get()!!.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-            else
-                Snackbar.make(fragmentReference.get()!!.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+            fragmentReference.get()?.let {
+                if (updated)
+                    Snackbar.make(it.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+                else
+                    Snackbar.make(it.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -170,16 +179,19 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg p0: Void?): Int {
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).favoritesDao()
-            mDao.setFavorite(idDaAgg)
+            fragmentReference.get()?.let {
+                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).favoritesDao()
+                mDao.setFavorite(idDaAgg)
+            }
             return 0
         }
 
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
-            if (showSnackbar)
-                Snackbar.make(fragmentReference.get()!!.view!!, R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
-
+            fragmentReference.get()?.let {
+                if (showSnackbar)
+                    Snackbar.make(it.view!!, R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -188,9 +200,10 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg p0: Void?): Int {
-            mRemovedItems?.let {
-                val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).favoritesDao()
-                for (removedItem in it)
+            val apiResult = Pair(fragmentReference.get(), mRemovedItems)
+            apiResult.letCheckNull { fragment, removedItems ->
+                val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).favoritesDao()
+                for (removedItem in removedItems)
                     mDao.removeFavorite(removedItem.id)
             }
             return 0
@@ -198,11 +211,12 @@ object ListeUtils {
 
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
-            mRemovedItems?.let {
-                Snackbar.make(fragmentReference.get()!!.view!!, fragmentReference.get()!!.resources.getQuantityString(R.plurals.favorites_removed, it.size, it.size), Snackbar.LENGTH_SHORT)
-                        .setAction(fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()) { _ ->
-                            for (removedItem in it)
-                                UpdateFavoriteTask(fragmentReference.get()!!, false, removedItem.id).execute()
+            val apiResult = Pair(fragmentReference.get(), mRemovedItems)
+            apiResult.letCheckNull { fragment, removedItems ->
+                Snackbar.make(fragment.view!!, fragment.resources.getQuantityString(R.plurals.favorites_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
+                        .setAction(fragment.getString(R.string.cancel).toUpperCase()) {
+                            for (removedItem in removedItems)
+                                UpdateFavoriteTask(fragment, false, removedItem.id).execute()
                         }.show()
             }
         }
@@ -213,15 +227,18 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg p0: Any?): Int {
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).listePersDao()
-            mDao.updateLista(p0[0] as ListaPers)
+            fragmentReference.get()?.let {
+                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).listePersDao()
+                mDao.updateLista(p0[0] as ListaPers)
+            }
             return 0
         }
 
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
-            Snackbar.make(fragmentReference.get()!!.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
-
+            fragmentReference.get()?.let {
+                Snackbar.make(it.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -230,14 +247,18 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg params: Any?): Int {
-            val mCustomListDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).customListDao()
-            mCustomListDao.updatePositionNoTimestamp(idDaAgg, idListaDaAgg, posizioneDaAgg)
+            fragmentReference.get()?.let {
+                val mCustomListDao = RisuscitoDatabase.getInstance(it.requireContext()).customListDao()
+                mCustomListDao.updatePositionNoTimestamp(idDaAgg, idListaDaAgg, posizioneDaAgg)
+            }
             return 0
         }
 
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
-            Snackbar.make(fragmentReference.get()!!.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+            fragmentReference.get()?.let {
+                Snackbar.make(it.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -246,25 +267,30 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg params: Any?): String {
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).cantoDao()
-            return mDao.getCantoById(idCanto).titolo!!
+            fragmentReference.get()?.let {
+                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).cantoDao()
+                return mDao.getCantoById(idCanto).titolo ?: ""
+            }
+            return ""
         }
 
         override fun onPostExecute(titoloPresente: String) {
             super.onPostExecute(titoloPresente)
-            SimpleDialogFragment.Builder(
-                    (fragmentReference.get()!!.activity as AppCompatActivity?)!!,
-                    fragmentReference.get()!! as SimpleDialogFragment.SimpleCallback,
-                    replaceTag)
-                    .title(R.string.dialog_replace_title)
-                    .content(
-                            (fragmentReference.get()!!.getString(R.string.dialog_present_yet)
-                                    + " "
-                                    + fragmentReference.get()!!.resources.getString(LUtils.getResId(titoloPresente, R.string::class.java))
-                                    + fragmentReference.get()!!.getString(R.string.dialog_wonna_replace)))
-                    .positiveButton(R.string.replace_confirm)
-                    .negativeButton(R.string.cancel)
-                    .show()
+            fragmentReference.get()?.let {
+                SimpleDialogFragment.Builder(
+                        it.requireActivity() as AppCompatActivity,
+                        it as SimpleDialogFragment.SimpleCallback,
+                        replaceTag)
+                        .title(R.string.dialog_replace_title)
+                        .content(
+                                (it.getString(R.string.dialog_present_yet)
+                                        + " "
+                                        + it.resources.getString(LUtils.getResId(titoloPresente, R.string::class.java))
+                                        + it.getString(R.string.dialog_wonna_replace)))
+                        .positiveButton(R.string.replace_confirm)
+                        .negativeButton(R.string.cancel)
+                        .show()
+            }
         }
     }
 
@@ -273,27 +299,32 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg params: Any?): Boolean {
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).customListDao()
+            fragmentReference.get()?.let {
+                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).customListDao()
 
-            return if (mDao.checkExistsPosition(idLista, newPosition, idDaCanc) > 0)
-                true
-            else {
-                val positionToDelete = mDao.getPositionSpecific(idLista, posizioneDaCanc, idDaCanc)
-                mDao.deletePosition(positionToDelete)
+                return if (mDao.checkExistsPosition(idLista, newPosition, idDaCanc) > 0)
+                    true
+                else {
+                    val positionToDelete = mDao.getPositionSpecific(idLista, posizioneDaCanc, idDaCanc)
+                    mDao.deletePosition(positionToDelete)
 
-                val positionToInsert = CustomList()
-                positionToInsert.id = idLista
-                positionToInsert.position = newPosition
-                positionToInsert.idCanto = idDaCanc
-                positionToInsert.timestamp = Date(System.currentTimeMillis())
-                mDao.insertPosition(positionToInsert)
-                false
+                    val positionToInsert = CustomList()
+                    positionToInsert.id = idLista
+                    positionToInsert.position = newPosition
+                    positionToInsert.idCanto = idDaCanc
+                    positionToInsert.timestamp = Date(System.currentTimeMillis())
+                    mDao.insertPosition(positionToInsert)
+                    false
+                }
             }
+            return true
         }
 
         override fun onPostExecute(cantoPresente: Boolean) {
             super.onPostExecute(cantoPresente)
-            Snackbar.make(fragmentReference.get()!!.view!!, if (cantoPresente) R.string.present_yet else R.string.switch_done, Snackbar.LENGTH_SHORT).show()
+            fragmentReference.get()?.let {
+                Snackbar.make(it.view!!, if (cantoPresente) R.string.present_yet else R.string.switch_done, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -302,36 +333,41 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg params: Any?): Int {
-            return if (newId != idDaCanc || posizioneDaCanc != newPosition) {
-                val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).customListDao()
-                if ((mDao.checkExistsPosition(idLista, newPosition, idDaCanc) > 0
-                                || mDao.checkExistsPosition(idLista, posizioneDaCanc, newId) > 0)
-                        && newPosition != posizioneDaCanc) {
-                    1
-                } else {
-                    val positionToDelete = mDao.getPositionSpecific(idLista, newPosition, newId)
-                    mDao.deletePosition(positionToDelete)
+            fragmentReference.get()?.let {
+                return if (newId != idDaCanc || posizioneDaCanc != newPosition) {
+                    val mDao = RisuscitoDatabase.getInstance(it.requireContext()).customListDao()
+                    if ((mDao.checkExistsPosition(idLista, newPosition, idDaCanc) > 0
+                                    || mDao.checkExistsPosition(idLista, posizioneDaCanc, newId) > 0)
+                            && newPosition != posizioneDaCanc) {
+                        1
+                    } else {
+                        val positionToDelete = mDao.getPositionSpecific(idLista, newPosition, newId)
+                        mDao.deletePosition(positionToDelete)
 
-                    val positionToInsert = CustomList()
-                    positionToInsert.id = idLista
-                    positionToInsert.position = newPosition
-                    positionToInsert.idCanto = idDaCanc
-                    positionToInsert.timestamp = positionToDelete.timestamp
+                        val positionToInsert = CustomList()
+                        positionToInsert.id = idLista
+                        positionToInsert.position = newPosition
+                        positionToInsert.idCanto = idDaCanc
+                        positionToInsert.timestamp = positionToDelete.timestamp
 
-                    mDao.updatePositionNoTimestamp(newId, idLista, posizioneDaCanc, idDaCanc)
-                    mDao.insertPosition(positionToInsert)
-                    0
-                }
-            } else
-                2
+                        mDao.updatePositionNoTimestamp(newId, idLista, posizioneDaCanc, idDaCanc)
+                        mDao.insertPosition(positionToInsert)
+                        0
+                    }
+                } else
+                    2
+            }
+            return 2
         }
 
         override fun onPostExecute(cantoPresente: Int) {
             super.onPostExecute(cantoPresente)
-            when (cantoPresente) {
-                0 -> Snackbar.make(fragmentReference.get()!!.view!!, R.string.switch_done, Snackbar.LENGTH_SHORT).show()
-                1 -> Snackbar.make(fragmentReference.get()!!.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-                2 -> Snackbar.make(fragmentReference.get()!!.view!!, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
+            fragmentReference.get()?.let {
+                when (cantoPresente) {
+                    0 -> Snackbar.make(it.view!!, R.string.switch_done, Snackbar.LENGTH_SHORT).show()
+                    1 -> Snackbar.make(it.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                    2 -> Snackbar.make(it.view!!, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -341,27 +377,31 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg params: Any?): Int {
-            val positionToDelete = CustomList()
-            positionToDelete.id = idLista
-            positionToDelete.position = posizioneDaCanc
-            positionToDelete.idCanto = idDaCanc
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).customListDao()
-            mDao.deletePosition(positionToDelete)
+            fragmentReference.get()?.let {
+                val positionToDelete = CustomList()
+                positionToDelete.id = idLista
+                positionToDelete.position = posizioneDaCanc
+                positionToDelete.idCanto = idDaCanc
+                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).customListDao()
+                mDao.deletePosition(positionToDelete)
+            }
             return 0
         }
 
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
-            Snackbar.make(
-                    fragmentReference.get()!!.view!!,
-                    R.string.song_removed,
-                    Snackbar.LENGTH_LONG)
-                    .setAction(
-                            fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()
-                    ) {
-                        ReinsertPositionTask(fragmentReference.get()!!, idLista, posizioneDaCanc, idDaCanc, timestampDaCanc).execute()
-                    }
-                    .show()
+            fragmentReference.get()?.let { fragment ->
+                Snackbar.make(
+                        fragment.view!!,
+                        R.string.song_removed,
+                        Snackbar.LENGTH_LONG)
+                        .setAction(
+                                fragment.getString(R.string.cancel).toUpperCase()
+                        ) {
+                            ReinsertPositionTask(fragment, idLista, posizioneDaCanc, idDaCanc, timestampDaCanc).execute()
+                        }
+                        .show()
+            }
         }
     }
 
@@ -370,13 +410,15 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg params: Any?): Int {
-            val positionToInsert = CustomList()
-            positionToInsert.id = idLista
-            positionToInsert.position = posizioneDaCanc
-            positionToInsert.idCanto = idDaCanc
-            positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).customListDao()
-            mDao.insertPosition(positionToInsert)
+            fragmentReference.get()?.let {
+                val positionToInsert = CustomList()
+                positionToInsert.id = idLista
+                positionToInsert.position = posizioneDaCanc
+                positionToInsert.idCanto = idDaCanc
+                positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
+                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).customListDao()
+                mDao.insertPosition(positionToInsert)
+            }
             return 0
         }
     }
@@ -386,9 +428,10 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg p0: Void?): Int {
-            mRemovedItems?.let {
-                val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).cronologiaDao()
-                for (removedItem in it) {
+            val apiResult = Pair(fragmentReference.get(), mRemovedItems)
+            apiResult.letCheckNull { fragment, removedItems ->
+                val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cronologiaDao()
+                for (removedItem in removedItems) {
                     val cronTemp = Cronologia()
                     cronTemp.idCanto = removedItem.id
                     mDao.deleteCronologia(cronTemp)
@@ -399,11 +442,12 @@ object ListeUtils {
 
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
-            mRemovedItems?.let {
-                Snackbar.make(fragmentReference.get()!!.view!!, fragmentReference.get()!!.resources.getQuantityString(R.plurals.histories_removed, it.size, it.size), Snackbar.LENGTH_SHORT)
-                        .setAction(fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()) { _ ->
-                            for (removedItem in it)
-                                UpdateHistoryTask(fragmentReference.get()!!, removedItem.id, removedItem.timestamp!!.text.toString()).execute()
+            val apiResult = Pair(fragmentReference.get(), mRemovedItems)
+            apiResult.letCheckNull { fragment, removedItems ->
+                Snackbar.make(fragment.view!!, fragment.resources.getQuantityString(R.plurals.histories_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
+                        .setAction(fragment.getString(R.string.cancel).toUpperCase()) {
+                            for (removedItem in removedItems)
+                                UpdateHistoryTask(fragment, removedItem.id, removedItem.timestamp?.text.toString()).execute()
                         }.show()
             }
         }
@@ -414,11 +458,13 @@ object ListeUtils {
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg p0: Void?): Int {
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).cronologiaDao()
-            val cronTemp = Cronologia()
-            cronTemp.idCanto = removedHistoryId
-            cronTemp.ultimaVisita = Date(java.lang.Long.parseLong(removedHistoryTimestamp))
-            mDao.insertCronologia(cronTemp)
+            fragmentReference.get()?.let {
+                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).cronologiaDao()
+                val cronTemp = Cronologia()
+                cronTemp.idCanto = removedHistoryId
+                cronTemp.ultimaVisita = Date(java.lang.Long.parseLong(removedHistoryTimestamp))
+                mDao.insertCronologia(cronTemp)
+            }
             return 0
         }
     }
@@ -428,25 +474,30 @@ object ListeUtils {
         private val activityReference: WeakReference<Activity> = WeakReference(activity)
 
         override fun doInBackground(vararg params: Void?): Boolean {
-            try {
-                val mDao = RisuscitoDatabase.getInstance(activityReference.get()!!).customListDao()
-                val position = CustomList()
-                position.id = idLista
-                position.position = listPosition
-                position.idCanto = idDaAgg
-                position.timestamp = Date(System.currentTimeMillis())
-                mDao.insertPosition(position)
-            } catch (e: SQLException) {
-                return false
+            activityReference.get()?.let {
+                try {
+                    val mDao = RisuscitoDatabase.getInstance(it).customListDao()
+                    val position = CustomList()
+                    position.id = idLista
+                    position.position = listPosition
+                    position.idCanto = idDaAgg
+                    position.timestamp = Date(System.currentTimeMillis())
+                    mDao.insertPosition(position)
+                } catch (e: SQLException) {
+                    return false
+                }
+                return true
             }
-            return true
+            return false
         }
 
         override fun onPostExecute(updated: Boolean) {
             super.onPostExecute(updated)
-            activityReference.get()!!.setResult(if (updated) CustomLists.RESULT_OK else CustomLists.RESULT_KO)
-            activityReference.get()!!.finish()
-            Animatoo.animateShrink(activityReference.get()!!)
+            activityReference.get()?.let {
+                it.setResult(if (updated) CustomLists.RESULT_OK else CustomLists.RESULT_KO)
+                it.finish()
+                Animatoo.animateShrink(it)
+            }
         }
     }
 
@@ -455,21 +506,25 @@ object ListeUtils {
         private val activityReference: WeakReference<Activity> = WeakReference(activity)
 
         override fun doInBackground(vararg p0: Void?): Boolean {
-            val mDao = RisuscitoDatabase.getInstance(activityReference.get()!!).listePersDao()
-            val listaPers = mDao.getListById(idLista)
-            if (listaPers?.lista != null) {
-                listaPers.lista!!.addCanto(idCanto.toString(), listPosition)
-                mDao.updateLista(listaPers)
-                return true
+            activityReference.get()?.let {
+                val mDao = RisuscitoDatabase.getInstance(it).listePersDao()
+                val listaPers = mDao.getListById(idLista)
+                if (listaPers?.lista != null) {
+                    listaPers.lista?.addCanto(idCanto.toString(), listPosition)
+                    mDao.updateLista(listaPers)
+                    return true
+                }
             }
             return false
         }
 
         override fun onPostExecute(updated: Boolean) {
             super.onPostExecute(updated)
-            activityReference.get()!!.setResult(if (updated) CustomLists.RESULT_OK else CustomLists.RESULT_CANCELED)
-            activityReference.get()!!.finish()
-            Animatoo.animateShrink(activityReference.get()!!)
+            activityReference.get()?.let {
+                it.setResult(if (updated) CustomLists.RESULT_OK else CustomLists.RESULT_CANCELED)
+                it.finish()
+                Animatoo.animateShrink(it)
+            }
         }
     }
 
