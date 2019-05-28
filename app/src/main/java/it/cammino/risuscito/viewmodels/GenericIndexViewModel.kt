@@ -57,7 +57,7 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
                             label = it[i].lista!!.name
                             hasNestedItems = true
                             callback = {
-                                subPopupMenu(it[i].lista!!.name!!, 3, view, i, fragment, dialogTag, dialogTag2, listePersonalizzate)
+                                subPopupMenu(it[i].lista!!.name, 3, view, i, fragment, dialogTag, dialogTag2, listePersonalizzate)
                             }
                         }
                     }

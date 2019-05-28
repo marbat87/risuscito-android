@@ -59,7 +59,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mCronologiaViewModel = ViewModelProviders.of(this).get(CronologiaViewModel::class.java)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_history)
 
         mMainActivity?.setTabVisible(false)

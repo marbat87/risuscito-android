@@ -245,7 +245,7 @@ class ListaPredefinitaFragment : Fragment() {
         val args = Bundle().apply { putInt("tipoLista", arguments!!.getInt("indiceLista", 0)) }
         mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(DefaultListaViewModel::class.java)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
 
         mLUtils = LUtils.getInstance(activity!!)
         mSwhitchMode = false

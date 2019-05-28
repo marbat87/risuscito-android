@@ -70,7 +70,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
         mCustomListsViewModel = ViewModelProviders.of(this).get(CustomListsViewModel::class.java)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
 
         mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
 

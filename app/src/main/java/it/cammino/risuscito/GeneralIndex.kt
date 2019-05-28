@@ -25,7 +25,7 @@ class GeneralIndex : Fragment() {
 
         mViewModel = ViewModelProviders.of(this).get(GeneralIndexViewModel::class.java)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
 
         return rootView

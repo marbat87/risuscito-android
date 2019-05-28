@@ -66,7 +66,7 @@ class ListaPersonalizzataFragment : Fragment() {
 
             val l = ThemeableActivity.getSystemLocalWrapper(activity!!.resources.configuration)
             val result = StringBuilder()
-            result.append("-- ").append(mCantiViewModel.listaPersonalizzata!!.name!!.toUpperCase(l)).append(" --\n")
+            result.append("-- ").append(mCantiViewModel.listaPersonalizzata!!.name.toUpperCase(l)).append(" --\n")
             for (i in 0 until mCantiViewModel.listaPersonalizzata!!.numPosizioni) {
                 result.append(mCantiViewModel.listaPersonalizzata!!.getNomePosizione(i).toUpperCase(l)).append("\n")
                 if (!mCantiViewModel.listaPersonalizzata!!.getCantoPosizione(i).equals("", ignoreCase = true)) {
@@ -142,7 +142,7 @@ class ListaPersonalizzataFragment : Fragment() {
         val args = Bundle().apply { putInt("tipoLista", arguments!!.getInt("idLista")) }
         mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(ListaPersonalizzataViewModel::class.java)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
 
         mLUtils = LUtils.getInstance(activity!!)
         mSwhitchMode = false

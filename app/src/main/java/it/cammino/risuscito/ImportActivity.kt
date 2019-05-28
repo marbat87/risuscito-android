@@ -86,9 +86,9 @@ class ImportActivity : AppCompatActivity() {
         val sp = PreferenceManager
                 .getDefaultSharedPreferences(mNewBase)
         val language = sp.getString(Utility.SYSTEM_LANGUAGE, "")
-        Log.d(TAG, "attachBaseContext - language: " + language!!)
+        Log.d(TAG, "attachBaseContext - language: $language")
         //ho settato almeno una volta la lingua --> imposto quella
-        if (language.isNotEmpty()) {
+        if (!language.isNullOrBlank()) {
             val locale = Locale(language)
             Locale.setDefault(locale)
             ThemeableActivity.setSystemLocalWrapper(config, locale)

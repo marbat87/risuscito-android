@@ -78,7 +78,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        mActivity = activity as MainActivity?
+        mActivity = activity as? MainActivity
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -114,7 +114,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mCantiViewModel = ViewModelProviders.of(this).get(ConsegnatiViewModel::class.java)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
 
         mRegularFont = ResourcesCompat.getFont(mMainActivity!!, R.font.googlesans_regular)
 

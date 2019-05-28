@@ -19,7 +19,7 @@ class AboutFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.about_layout, container, false)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
 
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)

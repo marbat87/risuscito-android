@@ -28,7 +28,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
         mMainActivity!!.setupToolbarTitle(R.string.title_activity_settings)
 
         mMainActivity!!.setTabVisible(false)

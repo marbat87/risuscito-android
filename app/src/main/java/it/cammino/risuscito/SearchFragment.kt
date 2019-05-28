@@ -70,7 +70,7 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.search_layout, container, false)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_search)
 
         val args = Bundle().apply { putInt("tipoLista", 0) }

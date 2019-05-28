@@ -76,18 +76,18 @@ class InsertActivity : ThemeableActivity() {
         risuscito_toolbar.title = getString(R.string.title_activity_inserisci_titolo)
         setSupportActionBar(risuscito_toolbar)
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val bundle = intent.extras
-        listaPredefinita = bundle!!.getInt("fromAdd")
-        idLista = bundle.getInt("idLista")
-        listPosition = bundle.getInt("position")
+        listaPredefinita = bundle?.getInt("fromAdd") ?: 0
+        idLista = bundle?.getInt("idLista") ?: 0
+        listPosition = bundle?.getInt("position") ?: 0
 
         val args = Bundle().apply { putInt("tipoLista", 3) }
         mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(this)
-            val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0")!!)
+            val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
             mViewModel.advancedSearch = currentItem != 0
         }
 
@@ -137,16 +137,16 @@ class InsertActivity : ThemeableActivity() {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to item.source!!.getText(this@InsertActivity), "idCanto" to item.id))
-                mLUtils!!.startActivityWithTransition(intent)
+                intent.putExtras(bundleOf("pagina" to item.source?.getText(this@InsertActivity), "idCanto" to item.id))
+                mLUtils?.startActivityWithTransition(intent)
             }
         })
 
         cantoAdapter.setHasStableIds(true)
 
         matchedList.adapter = cantoAdapter
-        val llm = if (mLUtils!!.isGridLayout)
-            GridLayoutManager(this, if (mLUtils!!.hasThreeColumns) 3 else 2)
+        val llm = if (mLUtils?.isGridLayout == true)
+            GridLayoutManager(this, if (mLUtils?.hasThreeColumns == true) 3 else 2)
         else
             LinearLayoutManager(this)
         matchedList.layoutManager = llm
@@ -238,7 +238,9 @@ class InsertActivity : ThemeableActivity() {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
+        searchTask?.let {
+            if (it.status == Status.RUNNING) it.cancel(true)
+        }
         super.onDestroy()
     }
 
@@ -252,13 +254,16 @@ class InsertActivity : ThemeableActivity() {
     private fun ricercaStringa(s: String) {
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
-            if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
+            searchTask?.let {
+                if (it.status == Status.RUNNING) it.cancel(true)
+            }
             searchTask = SearchTask(this)
-            searchTask!!.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch, mViewModel.consegnatiOnly)
+            searchTask?.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch, mViewModel.consegnatiOnly)
         } else {
             if (s.isEmpty()) {
-                if (searchTask != null && searchTask!!.status == Status.RUNNING)
-                    searchTask!!.cancel(true)
+                searchTask?.let {
+                    if (it.status == Status.RUNNING) it.cancel(true)
+                }
                 search_no_results.visibility = View.GONE
                 cantoAdapter.clear()
                 search_progress.visibility = View.INVISIBLE
@@ -280,52 +285,57 @@ class InsertActivity : ThemeableActivity() {
             val s = sSearchText[0] as String
             val advanced = sSearchText[1] as Boolean
             val consegnatiOnly = sSearchText[2] as Boolean
+            fragmentReference.get()?.let { fragment ->
+                if (advanced) {
+                    val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-            if (advanced) {
-                val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-                var text: String
-
-                for (aText in fragmentReference.get()!!.aTexts) {
-                    if (isCancelled) return titoliResult
-
-                    if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
-
-                    var found = true
-                    for (word in words) {
+                    for (aText in fragment.aTexts) {
                         if (isCancelled) return titoliResult
 
-                        if (word.trim { it <= ' ' }.length > 1) {
-                            text = word.trim { it <= ' ' }
-                            text = text.toLowerCase(
-                                    getSystemLocalWrapper(
-                                            fragmentReference.get()!!.resources.configuration))
-                            text = Utility.removeAccents(text)
+                        if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
 
-                            if (!aText[1]!!.contains(text)) found = false
-                        }
-                    }
-
-                    if (found) {
-                        Log.d(TAG, "aText[0]: ${aText[0]}")
-                        fragmentReference.get()!!.mViewModel.titoliInsert.sortedBy { it.title!!.getText(fragmentReference.get()!!) }
-                                .filter { it.undecodedSource == aText[0]!! && (!consegnatiOnly || it.consegnato == 1) }
-                                .forEach {
-                                    if (isCancelled) return titoliResult
-                                    titoliResult.add(it)
-                                }
-
-                    }
-                }
-            } else {
-                val stringa = Utility.removeAccents(s).toLowerCase()
-                Log.d(TAG, "onTextChanged: stringa $stringa")
-                fragmentReference.get()!!.mViewModel.titoliInsert.sortedBy { it.title!!.getText(fragmentReference.get()!!) }
-                        .filter { Utility.removeAccents(it.title!!.getText(fragmentReference.get()!!)).toLowerCase().contains(stringa) && (!consegnatiOnly || it.consegnato == 1) }
-                        .forEach {
+                        var found = true
+                        for (word in words) {
                             if (isCancelled) return titoliResult
-                            titoliResult.add(it.withFilter(stringa))
+
+                            if (word.trim { it <= ' ' }.length > 1) {
+                                var text = word.trim { it <= ' ' }
+                                text = text.toLowerCase(
+                                        getSystemLocalWrapper(
+                                                fragment.resources.configuration))
+                                text = Utility.removeAccents(text)
+
+                                if (aText[1]?.contains(text) != true) found = false
+                            }
                         }
+
+                        if (found) {
+                            Log.d(TAG, "aText[0]: ${aText[0]}")
+                            fragment.mViewModel.titoliInsert.sortedBy { it.title?.getText(fragment) }
+                                    .filter {
+                                        (aText[0]
+                                                ?: "") == it.undecodedSource && (!consegnatiOnly || it.consegnato == 1)
+                                    }
+                                    .forEach {
+                                        if (isCancelled) return titoliResult
+                                        titoliResult.add(it)
+                                    }
+
+                        }
+                    }
+                } else {
+                    val stringa = Utility.removeAccents(s).toLowerCase()
+                    Log.d(TAG, "onTextChanged: stringa $stringa")
+                    fragment.mViewModel.titoliInsert.sortedBy { it.title?.getText(fragment) }
+                            .filter {
+                                Utility.removeAccents(it.title?.getText(fragment)
+                                        ?: "").toLowerCase().contains(stringa) && (!consegnatiOnly || it.consegnato == 1)
+                            }
+                            .forEach {
+                                if (isCancelled) return titoliResult
+                                titoliResult.add(it.withFilter(stringa))
+                            }
+                }
             }
             return titoliResult
         }
@@ -350,15 +360,11 @@ class InsertActivity : ThemeableActivity() {
     }
 
     private fun subscribeUiFavorites() {
-        mViewModel
-                .insertItemsResult!!
-                .observe(
-                        this,
-                        Observer<List<InsertItem>> { canti ->
-                            if (canti != null) {
-                                mViewModel.titoliInsert = canti.sortedBy { it.title!!.getText(this) }
-                            }
-                        })
+        mViewModel.insertItemsResult?.observe(
+                this,
+                Observer<List<InsertItem>> { canti ->
+                    mViewModel.titoliInsert = canti.sortedBy { it.title?.getText(this) }
+                })
     }
 
     companion object {

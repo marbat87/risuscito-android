@@ -55,6 +55,7 @@ import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import kotlinx.android.synthetic.main.activity_crea_lista.*
 import kotlinx.android.synthetic.main.hint_layout.*
+import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -133,7 +134,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         touchHelper?.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
 
-        SearchTask().execute(savedInstanceState)
+        SearchTask(this).execute()
 
         val icon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon2.cmd_plus)
@@ -269,7 +270,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     private fun saveList(): Boolean {
         celebrazione = ListaPersonalizzata()
 
-        if (textfieldTitle.text != null && !textfieldTitle.text.toString().trim { it <= ' ' }.equals("", ignoreCase = true)) {
+        if (!textfieldTitle.text.isNullOrBlank()) {
             titoloLista = textfieldTitle.text.toString()
         } else {
             val toast = Toast.makeText(
@@ -277,7 +278,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             toast.show()
         }
 
-        celebrazione?.name = titoloLista
+        celebrazione?.name = titoloLista ?: ""
         Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
         for (i in 0 until mAdapter.adapterItems.size) {
             mAdapter.getItem(i)?.let {
@@ -511,62 +512,64 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     }
 
     @SuppressLint("StaticFieldLeak")
-    private inner class SearchTask : AsyncTask<Bundle, Void, Int>() {
+    private inner class SearchTask internal constructor(activity: Activity) : AsyncTask<Void, Void, Void>() {
 
-        override fun doInBackground(vararg savedInstanceState: Bundle): Int? {
+        private val activityReference: WeakReference<Activity> = WeakReference(activity)
 
-            val bundle = this@CreaListaActivity.intent.extras
-            modifica = bundle != null && bundle.getBoolean("modifica")
+        override fun doInBackground(vararg savedInstanceState: Void): Void? {
+            activityReference.get()?.let { mActivity ->
+                val bundle = mActivity.intent.extras
+                modifica = bundle?.getBoolean("modifica") == true
 
-            if (modifica) {
-                idModifica = bundle?.getInt("idDaModif") ?: 0
-                val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
-                val lista = mDao.getListById(idModifica)
-                titoloLista = lista?.titolo
-                celebrazione = lista?.lista
-            } else
-                titoloLista = bundle?.getString("titolo")
-
-            if (mViewModel.dataDrag != null) {
-                elementi = mViewModel.dataDrag ?: ArrayList()
-                for (elemento in elementi) elemento.touchHelper = touchHelper
-            } else {
                 if (modifica) {
-                    celebrazione?.let {
-                        for (i in 0 until it.numPosizioni) {
-                            val mSwipeable = SwipeableItem()
-                            mSwipeable.identifier = Utility.random(0, 5000).toLong()
-                            mSwipeable.touchHelper = touchHelper
-                            elementi.add(
-                                    mSwipeable
-                                            .withName(it.getNomePosizione(i)))
-                        }
-                    }
-                }
-            }
+                    idModifica = bundle?.getInt("idDaModif") ?: 0
+                    val mDao = RisuscitoDatabase.getInstance(mActivity).listePersDao()
+                    val lista = mDao.getListById(idModifica)
+                    titoloLista = lista?.titolo
+                    celebrazione = lista?.lista
+                } else
+                    titoloLista = bundle?.getString("titolo")
 
-            Log.d(TAG, "doInBackground: modifica $modifica")
-            if (modifica) {
-                if (mViewModel.data != null) {
-                    nomiCanti = mViewModel.data ?: ArrayList()
-                    Log.d(TAG, "doInBackground: nomiCanti size " + nomiCanti.size)
+                if (mViewModel.dataDrag != null) {
+                    elementi = mViewModel.dataDrag ?: ArrayList()
+                    for (elemento in elementi) elemento.touchHelper = touchHelper
                 } else {
                     if (modifica) {
                         celebrazione?.let {
                             for (i in 0 until it.numPosizioni) {
-                                nomiCanti.add(it.getCantoPosizione(i))
+                                val mSwipeable = SwipeableItem()
+                                mSwipeable.identifier = Utility.random(0, 5000).toLong()
+                                mSwipeable.touchHelper = touchHelper
+                                elementi.add(
+                                        mSwipeable
+                                                .withName(it.getNomePosizione(i)))
+                            }
+                        }
+                    }
+                }
+
+                Log.d(TAG, "doInBackground: modifica $modifica")
+                if (modifica) {
+                    if (mViewModel.data != null) {
+                        nomiCanti = mViewModel.data ?: ArrayList()
+                        Log.d(TAG, "doInBackground: nomiCanti size " + nomiCanti.size)
+                    } else {
+                        if (modifica) {
+                            celebrazione?.let {
+                                for (i in 0 until it.numPosizioni) {
+                                    nomiCanti.add(it.getCantoPosizione(i))
+                                }
                             }
                         }
                     }
                 }
             }
-
-            return 0
+            return null
         }
 
-        override fun onPostExecute(result: Int?) {
+        override fun onPostExecute(result: Void?) {
+            super.onPostExecute(result)
             mAdapter.set(elementi)
-
             if (mViewModel.tempTitle.isEmpty()) {
                 textfieldTitle.setText(titoloLista)
                 collapsingToolbarLayout.title = titoloLista

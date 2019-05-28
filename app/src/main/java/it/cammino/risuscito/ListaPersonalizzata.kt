@@ -1,33 +1,26 @@
-@file:Suppress("unused")
-
 package it.cammino.risuscito
 
 import android.util.Log
 import java.io.*
 
+@Suppress("unused")
 class ListaPersonalizzata : Serializable {
 
-    var name: String? = null
-    private var posizioni: Array<String?>? = null
-    var canti: Array<String?>? = null
+    var name: String = ""
+    private var posizioni: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
+    var canti: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
     var numPosizioni: Int = 0
 
     init {
-        name = ""
-        posizioni = arrayOfNulls(MAX_POSIZIONI)
-        canti = arrayOfNulls(MAX_POSIZIONI)
-        numPosizioni = 0
-
         for (i in 0 until MAX_POSIZIONI) {
-            posizioni!![i] = ""
-            canti!![i] = ""
+            posizioni[i] = ""
+            canti[i] = ""
         }
-
     }
 
     //restituisce il titolo della posizione all'indice "index"
     fun getNomePosizione(index: Int): String {
-        return if (index < 0 || index >= numPosizioni) "" else posizioni!![index]!!.trim { it <= ' ' }
+        return if (index < 0 || index >= numPosizioni) "" else (posizioni[index]?.trim() ?: "")
 
     }
 
@@ -36,10 +29,10 @@ class ListaPersonalizzata : Serializable {
         if (index < 0 || index >= numPosizioni)
             return ""
 
-        return if (!canti!![index].equals("", ignoreCase = true))
-            canti!![index]!!.trim { it <= ' ' }
-        else
-            ""
+        canti[index]?.let {
+            return it.trim()
+        }
+        return ""
     }
 
     /*aggiunge una nuova posizione
@@ -47,13 +40,13 @@ class ListaPersonalizzata : Serializable {
      ritorna -2 se la lista è piena
      */
     fun addPosizione(nomePosizione: String?): Int {
-        if (nomePosizione == null || nomePosizione.trim { it <= ' ' }.equals("", ignoreCase = true))
+        if (nomePosizione.isNullOrBlank())
             return -1
 
         if (numPosizioni == MAX_POSIZIONI)
             return -2
 
-        posizioni!![numPosizioni++] = nomePosizione.trim { it <= ' ' }
+        posizioni[numPosizioni++] = nomePosizione.trim()
         return 0
     }
 
@@ -62,13 +55,13 @@ class ListaPersonalizzata : Serializable {
      ritorna -2 se l'indice non è valido
      */
     fun addCanto(titoloCanto: String?, posizione: Int): Int {
-        if (titoloCanto == null || titoloCanto.trim { it <= ' ' }.equals("", ignoreCase = true))
+        if (titoloCanto.isNullOrBlank())
             return -1
 
         if (posizione >= MAX_POSIZIONI || posizione >= numPosizioni)
             return -2
 
-        canti!![posizione] = titoloCanto.trim { it <= ' ' }
+        canti[posizione] = titoloCanto.trim()
         return 0
     }
 
@@ -77,7 +70,7 @@ class ListaPersonalizzata : Serializable {
         if (posizione < 0 || posizione >= MAX_POSIZIONI)
             return -1
 
-        canti!![posizione] = ""
+        canti[posizione] = ""
         return 0
     }
 
@@ -87,13 +80,13 @@ class ListaPersonalizzata : Serializable {
             return -1
 
         val newPosizioni = arrayOfNulls<String>(20)
-        System.arraycopy(posizioni!!, 0, newPosizioni, 0, index)
-        System.arraycopy(posizioni!!, index + 1, newPosizioni, index, MAX_POSIZIONI - index - 1)
+        System.arraycopy(posizioni, 0, newPosizioni, 0, index)
+        System.arraycopy(posizioni, index + 1, newPosizioni, index, MAX_POSIZIONI - index - 1)
         posizioni = newPosizioni
 
         val newCanti = arrayOfNulls<String>(20)
-        System.arraycopy(canti!!, 0, newCanti, 0, index)
-        System.arraycopy(canti!!, index + 1, newCanti, index, MAX_POSIZIONI - index - 1)
+        System.arraycopy(canti, 0, newCanti, 0, index)
+        System.arraycopy(canti, index + 1, newCanti, index, MAX_POSIZIONI - index - 1)
         canti = newCanti
 
         return 0
@@ -122,10 +115,10 @@ class ListaPersonalizzata : Serializable {
 
         fun deserializeObject(b: ByteArray): Any? {
             return try {
-                val `in` = ObjectInputStream(ByteArrayInputStream(b))
-                val `object` = `in`.readObject()
-                `in`.close()
-                `object`
+                val inputStream = ObjectInputStream(ByteArrayInputStream(b))
+                val inputObject = inputStream.readObject()
+                inputStream.close()
+                inputObject
             } catch (cnfe: ClassNotFoundException) {
                 Log.e("deserializeObject", "class not found error", cnfe)
                 null

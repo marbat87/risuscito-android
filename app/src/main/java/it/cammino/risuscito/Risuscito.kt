@@ -48,7 +48,7 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_risuscito, container, false)
 
-        mMainActivity = activity as MainActivity?
+        mMainActivity = activity as? MainActivity
 
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
