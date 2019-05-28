@@ -51,11 +51,9 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import kotlinx.android.synthetic.main.activity_crea_lista.*
 import kotlinx.android.synthetic.main.hint_layout.*
-import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -134,7 +132,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         touchHelper?.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
 
-        SearchTask(this).execute()
+        SearchTask().execute()
 
         val icon = IconicsDrawable(this)
                 .icon(CommunityMaterial.Icon2.cmd_plus)
@@ -221,13 +219,14 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 return true
             }
             R.id.action_save_list -> {
-                ioThread {
-                    if (saveList()) {
-                        setResult(Activity.RESULT_OK)
-                        finish()
-                        Animatoo.animateSlideDown(this)
-                    }
-                }
+//                ioThread {
+//                    if (saveList()) {
+//                        setResult(Activity.RESULT_OK)
+//                        finish()
+//                        Animatoo.animateSlideDown(this)
+//                    }
+//                }
+                SaveListTask().execute(textfieldTitle.text)
                 return true
             }
             android.R.id.home -> {
@@ -267,57 +266,57 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
     }
 
-    private fun saveList(): Boolean {
-        celebrazione = ListaPersonalizzata()
-
-        if (!textfieldTitle.text.isNullOrBlank()) {
-            titoloLista = textfieldTitle.text.toString()
-        } else {
-            val toast = Toast.makeText(
-                    this, getString(R.string.no_title_edited), Toast.LENGTH_SHORT)
-            toast.show()
-        }
-
-        celebrazione?.name = titoloLista ?: ""
-        Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
-        for (i in 0 until mAdapter.adapterItems.size) {
-            mAdapter.getItem(i)?.let {
-                if (celebrazione?.addPosizione(it.name.text.toString()) == -2) {
-                    Snackbar.make(
-                            main_content,
-                            R.string.lista_pers_piena,
-                            Snackbar.LENGTH_SHORT)
-                            .show()
-                    return false
-                }
-            }
-        }
-
-        if (celebrazione?.getNomePosizione(0).equals("", ignoreCase = true)) {
-            Snackbar.make(
-                    main_content, R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
-                    .show()
-            return false
-        }
-
-        if (modifica) {
-            for (i in 0 until mAdapter.adapterItems.size) {
-                celebrazione?.addCanto(nomiCanti[i], i)
-            }
-        }
-
-        val mDao = RisuscitoDatabase.getInstance(this).listePersDao()
-        val listaToUpdate = ListaPers()
-        listaToUpdate.lista = celebrazione
-        listaToUpdate.titolo = titoloLista
-        if (modifica) {
-            listaToUpdate.id = idModifica
-            mDao.updateLista(listaToUpdate)
-        } else
-            mDao.insertLista(listaToUpdate)
-
-        return true
-    }
+//    private fun saveList(): Boolean {
+//        celebrazione = ListaPersonalizzata()
+//
+//        if (!textfieldTitle.text.isNullOrBlank()) {
+//            titoloLista = textfieldTitle.text.toString()
+//        } else {
+//            val toast = Toast.makeText(
+//                    this, getString(R.string.no_title_edited), Toast.LENGTH_SHORT)
+//            toast.show()
+//        }
+//
+//        celebrazione?.name = titoloLista ?: ""
+//        Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
+//        for (i in 0 until mAdapter.adapterItems.size) {
+//            mAdapter.getItem(i)?.let {
+//                if (celebrazione?.addPosizione(it.name.text.toString()) == -2) {
+//                    Snackbar.make(
+//                            main_content,
+//                            R.string.lista_pers_piena,
+//                            Snackbar.LENGTH_SHORT)
+//                            .show()
+//                    return false
+//                }
+//            }
+//        }
+//
+//        if (celebrazione?.getNomePosizione(0).equals("", ignoreCase = true)) {
+//            Snackbar.make(
+//                    main_content, R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
+//                    .show()
+//            return false
+//        }
+//
+//        if (modifica) {
+//            for (i in 0 until mAdapter.adapterItems.size) {
+//                celebrazione?.addCanto(nomiCanti[i], i)
+//            }
+//        }
+//
+//        val mDao = RisuscitoDatabase.getInstance(this).listePersDao()
+//        val listaToUpdate = ListaPers()
+//        listaToUpdate.lista = celebrazione
+//        listaToUpdate.titolo = titoloLista
+//        if (modifica) {
+//            listaToUpdate.id = idModifica
+//            mDao.updateLista(listaToUpdate)
+//        } else
+//            mDao.insertLista(listaToUpdate)
+//
+//        return true
+//    }
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
         super.onSaveInstanceState(savedInstanceState)
@@ -377,13 +376,14 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             SAVE_LIST ->
-                ioThread {
-                    if (saveList()) {
-                        setResult(Activity.RESULT_OK)
-                        finish()
-                        Animatoo.animateSlideDown(this)
-                    }
-                }
+//                ioThread {
+//                    if (saveList()) {
+//                        setResult(Activity.RESULT_OK)
+//                        finish()
+//                        Animatoo.animateSlideDown(this)
+//                    }
+//                }
+                SaveListTask().execute(textfieldTitle.text)
         }
     }
 
@@ -512,53 +512,49 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     }
 
     @SuppressLint("StaticFieldLeak")
-    private inner class SearchTask internal constructor(activity: Activity) : AsyncTask<Void, Void, Void>() {
-
-        private val activityReference: WeakReference<Activity> = WeakReference(activity)
+    private inner class SearchTask : AsyncTask<Void, Void, Void>() {
 
         override fun doInBackground(vararg savedInstanceState: Void): Void? {
-            activityReference.get()?.let { mActivity ->
-                val bundle = mActivity.intent.extras
-                modifica = bundle?.getBoolean("modifica") == true
+            val bundle = this@CreaListaActivity.intent.extras
+            modifica = bundle?.getBoolean("modifica") == true
 
+            if (modifica) {
+                idModifica = bundle?.getInt("idDaModif") ?: 0
+                val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
+                val lista = mDao.getListById(idModifica)
+                titoloLista = lista?.titolo
+                celebrazione = lista?.lista
+            } else
+                titoloLista = bundle?.getString("titolo")
+
+            if (mViewModel.dataDrag != null) {
+                elementi = mViewModel.dataDrag ?: ArrayList()
+                for (elemento in elementi) elemento.touchHelper = touchHelper
+            } else {
                 if (modifica) {
-                    idModifica = bundle?.getInt("idDaModif") ?: 0
-                    val mDao = RisuscitoDatabase.getInstance(mActivity).listePersDao()
-                    val lista = mDao.getListById(idModifica)
-                    titoloLista = lista?.titolo
-                    celebrazione = lista?.lista
-                } else
-                    titoloLista = bundle?.getString("titolo")
+                    celebrazione?.let {
+                        for (i in 0 until it.numPosizioni) {
+                            val mSwipeable = SwipeableItem()
+                            mSwipeable.identifier = Utility.random(0, 5000).toLong()
+                            mSwipeable.touchHelper = touchHelper
+                            elementi.add(
+                                    mSwipeable
+                                            .withName(it.getNomePosizione(i)))
+                        }
+                    }
+                }
+            }
 
-                if (mViewModel.dataDrag != null) {
-                    elementi = mViewModel.dataDrag ?: ArrayList()
-                    for (elemento in elementi) elemento.touchHelper = touchHelper
+            Log.d(TAG, "doInBackground: modifica $modifica")
+            if (modifica) {
+                if (mViewModel.data != null) {
+                    nomiCanti = mViewModel.data ?: ArrayList()
+                    Log.d(TAG, "doInBackground: nomiCanti size " + nomiCanti.size)
                 } else {
                     if (modifica) {
                         celebrazione?.let {
                             for (i in 0 until it.numPosizioni) {
-                                val mSwipeable = SwipeableItem()
-                                mSwipeable.identifier = Utility.random(0, 5000).toLong()
-                                mSwipeable.touchHelper = touchHelper
-                                elementi.add(
-                                        mSwipeable
-                                                .withName(it.getNomePosizione(i)))
-                            }
-                        }
-                    }
-                }
-
-                Log.d(TAG, "doInBackground: modifica $modifica")
-                if (modifica) {
-                    if (mViewModel.data != null) {
-                        nomiCanti = mViewModel.data ?: ArrayList()
-                        Log.d(TAG, "doInBackground: nomiCanti size " + nomiCanti.size)
-                    } else {
-                        if (modifica) {
-                            celebrazione?.let {
-                                for (i in 0 until it.numPosizioni) {
-                                    nomiCanti.add(it.getCantoPosizione(i))
-                                }
+                                nomiCanti.add(it.getCantoPosizione(i))
                             }
                         }
                     }
@@ -578,6 +574,75 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 collapsingToolbarLayout.title = mViewModel.tempTitle
             }
             if (elementi.size > 0) noElementsAdded.visibility = View.GONE
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private inner class SaveListTask : AsyncTask<Editable, Void, Int>() {
+
+        override fun doInBackground(vararg titleText: Editable): Int {
+            var result = 0
+            celebrazione = ListaPersonalizzata()
+
+            if (titleText[0].isNotBlank()) {
+                titoloLista = titleText[0].toString()
+            } else
+                result += 100
+
+            celebrazione?.name = titoloLista ?: ""
+            Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
+            for (i in 0 until mAdapter.adapterItems.size) {
+                mAdapter.getItem(i)?.let {
+                    if (celebrazione?.addPosizione(it.name.text.toString()) == -2) {
+                        return 1
+                    }
+                }
+            }
+
+            if (celebrazione?.getNomePosizione(0).equals("", ignoreCase = true))
+                return 2
+
+            if (modifica) {
+                for (i in 0 until mAdapter.adapterItems.size) {
+                    celebrazione?.addCanto(nomiCanti[i], i)
+                }
+            }
+
+            val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
+            val listaToUpdate = ListaPers()
+            listaToUpdate.lista = celebrazione
+            listaToUpdate.titolo = titoloLista
+            if (modifica) {
+                listaToUpdate.id = idModifica
+                mDao.updateLista(listaToUpdate)
+            } else
+                mDao.insertLista(listaToUpdate)
+
+            return result
+        }
+
+        override fun onPostExecute(result: Int) {
+            super.onPostExecute(result)
+            if (result == 100)
+                Toast.makeText(this@CreaListaActivity, getString(R.string.no_title_edited), Toast.LENGTH_SHORT).show()
+            when (result) {
+                0, 100 -> {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                    Animatoo.animateSlideDown(this@CreaListaActivity)
+                }
+                1 ->
+                    Snackbar.make(
+                            this@CreaListaActivity.main_content,
+                            R.string.lista_pers_piena,
+                            Snackbar.LENGTH_SHORT)
+                            .show()
+                2 ->
+                    Snackbar.make(
+                            this@CreaListaActivity.main_content, R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
+                            .show()
+
+            }
         }
     }
 
