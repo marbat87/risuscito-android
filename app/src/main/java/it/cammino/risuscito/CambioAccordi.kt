@@ -179,9 +179,9 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
         internal val accordi_it = arrayOf("Do", "Do#", "Re", "Mib", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "Sib", "Si")
         internal val accordi_uk = arrayOf("C", "Cis", "D", "Eb", "E", "F", "Fis", "G", "Gis", "A", "B", "H")
         internal val accordi_en = arrayOf("C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B")
-        internal val barre_it = arrayOf("I", "II", "III", "IV", "V", "VI", "VII")
-        internal val barre_uk = arrayOf("I", "II", "III", "IV", "V", "VI", "VII")
-        internal val barre_en = arrayOf("1", "2", "3", "4", "5", "6", "7")
+        internal val barre_it = arrayOf("0", "I", "II", "III", "IV", "V", "VI", "VII")
+        internal val barre_uk = arrayOf("0", "I", "II", "III", "IV", "V", "VI", "VII")
+        internal val barre_en = arrayOf("0", "1", "2", "3", "4", "5", "6", "7")
         private val TAG = CambioAccordi::class.java.canonicalName
         private val accordi_uk_lower = arrayOf("c", "cis", "d", "eb", "e", "f", "fis", "g", "gis", "a", "b", "h")
 

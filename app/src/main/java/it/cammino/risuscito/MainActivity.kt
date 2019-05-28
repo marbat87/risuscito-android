@@ -1,7 +1,5 @@
 package it.cammino.risuscito
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -67,7 +65,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
-    private var mViewModel: MainActivityViewModel? = null
+    private lateinit var mViewModel: MainActivityViewModel
     private lateinit var profileIcon: IconicsDrawable
     private var mLUtils: LUtils? = null
     var drawer: Drawer? = null
@@ -75,7 +73,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private var mMiniDrawer: MiniDrawer? = null
     var crossFader: Crossfader<*>? = null
         private set
-    private var mAccountHeader: AccountHeader? = null
+    private lateinit var mAccountHeader: AccountHeader
     var isOnTablet: Boolean = false
         private set
     var hasThreeColumns: Boolean = false
@@ -132,31 +130,31 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .colorInt(themeUtils.primaryColor())
                 .sizeDp(48)
 
-        risuscito_toolbar!!.setBackgroundColor(themeUtils.primaryColor())
-        risuscito_toolbar!!.navigationIcon = icon
+        risuscito_toolbar?.setBackgroundColor(themeUtils.primaryColor())
+        risuscito_toolbar?.navigationIcon = icon
         setSupportActionBar(risuscito_toolbar)
 
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
             TranslationTask(this).execute()
         }
 
         mLUtils = LUtils.getInstance(this)
-        isOnTablet = mLUtils!!.isOnTablet
+        isOnTablet = mLUtils?.isOnTablet ?: false
         Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
-        hasThreeColumns = mLUtils!!.hasThreeColumns
+        hasThreeColumns = mLUtils?.hasThreeColumns ?: false
         Log.d(TAG, "onCreate: hasThreeComlumns = $hasThreeColumns")
-        isGridLayout = mLUtils!!.isGridLayout
+        isGridLayout = mLUtils?.isGridLayout ?: false
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
 
         if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             window.statusBarColor = themeUtils.primaryColorDark()
 
         if (isOnTablet)
-            tabletToolbarBackground!!.setBackgroundColor(themeUtils.primaryColor())
+            tabletToolbarBackground?.setBackgroundColor(themeUtils.primaryColor())
         else
-            material_tabs!!.setBackgroundColor(themeUtils.primaryColor())
+            material_tabs?.setBackgroundColor(themeUtils.primaryColor())
 
         setupNavDrawer(savedInstanceState)
 
@@ -165,7 +163,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
             }
         }
-        if (!isOnTablet) toolbar_layout!!.setExpanded(true, false)
+        if (!isOnTablet) toolbar_layout?.setExpanded(true, false)
 
         searchView.setBackIconColor(themeUtils.primaryColor())
         searchView.setBackgroundColor(themeUtils.primaryColor())
@@ -205,21 +203,23 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     public override fun onStart() {
         super.onStart()
-        val task = mSignInClient!!.silentSignIn()
-        if (task.isSuccessful) {
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            Log.d(TAG, "Got cached sign-in")
-            handleSignInResult(task)
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-            showProgressDialog()
+        val task = mSignInClient?.silentSignIn()
+        task?.let {
+            if (it.isSuccessful) {
+                // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+                // and the GoogleSignInResult will be available instantly.
+                Log.d(TAG, "Got cached sign-in")
+                handleSignInResult(task)
+            } else {
+                // If the user has not previously signed in on this device or the sign-in has expired,
+                // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+                // single sign-on will occur in this branch.
+                showProgressDialog()
 
-            task.addOnCompleteListener { mTask: Task<GoogleSignInAccount> ->
-                Log.d(TAG, "Reconnected")
-                handleSignInResult(mTask)
+                task.addOnCompleteListener { mTask: Task<GoogleSignInAccount> ->
+                    Log.d(TAG, "Reconnected")
+                    handleSignInResult(mTask)
+                }
             }
         }
     }
@@ -230,7 +230,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
-        val mSavedInstanceState = drawer!!.saveInstanceState(savedInstanceState)
+        val mSavedInstanceState = drawer?.saveInstanceState(savedInstanceState)
         super.onSaveInstanceState(mSavedInstanceState)
     }
 
@@ -302,7 +302,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .withActivity(this)
                 .withToolbar(risuscito_toolbar!!)
                 .withHasStableIds(true)
-                .withAccountHeader(mAccountHeader!!)
+                .withAccountHeader(mAccountHeader)
                 .addDrawerItems(
                         PrimaryDrawerItem()
                                 .withName(R.string.activity_homepage)
@@ -380,7 +380,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         if (drawerItem.identifier == R.id.navigation_home.toLong()) {
                             fragment = Risuscito()
                             if (!isOnTablet)
-                                toolbar_layout!!.setExpanded(true, true)
+                                toolbar_layout?.setExpanded(true, true)
                         } else if (drawerItem.identifier == R.id.navigation_search.toLong()) {
                             fragment = SearchFragment()
                         } else if (drawerItem.identifier == R.id.navigation_indexes.toLong()) {
@@ -412,7 +412,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             }
                         }
 
-                        if (isOnTablet) mMiniDrawer!!.setSelection(drawerItem.identifier)
+                        if (isOnTablet) mMiniDrawer?.setSelection(drawerItem.identifier)
                         return isOnTablet
                     }
                 })
@@ -423,10 +423,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         if (isOnTablet) {
             drawer = mDrawerBuilder.buildView()
             // the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
-            mMiniDrawer = drawer!!
-                    .miniDrawer!!
-                    .withEnableSelectedMiniDrawerItemBackground(true)
-                    .withIncludeSecondaryDrawerItems(true)
+            mMiniDrawer = drawer?.miniDrawer?.withEnableSelectedMiniDrawerItemBackground(true)?.withIncludeSecondaryDrawerItems(true)
 
             // get the widths in px for the first and second panel
             val firstWidth = UIUtils.convertDpToPixel(302f, this).toInt()
@@ -436,27 +433,23 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             // method returns the view to be used in the crossfader)
             crossFader = Crossfader<CrossFadeSlidingPaneLayout>()
                     .withContent(main_frame)
-                    .withFirst(drawer!!.slider, firstWidth)
-                    .withSecond(mMiniDrawer!!.build(this), secondWidth)
+                    .withFirst(drawer?.slider, firstWidth)
+                    .withSecond(mMiniDrawer?.build(this), secondWidth)
                     .withSavedInstance(savedInstanceState)
                     .withGmailStyleSwiping()
                     .build()
 
             // define the crossfader to be used with the miniDrawer. This is required to be able to
             // automatically toggle open / close
-            mMiniDrawer!!.withCrossFader(CrossfadeWrapper(crossFader as Crossfader<*>))
+            mMiniDrawer?.withCrossFader(CrossfadeWrapper(crossFader as Crossfader<*>))
 
             // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
             // define the other one
-            crossFader!!
-                    .getCrossFadeSlidingPaneLayout()
-                    .setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-            crossFader!!
-                    .getCrossFadeSlidingPaneLayout()
-                    .setShadowResourceRight(R.drawable.material_drawer_shadow_right)
+            crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
+            crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
         } else {
             drawer = mDrawerBuilder.build()
-            drawer!!.drawerLayout.setStatusBarBackgroundColor(themeUtils.primaryColorDark())
+            drawer?.drawerLayout?.setStatusBarBackgroundColor(themeUtils.primaryColorDark())
         }
     }
 
@@ -520,8 +513,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 + " -> CONVERTO DA "
                                 + canto.savedTab
                                 + " A "
-                                + mappa[canto.savedTab!!])
-                canto.savedTab = mappa[canto.savedTab!!]
+                                + mappa[canto.savedTab ?: ""])
+                canto.savedTab = mappa[canto.savedTab ?: ""]
                 mDao.updateCanto(canto)
             }
         }
@@ -532,14 +525,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val conversion = intent.getStringExtra(Utility.CHANGE_LANGUAGE)
 
         var barre1 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - from: " + conversion.substring(0, 2))
+        Log.d(TAG, "convertiBarre - from: ${conversion.substring(0, 2)}")
         when (conversion.substring(0, 2)) {
             "uk" -> barre1 = CambioAccordi.barre_uk
             "en" -> barre1 = CambioAccordi.barre_en
         }
 
         var barre2 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - to: " + conversion.substring(3, 5))
+        Log.d(TAG, "convertiBarre - to: ${conversion.substring(3, 5)}")
         when (conversion.substring(3, 5)) {
             "uk" -> barre2 = CambioAccordi.barre_uk
             "en" -> barre2 = CambioAccordi.barre_en
@@ -568,34 +561,34 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun setupToolbarTitle(titleResId: Int) {
-        risuscito_toolbar!!.title = getString(titleResId)
+        risuscito_toolbar?.title = getString(titleResId)
     }
 
     fun closeFabMenu() {
-        if (fab_pager!!.isOpen)
-            fab_pager!!.close()
+        if (fab_pager?.isOpen == true)
+            fab_pager?.close()
     }
 
     fun toggleFabMenu() {
-        fab_pager!!.toggle()
+        fab_pager?.toggle()
     }
 
     fun enableFab(enable: Boolean) {
         Log.d(TAG, "enableFab: $enable")
         if (enable) {
-            if (fab_pager!!.isOpen)
-                fab_pager!!.close()
+            if (fab_pager?.isOpen == true)
+                fab_pager?.close()
             else {
-                val params = fab_pager!!.layoutParams as CoordinatorLayout.LayoutParams
-                params.behavior = if (mLUtils!!.isFabScrollingActive) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
+                val params = fab_pager?.layoutParams as CoordinatorLayout.LayoutParams
+                params.behavior = if (mLUtils?.isFabScrollingActive == true) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
                 fab_pager.requestLayout()
                 fab_pager.show()
             }
         } else {
-            if (fab_pager!!.isOpen)
-                fab_pager!!.close()
+            if (fab_pager?.isOpen == true)
+                fab_pager?.close()
             fab_pager.hide()
-            val params = fab_pager!!.layoutParams as CoordinatorLayout.LayoutParams
+            val params = fab_pager?.layoutParams as CoordinatorLayout.LayoutParams
             params.behavior = SpeedDialView.NoBehavior()
             fab_pager.requestLayout()
         }
@@ -609,7 +602,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         fab_pager.clearActionItems()
 
         if (optionMenu) {
-            fab_pager.expansionMode = if (mLUtils!!.isFabScrollingActive) (if (mLUtils!!.isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
+            fab_pager.expansionMode = if (mLUtils?.isFabScrollingActive == true) (if (mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
             val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
             val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 
@@ -714,43 +707,38 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         if (!isOnTablet) {
             Log.d(TAG, "enableBottombar - enabled: $enabled")
             if (enabled)
-                mLUtils!!.animateIn(bottom_bar)
+                mLUtils?.animateIn(bottom_bar)
             else
-                mLUtils!!.animateOut(bottom_bar)
+                mLUtils?.animateOut(bottom_bar)
         }
     }
 
     // [START signIn]
     fun signIn() {
-        //    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        val signInIntent = mSignInClient!!.signInIntent
+        val signInIntent = mSignInClient?.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     // [START signOut]
     private fun signOut() {
         FirebaseAuth.getInstance().signOut()
-        mSignInClient!!
-                .signOut()
-                .addOnCompleteListener {
-                    updateUI(false)
-                    PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
-                    Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
-                            .show()
-                }
+        mSignInClient?.signOut()?.addOnCompleteListener {
+            updateUI(false)
+            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
+            Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
+                    .show()
+        }
     }
 
     // [START revokeAccess]
     private fun revokeAccess() {
         FirebaseAuth.getInstance().signOut()
-        mSignInClient!!
-                .revokeAccess()
-                .addOnCompleteListener {
-                    updateUI(false)
-                    PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
-                    Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
-                            .show()
-                }
+        mSignInClient?.revokeAccess()?.addOnCompleteListener {
+            updateUI(false)
+            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
+            Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
+                    .show()
+        }
     }
 
     // [START onActivityResult]
@@ -778,7 +766,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             Toast.makeText(this, getString(
                     R.string.login_failed,
                     -1,
-                    task.exception!!.localizedMessage), Toast.LENGTH_SHORT)
+                    task.exception?.localizedMessage), Toast.LENGTH_SHORT)
                     .show()
             acct = null
             updateUI(false)
@@ -786,19 +774,19 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun firebaseAuthWithGoogle() {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct!!.id!!)
+        Log.d(TAG, "firebaseAuthWithGoogle: ${acct?.idToken}")
 
-        val credential = GoogleAuthProvider.getCredential(acct!!.idToken, null)
+        val credential = GoogleAuthProvider.getCredential(acct?.idToken, null)
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "firebaseAuthWithGoogle:success")
                         PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, true) }
-                        if (mViewModel!!.showSnackbar) {
-                            Toast.makeText(this, getString(R.string.connected_as, acct!!.displayName), Toast.LENGTH_SHORT)
+                        if (mViewModel.showSnackbar) {
+                            Toast.makeText(this, getString(R.string.connected_as, acct?.displayName), Toast.LENGTH_SHORT)
                                     .show()
-                            mViewModel!!.showSnackbar = false
+                            mViewModel.showSnackbar = false
                         }
                         updateUI(true)
                     } else {
@@ -807,7 +795,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         Toast.makeText(this, getString(
                                 R.string.login_failed,
                                 -1,
-                                task.exception!!.localizedMessage), Toast.LENGTH_SHORT)
+                                task.exception?.localizedMessage), Toast.LENGTH_SHORT)
                                 .show()
                     }
                 }
@@ -821,28 +809,28 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
         if (signedIn) {
             val profile: IProfile<*>
-            val profilePhoto = acct!!.photoUrl
+            val profilePhoto = acct?.photoUrl
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
                 personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length - 2) + 400
                 profile = ProfileDrawerItem()
-                        .withName(acct!!.displayName)
-                        .withEmail(acct!!.email)
+                        .withName(acct?.displayName)
+                        .withEmail(acct?.email)
                         .withIcon(personPhotoUrl)
                         .withIdentifier(PROF_ID)
                         .withTypeface(mRegularFont)
             } else {
                 profile = ProfileDrawerItem()
-                        .withName(acct!!.displayName)
-                        .withEmail(acct!!.email)
+                        .withName(acct?.displayName)
+                        .withEmail(acct?.email)
                         .withIcon(profileIcon)
                         .withIdentifier(PROF_ID)
                         .withTypeface(mRegularFont)
             }
             // Create the AccountHeader
-            mAccountHeader!!.updateProfile(profile)
-            if (mAccountHeader!!.profiles!!.size == 1) {
-                mAccountHeader!!.addProfiles(
+            mAccountHeader.updateProfile(profile)
+            if (mAccountHeader.profiles?.size == 1) {
+                mAccountHeader.addProfiles(
                         ProfileSettingDrawerItem()
                                 .withName(getString(R.string.gdrive_backup))
                                 .withIcon(CommunityMaterial.Icon.cmd_cloud_upload)
@@ -860,7 +848,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .withIcon(CommunityMaterial.Icon.cmd_account_key)
                                 .withIdentifier(R.id.gplus_revoke.toLong()))
             }
-            if (isOnTablet) mMiniDrawer!!.onProfileClick()
+            if (isOnTablet) mMiniDrawer?.onProfileClick()
         } else {
             val profile = ProfileDrawerItem()
                     .withName("")
@@ -868,28 +856,28 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     .withIcon(profileIcon)
                     .withIdentifier(PROF_ID)
                     .withTypeface(mRegularFont)
-            if (mAccountHeader!!.profiles!!.size > 1) {
-                mAccountHeader!!.removeProfile(1)
-                mAccountHeader!!.removeProfile(1)
-                mAccountHeader!!.removeProfile(1)
-                mAccountHeader!!.removeProfile(1)
+            if ((mAccountHeader.profiles?.size ?: 0) > 1) {
+                mAccountHeader.removeProfile(1)
+                mAccountHeader.removeProfile(1)
+                mAccountHeader.removeProfile(1)
+                mAccountHeader.removeProfile(1)
             }
-            mAccountHeader!!.updateProfile(profile)
-            if (isOnTablet) mMiniDrawer!!.onProfileClick()
+            mAccountHeader.updateProfile(profile)
+            if (isOnTablet) mMiniDrawer?.onProfileClick()
         }
         hideProgressDialog()
     }
 
     private fun showProgressDialog() {
-        loadingBar!!.visibility = View.VISIBLE
+        loadingBar?.visibility = View.VISIBLE
     }
 
     private fun hideProgressDialog() {
-        loadingBar!!.visibility = View.GONE
+        loadingBar?.visibility = View.GONE
     }
 
     fun setShowSnackbar() {
-        this.mViewModel!!.showSnackbar = true
+        this.mViewModel.showSnackbar = true
     }
 
     override fun onPositive(tag: String) {
@@ -948,104 +936,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         sFragment?.setmCallback(this)
     }
 
-    private class TranslationTask internal constructor(activity: MainActivity) : AsyncTask<Void, Void, Void>() {
-
-        private val activityWeakReference: WeakReference<MainActivity> = WeakReference(activity)
-
-        override fun doInBackground(vararg sUrl: Void): Void? {
-            activityWeakReference.get()!!.intent.removeExtra(Utility.DB_RESET)
-            activityWeakReference.get()!!.convertTabs()
-            activityWeakReference.get()!!.convertiBarre()
-            return null
-        }
-
-        override fun onPreExecute() {
-            super.onPreExecute()
-            ProgressDialogFragment.Builder(activityWeakReference.get()!!, null, "TRANSLATION")
-                    .content(R.string.translation_running)
-                    .progressIndeterminate(true)
-                    .show()
-        }
-
-        override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
-            activityWeakReference.get()!!.intent.removeExtra(Utility.CHANGE_LANGUAGE)
-            try {
-                activityWeakReference.get()!!.dismissProgressDialog("TRANSLATION")
-            } catch (e: IllegalArgumentException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            }
-
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private inner class BackupTask internal constructor(activity: Activity) : AsyncTask<Void, Void, String>() {
-
-        private val activityReference: WeakReference<Activity> = WeakReference(activity)
-
-        override fun doInBackground(vararg sUrl: Void): String {
-            return try {
-                backupDatabase(acct!!.id)
-                val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-                intentBroadcast.putExtra(WHICH, "BACKUP")
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-                backupSharedPreferences(acct!!.id, acct!!.email)
-                ""
-            } catch (e: Exception) {
-                Log.e(TAG, "Exception: " + e.localizedMessage, e)
-                "error: " + e.localizedMessage
-            }
-        }
-
-        override fun onPostExecute(result: String) {
-            super.onPostExecute(result)
-            dismissProgressDialog(BACKUP_RUNNING)
-            if (result.isEmpty())
-                Snackbar.make(
-                        activityReference.get()!!.main_content,
-                        R.string.gdrive_backup_success,
-                        Snackbar.LENGTH_LONG)
-                        .show()
-            else
-                Snackbar.make(activityReference.get()!!.main_content, result, Snackbar.LENGTH_SHORT).show()
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private inner class RestoreTask internal constructor(activity: Activity) : AsyncTask<Void, Void, String>() {
-
-        private val activityReference: WeakReference<Activity> = WeakReference(activity)
-
-        override fun doInBackground(vararg sUrl: Void): String {
-            return try {
-                restoreDatabase(acct!!.id)
-                val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-                intentBroadcast.putExtra(WHICH, RESTORE)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-                restoreSharedPreferences(acct!!.id)
-                ""
-            } catch (e: Exception) {
-                Log.e(TAG, "Exception: " + e.localizedMessage, e)
-                "error: " + e.localizedMessage
-            }
-        }
-
-        override fun onPostExecute(result: String) {
-            super.onPostExecute(result)
-            dismissProgressDialog(RESTORE_RUNNING)
-            if (result.isEmpty())
-                SimpleDialogFragment.Builder(this@MainActivity, this@MainActivity, RESTART)
-                        .title(R.string.general_message)
-                        .content(R.string.gdrive_restore_success)
-                        .positiveButton(R.string.ok)
-                        .show()
-            else
-                Snackbar.make(activityReference.get()!!.main_content, result, Snackbar.LENGTH_LONG).show()
-        }
-
-    }
-
     private fun backToHome(exitAlso: Boolean) {
         val myFragment = supportFragmentManager.findFragmentByTag(R.id.navigation_home.toString())
         if (myFragment != null && myFragment.isVisible) {
@@ -1055,11 +945,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
 
         if (isOnTablet)
-            mMiniDrawer!!.setSelection(R.id.navigation_home.toLong())
+            mMiniDrawer?.setSelection(R.id.navigation_home.toLong())
         else {
-            toolbar_layout!!.setExpanded(true, true)
+            toolbar_layout?.setExpanded(true, true)
         }
-        drawer!!.setSelection(R.id.navigation_home.toLong())
+        drawer?.setSelection(R.id.navigation_home.toLong())
     }
 
     companion object {
@@ -1077,5 +967,118 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         private const val RESTART = "RESTART"
         private const val RESTORE = "RESTORE"
         private val TAG = MainActivity::class.java.canonicalName
+
+        private class TranslationTask internal constructor(activity: MainActivity) : AsyncTask<Void, Void, Void>() {
+
+            private val activityWeakReference: WeakReference<MainActivity> = WeakReference(activity)
+
+            override fun doInBackground(vararg sUrl: Void): Void? {
+                activityWeakReference.get()?.let {
+                    it.intent.removeExtra(Utility.DB_RESET)
+                    it.convertTabs()
+                    it.convertiBarre()
+                }
+                return null
+            }
+
+            override fun onPreExecute() {
+                super.onPreExecute()
+                activityWeakReference.get()?.let {
+                    ProgressDialogFragment.Builder(it, null, "TRANSLATION")
+                            .content(R.string.translation_running)
+                            .progressIndeterminate(true)
+                            .show()
+                }
+            }
+
+            override fun onPostExecute(result: Void?) {
+                super.onPostExecute(result)
+                activityWeakReference.get()?.let {
+                    it.intent.removeExtra(Utility.CHANGE_LANGUAGE)
+                    try {
+                        it.dismissProgressDialog("TRANSLATION")
+                    } catch (e: IllegalArgumentException) {
+                        Log.e(javaClass.name, e.localizedMessage, e)
+                    }
+                }
+            }
+        }
+
+        private class BackupTask internal constructor(activity: MainActivity) : AsyncTask<Void, Void, String>() {
+
+            private val activityReference: WeakReference<MainActivity> = WeakReference(activity)
+
+            override fun doInBackground(vararg sUrl: Void): String {
+                activityReference.get()?.let {
+                    return try {
+                        it.backupDatabase(it.acct?.id)
+                        val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
+                        intentBroadcast.putExtra(WHICH, "BACKUP")
+                        LocalBroadcastManager.getInstance(it).sendBroadcast(intentBroadcast)
+                        it.backupSharedPreferences(it.acct?.id, it.acct?.email)
+                        ""
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Exception: " + e.localizedMessage, e)
+                        "error: " + e.localizedMessage
+                    }
+                }
+                Log.e(TAG, "activityReference.get() is null")
+                return "error: activityReference.get() is null"
+            }
+
+            override fun onPostExecute(result: String) {
+                super.onPostExecute(result)
+                activityReference.get()?.let {
+                    it.dismissProgressDialog(BACKUP_RUNNING)
+                    if (result.isEmpty())
+                        Snackbar.make(
+                                it.main_content,
+                                R.string.gdrive_backup_success,
+                                Snackbar.LENGTH_LONG)
+                                .show()
+                    else
+                        Snackbar.make(it.main_content, result, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        private class RestoreTask internal constructor(activity: MainActivity) : AsyncTask<Void, Void, String>() {
+
+            private val activityReference: WeakReference<MainActivity> = WeakReference(activity)
+
+            override fun doInBackground(vararg sUrl: Void): String {
+                activityReference.get()?.let {
+                    return try {
+                        it.restoreDatabase(it.acct?.id)
+                        val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
+                        intentBroadcast.putExtra(WHICH, RESTORE)
+                        LocalBroadcastManager.getInstance(it).sendBroadcast(intentBroadcast)
+                        it.restoreSharedPreferences(it.acct?.id)
+                        ""
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Exception: " + e.localizedMessage, e)
+                        "error: " + e.localizedMessage
+                    }
+                }
+                Log.e(TAG, "activityReference.get() is null")
+                return "error: activityReference.get() is null"
+            }
+
+            override fun onPostExecute(result: String) {
+                super.onPostExecute(result)
+                activityReference.get()?.let {
+                    it.dismissProgressDialog(RESTORE_RUNNING)
+                    if (result.isEmpty())
+                        SimpleDialogFragment.Builder(it, it, RESTART)
+                                .title(R.string.general_message)
+                                .content(R.string.gdrive_restore_success)
+                                .positiveButton(R.string.ok)
+                                .show()
+                    else
+                        Snackbar.make(it.main_content, result, Snackbar.LENGTH_LONG).show()
+                }
+            }
+
+        }
     }
 }
