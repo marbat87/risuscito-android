@@ -78,7 +78,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                         javaClass.name,
                         "$ConsegnatiSaverService.DATA_DONE: ${intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0)}")
                 val fragment = ProgressDialogFragment.findVisible(
-                        mMainActivity!!, CONSEGNATI_SAVING)
+                        mMainActivity, CONSEGNATI_SAVING)
                 fragment?.setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0))
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
@@ -92,7 +92,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             try {
                 Log.d(javaClass.name, "BROADCAST_SAVING_COMPLETED")
                 val fragment = ProgressDialogFragment.findVisible(
-                        mMainActivity!!, CONSEGNATI_SAVING)
+                        mMainActivity, CONSEGNATI_SAVING)
                 fragment?.dismiss()
                 chooseRecycler?.visibility = View.GONE
                 enableBottombar(false)
@@ -161,7 +161,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 mMainActivity!!, null, CONSEGNATI_SAVING)
                                 .content(R.string.save_consegnati_running)
                                 .progressIndeterminate(false)
-                                .progressMax(selectableAdapter.itemCount)
+                                .progressMax(mCantiViewModel.titoliChoose.size)
                                 .show()
 
                         val mSelected = selectExtension?.selectedItems
@@ -478,11 +478,9 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 this,
                 Observer { cantos ->
                     Log.d(TAG, "onChanged: " + (cantos != null))
-                    if (cantos != null) {
-                        mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
-                        cantoAdapter.set(mCantiViewModel.titoli)
-                        no_consegnati?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-                    }
+                    mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
+                    cantoAdapter.set(mCantiViewModel.titoli)
+                    no_consegnati?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                 })
     }
 
@@ -492,28 +490,32 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         override fun doInBackground(vararg sUrl: Void): Void? {
 
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.requireContext()).consegnatiDao()
-            val canti = mDao.choosen
-            val newList = ArrayList<CheckableItem>()
-            for (canto in canti) {
-                val checkableItem = CheckableItem()
-                checkableItem.isSelected = canto.consegnato > 0
-                newList.add(
-                        checkableItem
-                                .withTitle(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                .withPage(fragmentReference.get()!!.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                .withColor(canto.color ?: Canto.BIANCO)
-                                .withId(canto.id)
-                )
+            fragmentReference.get()?.let {
+                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).consegnatiDao()
+                val canti = mDao.choosen
+                val newList = ArrayList<CheckableItem>()
+                for (canto in canti) {
+                    val checkableItem = CheckableItem()
+                    checkableItem.isSelected = canto.consegnato > 0
+                    newList.add(
+                            checkableItem
+                                    .withTitle(it.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                    .withPage(it.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                    .withColor(canto.color ?: Canto.BIANCO)
+                                    .withId(canto.id)
+                    )
+                }
+                it.mCantiViewModel.titoliChoose = newList.sortedWith(compareBy { item -> item.title.toString() })
+                it.mCantiViewModel.titoliChooseFiltered = it.mCantiViewModel.titoliChoose.sortedWith(compareBy { item -> item.title.toString() })
             }
-            fragmentReference.get()!!.mCantiViewModel.titoliChoose = newList.sortedWith(compareBy { it.title.toString() })
-            fragmentReference.get()!!.mCantiViewModel.titoliChooseFiltered = fragmentReference.get()!!.mCantiViewModel.titoliChoose.sortedWith(compareBy { it.title.toString() })
             return null
         }
 
         override fun onPostExecute(result: Void?) {
             super.onPostExecute(result)
-            fragmentReference.get()!!.selectableAdapter.set(fragmentReference.get()!!.mCantiViewModel.titoliChooseFiltered)
+            fragmentReference.get()?.let {
+                it.selectableAdapter.set(it.mCantiViewModel.titoliChooseFiltered)
+            }
         }
     }
 

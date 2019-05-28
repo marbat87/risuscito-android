@@ -184,10 +184,12 @@ class InputTextDialogFragment : DialogFragment() {
     }
 
     companion object {
-
-        fun findVisible(context: AppCompatActivity, tag: String): InputTextDialogFragment? {
-            val frag = context.supportFragmentManager.findFragmentByTag(tag)
-            return if (frag != null && frag is InputTextDialogFragment) frag else null
+        fun findVisible(context: AppCompatActivity?, tag: String): InputTextDialogFragment? {
+            context?.let {
+                val frag = it.supportFragmentManager.findFragmentByTag(tag)
+                return if (frag != null && frag is InputTextDialogFragment) frag else null
+            }
+            return null
         }
 
         private val TAG = InputTextDialogFragment::class.java.canonicalName

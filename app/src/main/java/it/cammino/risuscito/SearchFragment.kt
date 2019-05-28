@@ -16,7 +16,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -72,23 +71,23 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         rootView = inflater.inflate(R.layout.search_layout, container, false)
 
         mMainActivity = activity as MainActivity?
-        mMainActivity!!.setupToolbarTitle(R.string.title_activity_search)
+        mMainActivity?.setupToolbarTitle(R.string.title_activity_search)
 
         val args = Bundle().apply { putInt("tipoLista", 0) }
-        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(SimpleIndexViewModel::class.java)
+        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0")!!)
+            val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
             mViewModel.advancedSearch = currentItem != 0
         }
 
         try {
             val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
-                    activity!!.resources.configuration)
+                    requireActivity().resources.configuration)
                     .language) {
-                "uk" -> activity!!.assets.open("fileout_uk.xml")
-                "en" -> activity!!.assets.open("fileout_en.xml")
-                else -> activity!!.assets.open("fileout_new.xml")
+                "uk" -> requireActivity().assets.open("fileout_uk.xml")
+                "en" -> requireActivity().assets.open("fileout_en.xml")
+                else -> requireActivity().assets.open("fileout_new.xml")
             }
             aTexts = CantiXmlParser().parse(inputStream)
             inputStream.close()
@@ -100,16 +99,16 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             Crashlytics.logException(e)
         }
 
-        mLUtils = LUtils.getInstance(activity!!)
+        mLUtils = LUtils.getInstance(requireActivity())
 
-        var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, SEARCH_REPLACE)
+        var sFragment = SimpleDialogFragment.findVisible(mMainActivity, SEARCH_REPLACE)
         sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, SEARCH_REPLACE_2)
+        sFragment = SimpleDialogFragment.findVisible(mMainActivity, SEARCH_REPLACE_2)
         sFragment?.setmCallback(this)
 
-        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
+        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
 
-        subscribeUiFavorites()
+        subscribeUiCanti()
 
         return rootView
     }
@@ -117,9 +116,9 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity!!.setTabVisible(false)
-        mMainActivity!!.enableFab(false)
-        mMainActivity!!.enableBottombar(false)
+        mMainActivity?.setTabVisible(false)
+        mMainActivity?.enableFab(false)
+        mMainActivity?.enableBottombar(false)
 
         ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
@@ -127,36 +126,35 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                val intent = Intent(activity!!.applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to item.source!!.getText(context), "idCanto" to item.id))
-                mLUtils!!.startActivityWithTransition(intent)
+                val intent = Intent(requireActivity().applicationContext, PaginaRenderActivity::class.java)
+                intent.putExtras(bundleOf("pagina" to item.source?.getText(context), "idCanto" to item.id))
+                mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
             consume
         }
 
-        cantoAdapter.onLongClickListener = { v: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+        cantoAdapter.onLongClickListener = { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             mViewModel.idDaAgg = item.id
-            mViewModel.popupMenu(this, v!!, SEARCH_REPLACE, SEARCH_REPLACE_2, listePersonalizzate)
+            mViewModel.popupMenu(this, v, SEARCH_REPLACE, SEARCH_REPLACE_2, listePersonalizzate)
             true
         }
 
         cantoAdapter.setHasStableIds(true)
 
         matchedList.adapter = cantoAdapter
-        val mMainActivity = activity as MainActivity?
-        val llm = if (mMainActivity!!.isGridLayout)
-            GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
+        val llm = if (mMainActivity?.isGridLayout == true)
+            GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         else
             LinearLayoutManager(context)
         matchedList.layoutManager = llm
         matchedList.setHasFixedSize(true)
-        val insetDivider = DividerItemDecoration(context!!, llm.orientation)
+        val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         insetDivider.setDrawable(
-                ContextCompat.getDrawable(context!!, R.drawable.material_inset_divider)!!)
+                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
 
-        val icon = IconicsDrawable(context!!)
+        val icon = IconicsDrawable(requireContext())
                 .icon(CommunityMaterial.Icon.cmd_close_circle)
                 .colorRes(R.color.text_color_secondary)
                 .sizeDp(32)
@@ -205,14 +203,16 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     }
                 }
             }
-            popupMenu.show(context!!, view)
+            popupMenu.show(requireContext(), view)
         }
 
     }
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
+        searchTask?.let {
+            if (it.status == Status.RUNNING) it.cancel(true)
+        }
         super.onDestroy()
     }
 
@@ -220,10 +220,11 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             SEARCH_REPLACE -> {
-                listePersonalizzate!![mViewModel.idListaClick]
-                        .lista!!
-                        .addCanto(mViewModel.idDaAgg.toString(), mViewModel.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(this, listePersonalizzate!![mViewModel.idListaClick])
+                listePersonalizzate?.let {
+                    it[mViewModel.idListaClick]
+                            .lista?.addCanto(mViewModel.idDaAgg.toString(), mViewModel.idPosizioneClick)
+                    ListeUtils.updateListaPersonalizzata(this, it[mViewModel.idListaClick])
+                }
             }
             SEARCH_REPLACE_2 ->
                 ListeUtils.updatePosizione(this, mViewModel.idDaAgg, mViewModel.idListaDaAgg, mViewModel.posizioneDaAgg)
@@ -235,13 +236,16 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private fun ricercaStringa(s: String) {
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
-            if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
+            searchTask?.let {
+                if (it.status == Status.RUNNING) it.cancel(true)
+            }
             searchTask = SearchTask(this)
-            searchTask!!.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch)
+            searchTask?.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch)
         } else {
             if (s.isEmpty()) {
-                if (searchTask != null && searchTask!!.status == Status.RUNNING)
-                    searchTask!!.cancel(true)
+                searchTask?.let {
+                    if (it.status == Status.RUNNING) it.cancel(true)
+                }
                 search_no_results.visibility = View.GONE
                 cantoAdapter.clear()
                 search_progress.visibility = View.INVISIBLE
@@ -261,54 +265,53 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             Log.d(TAG, "ADVANCED: " + sSearchText[1])
             val s = sSearchText[0] as String
             val advanced = sSearchText[1] as Boolean
+            fragmentReference.get()?.let { fragment ->
+                if (advanced) {
+                    val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-            if (advanced) {
-                val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-                var text: String
-
-                for (aText in fragmentReference.get()!!.aTexts) {
-                    if (isCancelled) return titoliResult
-
-                    if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
-
-                    var found = true
-                    for (word in words) {
+                    for (aText in fragment.aTexts) {
                         if (isCancelled) return titoliResult
 
-                        if (word.trim { it <= ' ' }.length > 1) {
-                            text = word.trim { it <= ' ' }
-                            text = text.toLowerCase(
-                                    ThemeableActivity.getSystemLocalWrapper(
-                                            fragmentReference.get()!!.activity!!.resources.configuration))
-                            text = Utility.removeAccents(text)
+                        if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
 
-                            if (!aText[1]!!.contains(text)) found = false
-                        }
-                    }
-
-                    if (found) {
-                        Log.d(TAG, "aText[0]: ${aText[0]}")
-
-                        fragmentReference.get()!!.mViewModel.titoli.sortedBy { it.title!!.getText(fragmentReference.get()!!.context) }
-                                .filter { it.undecodedSource == aText[0]!! }
-                                .forEach {
-                                    if (isCancelled) return titoliResult
-                                    titoliResult.add(it)
-                                }
-
-                    }
-                }
-            } else {
-                val stringa = Utility.removeAccents(s).toLowerCase()
-                Log.d(TAG, "onTextChanged: stringa $stringa")
-
-                fragmentReference.get()!!.mViewModel.titoli.sortedBy { it.title!!.getText(fragmentReference.get()!!.context) }
-                        .filter { Utility.removeAccents(it.title!!.getText(fragmentReference.get()!!.context)).toLowerCase().contains(stringa) }
-                        .forEach {
+                        var found = true
+                        for (word in words) {
                             if (isCancelled) return titoliResult
-                            titoliResult.add(it.withFilter(stringa))
+
+                            if (word.trim { it <= ' ' }.length > 1) {
+                                var text = word.trim { it <= ' ' }
+                                text = text.toLowerCase(
+                                        ThemeableActivity.getSystemLocalWrapper(
+                                                fragment.requireActivity().resources.configuration))
+                                text = Utility.removeAccents(text)
+
+                                if (aText[1]?.contains(text) != true) found = false
+                            }
                         }
+
+                        if (found) {
+                            Log.d(TAG, "aText[0]: ${aText[0]}")
+                            fragment.mViewModel.titoli.sortedBy { it.title?.getText(fragment.context) }
+                                    .filter { (aText[0] ?: "") == it.undecodedSource }
+                                    .forEach {
+                                        if (isCancelled) return titoliResult
+                                        titoliResult.add(it)
+                                    }
+                        }
+                    }
+                } else {
+                    val stringa = Utility.removeAccents(s).toLowerCase()
+                    Log.d(TAG, "onTextChanged: stringa $stringa")
+                    fragment.mViewModel.titoli.sortedBy { it.title?.getText(fragment.context) }
+                            .filter {
+                                Utility.removeAccents(it.title?.getText(fragment.context)
+                                        ?: "").toLowerCase().contains(stringa)
+                            }
+                            .forEach {
+                                if (isCancelled) return titoliResult
+                                titoliResult.add(it.withFilter(stringa))
+                            }
+                }
             }
             return titoliResult
         }
@@ -332,16 +335,12 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
     }
 
-    private fun subscribeUiFavorites() {
-        mViewModel
-                .itemsResult!!
-                .observe(
-                        this,
-                        Observer<List<SimpleItem>> { canti ->
-                            if (canti != null) {
-                                mViewModel.titoli = canti.sortedBy { it.title!!.getText(context) }
-                            }
-                        })
+    private fun subscribeUiCanti() {
+        mViewModel.itemsResult?.observe(
+                this,
+                Observer<List<SimpleItem>> { canti ->
+                    mViewModel.titoli = canti.sortedBy { it.title?.getText(context) }
+                })
     }
 
     companion object {

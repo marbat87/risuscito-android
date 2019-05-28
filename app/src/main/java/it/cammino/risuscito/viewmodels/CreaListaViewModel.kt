@@ -2,8 +2,6 @@ package it.cammino.risuscito.viewmodels
 
 import androidx.lifecycle.ViewModel
 
-import java.util.ArrayList
-
 import it.cammino.risuscito.items.SwipeableItem
 
 class CreaListaViewModel : ViewModel() {

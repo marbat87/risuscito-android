@@ -11,7 +11,6 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.util.SparseArray
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -52,10 +51,10 @@ import kotlinx.android.synthetic.main.tabs_layout.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 
-    private var mCustomListsViewModel: CustomListsViewModel? = null
+    private lateinit var mCustomListsViewModel: CustomListsViewModel
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
-    private var titoliListe: Array<String?>? = null
-    private var idListe: IntArray? = null
+    private var titoliListe: Array<String?> = arrayOfNulls(0)
+    private var idListe: IntArray = IntArray(0)
     private var movePage: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mRegularFont: Typeface? = null
@@ -73,20 +72,20 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
         mMainActivity = activity as MainActivity?
 
-        mRegularFont = ResourcesCompat.getFont(mMainActivity!!, R.font.googlesans_regular)
+        mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
 
-        mMainActivity!!.setupToolbarTitle(R.string.title_activity_custom_lists)
+        mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
 
-        titoliListe = arrayOfNulls(0)
-        idListe = IntArray(0)
+//        titoliListe = arrayOfNulls(0)
+//        idListe = IntArray(0)
 
         movePage = savedInstanceState != null
 
-        val iFragment = InputTextDialogFragment.findVisible((activity as AppCompatActivity?)!!, NEW_LIST)
+        val iFragment = InputTextDialogFragment.findVisible(mMainActivity, NEW_LIST)
         iFragment?.setmCallback(this)
-        var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, RESET_LIST)
+        var sFragment = SimpleDialogFragment.findVisible(mMainActivity, RESET_LIST)
         sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, DELETE_LIST)
+        sFragment = SimpleDialogFragment.findVisible(mMainActivity, DELETE_LIST)
         sFragment?.setmCallback(this)
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -101,12 +100,12 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mSectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager)
-        mMainActivity!!.enableBottombar(false)
+        mMainActivity?.enableBottombar(false)
         view_pager.adapter = mSectionsPagerAdapter
 
-        tabs = mMainActivity!!.getMaterialTabs()
-        tabs!!.visibility = View.VISIBLE
-        tabs!!.setupWithViewPager(view_pager)
+        tabs = mMainActivity?.getMaterialTabs()
+        tabs?.visibility = View.VISIBLE
+        tabs?.setupWithViewPager(view_pager)
 
         subscribeUiFavorites()
     }
@@ -117,13 +116,15 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        IconicsMenuInflaterUtil.inflate(
-                activity!!.menuInflater, activity!!, R.menu.help_menu, menu!!)
+        menu?.let {
+            IconicsMenuInflaterUtil.inflate(
+                    requireActivity().menuInflater, requireContext(), R.menu.help_menu, it)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item!!.itemId) {
+        when (item?.itemId) {
             R.id.action_help -> {
                 playIntro()
                 return true
@@ -136,14 +137,15 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
      */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mCustomListsViewModel!!.indexToShow = view_pager.currentItem
+        mCustomListsViewModel.indexToShow = view_pager.currentItem
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.i(TAG, "onActivityResult requestCode: $requestCode")
         super.onActivityResult(requestCode, resultCode, data)
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
-            mCustomListsViewModel!!.indexToShow = mCustomListsViewModel!!.indDaModif
+            Log.i(TAG, "mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
+            mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif
             movePage = true
         }
         if (requestCode == ListaPredefinitaFragment.TAG_INSERT_PAROLA
@@ -151,7 +153,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 || requestCode == ListaPersonalizzataFragment.TAG_INSERT_PERS) {
             Log.i(TAG, "onActivityResult resultCode: $resultCode")
             if (resultCode == RESULT_OK || resultCode == RESULT_KO)
-                Snackbar.make(activity!!.main_content, if (resultCode == RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(requireActivity().main_content, if (resultCode == RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -160,7 +162,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         when (tag) {
             NEW_LIST -> {
                 val mEditText = dialog.getInputField()
-                mCustomListsViewModel!!.indDaModif = 2 + idListe!!.size
+                mCustomListsViewModel.indDaModif = 2 + idListe.size
                 startActivityForResult(
                         Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf("titolo" to mEditText.text.toString(), "modifica" to false)), TAG_CREA_LISTA)
                 Animatoo.animateSlideUp(activity)
@@ -174,21 +176,21 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             RESET_LIST -> {
-                val mView = mSectionsPagerAdapter!!.getRegisteredFragment(view_pager.currentItem).view
+                val mView = mSectionsPagerAdapter?.getRegisteredFragment(view_pager.currentItem)?.view
                 mView?.button_pulisci?.performClick()
             }
             DELETE_LIST ->
                 ioThread {
-                    val mDao = RisuscitoDatabase.getInstance(context!!).listePersDao()
+                    val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
                     val listToDelete = ListaPers()
-                    listToDelete.id = mCustomListsViewModel!!.idDaCanc
+                    listToDelete.id = mCustomListsViewModel.idDaCanc
                     mDao.deleteList(listToDelete)
-                    mCustomListsViewModel!!.indexToShow = 0
+                    mCustomListsViewModel.indexToShow = 0
                     movePage = true
                     Snackbar.make(
-                            activity!!.main_content,
+                            requireActivity().main_content,
                             getString(R.string.list_removed)
-                                    + mCustomListsViewModel!!.titoloDaCanc
+                                    + mCustomListsViewModel.titoloDaCanc
                                     + "'!",
                             Snackbar.LENGTH_LONG)
                             .setAction(
@@ -197,15 +199,15 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                                     return@setAction
                                 mLastClickTime = SystemClock.elapsedRealtime()
-                                mCustomListsViewModel!!.indexToShow = mCustomListsViewModel!!.listaDaCanc + 2
+                                mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
                                 movePage = true
                                 ioThread {
-                                    val mListePersDao = RisuscitoDatabase.getInstance(context!!)
+                                    val mListePersDao = RisuscitoDatabase.getInstance(requireContext())
                                             .listePersDao()
                                     val listaToRestore = ListaPers()
-                                    listaToRestore.id = mCustomListsViewModel!!.idDaCanc
-                                    listaToRestore.titolo = mCustomListsViewModel!!.titoloDaCanc
-                                    listaToRestore.lista = mCustomListsViewModel!!.celebrazioneDaCanc
+                                    listaToRestore.id = mCustomListsViewModel.idDaCanc
+                                    listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+                                    listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
                                     mListePersDao.insertLista(listaToRestore)
                                 }
                             }.show()
@@ -217,10 +219,10 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     private fun playIntro() {
         enableFab(true)
-        val doneDrawable = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_check)
+        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check)
                 .sizeDp(24)
                 .paddingDp(4)
-        TapTargetSequence(activity!!)
+        TapTargetSequence(requireActivity())
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forView(
@@ -263,28 +265,30 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     private fun subscribeUiFavorites() {
-        mCustomListsViewModel!!
-                .customListResult!!
-                .observe(
-                        this,
-                        Observer { list ->
-                            titoliListe = arrayOfNulls(list!!.size)
-                            idListe = IntArray(list.size)
+        mCustomListsViewModel.customListResult?.observe(
+                this,
+                Observer { list ->
+                    list?.let {
+                        titoliListe = arrayOfNulls(it.size)
+                        idListe = IntArray(it.size)
 
-                            for (i in list.indices) {
-                                titoliListe!![i] = list[i].titolo
-                                idListe!![i] = list[i].id
+                        for (i in it.indices) {
+                            titoliListe[i] = it[i].titolo
+                            idListe[i] = it[i].id
+                        }
+                        mSectionsPagerAdapter?.notifyDataSetChanged()
+                        tabs?.setupWithViewPager(view_pager)
+                        Log.i(TAG, "movePage: $movePage")
+                        Log.i(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
+                        if (movePage) {
+                            Handler().postDelayed(200) {
+                                tabs?.getTabAt(mCustomListsViewModel.indexToShow)?.select()
+                                mCustomListsViewModel.indexToShow = 0
+                                movePage = false
                             }
-                            mSectionsPagerAdapter!!.notifyDataSetChanged()
-                            tabs!!.setupWithViewPager(view_pager)
-                            if (movePage) {
-                                Handler().postDelayed(200) {
-                                    tabs!!.getTabAt(mCustomListsViewModel!!.indexToShow)!!.select()
-                                    mCustomListsViewModel!!.indexToShow = 0
-                                    movePage = false
-                                }
-                            }
-                        })
+                        }
+                    }
+                })
     }
 
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
@@ -296,7 +300,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 1 -> ListaPredefinitaFragment.newInstance(2)
                 else -> {
                     val listaPersFrag = ListaPersonalizzataFragment()
-                    listaPersFrag.arguments = bundleOf("idLista" to idListe!![position - 2])
+                    listaPersFrag.arguments = bundleOf("idLista" to idListe[position - 2])
                     listaPersFrag
                 }
             }
@@ -308,9 +312,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
             return fragment
         }
 
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        override fun destroyItem(container: ViewGroup, position: Int, mObject: Any) {
             registeredFragments.remove(position)
-            super.destroyItem(container, position, `object`)
+            super.destroyItem(container, position, mObject)
         }
 
         internal fun getRegisteredFragment(position: Int): Fragment {
@@ -318,15 +322,15 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         }
 
         override fun getCount(): Int {
-            return 2 + titoliListe!!.size
+            return 2 + titoliListe.size
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-            val l = ThemeableActivity.getSystemLocalWrapper(activity!!.resources.configuration)
+            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
             return when (position) {
                 0 -> getString(R.string.title_activity_canti_parola).toUpperCase(l)
                 1 -> getString(R.string.title_activity_canti_eucarestia).toUpperCase(l)
-                else -> titoliListe!![position - 2]!!.toUpperCase(l)
+                else -> titoliListe[position - 2]?.toUpperCase(l)
             }
         }
 
@@ -336,23 +340,23 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     fun getFab(): FloatingActionButton {
-        return mMainActivity!!.getFab()
+        return mMainActivity?.getFab()!!
     }
 
     private fun enableFab(enabled: Boolean) {
-        mMainActivity!!.enableFab(enabled)
+        mMainActivity?.enableFab(enabled)
     }
 
     private fun closeFabMenu() {
-        mMainActivity!!.closeFabMenu()
+        mMainActivity?.closeFabMenu()
     }
 
     private fun toggleFabMenu() {
-        mMainActivity!!.toggleFabMenu()
+        mMainActivity?.toggleFabMenu()
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = IconicsDrawable(activity!!)
+        val icon = IconicsDrawable(requireContext())
                 .icon(CommunityMaterial.Icon2.cmd_plus)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)
@@ -363,7 +367,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_pulisci -> {
                     closeFabMenu()
                     SimpleDialogFragment.Builder(
-                            (activity as AppCompatActivity?)!!, this, RESET_LIST)
+                            mMainActivity!!, this, RESET_LIST)
                             .title(R.string.dialog_reset_list_title)
                             .content(R.string.reset_list_question)
                             .positiveButton(R.string.reset_confirm)
@@ -374,7 +378,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_add_lista -> {
                     closeFabMenu()
                     InputTextDialogFragment.Builder(
-                            (activity as AppCompatActivity?)!!, this, NEW_LIST)
+                            mMainActivity!!, this, NEW_LIST)
                             .title(R.string.lista_add_desc)
                             .positiveButton(R.string.create_confirm)
                             .negativeButton(R.string.cancel)
@@ -383,32 +387,30 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 }
                 R.id.fab_condividi -> {
                     closeFabMenu()
-                    val mView = mSectionsPagerAdapter!!
-                            .getRegisteredFragment(view_pager.currentItem)
-                            .view
+                    val mView = mSectionsPagerAdapter?.getRegisteredFragment(view_pager.currentItem)?.view
                     mView?.button_condividi?.performClick()
                     true
                 }
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
-                    mCustomListsViewModel!!.indDaModif = view_pager.currentItem
+                    mCustomListsViewModel.indDaModif = view_pager.currentItem
                     startActivityForResult(
-                            Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf("idDaModif" to idListe!![view_pager.currentItem - 2], "modifica" to true)),
+                            Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf("idDaModif" to idListe[view_pager.currentItem - 2], "modifica" to true)),
                             TAG_MODIFICA_LISTA)
                     Animatoo.animateSlideUp(activity)
                     true
                 }
                 R.id.fab_delete_lista -> {
                     closeFabMenu()
-                    mCustomListsViewModel!!.listaDaCanc = view_pager.currentItem - 2
-                    mCustomListsViewModel!!.idDaCanc = idListe!![mCustomListsViewModel!!.listaDaCanc]
+                    mCustomListsViewModel.listaDaCanc = view_pager.currentItem - 2
+                    mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
                     ioThread {
-                        val mDao = RisuscitoDatabase.getInstance(activity!!).listePersDao()
-                        val lista = mDao.getListById(mCustomListsViewModel!!.idDaCanc)
-                        mCustomListsViewModel!!.titoloDaCanc = lista?.titolo
-                        mCustomListsViewModel!!.celebrazioneDaCanc = lista?.lista
+                        val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+                        val lista = mDao.getListById(mCustomListsViewModel.idDaCanc)
+                        mCustomListsViewModel.titoloDaCanc = lista?.titolo
+                        mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
                         SimpleDialogFragment.Builder(
-                                (activity as AppCompatActivity?)!!,
+                                mMainActivity!!,
                                 this,
                                 DELETE_LIST)
                                 .title(R.string.action_remove_list)
@@ -421,9 +423,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 }
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
-                    val mView = mSectionsPagerAdapter!!
-                            .getRegisteredFragment(view_pager.currentItem)
-                            .view
+                    val mView = mSectionsPagerAdapter?.getRegisteredFragment(view_pager.currentItem)?.view
                     mView?.button_invia_file?.performClick()
                     true
                 }
@@ -439,7 +439,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
             toggleFabMenu()
         }
 
-        mMainActivity!!.initFab(true, icon, click, actionListener, customList)
+        mMainActivity?.initFab(true, icon, click, actionListener, customList)
     }
 
     companion object {

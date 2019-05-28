@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,6 +21,7 @@ import com.mikepenz.fastadapter.adapters.GenericFastItemAdapter
 import com.mikepenz.fastadapter.expandable.getExpandableExtension
 import com.mikepenz.itemanimators.SlideDownAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleSubExpandableItem
@@ -52,18 +52,18 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.layout_recycler, container, false)
 
-        val args = Bundle().apply { putInt("tipoLista", arguments!!.getInt("tipoLista", 0)) }
-        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(SimpleIndexViewModel::class.java)
+        val args = Bundle().apply { putInt("tipoLista", arguments?.getInt("tipoLista", 0) ?: 0) }
+        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
 
-        mLUtils = LUtils.getInstance(activity!!)
+        mLUtils = LUtils.getInstance(requireActivity())
 
-        var sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, when (mCantiViewModel.tipoLista) {
+        var sFragment = SimpleDialogFragment.findVisible(mActivity, when (mCantiViewModel.tipoLista) {
             0 -> ARGUMENT_REPLACE
             1 -> LITURGICO_REPLACE
             else -> ""
         })
         sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible((activity as AppCompatActivity?)!!, when (mCantiViewModel.tipoLista) {
+        sFragment = SimpleDialogFragment.findVisible(mActivity, when (mCantiViewModel.tipoLista) {
             0 -> ARGUMENT_REPLACE_2
             1 -> LITURGICO_REPLACE_2
             else -> ""
@@ -71,7 +71,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
         sFragment?.setmCallback(this)
 
         if (!isViewShown)
-            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
+            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
 
         return rootView
     }
@@ -91,19 +91,19 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to (item as SimpleSubItem).source!!.getText(context), "idCanto" to item.id))
-                mLUtils!!.startActivityWithTransition(intent)
+                intent.putExtras(bundleOf("pagina" to (item as SimpleSubItem).source?.getText(context), "idCanto" to item.id))
+                mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
             consume
         }
 
-        mAdapter.onLongClickListener = { v: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+        mAdapter.onLongClickListener = { v: View, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
             if (item is SimpleSubItem) {
                 mCantiViewModel.idDaAgg = item.id
                 when (mCantiViewModel.tipoLista) {
-                    0 -> mCantiViewModel.popupMenu(this, v!!, ARGUMENT_REPLACE, ARGUMENT_REPLACE_2, listePersonalizzate)
-                    1 -> mCantiViewModel.popupMenu(this, v!!, LITURGICO_REPLACE, LITURGICO_REPLACE_2, listePersonalizzate)
+                    0 -> mCantiViewModel.popupMenu(this, v, ARGUMENT_REPLACE, ARGUMENT_REPLACE_2, listePersonalizzate)
+                    1 -> mCantiViewModel.popupMenu(this, v, LITURGICO_REPLACE, LITURGICO_REPLACE_2, listePersonalizzate)
                 }
             }
             true
@@ -114,10 +114,10 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                 Log.i(TAG, "item.position ${item.position}")
                 if (!item.isExpanded) {
                     if (mActivity.isGridLayout)
-                        glm!!.scrollToPositionWithOffset(
+                        glm?.scrollToPositionWithOffset(
                                 item.position, 0)
                     else
-                        llm!!.scrollToPositionWithOffset(
+                        llm?.scrollToPositionWithOffset(
                                 item.position, 0)
                 }
             }
@@ -125,9 +125,9 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
         }
 
         val mMainActivity = mActivity as MainActivity?
-        if (mMainActivity!!.isGridLayout) {
+        if (mMainActivity?.isGridLayout == true) {
             glm = GridLayoutManager(context, if (mMainActivity.hasThreeColumns) 3 else 2)
-            glm!!.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            glm?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return when (mAdapter.getItemViewType(position)) {
                         R.id.fastadapter_expandable_item_id -> if (mMainActivity.hasThreeColumns) 3 else 2
@@ -136,20 +136,20 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                     }
                 }
             }
-            recycler_view!!.layoutManager = glm
+            recycler_view?.layoutManager = glm
         } else {
             llm = LinearLayoutManager(context)
-            recycler_view!!.layoutManager = llm
+            recycler_view?.layoutManager = llm
         }
 
-        recycler_view!!.adapter = mAdapter
-        recycler_view!!.setHasFixedSize(true) // Size of RV will not change
-        recycler_view!!.itemAnimator = SlideDownAlphaAnimator()
+        recycler_view?.adapter = mAdapter
+        recycler_view?.setHasFixedSize(true) // Size of RV will not change
+        recycler_view?.itemAnimator = SlideDownAlphaAnimator()
 
         ioThread {
             when (mCantiViewModel.tipoLista) {
                 0 -> {
-                    val mDao = RisuscitoDatabase.getInstance(context!!).argomentiDao()
+                    val mDao = RisuscitoDatabase.getInstance(requireContext()).argomentiDao()
                     val canti = mDao.all
                     mCantiViewModel.titoliList.clear()
                     var subItems = LinkedList<ISubItem<*>>()
@@ -161,7 +161,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                                 .withTitle(LUtils.getResId(canti[i].titolo, R.string::class.java))
                                 .withPage(LUtils.getResId(canti[i].pagina, R.string::class.java))
                                 .withSource(LUtils.getResId(canti[i].source, R.string::class.java))
-                                .withColor(canti[i].color!!)
+                                .withColor(canti[i].color ?: Canto.BIANCO)
                                 .withId(canti[i].id)
                         simpleItem.identifier = (i * 1000).toLong()
                         subItems.add(simpleItem)
@@ -177,11 +177,11 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                                     .withPosition(totListe++)
                                     .onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                 if (!item.isExpanded) {
-                                    if (mMainActivity.isGridLayout)
-                                        glm!!.scrollToPositionWithOffset(
+                                    if (mMainActivity?.isGridLayout == true)
+                                        glm?.scrollToPositionWithOffset(
                                                 item.position, 0)
                                     else
-                                        llm!!.scrollToPositionWithOffset(
+                                        llm?.scrollToPositionWithOffset(
                                                 item.position, 0)
                                 }
                                 false
@@ -189,7 +189,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                             expandableItem.identifier = canti[i].idArgomento.toLong()
 
                             expandableItem.subItems = subItems
-                            expandableItem.subItems.sortBy { (it as SimpleSubItem).title!!.getText(context) }
+                            expandableItem.subItems.sortBy { (it as SimpleSubItem).title?.getText(context) }
                             mCantiViewModel.titoliList.add(expandableItem)
                             subItems = LinkedList()
                             totCanti = 0
@@ -199,7 +199,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                     }
                 }
                 else -> {
-                    val mDao = RisuscitoDatabase.getInstance(context!!).indiceLiturgicoDao()
+                    val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
                     val canti = mDao.all
                     mCantiViewModel.titoliList.clear()
                     var subItems = LinkedList<ISubItem<*>>()
@@ -211,7 +211,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                                 .withTitle(LUtils.getResId(canti[i].titolo, R.string::class.java))
                                 .withPage(LUtils.getResId(canti[i].pagina, R.string::class.java))
                                 .withSource(LUtils.getResId(canti[i].source, R.string::class.java))
-                                .withColor(canti[i].color!!)
+                                .withColor(canti[i].color ?: Canto.BIANCO)
                                 .withId(canti[i].id)
                         simpleItem.identifier = (i * 1000).toLong()
                         subItems.add(simpleItem)
@@ -227,11 +227,11 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                                     .withPosition(totListe++)
                                     .onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                 if (!item.isExpanded) {
-                                    if (mMainActivity.isGridLayout)
-                                        glm!!.scrollToPositionWithOffset(
+                                    if (mMainActivity?.isGridLayout == true)
+                                        glm?.scrollToPositionWithOffset(
                                                 item.position, 0)
                                     else
-                                        llm!!.scrollToPositionWithOffset(
+                                        llm?.scrollToPositionWithOffset(
                                                 item.position, 0)
                                 }
                                 false
@@ -239,7 +239,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                             expandableItem.identifier = canti[i].idIndice.toLong()
 
                             expandableItem.subItems = subItems
-                            expandableItem.subItems.sortBy { (it as SimpleSubItem).title!!.getText(context) }
+                            expandableItem.subItems.sortBy { (it as SimpleSubItem).title?.getText(context) }
                             mCantiViewModel.titoliList.add(expandableItem)
                             subItems = LinkedList()
                             totCanti = 0
@@ -249,7 +249,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                     }
                 }
             }
-            mCantiViewModel.titoliList.sortBy { (it as SimpleSubExpandableItem).title!!.getText(context) }
+            mCantiViewModel.titoliList.sortBy { (it as SimpleSubExpandableItem).title?.getText(context) }
             mAdapter.set(mCantiViewModel.titoliList)
             mAdapter.withSavedInstanceState(savedInstanceState)
         }
@@ -262,7 +262,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
             if (view != null) {
                 isViewShown = true
                 Log.d(javaClass.name, "VISIBLE")
-                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(context!!).listePersDao().all }
+                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
             } else
                 isViewShown = false
         }
@@ -271,7 +271,7 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
     override fun onSaveInstanceState(outState: Bundle) {
         var mOutState = outState
         if (userVisibleHint)
-            mOutState = mAdapter.saveInstanceState(mOutState)!!
+            mOutState = mAdapter.saveInstanceState(mOutState) ?: Bundle()
         super.onSaveInstanceState(mOutState)
     }
 
@@ -279,10 +279,11 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             ARGUMENT_REPLACE, LITURGICO_REPLACE -> {
-                listePersonalizzate!![mCantiViewModel.idListaClick]
-                        .lista!!
-                        .addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
-                ListeUtils.updateListaPersonalizzata(this, listePersonalizzate!![mCantiViewModel.idListaClick])
+                listePersonalizzate?.let {
+                    it[mCantiViewModel.idListaClick]
+                            .lista?.addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
+                    ListeUtils.updateListaPersonalizzata(this, it[mCantiViewModel.idListaClick])
+                }
             }
             ARGUMENT_REPLACE_2, LITURGICO_REPLACE_2 ->
                 ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)

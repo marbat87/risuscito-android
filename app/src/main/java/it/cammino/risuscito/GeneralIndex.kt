@@ -17,7 +17,7 @@ class GeneralIndex : Fragment() {
 
     private var mMainActivity: MainActivity? = null
 
-    private var mViewModel: GeneralIndexViewModel? = null
+    private lateinit var mViewModel: GeneralIndexViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -26,7 +26,7 @@ class GeneralIndex : Fragment() {
         mViewModel = ViewModelProviders.of(this).get(GeneralIndexViewModel::class.java)
 
         mMainActivity = activity as MainActivity?
-        mMainActivity!!.setupToolbarTitle(R.string.title_activity_general_index)
+        mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
 
         return rootView
     }
@@ -35,20 +35,21 @@ class GeneralIndex : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         view_pager.adapter = SectionsPagerAdapter(childFragmentManager)
 
-        mMainActivity!!.setTabVisible(true)
-        mMainActivity!!.enableFab(false)
-        mMainActivity!!.enableBottombar(false)
+        mMainActivity?.setTabVisible(true)
+        mMainActivity?.enableFab(false)
+        mMainActivity?.enableBottombar(false)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            view_pager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")!!)
+            view_pager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")
+                    ?: "0")
         } else
-            view_pager.currentItem = mViewModel!!.pageViewed
-        mMainActivity!!.getMaterialTabs().setupWithViewPager(view_pager)
+            view_pager.currentItem = mViewModel.pageViewed
+        mMainActivity?.getMaterialTabs()?.setupWithViewPager(view_pager)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mViewModel!!.pageViewed = view_pager.currentItem
+        mViewModel.pageViewed = view_pager.currentItem
     }
 
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
@@ -69,7 +70,7 @@ class GeneralIndex : Fragment() {
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-            val l = ThemeableActivity.getSystemLocalWrapper(activity!!.resources.configuration)
+            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
             when (position) {
                 0 -> return getString(R.string.letter_order_text).toUpperCase(l)
                 1 -> return getString(R.string.page_order_text).toUpperCase(l)

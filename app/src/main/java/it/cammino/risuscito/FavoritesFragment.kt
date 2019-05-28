@@ -74,7 +74,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
 
-        val sFragment = SimpleDialogFragment.findVisible(requireActivity() as AppCompatActivity, FAVORITES_RESET)
+        val sFragment = SimpleDialogFragment.findVisible(mMainActivity, FAVORITES_RESET)
         sFragment?.setmCallback(this)
         return rootView
     }
@@ -225,7 +225,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 Log.d(TAG, "MaterialCab onSelection")
                 when (item.itemId) {
                     R.id.action_remove_item -> {
-                        ListeUtils.removeFavoritesWithUndo(this@FavoritesFragment, selectExtension?.selectedItems!!)
+                        ListeUtils.removeFavoritesWithUndo(this@FavoritesFragment, selectExtension?.selectedItems)
                         actionModeOk = true
                         destroy()
                         true
@@ -254,24 +254,22 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 this,
                 Observer { canti ->
                     Log.d(TAG, "onChanged: a")
-                    if (canti != null) {
-                        val newList = ArrayList<SimpleItem>()
-                        for (canto in canti) {
-                            newList.add(
-                                    SimpleItem()
-                                            .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                            .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                            .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-                                            .withColor(canto.color ?: Canto.BIANCO)
-                                            .withId(canto.id)
-                                            .withSelectedColor(themeUtils.primaryColorDark())
-                            )
-                        }
-                        mFavoritesViewModel.titoli = newList.sortedWith(compareBy { it.title.toString() })
-                        cantoAdapter.set(mFavoritesViewModel.titoli)
-                        no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-                        activity?.invalidateOptionsMenu()
+                    val newList = ArrayList<SimpleItem>()
+                    for (canto in canti) {
+                        newList.add(
+                                SimpleItem()
+                                        .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                        .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                        .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
+                                        .withColor(canto.color ?: Canto.BIANCO)
+                                        .withId(canto.id)
+                                        .withSelectedColor(themeUtils.primaryColorDark())
+                        )
                     }
+                    mFavoritesViewModel.titoli = newList.sortedWith(compareBy { it.title.toString() })
+                    cantoAdapter.set(mFavoritesViewModel.titoli)
+                    no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+                    activity?.invalidateOptionsMenu()
                 })
     }
 

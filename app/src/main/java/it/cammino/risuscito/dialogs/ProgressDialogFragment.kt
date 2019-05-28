@@ -219,10 +219,12 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     companion object {
-
-        fun findVisible(context: AppCompatActivity, tag: String): ProgressDialogFragment? {
-            val frag = context.supportFragmentManager.findFragmentByTag(tag)
-            return if (frag != null && frag is ProgressDialogFragment) frag else null
+        fun findVisible(context: AppCompatActivity?, tag: String): ProgressDialogFragment? {
+            context?.let {
+                val frag = it.supportFragmentManager.findFragmentByTag(tag)
+                return if (frag != null && frag is ProgressDialogFragment) frag else null
+            }
+            return null
         }
     }
 

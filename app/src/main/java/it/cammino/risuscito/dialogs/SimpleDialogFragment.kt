@@ -208,10 +208,12 @@ class SimpleDialogFragment : DialogFragment() {
     }
 
     companion object {
-
-        fun findVisible(context: AppCompatActivity, tag: String): SimpleDialogFragment? {
-            val frag = context.supportFragmentManager.findFragmentByTag(tag)
-            return if (frag != null && frag is SimpleDialogFragment) frag else null
+        fun findVisible(context: AppCompatActivity?, tag: String): SimpleDialogFragment? {
+            context?.let {
+                val frag = it.supportFragmentManager.findFragmentByTag(tag)
+                return if (frag != null && frag is SimpleDialogFragment) frag else null
+            }
+            return null
         }
     }
 

@@ -43,12 +43,12 @@ object ListeUtils {
 //        UpdateFavoriteTask(fragment, false, idDaAgg).execute()
 //    }
 
-    fun removeFavoritesWithUndo(fragment: Fragment, mRemovedItems: Set<SimpleItem>) {
-        RemoveFavoriteTask(fragment, true, mRemovedItems, mRemovedItems.size).execute()
+    fun removeFavoritesWithUndo(fragment: Fragment, mRemovedItems: Set<SimpleItem>?) {
+        RemoveFavoriteTask(fragment, mRemovedItems).execute()
     }
 
-    fun removeHistoriesWithUndo(fragment: Fragment, mRemovedItems: Set<SimpleHistoryItem>) {
-        RemoveHistoryTask(fragment, mRemovedItems, mRemovedItems.size).execute()
+    fun removeHistoriesWithUndo(fragment: Fragment, mRemovedItems: Set<SimpleHistoryItem>?) {
+        RemoveHistoryTask(fragment, mRemovedItems).execute()
     }
 
     fun updateListaPersonalizzata(fragment: Fragment, listaUpd: ListaPers) {
@@ -183,27 +183,28 @@ object ListeUtils {
         }
     }
 
-    private class RemoveFavoriteTask internal constructor(fragment: Fragment, private val withUndo: Boolean, private val mRemovedItems: Set<SimpleItem>, private val iRemoved: Int) : AsyncTask<Void, Void, Int>() {
+    private class RemoveFavoriteTask internal constructor(fragment: Fragment, private val mRemovedItems: Set<SimpleItem>?) : AsyncTask<Void, Void, Int>() {
 
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg p0: Void?): Int {
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).favoritesDao()
-            for (removedItem in mRemovedItems) {
-                mDao.removeFavorite(removedItem.id)
+            mRemovedItems?.let {
+                val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).favoritesDao()
+                for (removedItem in it)
+                    mDao.removeFavorite(removedItem.id)
             }
             return 0
         }
 
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
-            if (withUndo)
-                Snackbar.make(fragmentReference.get()!!.view!!, fragmentReference.get()!!.resources.getQuantityString(R.plurals.favorites_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
-                        .setAction(fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()) {
-                            for (removedItem in mRemovedItems)
+            mRemovedItems?.let {
+                Snackbar.make(fragmentReference.get()!!.view!!, fragmentReference.get()!!.resources.getQuantityString(R.plurals.favorites_removed, it.size, it.size), Snackbar.LENGTH_SHORT)
+                        .setAction(fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()) { _ ->
+                            for (removedItem in it)
                                 UpdateFavoriteTask(fragmentReference.get()!!, false, removedItem.id).execute()
                         }.show()
-
+            }
         }
     }
 
@@ -380,28 +381,31 @@ object ListeUtils {
         }
     }
 
-    private class RemoveHistoryTask internal constructor(fragment: Fragment, private val mRemovedItems: Set<SimpleHistoryItem>, private val iRemoved: Int) : AsyncTask<Void, Void, Int>() {
+    private class RemoveHistoryTask internal constructor(fragment: Fragment, private val mRemovedItems: Set<SimpleHistoryItem>?) : AsyncTask<Void, Void, Int>() {
 
         private val fragmentReference: WeakReference<Fragment> = WeakReference(fragment)
 
         override fun doInBackground(vararg p0: Void?): Int {
-            val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).cronologiaDao()
-            for (removedItem in mRemovedItems) {
-                val cronTemp = Cronologia()
-                cronTemp.idCanto = removedItem.id
-                mDao.deleteCronologia(cronTemp)
+            mRemovedItems?.let {
+                val mDao = RisuscitoDatabase.getInstance(fragmentReference.get()!!.context!!).cronologiaDao()
+                for (removedItem in it) {
+                    val cronTemp = Cronologia()
+                    cronTemp.idCanto = removedItem.id
+                    mDao.deleteCronologia(cronTemp)
+                }
             }
             return 0
         }
 
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
-            Snackbar.make(fragmentReference.get()!!.view!!, fragmentReference.get()!!.resources.getQuantityString(R.plurals.histories_removed, iRemoved, iRemoved), Snackbar.LENGTH_SHORT)
-                    .setAction(fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()) {
-                        for (removedItem in mRemovedItems)
-                            UpdateHistoryTask(fragmentReference.get()!!, removedItem.id, removedItem.timestamp!!.text.toString()).execute()
-                    }.show()
-
+            mRemovedItems?.let {
+                Snackbar.make(fragmentReference.get()!!.view!!, fragmentReference.get()!!.resources.getQuantityString(R.plurals.histories_removed, it.size, it.size), Snackbar.LENGTH_SHORT)
+                        .setAction(fragmentReference.get()!!.getString(R.string.cancel).toUpperCase()) { _ ->
+                            for (removedItem in it)
+                                UpdateHistoryTask(fragmentReference.get()!!, removedItem.id, removedItem.timestamp!!.text.toString()).execute()
+                        }.show()
+            }
         }
     }
 
