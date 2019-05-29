@@ -53,7 +53,10 @@ object Utility {
     internal const val SPEED_VALUE = "speedValue"
     internal const val SCROLL_PLAYING = "scrollPlaying"
     internal const val ID_CANTO = "idCanto"
+    internal const val PAGINA = "pagina"
+    internal const val TIPO_LISTA = "tipoLista"
     internal const val WRITE_STORAGE_RC = 123
+
 
     /* Checks if external storage is available for read and write */
     internal val isExternalStorageWritable: Boolean

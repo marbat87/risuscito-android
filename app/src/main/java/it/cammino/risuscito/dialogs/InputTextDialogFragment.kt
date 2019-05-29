@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.KeyEvent
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +22,7 @@ class InputTextDialogFragment : DialogFragment() {
     private var mCallback: SimpleInputCallback? = null
 
     private val builder: Builder?
-        get() = if (arguments == null || !arguments!!.containsKey("builder")) null else arguments!!.getSerializable("builder") as Builder
+        get() = if (arguments?.containsKey("builder") != true) null else arguments?.getSerializable("builder") as? Builder
 
     override fun onDestroyView() {
         if (dialog != null && retainInstance)
@@ -44,7 +43,7 @@ class InputTextDialogFragment : DialogFragment() {
         if (mCallback == null)
             mCallback = mBuilder.mListener
 
-        val dialog = MaterialDialog(activity!!)
+        val dialog = MaterialDialog(requireContext())
                 .input(prefill = mBuilder.mPrefill
                         ?: "", inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
 
@@ -56,15 +55,13 @@ class InputTextDialogFragment : DialogFragment() {
 
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) { mDialog ->
-                Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
-                mCallback!!.onPositive(mBuilder.mTag, mDialog)
+                mCallback?.onPositive(mBuilder.mTag, mDialog)
             }
         }
 
         mBuilder.mNegativeButton?.let {
             dialog.negativeButton(text = it) { mDialog ->
-                Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
-                mCallback!!.onNegative(mBuilder.mTag, mDialog)
+                mCallback?.onNegative(mBuilder.mTag, mDialog)
             }
         }
 
@@ -164,7 +161,7 @@ class InputTextDialogFragment : DialogFragment() {
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
         frag?.let {
-            (it as DialogFragment).dismiss()
+            (it as? DialogFragment)?.dismiss()
             context.supportFragmentManager.beginTransaction()
                     .remove(it).commit()
         }

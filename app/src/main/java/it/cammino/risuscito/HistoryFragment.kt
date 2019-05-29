@@ -109,7 +109,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to item.source?.text, "idCanto" to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.text, Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }

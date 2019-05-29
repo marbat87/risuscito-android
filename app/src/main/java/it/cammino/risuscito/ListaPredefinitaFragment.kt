@@ -12,7 +12,6 @@ import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -29,6 +28,7 @@ import com.mikepenz.iconics.paddingDp
 import com.mikepenz.iconics.sizeDp
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import it.cammino.risuscito.database.Posizione
+import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
@@ -72,7 +72,7 @@ class ListaPredefinitaFragment : Fragment() {
     private val titlesList: String
         get() {
 
-            val l = ThemeableActivity.getSystemLocalWrapper(activity!!.resources.configuration)
+            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
             val result = StringBuilder()
             var progressivePos = 0
 
@@ -183,18 +183,18 @@ class ListaPredefinitaFragment : Fragment() {
     private val click = OnClickListener { v ->
         if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
         mLastClickTime = SystemClock.elapsedRealtime()
-        val parent = v.parent.parent as View
+        val parent = v.parent.parent as? View
         if (v.id == R.id.addCantoGenerico) {
             if (mSwhitchMode) {
                 destroy()
-                ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent.text_id_posizione.text.toString()))
+                ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent?.text_id_posizione?.text.toString()))
             } else {
                 if (!MaterialCab.isActive) {
                     val intent = Intent(activity, InsertActivity::class.java)
-                    intent.putExtras(bundleOf("fromAdd" to 1,
-                            "idLista" to mCantiViewModel.defaultListaId,
-                            "position" to Integer.valueOf(parent.text_id_posizione.text.toString())))
-                    parentFragment!!.startActivityForResult(intent, when (mCantiViewModel.defaultListaId) {
+                    intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 1,
+                            InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
+                            InsertActivity.POSITION to Integer.valueOf(parent?.text_id_posizione?.text.toString())))
+                    parentFragment?.startActivityForResult(intent, when (mCantiViewModel.defaultListaId) {
                         1 -> TAG_INSERT_PAROLA
                         2 -> TAG_INSERT_EUCARESTIA
                         else -> TAG_INSERT_PAROLA
@@ -205,16 +205,16 @@ class ListaPredefinitaFragment : Fragment() {
         } else {
             if (!mSwhitchMode)
                 if (MaterialCab.isActive) {
-                    posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
+                    posizioneDaCanc = Integer.valueOf(parent?.text_id_posizione?.text.toString())
                     idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
                     timestampDaCanc = v.text_timestamp.text.toString()
                     snackBarRimuoviCanto(v)
                 } else {
                     //apri canto
                     val intent = Intent(activity, PaginaRenderActivity::class.java)
-                    intent.putExtras(bundleOf("pagina" to v.text_source_canto.text.toString(),
-                            "idCanto" to Integer.valueOf(v.text_id_canto_card.text.toString())))
-                    mLUtils!!.startActivityWithTransition(intent)
+                    intent.putExtras(bundleOf(Utility.PAGINA to v.text_source_canto.text.toString(),
+                            Utility.ID_CANTO to Integer.valueOf(v.text_id_canto_card.text.toString())))
+                    mLUtils?.startActivityWithTransition(intent)
                 }
             else {
                 destroy()
@@ -222,7 +222,7 @@ class ListaPredefinitaFragment : Fragment() {
                         mCantiViewModel.defaultListaId,
                         posizioneDaCanc,
                         idDaCanc,
-                        Integer.valueOf(parent.text_id_posizione.text.toString()),
+                        Integer.valueOf(parent?.text_id_posizione?.text.toString()),
                         Integer.valueOf((v.text_id_canto_card).text.toString())
                 )
             }
@@ -230,8 +230,8 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private val longClick = OnLongClickListener { v ->
-        val parent = v.parent.parent as View
-        posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
+        val parent = v.parent.parent as? View
+        posizioneDaCanc = Integer.valueOf(parent?.text_id_posizione?.text.toString())
         idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
         timestampDaCanc = v.text_timestamp.text.toString()
         snackBarRimuoviCanto(v)
@@ -242,17 +242,19 @@ class ListaPredefinitaFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
 
-        val args = Bundle().apply { putInt("tipoLista", arguments!!.getInt("indiceLista", 0)) }
-        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(activity!!.application, args)).get(DefaultListaViewModel::class.java)
+        val args = Bundle().apply {
+            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
+        }
+        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(DefaultListaViewModel::class.java)
 
         mMainActivity = activity as? MainActivity
 
-        mLUtils = LUtils.getInstance(activity!!)
+        mLUtils = LUtils.getInstance(requireActivity())
         mSwhitchMode = false
 
         if (!isViewShown) {
             destroy()
-            (parentFragment as CustomLists).initFabOptions(false)
+            (parentFragment as? CustomLists)?.initFabOptions(false)
         }
 
         return rootView
@@ -263,22 +265,22 @@ class ListaPredefinitaFragment : Fragment() {
 
         // Creating new adapter object
         cantoAdapter = FastItemAdapter()
-        cantoAdapter!!.setHasStableIds(true)
-        cantoAdapter!!.set(posizioniList)
-        recycler_list!!.adapter = cantoAdapter
+        cantoAdapter?.setHasStableIds(true)
+        cantoAdapter?.set(posizioniList)
+        recycler_list?.adapter = cantoAdapter
 
         // Setting the layoutManager
-        recycler_list!!.layoutManager = LinearLayoutManager(activity)
+        recycler_list?.layoutManager = LinearLayoutManager(activity)
 
         subscribeUiFavorites()
 
         button_pulisci.setOnClickListener {
-            ListeUtils.cleanList(context!!, mCantiViewModel.defaultListaId)
+            ListeUtils.cleanList(requireContext(), mCantiViewModel.defaultListaId)
         }
 
         button_condividi.setOnClickListener {
             val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
-            bottomSheetDialog.show(fragmentManager!!, null)
+            bottomSheetDialog.show(requireFragmentManager(), null)
         }
     }
 
@@ -288,7 +290,7 @@ class ListaPredefinitaFragment : Fragment() {
             if (view != null) {
                 isViewShown = true
                 destroy()
-                (parentFragment as CustomLists).initFabOptions(false)
+                (parentFragment as? CustomLists)?.initFabOptions(false)
 
             } else
                 isViewShown = false
@@ -301,18 +303,16 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun getCantofromPosition(
-            posizioni: List<Posizione>?, titoloPosizione: String, position: Int, tag: Int): ListaPersonalizzataItem {
-        val list = posizioni!!
-                .filter { it.position == position }
-                .map {
-                    PosizioneItem()
-                            .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                            .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                            .withSource(LUtils.getResId(it.source, R.string::class.java))
-                            .withColor(it.color!!)
-                            .withId(it.id)
-                            .withTimestamp(it.timestamp!!.time.toString())
-                }
+            posizioni: List<Posizione>, titoloPosizione: String, position: Int, tag: Int): ListaPersonalizzataItem {
+        val list = posizioni.filter { it.position == position }.map {
+            PosizioneItem()
+                    .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
+                    .withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                    .withSource(LUtils.getResId(it.source, R.string::class.java))
+                    .withColor(it.color ?: Canto.BIANCO)
+                    .withId(it.id)
+                    .withTimestamp(it.timestamp?.time.toString())
+        }
 
         return ListaPersonalizzataItem()
                 .withTitleItem(PosizioneTitleItem(
@@ -336,13 +336,13 @@ class ListaPredefinitaFragment : Fragment() {
 
         val items = posizioniList[position].listItem
 
-        if (items!!.isNotEmpty()) {
+        if (!items.isNullOrEmpty()) {
             for (tempItem in items) {
                 result
-                        .append(tempItem.title!!.getText(context))
+                        .append(tempItem.title?.getText(context))
                         .append(" - ")
                         .append(getString(R.string.page_contracted))
-                        .append(tempItem.page!!.getText(context))
+                        .append(tempItem.page?.getText(context))
                 result.append("\n")
             }
         } else {
@@ -355,148 +355,150 @@ class ListaPredefinitaFragment : Fragment() {
 
     private fun snackBarRimuoviCanto(view: View) {
         destroy()
-        val parent = view.parent.parent as View
-        longclickedPos = Integer.valueOf(parent.generic_tag.text.toString())
+        val parent = view.parent.parent as? View
+        longclickedPos = Integer.valueOf(parent?.generic_tag?.text.toString())
         longClickedChild = Integer.valueOf(view.item_tag.text.toString())
-        if (!mMainActivity!!.isOnTablet)
-            activity!!.toolbar_layout!!.setExpanded(true, true)
+        if (mMainActivity?.isOnTablet != true)
+            activity?.toolbar_layout?.setExpanded(true, true)
         startCab(false)
     }
 
     private fun startCab(switchMode: Boolean) {
-        mSwhitchMode = switchMode
-        MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            if (switchMode)
-                titleRes(R.string.switch_started)
-            else
-                title = resources.getQuantityString(R.plurals.item_selected, 1, 1)
-            popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
-            contentInsetStartRes(R.dimen.mcab_default_content_inset)
-            menuRes = R.menu.menu_actionmode_lists
-            backgroundColor = themeUtils.primaryColorDark()
+        mMainActivity?.let {
+            mSwhitchMode = switchMode
+            MaterialCab.attach(it, R.id.cab_stub) {
+                if (switchMode)
+                    titleRes(R.string.switch_started)
+                else
+                    title = resources.getQuantityString(R.plurals.item_selected, 1, 1)
+                popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
+                contentInsetStartRes(R.dimen.mcab_default_content_inset)
+                menuRes = R.menu.menu_actionmode_lists
+                backgroundColor = themeUtils.primaryColorDark()
 
-            onCreate { _, menu ->
-                Log.d(TAG, "MaterialCab onCreate")
-                posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(true)
-                cantoAdapter!!.notifyItemChanged(longclickedPos)
-                menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon2.cmd_shuffle)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .colorInt(Color.WHITE)
-                menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(activity!!, CommunityMaterial.Icon.cmd_delete)
-                        .sizeDp(24)
-                        .paddingDp(2)
-                        .colorInt(Color.WHITE)
-            }
-
-            onSelection { item ->
-                Log.d(TAG, "MaterialCab onSelection")
-                when (item.itemId) {
-                    R.id.action_remove_item -> {
-                        destroy()
-                        ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc!!)
-                        true
-                    }
-                    R.id.action_switch_item -> {
-                        startCab(true)
-                        Toast.makeText(
-                                activity,
-                                resources.getString(R.string.switch_tooltip),
-                                Toast.LENGTH_SHORT)
-                                .show()
-                        true
-                    }
-                    else -> false
+                onCreate { _, menu ->
+                    Log.d(TAG, "MaterialCab onCreate")
+                    posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
+                    cantoAdapter?.notifyItemChanged(longclickedPos)
+                    menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_shuffle)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorInt(Color.WHITE)
+                    menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_delete)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorInt(Color.WHITE)
                 }
-            }
 
-            onDestroy {
-                //                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
-                mSwhitchMode = false
-                try {
-                    posizioniList[longclickedPos].listItem!![longClickedChild].setmSelected(false)
-                    cantoAdapter!!.notifyItemChanged(longclickedPos)
-                } catch (e: Exception) {
-                    Crashlytics.logException(e)
+                onSelection { item ->
+                    Log.d(TAG, "MaterialCab onSelection")
+                    when (item.itemId) {
+                        R.id.action_remove_item -> {
+                            destroy()
+                            ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc
+                                    ?: "")
+                            true
+                        }
+                        R.id.action_switch_item -> {
+                            startCab(true)
+                            Toast.makeText(
+                                    activity,
+                                    resources.getString(R.string.switch_tooltip),
+                                    Toast.LENGTH_SHORT)
+                                    .show()
+                            true
+                        }
+                        else -> false
+                    }
                 }
-                true
+
+                onDestroy {
+                    //                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                    mSwhitchMode = false
+                    try {
+                        posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
+                        cantoAdapter?.notifyItemChanged(longclickedPos)
+                    } catch (e: Exception) {
+                        Crashlytics.logException(e)
+                    }
+                    true
+                }
             }
         }
     }
 
     private fun subscribeUiFavorites() {
-        mCantiViewModel
-                .cantiResult!!
-                .observe(
-                        this,
-                        Observer<List<Posizione>> { mCanti ->
-                            var progressiveTag = 0
-                            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-                            posizioniList.clear()
+        mCantiViewModel.cantiResult?.observe(
+                this,
+                Observer<List<Posizione>> { mCanti ->
+                    var progressiveTag = 0
+                    val pref = PreferenceManager.getDefaultSharedPreferences(context)
+                    posizioniList.clear()
 
-                            when (mCantiViewModel.defaultListaId) {
-                                1 -> {
-                                    posizioniList.add(
-                                            getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
-                                    posizioniList.add(
-                                            getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
-                                    posizioniList.add(
-                                            getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
-                                    posizioniList.add(
-                                            getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
+                    when (mCantiViewModel.defaultListaId) {
+                        1 -> {
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
 
-                                    if (pref.getBoolean(Utility.SHOW_PACE, false))
-                                        posizioniList.add(
-                                                getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
+                            if (pref.getBoolean(Utility.SHOW_PACE, false))
+                                posizioniList.add(
+                                        getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
 
-                                    posizioniList.add(
-                                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
-                                }
-                                2 -> {
-                                    posizioniList.add(
-                                            getCantofromPosition(
-                                                    mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                        }
+                        2 -> {
+                            posizioniList.add(
+                                    getCantofromPosition(
+                                            mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
 
-                                    if (pref.getBoolean(Utility.SHOW_SECONDA, false))
-                                        posizioniList.add(
-                                                getCantofromPosition(
-                                                        mCanti, getString(R.string.seconda_lettura), 6, progressiveTag++))
+                            if (pref.getBoolean(Utility.SHOW_SECONDA, false))
+                                posizioniList.add(
+                                        getCantofromPosition(
+                                                mCanti, getString(R.string.seconda_lettura), 6, progressiveTag++))
 
-                                    posizioniList.add(
-                                            getCantofromPosition(
-                                                    mCanti, getString(R.string.canto_pace), 2, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(
+                                            mCanti, getString(R.string.canto_pace), 2, progressiveTag++))
 
-                                    if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
-                                        posizioniList.add(
-                                                getCantofromPosition(
-                                                        mCanti, getString(R.string.canto_offertorio), 8, progressiveTag++))
+                            if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
+                                posizioniList.add(
+                                        getCantofromPosition(
+                                                mCanti, getString(R.string.canto_offertorio), 8, progressiveTag++))
 
-                                    if (pref.getBoolean(Utility.SHOW_SANTO, false))
-                                        posizioniList.add(
-                                                getCantofromPosition(mCanti, getString(R.string.santo), 7, progressiveTag++))
+                            if (pref.getBoolean(Utility.SHOW_SANTO, false))
+                                posizioniList.add(
+                                        getCantofromPosition(mCanti, getString(R.string.santo), 7, progressiveTag++))
 
-                                    posizioniList.add(
-                                            getCantofromPosition(
-                                                    mCanti, getString(R.string.canto_pane), 3, progressiveTag++))
-                                    posizioniList.add(
-                                            getCantofromPosition(
-                                                    mCanti, getString(R.string.canto_vino), 4, progressiveTag++))
-                                    posizioniList.add(
-                                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
-                                }
-                            }
-                            cantoAdapter!!.set(posizioniList)
-                        })
+                            posizioniList.add(
+                                    getCantofromPosition(
+                                            mCanti, getString(R.string.canto_pane), 3, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(
+                                            mCanti, getString(R.string.canto_vino), 4, progressiveTag++))
+                            posizioniList.add(
+                                    getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                        }
+                    }
+                    cantoAdapter?.set(posizioniList)
+                })
     }
 
     companion object {
         const val TAG_INSERT_PAROLA = 333
         const val TAG_INSERT_EUCARESTIA = 444
+        private const val INDICE_LISTA = "indiceLista"
         private val TAG = ListaPredefinitaFragment::class.java.canonicalName
 
         fun newInstance(indiceLista: Int): ListaPredefinitaFragment {
             val f = ListaPredefinitaFragment()
-            f.arguments = bundleOf("indiceLista" to indiceLista)
+            f.arguments = bundleOf(INDICE_LISTA to indiceLista)
             return f
         }
     }

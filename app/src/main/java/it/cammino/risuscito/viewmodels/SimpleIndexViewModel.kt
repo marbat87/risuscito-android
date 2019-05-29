@@ -7,6 +7,7 @@ import androidx.lifecycle.Transformations
 import com.mikepenz.fastadapter.IItem
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem
@@ -24,7 +25,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
         private set
 
     init {
-        tipoLista = args.getInt("tipoLista")
+        tipoLista = args.getInt(Utility.TIPO_LISTA)
         val mDb = RisuscitoDatabase.getInstance(getApplication())
         when (tipoLista) {
             0, 1 ->

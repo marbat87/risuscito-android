@@ -377,8 +377,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
         mViewModel!!.pagina = mViewModel!!.pagina
-                ?: bundle?.getCharSequence("pagina", "")?.toString()
-        mViewModel!!.idCanto = bundle?.getInt("idCanto") ?: return
+                ?: bundle?.getCharSequence(Utility.PAGINA, "")?.toString()
+        mViewModel!!.idCanto = bundle?.getInt(Utility.ID_CANTO) ?: return
 
         try {
             mViewModel!!.primaNota = mViewModel!!.primaNota ?: CambioAccordi.recuperaPrimoAccordo(

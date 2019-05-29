@@ -110,7 +110,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to item.source?.text, "idCanto" to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.text, Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }

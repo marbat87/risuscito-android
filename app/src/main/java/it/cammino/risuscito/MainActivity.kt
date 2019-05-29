@@ -244,181 +244,152 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .withTypeface(mRegularFont)
 
         // Create the AccountHeader
-        mAccountHeader = AccountHeaderBuilder()
-                .withActivity(this)
-                .withTranslucentStatusBar(!isOnTablet)
-                .withSelectionListEnabledForSingleProfile(false)
-                .withSavedInstance(savedInstanceState)
-                .addProfiles(profile)
-                .withNameTypeface(mRegularFont!!)
-                .withEmailTypeface(mRegularFont!!)
-                .withOnAccountHeaderListener(object : AccountHeader.OnAccountHeaderListener {
-                    override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {
-                        // sample usage of the onProfileChanged listener
-                        // if the clicked item has the identifier 1 add a new profile ;)
-                        if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gdrive_backup.toLong()) {
-                            SimpleDialogFragment.Builder(
-                                    this@MainActivity, this@MainActivity, BACKUP_ASK)
-                                    .title(R.string.gdrive_backup)
-                                    .content(R.string.gdrive_backup_content)
-                                    .positiveButton(R.string.backup_confirm)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gdrive_restore.toLong()) {
-                            SimpleDialogFragment.Builder(
-                                    this@MainActivity, this@MainActivity, RESTORE_ASK)
-                                    .title(R.string.gdrive_restore)
-                                    .content(R.string.gdrive_restore_content)
-                                    .positiveButton(R.string.restore_confirm)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gplus_signout.toLong()) {
-                            SimpleDialogFragment.Builder(
-                                    this@MainActivity, this@MainActivity, SIGNOUT)
-                                    .title(R.string.gplus_signout)
-                                    .content(R.string.dialog_acc_disconn_text)
-                                    .positiveButton(R.string.disconnect_confirm)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
-                        } else if (profile is IDrawerItem<*> && (profile as IDrawerItem<*>).identifier == R.id.gplus_revoke.toLong()) {
-                            SimpleDialogFragment.Builder(
-                                    this@MainActivity, this@MainActivity, REVOKE)
-                                    .title(R.string.gplus_revoke)
-                                    .content(R.string.dialog_acc_revoke_text)
-                                    .positiveButton(R.string.disconnect_confirm)
-                                    .negativeButton(android.R.string.no)
-                                    .show()
+        mAccountHeader = AccountHeaderBuilder().apply {
+            withTranslucentStatusBar(!isOnTablet)
+            withSelectionListEnabledForSingleProfile(false)
+            withSavedInstance(savedInstanceState)
+            addProfiles(profile)
+            mRegularFont?.let {
+                withNameTypeface(it)
+                withEmailTypeface(it)
+            }
+            withOnAccountHeaderListener(object : AccountHeader.OnAccountHeaderListener {
+                override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {
+                    // sample usage of the onProfileChanged listener
+                    // if the clicked item has the identifier 1 add a new profile ;)
+                    if (profile is IDrawerItem<*>) {
+                        when (profile.identifier) {
+                            R.id.gdrive_backup.toLong() -> showAccountRelatedDialog(BACKUP_ASK)
+                            R.id.gdrive_restore.toLong() -> showAccountRelatedDialog(RESTORE_ASK)
+                            R.id.gplus_signout.toLong() -> showAccountRelatedDialog(SIGNOUT)
+                            R.id.gplus_revoke.toLong() -> showAccountRelatedDialog(REVOKE)
                         }
-
-                        // false if you have not consumed the event and it should close the drawer
-                        return false
                     }
-                })
-                .build()
+                    // false if you have not consumed the event and it should close the drawer
+                    return false
+                }
+            })
+        }.withActivity(this).build()
 
         val selectedColor = themeUtils.primaryColor()
 
-        val mDrawerBuilder = DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(risuscito_toolbar!!)
-                .withHasStableIds(true)
-                .withAccountHeader(mAccountHeader)
-                .addDrawerItems(
-                        PrimaryDrawerItem()
-                                .withName(R.string.activity_homepage)
-                                .withIcon(CommunityMaterial.Icon2.cmd_home)
-                                .withIdentifier(R.id.navigation_home.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.search_name_text)
-                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
-                                .withIdentifier(R.id.navigation_search.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_general_index)
-                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
-                                .withIdentifier(R.id.navigation_indexes.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_custom_lists)
-                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
-                                .withIdentifier(R.id.navitagion_lists.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.action_favourites)
-                                .withIcon(CommunityMaterial.Icon2.cmd_heart)
-                                .withIdentifier(R.id.navigation_favorites.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_consegnati)
-                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
-                                .withIdentifier(R.id.navigation_consegnati.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_history)
-                                .withIcon(CommunityMaterial.Icon2.cmd_history)
-                                .withIdentifier(R.id.navigation_history.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_settings)
-                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
-                                .withIdentifier(R.id.navigation_settings.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont),
-                        DividerDrawerItem(),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_about)
-                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
-                                .withIdentifier(R.id.navigation_changelog.toLong())
-                                .withSelectedIconColor(selectedColor)
-                                .withSelectedTextColor(selectedColor)
-                                .withTypeface(mMediumFont))
-                .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
-                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                        // check if the drawerItem is set.
-                        // there are different reasons for the drawerItem to be null
-                        // --> click on the header
-                        // --> click on the footer
-                        // those items don't contain a drawerItem
+        val mDrawerBuilder = DrawerBuilder().apply {
+            risuscito_toolbar?.let {
+                withToolbar(it)
+            }
+            withHasStableIds(true)
+            withAccountHeader(mAccountHeader)
+            addDrawerItems(
+                    PrimaryDrawerItem()
+                            .withName(R.string.activity_homepage)
+                            .withIcon(CommunityMaterial.Icon2.cmd_home)
+                            .withIdentifier(R.id.navigation_home.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont),
+                    PrimaryDrawerItem()
+                            .withName(R.string.search_name_text)
+                            .withIcon(CommunityMaterial.Icon2.cmd_magnify)
+                            .withIdentifier(R.id.navigation_search.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont),
+                    PrimaryDrawerItem()
+                            .withName(R.string.title_activity_general_index)
+                            .withIcon(CommunityMaterial.Icon2.cmd_view_list)
+                            .withIdentifier(R.id.navigation_indexes.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont),
+                    PrimaryDrawerItem()
+                            .withName(R.string.title_activity_custom_lists)
+                            .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
+                            .withIdentifier(R.id.navitagion_lists.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont),
+                    PrimaryDrawerItem()
+                            .withName(R.string.action_favourites)
+                            .withIcon(CommunityMaterial.Icon2.cmd_heart)
+                            .withIdentifier(R.id.navigation_favorites.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont),
+                    PrimaryDrawerItem()
+                            .withName(R.string.title_activity_consegnati)
+                            .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
+                            .withIdentifier(R.id.navigation_consegnati.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont),
+                    PrimaryDrawerItem()
+                            .withName(R.string.title_activity_history)
+                            .withIcon(CommunityMaterial.Icon2.cmd_history)
+                            .withIdentifier(R.id.navigation_history.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont),
+                    PrimaryDrawerItem()
+                            .withName(R.string.title_activity_settings)
+                            .withIcon(CommunityMaterial.Icon2.cmd_settings)
+                            .withIdentifier(R.id.navigation_settings.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont),
+                    DividerDrawerItem(),
+                    PrimaryDrawerItem()
+                            .withName(R.string.title_activity_about)
+                            .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
+                            .withIdentifier(R.id.navigation_changelog.toLong())
+                            .withSelectedIconColor(selectedColor)
+                            .withSelectedTextColor(selectedColor)
+                            .withTypeface(mMediumFont))
+            withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    // check if the drawerItem is set.
+                    // there are different reasons for the drawerItem to be null
+                    // --> click on the header
+                    // --> click on the footer
+                    // those items don't contain a drawerItem
 
-                        val fragment: Fragment
-                        if (drawerItem.identifier == R.id.navigation_home.toLong()) {
+                    val fragment: Fragment
+                    when (drawerItem.identifier) {
+                        R.id.navigation_home.toLong() -> {
                             fragment = Risuscito()
                             if (!isOnTablet)
                                 toolbar_layout?.setExpanded(true, true)
-                        } else if (drawerItem.identifier == R.id.navigation_search.toLong()) {
-                            fragment = SearchFragment()
-                        } else if (drawerItem.identifier == R.id.navigation_indexes.toLong()) {
-                            fragment = GeneralIndex()
-                        } else if (drawerItem.identifier == R.id.navitagion_lists.toLong()) {
-                            fragment = CustomLists()
-                        } else if (drawerItem.identifier == R.id.navigation_favorites.toLong()) {
-                            fragment = FavoritesFragment()
-                        } else if (drawerItem.identifier == R.id.navigation_settings.toLong()) {
-                            fragment = SettingsFragment()
-                        } else if (drawerItem.identifier == R.id.navigation_changelog.toLong()) {
-                            fragment = AboutFragment()
-                        } else if (drawerItem.identifier == R.id.navigation_consegnati.toLong()) {
-                            fragment = ConsegnatiFragment()
-                        } else if (drawerItem.identifier == R.id.navigation_history.toLong()) {
-                            fragment = HistoryFragment()
-                        } else
-                            return true
-
-                        // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-                        val myFragment = supportFragmentManager
-                                .findFragmentByTag(drawerItem.identifier.toString())
-                        if (myFragment == null || !myFragment.isVisible) {
-                            supportFragmentManager.transaction {
-                                if (!isOnTablet)
-                                    setCustomAnimations(
-                                            R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
-                                replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
-                            }
                         }
-
-                        if (isOnTablet) mMiniDrawer?.setSelection(drawerItem.identifier)
-                        return isOnTablet
+                        R.id.navigation_search.toLong() -> fragment = SearchFragment()
+                        R.id.navigation_indexes.toLong() -> fragment = GeneralIndex()
+                        R.id.navitagion_lists.toLong() -> fragment = CustomLists()
+                        R.id.navigation_favorites.toLong() -> fragment = FavoritesFragment()
+                        R.id.navigation_settings.toLong() -> fragment = SettingsFragment()
+                        R.id.navigation_changelog.toLong() -> fragment = AboutFragment()
+                        R.id.navigation_consegnati.toLong() -> fragment = ConsegnatiFragment()
+                        R.id.navigation_history.toLong() -> fragment = HistoryFragment()
+                        else -> return true
                     }
-                })
-                .withGenerateMiniDrawer(isOnTablet)
-                .withSavedInstance(savedInstanceState)
-                .withTranslucentStatusBar(!isOnTablet)
+
+                    // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+                    val myFragment = supportFragmentManager
+                            .findFragmentByTag(drawerItem.identifier.toString())
+                    if (myFragment == null || !myFragment.isVisible) {
+                        supportFragmentManager.transaction {
+                            if (!isOnTablet)
+                                setCustomAnimations(
+                                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
+                            replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
+                        }
+                    }
+
+                    if (isOnTablet) mMiniDrawer?.setSelection(drawerItem.identifier)
+                    return isOnTablet
+                }
+            })
+            withGenerateMiniDrawer(isOnTablet)
+            withSavedInstance(savedInstanceState)
+            withTranslucentStatusBar(!isOnTablet)
+        }.withActivity(this)
 
         if (isOnTablet) {
             drawer = mDrawerBuilder.buildView()
@@ -742,7 +713,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     // [START onActivityResult]
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "requestCode: $requestCode")
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -952,6 +923,34 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         drawer?.setSelection(R.id.navigation_home.toLong())
     }
 
+    private fun showAccountRelatedDialog(tag: String) {
+        SimpleDialogFragment.Builder(this, this, tag).apply {
+            when (tag) {
+                BACKUP_ASK -> {
+                    title(R.string.gdrive_backup)
+                    content(R.string.gdrive_backup_content)
+                    positiveButton(R.string.backup_confirm)
+                }
+                RESTORE_ASK -> {
+                    title(R.string.gdrive_restore)
+                    content(R.string.gdrive_restore_content)
+                    positiveButton(R.string.restore_confirm)
+                }
+                SIGNOUT -> {
+                    title(R.string.gplus_signout)
+                    content(R.string.dialog_acc_disconn_text)
+                    positiveButton(R.string.disconnect_confirm)
+                }
+                REVOKE -> {
+                    title(R.string.gplus_revoke)
+                    content(R.string.dialog_acc_revoke_text)
+                    positiveButton(R.string.disconnect_confirm)
+                }
+            }
+            negativeButton(android.R.string.no)
+        }.show()
+    }
+
     companion object {
         /* Request code used to invoke sign in user interactions. */
         private const val RC_SIGN_IN = 9001
@@ -968,7 +967,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         private const val RESTORE = "RESTORE"
         private val TAG = MainActivity::class.java.canonicalName
 
-        private class TranslationTask internal constructor(activity: MainActivity) : AsyncTask<Void, Void, Void>() {
+        private class TranslationTask(activity: MainActivity) : AsyncTask<Void, Void, Void>() {
 
             private val activityWeakReference: WeakReference<MainActivity> = WeakReference(activity)
 
@@ -1004,7 +1003,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             }
         }
 
-        private class BackupTask internal constructor(activity: MainActivity) : AsyncTask<Void, Void, String>() {
+        private class BackupTask(activity: MainActivity) : AsyncTask<Void, Void, String>() {
 
             private val activityReference: WeakReference<MainActivity> = WeakReference(activity)
 
@@ -1042,7 +1041,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             }
         }
 
-        private class RestoreTask internal constructor(activity: MainActivity) : AsyncTask<Void, Void, String>() {
+        private class RestoreTask(activity: MainActivity) : AsyncTask<Void, Void, String>() {
 
             private val activityReference: WeakReference<MainActivity> = WeakReference(activity)
 

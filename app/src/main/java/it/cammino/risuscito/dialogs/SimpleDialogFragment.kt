@@ -20,7 +20,7 @@ class SimpleDialogFragment : DialogFragment() {
     private var mCallback: SimpleCallback? = null
 
     private val builder: Builder?
-        get() = if (arguments == null || !arguments!!.containsKey("builder")) null else arguments!!.getSerializable("builder") as Builder
+        get() = if (arguments?.containsKey("builder") != true) null else arguments?.getSerializable("builder") as? Builder
 
     override fun onDestroyView() {
         if (dialog != null && retainInstance)
@@ -41,7 +41,7 @@ class SimpleDialogFragment : DialogFragment() {
         if (mCallback == null)
             mCallback = mBuilder.mListener
 
-        val dialog = MaterialDialog(activity!!)
+        val dialog = MaterialDialog(requireContext())
 
         if (mBuilder.mTitle != 0)
             dialog.title(res = mBuilder.mTitle)
@@ -49,18 +49,19 @@ class SimpleDialogFragment : DialogFragment() {
         if (!mBuilder.mAutoDismiss)
             dialog.noAutoDismiss()
 
-        if (mBuilder.mContent != null)
-            dialog.message(text = mBuilder.mContent!!)
+        mBuilder.mContent?.let {
+            dialog.message(text = it)
+        }
 
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) {
-                mCallback!!.onPositive(mBuilder.mTag)
+                mCallback?.onPositive(mBuilder.mTag)
             }
         }
 
         mBuilder.mNegativeButton?.let {
             dialog.negativeButton(text = it) {
-                mCallback!!.onNegative(mBuilder.mTag)
+                mCallback?.onNegative(mBuilder.mTag)
             }
         }
 
@@ -84,7 +85,7 @@ class SimpleDialogFragment : DialogFragment() {
 
     @SuppressLint("CheckResult")
     fun setContent(@StringRes res: Int) {
-        (dialog as MaterialDialog).message(res)
+        (dialog as? MaterialDialog)?.message(res)
     }
 
     fun setmCallback(callback: SimpleCallback) {
@@ -107,7 +108,7 @@ class SimpleDialogFragment : DialogFragment() {
         super.onCancel(dialog)
         val mBuilder = builder
         if (mBuilder?.mCanceListener == true)
-            mCallback!!.onPositive(mBuilder.mTag)
+            mCallback?.onPositive(mBuilder.mTag)
     }
 
     class Builder(context: AppCompatActivity, @field:Transient internal var mListener: SimpleCallback, internal val mTag: String) : Serializable {
@@ -187,7 +188,7 @@ class SimpleDialogFragment : DialogFragment() {
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
         frag?.let {
-            (it as DialogFragment).dismiss()
+            (it as? DialogFragment)?.dismiss()
             context.supportFragmentManager.beginTransaction()
                     .remove(it).commit()
         }

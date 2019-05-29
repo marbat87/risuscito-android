@@ -56,7 +56,7 @@ class LUtils private constructor(private val mActivity: Activity) {
         ioThread {
             val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
             val cronologia = Cronologia()
-            cronologia.idCanto = intent.extras!!.getInt("idCanto")
+            cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
             mDao.insertCronologia(cronologia)
         }
     }
@@ -69,12 +69,6 @@ class LUtils private constructor(private val mActivity: Activity) {
     fun closeActivityWithTransition() {
         mActivity.finish()
         Animatoo.animateSlideRight(mActivity)
-    }
-
-    internal fun closeActivityWithFadeOut() {
-        mActivity.finish()
-        Animatoo.animateZoom(mActivity)
-
     }
 
     internal fun goFullscreen() {
@@ -106,68 +100,70 @@ class LUtils private constructor(private val mActivity: Activity) {
             mActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
-    internal fun listToXML(lista: ListaPersonalizzata): Uri? {
+    internal fun listToXML(lista: ListaPersonalizzata?): Uri? {
+        lista?.let {
+            try {
+                val docFactory = DocumentBuilderFactory.newInstance()
+                val docBuilder = docFactory.newDocumentBuilder()
 
-        try {
-            val docFactory = DocumentBuilderFactory.newInstance()
-            val docBuilder = docFactory.newDocumentBuilder()
+                // root elements
+                val doc = docBuilder.newDocument()
+                val rootElement = doc.createElement("list")
+                rootElement.setAttribute("title", it.name)
+                doc.appendChild(rootElement)
 
-            // root elements
-            val doc = docBuilder.newDocument()
-            val rootElement = doc.createElement("list")
-            rootElement.setAttribute("title", lista.name)
-            doc.appendChild(rootElement)
+                for (i in 0 until it.numPosizioni) {
+                    val position = doc.createElement("position")
+                    position.setAttribute("name", it.getNomePosizione(i))
+                    if (it.getCantoPosizione(i) != "")
+                        position.appendChild(doc.createTextNode(it.getCantoPosizione(i)))
+                    else
+                        position.appendChild(doc.createTextNode("0"))
+                    rootElement.appendChild(position)
+                }
 
-            for (i in 0 until lista.numPosizioni) {
-                val position = doc.createElement("position")
-                position.setAttribute("name", lista.getNomePosizione(i))
-                if (lista.getCantoPosizione(i) != "")
-                    position.appendChild(doc.createTextNode(lista.getCantoPosizione(i)))
-                else
-                    position.appendChild(doc.createTextNode("0"))
-                rootElement.appendChild(position)
+                val domSource = DOMSource(doc)
+                val writer = StringWriter()
+                val result = StreamResult(writer)
+                val tf = TransformerFactory.newInstance()
+                val transformer = tf.newTransformer()
+                transformer.transform(domSource, result)
+                Log.d(TAG, "listToXML: $writer")
+                //            writer.toString();
+
+                val exportFile = File(mActivity.cacheDir.absolutePath + "/" + it.name + FILE_FORMAT)
+                Log.d(TAG, "listToXML: exportFile = " + exportFile.absolutePath)
+                val fos = FileOutputStream(exportFile)
+                val dataWrite = writer.toString()
+                fos.write(dataWrite.toByteArray())
+                fos.close()
+
+                return FileProvider.getUriForFile(mActivity, "it.cammino.risuscito.fileprovider", exportFile)
+
+            } catch (e: ParserConfigurationException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
+            } catch (e: TransformerConfigurationException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
+            } catch (e: TransformerException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
+            } catch (e: FileNotFoundException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
+            } catch (e: IOException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
             }
-
-            val domSource = DOMSource(doc)
-            val writer = StringWriter()
-            val result = StreamResult(writer)
-            val tf = TransformerFactory.newInstance()
-            val transformer = tf.newTransformer()
-            transformer.transform(domSource, result)
-            Log.d(TAG, "listToXML: $writer")
-            //            writer.toString();
-
-            val exportFile = File(mActivity.cacheDir.absolutePath + "/" + lista.name + FILE_FORMAT)
-            Log.d(TAG, "listToXML: exportFile = " + exportFile.absolutePath)
-            val fos = FileOutputStream(exportFile)
-            val dataWrite = writer.toString()
-            fos.write(dataWrite.toByteArray())
-            fos.close()
-
-            return FileProvider.getUriForFile(mActivity, "it.cammino.risuscito.fileprovider", exportFile)
-
-        } catch (e: ParserConfigurationException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
-        } catch (e: TransformerConfigurationException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
-        } catch (e: TransformerException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
-        } catch (e: FileNotFoundException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
-        } catch (e: IOException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
         }
-
+        Log.e(TAG, "input lista null")
+        return null
     }
 
     fun convertIntPreferences() {
@@ -253,14 +249,17 @@ class LUtils private constructor(private val mActivity: Activity) {
         }
 
         fun getResId(resName: String?, c: Class<*>): Int {
-            return try {
-                val idField = c.getDeclaredField(resName!!)
-                idField.getInt(idField)
-            } catch (e: Exception) {
-                Log.e(TAG, "getResId: " + e.localizedMessage, e)
-                -1
+            resName?.let {
+                return try {
+                    val idField = c.getDeclaredField(it)
+                    idField.getInt(idField)
+                } catch (e: Exception) {
+                    Log.e(TAG, "getResId: " + e.localizedMessage, e)
+                    -1
+                }
             }
-
+            Log.e(TAG, "resName NULL")
+            return -1
         }
     }
 

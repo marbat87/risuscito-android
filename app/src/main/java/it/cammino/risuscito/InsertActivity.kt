@@ -79,11 +79,11 @@ class InsertActivity : ThemeableActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val bundle = intent.extras
-        listaPredefinita = bundle?.getInt("fromAdd") ?: 0
-        idLista = bundle?.getInt("idLista") ?: 0
-        listPosition = bundle?.getInt("position") ?: 0
+        listaPredefinita = bundle?.getInt(FROM_ADD) ?: 0
+        idLista = bundle?.getInt(ID_LISTA) ?: 0
+        listPosition = bundle?.getInt(POSITION) ?: 0
 
-        val args = Bundle().apply { putInt("tipoLista", 3) }
+        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, 3) }
         mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(this)
@@ -137,7 +137,7 @@ class InsertActivity : ThemeableActivity() {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to item.source?.getText(this@InsertActivity), "idCanto" to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(this@InsertActivity), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
             }
         })
@@ -369,5 +369,8 @@ class InsertActivity : ThemeableActivity() {
 
     companion object {
         private val TAG = InsertActivity::class.java.canonicalName
+        internal const val FROM_ADD = "fromAdd"
+        internal const val ID_LISTA = "idLista"
+        internal const val POSITION = "position"
     }
 }

@@ -49,7 +49,9 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.index_list_fragment, container, false)
 
-        val args = Bundle().apply { putInt(TIPO_LISTA, arguments?.getInt(TIPO_LISTA, 0) ?: 0) }
+        val args = Bundle().apply {
+            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
+        }
         mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
 
         mLUtils = LUtils.getInstance(requireActivity())
@@ -90,8 +92,8 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(
-                        "pagina" to item.source?.getText(context),
-                        "idCanto" to item.id
+                        Utility.PAGINA to item.source?.getText(context),
+                        Utility.ID_CANTO to item.id
                 ))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
@@ -174,12 +176,12 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         private const val NUMERIC_REPLACE_2 = "NUMERIC_REPLACE_2"
         private const val SALMI_REPLACE = "SALMI_REPLACE"
         private const val SALMI_REPLACE_2 = "SALMI_REPLACE_2"
-        private const val TIPO_LISTA = "tipoLista"
+        private const val INDICE_LISTA = "indiceLista"
         private val TAG = SimpleIndexFragment::class.java.canonicalName
 
         fun newInstance(tipoLista: Int): SimpleIndexFragment {
             val f = SimpleIndexFragment()
-            f.arguments = bundleOf(TIPO_LISTA to tipoLista)
+            f.arguments = bundleOf(INDICE_LISTA to tipoLista)
             return f
         }
     }

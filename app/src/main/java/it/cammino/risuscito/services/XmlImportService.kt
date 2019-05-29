@@ -175,7 +175,7 @@ class XmlImportService : IntentService("XmlImportService") {
             }
             val name = parser.name
             // Starts by looking for the entry tag
-            if (name == "position") {
+            if (name == POSITION_TAG) {
                 tempPos = readPosition(parser)
                 list.addPosizione(tempPos.name)
                 if (!tempPos.canto.equals("0", ignoreCase = true))
@@ -191,10 +191,10 @@ class XmlImportService : IntentService("XmlImportService") {
     @Throws(IOException::class, XmlPullParserException::class)
     private fun readPosition(parser: XmlPullParser): Position {
         val result = Position()
-        parser.require(XmlPullParser.START_TAG, ns, "position")
+        parser.require(XmlPullParser.START_TAG, ns, POSITION_TAG)
         val name = parser.getAttributeValue(null, "name")
         val canto = readCanto(parser)
-        parser.require(XmlPullParser.END_TAG, ns, "position")
+        parser.require(XmlPullParser.END_TAG, ns, POSITION_TAG)
         result.name = name.trim { it <= ' ' }
         result.canto = canto.trim { it <= ' ' }
         return result
@@ -236,6 +236,7 @@ class XmlImportService : IntentService("XmlImportService") {
         const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
         const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
         private const val CHANNEL_ID = "itcr_import_channel"
+        private const val POSITION_TAG = "position"
         // We don't use namespaces
         private val ns: String? = null
     }

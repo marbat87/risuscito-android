@@ -27,7 +27,7 @@ class ProgressDialogFragment : DialogFragment() {
     private val progressNumberFormat = "%1d/%2d"
 
     private val builder: Builder?
-        get() = if (arguments == null || !arguments!!.containsKey("builder")) null else arguments!!.getSerializable("builder") as Builder
+        get() = if (arguments?.containsKey("builder") != true) null else arguments?.getSerializable("builder") as? Builder
 
     override fun onDestroyView() {
         if (dialog != null && retainInstance)
@@ -48,7 +48,7 @@ class ProgressDialogFragment : DialogFragment() {
         if (mCallback == null)
             mCallback = mBuilder.mListener
 
-        val dialog = MaterialDialog(activity!!)
+        val dialog = MaterialDialog(requireContext())
 
         if (mBuilder.mTitle != 0)
             dialog.title(res = mBuilder.mTitle)
@@ -58,13 +58,13 @@ class ProgressDialogFragment : DialogFragment() {
 
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) {
-                mCallback!!.onPositive(mBuilder.mTag)
+                mCallback?.onPositive(mBuilder.mTag)
             }
         }
 
         mBuilder.mNegativeButton?.let {
             dialog.negativeButton(text = it) {
-                mCallback!!.onNegative(mBuilder.mTag)
+                mCallback?.onNegative(mBuilder.mTag)
             }
         }
 
@@ -96,7 +96,7 @@ class ProgressDialogFragment : DialogFragment() {
 
     @SuppressLint("CheckResult")
     fun setContent(@StringRes res: Int) {
-        (dialog as MaterialDialog).getCustomView().md_content_indeterminate.setText(res)
+        (dialog as? MaterialDialog)?.getCustomView()?.md_content_indeterminate?.setText(res)
     }
 
     fun setmCallback(callback: ProgressCallback) {
@@ -104,12 +104,12 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     fun setProgress(progress: Int) {
-        (dialog as MaterialDialog).getCustomView().working_progress.progress = progress
-        (dialog as MaterialDialog).getCustomView().md_label.text =
+        (dialog as? MaterialDialog)?.getCustomView()?.working_progress?.progress = progress
+        (dialog as? MaterialDialog)?.getCustomView()?.md_label?.text =
                 progressPercentFormat.format(
-                        progress.toFloat() / builder!!.mProgressMax.toFloat())
-        (dialog as MaterialDialog).getCustomView().md_minMax.text =
-                String.format(progressNumberFormat, progress, builder!!.mProgressMax)
+                        progress.toFloat() / (builder?.mProgressMax?.toFloat() ?: Float.MIN_VALUE))
+        (dialog as? MaterialDialog)?.getCustomView()?.md_minMax?.text =
+                String.format(progressNumberFormat, progress, builder?.mProgressMax)
     }
 
     fun cancel() {
@@ -198,7 +198,7 @@ class ProgressDialogFragment : DialogFragment() {
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
         frag?.let {
-            (it as DialogFragment).dismiss()
+            (it as? DialogFragment)?.dismiss()
             context.supportFragmentManager.beginTransaction()
                     .remove(it).commit()
         }

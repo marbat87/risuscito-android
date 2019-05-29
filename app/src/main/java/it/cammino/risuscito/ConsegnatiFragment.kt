@@ -194,8 +194,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(
-                        "pagina" to item.source?.getText(context),
-                        "idCanto" to item.id
+                        Utility.PAGINA to item.source?.getText(context),
+                        Utility.ID_CANTO to item.id
                 ))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true

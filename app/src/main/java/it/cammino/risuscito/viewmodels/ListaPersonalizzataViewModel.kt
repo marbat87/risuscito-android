@@ -9,6 +9,7 @@ import androidx.lifecycle.Transformations
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.objects.PosizioneItem
@@ -27,7 +28,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) : And
         private set
 
     init {
-        listaPersonalizzataId = args.getInt("tipoLista")
+        listaPersonalizzataId = args.getInt(Utility.TIPO_LISTA)
         val mDb = RisuscitoDatabase.getInstance(getApplication())
         listaPersonalizzataResult = Transformations.map(zipLiveData(mDb.listePersDao().getLiveListById(listaPersonalizzataId)!!, mDb.cantoDao().liveAll)) { results ->
             val mPosizioniList = ArrayList<ListaPersonalizzataItem>()

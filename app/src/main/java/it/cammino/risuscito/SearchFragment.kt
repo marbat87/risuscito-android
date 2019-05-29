@@ -73,7 +73,7 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_search)
 
-        val args = Bundle().apply { putInt("tipoLista", 0) }
+        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, 0) }
         mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
@@ -127,7 +127,7 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(requireActivity().applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to item.source?.getText(context), "idCanto" to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(context), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
