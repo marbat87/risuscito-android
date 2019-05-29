@@ -116,7 +116,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mMainActivity = activity as? MainActivity
 
-        mRegularFont = ResourcesCompat.getFont(mMainActivity!!, R.font.googlesans_regular)
+        mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_consegnati)
 
@@ -157,13 +157,14 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     }
                     R.id.confirm_changes -> {
                         mCantiViewModel.editMode = false
-                        ProgressDialogFragment.Builder(
-                                mMainActivity!!, null, CONSEGNATI_SAVING)
-                                .content(R.string.save_consegnati_running)
-                                .progressIndeterminate(false)
-                                .progressMax(mCantiViewModel.titoliChoose.size)
-                                .show()
-
+                        mMainActivity?.let { activity ->
+                            ProgressDialogFragment.Builder(
+                                    activity, null, CONSEGNATI_SAVING)
+                                    .content(R.string.save_consegnati_running)
+                                    .progressIndeterminate(false)
+                                    .progressMax(mCantiViewModel.titoliChoose.size)
+                                    .show()
+                        }
                         val mSelected = selectExtension?.selectedItems
                         val mSelectedId = mSelected?.mapTo(ArrayList()) { item -> item.id }
 
