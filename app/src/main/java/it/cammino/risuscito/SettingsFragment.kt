@@ -29,16 +29,16 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         mMainActivity = activity as? MainActivity
-        mMainActivity!!.setupToolbarTitle(R.string.title_activity_settings)
+        mMainActivity?.setupToolbarTitle(R.string.title_activity_settings)
 
-        mMainActivity!!.setTabVisible(false)
-        mMainActivity!!.enableFab(false)
-        mMainActivity!!.enableBottombar(false)
+        mMainActivity?.setTabVisible(false)
+        mMainActivity?.enableFab(false)
+        mMainActivity?.enableBottombar(false)
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as ListPreference
 
         loadStorageList(
-                EasyPermissions.hasPermissions(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                EasyPermissions.hasPermissions(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE))
 
         listPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             listPreference.entries = mEntries
@@ -66,29 +66,27 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         Log.d(TAG, "onSharedPreferenceChanged: $s")
         if (s.equals("new_primary_color", ignoreCase = true)) {
             Log.d(TAG, "onSharedPreferenceChanged: new_primary_color" + sharedPreferences.getInt(s, 0))
-            activity!!.recreate()
+            activity?.recreate()
         }
         if (s.equals("new_accent_color", ignoreCase = true)) {
             Log.d(TAG, "onSharedPreferenceChanged: new_accent_color" + sharedPreferences.getInt(s, 0))
-            activity!!.recreate()
+            activity?.recreate()
         }
         if (s.equals("dark_mode", ignoreCase = true)) {
             Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getBoolean(s, false))
-            activity!!.recreate()
+            activity?.recreate()
         }
         if (s == Utility.SYSTEM_LANGUAGE) {
             Log.d(
                     TAG,
                     "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                             .language)
-            Log.d(TAG, "onSharedPreferenceChanged: cur set " + sharedPreferences.getString(s, "")!!)
+            Log.d(TAG, "onSharedPreferenceChanged: cur set ${sharedPreferences.getString(s, "")}")
             if (!ThemeableActivity.getSystemLocalWrapper(resources.configuration)
                             .language
-                            .equals(sharedPreferences.getString(s, "it")!!, ignoreCase = true)) {
-                val i = activity!!.baseContext
-                        .packageManager
-                        .getLaunchIntentForPackage(activity!!.baseContext.packageName)
-                i?.let {
+                            .equals(sharedPreferences.getString(s, "it"), ignoreCase = true)) {
+                val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
+                mIntent?.let {
                     it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     it.putExtra(Utility.DB_RESET, true)
                     val currentLang = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
@@ -100,7 +98,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 }
             }
         }
-        if (s == Utility.SCREEN_ON) LUtils.getInstance(activity!!).checkScreenAwake()
+        if (s == Utility.SCREEN_ON) LUtils.getInstance(requireActivity()).checkScreenAwake()
     }
 
     private fun loadStorageList(external: Boolean) {
