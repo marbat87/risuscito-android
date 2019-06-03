@@ -79,41 +79,45 @@ object Utility {
     }
 
     /* Filtra il link di input per tenere solo il nome del file */
-    internal fun filterMediaLinkNew(link: String): String {
-        return if (link.isEmpty())
-            link
-        else {
-            return when {
-                link.indexOf("resuscicanti") > 0 -> {
-                    val start = link.indexOf(".com/")
-                    link.substring(start + 5).replace("%20".toRegex(), "_")
+    internal fun filterMediaLinkNew(link: String?): String {
+        link?.let {
+            return if (it.isEmpty())
+                it
+            else {
+                return when {
+                    it.indexOf("resuscicanti") > 0 -> {
+                        val start = it.indexOf(".com/")
+                        it.substring(start + 5).replace("%20".toRegex(), "_")
+                    }
+                    it.indexOf("marbat87") > 0 -> {
+                        val start = it.indexOf("audio/")
+                        it.substring(start + 6).replace("%20".toRegex(), "_")
+                    }
+                    else -> it
                 }
-                link.indexOf("marbat87") > 0 -> {
-                    val start = link.indexOf("audio/")
-                    link.substring(start + 6).replace("%20".toRegex(), "_")
-                }
-                else -> link
             }
-        }
+        } ?: return ""
     }
 
     /* Filtra il link di input per tenere solo il nome del file */
-    internal fun filterMediaLink(link: String): String {
-        return if (link.isEmpty())
-            link
-        else {
-            when {
-                link.indexOf("resuscicanti") > 0 -> {
-                    val start = link.indexOf(".com/")
-                    link.substring(start + 5)
+    internal fun filterMediaLink(link: String?): String {
+        link?.let {
+            return if (it.isEmpty())
+                it
+            else {
+                when {
+                    it.indexOf("resuscicanti") > 0 -> {
+                        val start = it.indexOf(".com/")
+                        it.substring(start + 5)
+                    }
+                    it.indexOf("marbat87") > 0 -> {
+                        val start = it.indexOf("audio/")
+                        it.substring(start + 6)
+                    }
+                    else -> it
                 }
-                link.indexOf("marbat87") > 0 -> {
-                    val start = link.indexOf("audio/")
-                    link.substring(start + 6)
-                }
-                else -> link
             }
-        }
+        } ?: return ""
     }
 
     fun retrieveMediaFileLink(activity: Context, link: String?, cercaEsterno: Boolean): String {
