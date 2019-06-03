@@ -19,6 +19,7 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.items.SimpleItem
+import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.ref.WeakReference
 import java.sql.Date
 
@@ -119,7 +120,7 @@ object ListeUtils {
             super.onPostExecute(titoloPresente)
             fragmentReference.get()?.let {
                 if (titoloPresente != null && titoloPresente == CANTO_PRESENTE) {
-                    Snackbar.make(it.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(it.requireActivity().main_content, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                 } else
                     if (titoloPresente != null && titoloPresente.isNotEmpty()) {
                         SimpleDialogFragment.Builder(
@@ -136,7 +137,7 @@ object ListeUtils {
                                 .negativeButton(R.string.cancel)
                                 .show()
                     } else
-                        Snackbar.make(it.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(it.requireActivity().main_content, R.string.list_added, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -167,9 +168,9 @@ object ListeUtils {
             super.onPostExecute(updated)
             fragmentReference.get()?.let {
                 if (updated)
-                    Snackbar.make(it.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(it.requireActivity().main_content, R.string.list_added, Snackbar.LENGTH_SHORT).show()
                 else
-                    Snackbar.make(it.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(it.requireActivity().main_content, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -190,7 +191,7 @@ object ListeUtils {
             super.onPostExecute(result)
             fragmentReference.get()?.let {
                 if (showSnackbar)
-                    Snackbar.make(it.view!!, R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(it.requireActivity().main_content, R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -213,7 +214,7 @@ object ListeUtils {
             super.onPostExecute(result)
             val apiResult = Pair(fragmentReference.get(), mRemovedItems)
             apiResult.letCheckNull { fragment, removedItems ->
-                Snackbar.make(fragment.view!!, fragment.resources.getQuantityString(R.plurals.favorites_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
+                Snackbar.make(fragment.requireActivity().main_content, fragment.resources.getQuantityString(R.plurals.favorites_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
                         .setAction(fragment.getString(R.string.cancel).toUpperCase()) {
                             for (removedItem in removedItems)
                                 UpdateFavoriteTask(fragment, false, removedItem.id).execute()
@@ -237,7 +238,7 @@ object ListeUtils {
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
             fragmentReference.get()?.let {
-                Snackbar.make(it.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(it.requireActivity().main_content, R.string.list_added, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -257,7 +258,7 @@ object ListeUtils {
         override fun onPostExecute(result: Int) {
             super.onPostExecute(result)
             fragmentReference.get()?.let {
-                Snackbar.make(it.view!!, R.string.list_added, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(it.requireActivity().main_content, R.string.list_added, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -323,7 +324,7 @@ object ListeUtils {
         override fun onPostExecute(cantoPresente: Boolean) {
             super.onPostExecute(cantoPresente)
             fragmentReference.get()?.let {
-                Snackbar.make(it.view!!, if (cantoPresente) R.string.present_yet else R.string.switch_done, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(it.requireActivity().main_content, if (cantoPresente) R.string.present_yet else R.string.switch_done, Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -364,9 +365,9 @@ object ListeUtils {
             super.onPostExecute(cantoPresente)
             fragmentReference.get()?.let {
                 when (cantoPresente) {
-                    0 -> Snackbar.make(it.view!!, R.string.switch_done, Snackbar.LENGTH_SHORT).show()
-                    1 -> Snackbar.make(it.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-                    2 -> Snackbar.make(it.view!!, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
+                    0 -> Snackbar.make(it.requireActivity().main_content, R.string.switch_done, Snackbar.LENGTH_SHORT).show()
+                    1 -> Snackbar.make(it.requireActivity().main_content, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                    2 -> Snackbar.make(it.requireActivity().main_content, R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
@@ -392,7 +393,7 @@ object ListeUtils {
             super.onPostExecute(result)
             fragmentReference.get()?.let { fragment ->
                 Snackbar.make(
-                        fragment.view!!,
+                        fragment.requireActivity().main_content,
                         R.string.song_removed,
                         Snackbar.LENGTH_LONG)
                         .setAction(
@@ -444,7 +445,7 @@ object ListeUtils {
             super.onPostExecute(result)
             val apiResult = Pair(fragmentReference.get(), mRemovedItems)
             apiResult.letCheckNull { fragment, removedItems ->
-                Snackbar.make(fragment.view!!, fragment.resources.getQuantityString(R.plurals.histories_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
+                Snackbar.make(fragment.requireActivity().main_content, fragment.resources.getQuantityString(R.plurals.histories_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
                         .setAction(fragment.getString(R.string.cancel).toUpperCase()) {
                             for (removedItem in removedItems)
                                 UpdateHistoryTask(fragment, removedItem.id, removedItem.timestamp?.text.toString()).execute()

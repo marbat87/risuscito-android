@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.os.*
-import android.preference.PreferenceManager
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -29,6 +28,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.fileChooser
 import com.getkeepsafe.taptargetview.TapTarget
@@ -68,6 +68,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private val mExecutorService = Executors.newSingleThreadScheduledExecutor()
     var mostraAudioBool: Boolean = false
     private var mDownload: Boolean = false
+
+    private val noChangesTabBarre: Boolean
+        get() = mViewModel.notaCambio == mViewModel.mCurrentCanto?.savedTab && mViewModel.barreCambio == mViewModel.mCurrentCanto?.savedBarre
+
+    private val mSharedPrefs: SharedPreferences
+        get() = PreferenceManager.getDefaultSharedPreferences(this)
+
+    private val mRiuscitoDb: RisuscitoDatabase
+        get() = RisuscitoDatabase.getInstance(this)
 
     private lateinit var mViewModel: PaginaRenderViewModel
     private var url: String? = null
@@ -110,8 +119,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                 }
                 PlaybackStateCompat.STATE_ERROR -> {
-                    val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, BUFFERING)
-                    sFragment?.dismiss()
+                    dismissProgressDialog(BUFFERING)
                     stopSeekbarUpdate()
                     music_seekbar.progress = 0
                     music_seekbar.isEnabled = false
@@ -124,8 +132,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .show()
                 }
                 PlaybackStateCompat.STATE_PLAYING -> {
-                    val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, BUFFERING)
-                    sFragment?.dismiss()
+                    dismissProgressDialog(BUFFERING)
                     scheduleSeekbarUpdate()
                     showPlaying(true)
                     music_seekbar.isEnabled = true
@@ -210,10 +217,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             // Implement UI change code here once notification is received
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_COMPLETED")
-                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, DOWNLOAD_MP3)
-                sFragment?.dismiss()
-                val pref = PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity)
-                val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")
+                dismissProgressDialog(DOWNLOAD_MP3)
+                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
                         ?: "0")
                 if (saveLocation == 1) {
                     // initiate media scan and put the new things into the path array to
@@ -246,8 +251,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_ERROR")
                 Log.d(TAG, "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR))
-                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, DOWNLOAD_MP3)
-                sFragment?.dismiss()
+                dismissProgressDialog(DOWNLOAD_MP3)
                 Snackbar.make(
                         findViewById(android.R.id.content),
                         getString(R.string.download_error)
@@ -266,8 +270,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             // Implement UI change code here once notification is received
             Log.d(TAG, "BROADCAST_EXPORT_COMPLETED")
             Log.d(TAG, "DATA_PDF_PATH: " + intent.getStringExtra(PdfExportService.DATA_PDF_PATH))
-            val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, EXPORT_PDF)
-            sFragment?.dismiss()
+            dismissProgressDialog(EXPORT_PDF)
             val localPDFPath = intent.getStringExtra(PdfExportService.DATA_PDF_PATH)
             val file = File(localPDFPath)
             val target = Intent(Intent.ACTION_VIEW)
@@ -297,8 +300,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 Log.d(
                         TAG,
                         "$PdfExportService.DATA_EXPORT_ERROR: ${intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)}")
-                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, EXPORT_PDF)
-                sFragment?.dismiss()
+                dismissProgressDialog(EXPORT_PDF)
                 Snackbar.make(
                         findViewById(android.R.id.content),
                         intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR),
@@ -379,12 +381,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         try {
             mViewModel.primaNota = if (mViewModel.primaNota == PaginaRenderViewModel.NOT_VAL) CambioAccordi.recuperaPrimoAccordo(
-                    assets.open(mViewModel.pagina + ".htm"),
+                    assets.open(mViewModel.pagina + FILE_PATH_SUFFIX),
                     getSystemLocalWrapper(resources.configuration)
                             .language)
             else mViewModel.primaNota
             mViewModel.primoBarre = if (mViewModel.primoBarre == PaginaRenderViewModel.NOT_VAL) cambioAccordi.recuperaBarre(
-                    assets.open(mViewModel.pagina + ".htm"),
+                    assets.open(mViewModel.pagina + FILE_PATH_SUFFIX),
                     getSystemLocalWrapper(resources.configuration)
                             .language)
             else mViewModel.primoBarre
@@ -462,23 +464,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
 
         if (mViewModel.mostraAudio == null) {
-            val pref = PreferenceManager.getDefaultSharedPreferences(this)
-            mViewModel.mostraAudio = pref.getBoolean(Utility.SHOW_AUDIO, true).toString()
+            mViewModel.mostraAudio = mSharedPrefs.getBoolean(Utility.SHOW_AUDIO, true).toString()
         }
         mostraAudioBool = java.lang.Boolean.parseBoolean(mViewModel.mostraAudio)
 
-        val sFragment1 = ProgressDialogFragment.findVisible(this, DOWNLOAD_MP3)
-        sFragment1?.setmCallback(this)
-        var sFragment = SimpleDialogFragment.findVisible(this, DELETE_LINK)
+        val sFragment = ProgressDialogFragment.findVisible(this, DOWNLOAD_MP3)
         sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible(this, DOWNLINK_CHOOSE)
-        sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible(this, DELETE_MP3)
-        sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible(this, ONLY_LINK)
-        sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible(this, SAVE_TAB)
-        sFragment?.setmCallback(this)
+        setDialogCallback(DELETE_LINK)
+        setDialogCallback(DOWNLINK_CHOOSE)
+        setDialogCallback(DELETE_MP3)
+        setDialogCallback(ONLY_LINK)
+        setDialogCallback(SAVE_TAB)
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
@@ -491,8 +487,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         IconicsMenuInflaterUtil.inflate(
                 menuInflater, this, R.menu.canto, menu, true)
         super.onCreateOptionsMenu(menu)
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-        Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: " + mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false))
+        Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: ${mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)}")
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
             Handler().postDelayed(1500) {
                 if (music_buttons.isVisible)
@@ -512,7 +507,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         || mViewModel.mCurrentCanto?.savedTab == null
                         || mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL
                         || mViewModel.mCurrentCanto?.savedBarre == null
-                        || mViewModel.notaCambio == mViewModel.mCurrentCanto?.savedTab && mViewModel.barreCambio == mViewModel.mCurrentCanto?.savedBarre) {
+                        || noChangesTabBarre) {
                     if (mViewModel.scrollPlaying) {
                         showScrolling(false)
                         mHandler.removeCallbacks(mScrollDown)
@@ -578,9 +573,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true)
-                    if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
+                    if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadUrl("file:///android_asset/${mViewModel.pagina}.htm")
+                    cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         cantoView.setInitialScale(it.zoom)
@@ -612,9 +607,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1, true)
-                    if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
+                    if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadUrl("file:///android_asset/${mViewModel.pagina}.htm")
+                    cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         cantoView.setInitialScale(it.zoom)
@@ -634,9 +629,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2, true)
-                        if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
+                        if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadUrl("file:///android_asset/${mViewModel.pagina}.htm")
+                        cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             cantoView.setInitialScale(it.zoom)
@@ -655,9 +650,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3, true)
-                        if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
+                        if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadUrl("file:///android_asset/${mViewModel.pagina}.htm")
+                        cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             cantoView.setInitialScale(it.zoom)
@@ -682,7 +677,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 || mViewModel.mCurrentCanto?.savedTab == null
                 || mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL
                 || mViewModel.mCurrentCanto?.savedBarre == null
-                || mViewModel.notaCambio == mViewModel.mCurrentCanto?.savedTab && mViewModel.barreCambio == mViewModel.mCurrentCanto?.savedBarre) {
+                || noChangesTabBarre) {
             if (mViewModel.scrollPlaying) {
                 showScrolling(false)
                 mHandler.removeCallbacks(mScrollDown)
@@ -699,6 +694,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     .show()
         }
     }
+
 
     public override fun onResume() {
         super.onResume()
@@ -749,7 +745,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         else
             ""
 
-        val mDao = RisuscitoDatabase.getInstance(this).localLinksDao()
+        val mDao = mRiuscitoDb.localLinksDao()
         val localLink = mDao.getLocalLinkByCantoId(mViewModel.idCanto)
 
         personalUrl = localLink?.localPath ?: ""
@@ -784,7 +780,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         var barreScritto = false
 
         try {
-            val br = BufferedReader(InputStreamReader(assets.open(mViewModel.pagina + ".htm"), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(assets.open(mViewModel.pagina + FILE_PATH_SUFFIX), "UTF-8"))
 
             var line: String? = br.readLine()
 
@@ -1021,8 +1017,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 RecordStateCheckerTask().execute()
             }
             DOWNLINK_CHOOSE -> {
-                val pref = PreferenceManager.getDefaultSharedPreferences(this)
-                val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0")
+                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
                         ?: "0")
                 if (saveLocation == 1) {
                     if (EasyPermissions.hasPermissions(
@@ -1030,7 +1025,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     // Have permission, do the thing!
                         startExternalDownload()
                     else {
-                        PreferenceManager.getDefaultSharedPreferences(this).edit { putString(Utility.SAVE_LOCATION, "0") }
+                        mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                         Snackbar.make(
                                 findViewById(android.R.id.content),
                                 R.string.forced_private,
@@ -1142,14 +1137,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
-                                PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
+                                mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
+                                mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
                         })
@@ -1226,14 +1221,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
-                                PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
+                                mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                PreferenceManager.getDefaultSharedPreferences(this@PaginaRenderActivity).edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
+                                mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
                                 music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
                             }
                         })
@@ -1316,15 +1311,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         // c'è la registrazione online
         if (!url.isNullOrEmpty()) {
             // controllo se ho scaricato un file in locale
-            val pref = PreferenceManager.getDefaultSharedPreferences(this)
-            val saveLocation = Integer.parseInt(pref.getString(Utility.SAVE_LOCATION, "0") ?: "0")
+            val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
+                    ?: "0")
             if (saveLocation == 1) {
                 localUrl = if (EasyPermissions.hasPermissions(
                                 this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // Have permission, do the thing!
                     Utility.retrieveMediaFileLink(this, url, true)
                 } else {
-                    PreferenceManager.getDefaultSharedPreferences(this).edit { putString(Utility.SAVE_LOCATION, "0") }
+                    mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
                             findViewById(android.R.id.content),
                             getString(R.string.external_storage_denied),
@@ -1369,7 +1364,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private inner class DataRetrieverTask : AsyncTask<Int, Void, Int>() {
         override fun doInBackground(vararg params: Int?): Int? {
             Log.d(TAG, "doInBackground: ")
-            val mDao = RisuscitoDatabase.getInstance(applicationContext).cantoDao()
+            val mDao = mRiuscitoDb.cantoDao()
             mViewModel.mCurrentCanto = mDao.getCantoById(params[0] ?: 0)
             getRecordLink()
             return 0
@@ -1412,9 +1407,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true)
-                if (nuovoFile != null) cantoView.loadUrl("file://$nuovoFile")
+                if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
-                cantoView.loadUrl("file:///android_asset/${mViewModel.pagina}.htm")
+                cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
 
             val webSettings = cantoView.settings
             webSettings.useWideViewPort = true
@@ -1466,7 +1461,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     @SuppressLint("StaticFieldLeak")
     private inner class DeleteLinkTask : AsyncTask<Int, Void, Int>() {
         override fun doInBackground(vararg params: Int?): Int? {
-            val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).localLinksDao()
+            val mDao = mRiuscitoDb.localLinksDao()
             val linkToDelete = LocalLink()
             linkToDelete.idCanto = params[0] ?: 0
             mDao.deleteLocalLink(linkToDelete)
@@ -1484,7 +1479,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     @SuppressLint("StaticFieldLeak")
     private inner class InsertLinkTask : AsyncTask<String, Void, Int>() {
         override fun doInBackground(vararg params: String): Int? {
-            val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).localLinksDao()
+            val mDao = mRiuscitoDb.localLinksDao()
             val linkToInsert = LocalLink()
             linkToInsert.idCanto = Integer.valueOf(params[0])
             linkToInsert.localPath = params[1]
@@ -1504,7 +1499,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private inner class UpdateFavoriteTask : AsyncTask<Int, Void, Int>() {
         override fun doInBackground(vararg params: Int?): Int? {
             mViewModel.mCurrentCanto?.let {
-                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
+                val mDao = mRiuscitoDb.cantoDao()
                 it.favorite = params[0] ?: 0
                 mDao.updateCanto(it)
             }
@@ -1526,7 +1521,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private inner class UpdateCantoTask : AsyncTask<Int, Void, Int>() {
         override fun doInBackground(vararg params: Int?): Int? {
             mViewModel.mCurrentCanto?.let {
-                val mDao = RisuscitoDatabase.getInstance(this@PaginaRenderActivity).cantoDao()
+                val mDao = mRiuscitoDb.cantoDao()
                 mDao.updateCanto(it)
             }
             return params[0]
@@ -1718,6 +1713,16 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
     }
 
+    private fun setDialogCallback(tag: String) {
+        val sFragment = SimpleDialogFragment.findVisible(this, tag)
+        sFragment?.setmCallback(this)
+    }
+
+    private fun dismissProgressDialog(tag: String) {
+        val sFragment = ProgressDialogFragment.findVisible(this, tag)
+        sFragment?.dismiss()
+    }
+
     companion object {
         internal val TAG = PaginaRenderActivity::class.java.canonicalName
         private const val PROGRESS_UPDATE_INTERNAL: Long = 1000
@@ -1730,5 +1735,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val DELETE_MP3 = "DELETE_MP3"
         private const val BUFFERING = "BUFFERING"
         private const val SAVE_TAB = "SAVE_TAB"
+        private const val DEF_FILE_PATH = "file://"
+        private const val FILE_PATH_PREFIX = "$DEF_FILE_PATH/android_asset/"
+        private const val FILE_PATH_SUFFIX = ".htm"
     }
 }

@@ -22,7 +22,7 @@ class InputTextDialogFragment : DialogFragment() {
     private var mCallback: SimpleInputCallback? = null
 
     private val builder: Builder?
-        get() = if (arguments?.containsKey("builder") != true) null else arguments?.getSerializable("builder") as? Builder
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
 
     override fun onDestroyView() {
         if (dialog != null && retainInstance)
@@ -71,14 +71,14 @@ class InputTextDialogFragment : DialogFragment() {
 
         dialog.setCancelable(mBuilder.mCanceable)
 
-        dialog.setOnKeyListener(DialogInterface.OnKeyListener
-        { arg0, keyCode, event ->
+        dialog.setOnKeyListener { arg0, keyCode, event ->
+            var returnValue = false
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
                 arg0.cancel()
-                return@OnKeyListener true
+                returnValue = true
             }
-            false
-        })
+            returnValue
+        }
 
         return dialog
     }
@@ -145,7 +145,7 @@ class InputTextDialogFragment : DialogFragment() {
         fun build(): InputTextDialogFragment {
             val dialog = InputTextDialogFragment()
             val args = Bundle()
-            args.putSerializable("builder", this)
+            args.putSerializable(BUILDER_TAG, this)
             dialog.arguments = args
             return dialog
         }
@@ -181,6 +181,7 @@ class InputTextDialogFragment : DialogFragment() {
     }
 
     companion object {
+        private const val BUILDER_TAG = "builder"
         fun findVisible(context: AppCompatActivity?, tag: String): InputTextDialogFragment? {
             context?.let {
                 val frag = it.supportFragmentManager.findFragmentByTag(tag)

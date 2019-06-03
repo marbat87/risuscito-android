@@ -559,8 +559,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             if (fab_pager?.isOpen == true)
                 fab_pager?.close()
             fab_pager.hide()
-            val params = fab_pager?.layoutParams as CoordinatorLayout.LayoutParams
-            params.behavior = SpeedDialView.NoBehavior()
+            val params = fab_pager?.layoutParams as? CoordinatorLayout.LayoutParams
+            params?.behavior = SpeedDialView.NoBehavior()
             fab_pager.requestLayout()
         }
     }
