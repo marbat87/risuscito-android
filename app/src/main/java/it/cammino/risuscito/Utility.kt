@@ -116,9 +116,9 @@ object Utility {
         }
     }
 
-    fun retrieveMediaFileLink(activity: Context, link: String, cercaEsterno: Boolean): String {
+    fun retrieveMediaFileLink(activity: Context, link: String?, cercaEsterno: Boolean): String {
 
-        if (link.isEmpty()) return ""
+        if (link.isNullOrEmpty()) return ""
 
         if (isExternalStorageReadable && cercaEsterno) {
             Log.v("Utility.java", "retrieveMediaFileLink: " + filterMediaLinkNew(link))

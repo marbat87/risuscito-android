@@ -37,7 +37,7 @@ fun TextInputEditText.makeClearableEditText(
 ) {
     val updateRightDrawable = {
         this.setCompoundDrawables(null, null,
-                if (text!!.isNotEmpty()) clearDrawable else null,
+                if (!text.isNullOrEmpty()) clearDrawable else null,
                 null)
     }
     updateRightDrawable()
@@ -49,7 +49,7 @@ fun TextInputEditText.makeClearableEditText(
         updateRightDrawable()
     }
     this.onRightDrawableClicked {
-        this.text!!.clear()
+        this.text?.clear()
         this.setCompoundDrawables(null, null, null, null)
         onCanceled?.invoke()
         this.requestFocus()

@@ -122,26 +122,26 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
                         true))
 
         if (isSelected) {
-            holder.mPage!!.visibility = View.INVISIBLE
-            holder.mPageSelected!!.visibility = View.VISIBLE
+            holder.mPage?.visibility = View.INVISIBLE
+            holder.mPageSelected?.visibility = View.VISIBLE
         } else {
-            val bgShape = holder.mPage!!.background as GradientDrawable
-            bgShape.setColor(color!!.colorInt)
-            holder.mPage!!.visibility = View.VISIBLE
-            holder.mPageSelected!!.visibility = View.INVISIBLE
+            val bgShape = holder.mPage?.background as? GradientDrawable
+            bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+            holder.mPage?.visibility = View.VISIBLE
+            holder.mPageSelected?.visibility = View.INVISIBLE
         }
 
-        holder.mId!!.text = id.toString()
+        holder.mId?.text = id.toString()
 
-        holder.mItemDivider!!.visibility = if (isHasDivider) View.VISIBLE else View.INVISIBLE
+        holder.mItemDivider?.visibility = if (isHasDivider) View.VISIBLE else View.INVISIBLE
 
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mTitle!!.text = null
-        holder.mPage!!.text = null
-        holder.mId!!.text = null
+        holder.mTitle?.text = null
+        holder.mPage?.text = null
+        holder.mId?.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

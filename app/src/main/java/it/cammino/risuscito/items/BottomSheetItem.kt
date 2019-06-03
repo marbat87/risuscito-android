@@ -44,15 +44,15 @@ class BottomSheetItem : AbstractItem<BottomSheetItem.ViewHolder>() {
         super.bindView(holder, payloads)
 
         val pm = holder.itemView.context.packageManager
-        holder.mIcon!!.setImageDrawable(item!!.loadIcon(pm))
-        holder.mLabel!!.text = item!!.loadLabel(pm)
+        holder.mIcon?.setImageDrawable(item?.loadIcon(pm))
+        holder.mLabel?.text = item?.loadLabel(pm)
 
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mLabel!!.text = null
-        holder.mIcon!!.setImageDrawable(null)
+        holder.mLabel?.text = null
+        holder.mIcon?.setImageDrawable(null)
     }
 
     override fun getViewHolder(v: View): ViewHolder {

@@ -7,10 +7,10 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import it.cammino.risuscito.BuildConfig
 import it.cammino.risuscito.CambioAccordi
 import it.cammino.risuscito.LUtils
@@ -40,9 +40,9 @@ class PdfExportService : IntentService("PdfExportService") {
             page = Page(pdf, A4.PORTRAIT)
             startingY = START_Y
         }
-        text!!.setLocation(START_X, startingY)
-        text!!.text = line
-        text!!.drawOn(page)
+        text?.setLocation(START_X, startingY)
+        text?.text = line
+        text?.drawOn(page)
         startingY += 20f
     }
 
@@ -62,21 +62,21 @@ class PdfExportService : IntentService("PdfExportService") {
 
     private fun exportPdf(intent: Intent?) {
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, "exportPdf: DATA_PRIMA_NOTA " + intent!!.getStringExtra(DATA_PRIMA_NOTA))
-            Log.d(TAG, "exportPdf: DATA_NOTA_CAMBIO " + intent.getStringExtra(DATA_NOTA_CAMBIO))
-            Log.d(TAG, "exportPdf: PRIMO_BARRE " + intent.getStringExtra(DATA_PRIMO_BARRE))
-            Log.d(TAG, "exportPdf: DATA_BARRE_CAMBIO " + intent.getStringExtra(DATA_BARRE_CAMBIO))
-            Log.d(TAG, "exportPdf: DATA_PAGINA " + intent.getStringExtra(DATA_PAGINA))
-            Log.d(TAG, "exportPdf: DATA_LINGUA " + intent.getStringExtra(DATA_LINGUA))
+            Log.d(TAG, "exportPdf: DATA_PRIMA_NOTA ${intent?.getStringExtra(DATA_PRIMA_NOTA)}")
+            Log.d(TAG, "exportPdf: DATA_NOTA_CAMBIO ${intent?.getStringExtra(DATA_NOTA_CAMBIO)}")
+            Log.d(TAG, "exportPdf: PRIMO_BARRE ${intent?.getStringExtra(DATA_PRIMO_BARRE)}")
+            Log.d(TAG, "exportPdf: DATA_BARRE_CAMBIO ${intent?.getStringExtra(DATA_BARRE_CAMBIO)}")
+            Log.d(TAG, "exportPdf: DATA_PAGINA ${intent?.getStringExtra(DATA_PAGINA)}")
+            Log.d(TAG, "exportPdf: DATA_LINGUA ${intent?.getStringExtra(DATA_LINGUA)}")
         }
 
-        primaNota = intent!!.getStringExtra(DATA_PRIMA_NOTA)
-        notaCambio = intent.getStringExtra(DATA_NOTA_CAMBIO)
-        primoBarre = intent.getStringExtra(DATA_PRIMO_BARRE)
-        val barreCambio = intent.getStringExtra(DATA_BARRE_CAMBIO)
-        pagina = intent.getStringExtra(DATA_PAGINA)
+        primaNota = intent?.getStringExtra(DATA_PRIMA_NOTA) ?: ""
+        notaCambio = intent?.getStringExtra(DATA_NOTA_CAMBIO) ?: ""
+        primoBarre = intent?.getStringExtra(DATA_PRIMO_BARRE) ?: ""
+        val barreCambio = intent?.getStringExtra(DATA_BARRE_CAMBIO) ?: ""
+        pagina = intent?.getStringExtra(DATA_PAGINA) ?: ""
         localPDFPath = ""
-        mLingua = intent.getStringExtra(DATA_LINGUA)
+        mLingua = intent?.getStringExtra(DATA_LINGUA) ?: ""
 
         val cambioAccordi = CambioAccordi(applicationContext, mLingua)
 
@@ -108,11 +108,11 @@ class PdfExportService : IntentService("PdfExportService") {
                 while (line != null) {
                     if ((line.contains("000000") || line.contains("A13F3C")) && !line.contains("BGCOLOR")) {
                         if (line.contains("000000")) {
-                            text!!.color = Color.black
+                            text?.color = Color.black
                         }
 
                         if (line.contains("A13F3C")) {
-                            text!!.color = Color.red
+                            text?.color = Color.red
                         }
                         line = line.replace("<H4>".toRegex(), "")
                         line = line.replace("</H4>".toRegex(), "")
@@ -159,7 +159,7 @@ class PdfExportService : IntentService("PdfExportService") {
                 return
             }
 
-            pdf!!.close()
+            pdf?.close()
         } catch (e: FileNotFoundException) {
             Log.e(javaClass.name, e.localizedMessage, e)
             Log.e(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_ERROR")
@@ -228,7 +228,7 @@ class PdfExportService : IntentService("PdfExportService") {
                     if (mLingua.equals("uk", ignoreCase = true) && patternMinore != null) {
                         val matcherMin = patternMinore.matcher(sb.toString())
                         while (matcherMin.find())
-                            matcherMin.appendReplacement(sb2, conversioneMin!![matcherMin.group(0)])
+                            matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0)))
                         matcherMin.appendTail(sb2)
                         line = sb2.toString()
                         line = line.replace("<K>".toRegex(), "</FONT><FONT COLOR='#A13F3C'>")
@@ -296,9 +296,7 @@ class PdfExportService : IntentService("PdfExportService") {
     @Suppress("DEPRECATION")
     private fun createConfContextLegacy(conf: Configuration): Resources {
         val metrics = DisplayMetrics()
-        (getSystemService(Context.WINDOW_SERVICE) as WindowManager)
-                .defaultDisplay
-                .getMetrics(metrics)
+        (getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.defaultDisplay?.getMetrics(metrics)
         return Resources(assets, metrics, conf)
     }
 

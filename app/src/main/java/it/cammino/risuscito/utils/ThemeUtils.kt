@@ -2,6 +2,7 @@ package it.cammino.risuscito.utils
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
 import it.cammino.risuscito.R
@@ -87,7 +88,7 @@ class ThemeUtils(context: Activity) {
     }
 
     fun primaryColorDark(): Int {
-        return mPrimaryDarkMap!![primaryColor()]!!
+        return mPrimaryDarkMap?.get(primaryColor()) ?: Color.WHITE
     }
 
     private fun accentColor(): Int {

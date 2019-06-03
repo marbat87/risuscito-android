@@ -26,16 +26,16 @@ class XmlImportService : IntentService("XmlImportService") {
 
     override fun onHandleIntent(intent: Intent?) {
         Log.d(TAG, "onHandleIntent: Starting")
-        val data = intent!!.data
-        if (data != null) {
+        val data = intent?.data
+        data?.let {
             intent.data = null
-            importData(data)
+            importData(it)
         }
     }
 
     private fun importData(data: Uri) {
         Log.d(TAG, "importData: data = $data")
-        Log.d(TAG, "importData:  data.getScheme = " + data.scheme)
+        Log.d(TAG, "importData:  data.getScheme = ${data.scheme}")
         val scheme = data.scheme
 
         val mNotificationManager = NotificationManagerCompat.from(this)
@@ -142,15 +142,15 @@ class XmlImportService : IntentService("XmlImportService") {
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun parse(`in`: InputStream?): ListaPersonalizzata? {
+    private fun parse(inputStream: InputStream?): ListaPersonalizzata? {
         try {
             val parser = Xml.newPullParser()
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-            parser.setInput(`in`, null)
+            parser.setInput(inputStream, null)
             parser.nextTag()
             return readLista(parser)
         } finally {
-            `in`!!.close()
+            inputStream?.close()
         }
     }
 

@@ -2,12 +2,12 @@ package it.cammino.risuscito.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.google.android.material.appbar.AppBarLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.view.ViewCompat
 import android.util.AttributeSet
 import android.view.View
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 @Suppress("unused")
 class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
@@ -37,7 +37,7 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
                     @SuppressLint("RestrictedApi")
                     override fun onHidden(fab: FloatingActionButton?) {
                         super.onHidden(fab)
-                        fab!!.visibility = View.INVISIBLE
+                        fab?.visibility = View.INVISIBLE
                     }
                 })
             }

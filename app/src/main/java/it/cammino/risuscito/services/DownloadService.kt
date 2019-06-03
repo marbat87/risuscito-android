@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.PowerManager
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -40,15 +40,15 @@ class DownloadService : IntentService("DownloadService") {
     }
 
     private fun startSaving(intent: Intent?) {
-        val uri = intent!!.data!!.toString()
-        val mPath = intent.getStringExtra(DATA_DESTINATION_FILE)
+        val uri = intent?.data?.toString()
+        val mPath = intent?.getStringExtra(DATA_DESTINATION_FILE)
         Log.d(TAG, "startSaving DATA $uri")
         Log.d(TAG, "startSaving: DATA_DESTINATION_FILE $mPath")
 
-        val pm = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
-        val wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+        val pm = applicationContext.getSystemService(Context.POWER_SERVICE) as? PowerManager
+        val wakelock = pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 javaClass.name)
-        wakelock.acquire(30000)
+        wakelock?.acquire(30000)
 
         try {
             var input: InputStream? = null
@@ -56,15 +56,14 @@ class DownloadService : IntentService("DownloadService") {
             var connection: HttpURLConnection? = null
             try {
                 val url = URL(uri)
-                connection = url.openConnection() as HttpURLConnection
-                connection.connect()
+                connection = url.openConnection() as? HttpURLConnection
+                connection?.connect()
 
                 // expect HTTP 200 OK, so we don't mistakenly save error report
                 // instead of the file
-                if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+                if (connection?.responseCode != HttpURLConnection.HTTP_OK) {
                     LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
-                    val erroreMessage = ("Server returned HTTP " + connection.responseCode
-                            + " " + connection.responseMessage)
+                    val erroreMessage = ("Server returned HTTP ${connection?.responseCode} ${connection?.responseMessage}")
                     Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
                     Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $erroreMessage")
                     val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
@@ -79,12 +78,12 @@ class DownloadService : IntentService("DownloadService") {
 
                 // download the file
                 input = connection.inputStream
-                output = FileOutputStream(intent.getStringExtra(DATA_DESTINATION_FILE))
+                output = FileOutputStream(intent?.getStringExtra(DATA_DESTINATION_FILE))
                 //                    Log.i(PaginaRenderActivity.this.getClass().toString(), "URL[1]:" + sUrl[1]);
 
                 val data = ByteArray(4096)
                 var total: Long = 0
-                var count = input!!.read(data)
+                var count = input?.read(data) ?: 0
                 while (count != -1) {
                     // allow canceling with back button
                     if (isCancelled) {
@@ -140,7 +139,7 @@ class DownloadService : IntentService("DownloadService") {
                 connection?.disconnect()
             }
         } finally {
-            if (wakelock.isHeld)
+            if (wakelock?.isHeld == true)
                 wakelock.release()
         }
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)

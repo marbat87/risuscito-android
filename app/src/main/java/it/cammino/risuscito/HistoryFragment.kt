@@ -28,7 +28,6 @@ import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
@@ -109,7 +108,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.text, Utility.ID_CANTO to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(context), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
@@ -254,21 +253,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mCronologiaViewModel.cronologiaCanti?.observe(
                 this,
                 Observer { canti ->
-                    Log.d(TAG, "onChanged: ")
-                    mCronologiaViewModel.titoli.clear()
-                    for (canto in canti) {
-                        val sampleItem = SimpleHistoryItem()
-                        sampleItem
-                                .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-                                .withColor(canto.color ?: Canto.BIANCO)
-                                .withTimestamp(canto.ultimaVisita?.time.toString())
-                                .withId(canto.id)
-                                .withSelectedColor(themeUtils.primaryColorDark())
-                        mCronologiaViewModel.titoli.add(sampleItem)
-                    }
-                    cantoAdapter.set(mCronologiaViewModel.titoli)
+                    cantoAdapter.set(canti.map { it.withSelectedColor(themeUtils.primaryColorDark()) })
                     no_history?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                     activity?.invalidateOptionsMenu()
                 })

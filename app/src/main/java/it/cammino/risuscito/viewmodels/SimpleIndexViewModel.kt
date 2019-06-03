@@ -9,6 +9,7 @@ import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem
 
@@ -33,13 +34,14 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
-                                SimpleItem()
-                                        .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                                        .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                                        .withSource(LUtils.getResId(it.source, R.string::class.java))
-                                        .withColor(it.color!!)
-                                        .withId(it.id)
-                                        .withUndecodedSource(it.source ?: "")
+                                SimpleItem().apply {
+                                    withTitle(LUtils.getResId(it.titolo, R.string::class.java))
+                                    withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                                    withSource(LUtils.getResId(it.source, R.string::class.java))
+                                    withColor(it.color ?: Canto.BIANCO)
+                                    withId(it.id)
+                                    withUndecodedSource(it.source ?: "")
+                                }
                         )
                     }
                     newList
@@ -49,13 +51,14 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
-                                SimpleItem()
-                                        .withTitle(LUtils.getResId(it.titoloSalmo, R.string::class.java))
-                                        .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                                        .withSource(LUtils.getResId(it.source, R.string::class.java))
-                                        .withColor(it.color!!)
-                                        .withId(it.id)
-                                        .withNumSalmo(it.numSalmo!!)
+                                SimpleItem().apply {
+                                    withTitle(LUtils.getResId(it.titoloSalmo, R.string::class.java))
+                                    withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                                    withSource(LUtils.getResId(it.source, R.string::class.java))
+                                    withColor(it.color ?: Canto.BIANCO)
+                                    withId(it.id)
+                                    withNumSalmo(it.numSalmo ?: "0")
+                                }
                         )
                     }
                     newList
@@ -65,14 +68,15 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     val newList = ArrayList<InsertItem>()
                     canti.forEach {
                         newList.add(
-                                InsertItem()
-                                        .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                                        .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                                        .withSource(LUtils.getResId(it.source, R.string::class.java))
-                                        .withColor(it.color!!)
-                                        .withId(it.id)
-                                        .withUndecodedSource(it.source ?: "")
-                                        .withConsegnato(it.consegnato)
+                                InsertItem().apply {
+                                    withTitle(LUtils.getResId(it.titolo, R.string::class.java))
+                                    withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                                    withSource(LUtils.getResId(it.source, R.string::class.java))
+                                    withColor(it.color ?: Canto.BIANCO)
+                                    withId(it.id)
+                                    withUndecodedSource(it.source ?: "")
+                                    withConsegnato(it.consegnato)
+                                }
                         )
                     }
                     newList

@@ -145,18 +145,18 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
                         true))
 
         if (isSelected) {
-            holder.mPage!!.visibility = View.INVISIBLE
-            holder.mPageSelected!!.visibility = View.VISIBLE
-            val bgShape = holder.mPageSelected!!.background as GradientDrawable
-            bgShape.setColor(selectedColor!!.colorInt)
+            holder.mPage?.visibility = View.INVISIBLE
+            holder.mPageSelected?.visibility = View.VISIBLE
+            val bgShape = holder.mPageSelected?.background as? GradientDrawable
+            bgShape?.setColor(selectedColor?.colorInt ?: Color.WHITE)
         } else {
-            val bgShape = holder.mPage!!.background as GradientDrawable
-            bgShape.setColor(color!!.colorInt)
-            holder.mPage!!.visibility = View.VISIBLE
-            holder.mPageSelected!!.visibility = View.INVISIBLE
+            val bgShape = holder.mPage?.background as? GradientDrawable
+            bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+            holder.mPage?.visibility = View.VISIBLE
+            holder.mPageSelected?.visibility = View.INVISIBLE
         }
 
-        holder.mId!!.text = id.toString()
+        holder.mId?.text = id.toString()
 
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
@@ -164,25 +164,25 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
                     DateFormat.SHORT, DateFormat.MEDIUM, ThemeableActivity.getSystemLocalWrapper(ctx.resources.configuration))
             val tempTimestamp: String
 
-            val dateTimestamp = Date(java.lang.Long.parseLong(timestamp!!.text.toString()))
+            val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.text.toString()))
             tempTimestamp = if (df is SimpleDateFormat) {
                 val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
                 df.applyPattern(pattern)
                 df.format(dateTimestamp)
             } else
                 df.format(dateTimestamp)
-            holder.mTimestamp!!.text = tempTimestamp
-            holder.mTimestamp!!.visibility = View.VISIBLE
+            holder.mTimestamp?.text = tempTimestamp
+            holder.mTimestamp?.visibility = View.VISIBLE
         } else
-            holder.mTimestamp!!.visibility = View.GONE
+            holder.mTimestamp?.visibility = View.GONE
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mTitle!!.text = null
-        holder.mPage!!.text = null
-        holder.mId!!.text = null
-        holder.mTimestamp!!.text = null
+        holder.mTitle?.text = null
+        holder.mPage?.text = null
+        holder.mId?.text = null
+        holder.mTimestamp?.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

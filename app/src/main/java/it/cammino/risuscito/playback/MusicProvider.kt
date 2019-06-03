@@ -48,7 +48,8 @@ class MusicProvider internal constructor(private val mContext: Context) {
 
     // Categorized caches for music track data:
     private val mMusicListById: LinkedHashMap<String, MediaMetadataCompat> = LinkedHashMap()
-    @Volatile private var mCurrentState = State.NON_INITIALIZED
+    @Volatile
+    private var mCurrentState = State.NON_INITIALIZED
     private val mDao: CantoDao = RisuscitoDatabase.getInstance(mContext).cantoDao()
 
     val allMusics: Iterable<MediaMetadataCompat>
@@ -64,7 +65,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
      *
      * @param musicId The unique music ID.
      */
-    fun getMusic(musicId: String): MediaMetadataCompat? {
+    fun getMusic(musicId: String?): MediaMetadataCompat? {
         return if (mMusicListById.containsKey(musicId)) mMusicListById[musicId] else null
     }
 
@@ -75,10 +76,13 @@ class MusicProvider internal constructor(private val mContext: Context) {
      * @param musicId The ID
      * @param metadata New Metadata to associate with it
      */
-    @Synchronized fun updateMusic(musicId: String, metadata: MediaMetadataCompat) {
-        val track = mMusicListById[musicId]
-        if (track != null) {
-            mMusicListById[musicId] = metadata
+    @Synchronized
+    fun updateMusic(musicId: String?, metadata: MediaMetadataCompat) {
+        musicId?.let {
+            val track = mMusicListById[it]
+            if (track != null) {
+                mMusicListById[it] = metadata
+            }
         }
     }
 
@@ -91,7 +95,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
         Log.d(TAG, "retrieveMediaAsync called")
         if (mCurrentState == State.INITIALIZED) {
             // Already initialized, so call back immediately.
-            callback!!.onMusicCatalogReady(true)
+            callback?.onMusicCatalogReady(true)
             return
         }
 
@@ -108,7 +112,8 @@ class MusicProvider internal constructor(private val mContext: Context) {
         }.execute()
     }
 
-    @Synchronized private fun retrieveMedia() {
+    @Synchronized
+    private fun retrieveMedia() {
         if (mCurrentState == State.NON_INITIALIZED) {
             mCurrentState = State.INITIALIZING
 
@@ -147,21 +152,21 @@ class MusicProvider internal constructor(private val mContext: Context) {
                                 + " / "
                                 + mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))
                                 + " / "
-                                + if (LUtils.getResId(canto.link, R.string::class.java) != - 1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link)
+                                + if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link)
 
-                var url = if (LUtils.getResId(canto.link, R.string::class.java) != - 1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link
+                var url = if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link
                 if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
-                    if (Utility.retrieveMediaFileLink(mContext, url!!, true).isNotEmpty())
+                    if (Utility.retrieveMediaFileLink(mContext, url, true).isNotEmpty())
                         url = Utility.retrieveMediaFileLink(mContext, url, true)
                 } else {
-                    if (Utility.retrieveMediaFileLink(mContext, url!!, false).isNotEmpty())
+                    if (Utility.retrieveMediaFileLink(mContext, url, false).isNotEmpty())
                         url = Utility.retrieveMediaFileLink(mContext, url, false)
                 }
 
                 Log.v(TAG, "retrieveMedia: " + canto.id + " / " + mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)) + " / " + url)
 
-                if (url.isNotEmpty()) {
+                if (!url.isNullOrEmpty()) {
                     temp = MediaMetadataCompat.Builder()
                             .putString(
                                     MediaMetadataCompat.METADATA_KEY_MEDIA_ID, canto.id.toString())

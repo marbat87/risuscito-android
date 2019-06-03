@@ -61,13 +61,13 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     } else {
         null
     }
-//    private val mFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    //    private val mFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
     private val mFocusRequest = if (LUtils.hasO()) {
-        AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(mPlaybackAttributes!!)
-                .setAcceptsDelayedFocusGain(true)
-                .setOnAudioFocusChangeListener(this, Handler())
-                .build()
+        AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).apply {
+            mPlaybackAttributes?.let { setAudioAttributes(it) }
+            setAcceptsDelayedFocusGain(true)
+            setOnAudioFocusChangeListener(this@Playback, Handler())
+        }.build()
     } else {
         null
     }
@@ -76,14 +76,14 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         get() = true
 
     internal val isPlaying: Boolean
-        get() = mPlayOnFocusGain || mMediaPlayer != null && mMediaPlayer!!.isPlaying
+        get() = mPlayOnFocusGain || (mMediaPlayer?.isPlaying == true)
 
     internal val currentStreamPosition: Int
-        get() = if (mMediaPlayer != null) mMediaPlayer!!.currentPosition else mCurrentPosition
+        get() = mMediaPlayer?.currentPosition ?: mCurrentPosition
 
     val duration: Long
-        get() = if (mMediaPlayer != null && state == PlaybackStateCompat.STATE_PLAYING) {
-            mMediaPlayer!!.duration.toLong()
+        get() = if (state == PlaybackStateCompat.STATE_PLAYING) {
+            mMediaPlayer?.duration?.toLong() ?: 0
         } else
             0
 
@@ -99,9 +99,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
     internal fun stop() {
         state = PlaybackStateCompat.STATE_STOPPED
-        if (mCallback != null) {
-            mCallback!!.onPlaybackStatusChanged(state)
-        }
+        mCallback?.onPlaybackStatusChanged(state)
         mCurrentPosition = 0
         // Give up Audio focus
         giveUpAudioFocus()
@@ -110,14 +108,14 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         if (mWifiLock.isHeld) mWifiLock.release()
     }
 
-    internal fun setmMusicProvider(mMusicProvider: MusicProvider) {
+    internal fun setmMusicProvider(mMusicProvider: MusicProvider?) {
         this.mMusicProvider = mMusicProvider
     }
 
-    fun play(item: MediaSessionCompat.QueueItem) {
+    fun play(item: MediaSessionCompat.QueueItem?) {
         mPlayOnFocusGain = true
         tryToGetAudioFocus()
-        val mediaId = item.description.mediaId
+        val mediaId = item?.description?.mediaId
         val mediaHasChanged = !TextUtils.equals(mediaId, mCurrentMediaId)
         if (mediaHasChanged) {
             mCurrentPosition = 0
@@ -129,9 +127,9 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         } else {
             state = PlaybackStateCompat.STATE_STOPPED
             relaxResources(false) // release everything except MediaPlayer
-            val track = mMusicProvider!!.getMusic(item.description.mediaId!!)
+            val track = mMusicProvider?.getMusic(item?.description?.mediaId)
 
-            val source = track!!.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI)
+            val source = track?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI)
             try {
                 createMediaPlayerIfNeeded()
 
@@ -147,11 +145,11 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
                 Log.d(TAG, "play: $source")
 
-                if (source.startsWith("http"))
-                    mMediaPlayer!!.setDataSource(source)
+                if (source?.startsWith("http") == true)
+                    mMediaPlayer?.setDataSource(source)
                 else {
                     val fileInputStream = FileInputStream(source)
-                    mMediaPlayer!!.setDataSource(fileInputStream.fd)
+                    mMediaPlayer?.setDataSource(fileInputStream.fd)
                     fileInputStream.close()
                 }
 
@@ -160,26 +158,22 @@ class Playback internal constructor(private val mService: MusicService, //    pr
                 // the onPrepared() method on this class, since we set the
                 // listener to 'this'). Until the media player is prepared,
                 // we *cannot* call start() on it!
-                mMediaPlayer!!.prepareAsync()
+                mMediaPlayer?.prepareAsync()
 
                 // If we are streaming from the internet, we want to hold a
                 // Wifi lock, which prevents the Wifi radio from going to
                 // sleep while the song is playing.
-                if (source.startsWith("http"))
+                if (source?.startsWith("http") == true)
                     mWifiLock.acquire()
                 else {
                     if (mWifiLock.isHeld) mWifiLock.release()
                 }
 
-                if (mCallback != null) {
-                    mCallback!!.onPlaybackStatusChanged(state)
-                }
+                mCallback?.onPlaybackStatusChanged(state)
 
             } catch (ioException: IOException) {
                 Log.e(TAG, "Exception playing song", ioException)
-                if (mCallback != null) {
-                    mCallback!!.onError(ioException.message!!)
-                }
+                mCallback?.onError(ioException.message)
             }
 
         }
@@ -188,17 +182,15 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     internal fun pause() {
         if (state == PlaybackStateCompat.STATE_PLAYING) {
             // Pause media player and cancel the 'foreground service' state.
-            if (mMediaPlayer != null && mMediaPlayer!!.isPlaying) {
-                mMediaPlayer!!.pause()
-                mCurrentPosition = mMediaPlayer!!.currentPosition
+            if (mMediaPlayer?.isPlaying == true) {
+                mMediaPlayer?.pause()
+                mCurrentPosition = mMediaPlayer?.currentPosition ?: 0
             }
             // while paused, retain the MediaPlayer but give up audio focus
             relaxResources(false)
         }
         state = PlaybackStateCompat.STATE_PAUSED
-        if (mCallback != null) {
-            mCallback!!.onPlaybackStatusChanged(state)
-        }
+        mCallback?.onPlaybackStatusChanged(state)
     }
 
     internal fun seekTo(position: Int) {
@@ -208,13 +200,11 @@ class Playback internal constructor(private val mService: MusicService, //    pr
             // If we do not have a current media player, simply update the current position.
             mCurrentPosition = position
         } else {
-            if (mMediaPlayer!!.isPlaying) {
+            if (mMediaPlayer?.isPlaying == true) {
                 state = PlaybackStateCompat.STATE_BUFFERING
             }
-            mMediaPlayer!!.seekTo(position)
-            if (mCallback != null) {
-                mCallback!!.onPlaybackStatusChanged(state)
-            }
+            mMediaPlayer?.seekTo(position)
+            mCallback?.onPlaybackStatusChanged(state)
         }
     }
 
@@ -257,30 +247,25 @@ class Playback internal constructor(private val mService: MusicService, //    pr
             }
         } else { // we have audio focus:
             if (mAudioFocus == AUDIO_NO_FOCUS_CAN_DUCK) {
-                mMediaPlayer!!.setVolume(VOLUME_DUCK, VOLUME_DUCK) // we'll be relatively quiet
-            } else {
-                if (mMediaPlayer != null) {
-                    mMediaPlayer!!.setVolume(VOLUME_NORMAL, VOLUME_NORMAL) // we can be loud again
-                } // else do something for remote client.
-            }
+                mMediaPlayer?.setVolume(VOLUME_DUCK, VOLUME_DUCK) // we'll be relatively quiet
+            } else
+                mMediaPlayer?.setVolume(VOLUME_NORMAL, VOLUME_NORMAL) // we can be loud again
             // If we were playing when we lost focus, we need to resume playing.
             if (mPlayOnFocusGain) {
-                if (mMediaPlayer != null && !mMediaPlayer!!.isPlaying) {
+                if (mMediaPlayer != null && mMediaPlayer?.isPlaying != true) {
                     Log.d(TAG, "configMediaPlayerState startMediaPlayer. seeking to $mCurrentPosition")
-                    state = if (mCurrentPosition == mMediaPlayer!!.currentPosition) {
-                        mMediaPlayer!!.start()
+                    state = if (mCurrentPosition == mMediaPlayer?.currentPosition) {
+                        mMediaPlayer?.start()
                         PlaybackStateCompat.STATE_PLAYING
                     } else {
-                        mMediaPlayer!!.seekTo(mCurrentPosition)
+                        mMediaPlayer?.seekTo(mCurrentPosition)
                         PlaybackStateCompat.STATE_BUFFERING
                     }
                 }
                 mPlayOnFocusGain = false
             }
         }
-        if (mCallback != null) {
-            mCallback!!.onPlaybackStatusChanged(state)
-        }
+        mCallback?.onPlaybackStatusChanged(state)
     }
 
     /**
@@ -322,12 +307,10 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         Log.d(TAG, "onSeekComplete from MediaPlayer:" + player.currentPosition)
         mCurrentPosition = player.currentPosition
         if (state == PlaybackStateCompat.STATE_BUFFERING) {
-            mMediaPlayer!!.start()
+            mMediaPlayer?.start()
             state = PlaybackStateCompat.STATE_PLAYING
         }
-        if (mCallback != null) {
-            mCallback!!.onPlaybackStatusChanged(state)
-        }
+        mCallback?.onPlaybackStatusChanged(state)
     }
 
     /**
@@ -339,9 +322,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         Log.d(TAG, "onCompletion from MediaPlayer")
         // The media player finished playing the current song, so we go ahead
         // and start the next.
-        if (mCallback != null) {
-            mCallback!!.onCompletion()
-        }
+        mCallback?.onCompletion()
     }
 
     /**
@@ -364,9 +345,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
      */
     override fun onError(player: MediaPlayer, what: Int, extra: Int): Boolean {
         Log.e(TAG, "Media player error: what=$what, extra=$extra")
-        if (mCallback != null) {
-            mCallback!!.onError("MediaPlayer error $what ($extra)")
-        }
+        mCallback?.onError("MediaPlayer error $what ($extra)")
         return true // true indicates we handled the error
     }
 
@@ -382,16 +361,16 @@ class Playback internal constructor(private val mService: MusicService, //    pr
             // Make sure the media player will acquire a wake-lock while
             // playing. If we don't do that, the CPU might go to sleep while the
             // song is playing, causing playback to stop.
-            mMediaPlayer!!.setWakeMode(mService.applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
+            mMediaPlayer?.setWakeMode(mService.applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
 
             // we want the media player to notify us when it's ready preparing,
             // and when it's done playing:
-            mMediaPlayer!!.setOnPreparedListener(this)
-            mMediaPlayer!!.setOnCompletionListener(this)
-            mMediaPlayer!!.setOnErrorListener(this)
-            mMediaPlayer!!.setOnSeekCompleteListener(this)
+            mMediaPlayer?.setOnPreparedListener(this)
+            mMediaPlayer?.setOnCompletionListener(this)
+            mMediaPlayer?.setOnErrorListener(this)
+            mMediaPlayer?.setOnSeekCompleteListener(this)
         } else {
-            mMediaPlayer!!.reset()
+            mMediaPlayer?.reset()
         }
     }
 
@@ -408,8 +387,8 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
         // stop and release the Media Player, if it's available
         if (releaseMediaPlayer && mMediaPlayer != null) {
-            mMediaPlayer!!.reset()
-            mMediaPlayer!!.release()
+            mMediaPlayer?.reset()
+            mMediaPlayer?.release()
             mMediaPlayer = null
         }
 
@@ -419,12 +398,12 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setStreamTypeLollipop() {
-        mMediaPlayer!!.setAudioAttributes(mPlaybackAttributes!!)
+        mPlaybackAttributes?.let { mMediaPlayer?.setAudioAttributes(it) }
     }
 
     @Suppress("DEPRECATION")
     private fun setStreamTypeLegacy() {
-        mMediaPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        mMediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
     }
 
     private fun setStreamType() {
@@ -481,7 +460,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
         /** @param error to be added to the PlaybackState
          */
-        fun onError(error: String)
+        fun onError(error: String?)
     }
 
     companion object {

@@ -29,10 +29,12 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
     private var mOnClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = null
 
     override var onItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = { v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int ->
-        if (!item.isExpanded) {
-            ViewCompat.animate(v!!.group_indicator).rotation(180f).start()
-        } else {
-            ViewCompat.animate(v!!.group_indicator).rotation(0f).start()
+        v?.let {
+            if (!item.isExpanded) {
+                ViewCompat.animate(it.group_indicator).rotation(180f).start()
+            } else {
+                ViewCompat.animate(it.group_indicator).rotation(0f).start()
+            }
         }
         mOnClickListener?.invoke(v, adapter, item, position) ?: true
     }
@@ -115,23 +117,22 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
                         ContextCompat.getColor(ctx, R.color.ripple_color),
                         10))
         // set the text for the name
-        val newTitle = "${title!!.getText(holder.view.context)} ($totItems)"
-        holder.mTitle!!.text = newTitle
-//        StringHolder.applyTo(title, holder.mTitle)
+        val newTitle = "${title?.getText(holder.view.context)} ($totItems)"
+        holder.mTitle?.text = newTitle
         StringHolder.applyToOrHide(subTitle, holder.mSubTitle)
 
         if (isExpanded)
-            holder.mIndicator!!.rotation = 0f
+            holder.mIndicator?.rotation = 0f
         else
-            holder.mIndicator!!.rotation = 180f
+            holder.mIndicator?.rotation = 180f
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mTitle!!.text = null
-        holder.mSubTitle!!.text = null
+        holder.mTitle?.text = null
+        holder.mSubTitle?.text = null
         // make sure all animations are stopped
-        holder.mIndicator!!.clearAnimation()
+        holder.mIndicator?.clearAnimation()
     }
 
     override fun getViewHolder(v: View): ViewHolder {

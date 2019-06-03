@@ -112,9 +112,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
         // lingua
         val sp = PreferenceManager.getDefaultSharedPreferences(mNewBase)
         val language = sp.getString(Utility.SYSTEM_LANGUAGE, "")
-        Log.d(TAG, "attachBaseContext - language: " + language!!)
+        Log.d(TAG, "attachBaseContext - language: $language")
         // ho settato almeno una volta la lingua --> imposto quella
-        if (language.isNotEmpty()) {
+        if (!language.isNullOrEmpty()) {
             val locale = Locale(language)
             Locale.setDefault(locale)
             setSystemLocalWrapper(config, locale)
@@ -227,15 +227,17 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val prefEdit = PreferenceManager.getDefaultSharedPreferences(this).edit()
         prefEdit.clear()
 
-        val entries = querySnapshot.documents[0].get(FIREBASE_FIELD_PREFERENCE) as HashMap<*, *>
-        for ((key, v) in entries) {
-            Log.d(TAG, "preference : $key / $v")
-            when (v) {
-                is Boolean -> prefEdit.putBoolean(key as String, v)
-                is Float -> prefEdit.putFloat(key as String, v)
-                is Int -> prefEdit.putInt(key as String, v)
-                is Long -> prefEdit.putInt(key as String, v.toInt())
-                is String -> prefEdit.putString(key as String, v)
+        val entries = querySnapshot.documents[0].get(FIREBASE_FIELD_PREFERENCE) as? HashMap<*, *>
+        entries?.let {
+            for ((key, v) in it) {
+                Log.d(TAG, "preference : $key / $v")
+                when (v) {
+                    is Boolean -> prefEdit.putBoolean(key as? String, v)
+                    is Float -> prefEdit.putFloat(key as? String, v)
+                    is Int -> prefEdit.putInt(key as? String, v)
+                    is Long -> prefEdit.putInt(key as? String, v.toInt())
+                    is String -> prefEdit.putString(key as? String, v)
+                }
             }
         }
         prefEdit.apply()
@@ -298,7 +300,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
             Tasks.await(fileRef.delete())
             Log.d(TAG, "Backup esistente cancellato!")
         } catch (e: ExecutionException) {
-            if (e.cause is StorageException && (e.cause as StorageException).errorCode == StorageException.ERROR_OBJECT_NOT_FOUND)
+            if (e.cause is StorageException && (e.cause as? StorageException)?.errorCode == StorageException.ERROR_OBJECT_NOT_FOUND)
                 Log.d(TAG, "Backup non trovato!")
             else
                 throw e
@@ -319,7 +321,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         output.close()
 
         val saveFile = Tasks.await(fileRef.putFile(exportFile.toUri()))
-        Log.d(TAG, "DocumentSnapshot added with path: ${saveFile.metadata!!.path}")
+        Log.d(TAG, "DocumentSnapshot added with path: ${saveFile.metadata?.path}")
     }
 
     @Throws(InterruptedException::class, NoIdException::class, NoBackupException::class)
@@ -427,7 +429,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         } catch (e: ExecutionException) {
             Log.e(TAG, e.localizedMessage, e)
-            if (e.cause is StorageException && (e.cause as StorageException).errorCode == StorageException.ERROR_OBJECT_NOT_FOUND)
+            if (e.cause is StorageException && (e.cause as? StorageException)?.errorCode == StorageException.ERROR_OBJECT_NOT_FOUND)
                 throw NoBackupException()
             else
                 throw e

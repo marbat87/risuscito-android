@@ -21,14 +21,14 @@ internal object MediaNotificationHelper {
     private const val CHANNEL_ID = "itcr_media_playback_channel"
 
     fun createNotification(context: Context,
-                           mediaSession: MediaSessionCompat): Notification? {
+                           mediaSession: MediaSessionCompat?): Notification? {
 
         //Crezione notification channel per Android O
         Utility.createNotificationChannelWrapper(context, CHANNEL_ID, "Media playback", "Media playback controls")
 
-        val controller = mediaSession.controller
-        val mMetadata = controller.metadata
-        val mPlaybackState = controller.playbackState
+        val controller = mediaSession?.controller
+        val mMetadata = controller?.metadata
+        val mPlaybackState = controller?.playbackState
 
         if (mMetadata == null || mPlaybackState == null) {
             return null

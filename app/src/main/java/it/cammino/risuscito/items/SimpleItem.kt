@@ -153,21 +153,24 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
         val ctx = holder.itemView.context
 
         // set the text for the name
-        if (!filter.isNullOrEmpty()) {
-            val normalizedTitle = Utility.removeAccents(title!!.getText(holder.itemView.context))
-            val mPosition = normalizedTitle.toLowerCase().indexOf(filter!!)
-            if (mPosition >= 0) {
-                val stringTitle = title!!.getText(holder.itemView.context)
-                val highlighted = StringBuilder(if (mPosition > 0) stringTitle.substring(0, mPosition) else "")
-                        .append("<b>")
-                        .append(stringTitle.substring(mPosition, mPosition + filter!!.length))
-                        .append("</b>")
-                        .append(stringTitle.substring(mPosition + filter!!.length))
-                holder.mTitle!!.text = LUtils.fromHtmlWrapper(highlighted.toString())
-            } else
-                StringHolder.applyTo(title, holder.mTitle)
-        } else
-            StringHolder.applyTo(title, holder.mTitle)
+        filter?.let {
+            if (it.isNotEmpty()) {
+                val normalizedTitle = Utility.removeAccents(title?.getText(holder.itemView.context)
+                        ?: "")
+                val mPosition = normalizedTitle.toLowerCase().indexOf(it)
+                if (mPosition >= 0) {
+                    val stringTitle = title?.getText(holder.itemView.context)
+                    val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
+                            ?: "") else "")
+                            .append("<b>")
+                            .append(stringTitle?.substring(mPosition, mPosition + it.length))
+                            .append("</b>")
+                            .append(stringTitle?.substring(mPosition + it.length))
+                    holder.mTitle?.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                } else
+                    StringHolder.applyTo(title, holder.mTitle)
+            }
+        } ?: StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
         StringHolder.applyToOrHide(page, holder.mPage)
         ViewCompat.setBackground(
@@ -178,27 +181,27 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
                         true))
 
         if (isSelected) {
-            holder.mPage!!.visibility = View.INVISIBLE
-            holder.mPageSelected!!.visibility = View.VISIBLE
-            val bgShape = holder.mPageSelected!!.background as GradientDrawable
-            bgShape.setColor(selectedColor!!.colorInt)
+            holder.mPage?.visibility = View.INVISIBLE
+            holder.mPageSelected?.visibility = View.VISIBLE
+            val bgShape = holder.mPageSelected?.background as? GradientDrawable
+            bgShape?.setColor(selectedColor?.colorInt ?: Color.WHITE)
         } else {
-            val bgShape = holder.mPage!!.background as GradientDrawable
-            bgShape.setColor(color!!.colorInt)
-            holder.mPage!!.visibility = View.VISIBLE
-            holder.mPageSelected!!.visibility = View.INVISIBLE
+            val bgShape = holder.mPage?.background as? GradientDrawable
+            bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+            holder.mPage?.visibility = View.VISIBLE
+            holder.mPageSelected?.visibility = View.INVISIBLE
         }
 
-        holder.mId!!.text = id.toString()
+        holder.mId?.text = id.toString()
 
         holder.itemView.setTag(com.mikepenz.fastadapter.R.id.fastadapter_item, id)
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mTitle!!.text = null
-        holder.mPage!!.text = null
-        holder.mId!!.text = null
+        holder.mTitle?.text = null
+        holder.mPage?.text = null
+        holder.mId?.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

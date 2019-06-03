@@ -28,7 +28,6 @@ import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
@@ -110,7 +109,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.text, Utility.ID_CANTO to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(context), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
@@ -256,21 +255,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mFavoritesViewModel.mFavoritesResult?.observe(
                 this,
                 Observer { canti ->
-                    Log.d(TAG, "onChanged: a")
-                    val newList = ArrayList<SimpleItem>()
-                    for (canto in canti) {
-                        newList.add(
-                                SimpleItem()
-                                        .withTitle(resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                        .withPage(resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                        .withSource(resources.getString(LUtils.getResId(canto.source, R.string::class.java)))
-                                        .withColor(canto.color ?: Canto.BIANCO)
-                                        .withId(canto.id)
-                                        .withSelectedColor(themeUtils.primaryColorDark())
-                        )
-                    }
-                    mFavoritesViewModel.titoli = newList.sortedWith(compareBy { it.title.toString() })
-                    cantoAdapter.set(mFavoritesViewModel.titoli)
+                    cantoAdapter.set(canti.map { it.withSelectedColor(themeUtils.primaryColorDark()) }.sortedBy { it.title?.getText(context) })
                     no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                     activity?.invalidateOptionsMenu()
                 })

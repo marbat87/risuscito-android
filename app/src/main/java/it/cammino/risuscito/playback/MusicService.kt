@@ -136,7 +136,7 @@ class MusicService : MediaBrowserServiceCompat() {
             return@Callback false
         }
 
-        if (!mPlayback!!.isPlaying) {
+        if (mPlayback?.isPlaying != true) {
             Log.d(TAG, "Stopping service")
             stopSelf()
             mServiceStarted = false
@@ -154,7 +154,7 @@ class MusicService : MediaBrowserServiceCompat() {
 
         mMusicProvider = MusicProvider(applicationContext)
         sendMusicProviderStatusBroadcast(false)
-        mMusicProvider!!.retrieveMediaAsync(object : MusicProvider.Callback {
+        mMusicProvider?.retrieveMediaAsync(object : MusicProvider.Callback {
             override fun onMusicCatalogReady(success: Boolean) {
                 sendMusicProviderStatusBroadcast(success)
             }
@@ -162,12 +162,12 @@ class MusicService : MediaBrowserServiceCompat() {
 
         // Start a new MediaSession.
         mSession = MediaSessionCompat(this, TAG)
-        sessionToken = mSession!!.sessionToken
-        mSession!!.setCallback(MediaSessionCallback())
-        mSession!!.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        sessionToken = mSession?.sessionToken
+        mSession?.setCallback(MediaSessionCallback())
+        mSession?.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
 
         mPlayback = Playback(this, mMusicProvider)
-        mPlayback!!.setCallback(object : Playback.Callback {
+        mPlayback?.setCallback(object : Playback.Callback {
             override fun onPlaybackStatusChanged(state: Int) {
                 updatePlaybackState(null)
             }
@@ -178,7 +178,7 @@ class MusicService : MediaBrowserServiceCompat() {
                 handleStopRequest()
             }
 
-            override fun onError(error: String) {
+            override fun onError(error: String?) {
                 updatePlaybackState(error)
             }
         })
@@ -190,7 +190,7 @@ class MusicService : MediaBrowserServiceCompat() {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val pi = PendingIntent.getActivity(context, REQUEST_CODE, intent,
                 PendingIntent.FLAG_CANCEL_CURRENT)
-        mSession!!.setSessionActivity(pi)
+        mSession?.setSessionActivity(pi)
 
         mNotificationManager = NotificationManagerCompat.from(this)
         mAudioBecomingNoisyReceiver = AudioBecomingNoisyReceiver(this)
@@ -221,7 +221,7 @@ class MusicService : MediaBrowserServiceCompat() {
         mDelayedStopHandler.removeCallbacksAndMessages(null)
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
-        mSession!!.release()
+        mSession?.release()
     }
 
     override fun onGetRoot(clientPackageName: String,
@@ -242,11 +242,11 @@ class MusicService : MediaBrowserServiceCompat() {
                                 result: Result<List<MediaBrowserCompat.MediaItem>>) {
         Log.d(TAG, "OnLoadChildren: parentMediaId=$parentMediaId")
 
-        if (!mMusicProvider!!.isInitialized) {
+        if (mMusicProvider?.isInitialized != true) {
             // Use result.detach to allow calling result.sendResult from another thread:
             result.detach()
 
-            mMusicProvider!!.retrieveMediaAsync(object : MusicProvider.Callback {
+            mMusicProvider?.retrieveMediaAsync(object : MusicProvider.Callback {
                 override fun onMusicCatalogReady(success: Boolean) {
                     if (success) {
                         loadChildrenImpl(parentMediaId, result)
@@ -272,7 +272,7 @@ class MusicService : MediaBrowserServiceCompat() {
         val mediaItems = ArrayList<MediaBrowserCompat.MediaItem>()
 
         when (parentMediaId) {
-            MusicProvider.MEDIA_ID_ROOT -> mMusicProvider!!.allMusics.mapTo(mediaItems) {
+            MusicProvider.MEDIA_ID_ROOT -> mMusicProvider?.allMusics?.mapTo(mediaItems) {
                 MediaBrowserCompat.MediaItem(it.description,
                         MediaBrowserCompat.MediaItem.FLAG_PLAYABLE)
             }
@@ -294,7 +294,7 @@ class MusicService : MediaBrowserServiceCompat() {
             // the hierarchy in MediaBrowser and the actual unique musicID. This is necessary
             // so we can build the correct playing queue, based on where the track was
             // selected from.
-            val media = mMusicProvider!!.getMusic(mediaId!!)
+            val media = mMusicProvider?.getMusic(mediaId)
             if (media != null) {
                 mCurrentMedia = MediaSessionCompat.QueueItem(media.description, media.hashCode().toLong())
 
@@ -312,24 +312,24 @@ class MusicService : MediaBrowserServiceCompat() {
 
         override fun onSeekTo(position: Long) {
             Log.d(TAG, "onSeekTo:$position")
-            mPlayback!!.seekTo(position.toInt())
+            mPlayback?.seekTo(position.toInt())
         }
 
         override fun onPause() {
-            Log.d(TAG, "pause. current state=" + mPlayback!!.state)
+            Log.d(TAG, "pause. current state=${mPlayback?.state}")
             handlePauseRequest()
         }
 
         override fun onStop() {
-            Log.d(TAG, "stop. current state=" + mPlayback!!.state)
+            Log.d(TAG, "stop. current state=${mPlayback?.state}")
             handleStopRequest()
         }
 
         override fun onSkipToPrevious() {
-            Log.d(TAG, "skip to previous. current state=" + mPlayback!!.state)
-            if (mPlayback!!.state == PlaybackStateCompat.STATE_PAUSED)
+            Log.d(TAG, "skip to previous. current state=${mPlayback?.state}")
+            if (mPlayback?.state == PlaybackStateCompat.STATE_PAUSED)
                 handlePlayRequest()
-            mPlayback!!.seekTo(0)
+            mPlayback?.seekTo(0)
         }
 
         override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
@@ -341,12 +341,12 @@ class MusicService : MediaBrowserServiceCompat() {
         }
 
         override fun onCustomAction(action: String?, extras: Bundle?) {
-            Log.d(TAG, "onCustomAction: " + action!!)
+            Log.d(TAG, "onCustomAction: $action")
             if (ACTION_REFRESH == action) {
                 mMusicProvider = MusicProvider(applicationContext)
-                mPlayback!!.setmMusicProvider(mMusicProvider!!)
+                mPlayback?.setmMusicProvider(mMusicProvider)
                 sendMusicProviderStatusBroadcast(false)
-                mMusicProvider!!.retrieveMediaAsync(
+                mMusicProvider?.retrieveMediaAsync(
                         object : MusicProvider.Callback {
                             override fun onMusicCatalogReady(success: Boolean) {
                                 sendMusicProviderStatusBroadcast(success)
@@ -361,7 +361,7 @@ class MusicService : MediaBrowserServiceCompat() {
      * Handle a request to play music
      */
     private fun handlePlayRequest() {
-        Log.d(TAG, "handlePlayRequest: mState=" + mPlayback!!.state)
+        Log.d(TAG, "handlePlayRequest: mState=${mPlayback?.state}")
 
         if (mCurrentMedia == null) {
             // Nothing to play
@@ -379,20 +379,20 @@ class MusicService : MediaBrowserServiceCompat() {
             mServiceStarted = true
         }
 
-        if (!mSession!!.isActive) {
-            mSession!!.isActive = true
+        if (mSession?.isActive != true) {
+            mSession?.isActive = true
         }
 
         updateMetadata()
-        mPlayback!!.play(mCurrentMedia!!)
+        mPlayback?.play(mCurrentMedia)
     }
 
     /**
      * Handle a request to pause music
      */
     private fun handlePauseRequest() {
-        Log.d(TAG, "handlePauseRequest: mState=" + mPlayback!!.state)
-        mPlayback!!.pause()
+        Log.d(TAG, "handlePauseRequest: mState=$${mPlayback?.state}")
+        mPlayback?.pause()
 
         // reset the delayed stop handler.
         mDelayedStopHandler.removeCallbacksAndMessages(null)
@@ -403,8 +403,8 @@ class MusicService : MediaBrowserServiceCompat() {
      * Handle a request to stop music
      */
     private fun handleStopRequest() {
-        Log.d(TAG, "handleStopRequest: mState=" + mPlayback!!.state)
-        mPlayback!!.stop()
+        Log.d(TAG, "handleStopRequest: mState=$${mPlayback?.state}")
+        mPlayback?.stop()
         // reset the delayed stop handler.
         mDelayedStopHandler.removeCallbacksAndMessages(null)
         mDelayedStopHandler.sendEmptyMessage(STOP_CMD)
@@ -414,10 +414,10 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private fun updateMetadata() {
         val queueItem = mCurrentMedia
-        val musicId = queueItem!!.description.mediaId
-        val track = mMusicProvider!!.getMusic(musicId!!)
+        val musicId = queueItem?.description?.mediaId
+        val track = mMusicProvider?.getMusic(musicId)
 
-        mSession!!.setMetadata(track)
+        mSession?.setMetadata(track)
 
     }
 
@@ -427,21 +427,21 @@ class MusicService : MediaBrowserServiceCompat() {
      * @param error if not null, error message to present to the user.
      */
     private fun updatePlaybackState(error: String?) {
-        Log.d(TAG, "updatePlaybackState, playback state=" + mPlayback!!.state)
+        Log.d(TAG, "updatePlaybackState, playback mState=$${mPlayback?.state}")
         var position = PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN
-        if (mPlayback != null && mPlayback!!.isConnected) {
-            position = mPlayback!!.currentStreamPosition.toLong()
+        if (mPlayback?.isConnected == true) {
+            position = mPlayback?.currentStreamPosition?.toLong() ?: 0
         }
 
         var playbackActions = PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
-        if (mPlayback!!.isPlaying) {
+        if (mPlayback?.isPlaying == true) {
             playbackActions = playbackActions or PlaybackStateCompat.ACTION_PAUSE
         }
 
         val stateBuilder = PlaybackStateCompat.Builder()
                 .setActions(playbackActions)
 
-        var state = mPlayback!!.state
+        var state = mPlayback?.state ?: PlaybackStateCompat.STATE_NONE
 
         // If there is an error message, send it to the playback state:
         if (error != null) {
@@ -458,32 +458,32 @@ class MusicService : MediaBrowserServiceCompat() {
 
         // Set the activeQueueItemId if the current index is valid.
         if (mCurrentMedia != null) {
-            stateBuilder.setActiveQueueItemId(mCurrentMedia!!.queueId)
+            stateBuilder.setActiveQueueItemId(mCurrentMedia?.queueId ?: 0)
         }
 
-        mSession!!.setPlaybackState(stateBuilder.build())
+        mSession?.setPlaybackState(stateBuilder.build())
 
         if (state == PlaybackStateCompat.STATE_PLAYING) {
-            val oldMetadataCompat = mMusicProvider!!.getMusic(mCurrentMedia!!.description.mediaId!!)
+            val oldMetadataCompat = mMusicProvider?.getMusic(mCurrentMedia?.description?.mediaId)
             val newMetadataCompat = MediaMetadataCompat.Builder()
-                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, oldMetadataCompat!!.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))
-                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, oldMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI))
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, oldMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ALBUM))
-                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, oldMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ARTIST))
-                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayback!!.duration)
-                    .putString(MediaMetadataCompat.METADATA_KEY_GENRE, oldMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_GENRE))
+                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))
+                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI))
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM))
+                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST))
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayback?.duration ?: 0)
+                    .putString(MediaMetadataCompat.METADATA_KEY_GENRE, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_GENRE))
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, oldMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
-                    .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, oldMetadataCompat.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER))
-                    .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, oldMetadataCompat.getLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS))
-                    .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, oldMetadataCompat.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART))
-                    .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, oldMetadataCompat.getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON))
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
+                    .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) ?: 0)
+                    .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS) ?: 0)
+                    .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, oldMetadataCompat?.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART))
+                    .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, oldMetadataCompat?.getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON))
                     .build()
-            mMusicProvider!!.updateMusic(mCurrentMedia!!.description.mediaId!!, newMetadataCompat)
-            mSession!!.setMetadata(newMetadataCompat)
+            mMusicProvider?.updateMusic(mCurrentMedia?.description?.mediaId, newMetadataCompat)
+            mSession?.setMetadata(newMetadataCompat)
             val notification = postNotification()
             startForeground(NOTIFICATION_ID, notification)
-            mAudioBecomingNoisyReceiver!!.register()
+            mAudioBecomingNoisyReceiver?.register()
         } else {
             if (state == PlaybackStateCompat.STATE_PAUSED) {
                 postNotification()
@@ -491,12 +491,13 @@ class MusicService : MediaBrowserServiceCompat() {
                 mNotificationManager.cancel(NOTIFICATION_ID)
             }
             stopForeground(false)
-            mAudioBecomingNoisyReceiver!!.unregister()
+            mAudioBecomingNoisyReceiver?.unregister()
         }
     }
 
     private fun postNotification(): Notification? {
-        val notification = MediaNotificationHelper.createNotification(this, mSession!!) ?: return null
+        val notification = MediaNotificationHelper.createNotification(this, mSession)
+                ?: return null
 
         mNotificationManager.notify(NOTIFICATION_ID, notification)
         return notification

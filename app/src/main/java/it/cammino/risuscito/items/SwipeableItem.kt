@@ -74,18 +74,18 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
         StringHolder.applyTo(name, holder.name)
         //set the text for the description or hide
 
-        holder.swipeResultContent!!.visibility = if (swipedDirection != 0) View.VISIBLE else View.GONE
-        holder.itemContent!!.visibility = if (swipedDirection != 0) View.GONE else View.VISIBLE
+        holder.swipeResultContent?.visibility = if (swipedDirection != 0) View.VISIBLE else View.GONE
+        holder.itemContent?.visibility = if (swipedDirection != 0) View.GONE else View.VISIBLE
 
         var swipedAction: CharSequence? = null
         var swipedText: CharSequence? = null
         if (swipedDirection != 0) {
             swipedAction = holder.itemView.context.getString(android.R.string.cancel)
             swipedText = holder.itemView.context.getString(R.string.generic_removed, name.text)
-            holder.swipeResultContent!!.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
+            holder.swipeResultContent?.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
         }
-        holder.swipedAction!!.text = swipedAction ?: ""
-        holder.swipedText!!.text = swipedText ?: ""
+        holder.swipedAction?.text = swipedAction ?: ""
+        holder.swipedText?.text = swipedText ?: ""
         holder.swipedActionRunnable = this.swipedAction
 
         DragDropUtil.bindDragHandle(holder, this)
@@ -93,9 +93,9 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.name!!.text = null
-        holder.swipedAction!!.text = null
-        holder.swipedText!!.text = null
+        holder.name?.text = null
+        holder.swipedAction?.text = null
+        holder.swipedText?.text = null
         holder.swipedActionRunnable = null
     }
 
@@ -104,7 +104,7 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
     }
 
     override fun getDragView(viewHolder: RecyclerView.ViewHolder): View? {
-        return (viewHolder as ViewHolder).mDragHandler
+        return (viewHolder as? ViewHolder)?.mDragHandler
     }
 
     override var isSwipeable = true
@@ -130,7 +130,7 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
             swipedText = view.swiped_text
             swipedAction = view.swiped_action
             mDragHandler = view.drag_image
-            swipedAction!!.setOnClickListener {
+            swipedAction?.setOnClickListener {
                 swipedActionRunnable?.run()
             }
         }

@@ -107,7 +107,7 @@ class SwipeDismissTouchListener
                 mDownY = motionEvent.rawY
                 return if (mCallbacks.canDismiss(mToken)) {
                     mVelocityTracker = VelocityTracker.obtain()
-                    mVelocityTracker!!.addMovement(motionEvent)
+                    mVelocityTracker?.addMovement(motionEvent)
                     true
                 } else
                     false
@@ -119,11 +119,11 @@ class SwipeDismissTouchListener
                 }
 
                 val deltaX = motionEvent.rawX - mDownX
-                mVelocityTracker!!.addMovement(motionEvent)
-                mVelocityTracker!!.computeCurrentVelocity(1000)
-                val velocityX = mVelocityTracker!!.xVelocity
+                mVelocityTracker?.addMovement(motionEvent)
+                mVelocityTracker?.computeCurrentVelocity(1000)
+                val velocityX = mVelocityTracker?.xVelocity ?: 0f
                 val absVelocityX = Math.abs(velocityX)
-                val absVelocityY = Math.abs(mVelocityTracker!!.yVelocity)
+                val absVelocityY = Math.abs(mVelocityTracker?.yVelocity ?: 0f)
                 var dismiss = false
                 var dismissRight = false
                 if (Math.abs(deltaX) > mViewWidth / 2 && mSwiping) {
@@ -134,7 +134,7 @@ class SwipeDismissTouchListener
                         && absVelocityY < absVelocityX && mSwiping) {
                     // dismiss only if flinging in the same direction as dragging
                     dismiss = velocityX < 0 == deltaX < 0
-                    dismissRight = mVelocityTracker!!.xVelocity > 0
+                    dismissRight = (mVelocityTracker?.xVelocity ?: 0f) > 0
                 }
                 if (dismiss) {
                     // dismiss
@@ -155,7 +155,7 @@ class SwipeDismissTouchListener
                             .setDuration(mAnimationTime)
                             .setListener(null)
                 }
-                mVelocityTracker!!.recycle()
+                mVelocityTracker?.recycle()
                 mVelocityTracker = null
                 mTranslationX = 0f
                 mDownX = 0f
@@ -173,7 +173,7 @@ class SwipeDismissTouchListener
                         .alpha(1f)
                         .setDuration(mAnimationTime)
                         .setListener(null)
-                mVelocityTracker!!.recycle()
+                mVelocityTracker?.recycle()
                 mVelocityTracker = null
                 mTranslationX = 0f
                 mDownX = 0f
@@ -186,7 +186,7 @@ class SwipeDismissTouchListener
                     return false
                 }
 
-                mVelocityTracker!!.addMovement(motionEvent)
+                mVelocityTracker?.addMovement(motionEvent)
                 val deltaX = motionEvent.rawX - mDownX
                 val deltaY = motionEvent.rawY - mDownY
                 if (Math.abs(deltaX) > mSlop && Math.abs(deltaY) < Math.abs(deltaX) / 2) {
@@ -236,7 +236,7 @@ class SwipeDismissTouchListener
         })
 
         animator.addUpdateListener { valueAnimator ->
-            lp.height = valueAnimator.animatedValue as Int
+            lp.height = valueAnimator.animatedValue as? Int ?: 0
             mView.layoutParams = lp
         }
 

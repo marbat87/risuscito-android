@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -112,7 +113,6 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         mAdapter.setHasStableIds(true)
-        mAdapter.set(mCantiViewModel.titoli)
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (mActivity?.hasThreeColumns == true) 3 else 2)
         cantiList?.layoutManager = if (mActivity?.isGridLayout == true) glm else llm
@@ -121,6 +121,12 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
         insetDivider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
         cantiList?.addItemDecoration(insetDivider)
+        Log.i(TAG, "isAttachedToWindow ${ViewCompat.isAttachedToWindow(dragScrollBar)}")
+        Log.i(TAG, "set Indicator")
+        dragScrollBar?.let {
+            it.setIndicator(CustomIndicator(context), true)
+            it.setAutoHide(false)
+        }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
@@ -128,7 +134,10 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         if (isVisibleToUser) {
             if (view != null) {
                 isViewShown = true
-                Log.d(TAG, "VISIBLE")
+                dragScrollBar?.let {
+                    it.setIndicator(CustomIndicator(context), true)
+                    it.setAutoHide(false)
+                }
                 ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
             } else
                 isViewShown = false
@@ -156,16 +165,15 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         mCantiViewModel.itemsResult?.observe(
                 this,
                 Observer<List<SimpleItem>> { canti ->
-                    Log.d(TAG, "variazione canti")
-                    when (mCantiViewModel.tipoLista) {
-                        0 -> mCantiViewModel.titoli = canti.sortedBy { it.title?.getText(context) }
-                        1 -> mCantiViewModel.titoli = canti.sortedBy { it.page?.getText(context)?.toInt() }
-                        2 -> mCantiViewModel.titoli = canti
-                        else -> mCantiViewModel.titoli = canti
-                    }
-                    mAdapter.set(mCantiViewModel.titoli)
-                    dragScrollBar.setIndicator(CustomIndicator(context), true)
-                    dragScrollBar.setAutoHide(false)
+                    Log.i(TAG, "set Lista")
+                    mAdapter.set(
+                            when (mCantiViewModel.tipoLista) {
+                                0 -> canti.sortedBy { it.title?.getText(context) }
+                                1 -> canti.sortedBy { it.page?.getText(context)?.toInt() }
+                                2 -> canti
+                                else -> canti
+                            }
+                    )
                 })
     }
 

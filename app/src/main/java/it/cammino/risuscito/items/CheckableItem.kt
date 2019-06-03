@@ -85,20 +85,20 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
-        holder.checkBox!!.isChecked = isSelected
+        holder.checkBox?.isChecked = isSelected
 
         // set the text for the name
         StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
         StringHolder.applyToOrHide(page, holder.mPage)
-        val bgShape = holder.mPage!!.background as GradientDrawable
-        bgShape.setColor(color!!.colorInt)
+        val bgShape = holder.mPage?.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mTitle!!.text = null
-        holder.mPage!!.text = null
+        holder.mTitle?.text = null
+        holder.mPage?.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {
