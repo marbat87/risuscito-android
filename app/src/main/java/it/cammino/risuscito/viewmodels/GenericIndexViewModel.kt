@@ -14,6 +14,7 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 open class GenericIndexViewModel(application: Application) : AndroidViewModel(application) {
@@ -41,33 +42,33 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
                     labelRes = R.string.title_activity_canti_parola
                     hasNestedItems = true
                     callback = {
-                        subPopupMenu(fragment.getString(R.string.title_activity_canti_parola), 1, view, 0, fragment, dialogTag, dialogTag2, listePersonalizzate)
+                        subPopupMenuPredefinite(fragment.getString(R.string.title_activity_canti_parola), 1, view, fragment, dialogTag2)
                     }
                 }
                 item {
                     labelRes = R.string.title_activity_canti_eucarestia
                     hasNestedItems = true
                     callback = {
-                        subPopupMenu(fragment.getString(R.string.title_activity_canti_eucarestia), 2, view, 0, fragment, dialogTag, dialogTag2, listePersonalizzate)
+                        subPopupMenuPredefinite(fragment.getString(R.string.title_activity_canti_eucarestia), 2, view, fragment, dialogTag2)
                     }
                 }
                 listePersonalizzate?.let {
                     for (i in it.indices) {
                         item {
-                            label = it[i].lista!!.name
+                            label = it[i].lista?.name
                             hasNestedItems = true
                             callback = {
-                                subPopupMenu(it[i].lista!!.name, 3, view, i, fragment, dialogTag, dialogTag2, listePersonalizzate)
+                                subPopupMenuPersonalizzate(it[i].lista?.name, view, i, fragment, dialogTag, it)
                             }
                         }
                     }
                 }
             }
         }
-        popupMenu.show(fragment.context!!, view)
+        popupMenu.show(fragment.requireContext(), view)
     }
 
-    private fun subPopupMenu(menuTitle: String, tipoLista: Int, mView: View, idLista: Int, fragment: Fragment, dialogTag: String, dialogTag2: String, listePersonalizzate: List<ListaPers>?) {
+    private fun subPopupMenuPredefinite(menuTitle: String?, tipoLista: Int, mView: View, fragment: Fragment, dialogTag2: String) {
         val pref = PreferenceManager.getDefaultSharedPreferences(fragment.context)
         val popupMenu = popupMenu {
             dropdownGravity = Gravity.END
@@ -184,34 +185,41 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
                             }
                         }
                     }
-                    3 -> {
-                        for (i in 0 until listePersonalizzate!![idLista].lista!!.numPosizioni) {
-                            item {
-                                label = listePersonalizzate[idLista].lista!!.getNomePosizione(i)
-                                callback = {
-                                    //optional
-                                    idListaClick = idLista
-                                    idPosizioneClick = i
+                }
+            }
+        }
+        popupMenu.show(fragment.requireContext(), mView)
+    }
 
+    private fun subPopupMenuPersonalizzate(menuTitle: String?, mView: View, idLista: Int, fragment: Fragment, dialogTag: String, listePersonalizzate: List<ListaPers>) {
+        val popupMenu = popupMenu {
+            dropdownGravity = Gravity.END
+            section {
+                title = menuTitle
+                listePersonalizzate[idLista].lista?.let { list ->
+                    for (i in 0 until list.numPosizioni) {
+                        item {
+                            label = list.getNomePosizione(i)
+                            callback = {
+                                //optional
+                                idListaClick = idLista
+                                idPosizioneClick = i
+
+                                if (listePersonalizzate[idListaClick]
+                                                .lista?.getCantoPosizione(idPosizioneClick) == "") {
+                                    listePersonalizzate[idListaClick]
+                                            .lista?.addCanto(
+                                            (idDaAgg).toString(), idPosizioneClick)
+                                    ListeUtils.updateListaPersonalizzata(fragment, listePersonalizzate[idListaClick])
+                                } else {
                                     if (listePersonalizzate[idListaClick]
-                                                    .lista!!
-                                                    .getCantoPosizione(idPosizioneClick) == "") {
-                                        listePersonalizzate[idListaClick]
-                                                .lista!!
-                                                .addCanto(
-                                                        (idDaAgg).toString(), idPosizioneClick)
-                                        ListeUtils.updateListaPersonalizzata(fragment, listePersonalizzate[idListaClick])
+                                                    .lista?.getCantoPosizione(idPosizioneClick) == (idDaAgg).toString()) {
+                                        Snackbar.make(fragment.requireActivity().main_content, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                                     } else {
-                                        if (listePersonalizzate[idListaClick]
-                                                        .lista!!
-                                                        .getCantoPosizione(idPosizioneClick) == (idDaAgg).toString()) {
-                                            Snackbar.make(fragment.view!!, R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-                                        } else {
-                                            ListeUtils.manageReplaceDialog(fragment, Integer.parseInt(
-                                                    listePersonalizzate[idListaClick]
-                                                            .lista!!
-                                                            .getCantoPosizione(idPosizioneClick)), dialogTag)
-                                        }
+                                        ListeUtils.manageReplaceDialog(fragment, Integer.parseInt(
+                                                listePersonalizzate[idListaClick]
+                                                        .lista?.getCantoPosizione(idPosizioneClick)
+                                                        ?: "0"), dialogTag)
                                     }
                                 }
                             }
@@ -220,7 +228,7 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
                 }
             }
         }
-        popupMenu.show(fragment.context!!, mView)
+        popupMenu.show(fragment.requireContext(), mView)
     }
 
     private fun addToListaNoDup(idLista: Int, listPosition: Int, fragment: Fragment, dialogTag: String) {

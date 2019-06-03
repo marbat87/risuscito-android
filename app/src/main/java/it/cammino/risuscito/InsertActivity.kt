@@ -165,13 +165,13 @@ class InsertActivity : ThemeableActivity() {
         textfieldRicerca.makeClearableEditText(null, null, icon)
 
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
+            var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                (ContextCompat.getSystemService(this, InputMethodManager::class.java) as InputMethodManager)
-                        .hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
-                return@setOnKeyListener true
+                ContextCompat.getSystemService(this, InputMethodManager::class.java)?.hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
+                returnValue = true
             }
-            return@setOnKeyListener false
+            returnValue
         }
 
         textfieldRicerca.addTextChangedListener(
@@ -282,9 +282,9 @@ class InsertActivity : ThemeableActivity() {
             Log.d(TAG, "STRINGA: " + sSearchText[0])
             Log.d(TAG, "ADVANCED: " + sSearchText[1])
             Log.d(TAG, "CONSEGNATI ONLY: " + sSearchText[2])
-            val s = sSearchText[0] as String
-            val advanced = sSearchText[1] as Boolean
-            val consegnatiOnly = sSearchText[2] as Boolean
+            val s = sSearchText[0] as? String ?: ""
+            val advanced = sSearchText[1] as? Boolean ?: false
+            val consegnatiOnly = sSearchText[2] as? Boolean ?: false
             fragmentReference.get()?.let { fragment ->
                 if (advanced) {
                     val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()

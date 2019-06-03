@@ -45,16 +45,16 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val showTitle = arguments!!.getBoolean("showTitle")
+        val showTitle = arguments?.getBoolean("showTitle") ?: false
 
         if (showTitle)
-            sheet_title.setText(arguments!!.getInt("title"))
+            sheet_title.setText(arguments?.getInt("title") ?: 0)
         else
             sheet_title.text = ""
         sheet_title_area.visibility = if (showTitle) View.VISIBLE else View.GONE
 
-        val intent = arguments!!.getParcelable<Intent>("intent")
-        val pm = activity!!.packageManager
+        val intent = arguments?.getParcelable<Intent>("intent")
+        val pm = requireActivity().packageManager
 
         val list = pm.queryIntentActivities(intent, 0)
 
@@ -70,13 +70,14 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val mList = list.map { BottomSheetItem().withItem(it) }
 
         val mOnClickListener = { _: View?, _: IAdapter<BottomSheetItem>, item: BottomSheetItem, _: Int ->
-            PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.item!!.activityInfo.packageName) }
+            PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.item?.activityInfo?.packageName) }
 
-            val name = ComponentName(item.item!!.activityInfo.packageName, item.item!!.activityInfo.name)
+            val name = ComponentName(item.item?.activityInfo?.packageName
+                    ?: "", item.item?.activityInfo?.name ?: "")
             intent?.let {
-                val newIntent = it.clone() as Intent
-                newIntent.component = name
-                activity!!.startActivity(newIntent)
+                val newIntent = it.clone() as? Intent
+                newIntent?.component = name
+                activity?.startActivity(newIntent)
                 dialog.dismiss()
             }
             true
@@ -92,9 +93,9 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     override fun onResume() {
         super.onResume()
         // Resize bottom sheet dialog so it doesn't span the entire width past a particular measurement
-        val mLimited = activity!!.resources.getBoolean(R.bool.is_bottom_sheet_limited)
+        val mLimited = requireContext().resources.getBoolean(R.bool.is_bottom_sheet_limited)
         if (mLimited) {
-            val mMaxWidth = activity!!.resources.getDimension(R.dimen.max_bottomsheet_width).toInt()
+            val mMaxWidth = requireActivity().resources.getDimension(R.dimen.max_bottomsheet_width).toInt()
             val win = dialog.window
             win?.setLayout(mMaxWidth, -1)
         }
