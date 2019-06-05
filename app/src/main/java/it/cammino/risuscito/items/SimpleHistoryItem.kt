@@ -4,9 +4,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
@@ -15,6 +12,8 @@ import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.helperSetColor
+import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.ui.ThemeableActivity
 import kotlinx.android.synthetic.main.row_item_history.view.*
 import java.sql.Date
@@ -23,88 +22,54 @@ import java.text.SimpleDateFormat
 
 fun simpleHistoryItem(block: SimpleHistoryItem.() -> Unit): SimpleHistoryItem = SimpleHistoryItem().apply(block)
 
-@Suppress("unused")
 class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
+        }
+
     var page: StringHolder? = null
         private set
+    var setPage: Any? = null
+        set(value) {
+            page = helperSetString(value)
+        }
+
     var timestamp: StringHolder? = null
         private set
+    var setTimestamp: Any? = null
+        set(value) {
+            timestamp = helperSetString(value)
+        }
+
     var source: StringHolder? = null
         private set
+    var setSource: Any? = null
+        set(value) {
+            source = helperSetString(value)
+        }
+
     var color: ColorHolder? = null
         private set
+    var setColor: Any? = null
+        set(value) {
+            color = helperSetColor(value)
+        }
+
     private var selectedColor: ColorHolder? = null
+    var setSelectedColor: Any? = null
+        set(value) {
+            selectedColor = helperSetColor(value)
+        }
+
     var id: Int = 0
-        private set
-
-    fun withTitle(title: String): SimpleHistoryItem {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): SimpleHistoryItem {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withPage(page: String): SimpleHistoryItem {
-        this.page = StringHolder(page)
-        return this
-    }
-
-    fun withPage(@StringRes pageRes: Int): SimpleHistoryItem {
-        this.page = StringHolder(pageRes)
-        return this
-    }
-
-    fun withTimestamp(timestamp: String): SimpleHistoryItem {
-        this.timestamp = StringHolder(timestamp)
-        return this
-    }
-
-    fun withSource(src: String): SimpleHistoryItem {
-        this.source = StringHolder(src)
-        return this
-    }
-
-    fun withSource(@StringRes srcRes: Int): SimpleHistoryItem {
-        this.source = StringHolder(srcRes)
-        return this
-    }
-
-    fun withColor(color: String): SimpleHistoryItem {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): SimpleHistoryItem {
-        this.color = ColorHolder.fromColorRes(colorRes)
-        return this
-    }
-
-    fun withId(id: Int): SimpleHistoryItem {
-        this.id = id
-        identifier = id.toLong()
-        return this
-    }
-
-    fun withSelectedColor(selectedColor: String): SimpleHistoryItem {
-        this.selectedColor = ColorHolder.fromColor(Color.parseColor(selectedColor))
-        return this
-    }
-
-    fun withSelectedColor(@ColorInt selectedColor: Int): SimpleHistoryItem {
-        this.selectedColor = ColorHolder.fromColor(selectedColor)
-        return this
-    }
-
-    fun withSelectedColorRes(@ColorRes selectedColorRes: Int): SimpleHistoryItem {
-        this.selectedColor = ColorHolder.fromColorRes(selectedColorRes)
-        return this
-    }
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
 
     /**
      * defines the type defining this item. must be unique. preferably an id

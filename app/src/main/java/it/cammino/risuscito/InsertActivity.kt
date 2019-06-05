@@ -333,7 +333,7 @@ class InsertActivity : ThemeableActivity() {
                             }
                             .forEach {
                                 if (isCancelled) return titoliResult
-                                titoliResult.add(it.withFilter(stringa))
+                                titoliResult.add(it.apply { filter = stringa })
                             }
                 }
             }

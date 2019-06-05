@@ -112,7 +112,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             InputTextDialogFragment.Builder(
                     this, this, RENAME)
                     .title(R.string.posizione_rename)
-                    .prefill(item.name.text.toString())
+                    .prefill(item.name?.text.toString())
                     .positiveButton(R.string.aggiungi_rename)
                     .negativeButton(android.R.string.cancel)
                     .show()
@@ -331,7 +331,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             RENAME -> {
                 val mEditText = dialog.getInputField()
                 val mElement = mAdapter.adapterItems[mViewModel.positionToRename]
-                mElement.withName(mEditText.text.toString())
+                mElement.setName = mEditText.text.toString()
                 mAdapter.notifyAdapterItemChanged(mViewModel.positionToRename)
             }
             ADD_POSITION -> {
@@ -344,7 +344,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             swipeableItem {
                                 identifier = Utility.random(0, 5000).toLong()
                                 touchHelper = mTouchHelper
-                                withName(mEditText.text.toString())
+                                setName = mEditText.text.toString()
                             }
                     )
                     mAdapter.add(elementi)
@@ -355,7 +355,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             swipeableItem {
                                 identifier = Utility.random(0, 5000).toLong()
                                 touchHelper = mTouchHelper
-                                withName(mEditText.text.toString())
+                                setName = mEditText.text.toString()
                             }
                     )
                     mAdapter.notifyAdapterItemInserted(mSize)
@@ -417,12 +417,12 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         // -- Option 2: Delayed action --
         val item = mAdapter.getItem(position) ?: return
-        item.setSwipedDirection(direction)
+        item.swipedDirection = direction
 
         val deleteHandler = Handler {
             val itemOjb = it.obj as SwipeableItem
 
-            itemOjb.setSwipedAction(null)
+            itemOjb.swipedAction = null
             val position12 = mAdapter.getAdapterPosition(itemOjb)
             if (position12 != RecyclerView.NO_POSITION) {
                 //this sample uses a filter. If a filter is used we should use the methods provided by the filter (to make sure filter and normal state is updated)
@@ -441,13 +441,13 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         val message = Random().nextInt()
         deleteHandler.sendMessageDelayed(Message.obtain().apply { what = message; obj = item }, 2000)
 
-        item.setSwipedAction(Runnable {
+        item.swipedAction = Runnable {
             deleteHandler.removeMessages(message)
-            item.setSwipedDirection(0)
+            item.swipedDirection = 0
             val mPosition = mAdapter.getAdapterPosition(item)
             if (mPosition != RecyclerView.NO_POSITION)
                 mAdapter.notifyItemChanged(mPosition)
-        })
+        }
 
         mAdapter.notifyItemChanged(position)
     }
@@ -540,7 +540,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                     swipeableItem {
                                         identifier = Utility.random(0, 5000).toLong()
                                         touchHelper = mTouchHelper
-                                        withName(it.getNomePosizione(i))
+                                        setName = it.getNomePosizione(i)
                                     }
                             )
                         }
@@ -596,7 +596,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
             for (i in 0 until mAdapter.adapterItems.size) {
                 mAdapter.getItem(i)?.let {
-                    if (celebrazione?.addPosizione(it.name.text.toString()) == -2) {
+                    if (celebrazione?.addPosizione(it.name?.text.toString()) == -2) {
                         return 1
                     }
                 }

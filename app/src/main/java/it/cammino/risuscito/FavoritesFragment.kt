@@ -255,7 +255,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mFavoritesViewModel.mFavoritesResult?.observe(
                 this,
                 Observer { canti ->
-                    cantoAdapter.set(canti.map { it.withSelectedColor(themeUtils.primaryColorDark()) }.sortedBy { it.title?.getText(context) })
+                    cantoAdapter.set(canti.onEach { it.setSelectedColor = themeUtils.primaryColorDark() }.sortedBy { it.title?.getText(context) })
                     no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                     activity?.invalidateOptionsMenu()
                 })

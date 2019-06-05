@@ -66,7 +66,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) : And
                                 tagPosizione = cantoIndex
                             }
                             listItem = list
-                            withId(cantoIndex)
+                            id = cantoIndex
                         }
 
                         mPosizioniList.add(result)

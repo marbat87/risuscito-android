@@ -5,64 +5,42 @@ import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.helperSetColor
+import it.cammino.risuscito.Utility.helperSetString
 import kotlinx.android.synthetic.main.checkable_row_item.view.*
 
 fun checkableItem(block: CheckableItem.() -> Unit): CheckableItem = CheckableItem().apply(block)
-
 
 class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
+        }
     var page: StringHolder? = null
         private set
+    var setPage: Any? = null
+        set(value) {
+            page = helperSetString(value)
+        }
     var color: ColorHolder? = null
         private set
+    var setColor: Any? = null
+        set(value) {
+            color = helperSetColor(value)
+        }
     var id: Int = 0
-        private set
-
-    fun withTitle(title: String): CheckableItem {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): CheckableItem {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withPage(page: String): CheckableItem {
-        this.page = StringHolder(page)
-        return this
-    }
-
-    fun withPage(@StringRes pageRes: Int): CheckableItem {
-        this.page = StringHolder(pageRes)
-        return this
-    }
-
-    fun withColor(color: String): CheckableItem {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): CheckableItem {
-        this.color = ColorHolder.fromColorRes(colorRes)
-        return this
-    }
-
-    fun withId(id: Int): CheckableItem {
-        this.id = id
-        identifier = id.toLong()
-        return this
-    }
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
 
     /**
      * defines the type defining this item. must be unique. preferably an id

@@ -5,9 +5,6 @@ import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -18,114 +15,73 @@ import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
+import it.cammino.risuscito.Utility.helperSetColor
+import it.cammino.risuscito.Utility.helperSetString
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 fun simpleItem(block: SimpleItem.() -> Unit): SimpleItem = SimpleItem().apply(block)
 
-@Suppress("unused")
 class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
-    var page: StringHolder? = null
-        private set
-    var source: StringHolder? = null
-        private set
-    var undecodedSource: String? = null
-        private set
-    var color: ColorHolder? = null
-        private set
-    var numSalmo: Int = 0
-        private set
-    private var selectedColor: ColorHolder? = null
-    private var filter: String? = null
-    var id: Int = 0
-        private set
-
-    fun withTitle(title: String): SimpleItem {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): SimpleItem {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withPage(page: String): SimpleItem {
-        this.page = StringHolder(page)
-        return this
-    }
-
-    fun withPage(@StringRes pageRes: Int): SimpleItem {
-        this.page = StringHolder(pageRes)
-        return this
-    }
-
-    fun withSource(src: String): SimpleItem {
-        this.source = StringHolder(src)
-        return this
-    }
-
-    fun withSource(@StringRes srcRes: Int): SimpleItem {
-        this.source = StringHolder(srcRes)
-        return this
-    }
-
-    fun withUndecodedSource(undecodedSource: String): SimpleItem {
-        this.undecodedSource = undecodedSource
-        return this
-    }
-
-    fun withColor(color: String): SimpleItem {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): SimpleItem {
-        this.color = ColorHolder.fromColorRes(colorRes)
-        return this
-    }
-
-    fun withSelectedColor(selectedColor: String): SimpleItem {
-        this.selectedColor = ColorHolder.fromColor(Color.parseColor(selectedColor))
-        return this
-    }
-
-    fun withSelectedColor(@ColorInt selectedColor: Int): SimpleItem {
-        this.selectedColor = ColorHolder.fromColor(selectedColor)
-        return this
-    }
-
-    fun withSelectedColorRes(@ColorRes selectedColorRes: Int): SimpleItem {
-        this.selectedColor = ColorHolder.fromColorRes(selectedColorRes)
-        return this
-    }
-
-    fun withFilter(filter: String): SimpleItem {
-        this.filter = filter
-        return this
-    }
-
-    fun withId(id: Int): SimpleItem {
-        this.id = id
-        identifier = id.toLong()
-        return this
-    }
-
-    fun withNumSalmo(numSalmo: String): SimpleItem {
-        var numeroTemp = 0
-        try {
-            numeroTemp = Integer.valueOf(numSalmo.substring(0, 3))
-        } catch (e: NumberFormatException) {
-            Log.e(javaClass.name, e.localizedMessage, e)
-        } catch (e: IndexOutOfBoundsException) {
-            Log.e(javaClass.name, e.localizedMessage, e)
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
         }
 
-        this.numSalmo = numeroTemp
-        return this
-    }
+    var page: StringHolder? = null
+        private set
+    var setPage: Any? = null
+        set(value) {
+            page = helperSetString(value)
+        }
+
+    var source: StringHolder? = null
+        private set
+    var setSource: Any? = null
+        set(value) {
+            source = helperSetString(value)
+        }
+
+    var undecodedSource: String? = null
+
+    var color: ColorHolder? = null
+        private set
+    var setColor: Any? = null
+        set(value) {
+            color = helperSetColor(value)
+        }
+
+    var numSalmo: Int = 0
+        private set
+    var setNumSalmo: String? = null
+        set(value) {
+            var numeroTemp = 0
+            try {
+                numeroTemp = Integer.valueOf(value?.substring(0, 3) ?: "")
+            } catch (e: NumberFormatException) {
+                Log.e(javaClass.name, e.localizedMessage, e)
+            } catch (e: IndexOutOfBoundsException) {
+                Log.e(javaClass.name, e.localizedMessage, e)
+            }
+            numSalmo = numeroTemp
+            field = value
+        }
+
+    private var selectedColor: ColorHolder? = null
+    var setSelectedColor: Any? = null
+        set(value) {
+            selectedColor = helperSetColor(value)
+        }
+
+    var filter: String? = null
+
+    var id: Int = 0
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
 
     /**
      * defines the type defining this item. must be unique. preferably an id

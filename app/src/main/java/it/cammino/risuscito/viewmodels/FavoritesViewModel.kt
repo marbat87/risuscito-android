@@ -24,11 +24,11 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
             canti.forEach {
                 newList.add(
                         simpleItem {
-                            withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                            withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                            withSource(LUtils.getResId(it.source, R.string::class.java))
-                            withColor(it.color ?: Canto.BIANCO)
-                            withId(it.id)
+                            setTitle = LUtils.getResId(it.titolo, R.string::class.java)
+                            setPage = LUtils.getResId(it.pagina, R.string::class.java)
+                            setSource = LUtils.getResId(it.source, R.string::class.java)
+                            setColor = it.color ?: Canto.BIANCO
+                            id = it.id
                         }
                 )
             }

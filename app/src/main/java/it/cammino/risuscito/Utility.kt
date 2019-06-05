@@ -14,7 +14,10 @@ import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import com.mikepenz.materialize.holder.ColorHolder
+import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.utils.ThemeUtils
 import java.io.File
 import java.text.Normalizer
@@ -200,5 +203,17 @@ object Utility {
         mChannel.setShowBadge(false)
         mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         mNotificationManager.createNotificationChannel(mChannel)
+    }
+
+    fun <T> helperSetString(t: T) = when (t) {
+        is String -> StringHolder(t)
+        is Int -> StringHolder(t)
+        else -> throw IllegalArgumentException()
+    }
+
+    fun <T> helperSetColor(t: T) = when (t) {
+        is String -> ColorHolder.fromColor(Color.parseColor(t))
+        is @ColorInt Int -> ColorHolder.fromColor(t)
+        else -> throw IllegalArgumentException()
     }
 }

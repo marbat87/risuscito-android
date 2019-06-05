@@ -3,7 +3,6 @@ package it.cammino.risuscito.items
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -12,21 +11,32 @@ import com.mikepenz.fastadapter.IClickable
 import com.mikepenz.fastadapter.ISubItem
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
-import com.mikepenz.materialdrawer.holder.StringHolder
+import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.helperSetString
 import kotlinx.android.synthetic.main.list_group_item.view.*
 
 fun simpleSubExpandableItem(block: SimpleSubExpandableItem.() -> Unit): SimpleSubExpandableItem = SimpleSubExpandableItem().apply(block)
 
-@Suppress("unused")
 class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.ViewHolder>(), IClickable<SimpleSubExpandableItem>, ISubItem<SimpleSubExpandableItem.ViewHolder> {
 
     var title: StringHolder? = null
         private set
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
+        }
+
     private var subTitle: StringHolder? = null
-    private var totItems: Int = 0
+    @Suppress("unused")
+    var setSubTitle: Any? = null
+        set(value) {
+            subTitle = helperSetString(value)
+        }
+
+    var totItems: Int = 0
+
     var position: Int = 0
-        private set
 
     private var mOnClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = null
 
@@ -46,36 +56,6 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
         }
 
     override var onPreItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = null
-
-    fun withTitle(title: String): SimpleSubExpandableItem {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): SimpleSubExpandableItem {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withSubTitle(subTitle: String): SimpleSubExpandableItem {
-        this.subTitle = StringHolder(subTitle)
-        return this
-    }
-
-    fun withSubTitle(@StringRes subTitleRes: Int): SimpleSubExpandableItem {
-        this.subTitle = StringHolder(subTitleRes)
-        return this
-    }
-
-    fun withPosition(position: Int): SimpleSubExpandableItem {
-        this.position = position
-        return this
-    }
-
-    fun witTotItems(totItems: Int): SimpleSubExpandableItem {
-        this.totItems = totItems
-        return this
-    }
 
     override//this might not be true for your application
     var isSelectable: Boolean

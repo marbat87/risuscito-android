@@ -2,11 +2,8 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.util.Log
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.materialize.holder.ColorHolder
@@ -14,104 +11,46 @@ import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
+import it.cammino.risuscito.Utility.helperSetColor
+import it.cammino.risuscito.Utility.helperSetString
 import kotlinx.android.synthetic.main.row_item_to_insert.view.*
 
 fun insertItem(block: InsertItem.() -> Unit): InsertItem = InsertItem().apply(block)
 
-@Suppress("unused")
 class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
+        }
     var page: StringHolder? = null
         private set
+    var setPage: Any? = null
+        set(value) {
+            page = helperSetString(value)
+        }
     var source: StringHolder? = null
         private set
+    var setSource: Any? = null
+        set(value) {
+            source = helperSetString(value)
+        }
     var undecodedSource: String? = null
-        private set
     var color: ColorHolder? = null
         private set
-    private var numSalmo: Int = 0
-    private var filter: String? = null
-    var id: Int = 0
-        private set
-    var consegnato: Int = 0
-        private set
-
-    fun withTitle(title: String): InsertItem {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): InsertItem {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withPage(page: String): InsertItem {
-        this.page = StringHolder(page)
-        return this
-    }
-
-    fun withPage(@StringRes pageRes: Int): InsertItem {
-        this.page = StringHolder(pageRes)
-        return this
-    }
-
-    fun withSource(src: String): InsertItem {
-        this.source = StringHolder(src)
-        return this
-    }
-
-    fun withSource(@StringRes srcRes: Int): InsertItem {
-        this.source = StringHolder(srcRes)
-        return this
-    }
-
-    fun withUndecodedSource(undecodedSource: String): InsertItem {
-        this.undecodedSource = undecodedSource
-        return this
-    }
-
-    fun withColor(color: String): InsertItem {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): InsertItem {
-        this.color = ColorHolder.fromColorRes(colorRes)
-        return this
-    }
-
-    fun withConsegnato(consegnato: Int): InsertItem {
-        this.consegnato = consegnato
-        return this
-    }
-
-    fun withId(id: Int): InsertItem {
-        this.id = id
-        identifier = id.toLong()
-        return this
-    }
-
-    fun withNumSalmo(numSalmo: String): InsertItem {
-        var numeroTemp = 0
-        try {
-            numeroTemp = Integer.valueOf(numSalmo.substring(0, 3))
-        } catch (e: NumberFormatException) {
-            Log.e(javaClass.name, e.localizedMessage, e)
-        } catch (e: IndexOutOfBoundsException) {
-            Log.e(javaClass.name, e.localizedMessage, e)
+    var setColor: Any? = null
+        set(value) {
+            color = helperSetColor(value)
         }
-
-        this.numSalmo = numeroTemp
-        return this
-    }
-
-    fun withFilter(filter: String): InsertItem {
-        this.filter = filter
-        return this
-    }
+    var filter: String? = null
+    var id: Int = 0
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
+    var consegnato: Int = 0
 
     /**
      * defines the type defining this item. must be unique. preferably an id

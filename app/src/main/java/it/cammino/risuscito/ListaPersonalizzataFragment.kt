@@ -376,7 +376,7 @@ class ListaPersonalizzataFragment : Fragment() {
                         it.apply {
                             createClickListener = click
                             createLongClickListener = longClick
-                            withSelectedColor(themeUtils.primaryColorDark())
+                            setSelectedColor = themeUtils.primaryColorDark()
                         }
                     }
                     cantoAdapter.set(mCantiViewModel.posizioniList)

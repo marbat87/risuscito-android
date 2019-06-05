@@ -327,8 +327,8 @@ class ListaPredefinitaFragment : Fragment() {
             }
             createClickListener = click
             createLongClickListener = longClick
-            withSelectedColor(themeUtils.primaryColorDark())
-            withId(tag)
+            setSelectedColor = themeUtils.primaryColorDark()
+            id = tag
         }
     }
 

@@ -4,8 +4,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -15,74 +13,45 @@ import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.helperSetColor
+import it.cammino.risuscito.Utility.helperSetString
 import kotlinx.android.synthetic.main.simple_sub_item.view.*
 
 fun simpleSubItem(block: SimpleSubItem.() -> Unit): SimpleSubItem = SimpleSubItem().apply(block)
 
-@Suppress("unused")
 class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpandable<SimpleSubItem.ViewHolder> {
 
     var title: StringHolder? = null
         private set
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
+        }
+
     var page: StringHolder? = null
         private set
+    var setPage: Any? = null
+        set(value) {
+            page = helperSetString(value)
+        }
+
     var source: StringHolder? = null
         private set
+    var setSource: Any? = null
+        set(value) {
+            source = helperSetString(value)
+        }
+
     var color: ColorHolder? = null
         private set
+    var setColor: Any? = null
+        set(value) {
+            color = helperSetColor(value)
+        }
+
     var id: Int = 0
-        private set
-    private var isHasDivider = false
 
-    fun withTitle(title: String): SimpleSubItem {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): SimpleSubItem {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withPage(page: String): SimpleSubItem {
-        this.page = StringHolder(page)
-        return this
-    }
-
-    fun withPage(@StringRes pageRes: Int): SimpleSubItem {
-        this.page = StringHolder(pageRes)
-        return this
-    }
-
-    fun withSource(src: String): SimpleSubItem {
-        this.source = StringHolder(src)
-        return this
-    }
-
-    fun withSource(@StringRes srcRes: Int): SimpleSubItem {
-        this.source = StringHolder(srcRes)
-        return this
-    }
-
-    fun withColor(color: String): SimpleSubItem {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): SimpleSubItem {
-        this.color = ColorHolder.fromColorRes(colorRes)
-        return this
-    }
-
-    fun withId(id: Int): SimpleSubItem {
-        this.id = id
-        return this
-    }
-
-    fun withHasDivider(hasDivider: Boolean): SimpleSubItem {
-        this.isHasDivider = hasDivider
-        return this
-    }
+    var isHasDivider = false
 
     /**
      * defines the type defining this item. must be unique. preferably an id

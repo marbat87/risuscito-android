@@ -2,7 +2,6 @@ package it.cammino.risuscito.items
 
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -10,43 +9,24 @@ import com.mikepenz.fastadapter.drag.IExtendedDraggable
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.swipe.ISwipeable
 import com.mikepenz.fastadapter.utils.DragDropUtil
-import com.mikepenz.materialdrawer.holder.StringHolder
+import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.helperSetString
 import kotlinx.android.synthetic.main.swipeable_item.view.*
 
 fun swipeableItem(block: SwipeableItem.() -> Unit): SwipeableItem = SwipeableItem().apply(block)
 
-@Suppress("unused")
 class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExtendedDraggable<RecyclerView.ViewHolder> {
-    lateinit var name: StringHolder
 
-    private var swipedDirection: Int = 0
-    private var swipedAction: Runnable? = null
-    private var swipeable = true
+    var name: StringHolder? = null
+    var setName: Any? = null
+        set(value) {
+            name = helperSetString(value)
+        }
+
+    var swipedDirection: Int = 0
+    var swipedAction: Runnable? = null
     override var touchHelper: ItemTouchHelper? = null
-
-    fun withName(Name: String): SwipeableItem {
-        this.name = StringHolder(Name)
-        return this
-    }
-
-    fun withName(@StringRes NameRes: Int): SwipeableItem {
-        this.name = StringHolder(NameRes)
-        return this
-    }
-
-    fun withIsSwipeable(swipeable: Boolean): SwipeableItem {
-        this.swipeable = swipeable
-        return this
-    }
-
-    fun setSwipedDirection(swipedDirection: Int) {
-        this.swipedDirection = swipedDirection
-    }
-
-    fun setSwipedAction(action: Runnable?) {
-        this.swipedAction = action
-    }
 
     /**
      * defines the type defining this item. must be unique. preferably an id
@@ -83,7 +63,7 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
         var swipedText: CharSequence? = null
         if (swipedDirection != 0) {
             swipedAction = holder.itemView.context.getString(android.R.string.cancel)
-            swipedText = holder.itemView.context.getString(R.string.generic_removed, name.text)
+            swipedText = holder.itemView.context.getString(R.string.generic_removed, name?.text)
             holder.swipeResultContent?.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
         }
         holder.swipedAction?.text = swipedAction ?: ""

@@ -43,7 +43,6 @@ import com.mikepenz.iconics.typeface.library.community.material.CommunityMateria
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.CheckableItem
@@ -500,10 +499,10 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     newList.add(
                             checkableItem {
                                 isSelected = canto.consegnato > 0
-                                withTitle(it.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                withPage(it.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                withColor(canto.color ?: Canto.BIANCO)
-                                withId(canto.id)
+                                setTitle = it.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))
+                                setPage = it.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java))
+                                setColor = canto.color
+                                id = canto.id
                             }
                     )
                 }

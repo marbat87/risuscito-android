@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
@@ -16,6 +14,7 @@ import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
 import kotlinx.android.synthetic.main.generic_card_item.view.*
@@ -28,38 +27,23 @@ fun ListaPersonalizzataItem.posizioneTitleItem(block: PosizioneTitleItem.() -> U
     titleItem = PosizioneTitleItem().apply(block)
 }
 
-@Suppress("unused")
 class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>() {
 
     var titleItem: PosizioneTitleItem? = null
     var listItem: List<PosizioneItem>? = null
     var id: Int = 0
-        private set
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
 
     private var selectedColor: ColorHolder? = null
+    var setSelectedColor: Any? = null
+        set(value) {
+            selectedColor = helperSetColor(value)
+        }
     var createClickListener: View.OnClickListener? = null
     var createLongClickListener: View.OnLongClickListener? = null
-
-    fun withId(id: Int): ListaPersonalizzataItem {
-        this.id = id
-        identifier = id.toLong()
-        return this
-    }
-
-    fun withSelectedColor(selectedColor: String): ListaPersonalizzataItem {
-        this.selectedColor = ColorHolder.fromColor(Color.parseColor(selectedColor))
-        return this
-    }
-
-    fun withSelectedColor(@ColorInt selectedColor: Int): ListaPersonalizzataItem {
-        this.selectedColor = ColorHolder.fromColor(selectedColor)
-        return this
-    }
-
-    fun withSelectedColorRes(@ColorRes selectedColorRes: Int): ListaPersonalizzataItem {
-        this.selectedColor = ColorHolder.fromColorRes(selectedColorRes)
-        return this
-    }
 
     /**
      * defines the type defining this item. must be unique. preferably an id

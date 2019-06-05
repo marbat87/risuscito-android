@@ -253,7 +253,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mCronologiaViewModel.cronologiaCanti?.observe(
                 this,
                 Observer { canti ->
-                    cantoAdapter.set(canti.map { it.withSelectedColor(themeUtils.primaryColorDark()) })
+                    cantoAdapter.set(canti.onEach { it.setSelectedColor = themeUtils.primaryColorDark() })
                     no_history?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                     activity?.invalidateOptionsMenu()
                 })

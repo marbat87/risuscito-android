@@ -21,7 +21,6 @@ import com.mikepenz.fastadapter.adapters.GenericFastItemAdapter
 import com.mikepenz.fastadapter.expandable.getExpandableExtension
 import com.mikepenz.itemanimators.SlideDownAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleSubExpandableItem
@@ -162,13 +161,13 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                     for (i in canti.indices) {
                         mSubItems.add(
                                 simpleSubItem {
-                                    withTitle(LUtils.getResId(canti[i].titolo, R.string::class.java))
-                                    withPage(LUtils.getResId(canti[i].pagina, R.string::class.java))
-                                    withSource(LUtils.getResId(canti[i].source, R.string::class.java))
-                                    withColor(canti[i].color ?: Canto.BIANCO)
-                                    withId(canti[i].id)
+                                    setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
+                                    setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
+                                    setSource = LUtils.getResId(canti[i].source, R.string::class.java)
+                                    setColor = canti[i].color
+                                    id = canti[i].id
                                     identifier = (i * 1000).toLong()
-                                    withHasDivider(!((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento)))
+                                    isHasDivider = !((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento))
                                 }
                         )
                         totCanti++
@@ -177,9 +176,9 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                             // serve a non mettere il divisore sull'ultimo elemento della lista
                             mCantiViewModel.titoliList.add(
                                     simpleSubExpandableItem {
-                                        withTitle(LUtils.getResId(canti[i].nomeArgomento, R.string::class.java))
-                                        witTotItems(totCanti)
-                                        withPosition(totListe++)
+                                        setTitle = LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)
+                                        totItems = totCanti
+                                        position = totListe++
                                         onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                             if (!item.isExpanded) {
                                                 if (mActivity?.isGridLayout == true)
@@ -212,13 +211,13 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                     for (i in canti.indices) {
                         mSubItems.add(
                                 simpleSubItem {
-                                    withTitle(LUtils.getResId(canti[i].titolo, R.string::class.java))
-                                    withPage(LUtils.getResId(canti[i].pagina, R.string::class.java))
-                                    withSource(LUtils.getResId(canti[i].source, R.string::class.java))
-                                    withColor(canti[i].color ?: Canto.BIANCO)
-                                    withId(canti[i].id)
+                                    setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
+                                    setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
+                                    setSource = LUtils.getResId(canti[i].source, R.string::class.java)
+                                    setColor = canti[i].color
+                                    id = canti[i].id
                                     identifier = (i * 1000).toLong()
-                                    withHasDivider(!((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)))
+                                    isHasDivider = !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
                                 }
                         )
                         totCanti++
@@ -227,9 +226,9 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
                             // serve a non mettere il divisore sull'ultimo elemento della lista
                             mCantiViewModel.titoliList.add(
                                     simpleSubExpandableItem {
-                                        withTitle(LUtils.getResId(canti[i].nome, R.string::class.java))
-                                        witTotItems(totCanti)
-                                        withPosition(totListe++)
+                                        setTitle = LUtils.getResId(canti[i].nome, R.string::class.java)
+                                        totItems = totCanti
+                                        position = totListe++
                                         onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                             if (!item.isExpanded) {
                                                 if (mActivity?.isGridLayout == true)
