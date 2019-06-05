@@ -30,8 +30,9 @@ import com.mikepenz.iconics.typeface.library.community.material.CommunityMateria
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.ListaPersonalizzataItem
-import it.cammino.risuscito.objects.PosizioneItem
-import it.cammino.risuscito.objects.PosizioneTitleItem
+import it.cammino.risuscito.items.listaPersonalizzataItem
+import it.cammino.risuscito.items.posizioneTitleItem
+import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
@@ -303,31 +304,32 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun getCantofromPosition(
-            posizioni: List<Posizione>, titoloPosizione: String, position: Int, tag: Int): ListaPersonalizzataItem {
-        val list = posizioni.filter { it.position == position }.map {
-            PosizioneItem()
-                    .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                    .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                    .withSource(LUtils.getResId(it.source, R.string::class.java))
-                    .withColor(it.color ?: Canto.BIANCO)
-                    .withId(it.id)
-                    .withTimestamp(it.timestamp?.time.toString())
+            posizioni: List<Posizione>, title: String, position: Int, tag: Int): ListaPersonalizzataItem {
+        return listaPersonalizzataItem {
+            posizioneTitleItem {
+                titoloPosizione = title
+                idPosizione = position
+                tagPosizione = tag
+                isMultiple = when (mCantiViewModel.defaultListaId) {
+                    2 -> (position == 4 || position == 3)
+                    else -> false
+                }
+            }
+            listItem = posizioni.filter { it.position == position }.map {
+                posizioneItem {
+                    withTitle(LUtils.getResId(it.titolo, R.string::class.java))
+                    withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                    withSource(LUtils.getResId(it.source, R.string::class.java))
+                    withColor(it.color ?: Canto.BIANCO)
+                    withId(it.id)
+                    withTimestamp(it.timestamp?.time.toString())
+                }
+            }
+            createClickListener = click
+            createLongClickListener = longClick
+            withSelectedColor(themeUtils.primaryColorDark())
+            withId(tag)
         }
-
-        return ListaPersonalizzataItem()
-                .withTitleItem(PosizioneTitleItem(
-                        titoloPosizione,
-                        position,
-                        tag,
-                        when (mCantiViewModel.defaultListaId) {
-                            2 -> (position == 4 || position == 3)
-                            else -> false
-                        }))
-                .withListItem(list)
-                .withClickListener(click)
-                .withLongClickListener(longClick)
-                .withSelectedColor(themeUtils.primaryColorDark())
-                .withId(tag)
     }
 
     // recupera il titolo del canto in posizione "position" nella lista "list"

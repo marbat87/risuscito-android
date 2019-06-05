@@ -14,6 +14,8 @@ import com.mikepenz.materialdrawer.holder.StringHolder
 import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.swipeable_item.view.*
 
+fun swipeableItem(block: SwipeableItem.() -> Unit): SwipeableItem = SwipeableItem().apply(block)
+
 @Suppress("unused")
 class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExtendedDraggable<RecyclerView.ViewHolder> {
     lateinit var name: StringHolder

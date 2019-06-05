@@ -9,6 +9,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.items.simpleItem
 import java.util.*
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
@@ -22,7 +23,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
             val newList = ArrayList<SimpleItem>()
             canti.forEach {
                 newList.add(
-                        SimpleItem().apply {
+                        simpleItem {
                             withTitle(LUtils.getResId(it.titolo, R.string::class.java))
                             withPage(LUtils.getResId(it.pagina, R.string::class.java))
                             withSource(LUtils.getResId(it.source, R.string::class.java))

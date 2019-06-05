@@ -20,6 +20,8 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 
+fun simpleItem(block: SimpleItem.() -> Unit): SimpleItem = SimpleItem().apply(block)
+
 @Suppress("unused")
 class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 

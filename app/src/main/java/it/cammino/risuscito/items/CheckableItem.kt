@@ -14,6 +14,9 @@ import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.checkable_row_item.view.*
 
+fun checkableItem(block: CheckableItem.() -> Unit): CheckableItem = CheckableItem().apply(block)
+
+
 class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
 
     var title: StringHolder? = null

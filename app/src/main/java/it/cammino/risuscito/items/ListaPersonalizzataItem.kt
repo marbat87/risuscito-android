@@ -22,28 +22,23 @@ import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 
+fun listaPersonalizzataItem(block: ListaPersonalizzataItem.() -> Unit): ListaPersonalizzataItem = ListaPersonalizzataItem().apply(block)
+
+fun ListaPersonalizzataItem.posizioneTitleItem(block: PosizioneTitleItem.() -> Unit) {
+    titleItem = PosizioneTitleItem().apply(block)
+}
+
 @Suppress("unused")
 class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>() {
 
-    private var titleItem: PosizioneTitleItem? = null
+    var titleItem: PosizioneTitleItem? = null
     var listItem: List<PosizioneItem>? = null
-        private set
     var id: Int = 0
         private set
 
     private var selectedColor: ColorHolder? = null
-    private var createClickListener: View.OnClickListener? = null
-    private var createLongClickListener: View.OnLongClickListener? = null
-
-    fun withTitleItem(mTitleItem: PosizioneTitleItem): ListaPersonalizzataItem {
-        this.titleItem = mTitleItem
-        return this
-    }
-
-    fun withListItem(mListItem: List<PosizioneItem>): ListaPersonalizzataItem {
-        this.listItem = mListItem
-        return this
-    }
+    var createClickListener: View.OnClickListener? = null
+    var createLongClickListener: View.OnLongClickListener? = null
 
     fun withId(id: Int): ListaPersonalizzataItem {
         this.id = id
@@ -63,16 +58,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
 
     fun withSelectedColorRes(@ColorRes selectedColorRes: Int): ListaPersonalizzataItem {
         this.selectedColor = ColorHolder.fromColorRes(selectedColorRes)
-        return this
-    }
-
-    fun withClickListener(listener: View.OnClickListener): ListaPersonalizzataItem {
-        this.createClickListener = listener
-        return this
-    }
-
-    fun withLongClickListener(listener: View.OnLongClickListener): ListaPersonalizzataItem {
-        this.createLongClickListener = listener
         return this
     }
 
@@ -159,7 +144,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
 
         holder.idPosizione?.text = titleItem?.idPosizione.toString()
         holder.nomePosizione?.text = titleItem?.titoloPosizione
-        holder.tag?.text = titleItem?.tag.toString()
+        holder.tag?.text = titleItem?.tagPosizione.toString()
     }
 
     override fun unbindView(holder: ViewHolder) {

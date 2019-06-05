@@ -57,6 +57,7 @@ android {
     packagingOptions {
         exclude("META-INF/library-core_release.kotlin_module")
         exclude("META-INF/atomicfu.kotlin_module")
+        exclude("META-INF/library_release.kotlin_module")
     }
 }
 
@@ -114,4 +115,5 @@ dependencies {
     implementation ("com.github.MFlisar:changelog:1.1.5")
     implementation ("com.github.zawadz88.materialpopupmenu:material-popup-menu:3.4.0")
     implementation ("com.github.stupacki:MultiFunctions:1.2.1")
+    implementation ("io.lamart.livedata:livedata-utils:1.0.1")
 }

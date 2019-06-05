@@ -21,6 +21,8 @@ import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
+fun simpleHistoryItem(block: SimpleHistoryItem.() -> Unit): SimpleHistoryItem = SimpleHistoryItem().apply(block)
+
 @Suppress("unused")
 class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
 

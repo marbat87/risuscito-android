@@ -48,6 +48,7 @@ import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.services.ConsegnatiSaverService
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
@@ -496,14 +497,14 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 val canti = mDao.choosen
                 val newList = ArrayList<CheckableItem>()
                 for (canto in canti) {
-                    val checkableItem = CheckableItem()
-                    checkableItem.isSelected = canto.consegnato > 0
                     newList.add(
-                            checkableItem
-                                    .withTitle(it.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                                    .withPage(it.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
-                                    .withColor(canto.color ?: Canto.BIANCO)
-                                    .withId(canto.id)
+                            checkableItem {
+                                isSelected = canto.consegnato > 0
+                                withTitle(it.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
+                                withPage(it.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java)))
+                                withColor(canto.color ?: Canto.BIANCO)
+                                withId(canto.id)
+                            }
                     )
                 }
                 it.mCantiViewModel.titoliChoose = newList.sortedWith(compareBy { item -> item.title.toString() })

@@ -49,6 +49,7 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
+import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
@@ -69,7 +70,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     private var mRegularFont: Typeface? = null
     private var elementi: ArrayList<SwipeableItem> = ArrayList()
     // drag & drop
-    private var touchHelper: ItemTouchHelper? = null
+    private var mTouchHelper: ItemTouchHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,7 +103,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 .withLeaveBehindSwipeRight(leaveBehindDrawable)
         touchCallback.setIsDragEnabled(false)
 
-        touchHelper = ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
+        mTouchHelper = ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
 
         mAdapter.add(elementi)
         mAdapter.onLongClickListener = { _: View?, _: IAdapter<SwipeableItem>, item: SwipeableItem, position: Int ->
@@ -130,7 +131,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                         this, R.drawable.preference_list_divider_material)!!)
         recycler_view?.addItemDecoration(insetDivider)
 
-        touchHelper?.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
+        mTouchHelper?.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
 
         SearchTask().execute()
 
@@ -339,23 +340,24 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 if (modifica) nomiCanti.add("")
                 if (mAdapter.adapterItemCount == 0) {
                     elementi.clear()
-                    val mSwipeable = SwipeableItem()
-                    mSwipeable.identifier = Utility.random(0, 5000).toLong()
-                    mSwipeable.touchHelper = touchHelper
                     elementi.add(
-                            mSwipeable
-                                    .withName(mEditText.text.toString()))
+                            swipeableItem {
+                                identifier = Utility.random(0, 5000).toLong()
+                                touchHelper = mTouchHelper
+                                withName(mEditText.text.toString())
+                            }
+                    )
                     mAdapter.add(elementi)
                     mAdapter.notifyItemInserted(0)
                 } else {
                     val mSize = mAdapter.adapterItemCount
-                    val mSwipeable = SwipeableItem()
-                    mSwipeable.identifier = Utility.random(0, 5000).toLong()
-                    mSwipeable.touchHelper = touchHelper
-                    mAdapter
-                            .add(
-                                    mSwipeable
-                                            .withName(mEditText.text.toString()))
+                    mAdapter.add(
+                            swipeableItem {
+                                identifier = Utility.random(0, 5000).toLong()
+                                touchHelper = mTouchHelper
+                                withName(mEditText.text.toString())
+                            }
+                    )
                     mAdapter.notifyAdapterItemInserted(mSize)
                 }
                 Log.d(TAG, "onPositive - elementi.size(): " + mAdapter.adapterItems.size)
@@ -529,17 +531,18 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
             if (mViewModel.dataDrag != null) {
                 elementi = mViewModel.dataDrag ?: ArrayList()
-                for (elemento in elementi) elemento.touchHelper = touchHelper
+                for (elemento in elementi) elemento.touchHelper = mTouchHelper
             } else {
                 if (modifica) {
                     celebrazione?.let {
                         for (i in 0 until it.numPosizioni) {
-                            val mSwipeable = SwipeableItem()
-                            mSwipeable.identifier = Utility.random(0, 5000).toLong()
-                            mSwipeable.touchHelper = touchHelper
                             elementi.add(
-                                    mSwipeable
-                                            .withName(it.getNomePosizione(i)))
+                                    swipeableItem {
+                                        identifier = Utility.random(0, 5000).toLong()
+                                        touchHelper = mTouchHelper
+                                        withName(it.getNomePosizione(i))
+                                    }
+                            )
                         }
                     }
                 }

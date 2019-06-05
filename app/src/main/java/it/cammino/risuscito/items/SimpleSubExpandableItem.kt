@@ -16,6 +16,8 @@ import com.mikepenz.materialdrawer.holder.StringHolder
 import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.list_group_item.view.*
 
+fun simpleSubExpandableItem(block: SimpleSubExpandableItem.() -> Unit): SimpleSubExpandableItem = SimpleSubExpandableItem().apply(block)
+
 @Suppress("unused")
 class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.ViewHolder>(), IClickable<SimpleSubExpandableItem>, ISubItem<SimpleSubExpandableItem.ViewHolder> {
 

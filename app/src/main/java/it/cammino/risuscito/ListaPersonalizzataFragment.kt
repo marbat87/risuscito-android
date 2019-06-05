@@ -372,12 +372,12 @@ class ListaPersonalizzataFragment : Fragment() {
         mCantiViewModel.listaPersonalizzataResult?.observe(
                 this,
                 Observer { listaPersonalizzataResult ->
-                    Log.d(TAG, "onChanged")
                     mCantiViewModel.posizioniList = listaPersonalizzataResult.map {
-                        it.withClickListener(click)
-                                .withLongClickListener(longClick)
-                                .withSelectedColor(themeUtils.primaryColorDark())
-                        it
+                        it.apply {
+                            createClickListener = click
+                            createLongClickListener = longClick
+                            withSelectedColor(themeUtils.primaryColorDark())
+                        }
                     }
                     cantoAdapter.set(mCantiViewModel.posizioniList)
                 })

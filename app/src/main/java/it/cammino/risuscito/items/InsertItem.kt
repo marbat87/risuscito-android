@@ -16,6 +16,8 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import kotlinx.android.synthetic.main.row_item_to_insert.view.*
 
+fun insertItem(block: InsertItem.() -> Unit): InsertItem = InsertItem().apply(block)
+
 @Suppress("unused")
 class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
 
