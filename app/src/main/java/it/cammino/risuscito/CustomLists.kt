@@ -7,7 +7,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
-import android.preference.PreferenceManager
 import android.util.Log
 import android.util.SparseArray
 import android.view.*
@@ -20,6 +19,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.PagerAdapter
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.afollestad.materialdialogs.MaterialDialog

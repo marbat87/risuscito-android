@@ -9,7 +9,6 @@ import android.graphics.Typeface
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.*
 import androidx.core.content.ContextCompat
@@ -20,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager

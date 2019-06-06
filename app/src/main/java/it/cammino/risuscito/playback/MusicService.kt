@@ -132,7 +132,7 @@ class MusicService : MediaBrowserServiceCompat() {
      * Custom [Handler] to process the delayed stop command.
      */
     private val mDelayedStopHandler = Handler(Handler.Callback { msg ->
-        if (msg == null || msg.what != STOP_CMD) {
+        if (msg.what != STOP_CMD) {
             return@Callback false
         }
 
@@ -334,8 +334,8 @@ class MusicService : MediaBrowserServiceCompat() {
 
         override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
             val mKeyEvent = mediaButtonEvent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)
-            Log.d(TAG, "onMediaButtonEvent keycode: " + mKeyEvent.keyCode)
-            if (mKeyEvent.keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+            Log.d(TAG, "onMediaButtonEvent keycode: ${mKeyEvent?.keyCode}")
+            if (mKeyEvent?.keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
                 onSkipToPrevious()
             return super.onMediaButtonEvent(mediaButtonEvent)
         }

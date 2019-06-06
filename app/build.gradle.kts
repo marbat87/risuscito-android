@@ -12,12 +12,12 @@ plugins {
 
 android {
 
-    compileSdkVersion(28)
-    buildToolsVersion("28.0.3")
+    compileSdkVersion(29)
+    buildToolsVersion("29.0.0")
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdkVersion(16)
-        targetSdkVersion(28)
+        targetSdkVersion(29)
         multiDexEnabled = true
         versionCode = 4411
         versionName = "4.4.0"

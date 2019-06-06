@@ -93,8 +93,7 @@ class DownloadService : IntentService("DownloadService") {
                             output?.close()
                             @Suppress("UNNECESSARY_SAFE_CALL")
                             input?.close()
-                            val fileToDelete = File(mPath)
-                            fileToDelete.delete()
+                            mPath?.let { File(it).delete() }
                         } catch (ignored: IOException) {
                             Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
                         }

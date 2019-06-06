@@ -143,14 +143,12 @@ class XmlImportService : IntentService("XmlImportService") {
 
     @Throws(XmlPullParserException::class, IOException::class)
     private fun parse(inputStream: InputStream?): ListaPersonalizzata? {
-        try {
+        inputStream.use {
             val parser = Xml.newPullParser()
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-            parser.setInput(inputStream, null)
+            parser.setInput(it, null)
             parser.nextTag()
             return readLista(parser)
-        } finally {
-            inputStream?.close()
         }
     }
 

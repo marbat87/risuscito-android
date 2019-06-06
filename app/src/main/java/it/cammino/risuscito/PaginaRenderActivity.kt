@@ -272,24 +272,26 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             Log.d(TAG, "DATA_PDF_PATH: " + intent.getStringExtra(PdfExportService.DATA_PDF_PATH))
             dismissProgressDialog(EXPORT_PDF)
             val localPDFPath = intent.getStringExtra(PdfExportService.DATA_PDF_PATH)
-            val file = File(localPDFPath)
-            val target = Intent(Intent.ACTION_VIEW)
-            val pdfUri = FileProvider.getUriForFile(
-                    this@PaginaRenderActivity, "it.cammino.risuscito.fileprovider", file)
-            Log.d(TAG, "pdfUri: $pdfUri")
-            target.setDataAndType(pdfUri, "application/pdf")
-            target.flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION
-            val intent2 = Intent.createChooser(target, getString(R.string.open_pdf))
-            try {
-                startActivity(intent2)
-            } catch (e: ActivityNotFoundException) {
-                Snackbar.make(
-                        findViewById(android.R.id.content),
-                        R.string.no_pdf_reader,
-                        Snackbar.LENGTH_SHORT)
-                        .show()
+            localPDFPath?.let {
+                val file = File(it)
+                val target = Intent(Intent.ACTION_VIEW)
+                val pdfUri = FileProvider.getUriForFile(
+                        this@PaginaRenderActivity, "it.cammino.risuscito.fileprovider", file)
+                Log.d(TAG, "pdfUri: $pdfUri")
+                target.setDataAndType(pdfUri, "application/pdf")
+                target.flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                val intent2 = Intent.createChooser(target, getString(R.string.open_pdf))
+                try {
+                    startActivity(intent2)
+                } catch (e: ActivityNotFoundException) {
+                    Snackbar.make(
+                            findViewById(android.R.id.content),
+                            R.string.no_pdf_reader,
+                            Snackbar.LENGTH_SHORT)
+                            .show()
+                }
             }
-
+                    ?: Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT).show()
         }
     }
     private val exportError = object : BroadcastReceiver() {
@@ -303,7 +305,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 dismissProgressDialog(EXPORT_PDF)
                 Snackbar.make(
                         findViewById(android.R.id.content),
-                        intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR),
+                        intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)
+                                ?: getString(R.string.error),
                         Snackbar.LENGTH_SHORT)
                         .show()
             } catch (e: IllegalArgumentException) {
@@ -816,12 +819,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val matcher = pattern.matcher(line)
                     val sb = StringBuffer()
                     val sb2 = StringBuffer()
-                    while (matcher.find()) matcher.appendReplacement(sb, conversione?.get(matcher.group(0)))
+                    while (matcher.find()) matcher.appendReplacement(sb, conversione?.get(matcher.group(0)
+                            ?: "") ?: "")
                     matcher.appendTail(sb)
                     if (language.equals("uk", ignoreCase = true)) {
                         val matcherMin = patternMinore?.matcher(sb.toString())
                         while (matcherMin?.find() == true)
-                            matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0)))
+                            matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0)
+                                    ?: "") ?: "")
                         matcherMin?.appendTail(sb2)
                         line = sb2.toString()
                         //                        Log.d(TAG, "RIGA ELAB 1: " + line);
@@ -998,22 +1003,24 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 DeleteLinkTask().execute(mViewModel.idCanto)
             }
             DELETE_MP3 -> {
-                val fileToDelete = File(localUrl)
-                if (fileToDelete.delete()) {
-                    if (fileToDelete.absolutePath.contains("/Risuscit")) {
-                        // initiate media scan and put the new things into the path array to
-                        // make the scanner aware of the location and the files you want to see
-                        MediaScannerConnection.scanFile(
-                                applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
-                    }
-                    Snackbar.make(
-                            findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
-                            .show()
-                } else
-                    Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
-                            .show()
-                stopMedia()
-                refreshCatalog()
+                localUrl?.let {
+                    val fileToDelete = File(it)
+                    if (fileToDelete.delete()) {
+                        if (fileToDelete.absolutePath.contains("/Risuscit")) {
+                            // initiate media scan and put the new things into the path array to
+                            // make the scanner aware of the location and the files you want to see
+                            MediaScannerConnection.scanFile(
+                                    applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
+                        }
+                        Snackbar.make(
+                                findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                .show()
+                    } else
+                        Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
+                                .show()
+                    stopMedia()
+                    refreshCatalog()
+                }
                 RecordStateCheckerTask().execute()
             }
             DOWNLINK_CHOOSE -> {
@@ -1336,6 +1343,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             no_record.visibility = View.INVISIBLE
             // mostra i pulsanti per il lettore musicale se ho una registrazione locale oppure se sono
             // online, altrimenti mostra il messaggio di mancata connessione
+            Log.d(TAG, "isOnline ${Utility.isOnline(this)}")
             music_buttons.visibility = if (Utility.isOnline(this) || mDownload) View.VISIBLE else View.INVISIBLE
             no_connection.visibility = if (Utility.isOnline(this) || mDownload) View.INVISIBLE else View.VISIBLE
         } else {

@@ -9,6 +9,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Environment
 import android.util.Log
@@ -27,6 +28,7 @@ import java.util.regex.Pattern
 object Utility {
 
     // Costanti per le impostazioni
+    private val TAG = Utility::class.java.canonicalName
     const val SCREEN_ON = "sempre_acceso"
     const val SYSTEM_LANGUAGE = "lingua_sistema"
     const val DB_RESET = "db_reset"
@@ -75,10 +77,29 @@ object Utility {
             return Environment.MEDIA_MOUNTED == state || Environment.MEDIA_MOUNTED_READ_ONLY == state
         }
 
-    internal fun isOnline(activity: Activity): Boolean {
-        val cm = ContextCompat.getSystemService(activity as Context, ConnectivityManager::class.java) as ConnectivityManager
-        val netInfo = cm.activeNetworkInfo
-        return netInfo != null && netInfo.isConnected
+//    internal fun isOnline(activity: Activity): Boolean {
+//        val cm = ContextCompat.getSystemService(activity as Context, ConnectivityManager::class.java) as ConnectivityManager
+//        val netInfo = cm.activeNetworkInfo
+//        return netInfo != null && netInfo.isConnected
+//    }
+
+    internal fun isOnline(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        return if (LUtils.hasM())
+            isOnlineM(connectivityManager)
+        else isOnlineLegacy(connectivityManager)
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun isOnlineM(connectivityManager: ConnectivityManager?): Boolean {
+        val network = connectivityManager?.activeNetwork
+        val capabilities = connectivityManager?.getNetworkCapabilities(network)
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
+    @Suppress("DEPRECATION")
+    private fun isOnlineLegacy(connectivityManager: ConnectivityManager?): Boolean {
+        return connectivityManager?.activeNetworkInfo?.isConnected == true
     }
 
     /* Filtra il link di input per tenere solo il nome del file */
@@ -128,34 +149,49 @@ object Utility {
         if (link.isNullOrEmpty()) return ""
 
         if (isExternalStorageReadable && cercaEsterno) {
-            Log.v("Utility.java", "retrieveMediaFileLink: " + filterMediaLinkNew(link))
+            Log.d(TAG, "retrieveMediaFileLink: " + filterMediaLinkNew(link))
             // cerca file esterno con nuovi path e nome
             var fileExt = File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
                     "/Risuscitò/" + filterMediaLinkNew(link))
             if (fileExt.exists()) {
-                Log.d("Utility.java", "FILE esterno: " + fileExt.absolutePath)
+                Log.d(TAG, "FILE esterno1: " + fileExt.absolutePath)
                 return fileExt.absolutePath
             } else {
                 // cerca file esterno con vecchi path e nome
                 val fileArray = ContextCompat.getExternalFilesDirs(activity, null)
                 fileExt = File(fileArray[0], filterMediaLink(link))
                 if (fileExt.exists()) {
-                    Log.d("Utility.java", "FILE esterno: " + fileExt.absolutePath)
+                    Log.d(TAG, "FILE esterno2: " + fileExt.absolutePath)
                     return fileExt.absolutePath
                 } else
-                    Log.v("Utility.java", "FILE ESTERNO NON TROVATO")
+                    Log.d(TAG, "FILE ESTERNO NON TROVATO")
             }
+//            val values = ContentValues()
+//            values.put(MediaStore.Audio.Media.TITLE, filterMediaLinkNew(link))
+//            values.put(MediaStore.Audio.Media.RELATIVE_PATH, "/Risuscitò/")
+//            val fileUri = activity.contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values)
+//            fileUri?.let {
+//                Log.d(TAG, "FILE esterno1: ${it.path}")
+//                return it.path ?: ""
+//            }
+//            val fileArray = ContextCompat.getExternalFilesDirs(activity, null)
+//            val fileExt = File(fileArray[0], filterMediaLink(link))
+//            if (fileExt.exists()) {
+//                Log.d(TAG, "FILE esterno: " + fileExt.absolutePath)
+//                return fileExt.absolutePath
+//            } else
+//                Log.d(TAG, "FILE ESTERNO NON TROVATO")
         } else {
-            Log.v("Utility.java", "isExternalStorageReadable: FALSE")
+            Log.d(TAG, "isExternalStorageReadable: FALSE")
         }
 
         val fileInt = File(activity.filesDir, filterMediaLink(link))
         if (fileInt.exists()) {
-            Log.d("Utility.java", "FILE interno: " + fileInt.absolutePath)
+            Log.d(TAG, "FILE interno: " + fileInt.absolutePath)
             return fileInt.absolutePath
         } else
-            Log.v("Utility.java", "FILE INTERNO NON TROVATO")
+            Log.v(TAG, "FILE INTERNO NON TROVATO")
         //		Log.i("FILE INTERNO:", "NON TROVATO");
         return ""
     }
@@ -205,15 +241,16 @@ object Utility {
         mNotificationManager.createNotificationChannel(mChannel)
     }
 
-    fun <T> helperSetString(t: T) = when (t) {
+    fun <T> helperSetString(t: T): StringHolder = when (t) {
         is String -> StringHolder(t)
         is Int -> StringHolder(t)
         else -> throw IllegalArgumentException()
     }
 
-    fun <T> helperSetColor(t: T) = when (t) {
+    fun <T> helperSetColor(t: T): ColorHolder = when (t) {
         is String -> ColorHolder.fromColor(Color.parseColor(t))
         is @ColorInt Int -> ColorHolder.fromColor(t)
         else -> throw IllegalArgumentException()
     }
+
 }

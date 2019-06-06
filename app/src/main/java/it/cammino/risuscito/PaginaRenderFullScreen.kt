@@ -25,7 +25,7 @@ import java.lang.ref.WeakReference
 class PaginaRenderFullScreen : ThemeableActivity() {
     private var currentCanto: Canto? = null
     var speedValue: Int = 0
-    var scrollPlaying: Boolean = false
+    private var scrollPlaying: Boolean = false
     var idCanto: Int = 0
     private var urlCanto: String? = null
     private val mHandler = Handler()

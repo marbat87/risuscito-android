@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -23,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.transaction
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -229,9 +229,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         hideProgressDialog()
     }
 
-    public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
+    public override fun onSaveInstanceState(savedInstanceState: Bundle) {
         val mSavedInstanceState = drawer?.saveInstanceState(savedInstanceState)
-        super.onSaveInstanceState(mSavedInstanceState)
+        super.onSaveInstanceState(mSavedInstanceState ?: savedInstanceState)
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
@@ -456,15 +456,15 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val conversion = intent.getStringExtra(Utility.CHANGE_LANGUAGE)
 
         var accordi1 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - from: " + conversion.substring(0, 2))
-        when (conversion.substring(0, 2)) {
+        Log.d(TAG, "convertTabs - from: ${conversion?.substring(0, 2)}")
+        when (conversion?.substring(0, 2)) {
             "uk" -> accordi1 = CambioAccordi.accordi_uk
             "en" -> accordi1 = CambioAccordi.accordi_en
         }
 
         var accordi2 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - to: " + conversion.substring(3, 5))
-        when (conversion.substring(3, 5)) {
+        Log.d(TAG, "convertTabs - to: ${conversion?.substring(3, 5)}")
+        when (conversion?.substring(3, 5)) {
             "uk" -> accordi2 = CambioAccordi.accordi_uk
             "en" -> accordi2 = CambioAccordi.accordi_en
         }
@@ -496,15 +496,15 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         val conversion = intent.getStringExtra(Utility.CHANGE_LANGUAGE)
 
         var barre1 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - from: ${conversion.substring(0, 2)}")
-        when (conversion.substring(0, 2)) {
+        Log.d(TAG, "convertiBarre - from: ${conversion?.substring(0, 2)}")
+        when (conversion?.substring(0, 2)) {
             "uk" -> barre1 = CambioAccordi.barre_uk
             "en" -> barre1 = CambioAccordi.barre_en
         }
 
         var barre2 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - to: ${conversion.substring(3, 5)}")
-        when (conversion.substring(3, 5)) {
+        Log.d(TAG, "convertiBarre - to: ${conversion?.substring(3, 5)}")
+        when (conversion?.substring(3, 5)) {
             "uk" -> barre2 = CambioAccordi.barre_uk
             "en" -> barre2 = CambioAccordi.barre_en
         }

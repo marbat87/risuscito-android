@@ -24,9 +24,9 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
-import android.preference.PreferenceManager
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
+import androidx.preference.PreferenceManager
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -124,7 +124,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
             if (ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
                             .language != PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "")) {
                 val config = Configuration()
-                val locale = Locale(PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "it"))
+                val locale = Locale(PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "it") ?: "it")
                 Locale.setDefault(locale)
                 ThemeableActivity.setSystemLocalWrapper(config, locale)
                 if (LUtils.hasJB()) {

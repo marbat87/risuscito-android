@@ -8,7 +8,6 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -22,6 +21,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -220,13 +220,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 return true
             }
             R.id.action_save_list -> {
-//                ioThread {
-//                    if (saveList()) {
-//                        setResult(Activity.RESULT_OK)
-//                        finish()
-//                        Animatoo.animateSlideDown(this)
-//                    }
-//                }
                 SaveListTask().execute(textfieldTitle.text)
                 return true
             }
@@ -267,59 +260,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
     }
 
-//    private fun saveList(): Boolean {
-//        celebrazione = ListaPersonalizzata()
-//
-//        if (!textfieldTitle.text.isNullOrBlank()) {
-//            titoloLista = textfieldTitle.text.toString()
-//        } else {
-//            val toast = Toast.makeText(
-//                    this, getString(R.string.no_title_edited), Toast.LENGTH_SHORT)
-//            toast.show()
-//        }
-//
-//        celebrazione?.name = titoloLista ?: ""
-//        Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
-//        for (i in 0 until mAdapter.adapterItems.size) {
-//            mAdapter.getItem(i)?.let {
-//                if (celebrazione?.addPosizione(it.name.text.toString()) == -2) {
-//                    Snackbar.make(
-//                            main_content,
-//                            R.string.lista_pers_piena,
-//                            Snackbar.LENGTH_SHORT)
-//                            .show()
-//                    return false
-//                }
-//            }
-//        }
-//
-//        if (celebrazione?.getNomePosizione(0).equals("", ignoreCase = true)) {
-//            Snackbar.make(
-//                    main_content, R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
-//                    .show()
-//            return false
-//        }
-//
-//        if (modifica) {
-//            for (i in 0 until mAdapter.adapterItems.size) {
-//                celebrazione?.addCanto(nomiCanti[i], i)
-//            }
-//        }
-//
-//        val mDao = RisuscitoDatabase.getInstance(this).listePersDao()
-//        val listaToUpdate = ListaPers()
-//        listaToUpdate.lista = celebrazione
-//        listaToUpdate.titolo = titoloLista
-//        if (modifica) {
-//            listaToUpdate.id = idModifica
-//            mDao.updateLista(listaToUpdate)
-//        } else
-//            mDao.insertLista(listaToUpdate)
-//
-//        return true
-//    }
-
-    public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
+    public override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
         mViewModel.dataDrag = mAdapter.adapterItems as ArrayList<SwipeableItem>
         if (modifica) mViewModel.data = nomiCanti
@@ -378,13 +319,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             SAVE_LIST ->
-//                ioThread {
-//                    if (saveList()) {
-//                        setResult(Activity.RESULT_OK)
-//                        finish()
-//                        Animatoo.animateSlideDown(this)
-//                    }
-//                }
                 SaveListTask().execute(textfieldTitle.text)
         }
     }

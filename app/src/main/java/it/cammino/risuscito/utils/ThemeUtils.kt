@@ -3,8 +3,8 @@ package it.cammino.risuscito.utils
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
-import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import it.cammino.risuscito.R
 
 class ThemeUtils(context: Activity) {

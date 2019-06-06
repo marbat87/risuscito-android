@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.PreferenceManager
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import it.cammino.risuscito.ui.ThemeableActivity
 import pub.devrel.easypermissions.EasyPermissions

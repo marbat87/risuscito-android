@@ -7,7 +7,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.preference.PreferenceManager
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
@@ -16,6 +15,7 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.animation.AnimationUtils
@@ -221,6 +221,10 @@ class LUtils private constructor(private val mActivity: Activity) {
 
         fun hasJB(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
+        }
+
+        fun hasM(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
         }
 
         fun hasN(): Boolean {

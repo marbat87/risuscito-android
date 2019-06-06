@@ -53,7 +53,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     canti.forEach {
                         newList.add(
                                 simpleItem {
-                                    setTitle = LUtils.getResId(it.titolo, R.string::class.java)
+                                    setTitle = LUtils.getResId(it.titoloSalmo, R.string::class.java)
                                     setPage = LUtils.getResId(it.pagina, R.string::class.java)
                                     setSource = LUtils.getResId(it.source, R.string::class.java)
                                     setColor = it.color

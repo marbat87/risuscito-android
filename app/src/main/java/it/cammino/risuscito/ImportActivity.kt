@@ -6,13 +6,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import it.cammino.risuscito.services.XmlImportService
 import it.cammino.risuscito.ui.ThemeableActivity

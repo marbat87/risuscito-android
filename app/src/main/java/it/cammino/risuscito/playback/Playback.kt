@@ -94,7 +94,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         // Create the Wifi lock (this does not acquire the lock, this just creates it).
 
         this.mWifiLock = (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
-                .createWifiLock(WifiManager.WIFI_MODE_FULL, "sample_lock")
+                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "sample_lock")
     }
 
     internal fun stop() {
