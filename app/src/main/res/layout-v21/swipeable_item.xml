@@ -48,16 +48,15 @@
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.MaterialComponents.CardView"
         android:id="@+id/container"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:foreground="?customSelector"
         android:layout_marginLeft="-3dp"
         android:layout_marginStart="-3dp"
         android:layout_marginRight="-3dp"
-        android:layout_marginEnd="-3dp"
-        risuscito:cardElevation="3dp">
+        android:layout_marginEnd="-3dp">
 
         <ImageView
             android:id="@+id/drag_image"

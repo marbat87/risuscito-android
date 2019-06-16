@@ -19,7 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
@@ -119,14 +119,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
-        val icon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon2.cmd_menu)
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_menu)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
 
-        profileIcon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon.cmd_account_circle)
+        profileIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_account_circle)
                 .colorInt(themeUtils.primaryColor())
                 .sizeDp(48)
 
@@ -159,7 +157,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         setupNavDrawer(savedInstanceState)
 
         if (savedInstanceState == null) {
-            supportFragmentManager.transaction {
+            supportFragmentManager.commit {
                 replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
             }
         }
@@ -374,7 +372,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     val myFragment = supportFragmentManager
                             .findFragmentByTag(drawerItem.identifier.toString())
                     if (myFragment == null || !myFragment.isVisible) {
-                        supportFragmentManager.transaction {
+                        supportFragmentManager.commit {
                             if (!isOnTablet)
                                 setCustomAnimations(
                                         R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
@@ -578,8 +576,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 
             fab_pager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_pulisci, IconicsDrawable(this)
-                            .icon(CommunityMaterial.Icon.cmd_eraser_variant)
+                    SpeedDialActionItem.Builder(R.id.fab_pulisci, IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant)
                             .colorInt(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
@@ -591,8 +588,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             )
 
             fab_pager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_add_lista, IconicsDrawable(this)
-                            .icon(CommunityMaterial.Icon2.cmd_plus)
+                    SpeedDialActionItem.Builder(R.id.fab_add_lista, IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
                             .colorInt(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
@@ -604,8 +600,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             )
 
             fab_pager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_condividi, IconicsDrawable(this)
-                            .icon(CommunityMaterial.Icon2.cmd_share_variant)
+                    SpeedDialActionItem.Builder(R.id.fab_condividi, IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant)
                             .colorInt(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
@@ -618,8 +613,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             if (customList) {
                 fab_pager.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_condividi_file, IconicsDrawable(this)
-                                .icon(CommunityMaterial.Icon.cmd_attachment)
+                        SpeedDialActionItem.Builder(R.id.fab_condividi_file, IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment)
                                 .colorInt(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
@@ -631,8 +625,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 )
 
                 fab_pager.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_edit_lista, IconicsDrawable(this)
-                                .icon(CommunityMaterial.Icon2.cmd_pencil)
+                        SpeedDialActionItem.Builder(R.id.fab_edit_lista, IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil)
                                 .colorInt(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
@@ -644,8 +637,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 )
 
                 fab_pager.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_delete_lista, IconicsDrawable(this)
-                                .icon(CommunityMaterial.Icon.cmd_delete)
+                        SpeedDialActionItem.Builder(R.id.fab_delete_lista, IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
                                 .colorInt(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))

@@ -23,8 +23,8 @@ class SimpleDialogFragment : DialogFragment() {
         get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
 
     override fun onDestroyView() {
-        if (dialog != null && retainInstance)
-            dialog.setDismissMessage(null)
+        if (retainInstance)
+            dialog?.setDismissMessage(null)
         super.onDestroyView()
     }
 
@@ -93,18 +93,18 @@ class SimpleDialogFragment : DialogFragment() {
     }
 
     fun cancel() {
-        dialog.cancel()
+        dialog?.cancel()
     }
 
     fun setOnCancelListener(listener: DialogInterface.OnCancelListener) {
-        dialog.setOnCancelListener(listener)
+        dialog?.setOnCancelListener(listener)
     }
 
     override fun dismiss() {
         super.dismissAllowingStateLoss()
     }
 
-    override fun onCancel(dialog: DialogInterface?) {
+    override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
         val mBuilder = builder
         if (mBuilder?.mCanceListener == true)

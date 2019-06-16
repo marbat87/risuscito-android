@@ -49,6 +49,8 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.DownloadService
 import it.cammino.risuscito.services.PdfExportService
+import it.cammino.risuscito.ui.LocaleManager
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
@@ -369,8 +371,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         mLUtils = LUtils.getInstance(this)
 
-        val icon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon2.cmd_plus)
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4)
@@ -385,13 +386,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         try {
             mViewModel.primaNota = if (mViewModel.primaNota == PaginaRenderViewModel.NOT_VAL) CambioAccordi.recuperaPrimoAccordo(
                     assets.open(mViewModel.pagina + FILE_PATH_SUFFIX),
-                    getSystemLocalWrapper(resources.configuration)
-                            .language)
+                    getSystemLocale(resources).language)
+//                    getSystemLocalWrapper(resources.configuration)
+//                            .language)
             else mViewModel.primaNota
             mViewModel.primoBarre = if (mViewModel.primoBarre == PaginaRenderViewModel.NOT_VAL) cambioAccordi.recuperaBarre(
                     assets.open(mViewModel.pagina + FILE_PATH_SUFFIX),
-                    getSystemLocalWrapper(resources.configuration)
-                            .language)
+                    getSystemLocale(resources).language)
+//                    getSystemLocalWrapper(resources.configuration)
+//                            .language)
             else mViewModel.primoBarre
         } catch (e: IOException) {
             Log.e(TAG, e.localizedMessage, e)
@@ -401,7 +404,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                         val time = String.format(
-                                getSystemLocalWrapper(resources.configuration),
+                                getSystemLocale(resources),
+//                                getSystemLocalWrapper(resources.configuration),
                                 "%02d:%02d",
                                 TimeUnit.MILLISECONDS.toMinutes(progress.toLong()),
                                 TimeUnit.MILLISECONDS.toSeconds(progress.toLong()) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(progress.toLong())))
@@ -542,8 +546,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 i.putExtra(PdfExportService.DATA_PAGINA, mViewModel.pagina)
                 i.putExtra(
                         PdfExportService.DATA_LINGUA,
-                        getSystemLocalWrapper(resources.configuration)
-                                .language)
+                        getSystemLocale(resources).language)
+//                        getSystemLocalWrapper(resources.configuration)
+//                                .language)
                 startService(i)
                 return true
             }
@@ -569,9 +574,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 mViewModel.notaCambio = mViewModel.primaNota
                 val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                 var convMin: HashMap<String, String>? = null
-                if (getSystemLocalWrapper(resources.configuration)
-                                .language
-                                .equals("uk", ignoreCase = true))
+//                if (getSystemLocalWrapper(resources.configuration).language
+                if (getSystemLocale(resources).language
+                                .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
                     convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
@@ -603,9 +608,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 mViewModel.barreCambio = mViewModel.primoBarre
                 val convMap1 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                 var convMin1: HashMap<String, String>? = null
-                if (getSystemLocalWrapper(resources.configuration)
-                                .language
-                                .equals("uk", ignoreCase = true))
+//                if (getSystemLocalWrapper(resources.configuration)
+//                                .language
+                if (getSystemLocale(resources).language
+                                .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
                     convMin1 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
@@ -625,9 +631,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mViewModel.notaCambio = item.titleCondensed.toString()
                     val convMap2 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                     var convMin2: HashMap<String, String>? = null
-                    if (getSystemLocalWrapper(resources.configuration)
-                                    .language
-                                    .equals("uk", ignoreCase = true))
+//                    if (getSystemLocalWrapper(resources.configuration)
+//                                    .language
+                    if (getSystemLocale(resources).language
+                                    .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
                         convMin2 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
@@ -646,9 +653,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mViewModel.barreCambio = item.titleCondensed.toString()
                     val convMap3 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                     var convMin3: HashMap<String, String>? = null
-                    if (getSystemLocalWrapper(resources.configuration)
-                                    .language
-                                    .equals("uk", ignoreCase = true))
+//                    if (getSystemLocalWrapper(resources.configuration)
+//                                    .language
+                    if (getSystemLocale(resources).language
+                                    .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
                         convMin3 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
@@ -790,7 +798,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val out = BufferedWriter(
                     OutputStreamWriter(FileOutputStream(cantoTrasportato), "UTF-8"))
 
-            val language = getSystemLocalWrapper(resources.configuration).language
+//            val language = getSystemLocalWrapper(resources.configuration).language
+            val language = getSystemLocale(resources).language
 
             val pattern: Pattern
             var patternMinore: Pattern? = null
@@ -963,8 +972,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun showPlaying(started: Boolean) {
         Log.d(TAG, "showPlaying: ")
-        val icon = IconicsDrawable(this)
-                .icon(if (started) CommunityMaterial.Icon2.cmd_pause else CommunityMaterial.Icon2.cmd_play)
+        val icon = IconicsDrawable(this, if (started) CommunityMaterial.Icon2.cmd_pause else CommunityMaterial.Icon2.cmd_play)
                 .colorInt(
                         ContextCompat.getColor(
                                 this,
@@ -978,12 +986,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun showScrolling(scrolling: Boolean) {
-        val icon = IconicsDrawable(this)
-                .icon(
-                        if (scrolling)
-                            CommunityMaterial.Icon2.cmd_pause_circle_outline
-                        else
-                            CommunityMaterial.Icon2.cmd_play_circle_outline)
+        val icon = IconicsDrawable(this, if (scrolling)
+            CommunityMaterial.Icon2.cmd_pause_circle_outline
+        else
+            CommunityMaterial.Icon2.cmd_play_circle_outline)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
@@ -1409,9 +1415,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
             var convMin: HashMap<String, String>? = null
-            if (getSystemLocalWrapper(resources.configuration)
-                            .language
-                            .equals("uk", ignoreCase = true))
+            if (getSystemLocale(resources).language
+//            if (getSystemLocalWrapper(resources.configuration)
+//                            .language
+                            .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
                 convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true)
@@ -1554,8 +1561,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         fab_canti.clearActionItems()
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_fullscreen_on, IconicsDrawable(this)
-                        .icon(CommunityMaterial.Icon.cmd_fullscreen)
+                SpeedDialActionItem.Builder(R.id.fab_fullscreen_on, IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen)
                         .colorInt(iconColor)
                         .sizeDp(24)
                         .paddingDp(4))
@@ -1567,8 +1573,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         )
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_sound_off, IconicsDrawable(this)
-                        .icon(if (mostraAudioBool) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset)
+                SpeedDialActionItem.Builder(R.id.fab_sound_off, IconicsDrawable(this, if (mostraAudioBool) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset)
                         .colorInt(iconColor)
                         .sizeDp(24)
                         .paddingDp(4))
@@ -1602,8 +1607,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         } else {
             if (!url.isNullOrEmpty())
                 fab_canti.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_save_file, IconicsDrawable(this)
-                                .icon(CommunityMaterial.Icon.cmd_download)
+                        SpeedDialActionItem.Builder(R.id.fab_save_file, IconicsDrawable(this, CommunityMaterial.Icon.cmd_download)
                                 .colorInt(iconColor)
                                 .sizeDp(24)
                                 .paddingDp(4))
@@ -1614,8 +1618,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .create()
                 )
             fab_canti.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_link_file, IconicsDrawable(this)
-                            .icon(CommunityMaterial.Icon2.cmd_link_variant)
+                    SpeedDialActionItem.Builder(R.id.fab_link_file, IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant)
                             .colorInt(iconColor)
                             .sizeDp(24)
                             .paddingDp(4))
@@ -1629,8 +1632,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this)
-                        .icon(if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart)
+                SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this, if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart)
                         .colorInt(iconColor)
                         .sizeDp(24)
                         .paddingDp(4))

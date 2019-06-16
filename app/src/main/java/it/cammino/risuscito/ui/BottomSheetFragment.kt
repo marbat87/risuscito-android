@@ -78,7 +78,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 val newIntent = mIntent.clone() as? Intent
                 newIntent?.component = name
                 activity?.startActivity(newIntent)
-                dialog.dismiss()
+                dialog?.dismiss()
                 true
             }
 
@@ -96,7 +96,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val mLimited = requireContext().resources.getBoolean(R.bool.is_bottom_sheet_limited)
         if (mLimited) {
             val mMaxWidth = requireActivity().resources.getDimension(R.dimen.max_bottomsheet_width).toInt()
-            val win = dialog.window
+            val win = dialog?.window
             win?.setLayout(mMaxWidth, -1)
         }
     }

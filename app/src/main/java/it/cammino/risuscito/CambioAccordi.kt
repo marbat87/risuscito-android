@@ -3,7 +3,7 @@ package it.cammino.risuscito
 import android.content.Context
 import android.util.Log
 import com.crashlytics.android.Crashlytics
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -67,8 +67,9 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
         if (primaNota == "" || notaCambio == "")
             return null
 
-        var language = ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
-                .language
+//        var language = ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
+//                .language
+        var language = getSystemLocale(mContext.resources).language
         if (!mLanguage.isNullOrEmpty()) language = mLanguage
 
         Log.v(TAG, "diffSemiToni: language $language")

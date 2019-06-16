@@ -5,22 +5,18 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
-import android.util.SparseArray
 import android.view.*
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
-import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
-import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
@@ -30,6 +26,7 @@ import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.colorInt
@@ -41,13 +38,13 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.lista_pers_button.view.*
-import kotlinx.android.synthetic.main.tabs_layout.*
+import kotlinx.android.synthetic.main.tabs_layout2.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 
@@ -60,13 +57,21 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
     private var mLastClickTime: Long = 0
+    private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            Log.i(TAG, "onPageSelected: $position")
+            destroy()
+            initFabOptions(position >= 2)
+        }
+    }
 
     private val themeUtils: ThemeUtils
         get() = (activity as MainActivity).themeUtils
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.tabs_layout, container, false)
+        val rootView = inflater.inflate(R.layout.tabs_layout2, container, false)
 
         mCustomListsViewModel = ViewModelProviders.of(this).get(CustomListsViewModel::class.java)
 
@@ -96,15 +101,31 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mSectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager)
+        mSectionsPagerAdapter = SectionsPagerAdapter(this)
         mMainActivity?.enableBottombar(false)
-        view_pager.adapter = mSectionsPagerAdapter
 
+        mMainActivity?.setTabVisible(true)
         tabs = mMainActivity?.getMaterialTabs()
         tabs?.visibility = View.VISIBLE
-        tabs?.setupWithViewPager(view_pager)
+        view_pager.adapter = mSectionsPagerAdapter
+        tabs?.let {
+            TabLayoutMediator(it, view_pager) { tab, position ->
+                //                val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
+                val l = getSystemLocale(resources)
+                tab.text = when (position) {
+                    0 -> getString(R.string.title_activity_canti_parola).toUpperCase(l)
+                    1 -> getString(R.string.title_activity_canti_eucarestia).toUpperCase(l)
+                    else -> titoliListe[position - 2]?.toUpperCase(l)
+                }
+            }.attach()
+        }
+        view_pager.registerOnPageChangeCallback(mPageChange)
+        subscribeUiListe()
+    }
 
-        subscribeUiFavorites()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        view_pager.unregisterOnPageChangeCallback(mPageChange)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -112,16 +133,14 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.let {
-            IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater, requireContext(), R.menu.help_menu, it)
-        }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        IconicsMenuInflaterUtil.inflate(
+                requireActivity().menuInflater, requireContext(), R.menu.help_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.action_help -> {
                 playIntro()
                 return true
@@ -173,8 +192,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             RESET_LIST -> {
-                val mView = mSectionsPagerAdapter?.getRegisteredFragment(view_pager.currentItem)?.view
-                mView?.button_pulisci?.performClick()
+                view_pager.button_pulisci.performClick()
             }
             DELETE_LIST ->
                 ioThread {
@@ -261,11 +279,12 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 .start()
     }
 
-    private fun subscribeUiFavorites() {
+    private fun subscribeUiListe() {
         mCustomListsViewModel.customListResult?.observe(
                 this,
                 Observer { list ->
                     list?.let {
+                        Log.d(TAG, "list size ${list.size}")
                         titoliListe = arrayOfNulls(it.size)
                         idListe = IntArray(it.size)
 
@@ -273,70 +292,35 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             titoliListe[i] = it[i].titolo
                             idListe[i] = it[i].id
                         }
-                        mSectionsPagerAdapter?.notifyDataSetChanged()
-                        tabs?.setupWithViewPager(view_pager)
                         Log.i(TAG, "movePage: $movePage")
                         Log.i(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
                         if (movePage) {
-                            Handler().postDelayed(200) {
-                                tabs?.getTabAt(mCustomListsViewModel.indexToShow)?.select()
-                                mCustomListsViewModel.indexToShow = 0
-                                movePage = false
-                            }
+                            view_pager.currentItem = mCustomListsViewModel.indexToShow
+                            mCustomListsViewModel.indexToShow = 0
+                            movePage = false
                         }
-                    }
+                        mSectionsPagerAdapter?.notifyDataSetChanged()
+                    } ?: Log.d(TAG, "lista NULLA")
                 })
     }
 
-    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
-        internal var registeredFragments = SparseArray<Fragment>()
+    private inner class SectionsPagerAdapter internal constructor(fm: Fragment) : FragmentStateAdapter(fm) {
 
-        override fun getItem(position: Int): Fragment {
+        override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> ListaPredefinitaFragment.newInstance(1)
                 1 -> ListaPredefinitaFragment.newInstance(2)
-                else -> {
-                    val listaPersFrag = ListaPersonalizzataFragment()
-                    listaPersFrag.arguments = bundleOf("idLista" to idListe[position - 2])
-                    listaPersFrag
-                }
+                else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
             }
         }
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as Fragment
-            registeredFragments.put(position, fragment)
-            return fragment
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, mObject: Any) {
-            registeredFragments.remove(position)
-            super.destroyItem(container, position, mObject)
-        }
-
-        internal fun getRegisteredFragment(position: Int): Fragment {
-            return registeredFragments.get(position)
-        }
-
-        override fun getCount(): Int {
+        override fun getItemCount(): Int {
             return 2 + titoliListe.size
         }
 
-        override fun getPageTitle(position: Int): CharSequence? {
-            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
-            return when (position) {
-                0 -> getString(R.string.title_activity_canti_parola).toUpperCase(l)
-                1 -> getString(R.string.title_activity_canti_eucarestia).toUpperCase(l)
-                else -> titoliListe[position - 2]?.toUpperCase(l)
-            }
-        }
-
-        override fun getItemPosition(`object`: Any): Int {
-            return PagerAdapter.POSITION_NONE
-        }
     }
 
-    fun getFab(): FloatingActionButton {
+    private fun getFab(): FloatingActionButton {
         return mMainActivity?.getFab()!!
     }
 
@@ -353,9 +337,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = IconicsDrawable(requireContext())
-                .icon(CommunityMaterial.Icon2.cmd_plus)
-                .colorInt(Color.WHITE)
+        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_plus)
+                .colorInt(Color.RED)
                 .sizeDp(24)
                 .paddingDp(4)
 
@@ -388,8 +371,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 }
                 R.id.fab_condividi -> {
                     closeFabMenu()
-                    val mView = mSectionsPagerAdapter?.getRegisteredFragment(view_pager.currentItem)?.view
-                    mView?.button_condividi?.performClick()
+                    view_pager?.button_condividi?.performClick()
                     true
                 }
                 R.id.fab_edit_lista -> {
@@ -426,8 +408,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 }
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
-                    val mView = mSectionsPagerAdapter?.getRegisteredFragment(view_pager.currentItem)?.view
-                    mView?.button_invia_file?.performClick()
+                    view_pager?.button_invia_file?.performClick()
                     true
                 }
                 else -> {

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +28,6 @@ import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
-import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -35,11 +35,10 @@ import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.layout_recycler.*
 import java.util.*
 
-class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
+class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private lateinit var mCantiViewModel: SimpleIndexViewModel
 
-    private var isViewShown = true
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -73,13 +72,10 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
         })
         sFragment?.setmCallback(this)
 
-        if (!isViewShown)
-            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
-
         return rootView
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         mActivity = activity as? MainActivity
     }
@@ -258,21 +254,14 @@ class SectionedIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback
 
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser) {
-            if (view != null) {
-                isViewShown = true
-                Log.d(javaClass.name, "VISIBLE")
-                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
-            } else
-                isViewShown = false
-        }
+    override fun onResume() {
+        super.onResume()
+        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         var mOutState = outState
-        if (userVisibleHint)
+        if (isResumed)
             mOutState = mAdapter.saveInstanceState(mOutState) ?: Bundle()
         super.onSaveInstanceState(mOutState)
     }

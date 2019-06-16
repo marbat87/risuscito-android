@@ -28,7 +28,7 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.BottomSheetFragment
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
@@ -44,7 +44,6 @@ class ListaPersonalizzataFragment : Fragment() {
     private lateinit var cantoDaCanc: String
 
     private lateinit var mCantiViewModel: ListaPersonalizzataViewModel
-    private var isViewShown = true
     private var posizioneDaCanc: Int = 0
     private var rootView: View? = null
     private var mSwhitchMode: Boolean = false
@@ -64,7 +63,8 @@ class ListaPersonalizzataFragment : Fragment() {
     private val titlesList: String
         get() {
 
-            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
+//            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
+            val l = getSystemLocale(resources)
             val result = StringBuilder()
             result.append("-- ").append(mCantiViewModel.listaPersonalizzata?.name?.toUpperCase(l)).append(" --\n")
             for (i in 0 until (mCantiViewModel.listaPersonalizzata?.numPosizioni ?: 0)) {
@@ -142,20 +142,15 @@ class ListaPersonalizzataFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
 
-        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, arguments?.getInt("idLista") ?: 0) }
+        val args = Bundle().apply {
+            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
+        }
         mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(ListaPersonalizzataViewModel::class.java)
 
         mMainActivity = activity as? MainActivity
 
         mLUtils = LUtils.getInstance(requireActivity())
         mSwhitchMode = false
-
-        if (!isViewShown) {
-            destroy()
-            val fab1 = (parentFragment as CustomLists).getFab()
-            fab1.show()
-            (parentFragment as CustomLists).initFabOptions(true)
-        }
 
         return rootView
     }
@@ -195,20 +190,6 @@ class ListaPersonalizzataFragment : Fragment() {
                         R.string.xml_error,
                         Snackbar.LENGTH_LONG)
                         .show()
-        }
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser) {
-            if (view != null) {
-                isViewShown = true
-                destroy()
-                val fab1 = (parentFragment as CustomLists).getFab()
-                fab1.show()
-                (parentFragment as CustomLists).initFabOptions(true)
-            } else
-                isViewShown = false
         }
     }
 
@@ -387,5 +368,12 @@ class ListaPersonalizzataFragment : Fragment() {
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
         const val TAG_INSERT_PERS = 555
+        private const val INDICE_LISTA = "indiceLista"
+
+        fun newInstance(indiceLista: Int): ListaPersonalizzataFragment {
+            val f = ListaPersonalizzataFragment()
+            f.arguments = bundleOf(INDICE_LISTA to indiceLista)
+            return f
+        }
     }
 }

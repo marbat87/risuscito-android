@@ -72,17 +72,6 @@
 
                 </it.cammino.risuscito.ui.BoundedCardView>
 
-                <!--<include layout="@layout/common_fab"/>-->
-                <!--<android.support.design.widget.FloatingActionButton-->
-                <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-                <!--android:id="@+id/fab_pager"-->
-                <!--android:layout_gravity="bottom|end"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_marginBottom="@dimen/fab_margin_coord"-->
-                <!--android:layout_marginEnd="@dimen/fab_margin_coord"-->
-                <!--android:layout_marginRight="@dimen/fab_margin_coord" />-->
-
                 <com.leinardi.android.speeddial.SpeedDialOverlayLayout
                     android:id="@+id/overlay"
                     android:layout_width="match_parent"

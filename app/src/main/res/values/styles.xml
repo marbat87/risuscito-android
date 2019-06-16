@@ -11,7 +11,7 @@
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment" tools:targetApi="JELLY_BEAN_MR1">viewStart</item>
         <item name="fontFamily">@font/googlesans_medium</item>
-        <item name="android:textColor">?colorAccent</item>
+        <item name="android:textColor">?colorSecondary</item>
         <item name="android:textSize">14sp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
@@ -22,11 +22,11 @@
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
         <item name="android:background">?colorPrimary</item>
-        <item name="tabIndicatorColor">?colorAccent</item>
-        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Tab.Risuscito</item>
+        <item name="tabIndicatorColor">?colorSecondary</item>
+        <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
     </style>
 
-    <style name="TextAppearance.MaterialComponents.Tab.Risuscito">
+    <style name="TextAppearance.Design.Tab.Risuscito">
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
@@ -97,7 +97,7 @@
         <item name="android:background">@drawable/bg_bottom_sheet_dialog</item>
     </style>
 
-    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.MaterialComponents.Light">
+    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.AppCompat.DayNight">
         <item name="fontFamily">@font/googlesans_regular</item>
     </style>
 
@@ -120,7 +120,7 @@
 
     <style name="material_popup_theme" parent="Widget.MPM.Menu">
         <item name="android:popupBackground">@drawable/material_popup_bg</item>
-        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Light</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.DayNight</item>
     </style>
 
 </resources>

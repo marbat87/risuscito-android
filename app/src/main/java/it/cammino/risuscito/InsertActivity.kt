@@ -30,16 +30,12 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.colorRes
-import com.mikepenz.iconics.paddingDp
-import com.mikepenz.iconics.sizeDp
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.InsertItem
+import it.cammino.risuscito.ui.LocaleManager
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.ui.makeClearableEditText
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -92,7 +88,8 @@ class InsertActivity : ThemeableActivity() {
         }
 
         try {
-            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+//            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+            val inputStream: InputStream = when (LocaleManager.getSystemLocale(resources)
                     .language) {
                 "uk" -> assets.open("fileout_uk.xml")
                 "en" -> assets.open("fileout_en.xml")
@@ -145,24 +142,14 @@ class InsertActivity : ThemeableActivity() {
         cantoAdapter.setHasStableIds(true)
 
         matchedList.adapter = cantoAdapter
-        val llm = if (mLUtils?.isGridLayout == true)
-            GridLayoutManager(this, if (mLUtils?.hasThreeColumns == true) 3 else 2)
-        else
-            LinearLayoutManager(this)
-        matchedList.layoutManager = llm
+        val glm = GridLayoutManager(this, if (mLUtils?.hasThreeColumns == true) 3 else 2)
+        val llm = LinearLayoutManager(this)
+        matchedList.layoutManager = if (mLUtils?.isGridLayout == true) glm else llm
         matchedList.setHasFixedSize(true)
-        val insetDivider = DividerItemDecoration(this, llm.orientation)
+        val insetDivider = DividerItemDecoration(this, if (mLUtils?.isGridLayout == true) glm.orientation else llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(this, R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
-
-        val icon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon.cmd_close_circle)
-                .colorRes(R.color.text_color_secondary)
-                .sizeDp(32)
-                .paddingDp(8)
-        icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-        textfieldRicerca.makeClearableEditText(null, null, icon)
 
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
@@ -300,9 +287,9 @@ class InsertActivity : ThemeableActivity() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.toLowerCase(
-                                        getSystemLocalWrapper(
-                                                fragment.resources.configuration))
+                                text = text.toLowerCase(getSystemLocale(fragment.resources))
+//                                        getSystemLocalWrapper(
+//                                                fragment.resources.configuration))
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false

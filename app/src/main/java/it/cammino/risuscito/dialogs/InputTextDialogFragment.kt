@@ -25,8 +25,8 @@ class InputTextDialogFragment : DialogFragment() {
         get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
 
     override fun onDestroyView() {
-        if (dialog != null && retainInstance)
-            dialog.setDismissMessage(null)
+        if (retainInstance)
+            dialog?.setDismissMessage(null)
         super.onDestroyView()
     }
 
@@ -88,11 +88,11 @@ class InputTextDialogFragment : DialogFragment() {
     }
 
     fun cancel() {
-        dialog.cancel()
+        dialog?.cancel()
     }
 
     fun setOnCancelListener(listener: DialogInterface.OnCancelListener) {
-        dialog.setOnCancelListener(listener)
+        dialog?.setOnCancelListener(listener)
     }
 
     class Builder(context: AppCompatActivity, @field:Transient var mListener: SimpleInputCallback, val mTag: String) : Serializable {

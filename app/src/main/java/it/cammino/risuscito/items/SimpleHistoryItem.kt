@@ -14,7 +14,7 @@ import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import kotlinx.android.synthetic.main.row_item_history.view.*
 import java.sql.Date
 import java.text.DateFormat
@@ -57,12 +57,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
     var setColor: Any? = null
         set(value) {
             color = helperSetColor(value)
-        }
-
-    private var selectedColor: ColorHolder? = null
-    var setSelectedColor: Any? = null
-        set(value) {
-            selectedColor = helperSetColor(value)
         }
 
     var id: Int = 0
@@ -111,24 +105,18 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
                         ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
                         true))
 
-        if (isSelected) {
-            holder.mPage?.visibility = View.INVISIBLE
-            holder.mPageSelected?.visibility = View.VISIBLE
-            val bgShape = holder.mPageSelected?.background as? GradientDrawable
-            bgShape?.setColor(selectedColor?.colorInt ?: Color.WHITE)
-        } else {
-            val bgShape = holder.mPage?.background as? GradientDrawable
-            bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-            holder.mPage?.visibility = View.VISIBLE
-            holder.mPageSelected?.visibility = View.INVISIBLE
-        }
+        val bgShape = holder.mPage?.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        holder.mPage?.visibility = if (isSelected) View.INVISIBLE else View.VISIBLE
+        holder.mPageSelected?.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
 
         holder.mId?.text = id.toString()
 
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
             val df = DateFormat.getDateTimeInstance(
-                    DateFormat.SHORT, DateFormat.MEDIUM, ThemeableActivity.getSystemLocalWrapper(ctx.resources.configuration))
+                    DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
+//                    DateFormat.SHORT, DateFormat.MEDIUM, ThemeableActivity.getSystemLocalWrapper(ctx.resources.configuration))
             val tempTimestamp: String
 
             val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.text.toString()))

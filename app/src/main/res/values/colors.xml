@@ -25,7 +25,7 @@
     <color name="material_drawer_selected">#E8E8E8</color>
     <color name="material_drawer_selected_text">#2196F3</color>
 
-    <color name="text_color_primary">@color/primary_text_default_material_light</color>
+    <color name="text_color_primary">@color/design_default_color_on_background</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_light</color>
     <color name="floating_background">@color/background_floating_material_light</color>
     <!--<color name="text_color_secondary_disabled">@color/secondary_text_disabled_material_light</color>-->

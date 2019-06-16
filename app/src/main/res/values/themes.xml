@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Base.Theme.MyTheme" parent="@style/Theme.MaterialComponents.Light.NoActionBar" />
+    <style name="Base.Theme.MyTheme" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
 
     <style name="Theme.MyTheme" parent="Base.Theme.MyTheme">
         <item name="fontFamily">@font/googlesans_regular</item>
         <!-- Set AppCompat’s color theming attrs -->
         <item name="colorPrimary">@color/theme_primary</item>
-        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <!--<item name="colorPrimaryDark">@color/theme_primary_dark</item>-->
+        <item name="colorPrimaryVariant">@color/theme_primary_dark</item>
 
         <!-- colorAccent is used as the default value for colorControlActivated,
             which is used to tint widgets -->
-        <item name="colorAccent">@color/theme_accent</item>
-        <item name="colorButtonNormal">?colorAccent</item>
+        <!--<item name="colorAccent">@color/theme_accent</item>-->
+        <item name="colorSecondary">@color/theme_accent</item>
+        <!--<item name="colorButtonNormal">?colorAccent</item>-->
         <item name="colorControlHighlight">@color/ripple_color</item>
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
 
@@ -26,8 +28,8 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
 
         <!-- MaterialDrawer specific values -->
-        <item name="material_drawer_background">@color/material_drawer_background</item>
-        <item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>
+        <item name="material_drawer_background">?colorSurface</item>
+        <item name="material_drawer_primary_text">?colorOnSurface</item>
         <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>
         <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>
         <item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>
@@ -40,17 +42,18 @@
         <!-- fix per poter applicare correttamente il tema notturno -->
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
-        <item name="colorBackgroundFloating">@color/floating_background</item>
-        <item name="cardBackgroundColor">@color/floating_background</item>
-        <item name="android:colorBackgroundFloating" tools:ignore="NewApi">
-            @color/floating_background
-        </item>
+        <!--<item name="colorBackgroundFloating">@color/floating_background</item>-->
+        <!--<item name="cardBackgroundColor">@color/floating_background</item>-->
+        <!--<item name="android:colorBackgroundFloating" tools:ignore="NewApi">-->
+            <!--@color/floating_background-->
+        <!--</item>-->
+        <item name="colorSurface">@color/floating_background</item>
         <item name="android:textColorHint">@color/text_color_secondary</item>
         <item name="android:contextPopupMenuStyle" tools:targetApi="n">@style/PopupMenuStyle</item>
         <item name="md_font_title">@font/googlesans_medium</item>
         <item name="md_font_body">@font/googlesans_regular</item>
         <item name="md_font_button">@font/googlesans_medium</item>
-        <item name="md_color_button_text">?colorAccent</item>
+        <item name="md_color_button_text">?colorSecondary</item>
         <item name="tabStyle">@style/Risuscito_tabstyle</item>
         <item name="android:alertDialogTheme">@style/RisuscitoAlertDialogTheme</item>
         <item name="materialPopupMenuStyle">@style/material_popup_theme</item>
@@ -74,67 +77,83 @@
     </style>
 
     <style name="RisuscitoTheme.Amber">
-        <item name="colorAccent">@color/md_amber_A200</item>
+        <!--<item name="colorAccent">@color/md_amber_A200</item>-->
+        <item name="colorSecondary">@color/md_amber_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Blue">
-        <item name="colorAccent">@color/md_blue_A200</item>
+        <!--<item name="colorAccent">@color/md_blue_A200</item>-->
+        <item name="colorSecondary">@color/md_blue_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Cyan">
-        <item name="colorAccent">@color/md_cyan_A200</item>
+        <!--<item name="colorAccent">@color/md_cyan_A200</item>-->
+        <item name="colorSecondary">@color/md_cyan_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Green">
-        <item name="colorAccent">@color/md_green_A200</item>
+        <!--<item name="colorAccent">@color/md_green_A200</item>-->
+        <item name="colorSecondary">@color/md_green_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Indigo">
-        <item name="colorAccent">@color/md_indigo_A200</item>
+        <!--<item name="colorAccent">@color/md_indigo_A200</item>-->
+        <item name="colorSecondary">@color/md_indigo_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Lime">
-        <item name="colorAccent">@color/md_lime_A200</item>
+        <!--<item name="colorAccent">@color/md_lime_A200</item>-->
+        <item name="colorSecondary">@color/md_lime_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Orange">
-        <item name="colorAccent">@color/md_orange_A200</item>
+        <!--<item name="colorAccent">@color/md_orange_A200</item>-->
+        <item name="colorSecondary">@color/md_orange_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Pink">
-        <item name="colorAccent">@color/md_pink_A200</item>
+        <!--<item name="colorAccent">@color/md_pink_A200</item>-->
+        <item name="colorSecondary">@color/md_pink_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Purple">
-        <item name="colorAccent">@color/md_purple_A200</item>
+        <!--<item name="colorAccent">@color/md_purple_A200</item>-->
+        <item name="colorSecondary">@color/md_purple_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Teal">
-        <item name="colorAccent">@color/md_teal_A200</item>
+        <!--<item name="colorAccent">@color/md_teal_A200</item>-->
+        <item name="colorSecondary">@color/md_teal_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Red">
-        <item name="colorAccent">@color/md_red_A200</item>
+        <!--<item name="colorAccent">@color/md_red_A200</item>-->
+        <item name="colorSecondary">@color/md_red_A200</item>
     </style>
 
     <style name="RisuscitoTheme.DeepOrange">
-        <item name="colorAccent">@color/md_deep_orange_A200</item>
+        <!--<item name="colorAccent">@color/md_deep_orange_A200</item>-->
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
     </style>
 
     <style name="RisuscitoTheme.DeepPurple">
-        <item name="colorAccent">@color/md_deep_purple_A200</item>
+        <!--<item name="colorAccent">@color/md_deep_purple_A200</item>-->
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
     </style>
 
     <style name="RisuscitoTheme.LightBlue">
-        <item name="colorAccent">@color/md_light_blue_A200</item>
+        <!--<item name="colorAccent">@color/md_light_blue_A200</item>-->
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
     </style>
 
     <style name="RisuscitoTheme.LightGreen">
-        <item name="colorAccent">@color/md_light_green_A200</item>
+        <!--<item name="colorAccent">@color/md_light_green_A200</item>-->
+        <item name="colorSecondary">@color/md_light_green_A200</item>
     </style>
 
     <style name="RisuscitoTheme.Yellow">
-        <item name="colorAccent">@color/md_yellow_A200</item>
+        <!--<item name="colorAccent">@color/md_yellow_A200</item>-->
+        <item name="colorSecondary">@color/md_yellow_A200</item>
     </style>
 
 </resources>

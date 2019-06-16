@@ -19,20 +19,18 @@ package it.cammino.risuscito.playback
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
-import androidx.preference.PreferenceManager
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.RisuscitoApplication
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 
@@ -117,25 +115,25 @@ class MusicProvider internal constructor(private val mContext: Context) {
         if (mCurrentState == State.NON_INITIALIZED) {
             mCurrentState = State.INITIALIZING
 
-            Log.d(TAG, "LINGUA CONTEXT: " + ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration).language)
-            Log.d(TAG, "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, ""))
+//            Log.d(TAG, "LINGUA CONTEXT: " + ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration).language)
+//            Log.d(TAG, "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, ""))
 
             var mNewBase = mContext
-            if (ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
-                            .language != PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "")) {
-                val config = Configuration()
-                val locale = Locale(PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "it") ?: "it")
-                Locale.setDefault(locale)
-                ThemeableActivity.setSystemLocalWrapper(config, locale)
-                if (LUtils.hasJB()) {
-                    mNewBase = mNewBase.createConfigurationContext(config)
-                } else {
-                    @Suppress("DEPRECATION")
-                    mNewBase.resources.updateConfiguration(config, mNewBase.resources.displayMetrics)
-                }
-            }
+//            if (ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
+//                            .language != PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "")) {
+//                val config = Configuration()
+//                val locale = Locale(PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "it") ?: "it")
+//                Locale.setDefault(locale)
+//                ThemeableActivity.setSystemLocalWrapper(config, locale)
+//                if (LUtils.hasJB()) {
+//                    mNewBase = mNewBase.createConfigurationContext(config)
+//                } else {
+//                    @Suppress("DEPRECATION")
+//                    mNewBase.resources.updateConfiguration(config, mNewBase.resources.displayMetrics)
+//                }
+//            }
+            mNewBase = RisuscitoApplication.localeManager.setLocale(mNewBase)
 
-//            val art = BitmapFactory.decodeResource(mNewBase.resources, R.drawable.ic_launcher_144dp)
             val art = decodeSampledBitmapFromResource(mNewBase.resources, R.drawable.ic_launcher_144dp, 320, 320)
             val artSmall = BitmapFactory.decodeResource(mNewBase.resources, R.mipmap.ic_launcher)
 

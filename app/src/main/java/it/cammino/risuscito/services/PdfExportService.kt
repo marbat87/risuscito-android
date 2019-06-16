@@ -15,7 +15,7 @@ import it.cammino.risuscito.BuildConfig
 import it.cammino.risuscito.CambioAccordi
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager
 import it.marbat.pdfjet.lib.*
 import java.io.*
 import java.util.*
@@ -187,7 +187,8 @@ class PdfExportService : IntentService("PdfExportService") {
         val cantoTrasportato = this.filesDir.toString() + "/temporaneo.htm"
 
         val conf = resources.configuration
-        ThemeableActivity.setSystemLocalWrapper(conf, Locale(mLingua))
+//        ThemeableActivity.setSystemLocalWrapper(conf, Locale(mLingua))
+        LocaleManager.setSystemLocale(conf, Locale(mLingua))
         val resources = createConfigurationWrapper(conf)
 
         var barreScritto = false
@@ -223,12 +224,14 @@ class PdfExportService : IntentService("PdfExportService") {
                     val matcher = pattern.matcher(line)
                     val sb = StringBuffer()
                     val sb2 = StringBuffer()
-                    while (matcher.find()) matcher.appendReplacement(sb, conversione[matcher.group(0) ?: ""] ?: "")
+                    while (matcher.find()) matcher.appendReplacement(sb, conversione[matcher.group(0)
+                            ?: ""] ?: "")
                     matcher.appendTail(sb)
                     if (mLingua.equals("uk", ignoreCase = true) && patternMinore != null) {
                         val matcherMin = patternMinore.matcher(sb.toString())
                         while (matcherMin.find())
-                            matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0) ?: "") ?: "")
+                            matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0)
+                                    ?: "") ?: "")
                         matcherMin.appendTail(sb2)
                         line = sb2.toString()
                         line = line.replace("<K>".toRegex(), "</FONT><FONT COLOR='#A13F3C'>")

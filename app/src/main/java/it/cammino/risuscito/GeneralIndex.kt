@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
 import kotlinx.android.synthetic.main.tabs_layout.*
 
@@ -33,7 +33,6 @@ class GeneralIndex : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view_pager.adapter = SectionsPagerAdapter(childFragmentManager)
 
         mMainActivity?.setTabVisible(true)
         mMainActivity?.enableFab(false)
@@ -44,6 +43,8 @@ class GeneralIndex : Fragment() {
                     ?: "0")
         } else
             view_pager.currentItem = mViewModel.pageViewed
+        view_pager.offscreenPageLimit = 1
+        view_pager.adapter = SectionsPagerAdapter(childFragmentManager)
         mMainActivity?.getMaterialTabs()?.setupWithViewPager(view_pager)
     }
 
@@ -52,7 +53,7 @@ class GeneralIndex : Fragment() {
         mViewModel.pageViewed = view_pager.currentItem
     }
 
-    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
@@ -70,7 +71,8 @@ class GeneralIndex : Fragment() {
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
+//            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
+            val l = getSystemLocale(resources)
             when (position) {
                 0 -> return getString(R.string.letter_order_text).toUpperCase(l)
                 1 -> return getString(R.string.page_order_text).toUpperCase(l)

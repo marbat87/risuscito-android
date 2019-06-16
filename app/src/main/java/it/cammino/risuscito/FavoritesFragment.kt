@@ -161,17 +161,15 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         super.onDestroy()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.let {
-            IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater, requireContext(), R.menu.clean_list_menu, it)
-            it.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
-        }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        IconicsMenuInflaterUtil.inflate(
+                requireActivity().menuInflater, requireContext(), R.menu.clean_list_menu, menu)
+        menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.list_reset -> {
                 mMainActivity?.let {
                     SimpleDialogFragment.Builder(it, this, FAVORITES_RESET)
@@ -255,7 +253,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mFavoritesViewModel.mFavoritesResult?.observe(
                 this,
                 Observer { canti ->
-                    cantoAdapter.set(canti.onEach { it.setSelectedColor = themeUtils.primaryColorDark() }.sortedBy { it.title?.getText(context) })
+                    cantoAdapter.set(canti.sortedBy { it.title?.getText(context) })
                     no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
                     activity?.invalidateOptionsMenu()
                 })

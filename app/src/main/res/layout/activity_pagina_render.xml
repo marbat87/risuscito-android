@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:layout_alignParentTop="true"
-                android:background="?colorBackgroundFloating">
+                android:background="?colorSurface">
 
                 <RelativeLayout
                     android:id="@+id/no_record"
@@ -181,7 +181,7 @@
                         android:paddingRight="@dimen/play_pause_padding"
                         risuscito:mpb_progressBackgroundTint="@android:color/transparent"
                         risuscito:mpb_progressStyle="circular"
-                        risuscito:mpb_progressTint="?colorAccent"
+                        risuscito:mpb_progressTint="?colorSecondary"
                         tools:targetApi="lollipop" />
 
                 </LinearLayout>

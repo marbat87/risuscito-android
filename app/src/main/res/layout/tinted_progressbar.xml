@@ -11,7 +11,7 @@
     risuscito:mpb_progressStyle="circular"
     android:visibility="invisible"
     android:elevation="1dp"
-    risuscito:mpb_progressTint="?colorAccent"
+    risuscito:mpb_progressTint="?colorSecondary"
     risuscito:mpb_progressBackgroundTint="@android:color/white"
     style="@style/Widget.MaterialProgressBar.ProgressBar"
     tools:targetApi="lollipop" />

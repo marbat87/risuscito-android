@@ -69,12 +69,6 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
             field = value
         }
 
-    private var selectedColor: ColorHolder? = null
-    var setSelectedColor: Any? = null
-        set(value) {
-            selectedColor = helperSetColor(value)
-        }
-
     var filter: String? = null
 
     var id: Int = 0
@@ -138,17 +132,20 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
                         ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
                         true))
 
-        if (isSelected) {
-            holder.mPage?.visibility = View.INVISIBLE
-            holder.mPageSelected?.visibility = View.VISIBLE
-            val bgShape = holder.mPageSelected?.background as? GradientDrawable
-            bgShape?.setColor(selectedColor?.colorInt ?: Color.WHITE)
-        } else {
-            val bgShape = holder.mPage?.background as? GradientDrawable
-            bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-            holder.mPage?.visibility = View.VISIBLE
-            holder.mPageSelected?.visibility = View.INVISIBLE
-        }
+        val bgShape = holder.mPage?.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        holder.mPage?.visibility = if (isSelected) View.INVISIBLE else View.VISIBLE
+        holder.mPageSelected?.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+
+//        if (isSelected) {
+//            holder.mPage?.visibility = View.INVISIBLE
+//            holder.mPageSelected?.visibility = View.VISIBLE
+//        } else {
+//            val bgShape = holder.mPage?.background as? GradientDrawable
+//            bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+//            holder.mPage?.visibility = View.VISIBLE
+//            holder.mPageSelected?.visibility = View.INVISIBLE
+//        }
 
         holder.mId?.text = id.toString()
 

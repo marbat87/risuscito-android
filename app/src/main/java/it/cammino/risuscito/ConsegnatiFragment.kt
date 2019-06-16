@@ -338,23 +338,21 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         activity?.searchView?.closeSearch()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.let {
-            if (mCantiViewModel.editMode) {
-                IconicsMenuInflaterUtil.inflate(
-                        requireActivity().menuInflater, requireContext(), R.menu.consegnati_menu, it)
-                val item = it.findItem(R.id.action_search)
-                requireActivity().searchView.setMenuItem(item)
-            } else
-                IconicsMenuInflaterUtil.inflate(
-                        requireActivity().menuInflater, requireActivity(), R.menu.help_menu, it)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        if (mCantiViewModel.editMode) {
+            IconicsMenuInflaterUtil.inflate(
+                    requireActivity().menuInflater, requireContext(), R.menu.consegnati_menu, menu)
+            val item = menu.findItem(R.id.action_search)
+            requireActivity().searchView.setMenuItem(item)
+        } else
+            IconicsMenuInflaterUtil.inflate(
+                    requireActivity().menuInflater, requireActivity(), R.menu.help_menu, menu)
 
-        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.action_help -> {
                 if (mCantiViewModel.editMode)
                     managerIntro()
@@ -385,8 +383,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun initFab() {
-        val icon = IconicsDrawable(requireActivity())
-                .icon(CommunityMaterial.Icon2.cmd_pencil)
+        val icon = IconicsDrawable(requireActivity(), CommunityMaterial.Icon2.cmd_pencil)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4)

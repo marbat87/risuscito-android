@@ -13,7 +13,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import com.takisoft.preferencex.PreferenceFragmentCompat
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import pub.devrel.easypermissions.EasyPermissions
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -35,17 +35,18 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
-        val listPreference = findPreference("memoria_salvataggio_scelta") as ListPreference
+        val listPreference = findPreference("memoria_salvataggio_scelta") as? ListPreference
 
         loadStorageList(
                 EasyPermissions.hasPermissions(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE))
 
-        listPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            listPreference.entries = mEntries
+        listPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            val listPref = it as? ListPreference
+            listPref?.entries = mEntries
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val saveLocation = pref.getString(Utility.SAVE_LOCATION, "0")
-            listPreference.setDefaultValue(saveLocation)
-            listPreference.entryValues = mEntryValues
+            listPref?.setDefaultValue(saveLocation)
+            listPref?.entryValues = mEntryValues
             false
         }
 
@@ -75,22 +76,30 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         if (s.equals("dark_mode", ignoreCase = true)) {
             Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getBoolean(s, false))
             activity?.recreate()
+//            AppCompatDelegate.setDefaultNightMode(
+//                    if (ThemeUtils.isDarkMode(requireContext()))
+//                        AppCompatDelegate.MODE_NIGHT_YES
+//                    else
+//                        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
         if (s == Utility.SYSTEM_LANGUAGE) {
             Log.d(
                     TAG,
-                    "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+//                    "onSharedPreferenceChanged: cur lang " + ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+                    "onSharedPreferenceChanged: cur lang " + getSystemLocale(resources)
                             .language)
             Log.d(TAG, "onSharedPreferenceChanged: cur set ${sharedPreferences.getString(s, "")}")
-            if (!ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+//            if (!ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+            if (!getSystemLocale(resources)
                             .language
                             .equals(sharedPreferences.getString(s, "it"), ignoreCase = true)) {
                 val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
                 mIntent?.let {
                     it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     it.putExtra(Utility.DB_RESET, true)
-                    val currentLang = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                            .language
+//                    val currentLang = ThemeableActivity.getSystemLocalWrapper(resources.configuration)
+//                            .language
+                    val currentLang = getSystemLocale(resources).language
                     it.putExtra(
                             Utility.CHANGE_LANGUAGE,
                             currentLang + "-" + sharedPreferences.getString(s, ""))

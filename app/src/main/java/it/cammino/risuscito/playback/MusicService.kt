@@ -164,7 +164,7 @@ class MusicService : MediaBrowserServiceCompat() {
         mSession = MediaSessionCompat(this, TAG)
         sessionToken = mSession?.sessionToken
         mSession?.setCallback(MediaSessionCallback())
-        mSession?.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+//        mSession?.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
 
         mPlayback = Playback(this, mMusicProvider)
         mPlayback?.setCallback(object : Playback.Callback {

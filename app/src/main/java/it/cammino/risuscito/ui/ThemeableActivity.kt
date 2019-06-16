@@ -3,16 +3,13 @@ package it.cammino.risuscito.ui
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
 import android.view.ViewConfiguration
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
@@ -48,10 +45,12 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (isMenuWorkaroundRequired) {
             forceOverflowMenu()
         }
+
         themeUtils = ThemeUtils(this)
         val mLUtils = LUtils.getInstance(this)
         mLUtils.convertIntPreferences()
         setTheme(themeUtils.current)
+
         AppCompatDelegate.setDefaultNightMode(
                 if (ThemeUtils.isDarkMode(this))
                     AppCompatDelegate.MODE_NIGHT_YES
@@ -105,60 +104,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        var mNewBase = newBase
-
-        val config = Configuration()
-
-        // lingua
-        val sp = PreferenceManager.getDefaultSharedPreferences(mNewBase)
-        val language = sp.getString(Utility.SYSTEM_LANGUAGE, "")
-        Log.d(TAG, "attachBaseContext - language: $language")
-        // ho settato almeno una volta la lingua --> imposto quella
-        if (!language.isNullOrEmpty()) {
-            val locale = Locale(language)
-            Locale.setDefault(locale)
-            setSystemLocalWrapper(config, locale)
-        } else {
-            val mLanguage = when (getSystemLocalWrapper(mNewBase.resources.configuration).language) {
-                "uk" -> "uk"
-                "en" -> "en"
-                else -> "it"
-            }
-            Log.d(TAG, "attachBaseContext - language setted: $mLanguage")
-            sp.edit { putString(Utility.SYSTEM_LANGUAGE, mLanguage) }
-            val locale = Locale(mLanguage)
-            Locale.setDefault(locale)
-            setSystemLocalWrapper(config, locale)
-        }// non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua
-        // selezionabile oppure IT se non presente
-
-        // fond dimension
-        try {
-            val actualScale = mNewBase.resources.configuration.fontScale
-            Log.d(TAG, "actualScale: $actualScale")
-            val systemScale = Settings.System.getFloat(contentResolver, Settings.System.FONT_SCALE)
-            Log.d(TAG, "systemScale: $systemScale")
-            if (actualScale != systemScale) {
-                config.fontScale = systemScale
-            }
-        } catch (e: Settings.SettingNotFoundException) {
-            Log.e(
-                    TAG,
-                    "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.localizedMessage)
-        } catch (e: NullPointerException) {
-            Log.e(
-                    TAG,
-                    "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA: " + e.localizedMessage)
-        }
-
-        if (LUtils.hasJB()) {
-            mNewBase = mNewBase.createConfigurationContext(config)
-        } else {
-            @Suppress("DEPRECATION")
-            mNewBase.resources.updateConfiguration(config, mNewBase.resources.displayMetrics)
-        }
-
-        super.attachBaseContext(mNewBase)
+        super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
     }
 
     inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))
@@ -467,38 +413,38 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val isMenuWorkaroundRequired: Boolean
             get() = Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && ("LGE".equals(Build.MANUFACTURER, ignoreCase = true) || "E6710".equals(Build.DEVICE, ignoreCase = true))
 
-        @Suppress("DEPRECATION")
-        private fun getSystemLocaleLegacy(config: Configuration): Locale {
-            return config.locale
-        }
+//        @Suppress("DEPRECATION")
+//        private fun getSystemLocaleLegacy(config: Configuration): Locale {
+//            return config.locale
+//        }
+//
+//        @TargetApi(Build.VERSION_CODES.N)
+//        private fun getSystemLocale(config: Configuration): Locale {
+//            return config.locales.get(0)
+//        }
+//
+//        fun getSystemLocalWrapper(config: Configuration): Locale {
+//            return if (LUtils.hasN())
+//                getSystemLocale(config)
+//            else
+//                getSystemLocaleLegacy(config)
+//        }
 
-        @TargetApi(Build.VERSION_CODES.N)
-        private fun getSystemLocale(config: Configuration): Locale {
-            return config.locales.get(0)
-        }
-
-        fun getSystemLocalWrapper(config: Configuration): Locale {
-            return if (LUtils.hasN())
-                getSystemLocale(config)
-            else
-                getSystemLocaleLegacy(config)
-        }
-
-        @Suppress("DEPRECATION")
-        private fun setSystemLocaleLegacy(config: Configuration, locale: Locale) {
-            config.locale = locale
-        }
-
-        @TargetApi(Build.VERSION_CODES.N)
-        private fun setSystemLocale(config: Configuration, locale: Locale) {
-            config.setLocale(locale)
-        }
-
-        fun setSystemLocalWrapper(config: Configuration, locale: Locale) {
-            if (LUtils.hasN())
-                setSystemLocale(config, locale)
-            else
-                setSystemLocaleLegacy(config, locale)
-        }
+//        @Suppress("DEPRECATION")
+//        private fun setSystemLocaleLegacy(config: Configuration, locale: Locale) {
+//            config.locale = locale
+//        }
+//
+//        @TargetApi(Build.VERSION_CODES.N)
+//        private fun setSystemLocale(config: Configuration, locale: Locale) {
+//            config.setLocale(locale)
+//        }
+//
+//        fun setSystemLocalWrapper(config: Configuration, locale: Locale) {
+//            if (LUtils.hasN())
+//                setSystemLocale(config, locale)
+//            else
+//                setSystemLocaleLegacy(config, locale)
+//        }
     }
 }

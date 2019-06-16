@@ -33,7 +33,7 @@
             risuscito:ico_icon="cmd-check"
             risuscito:ico_size="24dp"
             risuscito:ico_padding="7dp"
-            risuscito:ico_color="@android:color/white"
+            risuscito:ico_color="?colorOnSecondary"
             android:background="@drawable/page_oval_bkg_selected"
             android:visibility="invisible"
             tools:ignore="MissingPrefix"

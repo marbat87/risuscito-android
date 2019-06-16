@@ -87,8 +87,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         tabletToolbarBackground?.setBackgroundColor(themeUtils.primaryColor())
         action_title_bar.setBackgroundColor(themeUtils.primaryColor())
 
-        val leaveBehindDrawable = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon.cmd_delete)
+        val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
@@ -135,8 +134,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         SearchTask().execute()
 
-        val icon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon2.cmd_plus)
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(4)

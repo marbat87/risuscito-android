@@ -34,7 +34,7 @@ import it.cammino.risuscito.items.listaPersonalizzataItem
 import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.BottomSheetFragment
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
@@ -48,7 +48,6 @@ import kotlinx.android.synthetic.main.lista_pers_button.*
 class ListaPredefinitaFragment : Fragment() {
 
     private lateinit var mCantiViewModel: DefaultListaViewModel
-    private var isViewShown = true
     private var posizioneDaCanc: Int = 0
     private var idDaCanc: Int = 0
     private var timestampDaCanc: String? = null
@@ -73,7 +72,8 @@ class ListaPredefinitaFragment : Fragment() {
     private val titlesList: String
         get() {
 
-            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
+//            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
+            val l = getSystemLocale(resources)
             val result = StringBuilder()
             var progressivePos = 0
 
@@ -253,11 +253,6 @@ class ListaPredefinitaFragment : Fragment() {
         mLUtils = LUtils.getInstance(requireActivity())
         mSwhitchMode = false
 
-        if (!isViewShown) {
-            destroy()
-            (parentFragment as? CustomLists)?.initFabOptions(false)
-        }
-
         return rootView
     }
 
@@ -282,19 +277,6 @@ class ListaPredefinitaFragment : Fragment() {
         button_condividi.setOnClickListener {
             val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
             bottomSheetDialog.show(requireFragmentManager(), null)
-        }
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser) {
-            if (view != null) {
-                isViewShown = true
-                destroy()
-                (parentFragment as? CustomLists)?.initFabOptions(false)
-
-            } else
-                isViewShown = false
         }
     }
 

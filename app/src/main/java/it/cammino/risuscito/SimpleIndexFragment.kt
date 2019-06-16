@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -18,23 +19,22 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mikepenz.fastadapter.IAdapter
 import com.turingtechnologies.materialscrollbar.CustomIndicator
+import com.turingtechnologies.materialscrollbar.TouchScrollBar
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.HFFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.index_list_fragment.*
 
-class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
+class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private lateinit var mAdapter: FastScrollIndicatorAdapter
     private lateinit var mCantiViewModel: SimpleIndexViewModel
-    private var isViewShown = true
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
     private var mLUtils: LUtils? = null
@@ -43,7 +43,7 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        subscribeUiFavorites()
+        subscribeUiChanges()
     }
 
     override fun onCreateView(
@@ -73,13 +73,10 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         })
         fragment?.setmCallback(this)
 
-        if (!isViewShown)
-            ioThread { if (context != null) listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
-
         return rootView
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         mActivity = activity as? MainActivity
     }
@@ -121,27 +118,26 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
         insetDivider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
         cantiList?.addItemDecoration(insetDivider)
-        Log.i(TAG, "isAttachedToWindow ${ViewCompat.isAttachedToWindow(dragScrollBar)}")
-        Log.i(TAG, "set Indicator")
         dragScrollBar?.let {
-            it.setIndicator(CustomIndicator(context), true)
-            it.setAutoHide(false)
+            if (ViewCompat.isAttachedToWindow(it)) {
+                it.setIndicator(CustomIndicator(context), true)
+                it.setAutoHide(false)
+            } else
+                it.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+                    override fun onViewDetachedFromWindow(p0: View?) {}
+
+                    override fun onViewAttachedToWindow(p0: View?) {
+                        (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
+                        (p0 as? TouchScrollBar)?.setAutoHide(false)
+                        p0?.removeOnAttachStateChangeListener(this)
+                    }
+                })
         }
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser) {
-            if (view != null) {
-                isViewShown = true
-                dragScrollBar?.let {
-                    it.setIndicator(CustomIndicator(context), true)
-                    it.setAutoHide(false)
-                }
-                ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
-            } else
-                isViewShown = false
-        }
+    override fun onResume() {
+        super.onResume()
+        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
     }
 
     override fun onPositive(tag: String) {
@@ -161,11 +157,10 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onNegative(tag: String) {}
 
-    private fun subscribeUiFavorites() {
+    private fun subscribeUiChanges() {
         mCantiViewModel.itemsResult?.observe(
                 this,
                 Observer<List<SimpleItem>> { canti ->
-                    Log.i(TAG, "set Lista")
                     mAdapter.set(
                             when (mCantiViewModel.tipoLista) {
                                 0 -> canti.sortedBy { it.title?.getText(context) }
@@ -185,7 +180,7 @@ class SimpleIndexFragment : HFFragment(), SimpleDialogFragment.SimpleCallback {
         private const val SALMI_REPLACE = "SALMI_REPLACE"
         private const val SALMI_REPLACE_2 = "SALMI_REPLACE_2"
         private const val INDICE_LISTA = "indiceLista"
-        private val TAG = SimpleIndexFragment::class.java.canonicalName
+//        private val TAG = SimpleIndexFragment::class.java.canonicalName
 
         fun newInstance(tipoLista: Int): SimpleIndexFragment {
             val f = SimpleIndexFragment()

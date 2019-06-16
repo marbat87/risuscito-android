@@ -28,17 +28,13 @@ import com.github.zawadz88.materialpopupmenu.ViewBoundCallback
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.colorRes
-import com.mikepenz.iconics.paddingDp
-import com.mikepenz.iconics.sizeDp
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.ui.makeClearableEditText
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -81,11 +77,12 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         try {
-            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
-                    requireActivity().resources.configuration)
-                    .language) {
-                "uk" -> requireActivity().assets.open("fileout_uk.xml")
-                "en" -> requireActivity().assets.open("fileout_en.xml")
+//            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
+//                    requireActivity().resources.configuration)
+//                    .language) {
+            val inputStream: InputStream = when (getSystemLocale(resources).language) {
+                LANGUAGE_UKRAINIAN -> requireActivity().assets.open("fileout_uk.xml")
+                LANGUAGE_ENGLISH -> requireActivity().assets.open("fileout_en.xml")
                 else -> requireActivity().assets.open("fileout_new.xml")
             }
             aTexts = CantiXmlParser().parse(inputStream)
@@ -153,13 +150,12 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
 
-        val icon = IconicsDrawable(requireContext())
-                .icon(CommunityMaterial.Icon.cmd_close_circle)
-                .colorRes(R.color.text_color_secondary)
-                .sizeDp(32)
-                .paddingDp(8)
-        icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-        textfieldRicerca.makeClearableEditText(null, null, icon)
+//        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_close_circle)
+//                .colorRes(R.color.text_color_secondary)
+//                .sizeDp(32)
+//                .paddingDp(8)
+//        icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+//        textfieldRicerca.makeClearableEditText(null, null, icon)
 
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
@@ -279,9 +275,9 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.toLowerCase(
-                                        ThemeableActivity.getSystemLocalWrapper(
-                                                fragment.requireActivity().resources.configuration))
+                                text = text.toLowerCase(getSystemLocale(fragment.resources))
+//                                        ThemeableActivity.getSystemLocalWrapper(
+//                                                fragment.requireActivity().resources.configuration))
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
