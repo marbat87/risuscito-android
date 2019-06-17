@@ -63,7 +63,7 @@ android {
 
 val preferenceFixVersion = "1.0.0"
 val fastAdapterVersion = "4.0.0"
-val materialDialogsVersion = "3.0.0-rc3"
+val materialDialogsVersion = "3.0.0-rc4"
 val roomVersion = "2.1.0"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
