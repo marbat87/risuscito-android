@@ -1,6 +1,7 @@
 package it.cammino.risuscito
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.AsyncTask
 import android.os.AsyncTask.Status
 import android.os.Bundle
@@ -111,7 +112,7 @@ class InsertActivity : ThemeableActivity() {
 
         ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(this).listePersDao().all }
 
-        ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+        textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
             var consume = false
@@ -153,6 +154,8 @@ class InsertActivity : ThemeableActivity() {
                 ContextCompat.getDrawable(this, R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
 
+        textBoxRicerca.boxStrokeColor = themeUtils.primaryColor()
+        textBoxRicerca.hintTextColor = ColorStateList.valueOf(themeUtils.primaryColor())
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
@@ -186,7 +189,7 @@ class InsertActivity : ThemeableActivity() {
                             view.customItemCheckbox.isChecked = mViewModel.advancedSearch
                             view.customItemCheckbox.setOnCheckedChangeListener { _, isChecked ->
                                 mViewModel.advancedSearch = isChecked
-                                ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+                                textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
                                 ricercaStringa(textfieldRicerca.text.toString())
                                 dismissPopup()
                             }

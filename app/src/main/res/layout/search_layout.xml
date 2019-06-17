@@ -6,21 +6,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/ricerca_subtitle"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center"
-        android:paddingStart="@dimen/myListPreferredItemMargin"
-        android:paddingLeft="@dimen/myListPreferredItemMargin"
-        android:paddingEnd="@dimen/myListPreferredItemMargin"
-        android:paddingRight="@dimen/myListPreferredItemMargin"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        tools:text="@string/fast_search_subtitle" />
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/myListPreferredItemHeightMedium">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_min_top_margin">
 
         <FrameLayout
             android:id="@+id/more_options"
@@ -47,18 +36,20 @@
         </FrameLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textBoxRicerca"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginStart="@dimen/activity_min_margin"
-            android:layout_marginLeft="@dimen/activity_min_margin"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
             android:layout_toStartOf="@id/more_options"
             android:layout_toLeftOf="@id/more_options"
             android:gravity="center"
-            android:hint="@string/search_hint"
-            risuscito:endIconTint="@color/text_color_secondary"
+            android:hint="@string/fast_search_subtitle"
             risuscito:endIconMode="clear_text"
+            risuscito:endIconTint="@color/text_color_secondary"
+            risuscito:helperText="@string/search_hint"
             tools:ignore="RtlSymmetry">
 
             <com.google.android.material.textfield.TextInputEditText

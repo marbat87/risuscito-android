@@ -105,6 +105,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
+        RisuscitoApplication.localeManager.setLocale(this)
     }
 
     inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))

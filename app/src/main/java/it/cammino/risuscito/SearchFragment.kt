@@ -1,6 +1,7 @@
 package it.cammino.risuscito
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.AsyncTask
 import android.os.AsyncTask.Status
 import android.os.Bundle
@@ -36,6 +37,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -58,6 +60,9 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var searchTask: SearchTask? = null
     private var mLastClickTime: Long = 0
     private var mMainActivity: MainActivity? = null
+
+    private val themeUtils: ThemeUtils
+        get() = (activity as MainActivity).themeUtils
 
     private lateinit var mViewModel: SimpleIndexViewModel
 
@@ -116,7 +121,8 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
-        ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+//        ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+        textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             var consume = false
@@ -150,13 +156,8 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
 
-//        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_close_circle)
-//                .colorRes(R.color.text_color_secondary)
-//                .sizeDp(32)
-//                .paddingDp(8)
-//        icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-//        textfieldRicerca.makeClearableEditText(null, null, icon)
-
+        textBoxRicerca.boxStrokeColor = themeUtils.primaryColor()
+        textBoxRicerca.hintTextColor = ColorStateList.valueOf(themeUtils.primaryColor())
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
@@ -190,7 +191,7 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             view.customItemCheckbox.isChecked = mViewModel.advancedSearch
                             view.customItemCheckbox.setOnCheckedChangeListener { _, isChecked ->
                                 mViewModel.advancedSearch = isChecked
-                                ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+                                textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
                                 ricercaStringa(textfieldRicerca.text.toString())
                                 dismissPopup()
                             }
