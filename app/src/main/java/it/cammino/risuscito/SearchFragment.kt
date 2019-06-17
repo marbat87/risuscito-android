@@ -256,8 +256,8 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
             val titoliResult = ArrayList<SimpleItem>()
 
-            Log.d(TAG, "STRINGA: " + sSearchText[0])
-            Log.d(TAG, "ADVANCED: " + sSearchText[1])
+            Log.d(TAG, "STRINGA: ${sSearchText[0]}")
+            Log.d(TAG, "ADVANCED: ${sSearchText[1]}")
             val s = sSearchText[0] as? String ?: ""
             val advanced = sSearchText[1] as? Boolean ?: false
             fragmentReference.get()?.let { fragment ->

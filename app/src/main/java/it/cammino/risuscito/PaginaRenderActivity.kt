@@ -49,7 +49,9 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.DownloadService
 import it.cammino.risuscito.services.PdfExportService
-import it.cammino.risuscito.ui.LocaleManager
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
@@ -576,7 +578,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 var convMin: HashMap<String, String>? = null
 //                if (getSystemLocalWrapper(resources.configuration).language
                 if (getSystemLocale(resources).language
-                                .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
+                                .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                     convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
@@ -611,7 +613,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                if (getSystemLocalWrapper(resources.configuration)
 //                                .language
                 if (getSystemLocale(resources).language
-                                .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
+                                .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                     convMin1 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
@@ -634,7 +636,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                    if (getSystemLocalWrapper(resources.configuration)
 //                                    .language
                     if (getSystemLocale(resources).language
-                                    .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
+                                    .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                         convMin2 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
@@ -656,7 +658,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                    if (getSystemLocalWrapper(resources.configuration)
 //                                    .language
                     if (getSystemLocale(resources).language
-                                    .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
+                                    .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                         convMin3 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
@@ -805,13 +807,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             var patternMinore: Pattern? = null
 
             when (language) {
-                "it" -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
-                "uk" -> {
+                LANGUAGE_ITALIAN -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
+                LANGUAGE_UKRAINIAN -> {
                     pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H")
                     // inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
                     patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h")
                 }
-                "en" -> pattern = Pattern.compile("C#|C|D|Eb|E|F#|F|G#|G|A|Bb|B")
+                LANGUAGE_ENGLISH -> pattern = Pattern.compile("C#|C|D|Eb|E|F#|F|G#|G|A|Bb|B")
                 else -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
             }
 
@@ -821,7 +823,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             while (line != null) {
                 Log.v(TAG, "RIGA DA ELAB: $line")
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-                    if (language.equals("uk", ignoreCase = true) || language.equals("en", ignoreCase = true)) {
+                    if (language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || language.equals(LANGUAGE_ENGLISH, ignoreCase = true)) {
                         line = line.replace("</FONT><FONT COLOR=\"#A13F3C\">".toRegex(), "<K>")
                         line = line.replace("</FONT><FONT COLOR=\"#000000\">".toRegex(), "<K2>")
                     }
@@ -831,7 +833,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     while (matcher.find()) matcher.appendReplacement(sb, conversione?.get(matcher.group(0)
                             ?: "") ?: "")
                     matcher.appendTail(sb)
-                    if (language.equals("uk", ignoreCase = true)) {
+                    if (language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true)) {
                         val matcherMin = patternMinore?.matcher(sb.toString())
                         while (matcherMin?.find() == true)
                             matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0)
@@ -873,7 +875,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             }
                         }
 
-                        if (language.equals("en", ignoreCase = true)) {
+                        if (language.equals(LANGUAGE_ENGLISH, ignoreCase = true)) {
                             line = line.replace("<K>".toRegex(), "</FONT><FONT COLOR='#A13F3C'>")
                             line = line.replace("<K2>".toRegex(), "</FONT><FONT COLOR='#000000'>")
                         }
@@ -1418,7 +1420,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             if (getSystemLocale(resources).language
 //            if (getSystemLocalWrapper(resources.configuration)
 //                            .language
-                            .equals(LocaleManager.LANGUAGE_UKRAINIAN, ignoreCase = true))
+                            .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                 convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true)

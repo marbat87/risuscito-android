@@ -34,6 +34,8 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.LocaleManager
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
@@ -91,8 +93,8 @@ class InsertActivity : ThemeableActivity() {
 //            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
             val inputStream: InputStream = when (LocaleManager.getSystemLocale(resources)
                     .language) {
-                "uk" -> assets.open("fileout_uk.xml")
-                "en" -> assets.open("fileout_en.xml")
+                LANGUAGE_UKRAINIAN -> assets.open("fileout_uk.xml")
+                LANGUAGE_ENGLISH -> assets.open("fileout_en.xml")
                 else -> assets.open("fileout_new.xml")
             }
             aTexts = CantiXmlParser().parse(inputStream)

@@ -55,6 +55,8 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -456,15 +458,15 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         var accordi1 = CambioAccordi.accordi_it
         Log.d(TAG, "convertTabs - from: ${conversion?.substring(0, 2)}")
         when (conversion?.substring(0, 2)) {
-            "uk" -> accordi1 = CambioAccordi.accordi_uk
-            "en" -> accordi1 = CambioAccordi.accordi_en
+            LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
+            LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
         }
 
         var accordi2 = CambioAccordi.accordi_it
         Log.d(TAG, "convertTabs - to: ${conversion?.substring(3, 5)}")
         when (conversion?.substring(3, 5)) {
-            "uk" -> accordi2 = CambioAccordi.accordi_uk
-            "en" -> accordi2 = CambioAccordi.accordi_en
+            LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
+            LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
         }
 
         val mappa = HashMap<String, String>()
@@ -496,15 +498,15 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         var barre1 = CambioAccordi.barre_it
         Log.d(TAG, "convertiBarre - from: ${conversion?.substring(0, 2)}")
         when (conversion?.substring(0, 2)) {
-            "uk" -> barre1 = CambioAccordi.barre_uk
-            "en" -> barre1 = CambioAccordi.barre_en
+            LANGUAGE_UKRAINIAN -> barre1 = CambioAccordi.barre_uk
+            LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
         }
 
         var barre2 = CambioAccordi.barre_it
         Log.d(TAG, "convertiBarre - to: ${conversion?.substring(3, 5)}")
         when (conversion?.substring(3, 5)) {
-            "uk" -> barre2 = CambioAccordi.barre_uk
-            "en" -> barre2 = CambioAccordi.barre_en
+            LANGUAGE_UKRAINIAN -> barre2 = CambioAccordi.barre_uk
+            LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
         }
 
         val mappa = HashMap<String, String>()

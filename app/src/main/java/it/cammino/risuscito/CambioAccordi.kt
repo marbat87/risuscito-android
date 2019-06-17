@@ -3,6 +3,9 @@ package it.cammino.risuscito
 import android.content.Context
 import android.util.Log
 import com.crashlytics.android.Crashlytics
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import java.io.BufferedReader
 import java.io.InputStream
@@ -30,7 +33,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                     Log.v(TAG, "recuperaBarre - RIGA: $line")
                     found = true
 
-                    start = if (language.equals("en", ignoreCase = true))
+                    start = if (language.equals(LANGUAGE_ENGLISH, ignoreCase = true))
                         start + 5
                     else
                         line.indexOf(mContext.resources.getString(R.string.barre_add_al)) + 3
@@ -79,8 +82,8 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
 
         val accordi: Array<String>
         when (language) {
-            "it" -> accordi = accordi_it
-            "uk" -> {
+            LANGUAGE_ITALIAN -> accordi = accordi_it
+            LANGUAGE_UKRAINIAN -> {
                 accordi = accordi_uk
                 primoAccordo = if (primoAccordo.length == 1)
                     primoAccordo.toUpperCase()
@@ -91,7 +94,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                 else
                     cambioAccordo.substring(0, 1).toUpperCase() + cambioAccordo.substring(1)
             }
-            "en" -> accordi = accordi_en
+            LANGUAGE_ENGLISH -> accordi = accordi_en
             else -> accordi = accordi_it
         }
 
@@ -222,7 +225,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                             for (j in i + 1 until line.length) {
                                 Log.v(TAG, "recuperaPrimoAccordo - DA ISP: " + line[j])
                                 val myMatcher = when (language) {
-                                    "en" -> Pattern.compile("[^m][a-z]|#]").matcher(line[j].toString())
+                                    LANGUAGE_ENGLISH -> Pattern.compile("[^m][a-z]|#]").matcher(line[j].toString())
                                     else -> Pattern.compile("[a-z]|#]").matcher(line[j].toString())
                                 }
                                 if (myMatcher.find()) {
