@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +37,11 @@ import java.util.*
 
 class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
-    private lateinit var mCantiViewModel: SimpleIndexViewModel
+    private val mCantiViewModel: SimpleIndexViewModel by viewModels {
+        ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
+            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
+        })
+    }
 
     private var listePersonalizzate: List<ListaPers>? = null
     private var rootView: View? = null
@@ -52,10 +56,10 @@ class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.layout_recycler, container, false)
 
-        val args = Bundle().apply {
-            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
-        }
-        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
+//        val args = Bundle().apply {
+//            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
+//        }
+//        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
 
         mLUtils = LUtils.getInstance(requireActivity())
 

@@ -17,7 +17,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -59,7 +59,9 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mLastClickTime: Long = 0
     private var mMainActivity: MainActivity? = null
 
-    private lateinit var mViewModel: SimpleIndexViewModel
+    private val mViewModel: SimpleIndexViewModel by viewModels {
+        ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -68,8 +70,8 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_search)
 
-        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, 0) }
-        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
+//        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, 0) }
+//        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
@@ -113,7 +115,6 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
-//        ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
         textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->

@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +46,13 @@ import kotlinx.android.synthetic.main.lista_pers_button.*
 
 class ListaPredefinitaFragment : Fragment() {
 
-    private lateinit var mCantiViewModel: DefaultListaViewModel
+
+    private val mCantiViewModel: DefaultListaViewModel by viewModels {
+        ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
+            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
+        })
+    }
+
     private var posizioneDaCanc: Int = 0
     private var idDaCanc: Int = 0
     private var timestampDaCanc: String? = null
@@ -234,10 +240,10 @@ class ListaPredefinitaFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
 
-        val args = Bundle().apply {
-            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
-        }
-        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(DefaultListaViewModel::class.java)
+//        val args = Bundle().apply {
+//            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
+//        }
+//        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(DefaultListaViewModel::class.java)
 
         mMainActivity = activity as? MainActivity
 

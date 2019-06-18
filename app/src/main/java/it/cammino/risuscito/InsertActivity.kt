@@ -13,9 +13,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -64,7 +64,9 @@ class InsertActivity : ThemeableActivity() {
     private var idLista: Int = 0
     private var listPosition: Int = 0
 
-    private lateinit var mViewModel: SimpleIndexViewModel
+    private val mViewModel: SimpleIndexViewModel by viewModels {
+        ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 3) })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,8 +82,8 @@ class InsertActivity : ThemeableActivity() {
         idLista = bundle?.getInt(ID_LISTA) ?: 0
         listPosition = bundle?.getInt(POSITION) ?: 0
 
-        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, 3) }
-        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(application, args)).get(SimpleIndexViewModel::class.java)
+//        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, 3) }
+//        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(this)
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
@@ -89,7 +91,6 @@ class InsertActivity : ThemeableActivity() {
         }
 
         try {
-//            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
             val inputStream: InputStream = when (LocaleManager.getSystemLocale(resources)
                     .language) {
                 LANGUAGE_UKRAINIAN -> assets.open("fileout_uk.xml")
@@ -289,8 +290,6 @@ class InsertActivity : ThemeableActivity() {
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
                                 text = text.toLowerCase(getSystemLocale(fragment.resources))
-//                                        getSystemLocalWrapper(
-//                                                fragment.resources.configuration))
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false

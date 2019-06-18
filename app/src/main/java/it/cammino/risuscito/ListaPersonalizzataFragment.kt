@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
@@ -42,7 +42,11 @@ class ListaPersonalizzataFragment : Fragment() {
 
     private lateinit var cantoDaCanc: String
 
-    private lateinit var mCantiViewModel: ListaPersonalizzataViewModel
+    private val mCantiViewModel: ListaPersonalizzataViewModel by viewModels {
+        ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
+            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
+        })
+    }
     private var posizioneDaCanc: Int = 0
     private var rootView: View? = null
     private var mSwhitchMode: Boolean = false
@@ -136,10 +140,10 @@ class ListaPersonalizzataFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
 
-        val args = Bundle().apply {
-            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
-        }
-        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(ListaPersonalizzataViewModel::class.java)
+//        val args = Bundle().apply {
+//            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
+//        }
+//        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(ListaPersonalizzataViewModel::class.java)
 
         mMainActivity = activity as? MainActivity
 
