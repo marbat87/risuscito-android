@@ -26,8 +26,6 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        collapsingToolbarLayout?.setContentScrimColor(themeUtils.primaryColor())
-
         if (mViewModel?.appBarIsExpanded == true)
             Utility.setupTransparentTints(this, Color.TRANSPARENT, false)
         else

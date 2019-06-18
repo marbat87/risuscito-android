@@ -27,6 +27,7 @@
                 android:id="@+id/searchView"
                 risuscito:type="card"
                 android:hint="@string/title_filter"
+                risuscito:backIconTint="?colorPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?colorPrimary" />

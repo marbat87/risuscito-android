@@ -1,7 +1,6 @@
 package it.cammino.risuscito
 
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.AsyncTask
 import android.os.AsyncTask.Status
 import android.os.Bundle
@@ -71,7 +70,6 @@ class InsertActivity : ThemeableActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_insert_search)
 
-        risuscito_toolbar.setBackgroundColor(themeUtils.primaryColor())
         risuscito_toolbar.title = getString(R.string.title_activity_inserisci_titolo)
         setSupportActionBar(risuscito_toolbar)
 
@@ -154,8 +152,6 @@ class InsertActivity : ThemeableActivity() {
                 ContextCompat.getDrawable(this, R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
 
-        textBoxRicerca.boxStrokeColor = themeUtils.primaryColor()
-        textBoxRicerca.hintTextColor = ColorStateList.valueOf(themeUtils.primaryColor())
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {

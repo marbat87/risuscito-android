@@ -77,12 +77,6 @@ object Utility {
             return Environment.MEDIA_MOUNTED == state || Environment.MEDIA_MOUNTED_READ_ONLY == state
         }
 
-//    internal fun isOnline(activity: Activity): Boolean {
-//        val cm = ContextCompat.getSystemService(activity as Context, ConnectivityManager::class.java) as ConnectivityManager
-//        val netInfo = cm.activeNetworkInfo
-//        return netInfo != null && netInfo.isConnected
-//    }
-
     internal fun isOnline(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         return if (LUtils.hasM())
@@ -207,7 +201,7 @@ object Utility {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.background_material_dark else R.color.background_material_light))
+            context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
             context.window.navigationBarColor = Color.TRANSPARENT
         }
     }

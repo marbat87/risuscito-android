@@ -207,7 +207,7 @@
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
         android:theme="@style/ToolbarTheme"
-        risuscito:backgroundTint="?colorPrimary"
+        android:background="?colorPrimary"
         risuscito:contentInsetStart="0dp"
         risuscito:layout_scrollFlags="scroll|enterAlways">
 

@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             risuscito:mpb_progressStyle="horizontal"
-            risuscito:mpb_progressTint="?colorAccent" />
+            risuscito:mpb_progressTint="?colorSecondary" />
 
         <TextView
             android:id="@+id/md_label"

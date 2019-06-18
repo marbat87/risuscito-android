@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -130,7 +129,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .colorInt(themeUtils.primaryColor())
                 .sizeDp(48)
 
-        risuscito_toolbar?.setBackgroundColor(themeUtils.primaryColor())
         risuscito_toolbar?.navigationIcon = icon
         setSupportActionBar(risuscito_toolbar)
 
@@ -148,13 +146,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         isGridLayout = mLUtils?.isGridLayout ?: false
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
 
-        if (isOnTablet && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            window.statusBarColor = themeUtils.primaryColorDark()
-
         if (isOnTablet)
-            tabletToolbarBackground?.setBackgroundColor(themeUtils.primaryColor())
-        else
-            material_tabs?.setBackgroundColor(themeUtils.primaryColor())
+            Utility.setupTransparentTints(this, themeUtils.primaryColorDark(), false)
 
         setupNavDrawer(savedInstanceState)
 
@@ -164,9 +157,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             }
         }
         if (!isOnTablet) toolbar_layout?.setExpanded(true, false)
-
-        searchView.setBackIconColor(themeUtils.primaryColor())
-        searchView.setBackgroundColor(themeUtils.primaryColor())
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -271,7 +261,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             })
         }.withActivity(this).build()
 
-        val selectedColor = themeUtils.primaryColor()
+        val selectedColorLight = themeUtils.primaryColorLight()
 
         val mDrawerBuilder = DrawerBuilder().apply {
             risuscito_toolbar?.let {
@@ -284,65 +274,56 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .withName(R.string.activity_homepage)
                             .withIcon(CommunityMaterial.Icon2.cmd_home)
                             .withIdentifier(R.id.navigation_home.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.search_name_text)
                             .withIcon(CommunityMaterial.Icon2.cmd_magnify)
                             .withIdentifier(R.id.navigation_search.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_general_index)
                             .withIcon(CommunityMaterial.Icon2.cmd_view_list)
                             .withIdentifier(R.id.navigation_indexes.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_custom_lists)
                             .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
                             .withIdentifier(R.id.navitagion_lists.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.action_favourites)
                             .withIcon(CommunityMaterial.Icon2.cmd_heart)
                             .withIdentifier(R.id.navigation_favorites.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_consegnati)
                             .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
                             .withIdentifier(R.id.navigation_consegnati.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_history)
                             .withIcon(CommunityMaterial.Icon2.cmd_history)
                             .withIdentifier(R.id.navigation_history.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_settings)
                             .withIcon(CommunityMaterial.Icon2.cmd_settings)
                             .withIdentifier(R.id.navigation_settings.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     DividerDrawerItem(),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_about)
                             .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
                             .withIdentifier(R.id.navigation_changelog.toLong())
-                            .withSelectedIconColor(selectedColor)
-                            .withSelectedTextColor(selectedColor)
+                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont))
             withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {

@@ -364,8 +364,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
-        risuscito_toolbar.setBackgroundColor(themeUtils.primaryColor())
-        bottom_bar.setBackgroundColor(themeUtils.primaryColor())
         setSupportActionBar(risuscito_toolbar)
         supportActionBar?.setTitle(R.string.canto_title_activity)
 
@@ -1105,8 +1103,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.action_tonalita),
                                 getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1118,8 +1114,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.action_barre),
                                 getString(R.string.sc_barre_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1130,8 +1124,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_scroll_title),
                                 getString(R.string.sc_scroll_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1142,8 +1134,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.showcase_end_title),
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1177,8 +1167,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.action_tonalita),
                                 getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1190,8 +1178,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.action_barre),
                                 getString(R.string.sc_barre_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1202,8 +1188,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_audio_title),
                                 getString(R.string.sc_audio_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1214,8 +1198,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.sc_scroll_title),
                                 getString(R.string.sc_scroll_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -1226,8 +1208,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 getString(R.string.showcase_end_title),
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)

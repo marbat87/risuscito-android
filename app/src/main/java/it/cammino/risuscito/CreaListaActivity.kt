@@ -80,12 +80,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
-        risuscito_toolbar?.setBackgroundColor(themeUtils.primaryColor())
         setSupportActionBar(risuscito_toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        tabletToolbarBackground?.setBackgroundColor(themeUtils.primaryColor())
-        action_title_bar.setBackgroundColor(themeUtils.primaryColor())
 
         val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
                 .colorInt(Color.WHITE)
@@ -394,8 +391,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 getString(R.string.add_position),
                                 getString(R.string.showcase_add_pos_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -408,8 +403,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 getString(R.string.list_save_exit),
                                 getString(R.string.showcase_saveexit_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -421,8 +414,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 getString(R.string.showcase_end_title),
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)

@@ -187,8 +187,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mLUtils = LUtils.getInstance(requireActivity())
 
-        mBottomBar?.setBackgroundColor(themeUtils.primaryColor())
-
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
@@ -413,8 +411,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                         getFab(),
                         getString(R.string.title_activity_consegnati),
                         getString(R.string.showcase_consegnati_howto))
-                        .outerCircleColorInt(
-                                themeUtils.primaryColor()) // Specify a color for the outer circle
                         .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                         .textTypeface(mRegularFont) // Specify a typeface for the text
                         .titleTextColor(R.color.primary_text_default_material_dark)
@@ -438,8 +434,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 R.id.confirm_changes,
                                 getString(R.string.title_activity_consegnati),
                                 getString(R.string.showcase_consegnati_confirm))
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -449,8 +443,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                                 R.id.cancel_change,
                                 getString(R.string.title_activity_consegnati),
                                 getString(R.string.showcase_consegnati_cancel))
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -496,8 +488,8 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     newList.add(
                             checkableItem {
                                 isSelected = canto.consegnato > 0
-                                setTitle = it.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))
-                                setPage = it.resources.getString(LUtils.getResId(canto.pagina, R.string::class.java))
+                                setTitle = LUtils.getResId(canto.titolo, R.string::class.java)
+                                setPage = LUtils.getResId(canto.pagina, R.string::class.java)
                                 setColor = canto.color
                                 id = canto.id
                             }

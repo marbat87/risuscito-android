@@ -25,7 +25,7 @@
                 android:id="@+id/action_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorPrimary"
+                android:background="?colorPrimary"
                 android:gravity="bottom"
                 risuscito:layout_collapseMode="parallax">
 

@@ -414,38 +414,5 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val isMenuWorkaroundRequired: Boolean
             get() = Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && ("LGE".equals(Build.MANUFACTURER, ignoreCase = true) || "E6710".equals(Build.DEVICE, ignoreCase = true))
 
-//        @Suppress("DEPRECATION")
-//        private fun getSystemLocaleLegacy(config: Configuration): Locale {
-//            return config.locale
-//        }
-//
-//        @TargetApi(Build.VERSION_CODES.N)
-//        private fun getSystemLocale(config: Configuration): Locale {
-//            return config.locales.get(0)
-//        }
-//
-//        fun getSystemLocalWrapper(config: Configuration): Locale {
-//            return if (LUtils.hasN())
-//                getSystemLocale(config)
-//            else
-//                getSystemLocaleLegacy(config)
-//        }
-
-//        @Suppress("DEPRECATION")
-//        private fun setSystemLocaleLegacy(config: Configuration, locale: Locale) {
-//            config.locale = locale
-//        }
-//
-//        @TargetApi(Build.VERSION_CODES.N)
-//        private fun setSystemLocale(config: Configuration, locale: Locale) {
-//            config.setLocale(locale)
-//        }
-//
-//        fun setSystemLocalWrapper(config: Configuration, locale: Locale) {
-//            if (LUtils.hasN())
-//                setSystemLocale(config, locale)
-//            else
-//                setSystemLocaleLegacy(config, locale)
-//        }
     }
 }

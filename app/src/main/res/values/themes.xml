@@ -5,20 +5,14 @@
 
     <style name="Theme.MyTheme" parent="Base.Theme.MyTheme">
         <item name="fontFamily">@font/googlesans_regular</item>
-        <!-- Set AppCompat’s color theming attrs -->
         <item name="colorPrimary">@color/theme_primary</item>
-        <!--<item name="colorPrimaryDark">@color/theme_primary_dark</item>-->
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
         <item name="colorPrimaryVariant">@color/theme_primary_dark</item>
-
-        <!-- colorAccent is used as the default value for colorControlActivated,
-            which is used to tint widgets -->
-        <!--<item name="colorAccent">@color/theme_accent</item>-->
+        <item name="colorPrimaryLight">@color/theme_primary_light</item>
         <item name="colorSecondary">@color/theme_accent</item>
-        <!--<item name="colorButtonNormal">?colorAccent</item>-->
         <item name="colorControlHighlight">@color/ripple_color</item>
         <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
 
-        <!-- The rest of your attributes -->
         <item name="customSelector">@drawable/custom_list_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
         <item name="customSelectorRoundAccent">@drawable/custom_selector_round_accent</item>
@@ -28,25 +22,20 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
 
         <!-- MaterialDrawer specific values -->
-        <item name="material_drawer_background">?colorSurface</item>
-        <item name="material_drawer_primary_text">?colorOnSurface</item>
-        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>
-        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>
+        <item name="material_drawer_background">@color/risuscito_material_drawer_background</item>
+        <item name="material_drawer_primary_text">?android:textColorPrimary</item>
+        <item name="material_drawer_primary_icon">?android:textColorSecondary</item>
+        <item name="material_drawer_secondary_text">?android:textColorSecondary</item>
         <item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>
         <item name="material_drawer_divider">@color/material_drawer_divider</item>
-        <item name="material_drawer_selected">@color/material_drawer_selected</item>
-        <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
-        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
-        <item name="material_drawer_header_selection_subtext">@color/material_drawer_header_selection_subtext</item>
+        <item name="material_drawer_header_selection_text">?android:textColorPrimary</item>
+        <item name="material_drawer_header_selection_subtext">?android:textColorSecondary</item>
+        <item name="material_drawer_selected_text">?colorPrimary</item>
+        <item name="material_drawer_selected">?colorPrimaryLight</item>
 
         <!-- fix per poter applicare correttamente il tema notturno -->
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
-        <!--<item name="colorBackgroundFloating">@color/floating_background</item>-->
-        <!--<item name="cardBackgroundColor">@color/floating_background</item>-->
-        <!--<item name="android:colorBackgroundFloating" tools:ignore="NewApi">-->
-            <!--@color/floating_background-->
-        <!--</item>-->
         <item name="colorSurface">@color/floating_background</item>
         <item name="android:textColorHint">@color/text_color_secondary</item>
         <item name="android:contextPopupMenuStyle" tools:targetApi="n">@style/PopupMenuStyle</item>
@@ -76,83 +65,1365 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="RisuscitoTheme.Amber">
-        <!--<item name="colorAccent">@color/md_amber_A200</item>-->
+    <style name="RisuscitoTheme.pAmber">
+        <item name="colorPrimary">@color/md_amber_500</item>
+        <item name="colorPrimaryVariant">@color/md_amber_700</item>
+        <item name="colorPrimaryLight">@color/md_amber_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlue">
+        <item name="colorPrimary">@color/md_blue_500</item>
+        <item name="colorPrimaryVariant">@color/md_blue_700</item>
+        <item name="colorPrimaryLight">@color/md_blue_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown">
+        <item name="colorPrimary">@color/md_brown_500</item>
+        <item name="colorPrimaryVariant">@color/md_brown_700</item>
+        <item name="colorPrimaryLight">@color/md_brown_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan">
+        <item name="colorPrimary">@color/md_cyan_500</item>
+        <item name="colorPrimaryVariant">@color/md_cyan_700</item>
+        <item name="colorPrimaryLight">@color/md_cyan_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen">
+        <item name="colorPrimary">@color/md_green_500</item>
+        <item name="colorPrimaryVariant">@color/md_green_700</item>
+        <item name="colorPrimaryLight">@color/md_green_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey">
+        <item name="colorPrimary">@color/md_grey_500</item>
+        <item name="colorPrimaryVariant">@color/md_grey_700</item>
+        <item name="colorPrimaryLight">@color/md_grey_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime">
+        <item name="colorPrimary">@color/md_lime_500</item>
+        <item name="colorPrimaryVariant">@color/md_lime_700</item>
+        <item name="colorPrimaryLight">@color/md_lime_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo">
+        <item name="colorPrimary">@color/md_indigo_500</item>
+        <item name="colorPrimaryVariant">@color/md_indigo_700</item>
+        <item name="colorPrimaryLight">@color/md_indigo_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange">
+        <item name="colorPrimary">@color/md_orange_500</item>
+        <item name="colorPrimaryVariant">@color/md_orange_700</item>
+        <item name="colorPrimaryLight">@color/md_orange_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink">
+        <item name="colorPrimary">@color/md_pink_500</item>
+        <item name="colorPrimaryVariant">@color/md_pink_700</item>
+        <item name="colorPrimaryLight">@color/md_pink_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple">
+        <item name="colorPrimary">@color/md_purple_500</item>
+        <item name="colorPrimaryVariant">@color/md_purple_700</item>
+        <item name="colorPrimaryLight">@color/md_purple_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal">
+        <item name="colorPrimary">@color/md_teal_500</item>
+        <item name="colorPrimaryVariant">@color/md_teal_700</item>
+        <item name="colorPrimaryLight">@color/md_teal_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed">
+        <item name="colorPrimary">@color/md_red_500</item>
+        <item name="colorPrimaryVariant">@color/md_red_700</item>
+        <item name="colorPrimaryLight">@color/md_red_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange">
+        <item name="colorPrimary">@color/md_deep_orange_500</item>
+        <item name="colorPrimaryVariant">@color/md_deep_orange_700</item>
+        <item name="colorPrimaryLight">@color/md_deep_orange_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple">
+        <item name="colorPrimary">@color/md_deep_purple_500</item>
+        <item name="colorPrimaryVariant">@color/md_deep_purple_700</item>
+        <item name="colorPrimaryLight">@color/md_deep_purple_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue">
+        <item name="colorPrimary">@color/md_light_blue_500</item>
+        <item name="colorPrimaryVariant">@color/md_light_blue_700</item>
+        <item name="colorPrimaryLight">@color/md_light_blue_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey">
+        <item name="colorPrimary">@color/md_blue_grey_500</item>
+        <item name="colorPrimaryVariant">@color/md_blue_grey_700</item>
+        <item name="colorPrimaryLight">@color/md_blue_grey_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen">
+        <item name="colorPrimary">@color/md_light_green_500</item>
+        <item name="colorPrimaryVariant">@color/md_light_green_700</item>
+        <item name="colorPrimaryLight">@color/md_light_green_light</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow">
+        <item name="colorPrimary">@color/md_yellow_500</item>
+        <item name="colorPrimaryVariant">@color/md_yellow_700</item>
+        <item name="colorPrimaryLight">@color/md_yellow_light</item>
+    </style>
+
+
+    <!-- AMBER SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Amber">
         <item name="colorSecondary">@color/md_amber_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Blue">
-        <!--<item name="colorAccent">@color/md_blue_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Amber">
+        <item name="colorSecondary">@color/md_amber_A200</item>
+    </style>
+
+
+    <!-- BLUE SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Blue">
         <item name="colorSecondary">@color/md_blue_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Cyan">
-        <!--<item name="colorAccent">@color/md_cyan_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Blue">
+        <item name="colorSecondary">@color/md_blue_A200</item>
+    </style>
+
+
+    <!-- CYAN SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Cyan">
         <item name="colorSecondary">@color/md_cyan_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Green">
-        <!--<item name="colorAccent">@color/md_green_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Cyan">
+        <item name="colorSecondary">@color/md_cyan_A200</item>
+    </style>
+
+
+    <!-- GREEN SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Green">
         <item name="colorSecondary">@color/md_green_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Indigo">
-        <!--<item name="colorAccent">@color/md_indigo_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Green">
+        <item name="colorSecondary">@color/md_green_A200</item>
+    </style>
+
+
+    <!-- INDIGO SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Indigo">
         <item name="colorSecondary">@color/md_indigo_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Lime">
-        <!--<item name="colorAccent">@color/md_lime_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Indigo">
+        <item name="colorSecondary">@color/md_indigo_A200</item>
+    </style>
+
+
+    <!-- LIME SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Lime">
         <item name="colorSecondary">@color/md_lime_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Orange">
-        <!--<item name="colorAccent">@color/md_orange_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Lime">
+        <item name="colorSecondary">@color/md_lime_A200</item>
+    </style>
+
+
+    <!-- ORANGE SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Orange">
         <item name="colorSecondary">@color/md_orange_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Pink">
-        <!--<item name="colorAccent">@color/md_pink_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Orange">
+        <item name="colorSecondary">@color/md_orange_A200</item>
+    </style>
+
+
+    <!-- PINK SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Pink">
         <item name="colorSecondary">@color/md_pink_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Purple">
-        <!--<item name="colorAccent">@color/md_purple_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Pink">
+        <item name="colorSecondary">@color/md_pink_A200</item>
+    </style>
+
+
+    <!-- PURPLE SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Purple">
         <item name="colorSecondary">@color/md_purple_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Teal">
-        <!--<item name="colorAccent">@color/md_teal_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Purple">
+        <item name="colorSecondary">@color/md_purple_A200</item>
+    </style>
+
+
+    <!-- TEAL SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Teal">
         <item name="colorSecondary">@color/md_teal_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Red">
-        <!--<item name="colorAccent">@color/md_red_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Teal">
+        <item name="colorSecondary">@color/md_teal_A200</item>
+    </style>
+
+
+    <!-- RED SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Red">
         <item name="colorSecondary">@color/md_red_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.DeepOrange">
-        <!--<item name="colorAccent">@color/md_deep_orange_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Red">
+        <item name="colorSecondary">@color/md_red_A200</item>
+    </style>
+
+
+    <!-- DEEP ORANGE SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.DeepOrange">
         <item name="colorSecondary">@color/md_deep_orange_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.DeepPurple">
-        <!--<item name="colorAccent">@color/md_deep_purple_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.DeepOrange">
+        <item name="colorSecondary">@color/md_deep_orange_A200</item>
+    </style>
+
+
+    <!-- DEEP PURPLE SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.DeepPurple">
         <item name="colorSecondary">@color/md_deep_purple_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.LightBlue">
-        <!--<item name="colorAccent">@color/md_light_blue_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.DeepPurple">
+        <item name="colorSecondary">@color/md_deep_purple_A200</item>
+    </style>
+
+
+    <!-- LIGHT BLUE SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.LightBlue">
         <item name="colorSecondary">@color/md_light_blue_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.LightGreen">
-        <!--<item name="colorAccent">@color/md_light_green_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.LightBlue">
+        <item name="colorSecondary">@color/md_light_blue_A200</item>
+    </style>
+
+
+    <!-- LIGHT GREEN SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.LightGreen">
         <item name="colorSecondary">@color/md_light_green_A200</item>
     </style>
 
-    <style name="RisuscitoTheme.Yellow">
-        <!--<item name="colorAccent">@color/md_yellow_A200</item>-->
+    <style name="RisuscitoTheme.pBlue.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.LightGreen">
+        <item name="colorSecondary">@color/md_light_green_A200</item>
+    </style>
+
+
+    <!-- YELLOW SECONDARY THEMES -->
+    <style name="RisuscitoTheme.pAmber.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlue.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBrown.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pCyan.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGreen.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pGrey.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pIndigo.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLime.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pOrange.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPink.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pPurple.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pTeal.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pRed.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepOrange.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pDeepPurple.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightBlue.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pBlueGrey.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pLightGreen.Yellow">
+        <item name="colorSecondary">@color/md_yellow_A200</item>
+    </style>
+
+    <style name="RisuscitoTheme.pYellow.Yellow">
         <item name="colorSecondary">@color/md_yellow_A200</item>
     </style>
 

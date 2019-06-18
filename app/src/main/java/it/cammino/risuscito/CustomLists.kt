@@ -244,8 +244,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 getFab(),
                                 getString(R.string.showcase_listepers_title),
                                 getString(R.string.showcase_listepers_desc1))
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -257,8 +255,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                 getFab(),
                                 getString(R.string.showcase_listepers_title),
                                 getString(R.string.showcase_listepers_desc3))
-                                .outerCircleColorInt(
-                                        themeUtils.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .icon(doneDrawable)
                                 .textTypeface(mRegularFont) // Specify a typeface for the text

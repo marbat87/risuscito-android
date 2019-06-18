@@ -1,7 +1,6 @@
 package it.cammino.risuscito
 
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.AsyncTask
 import android.os.AsyncTask.Status
 import android.os.Bundle
@@ -156,8 +155,6 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
 
-        textBoxRicerca.boxStrokeColor = themeUtils.primaryColor()
-        textBoxRicerca.hintTextColor = ColorStateList.valueOf(themeUtils.primaryColor())
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
