@@ -39,7 +39,6 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -65,9 +64,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
             initFabOptions(position >= 2)
         }
     }
-
-    private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

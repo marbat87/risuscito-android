@@ -49,7 +49,6 @@ import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.services.ConsegnatiSaverService
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
@@ -104,9 +103,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         }
     }
-
-    private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

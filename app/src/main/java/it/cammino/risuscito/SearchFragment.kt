@@ -36,7 +36,6 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -59,9 +58,6 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var searchTask: SearchTask? = null
     private var mLastClickTime: Long = 0
     private var mMainActivity: MainActivity? = null
-
-    private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
 
     private lateinit var mViewModel: SimpleIndexViewModel
 
