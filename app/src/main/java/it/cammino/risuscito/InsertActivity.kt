@@ -15,8 +15,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -348,11 +348,9 @@ class InsertActivity : ThemeableActivity() {
     }
 
     private fun subscribeUiFavorites() {
-        mViewModel.insertItemsResult?.observe(
-                this,
-                Observer<List<InsertItem>> { canti ->
-                    mViewModel.titoliInsert = canti.sortedBy { it.title?.getText(this) }
-                })
+        mViewModel.insertItemsResult?.observe(this) { canti ->
+            mViewModel.titoliInsert = canti.sortedBy { it.title?.getText(this) }
+        }
     }
 
     companion object {

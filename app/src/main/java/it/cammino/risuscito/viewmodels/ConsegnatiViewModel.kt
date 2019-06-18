@@ -3,7 +3,7 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -25,7 +25,7 @@ class ConsegnatiViewModel(application: Application) : AndroidViewModel(applicati
 
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
-        mIndexResult = Transformations.map(mDb.consegnatiDao().liveConsegnati) { canti ->
+        mIndexResult = mDb.consegnatiDao().liveConsegnati.map { canti ->
             val newList = ArrayList<SimpleItem>()
             canti.forEach {
                 newList.add(

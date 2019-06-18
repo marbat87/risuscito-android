@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.appbar.AppBarLayout
 import com.michaelflisar.changelog.ChangelogBuilder
@@ -14,19 +14,17 @@ import kotlinx.android.synthetic.main.changelog_layout.*
 
 class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListener {
 
-    private var mViewModel: ChangelogViewModel? = null
+    private val mViewModel: ChangelogViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.changelog_layout)
 
-        mViewModel = ViewModelProviders.of(this).get(ChangelogViewModel::class.java)
-
         setSupportActionBar(risuscito_toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        if (mViewModel?.appBarIsExpanded == true)
+        if (mViewModel.appBarIsExpanded)
             Utility.setupTransparentTints(this, Color.TRANSPARENT, false)
         else
             Utility.setupTransparentTints(
@@ -73,15 +71,11 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
      * @param verticalOffset the vertical offset for the parent [AppBarLayout], in px
      */
     override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
-        mViewModel?.appBarIsExpanded = verticalOffset >= -100
-        if (mViewModel?.appBarIsExpanded == true)
-            Utility.setupTransparentTints(
-                    this,
-                    Color.TRANSPARENT,
-                    false)
-        else
-            Utility.setupTransparentTints(
-                    this, themeUtils.primaryColorDark(), false)
+        mViewModel.appBarIsExpanded = verticalOffset >= -100
+        Utility.setupTransparentTints(
+                this,
+                if (mViewModel.appBarIsExpanded) Color.TRANSPARENT else themeUtils.primaryColorDark(),
+                false)
     }
 
     companion object {

@@ -12,8 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -158,18 +158,16 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onNegative(tag: String) {}
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.itemsResult?.observe(
-                this,
-                Observer<List<SimpleItem>> { canti ->
-                    mAdapter.set(
-                            when (mCantiViewModel.tipoLista) {
-                                0 -> canti.sortedBy { it.title?.getText(context) }
-                                1 -> canti.sortedBy { it.page?.getText(context)?.toInt() }
-                                2 -> canti
-                                else -> canti
-                            }
-                    )
-                })
+        mCantiViewModel.itemsResult?.observe(this) { canti ->
+            mAdapter.set(
+                    when (mCantiViewModel.tipoLista) {
+                        0 -> canti.sortedBy { it.title?.getText(context) }
+                        1 -> canti.sortedBy { it.page?.getText(context)?.toInt() }
+                        2 -> canti
+                        else -> canti
+                    }
+            )
+        }
     }
 
     companion object {

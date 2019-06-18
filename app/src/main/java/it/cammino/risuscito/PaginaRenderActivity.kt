@@ -18,6 +18,7 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SeekBar
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
@@ -26,7 +27,6 @@ import androidx.core.net.toUri
 import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
-import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -82,7 +82,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private val mRiuscitoDb: RisuscitoDatabase
         get() = RisuscitoDatabase.getInstance(this)
 
-    private lateinit var mViewModel: PaginaRenderViewModel
+    private val mViewModel: PaginaRenderViewModel by viewModels()
     private var url: String? = null
     private var personalUrl: String? = null
     private var localUrl: String? = null
@@ -359,8 +359,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagina_render)
-
-        mViewModel = ViewModelProviders.of(this).get(PaginaRenderViewModel::class.java)
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 

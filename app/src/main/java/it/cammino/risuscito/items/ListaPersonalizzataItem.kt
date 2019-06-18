@@ -10,11 +10,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
-import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
 import kotlinx.android.synthetic.main.generic_card_item.view.*
@@ -37,11 +35,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
             field = value
         }
 
-    private var selectedColor: ColorHolder? = null
-    var setSelectedColor: Any? = null
-        set(value) {
-            selectedColor = helperSetColor(value)
-        }
     var createClickListener: View.OnClickListener? = null
     var createLongClickListener: View.OnLongClickListener? = null
 
@@ -105,8 +98,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                     if (canto.ismSelected()) {
                         itemView.text_page.visibility = View.INVISIBLE
                         itemView.selected_mark.visibility = View.VISIBLE
-                        val bgShape = itemView.selected_mark.background as? GradientDrawable
-                        bgShape?.setColor(selectedColor?.colorInt ?: Color.WHITE)
                         cantoView.isSelected = true
                     } else {
                         val bgShape = itemView.text_page.background as? GradientDrawable

@@ -3,7 +3,7 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -19,7 +19,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
-        mFavoritesResult = Transformations.map(mDb.favoritesDao().liveFavorites) { canti ->
+        mFavoritesResult = mDb.favoritesDao().liveFavorites.map { canti ->
             val newList = ArrayList<SimpleItem>()
             canti.forEach {
                 newList.add(

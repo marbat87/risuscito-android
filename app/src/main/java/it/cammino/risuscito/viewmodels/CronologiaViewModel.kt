@@ -3,7 +3,7 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -18,7 +18,7 @@ class CronologiaViewModel(application: Application) : AndroidViewModel(applicati
 
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
-        cronologiaCanti = Transformations.map(mDb.cronologiaDao().liveCronologia) { canti ->
+        cronologiaCanti = mDb.cronologiaDao().liveCronologia.map { canti ->
             val newList = ArrayList<SimpleHistoryItem>()
             canti.forEach {
                 newList.add(

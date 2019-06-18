@@ -13,8 +13,8 @@ import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -31,7 +31,6 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -39,7 +38,7 @@ import kotlinx.android.synthetic.main.layout_history.*
 
 class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
-    private lateinit var mCronologiaViewModel: CronologiaViewModel
+    private val mCronologiaViewModel: CronologiaViewModel by viewModels()
     private var cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleHistoryItem>? = null
 
@@ -49,14 +48,9 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
-    private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.layout_history, container, false)
-
-        mCronologiaViewModel = ViewModelProviders.of(this).get(CronologiaViewModel::class.java)
 
         mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_history)
@@ -209,7 +203,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
             contentInsetStartRes(R.dimen.mcab_default_content_inset)
             menuRes = R.menu.menu_delete
-            backgroundColor = themeUtils.primaryColorDark()
 
             onCreate { _, _ ->
                 Log.d(TAG, "MaterialCab onCreate")
@@ -248,13 +241,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun subscribeUiHistory() {
-        mCronologiaViewModel.cronologiaCanti?.observe(
-                this,
-                Observer {
-                    cantoAdapter.set(it)
-                    no_history?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-                    activity?.invalidateOptionsMenu()
-                })
+        mCronologiaViewModel.cronologiaCanti?.observe(this) {
+            cantoAdapter.set(it)
+            no_history?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+            activity?.invalidateOptionsMenu()
+        }
     }
 
     companion object {

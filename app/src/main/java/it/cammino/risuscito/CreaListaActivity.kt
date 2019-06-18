@@ -15,12 +15,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
 import androidx.core.view.ViewCompat
-import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -60,7 +60,7 @@ import kotlin.collections.ArrayList
 
 class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback, ItemTouchCallback, SimpleSwipeCallback.ItemSwipeCallback {
 
-    private lateinit var mViewModel: CreaListaViewModel
+    private val mViewModel: CreaListaViewModel by viewModels()
     private var celebrazione: ListaPersonalizzata? = null
     private var titoloLista: String? = null
     private var modifica: Boolean = false
@@ -75,8 +75,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crea_lista)
-
-        mViewModel = ViewModelProviders.of(this).get(CreaListaViewModel::class.java)
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 

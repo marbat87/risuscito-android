@@ -13,8 +13,8 @@ import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -31,14 +31,13 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import kotlinx.android.synthetic.main.activity_favourites.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
-    private lateinit var mFavoritesViewModel: FavoritesViewModel
+    private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
@@ -46,20 +45,14 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
-    private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.activity_favourites, container, false)
 
-        mFavoritesViewModel = ViewModelProviders.of(this).get(FavoritesViewModel::class.java)
-
-        mMainActivity = requireActivity() as MainActivity
+        mMainActivity = requireActivity() as? MainActivity
         Log.d(TAG, "onCreateView: isOnTablet " + mMainActivity?.isOnTablet)
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_favourites)
-
         mMainActivity?.setTabVisible(false)
 
         mLUtils = LUtils.getInstance(requireActivity())
@@ -215,7 +208,6 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
             contentInsetStartRes(R.dimen.mcab_default_content_inset)
             menuRes = R.menu.menu_delete
-            backgroundColor = themeUtils.primaryColorDark()
 
             onCreate { _, _ ->
                 Log.d(TAG, "MaterialCab onCreate")
@@ -250,13 +242,11 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun subscribeUiFavorites() {
-        mFavoritesViewModel.mFavoritesResult?.observe(
-                this,
-                Observer { canti ->
-                    cantoAdapter.set(canti.sortedBy { it.title?.getText(context) })
-                    no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-                    activity?.invalidateOptionsMenu()
-                })
+        mFavoritesViewModel.mFavoritesResult?.observe(this) { canti ->
+            cantoAdapter.set(canti.sortedBy { it.title?.getText(context) })
+            no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+            activity?.invalidateOptionsMenu()
+        }
     }
 
     companion object {

@@ -17,8 +17,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -77,9 +77,6 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         }
 
         try {
-//            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(
-//                    requireActivity().resources.configuration)
-//                    .language) {
             val inputStream: InputStream = when (getSystemLocale(resources).language) {
                 LANGUAGE_UKRAINIAN -> requireActivity().assets.open("fileout_uk.xml")
                 LANGUAGE_ENGLISH -> requireActivity().assets.open("fileout_en.xml")
@@ -270,8 +267,6 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
                                 text = text.toLowerCase(getSystemLocale(fragment.resources))
-//                                        ThemeableActivity.getSystemLocalWrapper(
-//                                                fragment.requireActivity().resources.configuration))
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -325,11 +320,9 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun subscribeUiCanti() {
-        mViewModel.itemsResult?.observe(
-                this,
-                Observer<List<SimpleItem>> { canti ->
-                    mViewModel.titoli = canti.sortedBy { it.title?.getText(context) }
-                })
+        mViewModel.itemsResult?.observe(this) { canti ->
+            mViewModel.titoli = canti.sortedBy { it.title?.getText(context) }
+        }
     }
 
     companion object {

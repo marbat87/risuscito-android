@@ -13,8 +13,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
@@ -36,7 +36,6 @@ import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
@@ -71,8 +70,6 @@ class ListaPredefinitaFragment : Fragment() {
 
     private val titlesList: String
         get() {
-
-//            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
             val l = getSystemLocale(resources)
             val result = StringBuilder()
             var progressivePos = 0
@@ -172,13 +169,7 @@ class ListaPredefinitaFragment : Fragment() {
                     result.append(getTitoloToSendFromPosition(progressivePos))
                 }
             }
-
             return result.toString()
-        }
-
-    private val themeUtils: ThemeUtils
-        get() {
-            return (activity as MainActivity).themeUtils
         }
 
     private val click = OnClickListener { v ->
@@ -309,7 +300,6 @@ class ListaPredefinitaFragment : Fragment() {
             }
             createClickListener = click
             createLongClickListener = longClick
-            setSelectedColor = themeUtils.primaryColorDark()
             id = tag
         }
     }
@@ -358,7 +348,6 @@ class ListaPredefinitaFragment : Fragment() {
                 popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
                 contentInsetStartRes(R.dimen.mcab_default_content_inset)
                 menuRes = R.menu.menu_actionmode_lists
-                backgroundColor = themeUtils.primaryColorDark()
 
                 onCreate { _, menu ->
                     Log.d(TAG, "MaterialCab onCreate")
@@ -412,66 +401,64 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun subscribeUiFavorites() {
-        mCantiViewModel.cantiResult?.observe(
-                this,
-                Observer<List<Posizione>> { mCanti ->
-                    var progressiveTag = 0
-                    val pref = PreferenceManager.getDefaultSharedPreferences(context)
-                    posizioniList.clear()
+        mCantiViewModel.cantiResult?.observe(this) { mCanti ->
+            var progressiveTag = 0
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            posizioniList.clear()
 
-                    when (mCantiViewModel.defaultListaId) {
-                        1 -> {
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
+            when (mCantiViewModel.defaultListaId) {
+                1 -> {
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
 
-                            if (pref.getBoolean(Utility.SHOW_PACE, false))
-                                posizioniList.add(
-                                        getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
+                    if (pref.getBoolean(Utility.SHOW_PACE, false))
+                        posizioniList.add(
+                                getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
 
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
-                        }
-                        2 -> {
-                            posizioniList.add(
-                                    getCantofromPosition(
-                                            mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                }
+                2 -> {
+                    posizioniList.add(
+                            getCantofromPosition(
+                                    mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
 
-                            if (pref.getBoolean(Utility.SHOW_SECONDA, false))
-                                posizioniList.add(
-                                        getCantofromPosition(
-                                                mCanti, getString(R.string.seconda_lettura), 6, progressiveTag++))
+                    if (pref.getBoolean(Utility.SHOW_SECONDA, false))
+                        posizioniList.add(
+                                getCantofromPosition(
+                                        mCanti, getString(R.string.seconda_lettura), 6, progressiveTag++))
 
-                            posizioniList.add(
-                                    getCantofromPosition(
-                                            mCanti, getString(R.string.canto_pace), 2, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(
+                                    mCanti, getString(R.string.canto_pace), 2, progressiveTag++))
 
-                            if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
-                                posizioniList.add(
-                                        getCantofromPosition(
-                                                mCanti, getString(R.string.canto_offertorio), 8, progressiveTag++))
+                    if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
+                        posizioniList.add(
+                                getCantofromPosition(
+                                        mCanti, getString(R.string.canto_offertorio), 8, progressiveTag++))
 
-                            if (pref.getBoolean(Utility.SHOW_SANTO, false))
-                                posizioniList.add(
-                                        getCantofromPosition(mCanti, getString(R.string.santo), 7, progressiveTag++))
+                    if (pref.getBoolean(Utility.SHOW_SANTO, false))
+                        posizioniList.add(
+                                getCantofromPosition(mCanti, getString(R.string.santo), 7, progressiveTag++))
 
-                            posizioniList.add(
-                                    getCantofromPosition(
-                                            mCanti, getString(R.string.canto_pane), 3, progressiveTag++))
-                            posizioniList.add(
-                                    getCantofromPosition(
-                                            mCanti, getString(R.string.canto_vino), 4, progressiveTag++))
-                            posizioniList.add(
-                                    getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
-                        }
-                    }
-                    cantoAdapter?.set(posizioniList)
-                })
+                    posizioniList.add(
+                            getCantofromPosition(
+                                    mCanti, getString(R.string.canto_pane), 3, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(
+                                    mCanti, getString(R.string.canto_vino), 4, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                }
+            }
+            cantoAdapter?.set(posizioniList)
+        }
     }
 
     companion object {

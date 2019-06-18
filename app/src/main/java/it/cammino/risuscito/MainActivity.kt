@@ -13,13 +13,13 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -66,7 +66,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
-    private lateinit var mViewModel: MainActivityViewModel
+    private val mViewModel: MainActivityViewModel by viewModels()
     private lateinit var profileIcon: IconicsDrawable
     private var mLUtils: LUtils? = null
     var drawer: Drawer? = null
@@ -114,8 +114,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         super.hasNavDrawer = true
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)

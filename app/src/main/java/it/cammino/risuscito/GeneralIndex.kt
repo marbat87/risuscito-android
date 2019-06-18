@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
@@ -17,13 +17,11 @@ class GeneralIndex : Fragment() {
 
     private var mMainActivity: MainActivity? = null
 
-    private lateinit var mViewModel: GeneralIndexViewModel
+    private val mViewModel: GeneralIndexViewModel by viewModels()
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.tabs_layout, container, false)
-
-        mViewModel = ViewModelProviders.of(this).get(GeneralIndexViewModel::class.java)
 
         mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)

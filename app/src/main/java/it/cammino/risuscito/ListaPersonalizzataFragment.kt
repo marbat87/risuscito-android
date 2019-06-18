@@ -15,8 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
@@ -29,7 +29,6 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -62,8 +61,6 @@ class ListaPersonalizzataFragment : Fragment() {
 
     private val titlesList: String
         get() {
-
-//            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
             val l = getSystemLocale(resources)
             val result = StringBuilder()
             result.append("-- ").append(mCantiViewModel.listaPersonalizzata?.name?.toUpperCase(l)).append(" --\n")
@@ -90,9 +87,6 @@ class ListaPersonalizzataFragment : Fragment() {
 
             return result.toString()
         }
-
-    private val themeUtils: ThemeUtils
-        get() = (activity as MainActivity).themeUtils
 
     private val click = OnClickListener { v ->
         if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
@@ -273,7 +267,6 @@ class ListaPersonalizzataFragment : Fragment() {
             popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
             contentInsetStartRes(R.dimen.mcab_default_content_inset)
             menuRes = R.menu.menu_actionmode_lists
-            backgroundColor = themeUtils.primaryColorDark()
 
             onCreate { _, _ ->
                 Log.d(TAG, "MaterialCab onCreate")
@@ -350,18 +343,15 @@ class ListaPersonalizzataFragment : Fragment() {
     }
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.listaPersonalizzataResult?.observe(
-                this,
-                Observer { listaPersonalizzataResult ->
-                    mCantiViewModel.posizioniList = listaPersonalizzataResult.map {
-                        it.apply {
-                            createClickListener = click
-                            createLongClickListener = longClick
-                            setSelectedColor = themeUtils.primaryColorDark()
-                        }
-                    }
-                    cantoAdapter.set(mCantiViewModel.posizioniList)
-                })
+        mCantiViewModel.listaPersonalizzataResult?.observe(this) { listaPersonalizzataResult ->
+            mCantiViewModel.posizioniList = listaPersonalizzataResult.map {
+                it.apply {
+                    createClickListener = click
+                    createLongClickListener = longClick
+                }
+            }
+            cantoAdapter.set(mCantiViewModel.posizioniList)
+        }
     }
 
 

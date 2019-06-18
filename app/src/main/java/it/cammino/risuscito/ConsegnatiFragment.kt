@@ -16,8 +16,8 @@ import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -59,8 +59,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
 
-    private lateinit var mCantiViewModel: ConsegnatiViewModel
-    private var rootView: View? = null
+    private val mCantiViewModel: ConsegnatiViewModel by viewModels()
     private var selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<CheckableItem>? = null
     private var mBottomBar: BottomAppBar? = null
@@ -106,9 +105,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.layout_consegnati, container, false)
-
-        mCantiViewModel = ViewModelProviders.of(this).get(ConsegnatiViewModel::class.java)
+        val rootView = inflater.inflate(R.layout.layout_consegnati, container, false)
 
         mMainActivity = activity as? MainActivity
 
@@ -459,15 +456,11 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun subscribeUiConsegnati() {
-        mCantiViewModel
-                .mIndexResult?.observe(
-                this,
-                Observer { cantos ->
-                    Log.d(TAG, "onChanged: " + (cantos != null))
-                    mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
-                    cantoAdapter.set(mCantiViewModel.titoli)
-                    no_consegnati?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
-                })
+        mCantiViewModel.mIndexResult?.observe(this) { cantos ->
+            mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
+            cantoAdapter.set(mCantiViewModel.titoli)
+            no_consegnati?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+        }
     }
 
     private class UpdateChooseListTask internal constructor(fragment: ConsegnatiFragment) : AsyncTask<Void, Void, Void>() {

@@ -12,8 +12,8 @@ import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -47,7 +47,7 @@ import kotlinx.android.synthetic.main.tabs_layout2.*
 
 class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 
-    private lateinit var mCustomListsViewModel: CustomListsViewModel
+    private val mCustomListsViewModel: CustomListsViewModel by viewModels()
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private var titoliListe: Array<String?> = arrayOfNulls(0)
     private var idListe: IntArray = IntArray(0)
@@ -68,8 +68,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.tabs_layout2, container, false)
-
-        mCustomListsViewModel = ViewModelProviders.of(this).get(CustomListsViewModel::class.java)
 
         mMainActivity = activity as? MainActivity
 
@@ -272,28 +270,24 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     private fun subscribeUiListe() {
-        mCustomListsViewModel.customListResult?.observe(
-                this,
-                Observer { list ->
-                    list?.let {
-                        Log.d(TAG, "list size ${list.size}")
-                        titoliListe = arrayOfNulls(it.size)
-                        idListe = IntArray(it.size)
+        mCustomListsViewModel.customListResult?.observe(this) { list ->
+            Log.d(TAG, "list size ${list.size}")
+            titoliListe = arrayOfNulls(list.size)
+            idListe = IntArray(list.size)
 
-                        for (i in it.indices) {
-                            titoliListe[i] = it[i].titolo
-                            idListe[i] = it[i].id
-                        }
-                        Log.i(TAG, "movePage: $movePage")
-                        Log.i(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
-                        if (movePage) {
-                            view_pager.currentItem = mCustomListsViewModel.indexToShow
-                            mCustomListsViewModel.indexToShow = 0
-                            movePage = false
-                        }
-                        mSectionsPagerAdapter?.notifyDataSetChanged()
-                    } ?: Log.d(TAG, "lista NULLA")
-                })
+            for (i in list.indices) {
+                titoliListe[i] = list[i].titolo
+                idListe[i] = list[i].id
+            }
+            Log.i(TAG, "movePage: $movePage")
+            Log.i(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
+            if (movePage) {
+                view_pager.currentItem = mCustomListsViewModel.indexToShow
+                mCustomListsViewModel.indexToShow = 0
+                movePage = false
+            }
+            mSectionsPagerAdapter?.notifyDataSetChanged()
+        }
     }
 
     private inner class SectionsPagerAdapter internal constructor(fm: Fragment) : FragmentStateAdapter(fm) {

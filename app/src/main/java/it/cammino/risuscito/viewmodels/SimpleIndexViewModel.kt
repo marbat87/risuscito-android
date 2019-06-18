@@ -3,7 +3,7 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mikepenz.fastadapter.IItem
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
@@ -31,7 +31,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
         val mDb = RisuscitoDatabase.getInstance(getApplication())
         when (tipoLista) {
             0, 1 ->
-                itemsResult = Transformations.map(mDb.cantoDao().liveAll) { canti ->
+                itemsResult = mDb.cantoDao().liveAll.map { canti ->
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
@@ -48,7 +48,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     newList
                 }
             2 ->
-                itemsResult = Transformations.map(mDb.salmiDao().liveAll) { canti ->
+                itemsResult = mDb.salmiDao().liveAll.map { canti ->
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
@@ -65,7 +65,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     newList
                 }
             3 ->
-                insertItemsResult = Transformations.map(mDb.consegnatiDao().liveChoosen) { canti ->
+                insertItemsResult = mDb.consegnatiDao().liveChoosen.map { canti ->
                     val newList = ArrayList<InsertItem>()
                     canti.forEach {
                         newList.add(
