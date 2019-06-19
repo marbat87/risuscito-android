@@ -17,6 +17,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 fun simpleItem(block: SimpleItem.() -> Unit): SimpleItem = SimpleItem().apply(block)
@@ -107,11 +108,11 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
         // set the text for the name
         filter?.let {
             if (it.isNotEmpty()) {
-                val normalizedTitle = Utility.removeAccents(title?.getText(holder.itemView.context)
+                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
                         ?: "")
                 val mPosition = normalizedTitle.toLowerCase().indexOf(it)
                 if (mPosition >= 0) {
-                    val stringTitle = title?.getText(holder.itemView.context)
+                    val stringTitle = title?.getText(ctx)
                     val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
                             ?: "") else "")
                             .append("<b>")
@@ -129,23 +130,15 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
                 holder.view,
                 FastAdapterUIUtils.getSelectableBackground(
                         ctx,
-                        ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
+                        ContextCompat.getColor(ctx, R.color.ripple_color),
                         true))
 
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
         holder.mPage?.visibility = if (isSelected) View.INVISIBLE else View.VISIBLE
         holder.mPageSelected?.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
-
-//        if (isSelected) {
-//            holder.mPage?.visibility = View.INVISIBLE
-//            holder.mPageSelected?.visibility = View.VISIBLE
-//        } else {
-//            val bgShape = holder.mPage?.background as? GradientDrawable
-//            bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-//            holder.mPage?.visibility = View.VISIBLE
-//            holder.mPageSelected?.visibility = View.INVISIBLE
-//        }
+        val bgShapeSelected = holder.mPageSelected?.background as? GradientDrawable
+        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
 
         holder.mId?.text = id.toString()
 

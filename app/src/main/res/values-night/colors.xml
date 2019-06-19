@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="risuscito_material_background">@color/design_dark_default_color_background</color>
     <color name="risuscito_material_drawer_background">@color/design_dark_default_color_surface</color>
     <color name="text_color_primary">@color/design_dark_default_color_on_background</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_dark</color>

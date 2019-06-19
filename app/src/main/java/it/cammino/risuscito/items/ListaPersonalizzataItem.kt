@@ -93,7 +93,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                             cantoView,
                             FastAdapterUIUtils.getSelectableBackground(
                                     context,
-                                    ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
+                                    ContextCompat.getColor(context, R.color.ripple_color),
                                     true))
                     if (canto.ismSelected()) {
                         itemView.text_page.visibility = View.INVISIBLE

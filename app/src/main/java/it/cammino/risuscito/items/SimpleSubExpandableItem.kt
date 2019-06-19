@@ -99,7 +99,7 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
                         ContextCompat.getColor(ctx, R.color.ripple_color),
                         10))
         // set the text for the name
-        val newTitle = "${title?.getText(holder.view.context)} ($totItems)"
+        val newTitle = "${title?.getText(ctx)} ($totItems)"
         holder.mTitle?.text = newTitle
         StringHolder.applyToOrHide(subTitle, holder.mSubTitle)
 

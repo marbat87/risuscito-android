@@ -192,13 +192,13 @@ object Utility {
 
     @SuppressLint("NewApi")
     fun setupTransparentTints(context: Activity, color: Int, hasNavDrawer: Boolean) {
-        if (!hasNavDrawer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (!hasNavDrawer && LUtils.hasL())
             context.window.statusBarColor = color
     }
 
     @SuppressLint("NewApi")
     fun setupNavBarColor(context: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (LUtils.hasO()) {
             context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
             context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))

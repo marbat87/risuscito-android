@@ -4,12 +4,9 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
-import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
@@ -78,29 +75,29 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         super.bindView(holder, payloads)
 
         // get the context
-        val ctx = holder.itemView.context
+//        val ctx = holder.itemView.context
 
         // set the text for the name
         StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
         StringHolder.applyToOrHide(page, holder.mPage)
 
-        ViewCompat.setBackground(
-                holder.view,
-                FastAdapterUIUtils.getSelectableBackground(
-                        ctx,
-                        ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
-                        true))
+//        ViewCompat.setBackground(
+//                holder.view,
+//                FastAdapterUIUtils.getSelectableBackground(
+//                        ctx,
+//                        ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
+//                        true))
 
-        if (isSelected) {
-            holder.mPage?.visibility = View.INVISIBLE
-            holder.mPageSelected?.visibility = View.VISIBLE
-        } else {
-            val bgShape = holder.mPage?.background as? GradientDrawable
-            bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-            holder.mPage?.visibility = View.VISIBLE
-            holder.mPageSelected?.visibility = View.INVISIBLE
-        }
+//        if (isSelected) {
+//            holder.mPage?.visibility = View.INVISIBLE
+//            holder.mPageSelected?.visibility = View.VISIBLE
+//        } else {
+        val bgShape = holder.mPage?.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        holder.mPage?.visibility = View.VISIBLE
+        holder.mPageSelected?.visibility = View.INVISIBLE
+//        }
 
         holder.mId?.text = id.toString()
 

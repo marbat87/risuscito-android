@@ -15,6 +15,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.row_item_history.view.*
 import java.sql.Date
 import java.text.DateFormat
@@ -102,13 +103,15 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
                 holder.view,
                 FastAdapterUIUtils.getSelectableBackground(
                         ctx,
-                        ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
+                        ContextCompat.getColor(ctx, R.color.ripple_color),
                         true))
 
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
         holder.mPage?.visibility = if (isSelected) View.INVISIBLE else View.VISIBLE
         holder.mPageSelected?.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+        val bgShapeSelected = holder.mPageSelected?.background as? GradientDrawable
+        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
 
         holder.mId?.text = id.toString()
 
@@ -116,7 +119,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
             val df = DateFormat.getDateTimeInstance(
                     DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
-//                    DateFormat.SHORT, DateFormat.MEDIUM, ThemeableActivity.getSystemLocalWrapper(ctx.resources.configuration))
             val tempTimestamp: String
 
             val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.text.toString()))

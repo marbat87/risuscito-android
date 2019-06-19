@@ -52,6 +52,9 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
+        // get the context
+        val ctx = holder.itemView.context
+
         //set the text for the name
         StringHolder.applyTo(name, holder.name)
         //set the text for the description or hide
@@ -62,9 +65,9 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
         var swipedAction: CharSequence? = null
         var swipedText: CharSequence? = null
         if (swipedDirection != 0) {
-            swipedAction = holder.itemView.context.getString(android.R.string.cancel)
-            swipedText = holder.itemView.context.getString(R.string.generic_removed, name?.text)
-            holder.swipeResultContent?.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
+            swipedAction = ctx.getString(android.R.string.cancel)
+            swipedText = ctx.getString(R.string.generic_removed, name?.text)
+            holder.swipeResultContent?.setBackgroundColor(ContextCompat.getColor(ctx, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
         }
         holder.swipedAction?.text = swipedAction ?: ""
         holder.swipedText?.text = swipedText ?: ""

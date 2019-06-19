@@ -76,14 +76,17 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
+        // get the context
+        val ctx = holder.itemView.context
+
         //set the text for the name
         filter?.let {
             if (it.isNotEmpty()) {
-                val normalizedTitle = Utility.removeAccents(title?.getText(holder.itemView.context)
+                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
                         ?: "")
                 val mPosition = normalizedTitle.toLowerCase().indexOf(it)
                 if (mPosition >= 0) {
-                    val stringTitle = title?.getText(holder.itemView.context)
+                    val stringTitle = title?.getText(ctx)
                     val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
                             ?: "") else "")
                             .append("<b>")
