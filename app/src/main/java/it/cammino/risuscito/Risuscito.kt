@@ -8,9 +8,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -19,15 +17,15 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.material.snackbar.Snackbar
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.utils.ThemeUtils
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_risuscito.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.PermissionRequest
 
-class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
+class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.PermissionCallbacks {
 
     private var mMainActivity: MainActivity? = null
-    private lateinit var rootView: View
     private val signInVisibility = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // Implement UI change code here once notification is received
@@ -44,29 +42,16 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.activity_risuscito, container, false)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         mMainActivity = activity as? MainActivity
 
+        mMainActivity?.setupToolbarTitle(R.string.activity_homepage)
+        mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
-        Log.d(
-                TAG,
-                "onCreateView: signed in = " + PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(Utility.SIGNED_IN, false))
         checkStoragePermissions()
-
-        return rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mMainActivity?.setupToolbarTitle(R.string.activity_homepage)
-        sign_in_button?.setSize(SignInButton.SIZE_WIDE)
-        mMainActivity?.setTabVisible(false)
 
         imageView1.setOnClickListener {
             if (mMainActivity?.isOnTablet == true)
@@ -75,12 +60,12 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
                 mMainActivity?.drawer?.openDrawer()
         }
 
+        sign_in_button.setSize(SignInButton.SIZE_WIDE)
         sign_in_button.visibility = if (PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.SIGNED_IN, false))
             View.INVISIBLE
         else
             View.VISIBLE
-
         sign_in_button.setOnClickListener {
             mMainActivity?.setShowSnackbar()
             mMainActivity?.signIn()
@@ -138,14 +123,14 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onPermissionsGranted(requestCode: Int, list: List<String>) {
         // Some permissions have been
         Log.d(TAG, "onPermissionsGranted: ")
-        Snackbar.make(rootView, getString(R.string.permission_ok), Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(requireActivity().main_content, getString(R.string.permission_ok), Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onPermissionsDenied(requestCode: Int, list: List<String>) {
         // Some permissions have been denied
         Log.d(TAG, "onPermissionsDenied: ")
         PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.SAVE_LOCATION, "0") }
-        Snackbar.make(rootView, getString(R.string.external_storage_denied), Snackbar.LENGTH_SHORT)
+        Snackbar.make(requireActivity().main_content, getString(R.string.external_storage_denied), Snackbar.LENGTH_SHORT)
                 .show()
     }
 

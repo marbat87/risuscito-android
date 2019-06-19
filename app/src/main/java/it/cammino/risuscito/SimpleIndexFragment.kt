@@ -5,9 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
@@ -31,7 +29,7 @@ import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.index_list_fragment.*
 
-class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialogFragment.SimpleCallback {
 
     private val mCantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
@@ -41,7 +39,6 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private lateinit var mAdapter: FastScrollIndicatorAdapter
     private var listePersonalizzate: List<ListaPers>? = null
-    private var rootView: View? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
     private var mActivity: MainActivity? = null
@@ -51,14 +48,13 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         subscribeUiChanges()
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.index_list_fragment, container, false)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mActivity = activity as? MainActivity
+    }
 
-//        val args = Bundle().apply {
-//            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
-//        }
-//        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         mLUtils = LUtils.getInstance(requireActivity())
         mAdapter = FastScrollIndicatorAdapter(mCantiViewModel.tipoLista, requireContext())
@@ -78,16 +74,6 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         })
         fragment?.setmCallback(this)
 
-        return rootView
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mActivity = activity as? MainActivity
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         mAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {

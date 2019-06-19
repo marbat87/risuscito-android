@@ -55,7 +55,7 @@ import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.layout_consegnati.*
 import java.lang.ref.WeakReference
 
-class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFragment.SimpleCallback {
 
     private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
 
@@ -67,64 +67,20 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
     private var mRegularFont: Typeface? = null
-    private val positionBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.d(javaClass.name, ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED)
-                Log.d(
-                        javaClass.name,
-                        "$ConsegnatiSaverService.DATA_DONE: ${intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0)}")
-                val fragment = ProgressDialogFragment.findVisible(
-                        mMainActivity, CONSEGNATI_SAVING)
-                fragment?.setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0))
-            } catch (e: IllegalArgumentException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            }
-
-        }
-    }
-    private val completedBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.d(javaClass.name, "BROADCAST_SAVING_COMPLETED")
-                val fragment = ProgressDialogFragment.findVisible(
-                        mMainActivity, CONSEGNATI_SAVING)
-                fragment?.dismiss()
-                chooseRecycler?.visibility = View.GONE
-                enableBottombar(false)
-                selected_view?.visibility = View.VISIBLE
-                enableFab(true)
-            } catch (e: IllegalArgumentException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            }
-
-        }
-    }
-
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.layout_consegnati, container, false)
-
-        mMainActivity = activity as? MainActivity
-
-        mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
-
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_consegnati)
-
-        return rootView
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
+
+        mMainActivity = activity as? MainActivity
+        mMainActivity?.setupToolbarTitle(R.string.title_activity_consegnati)
+        mMainActivity?.setTabVisible(false)
+        initFab()
         mBottomBar = if (mMainActivity?.isOnTablet == true)
             bottom_bar
         else
             activity?.bottom_bar
-
-        mMainActivity?.setTabVisible(false)
-        initFab()
 
         mBottomBar?.let {
             it.menu?.clear()
@@ -495,6 +451,43 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             fragmentReference.get()?.let {
                 it.selectableAdapter.set(it.mCantiViewModel.titoliChooseFiltered)
             }
+        }
+    }
+
+    private val positionBRec = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            // Implement UI change code here once notification is received
+            try {
+                Log.d(javaClass.name, ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED)
+                Log.d(
+                        javaClass.name,
+                        "$ConsegnatiSaverService.DATA_DONE: ${intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0)}")
+                val fragment = ProgressDialogFragment.findVisible(
+                        mMainActivity, CONSEGNATI_SAVING)
+                fragment?.setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0))
+            } catch (e: IllegalArgumentException) {
+                Log.e(javaClass.name, e.localizedMessage, e)
+            }
+
+        }
+    }
+
+    private val completedBRec = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            // Implement UI change code here once notification is received
+            try {
+                Log.d(javaClass.name, "BROADCAST_SAVING_COMPLETED")
+                val fragment = ProgressDialogFragment.findVisible(
+                        mMainActivity, CONSEGNATI_SAVING)
+                fragment?.dismiss()
+                chooseRecycler?.visibility = View.GONE
+                enableBottombar(false)
+                selected_view?.visibility = View.VISIBLE
+                enableFab(true)
+            } catch (e: IllegalArgumentException) {
+                Log.e(javaClass.name, e.localizedMessage, e)
+            }
+
         }
     }
 

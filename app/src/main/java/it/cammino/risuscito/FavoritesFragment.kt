@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -36,24 +39,23 @@ import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import kotlinx.android.synthetic.main.activity_favourites.*
 import kotlinx.android.synthetic.main.activity_main.*
 
-class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFragment.SimpleCallback {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
-    private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
+    private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.activity_favourites, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         mMainActivity = requireActivity() as? MainActivity
-        Log.d(TAG, "onCreateView: isOnTablet " + mMainActivity?.isOnTablet)
-
         mMainActivity?.setupToolbarTitle(R.string.title_activity_favourites)
         mMainActivity?.setTabVisible(false)
+        mMainActivity?.enableBottombar(false)
+        mMainActivity?.enableFab(false)
 
         mLUtils = LUtils.getInstance(requireActivity())
 
@@ -68,14 +70,6 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         val sFragment = SimpleDialogFragment.findVisible(mMainActivity, FAVORITES_RESET)
         sFragment?.setmCallback(this)
-        return rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        mMainActivity?.enableBottombar(false)
-        mMainActivity?.enableFab(false)
 
         cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
             var consume = false

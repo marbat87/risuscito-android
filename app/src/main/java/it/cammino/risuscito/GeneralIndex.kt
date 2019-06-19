@@ -1,9 +1,7 @@
 package it.cammino.risuscito
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -13,28 +11,21 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
 import kotlinx.android.synthetic.main.tabs_layout.*
 
-class GeneralIndex : Fragment() {
+class GeneralIndex : Fragment(R.layout.tabs_layout) {
 
     private var mMainActivity: MainActivity? = null
 
     private val mViewModel: GeneralIndexViewModel by viewModels()
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.tabs_layout, container, false)
-
-        mMainActivity = activity as? MainActivity
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
-
-        return rootView
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mMainActivity = activity as? MainActivity
+        mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
         mMainActivity?.setTabVisible(true)
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
+
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             view_pager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")

@@ -7,7 +7,10 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -45,7 +48,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.lista_pers_button.view.*
 import kotlinx.android.synthetic.main.tabs_layout2.*
 
-class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
+class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 
     private val mCustomListsViewModel: CustomListsViewModel by viewModels()
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
@@ -65,15 +68,15 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         }
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.tabs_layout2, container, false)
-
-        mMainActivity = activity as? MainActivity
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
 
+        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
+        mMainActivity?.enableBottombar(false)
+        mMainActivity?.setTabVisible(true)
 
         movePage = savedInstanceState != null
 
@@ -90,15 +93,8 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false))
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false)) playIntro()
 
-        return rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         mSectionsPagerAdapter = SectionsPagerAdapter(this)
-        mMainActivity?.enableBottombar(false)
 
-        mMainActivity?.setTabVisible(true)
         tabs = mMainActivity?.getMaterialTabs()
         tabs?.visibility = View.VISIBLE
         view_pager.adapter = mSectionsPagerAdapter

@@ -2,37 +2,25 @@ package it.cammino.risuscito
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.vansuita.materialabout.builder.AboutBuilder
 import kotlinx.android.synthetic.main.about_layout.*
 
 
-class AboutFragment : Fragment() {
+class AboutFragment : Fragment(R.layout.about_layout) {
 
     private var mMainActivity: MainActivity? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.about_layout, container, false)
-
-        mMainActivity = activity as? MainActivity
-
-        mMainActivity?.enableFab(false)
-        mMainActivity?.enableBottombar(false)
-        mMainActivity?.enableBottombar(false)
-        mMainActivity?.setTabVisible(false)
-
-        return rootView
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_about)
+        mMainActivity?.setTabVisible(false)
+        mMainActivity?.enableFab(false)
+        mMainActivity?.enableBottombar(false)
 
         val mChangeLogClickListener = View.OnClickListener {
             startActivity(Intent(mMainActivity, ChangelogActivity::class.java))

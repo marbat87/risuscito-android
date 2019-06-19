@@ -5,11 +5,9 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -44,8 +42,7 @@ import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
 
-class ListaPredefinitaFragment : Fragment() {
-
+class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata) {
 
     private val mCantiViewModel: DefaultListaViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
@@ -56,15 +53,232 @@ class ListaPredefinitaFragment : Fragment() {
     private var posizioneDaCanc: Int = 0
     private var idDaCanc: Int = 0
     private var timestampDaCanc: String? = null
-    private var rootView: View? = null
     private var mSwhitchMode: Boolean = false
-    private var posizioniList: ArrayList<ListaPersonalizzataItem> = ArrayList()
+    private val posizioniList: ArrayList<ListaPersonalizzataItem> = ArrayList()
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
-    private var cantoAdapter: FastItemAdapter<ListaPersonalizzataItem>? = null
+    private val cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
     private var mLUtils: LUtils? = null
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        mMainActivity = activity as? MainActivity
+
+        mLUtils = LUtils.getInstance(requireActivity())
+        mSwhitchMode = false
+
+        // Creating new adapter object
+        cantoAdapter.setHasStableIds(true)
+        cantoAdapter.set(posizioniList)
+        recycler_list?.adapter = cantoAdapter
+
+        // Setting the layoutManager
+        recycler_list?.layoutManager = LinearLayoutManager(activity)
+
+        subscribeUiFavorites()
+
+        button_pulisci.setOnClickListener {
+            ListeUtils.cleanList(requireContext(), mCantiViewModel.defaultListaId)
+        }
+
+        button_condividi.setOnClickListener {
+            val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
+            bottomSheetDialog.show(requireFragmentManager(), null)
+        }
+    }
+
+    override fun onDestroy() {
+        destroy()
+        super.onDestroy()
+    }
+
+    private fun getCantofromPosition(
+            posizioni: List<Posizione>, title: String, position: Int, tag: Int): ListaPersonalizzataItem {
+        return listaPersonalizzataItem {
+            posizioneTitleItem {
+                titoloPosizione = title
+                idPosizione = position
+                tagPosizione = tag
+                isMultiple = when (mCantiViewModel.defaultListaId) {
+                    2 -> (position == 4 || position == 3)
+                    else -> false
+                }
+            }
+            listItem = posizioni.filter { it.position == position }.map {
+                posizioneItem {
+                    withTitle(LUtils.getResId(it.titolo, R.string::class.java))
+                    withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                    withSource(LUtils.getResId(it.source, R.string::class.java))
+                    withColor(it.color ?: Canto.BIANCO)
+                    withId(it.id)
+                    withTimestamp(it.timestamp?.time.toString())
+                }
+            }
+            createClickListener = click
+            createLongClickListener = longClick
+            id = tag
+        }
+    }
+
+    // recupera il titolo del canto in posizione "position" nella lista "list"
+    private fun getTitoloToSendFromPosition(position: Int): String {
+        val result = StringBuilder()
+
+        val items = posizioniList[position].listItem
+
+        if (!items.isNullOrEmpty()) {
+            for (tempItem in items) {
+                result
+                        .append(tempItem.title?.getText(context))
+                        .append(" - ")
+                        .append(getString(R.string.page_contracted))
+                        .append(tempItem.page?.getText(context))
+                result.append("\n")
+            }
+        } else {
+            result.append(">> ").append(getString(R.string.to_be_chosen)).append(" <<")
+            result.append("\n")
+        }
+
+        return result.toString()
+    }
+
+    private fun snackBarRimuoviCanto(view: View) {
+        destroy()
+        val parent = view.parent.parent as? View
+        longclickedPos = Integer.valueOf(parent?.generic_tag?.text.toString())
+        longClickedChild = Integer.valueOf(view.item_tag.text.toString())
+        if (mMainActivity?.isOnTablet != true)
+            activity?.toolbar_layout?.setExpanded(true, true)
+        startCab(false)
+    }
+
+    private fun startCab(switchMode: Boolean) {
+        mMainActivity?.let {
+            mSwhitchMode = switchMode
+            MaterialCab.attach(it, R.id.cab_stub) {
+                if (switchMode)
+                    titleRes(R.string.switch_started)
+                else
+                    title = resources.getQuantityString(R.plurals.item_selected, 1, 1)
+                popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
+                contentInsetStartRes(R.dimen.mcab_default_content_inset)
+                menuRes = R.menu.menu_actionmode_lists
+
+                onCreate { _, menu ->
+                    Log.d(TAG, "MaterialCab onCreate")
+                    posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
+                    cantoAdapter.notifyItemChanged(longclickedPos)
+                    menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_shuffle)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorInt(Color.WHITE)
+                    menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_delete)
+                            .sizeDp(24)
+                            .paddingDp(2)
+                            .colorInt(Color.WHITE)
+                }
+
+                onSelection { item ->
+                    Log.d(TAG, "MaterialCab onSelection")
+                    when (item.itemId) {
+                        R.id.action_remove_item -> {
+                            destroy()
+                            ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc
+                                    ?: "")
+                            true
+                        }
+                        R.id.action_switch_item -> {
+                            startCab(true)
+                            Toast.makeText(
+                                    activity,
+                                    resources.getString(R.string.switch_tooltip),
+                                    Toast.LENGTH_SHORT)
+                                    .show()
+                            true
+                        }
+                        else -> false
+                    }
+                }
+
+                onDestroy {
+                    //                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                    mSwhitchMode = false
+                    try {
+                        posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
+                        cantoAdapter.notifyItemChanged(longclickedPos)
+                    } catch (e: Exception) {
+                        Crashlytics.logException(e)
+                    }
+                    true
+                }
+            }
+        }
+    }
+
+    private fun subscribeUiFavorites() {
+        mCantiViewModel.cantiResult?.observe(this) { mCanti ->
+            var progressiveTag = 0
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            posizioniList.clear()
+
+            when (mCantiViewModel.defaultListaId) {
+                1 -> {
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
+
+                    if (pref.getBoolean(Utility.SHOW_PACE, false))
+                        posizioniList.add(
+                                getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
+
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                }
+                2 -> {
+                    posizioniList.add(
+                            getCantofromPosition(
+                                    mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
+
+                    if (pref.getBoolean(Utility.SHOW_SECONDA, false))
+                        posizioniList.add(
+                                getCantofromPosition(
+                                        mCanti, getString(R.string.seconda_lettura), 6, progressiveTag++))
+
+                    posizioniList.add(
+                            getCantofromPosition(
+                                    mCanti, getString(R.string.canto_pace), 2, progressiveTag++))
+
+                    if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
+                        posizioniList.add(
+                                getCantofromPosition(
+                                        mCanti, getString(R.string.canto_offertorio), 8, progressiveTag++))
+
+                    if (pref.getBoolean(Utility.SHOW_SANTO, false))
+                        posizioniList.add(
+                                getCantofromPosition(mCanti, getString(R.string.santo), 7, progressiveTag++))
+
+                    posizioniList.add(
+                            getCantofromPosition(
+                                    mCanti, getString(R.string.canto_pane), 3, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(
+                                    mCanti, getString(R.string.canto_vino), 4, progressiveTag++))
+                    posizioniList.add(
+                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
+                }
+            }
+            cantoAdapter.set(posizioniList)
+        }
+    }
 
     private val defaultIntent: Intent
         get() {
@@ -234,237 +448,6 @@ class ListaPredefinitaFragment : Fragment() {
         timestampDaCanc = v.text_timestamp.text.toString()
         snackBarRimuoviCanto(v)
         true
-    }
-
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
-
-//        val args = Bundle().apply {
-//            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
-//        }
-//        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(DefaultListaViewModel::class.java)
-
-        mMainActivity = activity as? MainActivity
-
-        mLUtils = LUtils.getInstance(requireActivity())
-        mSwhitchMode = false
-
-        return rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // Creating new adapter object
-        cantoAdapter = FastItemAdapter()
-        cantoAdapter?.setHasStableIds(true)
-        cantoAdapter?.set(posizioniList)
-        recycler_list?.adapter = cantoAdapter
-
-        // Setting the layoutManager
-        recycler_list?.layoutManager = LinearLayoutManager(activity)
-
-        subscribeUiFavorites()
-
-        button_pulisci.setOnClickListener {
-            ListeUtils.cleanList(requireContext(), mCantiViewModel.defaultListaId)
-        }
-
-        button_condividi.setOnClickListener {
-            val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
-            bottomSheetDialog.show(requireFragmentManager(), null)
-        }
-    }
-
-    override fun onDestroy() {
-        destroy()
-        super.onDestroy()
-    }
-
-    private fun getCantofromPosition(
-            posizioni: List<Posizione>, title: String, position: Int, tag: Int): ListaPersonalizzataItem {
-        return listaPersonalizzataItem {
-            posizioneTitleItem {
-                titoloPosizione = title
-                idPosizione = position
-                tagPosizione = tag
-                isMultiple = when (mCantiViewModel.defaultListaId) {
-                    2 -> (position == 4 || position == 3)
-                    else -> false
-                }
-            }
-            listItem = posizioni.filter { it.position == position }.map {
-                posizioneItem {
-                    withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                    withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                    withSource(LUtils.getResId(it.source, R.string::class.java))
-                    withColor(it.color ?: Canto.BIANCO)
-                    withId(it.id)
-                    withTimestamp(it.timestamp?.time.toString())
-                }
-            }
-            createClickListener = click
-            createLongClickListener = longClick
-            id = tag
-        }
-    }
-
-    // recupera il titolo del canto in posizione "position" nella lista "list"
-    private fun getTitoloToSendFromPosition(position: Int): String {
-        val result = StringBuilder()
-
-        val items = posizioniList[position].listItem
-
-        if (!items.isNullOrEmpty()) {
-            for (tempItem in items) {
-                result
-                        .append(tempItem.title?.getText(context))
-                        .append(" - ")
-                        .append(getString(R.string.page_contracted))
-                        .append(tempItem.page?.getText(context))
-                result.append("\n")
-            }
-        } else {
-            result.append(">> ").append(getString(R.string.to_be_chosen)).append(" <<")
-            result.append("\n")
-        }
-
-        return result.toString()
-    }
-
-    private fun snackBarRimuoviCanto(view: View) {
-        destroy()
-        val parent = view.parent.parent as? View
-        longclickedPos = Integer.valueOf(parent?.generic_tag?.text.toString())
-        longClickedChild = Integer.valueOf(view.item_tag.text.toString())
-        if (mMainActivity?.isOnTablet != true)
-            activity?.toolbar_layout?.setExpanded(true, true)
-        startCab(false)
-    }
-
-    private fun startCab(switchMode: Boolean) {
-        mMainActivity?.let {
-            mSwhitchMode = switchMode
-            MaterialCab.attach(it, R.id.cab_stub) {
-                if (switchMode)
-                    titleRes(R.string.switch_started)
-                else
-                    title = resources.getQuantityString(R.plurals.item_selected, 1, 1)
-                popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
-                contentInsetStartRes(R.dimen.mcab_default_content_inset)
-                menuRes = R.menu.menu_actionmode_lists
-
-                onCreate { _, menu ->
-                    Log.d(TAG, "MaterialCab onCreate")
-                    posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
-                    cantoAdapter?.notifyItemChanged(longclickedPos)
-                    menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_shuffle)
-                            .sizeDp(24)
-                            .paddingDp(2)
-                            .colorInt(Color.WHITE)
-                    menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_delete)
-                            .sizeDp(24)
-                            .paddingDp(2)
-                            .colorInt(Color.WHITE)
-                }
-
-                onSelection { item ->
-                    Log.d(TAG, "MaterialCab onSelection")
-                    when (item.itemId) {
-                        R.id.action_remove_item -> {
-                            destroy()
-                            ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc
-                                    ?: "")
-                            true
-                        }
-                        R.id.action_switch_item -> {
-                            startCab(true)
-                            Toast.makeText(
-                                    activity,
-                                    resources.getString(R.string.switch_tooltip),
-                                    Toast.LENGTH_SHORT)
-                                    .show()
-                            true
-                        }
-                        else -> false
-                    }
-                }
-
-                onDestroy {
-                    //                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
-                    mSwhitchMode = false
-                    try {
-                        posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
-                        cantoAdapter?.notifyItemChanged(longclickedPos)
-                    } catch (e: Exception) {
-                        Crashlytics.logException(e)
-                    }
-                    true
-                }
-            }
-        }
-    }
-
-    private fun subscribeUiFavorites() {
-        mCantiViewModel.cantiResult?.observe(this) { mCanti ->
-            var progressiveTag = 0
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            posizioniList.clear()
-
-            when (mCantiViewModel.defaultListaId) {
-                1 -> {
-                    posizioniList.add(
-                            getCantofromPosition(mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
-                    posizioniList.add(
-                            getCantofromPosition(mCanti, getString(R.string.prima_lettura), 2, progressiveTag++))
-                    posizioniList.add(
-                            getCantofromPosition(mCanti, getString(R.string.seconda_lettura), 3, progressiveTag++))
-                    posizioniList.add(
-                            getCantofromPosition(mCanti, getString(R.string.terza_lettura), 4, progressiveTag++))
-
-                    if (pref.getBoolean(Utility.SHOW_PACE, false))
-                        posizioniList.add(
-                                getCantofromPosition(mCanti, getString(R.string.canto_pace), 6, progressiveTag++))
-
-                    posizioniList.add(
-                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
-                }
-                2 -> {
-                    posizioniList.add(
-                            getCantofromPosition(
-                                    mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++))
-
-                    if (pref.getBoolean(Utility.SHOW_SECONDA, false))
-                        posizioniList.add(
-                                getCantofromPosition(
-                                        mCanti, getString(R.string.seconda_lettura), 6, progressiveTag++))
-
-                    posizioniList.add(
-                            getCantofromPosition(
-                                    mCanti, getString(R.string.canto_pace), 2, progressiveTag++))
-
-                    if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
-                        posizioniList.add(
-                                getCantofromPosition(
-                                        mCanti, getString(R.string.canto_offertorio), 8, progressiveTag++))
-
-                    if (pref.getBoolean(Utility.SHOW_SANTO, false))
-                        posizioniList.add(
-                                getCantofromPosition(mCanti, getString(R.string.santo), 7, progressiveTag++))
-
-                    posizioniList.add(
-                            getCantofromPosition(
-                                    mCanti, getString(R.string.canto_pane), 3, progressiveTag++))
-                    posizioniList.add(
-                            getCantofromPosition(
-                                    mCanti, getString(R.string.canto_vino), 4, progressiveTag++))
-                    posizioniList.add(
-                            getCantofromPosition(mCanti, getString(R.string.canto_fine), 5, progressiveTag))
-                }
-            }
-            cantoAdapter?.set(posizioniList)
-        }
     }
 
     companion object {

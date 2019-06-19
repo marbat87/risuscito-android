@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -36,10 +39,10 @@ import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_history.*
 
-class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.SimpleCallback {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
-    private var cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
+    private val cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleHistoryItem>? = null
 
     private var actionModeOk: Boolean = false
@@ -48,13 +51,13 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.layout_history, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_history)
-
+        mMainActivity?.enableBottombar(false)
+        mMainActivity?.enableFab(false)
         mMainActivity?.setTabVisible(false)
 
         mLUtils = LUtils.getInstance(requireActivity())
@@ -70,13 +73,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         val sFragment = SimpleDialogFragment.findVisible(mMainActivity, RESET_HISTORY)
         sFragment?.setmCallback(this)
-        return rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mMainActivity?.enableBottombar(false)
-        mMainActivity?.enableFab(false)
 
         cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
             var consume = false

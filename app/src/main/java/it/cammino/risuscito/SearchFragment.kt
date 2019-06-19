@@ -9,9 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
@@ -47,31 +45,30 @@ import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
 
-class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.SimpleCallback {
+
+    private val mViewModel: SimpleIndexViewModel by viewModels {
+        ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
+    }
 
     internal val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private lateinit var aTexts: Array<Array<String?>>
 
-    private var rootView: View? = null
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
     private var searchTask: SearchTask? = null
     private var mLastClickTime: Long = 0
     private var mMainActivity: MainActivity? = null
 
-    private val mViewModel: SimpleIndexViewModel by viewModels {
-        ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
-    }
-
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.search_layout, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_search)
+        mMainActivity?.setTabVisible(false)
+        mMainActivity?.enableFab(false)
+        mMainActivity?.enableBottombar(false)
 
-//        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, 0) }
-//        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
@@ -104,16 +101,6 @@ class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
 
         subscribeUiCanti()
-
-        return rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        mMainActivity?.setTabVisible(false)
-        mMainActivity?.enableFab(false)
-        mMainActivity?.enableBottombar(false)
 
         textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 

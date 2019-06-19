@@ -5,11 +5,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -38,123 +36,37 @@ import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.lista_pers_button.*
 
-class ListaPersonalizzataFragment : Fragment() {
-
-    private lateinit var cantoDaCanc: String
+class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizzata) {
 
     private val mCantiViewModel: ListaPersonalizzataViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
         })
     }
+
+    private lateinit var cantoDaCanc: String
     private var posizioneDaCanc: Int = 0
-    private var rootView: View? = null
     private var mSwhitchMode: Boolean = false
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
-    private var cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
+    private val cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
-
-    private val shareIntent: Intent
-        get() = Intent(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_TEXT, titlesList)
-                .setType("text/plain")
-
-    private val titlesList: String
-        get() {
-            val l = getSystemLocale(resources)
-            val result = StringBuilder()
-            result.append("-- ").append(mCantiViewModel.listaPersonalizzata?.name?.toUpperCase(l)).append(" --\n")
-            for (i in 0 until (mCantiViewModel.listaPersonalizzata?.numPosizioni ?: 0)) {
-                result.append(mCantiViewModel.listaPersonalizzata?.getNomePosizione(i)?.toUpperCase(l)).append("\n")
-                if (!mCantiViewModel.listaPersonalizzata?.getCantoPosizione(i).isNullOrEmpty()) {
-                    mCantiViewModel.posizioniList[i].listItem?.let {
-                        for (tempItem in it) {
-                            result
-                                    .append(tempItem.title?.getText(context))
-                                    .append(" - ")
-                                    .append(getString(R.string.page_contracted))
-                                    .append(tempItem.page?.getText(context))
-                            result.append("\n")
-                        }
-                    }
-                } else {
-                    result.append(">> ").append(getString(R.string.to_be_chosen)).append(" <<")
-                    result.append("\n")
-                }
-                if (i < (mCantiViewModel.listaPersonalizzata?.numPosizioni
-                                ?: 0) - 1) result.append("\n")
-            }
-
-            return result.toString()
-        }
-
-    private val click = OnClickListener { v ->
-        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
-        mLastClickTime = SystemClock.elapsedRealtime()
-        val parent = v.parent.parent as View
-        if (parent.addCantoGenerico.isVisible) {
-            if (mSwhitchMode) {
-                scambioConVuoto(
-                        Integer.valueOf(parent.text_id_posizione.text.toString()))
-            } else {
-                if (!MaterialCab.isActive) {
-                    val intent = Intent(activity, InsertActivity::class.java)
-                    intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 0,
-                            InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
-                            InsertActivity.POSITION to Integer.valueOf(parent.text_id_posizione.text.toString())))
-                    parentFragment?.startActivityForResult(intent, TAG_INSERT_PERS)
-                    Animatoo.animateShrink(activity)
-                }
-            }
-        } else {
-            if (!mSwhitchMode)
-                if (MaterialCab.isActive) {
-                    posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
-                    snackBarRimuoviCanto(v)
-                } else
-                    openPagina(v)
-            else {
-                scambioCanto(
-                        Integer.valueOf(parent.text_id_posizione.text.toString()))
-            }
-        }
-    }
-
-    private val longClick = OnLongClickListener { v ->
-        val parent = v.parent.parent as View
-        posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
-        snackBarRimuoviCanto(v)
-        true
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         subscribeUiChanges()
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = inflater.inflate(R.layout.activity_lista_personalizzata, container, false)
-
-//        val args = Bundle().apply {
-//            putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
-//        }
-//        mCantiViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(requireActivity().application, args)).get(ListaPersonalizzataViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         mMainActivity = activity as? MainActivity
 
         mLUtils = LUtils.getInstance(requireActivity())
         mSwhitchMode = false
-
-        return rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         // Creating new adapter object
         cantoAdapter.setHasStableIds(true)
@@ -358,6 +270,78 @@ class ListaPersonalizzataFragment : Fragment() {
         }
     }
 
+    private val shareIntent: Intent
+        get() = Intent(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_TEXT, titlesList)
+                .setType("text/plain")
+
+    private val titlesList: String
+        get() {
+            val l = getSystemLocale(resources)
+            val result = StringBuilder()
+            result.append("-- ").append(mCantiViewModel.listaPersonalizzata?.name?.toUpperCase(l)).append(" --\n")
+            for (i in 0 until (mCantiViewModel.listaPersonalizzata?.numPosizioni ?: 0)) {
+                result.append(mCantiViewModel.listaPersonalizzata?.getNomePosizione(i)?.toUpperCase(l)).append("\n")
+                if (!mCantiViewModel.listaPersonalizzata?.getCantoPosizione(i).isNullOrEmpty()) {
+                    mCantiViewModel.posizioniList[i].listItem?.let {
+                        for (tempItem in it) {
+                            result
+                                    .append(tempItem.title?.getText(context))
+                                    .append(" - ")
+                                    .append(getString(R.string.page_contracted))
+                                    .append(tempItem.page?.getText(context))
+                            result.append("\n")
+                        }
+                    }
+                } else {
+                    result.append(">> ").append(getString(R.string.to_be_chosen)).append(" <<")
+                    result.append("\n")
+                }
+                if (i < (mCantiViewModel.listaPersonalizzata?.numPosizioni
+                                ?: 0) - 1) result.append("\n")
+            }
+
+            return result.toString()
+        }
+
+    private val click = OnClickListener { v ->
+        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
+        mLastClickTime = SystemClock.elapsedRealtime()
+        val parent = v.parent.parent as View
+        if (parent.addCantoGenerico.isVisible) {
+            if (mSwhitchMode) {
+                scambioConVuoto(
+                        Integer.valueOf(parent.text_id_posizione.text.toString()))
+            } else {
+                if (!MaterialCab.isActive) {
+                    val intent = Intent(activity, InsertActivity::class.java)
+                    intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 0,
+                            InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
+                            InsertActivity.POSITION to Integer.valueOf(parent.text_id_posizione.text.toString())))
+                    parentFragment?.startActivityForResult(intent, TAG_INSERT_PERS)
+                    Animatoo.animateShrink(activity)
+                }
+            }
+        } else {
+            if (!mSwhitchMode)
+                if (MaterialCab.isActive) {
+                    posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
+                    snackBarRimuoviCanto(v)
+                } else
+                    openPagina(v)
+            else {
+                scambioCanto(
+                        Integer.valueOf(parent.text_id_posizione.text.toString()))
+            }
+        }
+    }
+
+    private val longClick = OnLongClickListener { v ->
+        val parent = v.parent.parent as View
+        posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
+        snackBarRimuoviCanto(v)
+        true
+    }
 
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
