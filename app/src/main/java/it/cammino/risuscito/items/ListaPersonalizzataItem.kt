@@ -15,6 +15,7 @@ import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
+import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
@@ -96,6 +97,8 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                                     ContextCompat.getColor(context, R.color.ripple_color),
                                     true))
                     if (canto.ismSelected()) {
+                        val bgShape = itemView.selected_mark.background as? GradientDrawable
+                        bgShape?.setColor(context.themeColor(R.attr.colorSecondary))
                         itemView.text_page.visibility = View.INVISIBLE
                         itemView.selected_mark.visibility = View.VISIBLE
                         cantoView.isSelected = true
