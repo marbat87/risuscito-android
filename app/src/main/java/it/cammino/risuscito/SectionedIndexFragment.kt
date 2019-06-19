@@ -142,7 +142,6 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                     mCantiViewModel.titoliList.clear()
                     var mSubItems = LinkedList<ISubItem<*>>()
                     var totCanti = 0
-                    var totListe = 0
 
                     for (i in canti.indices) {
                         mSubItems.add(
@@ -164,7 +163,6 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                                     simpleSubExpandableItem {
                                         setTitle = LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)
                                         totItems = totCanti
-                                        position = totListe++
                                         onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                             if (!item.isExpanded) {
                                                 if (mActivity?.isGridLayout == true)
@@ -192,7 +190,6 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                     mCantiViewModel.titoliList.clear()
                     var mSubItems = LinkedList<ISubItem<*>>()
                     var totCanti = 0
-                    var totListe = 0
 
                     for (i in canti.indices) {
                         mSubItems.add(
@@ -214,7 +211,6 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                                     simpleSubExpandableItem {
                                         setTitle = LUtils.getResId(canti[i].nome, R.string::class.java)
                                         totItems = totCanti
-                                        position = totListe++
                                         onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                             if (!item.isExpanded) {
                                                 if (mActivity?.isGridLayout == true)
@@ -237,7 +233,10 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                     }
                 }
             }
+
+            var totListe = 0
             mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(context) }
+            mCantiViewModel.titoliList.forEach { (it as? SimpleSubExpandableItem)?.position = totListe++ }
             mAdapter.set(mCantiViewModel.titoliList)
             mAdapter.withSavedInstanceState(savedInstanceState)
         }
@@ -250,9 +249,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        var mOutState = outState
-        if (isResumed)
-            mOutState = mAdapter.saveInstanceState(mOutState) ?: Bundle()
+        val mOutState = mAdapter.saveInstanceState(outState) ?: Bundle()
         super.onSaveInstanceState(mOutState)
     }
 
