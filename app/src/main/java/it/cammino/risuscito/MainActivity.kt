@@ -259,8 +259,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             })
         }.withActivity(this).build()
 
-        val selectedColorLight = themeUtils.primaryColorLight()
-
         val mDrawerBuilder = DrawerBuilder().apply {
             risuscito_toolbar?.let {
                 withToolbar(it)
@@ -272,56 +270,47 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .withName(R.string.activity_homepage)
                             .withIcon(CommunityMaterial.Icon2.cmd_home)
                             .withIdentifier(R.id.navigation_home.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.search_name_text)
                             .withIcon(CommunityMaterial.Icon2.cmd_magnify)
                             .withIdentifier(R.id.navigation_search.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_general_index)
                             .withIcon(CommunityMaterial.Icon2.cmd_view_list)
                             .withIdentifier(R.id.navigation_indexes.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_custom_lists)
                             .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
                             .withIdentifier(R.id.navitagion_lists.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.action_favourites)
                             .withIcon(CommunityMaterial.Icon2.cmd_heart)
                             .withIdentifier(R.id.navigation_favorites.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_consegnati)
                             .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
                             .withIdentifier(R.id.navigation_consegnati.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_history)
                             .withIcon(CommunityMaterial.Icon2.cmd_history)
                             .withIdentifier(R.id.navigation_history.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_settings)
                             .withIcon(CommunityMaterial.Icon2.cmd_settings)
                             .withIdentifier(R.id.navigation_settings.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont),
                     DividerDrawerItem(),
                     PrimaryDrawerItem()
                             .withName(R.string.title_activity_about)
                             .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
                             .withIdentifier(R.id.navigation_changelog.toLong())
-                            .withSelectedColor(selectedColorLight)
                             .withTypeface(mMediumFont))
             withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
@@ -395,8 +384,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
             // define the other one
-            crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-            crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
+            crossFader?.crossFadeSlidingPaneLayout?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
+            crossFader?.crossFadeSlidingPaneLayout?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
         } else {
             drawer = mDrawerBuilder.build()
             drawer?.drawerLayout?.setStatusBarBackgroundColor(themeUtils.primaryColorDark())
@@ -416,7 +405,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
 
         if (isOnTablet) {
-            if (crossFader?.isCrossFaded() == true) {
+            if (crossFader?.isCrossFaded == true) {
                 crossFader?.crossFade()
                 return
             }

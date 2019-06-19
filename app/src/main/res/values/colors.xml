@@ -6,7 +6,7 @@
     <color name="theme_primary">@color/md_indigo_500</color>
     <color name="theme_accent">@color/md_orange_A200</color>
     <color name="theme_primary_dark">@color/md_indigo_700</color>
-    <color name="theme_primary_light">@color/md_indigo_light</color>
+    <color name="theme_primary_light">@color/md_indigo_200</color>
     <color name="ripple_color">#4D000000</color>
     <color name="ripple_color_light">#12000000</color>
 
@@ -40,6 +40,24 @@
     <color name="md_blue_grey_light">#1F607D8B</color>
     <color name="md_light_green_light">#1F8BC34A</color>
     <color name="md_yellow_light">#1FFFEB3B</color>
+
+    <!--  light colors: 8% opacity -->
+    <color name="md_accent_amber_light">#14FFD740</color>
+    <color name="md_accent_blue_light">#14448AFF</color>
+    <color name="md_accent_cyan_light">#1418FFFF</color>
+    <color name="md_accent_green_light">#1469F0AE</color>
+    <color name="md_accent_indigo_light">#14536DFE</color>
+    <color name="md_accent_lime_light">#14EEFF41</color>
+    <color name="md_accent_orange_light">#14FFAB40</color>
+    <color name="md_accent_pink_light">#14FFAB40</color>
+    <color name="md_accent_purple_light">#14E040FB</color>
+    <color name="md_accent_red_light">#14FF5252</color>
+    <color name="md_accent_teal_light">#1464FFDA</color>
+    <color name="md_accent_deep_orange_light">#14FF6E40</color>
+    <color name="md_accent_deep_purple_light">#147C4DFF</color>
+    <color name="md_accent_light_blue_light">#1440C4FF</color>
+    <color name="md_accent_light_green_light">#14B2FF59</color>
+    <color name="md_accent_yellow_light">#14FFFF00</color>
 
 </resources>
 

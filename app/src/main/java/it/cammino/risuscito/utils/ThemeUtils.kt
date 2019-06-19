@@ -42,26 +42,26 @@ class ThemeUtils(context: Activity) {
                 , ContextCompat.getColor(mContext, R.color.md_yellow_500) to ContextCompat.getColor(mContext, R.color.md_yellow_700)
         )
 
-        mPrimaryLightMap = hashMapOf(ContextCompat.getColor(mContext, R.color.md_amber_500) to ContextCompat.getColor(mContext, R.color.md_amber_light)
-                , ContextCompat.getColor(mContext, R.color.md_blue_500) to ContextCompat.getColor(mContext, R.color.md_blue_light)
-                , ContextCompat.getColor(mContext, R.color.md_brown_500) to ContextCompat.getColor(mContext, R.color.md_brown_light)
-                , ContextCompat.getColor(mContext, R.color.md_cyan_500) to ContextCompat.getColor(mContext, R.color.md_cyan_light)
-                , ContextCompat.getColor(mContext, R.color.md_green_500) to ContextCompat.getColor(mContext, R.color.md_green_light)
-                , ContextCompat.getColor(mContext, R.color.md_grey_500) to ContextCompat.getColor(mContext, R.color.md_grey_light)
-                , ContextCompat.getColor(mContext, R.color.md_indigo_500) to ContextCompat.getColor(mContext, R.color.md_indigo_light)
-                , ContextCompat.getColor(mContext, R.color.md_lime_500) to ContextCompat.getColor(mContext, R.color.md_lime_light)
-                , ContextCompat.getColor(mContext, R.color.md_orange_500) to ContextCompat.getColor(mContext, R.color.md_orange_light)
-                , ContextCompat.getColor(mContext, R.color.md_pink_500) to ContextCompat.getColor(mContext, R.color.md_pink_light)
-                , ContextCompat.getColor(mContext, R.color.md_purple_500) to ContextCompat.getColor(mContext, R.color.md_purple_light)
-                , ContextCompat.getColor(mContext, R.color.md_teal_500) to ContextCompat.getColor(mContext, R.color.md_teal_light)
-                , ContextCompat.getColor(mContext, R.color.md_red_500) to ContextCompat.getColor(mContext, R.color.md_red_light)
-                , ContextCompat.getColor(mContext, R.color.md_deep_orange_500) to ContextCompat.getColor(mContext, R.color.md_deep_orange_light)
-                , ContextCompat.getColor(mContext, R.color.md_deep_purple_500) to ContextCompat.getColor(mContext, R.color.md_deep_purple_light)
-                , ContextCompat.getColor(mContext, R.color.md_light_blue_500) to ContextCompat.getColor(mContext, R.color.md_light_blue_light)
-                , ContextCompat.getColor(mContext, R.color.md_blue_grey_500) to ContextCompat.getColor(mContext, R.color.md_blue_grey_light)
-                , ContextCompat.getColor(mContext, R.color.md_light_green_500) to ContextCompat.getColor(mContext, R.color.md_light_green_light)
-                , ContextCompat.getColor(mContext, R.color.md_yellow_500) to ContextCompat.getColor(mContext, R.color.md_yellow_light)
-        )
+//        mPrimaryLightMap = hashMapOf(ContextCompat.getColor(mContext, R.color.md_amber_500) to ContextCompat.getColor(mContext, R.color.md_amber_light)
+//                , ContextCompat.getColor(mContext, R.color.md_blue_500) to ContextCompat.getColor(mContext, R.color.md_blue_light)
+//                , ContextCompat.getColor(mContext, R.color.md_brown_500) to ContextCompat.getColor(mContext, R.color.md_brown_light)
+//                , ContextCompat.getColor(mContext, R.color.md_cyan_500) to ContextCompat.getColor(mContext, R.color.md_cyan_light)
+//                , ContextCompat.getColor(mContext, R.color.md_green_500) to ContextCompat.getColor(mContext, R.color.md_green_light)
+//                , ContextCompat.getColor(mContext, R.color.md_grey_500) to ContextCompat.getColor(mContext, R.color.md_grey_light)
+//                , ContextCompat.getColor(mContext, R.color.md_indigo_500) to ContextCompat.getColor(mContext, R.color.md_indigo_light)
+//                , ContextCompat.getColor(mContext, R.color.md_lime_500) to ContextCompat.getColor(mContext, R.color.md_lime_light)
+//                , ContextCompat.getColor(mContext, R.color.md_orange_500) to ContextCompat.getColor(mContext, R.color.md_orange_light)
+//                , ContextCompat.getColor(mContext, R.color.md_pink_500) to ContextCompat.getColor(mContext, R.color.md_pink_light)
+//                , ContextCompat.getColor(mContext, R.color.md_purple_500) to ContextCompat.getColor(mContext, R.color.md_purple_light)
+//                , ContextCompat.getColor(mContext, R.color.md_teal_500) to ContextCompat.getColor(mContext, R.color.md_teal_light)
+//                , ContextCompat.getColor(mContext, R.color.md_red_500) to ContextCompat.getColor(mContext, R.color.md_red_light)
+//                , ContextCompat.getColor(mContext, R.color.md_deep_orange_500) to ContextCompat.getColor(mContext, R.color.md_deep_orange_light)
+//                , ContextCompat.getColor(mContext, R.color.md_deep_purple_500) to ContextCompat.getColor(mContext, R.color.md_deep_purple_light)
+//                , ContextCompat.getColor(mContext, R.color.md_light_blue_500) to ContextCompat.getColor(mContext, R.color.md_light_blue_light)
+//                , ContextCompat.getColor(mContext, R.color.md_blue_grey_500) to ContextCompat.getColor(mContext, R.color.md_blue_grey_light)
+//                , ContextCompat.getColor(mContext, R.color.md_light_green_500) to ContextCompat.getColor(mContext, R.color.md_light_green_light)
+//                , ContextCompat.getColor(mContext, R.color.md_yellow_500) to ContextCompat.getColor(mContext, R.color.md_yellow_light)
+//        )
     }
 
     private fun getPrimaryThemeName(): String {
@@ -120,9 +120,9 @@ class ThemeUtils(context: Activity) {
         return mPrimaryDarkMap?.get(primaryColor()) ?: primaryColor()
     }
 
-    fun primaryColorLight(): Int {
-        return mPrimaryLightMap?.get(primaryColor()) ?: primaryColor()
-    }
+//    fun primaryColorLight(): Int {
+//        return mPrimaryLightMap?.get(primaryColor()) ?: primaryColor()
+//    }
 
     private fun accentColor(): Int {
         val defaultColor = ContextCompat.getColor(mContext, R.color.theme_accent)

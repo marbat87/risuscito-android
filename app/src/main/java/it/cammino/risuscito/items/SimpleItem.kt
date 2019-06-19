@@ -5,7 +5,6 @@ import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
@@ -130,7 +129,7 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
                 holder.view,
                 FastAdapterUIUtils.getSelectableBackground(
                         ctx,
-                        ContextCompat.getColor(ctx, R.color.ripple_color),
+                        ctx.themeColor(R.attr.colorSecondaryLight),
                         true))
 
         val bgShape = holder.mPage?.background as? GradientDrawable

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
@@ -94,7 +93,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                             cantoView,
                             FastAdapterUIUtils.getSelectableBackground(
                                     context,
-                                    ContextCompat.getColor(context, R.color.ripple_color),
+                                    context.themeColor(R.attr.colorSecondaryLight),
                                     true))
                     if (canto.ismSelected()) {
                         val bgShape = itemView.selected_mark.background as? GradientDrawable
