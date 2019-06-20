@@ -9,6 +9,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.appbar.AppBarLayout
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.ChangelogViewModel
 import kotlinx.android.synthetic.main.changelog_layout.*
 
@@ -28,7 +29,7 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
             Utility.setupTransparentTints(this, Color.TRANSPARENT, false)
         else
             Utility.setupTransparentTints(
-                    this, themeUtils.primaryColorDark(), false)
+                    this, themeColor(R.attr.colorPrimaryVariant), false)
 
         ChangelogBuilder()
                 .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
@@ -74,7 +75,7 @@ class ChangelogActivity : ThemeableActivity(), AppBarLayout.OnOffsetChangedListe
         mViewModel.appBarIsExpanded = verticalOffset >= -100
         Utility.setupTransparentTints(
                 this,
-                if (mViewModel.appBarIsExpanded) Color.TRANSPARENT else themeUtils.primaryColorDark(),
+                if (mViewModel.appBarIsExpanded) Color.TRANSPARENT else themeColor(R.attr.colorPrimaryVariant),
                 false)
     }
 

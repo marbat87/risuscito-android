@@ -57,6 +57,7 @@ import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
@@ -124,7 +125,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .paddingDp(2)
 
         profileIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_account_circle)
-                .colorInt(themeUtils.primaryColor())
+                .colorInt(themeColor(R.attr.colorPrimary))
                 .sizeDp(48)
 
         risuscito_toolbar?.navigationIcon = icon
@@ -145,7 +146,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
 
         if (isOnTablet)
-            Utility.setupTransparentTints(this, themeUtils.primaryColorDark(), false)
+            Utility.setupTransparentTints(this, themeColor(R.attr.colorPrimaryVariant), false)
 
         setupNavDrawer(savedInstanceState)
 
@@ -384,11 +385,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
             // define the other one
-            crossFader?.crossFadeSlidingPaneLayout?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-            crossFader?.crossFadeSlidingPaneLayout?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
+            crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
+            crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
         } else {
             drawer = mDrawerBuilder.build()
-            drawer?.drawerLayout?.setStatusBarBackgroundColor(themeUtils.primaryColorDark())
+            drawer?.drawerLayout?.setStatusBarBackgroundColor(themeColor(R.attr.colorPrimaryVariant))
         }
     }
 
@@ -405,7 +406,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
 
         if (isOnTablet) {
-            if (crossFader?.isCrossFaded == true) {
+            if (crossFader?.isCrossFaded() == true) {
                 crossFader?.crossFade()
                 return
             }

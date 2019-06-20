@@ -30,6 +30,7 @@ import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.themeColor
 import java.io.*
 import java.sql.Date
 import java.util.*
@@ -38,8 +39,7 @@ import java.util.concurrent.ExecutionException
 abstract class ThemeableActivity : AppCompatActivity() {
 
     protected var hasNavDrawer = false
-    lateinit var themeUtils: ThemeUtils
-        private set
+    private lateinit var themeUtils: ThemeUtils
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         if (isMenuWorkaroundRequired) {
@@ -58,10 +58,10 @@ abstract class ThemeableActivity : AppCompatActivity() {
                     AppCompatDelegate.MODE_NIGHT_NO)
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(this, themeUtils.primaryColorDark(), hasNavDrawer)
+        Utility.setupTransparentTints(this, themeColor(R.attr.colorPrimaryVariant), hasNavDrawer)
         Utility.setupNavBarColor(this)
 
-        setTaskDescriptionWrapper(themeUtils)
+        setTaskDescription()
 
         // Iconic
         layoutInflater.setIconicsFactory(delegate)
@@ -84,7 +84,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         return keyCode == KeyEvent.KEYCODE_MENU && isMenuWorkaroundRequired || super.onKeyDown(keyCode, event)
     }
-
 
     private fun forceOverflowMenu() {
         try {
@@ -112,11 +111,11 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     inner class NoIdException internal constructor() : Exception("no ID linked to this Account")
 
-    private fun setTaskDescriptionWrapper(themeUtils: ThemeUtils) {
+    private fun setTaskDescription() {
         if (LUtils.hasP())
-            setTaskDescriptionP(themeUtils)
+            setTaskDescriptionP()
         else if (LUtils.hasL())
-            setTaskDescriptionL(themeUtils)
+            setTaskDescriptionL()
     }
 
     @Throws(ExecutionException::class, InterruptedException::class, NoIdException::class)
@@ -385,14 +384,14 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     @Suppress("DEPRECATION")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun setTaskDescriptionL(themeUtils: ThemeUtils) {
-        val taskDesc = ActivityManager.TaskDescription(null, null, themeUtils.primaryColor())
+    private fun setTaskDescriptionL() {
+        val taskDesc = ActivityManager.TaskDescription(null, null, themeColor(R.attr.colorPrimary))
         setTaskDescription(taskDesc)
     }
 
     @TargetApi(Build.VERSION_CODES.P)
-    private fun setTaskDescriptionP(themeUtils: ThemeUtils) {
-        val taskDesc = ActivityManager.TaskDescription(null, R.mipmap.ic_launcher, themeUtils.primaryColor())
+    private fun setTaskDescriptionP() {
+        val taskDesc = ActivityManager.TaskDescription(null, R.mipmap.ic_launcher, themeColor(R.attr.colorPrimary))
         setTaskDescription(taskDesc)
     }
 
