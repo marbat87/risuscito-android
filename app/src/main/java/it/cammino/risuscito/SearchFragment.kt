@@ -5,8 +5,6 @@ import android.os.AsyncTask
 import android.os.AsyncTask.Status
 import android.os.Bundle
 import android.os.SystemClock
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -14,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -146,17 +145,9 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
             returnValue
         }
 
-        textfieldRicerca.addTextChangedListener(
-                object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {}
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        ricercaStringa(s.toString())
-                    }
-                }
-        )
+        textfieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+            ricercaStringa(s.toString())
+        }
 
         more_options.setOnClickListener {
             val popupMenu = popupMenu {
@@ -308,7 +299,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
     }
 
     private fun subscribeUiCanti() {
-        mViewModel.itemsResult?.observe(this) { canti ->
+        mViewModel.itemsResult?.observe(this) {canti ->
             mViewModel.titoli = canti.sortedBy { it.title?.getText(context) }
         }
     }

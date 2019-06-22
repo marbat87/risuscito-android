@@ -58,6 +58,7 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
     private val cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
+    private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
     private var mLUtils: LUtils? = null
@@ -88,11 +89,6 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
             val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
             bottomSheetDialog.show(requireFragmentManager(), null)
         }
-    }
-
-    override fun onDestroy() {
-        destroy()
-        super.onDestroy()
     }
 
     private fun getCantofromPosition(
@@ -180,12 +176,14 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                             .sizeDp(24)
                             .paddingDp(2)
                             .colorInt(Color.WHITE)
+                    actionModeOk = false
                 }
 
                 onSelection { item ->
                     Log.d(TAG, "MaterialCab onSelection")
                     when (item.itemId) {
                         R.id.action_remove_item -> {
+                            actionModeOk = true
                             destroy()
                             ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc
                                     ?: "")
@@ -205,13 +203,16 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                 }
 
                 onDestroy {
-                    //                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                    Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                    Log.d(TAG, "MaterialCab onDestroy - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId}")
                     mSwhitchMode = false
-                    try {
-                        posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
-                        cantoAdapter.notifyItemChanged(longclickedPos)
-                    } catch (e: Exception) {
-                        Crashlytics.logException(e)
+                    if (!actionModeOk) {
+                        try {
+                            posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
+                            cantoAdapter.notifyItemChanged(longclickedPos)
+                        } catch (e: Exception) {
+                            Crashlytics.logException(e)
+                        }
                     }
                     true
                 }
@@ -398,6 +399,7 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
         val parent = v.parent.parent as? View
         if (v.id == R.id.addCantoGenerico) {
             if (mSwhitchMode) {
+                actionModeOk = true
                 destroy()
                 ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent?.text_id_posizione?.text.toString()))
             } else {
@@ -429,6 +431,7 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                     mLUtils?.startActivityWithTransition(intent)
                 }
             else {
+                actionModeOk = true
                 destroy()
                 ListeUtils.scambioCanto(this,
                         mCantiViewModel.defaultListaId,

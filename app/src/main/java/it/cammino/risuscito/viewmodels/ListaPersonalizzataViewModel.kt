@@ -2,7 +2,6 @@ package it.cammino.risuscito.viewmodels
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import it.cammino.risuscito.LUtils
@@ -59,7 +58,6 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) : And
                             }
                         }
 
-                        Log.d(TAG, "cantoIndex: $cantoIndex")
                         val listaResult = listaPersonalizzataItem {
                             posizioneTitleItem {
                                 titoloPosizione = lista.getNomePosizione(cantoIndex)

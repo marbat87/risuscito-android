@@ -101,12 +101,13 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
                         Snackbar.LENGTH_LONG)
                         .show()
         }
+
     }
 
-    override fun onDestroy() {
-        destroy()
-        super.onDestroy()
-    }
+//    override fun onDestroy() {
+//        destroy()
+//        super.onDestroy()
+//    }
 
     private fun getSendIntent(exportUri: Uri): Intent {
         return Intent(Intent.ACTION_SEND)
@@ -231,6 +232,7 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
 
             onDestroy {
                 Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                Log.d(TAG, "MaterialCab onDestroy - longclickedPos: $longclickedPos / listaPersonalizzataId: ${mCantiViewModel.listaPersonalizzataId}")
                 mSwhitchMode = false
                 if (!actionModeOk) {
                     try {

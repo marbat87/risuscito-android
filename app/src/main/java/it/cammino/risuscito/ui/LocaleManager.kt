@@ -74,9 +74,9 @@ class LocaleManager(context: Context) {
                 config.fontScale = systemScale
             }
         } catch (e: Settings.SettingNotFoundException) {
-            Log.e(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA", e)
+            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
         } catch (e: NullPointerException) {
-            Log.e(TAG, "NullPointerException - FUNZIONE RESIZE TESTO NON SUPPORTATA", e)
+            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
         }
 
         setSystemLocale(config, locale)

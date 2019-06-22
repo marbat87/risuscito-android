@@ -538,11 +538,15 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "initFab()")
         enableFab(false)
         fab_pager.setMainFabClosedDrawable(icon)
-        enableFab(true)
         fab_pager.clearActionItems()
+        enableFab(true)
+        Log.d(TAG, "initFab optionMenu: $optionMenu")
 
         if (optionMenu) {
+            Log.d(TAG, "initFab fab_pager.expansionMode before: ${fab_pager.expansionMode}")
+            Log.d(TAG, "initFab fab_pager.expansionMode set: ${if (mLUtils?.isFabScrollingActive == true) (if (mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM}")
             fab_pager.expansionMode = if (mLUtils?.isFabScrollingActive == true) (if (mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
+            Log.d(TAG, "initFab fab_pager.expansionMode after: ${fab_pager.expansionMode}")
             val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
             val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 

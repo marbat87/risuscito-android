@@ -3,10 +3,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 plugins {
     id("com.android.application")
     id("io.fabric")
-    id("kotlin-android")
-    id("kotlin-android-extensions")
-    id("kotlin-kapt")
     id("com.google.gms.google-services")
+    kotlin("android")
+    kotlin("android.extensions")
+    kotlin("kapt")
 }
 
 
@@ -23,9 +23,14 @@ android {
         versionName = "4.4.0"
     }
 
+//    sourceSets {
+//        val main by getting
+//        main.java.srcDirs("src/main/kotlin")
+//    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
-        setTargetCompatibility(JavaVersion.VERSION_1_8)
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     (kotlinOptions as KotlinJvmOptions).apply {
@@ -59,6 +64,7 @@ android {
         exclude("META-INF/atomicfu.kotlin_module")
         exclude("META-INF/library_release.kotlin_module")
     }
+
 }
 
 val preferenceFixVersion = "1.0.0"

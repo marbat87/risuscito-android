@@ -62,8 +62,12 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
-            Log.i(TAG, "onPageSelected: $position")
-            destroy()
+            Log.d(TAG, "onPageSelected: $position")
+            Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
+            if (mCustomListsViewModel.indexToShow != position) {
+                mCustomListsViewModel.indexToShow = position
+                destroy()
+            }
             initFabOptions(position >= 2)
         }
     }
@@ -100,7 +104,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         view_pager.adapter = mSectionsPagerAdapter
         tabs?.let {
             TabLayoutMediator(it, view_pager) { tab, position ->
-                //                val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
                 val l = getSystemLocale(resources)
                 tab.text = when (position) {
                     0 -> getString(R.string.title_activity_canti_parola).toUpperCase(l)
@@ -113,8 +116,16 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         subscribeUiListe()
     }
 
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy")
+        super.onDestroy()
+        destroy()
+    }
+
     override fun onDestroyView() {
+        Log.d(TAG, "onDestroyView")
         super.onDestroyView()
+        mMainActivity?.fab_pager?.clearActionItems()
         view_pager.unregisterOnPageChangeCallback(mPageChange)
     }
 
@@ -139,25 +150,23 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         return false
     }
 
-    /** @param outState Bundle in which to place your saved state.
-     */
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        mCustomListsViewModel.indexToShow = view_pager.currentItem
-    }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//        mCustomListsViewModel.indexToShow = view_pager.currentItem
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.i(TAG, "onActivityResult requestCode: $requestCode")
+        Log.d(TAG, "onActivityResult requestCode: $requestCode")
         super.onActivityResult(requestCode, resultCode, data)
         if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
-            Log.i(TAG, "mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
+            Log.d(TAG, "mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
             mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif
             movePage = true
         }
         if (requestCode == ListaPredefinitaFragment.TAG_INSERT_PAROLA
                 || requestCode == ListaPredefinitaFragment.TAG_INSERT_EUCARESTIA
                 || requestCode == ListaPersonalizzataFragment.TAG_INSERT_PERS) {
-            Log.i(TAG, "onActivityResult resultCode: $resultCode")
+            Log.d(TAG, "onActivityResult resultCode: $resultCode")
             if (resultCode == RESULT_OK || resultCode == RESULT_KO)
                 Snackbar.make(requireActivity().main_content, if (resultCode == RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
         }
@@ -275,11 +284,11 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 titoliListe[i] = list[i].titolo
                 idListe[i] = list[i].id
             }
-            Log.i(TAG, "movePage: $movePage")
-            Log.i(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
+            Log.d(TAG, "movePage: $movePage")
+            Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
             if (movePage) {
                 view_pager.currentItem = mCustomListsViewModel.indexToShow
-                mCustomListsViewModel.indexToShow = 0
+//                mCustomListsViewModel.indexToShow = 0
                 movePage = false
             }
             mSectionsPagerAdapter?.notifyDataSetChanged()

@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -21,6 +20,7 @@ import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
 import androidx.core.view.ViewCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -162,18 +162,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             }
                         }))
 
-        textfieldTitle.addTextChangedListener(
-                object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {}
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        collapsingToolbarLayout.title = s
-                        mViewModel.tempTitle = s.toString()
-                    }
-                }
-        )
+        textfieldTitle.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+            collapsingToolbarLayout.title = s
+            mViewModel.tempTitle = s.toString()
+        }
 
         fab_crea_lista.setOnClickListener {
             InputTextDialogFragment.Builder(

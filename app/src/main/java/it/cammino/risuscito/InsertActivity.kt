@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -163,17 +164,9 @@ class InsertActivity : ThemeableActivity() {
             returnValue
         }
 
-        textfieldRicerca.addTextChangedListener(
-                object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {}
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        ricercaStringa(s.toString())
-                    }
-                }
-        )
+        textfieldRicerca.doOnTextChanged {s: CharSequence?, _: Int, _: Int, _: Int ->
+            ricercaStringa(s.toString())
+        }
 
         more_options.setOnClickListener {
             val popupMenu = popupMenu {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/theme">
+    <androidx.preference.PreferenceCategory android:title="@string/theme">
 
         <!--suppress AndroidElementNotAllowed -->
         <ColorPickerPreference
@@ -31,9 +31,9 @@
             android:title="@string/night_theme_title"
             android:summary="@string/night_theme_desc"/>
 
-    </PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/lists_pref">
+    <androidx.preference.PreferenceCategory android:title="@string/lists_pref">
 
         <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
@@ -81,9 +81,9 @@
             android:entryValues="@array/pref_default_search_values"
             android:key="ricerca_predefinita" />
 
-    </PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/system">
+    <androidx.preference.PreferenceCategory android:title="@string/system">
 
         <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
@@ -116,6 +116,6 @@
             android:entryValues="@array/pref_languages_values"
             android:key="lingua_sistema" />
 
-    </PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>

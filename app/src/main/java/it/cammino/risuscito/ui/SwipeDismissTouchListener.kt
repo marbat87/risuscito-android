@@ -9,6 +9,9 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.ListView
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [View.OnTouchListener] that makes any [View] dismissable when the
@@ -122,11 +125,11 @@ class SwipeDismissTouchListener
                 mVelocityTracker?.addMovement(motionEvent)
                 mVelocityTracker?.computeCurrentVelocity(1000)
                 val velocityX = mVelocityTracker?.xVelocity ?: 0f
-                val absVelocityX = Math.abs(velocityX)
-                val absVelocityY = Math.abs(mVelocityTracker?.yVelocity ?: 0f)
+                val absVelocityX = abs(velocityX)
+                val absVelocityY = abs(mVelocityTracker?.yVelocity ?: 0f)
                 var dismiss = false
                 var dismissRight = false
-                if (Math.abs(deltaX) > mViewWidth / 2 && mSwiping) {
+                if (abs(deltaX) > mViewWidth / 2 && mSwiping) {
                     dismiss = true
                     dismissRight = deltaX > 0
                 } else if (mMinFlingVelocity <= absVelocityX && absVelocityX <= mMaxFlingVelocity
@@ -189,7 +192,7 @@ class SwipeDismissTouchListener
                 mVelocityTracker?.addMovement(motionEvent)
                 val deltaX = motionEvent.rawX - mDownX
                 val deltaY = motionEvent.rawY - mDownY
-                if (Math.abs(deltaX) > mSlop && Math.abs(deltaY) < Math.abs(deltaX) / 2) {
+                if (abs(deltaX) > mSlop && abs(deltaY) < abs(deltaX) / 2) {
                     mSwiping = true
                     mSwipingSlop = if (deltaX > 0) mSlop else -mSlop
                     mView.parent.requestDisallowInterceptTouchEvent(true)
@@ -205,8 +208,7 @@ class SwipeDismissTouchListener
                     mTranslationX = deltaX
                     mView.translationX = deltaX - mSwipingSlop
                     // TODO: use an ease-out interpolator or such
-                    mView.alpha = Math.max(0f, Math.min(1f,
-                            1f - 2f * Math.abs(deltaX) / mViewWidth))
+                    mView.alpha = max(0f, min(1f, 1f - 2f * abs(deltaX) / mViewWidth))
                     return true
                 }
             }
