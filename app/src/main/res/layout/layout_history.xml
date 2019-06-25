@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/no_history"
@@ -17,11 +17,11 @@
             android:layout_height="120dip"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/history_empty"
-            android:src="@drawable/ic_sad_history" />
+            android:src="@drawable/ic_sad_history"
+            android:tint="?colorPrimary" />
 
         <TextView
             android:id="@+id/no_history_text"
-            risuscito:fontFamily="@font/googlesans_italic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/no_history_image"
@@ -32,6 +32,7 @@
             android:text="@string/history_empty"
             android:textAppearance="@style/SuperStateViewSubTitle"
             android:textColor="?android:textColorSecondary"
+            risuscito:fontFamily="@font/googlesans_italic"
             tools:ignore="MissingPrefix" />
 
     </RelativeLayout>

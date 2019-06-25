@@ -69,7 +69,7 @@ android {
 
 val preferenceFixVersion = "1.0.0"
 val fastAdapterVersion = "4.0.0"
-val materialDialogsVersion = "3.0.0-rc4"
+val materialDialogsVersion = "3.0.0"
 val roomVersion = "2.1.0"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
@@ -90,7 +90,7 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:17.0.0")
     implementation("com.google.firebase:firebase-core:17.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:20.0.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:20.1.0")
     implementation("com.google.firebase:firebase-storage:18.0.0")
     implementation("com.google.firebase:firebase-auth:18.0.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }

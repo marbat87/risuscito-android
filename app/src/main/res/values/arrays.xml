@@ -97,5 +97,16 @@
         <item>@color/md_yellow_A200</item>
     </integer-array>
 
+    <string-array name="themeListArray">
+        <item>@string/night_mode_light</item>
+        <item>@string/night_mode_dark</item>
+        <item>@string/night_mode_auto_battery</item>
+    </string-array>
+
+    <string-array name="themeEntryArray">
+        <item>light</item>
+        <item>dark</item>
+        <item>default</item>
+    </string-array>
 
 </resources>

@@ -38,10 +38,10 @@
                 android:layout_height="120dip"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="@string/no_consegnati"
-                android:src="@drawable/ic_sad_book" />
+                android:src="@drawable/ic_sad_book"
+                android:tint="?colorPrimary" />
 
             <TextView
-                risuscito:fontFamily="@font/googlesans_italic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/no_consegnati_image"
@@ -52,6 +52,7 @@
                 android:text="@string/no_consegnati"
                 android:textAppearance="@style/SuperStateViewSubTitle"
                 android:textColor="?android:textColorSecondary"
+                risuscito:fontFamily="@font/googlesans_italic"
                 tools:ignore="MissingPrefix" />
 
         </RelativeLayout>

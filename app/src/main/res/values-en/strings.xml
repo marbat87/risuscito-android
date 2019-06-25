@@ -294,4 +294,8 @@ Do you want to proceed?</string>
     <string name="import_confirm">import</string>
     <string name="default_search_title">Predefined search</string>
     <string name="default_search_summary">Indicate which search type must open on entering the function</string>
+    <string name="night_mode_light">Light</string>
+    <string name="night_mode_dark">Dark</string>
+    <string name="night_mode_auto_battery">Set by Battery Saver</string>
+    <string name="night_mode_auto_system">System default</string>
 </resources>

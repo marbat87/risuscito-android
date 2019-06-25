@@ -116,6 +116,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        mLUtils = LUtils.getInstance(this)
+
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
@@ -137,7 +139,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             TranslationTask(this).execute()
         }
 
-        mLUtils = LUtils.getInstance(this)
         isOnTablet = mLUtils?.isOnTablet ?: false
         Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
         hasThreeColumns = mLUtils?.hasThreeColumns ?: false
@@ -190,7 +191,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
     }
 
-    public override fun onStart() {
+    override fun onStart() {
         super.onStart()
         val task = mSignInClient?.silentSignIn()
         task?.let {
@@ -218,9 +219,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         hideProgressDialog()
     }
 
-    public override fun onSaveInstanceState(savedInstanceState: Bundle) {
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
         val mSavedInstanceState = drawer?.saveInstanceState(savedInstanceState)
         super.onSaveInstanceState(mSavedInstanceState ?: savedInstanceState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        fab_pager.expansionMode = if (mLUtils?.isFabScrollingActive == true) (if (mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
@@ -543,10 +549,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
         if (optionMenu) {
-            Log.d(TAG, "initFab fab_pager.expansionMode before: ${fab_pager.expansionMode}")
-            Log.d(TAG, "initFab fab_pager.expansionMode set: ${if (mLUtils?.isFabScrollingActive == true) (if (mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM}")
-            fab_pager.expansionMode = if (mLUtils?.isFabScrollingActive == true) (if (mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
-            Log.d(TAG, "initFab fab_pager.expansionMode after: ${fab_pager.expansionMode}")
             val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
             val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 

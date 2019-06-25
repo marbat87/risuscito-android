@@ -125,7 +125,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     override fun onDestroyView() {
         Log.d(TAG, "onDestroyView")
         super.onDestroyView()
-        mMainActivity?.fab_pager?.clearActionItems()
         view_pager.unregisterOnPageChangeCallback(mPageChange)
     }
 
@@ -149,11 +148,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         }
         return false
     }
-
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        mCustomListsViewModel.indexToShow = view_pager.currentItem
-//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d(TAG, "onActivityResult requestCode: $requestCode")
@@ -288,7 +282,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
             if (movePage) {
                 view_pager.currentItem = mCustomListsViewModel.indexToShow
-//                mCustomListsViewModel.indexToShow = 0
                 movePage = false
             }
             mSectionsPagerAdapter?.notifyDataSetChanged()

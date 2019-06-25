@@ -13,7 +13,9 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.ThemeUtils
 import pub.devrel.easypermissions.EasyPermissions
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -50,6 +52,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             false
         }
 
+        val countingPreference = findPreference("night_mode") as? SimpleMenuPreference
+        countingPreference?.summary = ThemeUtils.getNightModeText(requireContext())
+
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -73,9 +78,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             Log.d(TAG, "onSharedPreferenceChanged: new_accent_color" + sharedPreferences.getInt(s, 0))
             activity?.recreate()
         }
-        if (s.equals("dark_mode", ignoreCase = true)) {
-            Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getBoolean(s, false))
-            activity?.recreate()
+        if (s.equals("night_mode", ignoreCase = true)) {
+            Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0"))
+            ThemeUtils.setDefaultNightMode(requireContext())
+            val countingPreference = findPreference("night_mode") as? SimpleMenuPreference
+            countingPreference?.summary = ThemeUtils.getNightModeText(requireContext())
         }
         if (s == Utility.SYSTEM_LANGUAGE) {
             Log.d(

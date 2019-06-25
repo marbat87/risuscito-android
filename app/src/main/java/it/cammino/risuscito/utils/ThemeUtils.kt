@@ -1,24 +1,19 @@
 package it.cammino.risuscito.utils
 
-import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 
-class ThemeUtils(context: Activity) {
+class ThemeUtils(context: Context) {
 
-    private val mContext: Context
+    private val mContext: Context = context
 
     val current: Int
-        get() {
-            return LUtils.getResId("RisuscitoTheme_${getPrimaryThemeName()}_${getSecondaryThemeName()}", R.style::class.java)
-        }
-
-    init {
-        mContext = context
-    }
+        get() = LUtils.getResId("RisuscitoTheme_${getPrimaryThemeName()}_${getSecondaryThemeName()}", R.style::class.java)
 
     private fun getPrimaryThemeName(): String {
         return when (primaryColor()) {
@@ -79,9 +74,34 @@ class ThemeUtils(context: Activity) {
 
     companion object {
 
+        const val LIGHT_MODE = "light"
+        const val DARK_MODE = "dark"
+        const val DEFAULT_MODE = "default"
+
         fun isDarkMode(context: Context): Boolean {
-            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-            return prefs.getBoolean("dark_mode", false)
+//            return context.resources.getBoolean(R.bool.is_nigth_mode)
+            return (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        }
+
+        fun setDefaultNightMode(context: Context) {
+            when (getPrefNightMode(context)) {
+                LIGHT_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                DARK_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                DEFAULT_MODE -> AppCompatDelegate.setDefaultNightMode(if (LUtils.hasQ()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+            }
+        }
+
+        fun getNightModeText(context: Context): String {
+            return when (getPrefNightMode(context)) {
+                LIGHT_MODE -> context.getString(R.string.night_mode_light)
+                DARK_MODE -> context.getString(R.string.night_mode_dark)
+                else -> context.getString(if (LUtils.hasQ()) R.string.night_mode_auto_system else R.string.night_mode_auto_battery)
+            }
+        }
+
+        fun getPrefNightMode(context: Context): String {
+            return PreferenceManager.getDefaultSharedPreferences(context).getString("night_mode", "default")
+                    ?: "default"
         }
 
     }

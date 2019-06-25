@@ -3,13 +3,13 @@ package it.cammino.risuscito.ui
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.ViewConfiguration
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
@@ -39,23 +39,21 @@ import java.util.concurrent.ExecutionException
 abstract class ThemeableActivity : AppCompatActivity() {
 
     protected var hasNavDrawer = false
-    private lateinit var themeUtils: ThemeUtils
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         if (isMenuWorkaroundRequired) {
             forceOverflowMenu()
         }
 
-        themeUtils = ThemeUtils(this)
+        Log.d(TAG, "Configuration.UI_MODE_NIGHT_NO: ${Configuration.UI_MODE_NIGHT_NO}")
+        Log.d(TAG, "Configuration.UI_MODE_NIGHT_YES: ${Configuration.UI_MODE_NIGHT_YES}")
+        Log.d(TAG, "getResources().getConfiguration().uiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}")
+
+        val themeUtils = ThemeUtils(this)
+        Log.d(TAG, "ThemeUtils.isDarkMode(this): ${ThemeUtils.isDarkMode(this)}")
         val mLUtils = LUtils.getInstance(this)
         mLUtils.convertIntPreferences()
         setTheme(themeUtils.current)
-
-        AppCompatDelegate.setDefaultNightMode(
-                if (ThemeUtils.isDarkMode(this))
-                    AppCompatDelegate.MODE_NIGHT_YES
-                else
-                    AppCompatDelegate.MODE_NIGHT_NO)
 
         // setta il colore della barra di stato, solo su KITKAT
         Utility.setupTransparentTints(this, themeColor(R.attr.colorPrimaryVariant), hasNavDrawer)

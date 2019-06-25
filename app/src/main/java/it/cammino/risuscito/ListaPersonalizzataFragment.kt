@@ -104,11 +104,6 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
 
     }
 
-//    override fun onDestroy() {
-//        destroy()
-//        super.onDestroy()
-//    }
-
     private fun getSendIntent(exportUri: Uri): Intent {
         return Intent(Intent.ACTION_SEND)
                 .putExtra(Intent.EXTRA_STREAM, exportUri)

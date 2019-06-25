@@ -704,6 +704,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        fab_canti.expansionMode = if (mLUtils?.isFabScrollingActive == true && mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+    }
 
     public override fun onResume() {
         super.onResume()
@@ -1534,7 +1538,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun initFabOptions() {
-        fab_canti.expansionMode = if (mLUtils?.isFabScrollingActive == true && mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
         val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 

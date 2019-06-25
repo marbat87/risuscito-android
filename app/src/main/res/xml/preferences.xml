@@ -24,12 +24,13 @@
             risuscito:pref_sortColors="true"
             risuscito:pref_colors="@array/accent_colors_list"  />
 
-        <!--suppress AndroidElementNotAllowed -->
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="dark_mode"
+        <SimpleMenuPreference
+            android:defaultValue="default"
             android:title="@string/night_theme_title"
-            android:summary="@string/night_theme_desc"/>
+            android:summary="@string/night_theme_desc"
+            android:entries="@array/themeListArray"
+            android:entryValues="@array/themeEntryArray"
+            android:key="night_mode" />
 
     </androidx.preference.PreferenceCategory>
 

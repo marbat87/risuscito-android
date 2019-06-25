@@ -11,14 +11,16 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ioThread
 
 
-@Suppress("unused")
 class RisuscitoApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+        ThemeUtils.setDefaultNightMode(applicationContext)
 
         //only required if you add a custom or generic font on your own
         Iconics.init(applicationContext)
@@ -51,7 +53,7 @@ class RisuscitoApplication : MultiDexApplication() {
     }
 
     companion object {
-        private val TAG = RisuscitoApplication::class.java.canonicalName
+        //        private val TAG = RisuscitoApplication::class.java.canonicalName
         lateinit var localeManager: LocaleManager
     }
 }

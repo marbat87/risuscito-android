@@ -21,9 +21,9 @@
     <style name="Risuscito_tabstyle" parent="@style/Widget.MaterialComponents.TabLayout.Colored">
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <item name="android:background">?colorPrimary</item>
         <item name="tabIndicatorColor">?colorSecondary</item>
         <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
+        <item name="tabTextColor">@color/tabs_text_color_selector</item>
     </style>
 
     <style name="TextAppearance.Design.Tab.Risuscito">
