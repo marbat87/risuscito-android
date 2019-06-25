@@ -7,6 +7,9 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.NIGHT_MODE
+import it.cammino.risuscito.Utility.PRIMARY_COLOR
+import it.cammino.risuscito.Utility.SECONDARY_COLOR
 
 class ThemeUtils(context: Context) {
 
@@ -64,12 +67,12 @@ class ThemeUtils(context: Context) {
 
     private fun primaryColor(): Int {
         val defaultColor = ContextCompat.getColor(mContext, R.color.theme_primary)
-        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt("new_primary_color", defaultColor)
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt(PRIMARY_COLOR, defaultColor)
     }
 
     private fun accentColor(): Int {
         val defaultColor = ContextCompat.getColor(mContext, R.color.theme_accent)
-        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt("new_accent_color", defaultColor)
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt(SECONDARY_COLOR, defaultColor)
     }
 
     companion object {
@@ -100,7 +103,7 @@ class ThemeUtils(context: Context) {
         }
 
         fun getPrefNightMode(context: Context): String {
-            return PreferenceManager.getDefaultSharedPreferences(context).getString("night_mode", "default")
+            return PreferenceManager.getDefaultSharedPreferences(context).getString(NIGHT_MODE, DEFAULT_MODE)
                     ?: "default"
         }
 

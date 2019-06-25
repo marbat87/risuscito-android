@@ -14,6 +14,14 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
+import it.cammino.risuscito.Utility.CHANGE_LANGUAGE
+import it.cammino.risuscito.Utility.DB_RESET
+import it.cammino.risuscito.Utility.NIGHT_MODE
+import it.cammino.risuscito.Utility.PRIMARY_COLOR
+import it.cammino.risuscito.Utility.SAVE_LOCATION
+import it.cammino.risuscito.Utility.SCREEN_ON
+import it.cammino.risuscito.Utility.SECONDARY_COLOR
+import it.cammino.risuscito.Utility.SYSTEM_LANGUAGE
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ThemeUtils
 import pub.devrel.easypermissions.EasyPermissions
@@ -46,13 +54,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             val listPref = it as? ListPreference
             listPref?.entries = mEntries
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val saveLocation = pref.getString(Utility.SAVE_LOCATION, "0")
+            val saveLocation = pref.getString(SAVE_LOCATION, "0")
             listPref?.setDefaultValue(saveLocation)
             listPref?.entryValues = mEntryValues
             false
         }
 
-        val countingPreference = findPreference("night_mode") as? SimpleMenuPreference
+        val countingPreference = findPreference(NIGHT_MODE) as? SimpleMenuPreference
         countingPreference?.summary = ThemeUtils.getNightModeText(requireContext())
 
         return super.onCreateView(inflater, container, savedInstanceState)
@@ -70,21 +78,21 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
         Log.d(TAG, "onSharedPreferenceChanged: $s")
-        if (s.equals("new_primary_color", ignoreCase = true)) {
-            Log.d(TAG, "onSharedPreferenceChanged: new_primary_color" + sharedPreferences.getInt(s, 0))
+        if (s == PRIMARY_COLOR) {
+            Log.d(TAG, "onSharedPreferenceChanged: PRIMARY_COLOR" + sharedPreferences.getInt(s, 0))
             activity?.recreate()
         }
-        if (s.equals("new_accent_color", ignoreCase = true)) {
-            Log.d(TAG, "onSharedPreferenceChanged: new_accent_color" + sharedPreferences.getInt(s, 0))
+        if (s == SECONDARY_COLOR) {
+            Log.d(TAG, "onSharedPreferenceChanged: SECONDARY_COLOR" + sharedPreferences.getInt(s, 0))
             activity?.recreate()
         }
-        if (s.equals("night_mode", ignoreCase = true)) {
+        if (s == NIGHT_MODE) {
             Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0"))
             ThemeUtils.setDefaultNightMode(requireContext())
-            val countingPreference = findPreference("night_mode") as? SimpleMenuPreference
+            val countingPreference = findPreference(NIGHT_MODE) as? SimpleMenuPreference
             countingPreference?.summary = ThemeUtils.getNightModeText(requireContext())
         }
-        if (s == Utility.SYSTEM_LANGUAGE) {
+        if (s == SYSTEM_LANGUAGE) {
             Log.d(
                     TAG,
                     "onSharedPreferenceChanged: cur lang " + getSystemLocale(resources)
@@ -96,16 +104,16 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
                 mIntent?.let {
                     it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    it.putExtra(Utility.DB_RESET, true)
+                    it.putExtra(DB_RESET, true)
                     val currentLang = getSystemLocale(resources).language
                     it.putExtra(
-                            Utility.CHANGE_LANGUAGE,
+                            CHANGE_LANGUAGE,
                             currentLang + "-" + sharedPreferences.getString(s, ""))
                     startActivity(it)
                 }
             }
         }
-        if (s == Utility.SCREEN_ON) LUtils.getInstance(requireActivity()).checkScreenAwake()
+        if (s == SCREEN_ON) LUtils.getInstance(requireActivity()).checkScreenAwake()
     }
 
     private fun loadStorageList(external: Boolean) {
@@ -121,7 +129,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         } else {
             mEntries = resources.getStringArray(R.array.save_location_nosd_entries)
             mEntryValues = resources.getStringArray(R.array.save_location_nosd_values)
-            PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.SAVE_LOCATION, "0") }
+            PreferenceManager.getDefaultSharedPreferences(context).edit { putString(SAVE_LOCATION, "0") }
         }
     }
 

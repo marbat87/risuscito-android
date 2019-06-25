@@ -2,7 +2,7 @@
 <changelog>
 
     <release versionCode="4413"
-        date="Giugno 2019"
+        date="Luglio 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANTE[/b]: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le
             modifiche sono solo "sotto il cofano". Devi creare un nuovo backup da uno dei tuoi
@@ -15,6 +15,9 @@
         <new>New layout per la ricerca</new>
         <new>Aggiunta la registrazione dell'Inno dei vespri da Pasqua all'Ascensione</new>
         <new>Aggiunto il nuovo canto Inno a Cristo Luce (1967)</new>
+        <new>Compabilità con Android Q</new>
+        <new>Aggiunta opzione tema scuro automatico (segue le impostazioni sistema su Android Q, mentre è settato dalla modalità risparmio energetico).
+            Il funzionamento dipende comunque dalla versione del S.O. e in alcuni casi dal produttore del dispositivo</new>
     </release>
 
     <release versionCode="0"

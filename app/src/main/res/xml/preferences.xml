@@ -4,7 +4,6 @@
 
     <androidx.preference.PreferenceCategory android:title="@string/theme">
 
-        <!--suppress AndroidElementNotAllowed -->
         <ColorPickerPreference
             android:defaultValue="@color/md_indigo_500"
             android:dialogTitle="@string/primary_color"
@@ -14,7 +13,6 @@
             risuscito:pref_sortColors="true"
             risuscito:pref_colors="@array/primary_colors_list" />
 
-        <!--suppress AndroidElementNotAllowed -->
         <ColorPickerPreference
             android:defaultValue="@color/md_orange_A200"
             android:dialogTitle="@string/accent_color"
@@ -36,35 +34,30 @@
 
     <androidx.preference.PreferenceCategory android:title="@string/lists_pref">
 
-        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_seconda_lettura"
             android:title="@string/show_seconda_title"
             android:summary="@string/show_seconda_summary"/>
 
-        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_canto_offertorio"
             android:title="@string/show_offertorio_title"
             android:summary="@string/show_offertorio_summary"/>
 
-        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_santo"
             android:title="@string/show_santo_title"
             android:summary="@string/show_santo_summary"/>
 
-        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_canto_pace"
             android:title="@string/show_pace_title"
             android:summary="@string/show_pace_summary"/>
 
-        <!--suppress AndroidElementNotAllowed -->
         <SimpleMenuPreference
             android:defaultValue="0"
             android:title="@string/default_index_title"
@@ -73,7 +66,6 @@
             android:entryValues="@array/pref_default_index_values"
             android:key="indice_predefinito" />
 
-        <!--suppress AndroidElementNotAllowed -->
         <SimpleMenuPreference
             android:defaultValue="0"
             android:title="@string/default_search_title"
@@ -86,21 +78,18 @@
 
     <androidx.preference.PreferenceCategory android:title="@string/system">
 
-        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="sempre_acceso"
             android:title="@string/always_on"
             android:summary="@string/always_on_summary"/>
 
-        <!--suppress AndroidElementNotAllowed -->
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="mostra_audio"
             android:title="@string/show_audio_title"
             android:summary="@string/show_audio_summary"/>
 
-        <!--suppress AndroidElementNotAllowed -->
         <SimpleMenuPreference
             android:defaultValue="0"
             android:title="@string/save_location_title"
@@ -109,7 +98,6 @@
             android:entryValues="@array/save_location_sd_values"
             android:key="memoria_salvataggio_scelta" />
 
-        <!--suppress AndroidElementNotAllowed -->
         <SimpleMenuPreference
             android:title="@string/language_title"
             android:summary="@string/language_summary"

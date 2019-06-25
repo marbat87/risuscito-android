@@ -312,7 +312,7 @@
     <string name="default_search_summary">Indica quale tipo di ricerca deve aprirsi per default all\'ingresso nella funzione.</string>
     <string name="night_mode_light">Chiaro</string>
     <string name="night_mode_dark">Scuro</string>
-    <string name="night_mode_auto_battery">Automatico quando in risparmio energetico</string>
+    <string name="night_mode_auto_battery">Automatico da risparmio energetico</string>
     <string name="night_mode_auto_system">Automatico da sistema</string>
 </resources>
 

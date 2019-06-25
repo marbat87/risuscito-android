@@ -9,6 +9,9 @@
         <new>New option to choose the predefined search</new>
         <new>New layout for search</new>
         <new>Added the new song Hymn to Christ Light (1967)</new>
+        <new>Compability with Android Q</new>
+        <new>Added option for automatic dark mode (It follows system settings on Android Q, it is set by Battery Saver on older versions).
+            However it depends on O.S. version and in some cases on device manufacturer</new>
     </release>
 
     <release versionCode="0"
