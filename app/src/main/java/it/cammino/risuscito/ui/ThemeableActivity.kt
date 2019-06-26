@@ -30,6 +30,7 @@ import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
 import it.cammino.risuscito.utils.themeColor
 import java.io.*
 import java.sql.Date
@@ -56,7 +57,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         setTheme(themeUtils.current)
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(this, themeColor(R.attr.colorPrimaryVariant), hasNavDrawer)
+        Utility.setupTransparentTints(this, getStatusBarDefaultColor(this), hasNavDrawer)
         Utility.setupNavBarColor(this)
 
         setTaskDescription()

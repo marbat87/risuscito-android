@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:layout_alignParentTop="true"
-                android:background="?colorSurface">
+                android:background="@color/risuscito_material_background">
 
                 <RelativeLayout
                     android:id="@+id/no_record"
@@ -207,7 +207,6 @@
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
         android:theme="@style/ToolbarTheme"
-        android:background="?colorPrimary"
         risuscito:contentInsetStart="0dp"
         risuscito:layout_scrollFlags="scroll|enterAlways">
 

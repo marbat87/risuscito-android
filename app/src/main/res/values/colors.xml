@@ -59,5 +59,25 @@
     <color name="md_accent_light_green_light">#14B2FF59</color>
     <color name="md_accent_yellow_light">#14FFFF00</color>
 
+    <color name="primary_color_amber">@color/md_amber_500</color>
+    <color name="primary_color_blue">@color/md_blue_500</color>
+    <color name="primary_color_brown">@color/md_brown_500</color>
+    <color name="primary_color_cyan">@color/md_cyan_500</color>
+    <color name="primary_color_green">@color/md_green_500</color>
+    <color name="primary_color_grey">@color/md_grey_500</color>
+    <color name="primary_color_indigo">@color/md_indigo_500</color>
+    <color name="primary_color_lime">@color/md_lime_500</color>
+    <color name="primary_color_orange">@color/md_orange_500</color>
+    <color name="primary_color_pink">@color/md_pink_500</color>
+    <color name="primary_color_purple">@color/md_purple_500</color>
+    <color name="primary_color_teal">@color/md_teal_500</color>
+    <color name="primary_color_red">@color/md_red_500</color>
+    <color name="primary_color_deep_orange">@color/md_deep_orange_500</color>
+    <color name="primary_color_deep_purple">@color/md_deep_purple_500</color>
+    <color name="primary_color_light_blue">@color/md_light_blue_500</color>
+    <color name="primary_color_blue_grey">@color/md_blue_grey_500</color>
+    <color name="primary_color_light_green">@color/md_light_green_500</color>
+    <color name="primary_color_yellow">@color/md_yellow_500</color>
+
 </resources>
 

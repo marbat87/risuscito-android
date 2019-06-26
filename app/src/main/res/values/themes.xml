@@ -67,133 +67,133 @@
     </style>
 
     <style name="RisuscitoTheme.pAmber">
-        <item name="colorPrimary">@color/md_amber_500</item>
+        <item name="colorPrimary">@color/primary_color_amber</item>
         <item name="colorPrimaryVariant">@color/md_amber_700</item>
         <item name="colorPrimaryDark">@color/md_amber_700</item>
         <item name="colorPrimaryLight">@color/md_amber_light</item>
     </style>
 
     <style name="RisuscitoTheme.pBlue">
-        <item name="colorPrimary">@color/md_blue_500</item>
+        <item name="colorPrimary">@color/primary_color_blue</item>
         <item name="colorPrimaryVariant">@color/md_blue_700</item>
         <item name="colorPrimaryDark">@color/md_blue_700</item>
         <item name="colorPrimaryLight">@color/md_blue_light</item>
     </style>
 
     <style name="RisuscitoTheme.pBrown">
-        <item name="colorPrimary">@color/md_brown_500</item>
+        <item name="colorPrimary">@color/primary_color_brown</item>
         <item name="colorPrimaryVariant">@color/md_brown_700</item>
         <item name="colorPrimaryDark">@color/md_brown_700</item>
         <item name="colorPrimaryLight">@color/md_brown_light</item>
     </style>
 
     <style name="RisuscitoTheme.pCyan">
-        <item name="colorPrimary">@color/md_cyan_500</item>
+        <item name="colorPrimary">@color/primary_color_cyan</item>
         <item name="colorPrimaryVariant">@color/md_cyan_700</item>
         <item name="colorPrimaryDark">@color/md_cyan_700</item>
         <item name="colorPrimaryLight">@color/md_cyan_light</item>
     </style>
 
     <style name="RisuscitoTheme.pGreen">
-        <item name="colorPrimary">@color/md_green_500</item>
+        <item name="colorPrimary">@color/primary_color_green</item>
         <item name="colorPrimaryVariant">@color/md_green_700</item>
         <item name="colorPrimaryDark">@color/md_green_700</item>
         <item name="colorPrimaryLight">@color/md_green_light</item>
     </style>
 
     <style name="RisuscitoTheme.pGrey">
-        <item name="colorPrimary">@color/md_grey_500</item>
+        <item name="colorPrimary">@color/primary_color_grey</item>
         <item name="colorPrimaryVariant">@color/md_grey_700</item>
         <item name="colorPrimaryDark">@color/md_grey_700</item>
         <item name="colorPrimaryLight">@color/md_grey_light</item>
     </style>
 
     <style name="RisuscitoTheme.pLime">
-        <item name="colorPrimary">@color/md_lime_500</item>
+        <item name="colorPrimary">@color/primary_color_lime</item>
         <item name="colorPrimaryVariant">@color/md_lime_700</item>
         <item name="colorPrimaryDark">@color/md_lime_700</item>
         <item name="colorPrimaryLight">@color/md_lime_light</item>
     </style>
 
     <style name="RisuscitoTheme.pIndigo">
-        <item name="colorPrimary">@color/md_indigo_500</item>
+        <item name="colorPrimary">@color/primary_color_indigo</item>
         <item name="colorPrimaryVariant">@color/md_indigo_700</item>
         <item name="colorPrimaryDark">@color/md_indigo_700</item>
         <item name="colorPrimaryLight">@color/md_indigo_light</item>
     </style>
 
     <style name="RisuscitoTheme.pOrange">
-        <item name="colorPrimary">@color/md_orange_500</item>
+        <item name="colorPrimary">@color/primary_color_orange</item>
         <item name="colorPrimaryVariant">@color/md_orange_700</item>
         <item name="colorPrimaryDark">@color/md_orange_700</item>
         <item name="colorPrimaryLight">@color/md_orange_light</item>
     </style>
 
     <style name="RisuscitoTheme.pPink">
-        <item name="colorPrimary">@color/md_pink_500</item>
+        <item name="colorPrimary">@color/primary_color_pink</item>
         <item name="colorPrimaryVariant">@color/md_pink_700</item>
         <item name="colorPrimaryDark">@color/md_pink_700</item>
         <item name="colorPrimaryLight">@color/md_pink_light</item>
     </style>
 
     <style name="RisuscitoTheme.pPurple">
-        <item name="colorPrimary">@color/md_purple_500</item>
+        <item name="colorPrimary">@color/primary_color_purple</item>
         <item name="colorPrimaryVariant">@color/md_purple_700</item>
         <item name="colorPrimaryDark">@color/md_purple_700</item>
         <item name="colorPrimaryLight">@color/md_purple_light</item>
     </style>
 
     <style name="RisuscitoTheme.pTeal">
-        <item name="colorPrimary">@color/md_teal_500</item>
+        <item name="colorPrimary">@color/primary_color_teal</item>
         <item name="colorPrimaryVariant">@color/md_teal_700</item>
         <item name="colorPrimaryDark">@color/md_purple_700</item>
         <item name="colorPrimaryLight">@color/md_purple_light</item>
     </style>
 
     <style name="RisuscitoTheme.pRed">
-        <item name="colorPrimary">@color/md_red_500</item>
+        <item name="colorPrimary">@color/primary_color_red</item>
         <item name="colorPrimaryVariant">@color/md_red_700</item>
         <item name="colorPrimaryDark">@color/md_red_700</item>
         <item name="colorPrimaryLight">@color/md_red_light</item>
     </style>
 
     <style name="RisuscitoTheme.pDeepOrange">
-        <item name="colorPrimary">@color/md_deep_orange_500</item>
+        <item name="colorPrimary">@color/primary_color_deep_orange</item>
         <item name="colorPrimaryVariant">@color/md_deep_orange_700</item>
         <item name="colorPrimaryDark">@color/md_deep_orange_700</item>
         <item name="colorPrimaryLight">@color/md_deep_orange_light</item>
     </style>
 
     <style name="RisuscitoTheme.pDeepPurple">
-        <item name="colorPrimary">@color/md_deep_purple_500</item>
+        <item name="colorPrimary">@color/primary_color_deep_purple</item>
         <item name="colorPrimaryVariant">@color/md_deep_purple_700</item>
         <item name="colorPrimaryDark">@color/md_deep_purple_700</item>
         <item name="colorPrimaryLight">@color/md_deep_purple_light</item>
     </style>
 
     <style name="RisuscitoTheme.pLightBlue">
-        <item name="colorPrimary">@color/md_light_blue_500</item>
+        <item name="colorPrimary">@color/primary_color_light_blue</item>
         <item name="colorPrimaryVariant">@color/md_light_blue_700</item>
         <item name="colorPrimaryDark">@color/md_light_blue_700</item>
         <item name="colorPrimaryLight">@color/md_light_blue_light</item>
     </style>
 
     <style name="RisuscitoTheme.pBlueGrey">
-        <item name="colorPrimary">@color/md_blue_grey_500</item>
+        <item name="colorPrimary">@color/primary_color_blue_grey</item>
         <item name="colorPrimaryVariant">@color/md_blue_grey_700</item>
         <item name="colorPrimaryDark">@color/md_blue_grey_700</item>
         <item name="colorPrimaryLight">@color/md_blue_grey_light</item>
     </style>
 
     <style name="RisuscitoTheme.pLightGreen">
-        <item name="colorPrimary">@color/md_light_green_500</item>
+        <item name="colorPrimary">@color/primary_color_light_green</item>
         <item name="colorPrimaryVariant">@color/md_light_green_700</item>
         <item name="colorPrimaryDark">@color/md_light_green_700</item>
         <item name="colorPrimaryLight">@color/md_light_green_light</item>
     </style>
 
     <style name="RisuscitoTheme.pYellow">
-        <item name="colorPrimary">@color/md_yellow_500</item>
+        <item name="colorPrimary">@color/primary_color_yellow</item>
         <item name="colorPrimaryVariant">@color/md_yellow_700</item>
         <item name="colorPrimaryDark">@color/md_yellow_700</item>
         <item name="colorPrimaryLight">@color/md_yellow_light</item>

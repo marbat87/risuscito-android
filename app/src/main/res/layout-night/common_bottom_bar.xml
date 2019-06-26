@@ -8,7 +8,7 @@
     android:layout_gravity="bottom"
     android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
     android:visibility="invisible"
-    risuscito:backgroundTint="?colorPrimary"
+    risuscito:backgroundTint="?colorSurface"
     risuscito:hideOnScroll="true"
     risuscito:layout_scrollFlags="scroll|enterAlways"
     tools:ignore="BottomAppBar" />

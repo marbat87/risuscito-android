@@ -24,7 +24,6 @@
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
             risuscito:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
-
             <ImageView
                 risuscito:layout_collapseMode="parallax"
                 android:fitsSystemWindows="true"
@@ -47,7 +46,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/risuscito_toolbar"
                 android:layout_height="?attr/actionBarSize"
-                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+                android:theme="@style/ToolbarTheme"
                 risuscito:popupTheme="@style/RisuscitoToolbarPopup"
                 android:layout_width="match_parent"
                 android:minHeight="?attr/actionBarSize"
@@ -73,14 +72,6 @@
             android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-        <!--<it.gmariotti.changelibs.library.view.ChangeLogRecyclerView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--risuscito:changeLogFileResourceId="@raw/changelog_full"-->
-            <!--risuscito:rowHeaderLayoutId="@layout/changelogrowheader_material_layout"-->
-            <!--risuscito:rowLayoutId="@layout/changelogrow_material_layout"-->
-            <!--android:id="@+id/aboutText" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/aboutText"

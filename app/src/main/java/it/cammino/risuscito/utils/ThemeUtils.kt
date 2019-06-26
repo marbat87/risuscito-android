@@ -2,6 +2,8 @@ package it.cammino.risuscito.utils
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
@@ -77,11 +79,19 @@ class ThemeUtils(context: Context) {
 
     companion object {
 
+        val TAG = ThemeUtils::class.java.canonicalName
         const val LIGHT_MODE = "light"
         const val DARK_MODE = "dark"
         const val DEFAULT_MODE = "default"
 
+        fun getStatusBarDefaultColor(context: Context): Int {
+            return if (isDarkMode(context))
+                Color.BLACK
+            else context.themeColor(R.attr.colorPrimaryVariant)
+        }
+
         fun isDarkMode(context: Context): Boolean {
+            Log.d(TAG, "isDarkMode: ${(context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES}")
 //            return context.resources.getBoolean(R.bool.is_nigth_mode)
             return (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         }
@@ -90,7 +100,7 @@ class ThemeUtils(context: Context) {
             when (getPrefNightMode(context)) {
                 LIGHT_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 DARK_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                DEFAULT_MODE -> AppCompatDelegate.setDefaultNightMode(if (LUtils.hasQ()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+                DEFAULT_MODE -> AppCompatDelegate.setDefaultNightMode(if (LUtils.hasP()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
             }
         }
 
@@ -98,7 +108,7 @@ class ThemeUtils(context: Context) {
             return when (getPrefNightMode(context)) {
                 LIGHT_MODE -> context.getString(R.string.night_mode_light)
                 DARK_MODE -> context.getString(R.string.night_mode_dark)
-                else -> context.getString(if (LUtils.hasQ()) R.string.night_mode_auto_system else R.string.night_mode_auto_battery)
+                else -> context.getString(if (LUtils.hasP()) R.string.night_mode_auto_system else R.string.night_mode_auto_battery)
             }
         }
 

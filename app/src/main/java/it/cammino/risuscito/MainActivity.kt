@@ -57,6 +57,7 @@ import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -147,7 +148,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
 
         if (isOnTablet)
-            Utility.setupTransparentTints(this, themeColor(R.attr.colorPrimaryVariant), false)
+            Utility.setupTransparentTints(this, getStatusBarDefaultColor(this), false)
 
         setupNavDrawer(savedInstanceState)
 
@@ -395,7 +396,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
         } else {
             drawer = mDrawerBuilder.build()
-            drawer?.drawerLayout?.setStatusBarBackgroundColor(themeColor(R.attr.colorPrimaryVariant))
+            drawer?.drawerLayout?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
         }
     }
 

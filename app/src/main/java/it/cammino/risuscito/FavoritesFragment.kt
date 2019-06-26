@@ -34,7 +34,9 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
 import it.cammino.risuscito.utils.ioThread
+import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import kotlinx.android.synthetic.main.activity_favourites.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -200,6 +202,8 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
             val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
             title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
             popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
+            if (isDarkMode(requireContext()))
+                backgroundColor = requireContext().themeColor(R.attr.colorSurface)
             contentInsetStartRes(R.dimen.mcab_default_content_inset)
             menuRes = R.menu.menu_delete
 

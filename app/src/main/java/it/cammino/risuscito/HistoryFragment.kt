@@ -34,7 +34,9 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
 import it.cammino.risuscito.utils.ioThread
+import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_history.*
@@ -198,6 +200,8 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
             title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
             popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
             contentInsetStartRes(R.dimen.mcab_default_content_inset)
+            if (isDarkMode(requireContext()))
+                backgroundColor = requireContext().themeColor(R.attr.colorSurface)
             menuRes = R.menu.menu_delete
 
             onCreate { _, _ ->

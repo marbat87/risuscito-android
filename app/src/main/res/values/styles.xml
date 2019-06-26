@@ -3,6 +3,11 @@
 
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="fontFamily">@font/googlesans_medium</item>
+        <item name="android:background">?colorPrimary</item>
+    </style>
+
+    <style name="AdaptiveBackgroundColor">
+        <item name="android:background">?colorPrimary</item>
     </style>
 
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />
@@ -21,12 +26,10 @@
     <style name="Risuscito_tabstyle" parent="@style/Widget.MaterialComponents.TabLayout.Colored">
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <item name="tabIndicatorColor">?colorSecondary</item>
-        <item name="tabTextAppearance">@style/TextAppearance.Design.Tab.Risuscito</item>
-        <item name="tabTextColor">@color/tabs_text_color_selector</item>
+        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito</item>
     </style>
 
-    <style name="TextAppearance.Design.Tab.Risuscito">
+    <style name="TextAppearance.MaterialComponents.Button.Risuscito">
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 

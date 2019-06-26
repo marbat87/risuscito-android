@@ -25,12 +25,11 @@
 
             <com.ferfalk.simplesearchview.SimpleSearchView
                 android:id="@+id/searchView"
-                risuscito:type="card"
-                android:hint="@string/title_filter"
-                risuscito:backIconTint="?colorPrimary"
+                style="@style/AdaptiveBackgroundColor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?colorPrimary" />
+                android:hint="@string/title_filter"
+                risuscito:type="card" />
 
         </FrameLayout>
 

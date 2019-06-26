@@ -34,6 +34,8 @@ import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
+import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
@@ -162,6 +164,8 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                     title = resources.getQuantityString(R.plurals.item_selected, 1, 1)
                 popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
                 contentInsetStartRes(R.dimen.mcab_default_content_inset)
+                if (isDarkMode(requireContext()))
+                    backgroundColor = requireContext().themeColor(R.attr.colorSurface)
                 menuRes = R.menu.menu_actionmode_lists
 
                 onCreate { _, menu ->
