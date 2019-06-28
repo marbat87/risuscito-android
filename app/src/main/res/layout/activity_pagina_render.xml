@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbarlayout"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/risuscito_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        risuscito:elevation="@dimen/design_appbar_elevation">
-
-        <include layout="@layout/risuscito_toolbar_noelevation" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_gravity="top"
+        android:elevation="@dimen/design_appbar_elevation"
+        android:theme="@style/BottomToolbarTheme"
+        risuscito:elevation="@dimen/design_appbar_elevation"
+        risuscito:popupTheme="@style/RisuscitoToolbarPopup"
+        tools:ignore="UnusedAttribute" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -170,13 +171,13 @@
                         style="@style/Widget.MaterialProgressBar.ProgressBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minWidth="25dp"
-                        android:minHeight="25dp"
-                        android:maxHeight="25dp"
-                        android:maxWidth="25dp"
                         android:layout_gravity="center_vertical"
                         android:elevation="1dp"
                         android:indeterminate="true"
+                        android:maxWidth="25dp"
+                        android:maxHeight="25dp"
+                        android:minWidth="25dp"
+                        android:minHeight="25dp"
                         android:paddingLeft="@dimen/play_pause_padding"
                         android:paddingRight="@dimen/play_pause_padding"
                         risuscito:mpb_progressBackgroundTint="@android:color/transparent"
@@ -206,9 +207,8 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
-        android:theme="@style/ToolbarTheme"
-        risuscito:contentInsetStart="0dp"
-        risuscito:layout_scrollFlags="scroll|enterAlways">
+        android:theme="@style/BottomToolbarTheme"
+        risuscito:contentInsetStart="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"

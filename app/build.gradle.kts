@@ -61,15 +61,13 @@ android {
 
     packagingOptions {
         exclude("META-INF/library-core_release.kotlin_module")
-        exclude("META-INF/atomicfu.kotlin_module")
-        exclude("META-INF/library_release.kotlin_module")
     }
 
 }
 
 val preferenceFixVersion = "1.0.0"
 val fastAdapterVersion = "4.0.0"
-val materialDialogsVersion = "3.0.0"
+val materialDialogsVersion = "3.0.1"
 val roomVersion = "2.1.0"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")

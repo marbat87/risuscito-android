@@ -56,7 +56,6 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
-import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
@@ -385,14 +384,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mViewModel.primaNota = if (mViewModel.primaNota == PaginaRenderViewModel.NOT_VAL) CambioAccordi.recuperaPrimoAccordo(
                     assets.open(mViewModel.pagina + FILE_PATH_SUFFIX),
                     getSystemLocale(resources).language)
-//                    getSystemLocalWrapper(resources.configuration)
-//                            .language)
             else mViewModel.primaNota
             mViewModel.primoBarre = if (mViewModel.primoBarre == PaginaRenderViewModel.NOT_VAL) cambioAccordi.recuperaBarre(
                     assets.open(mViewModel.pagina + FILE_PATH_SUFFIX),
                     getSystemLocale(resources).language)
-//                    getSystemLocalWrapper(resources.configuration)
-//                            .language)
             else mViewModel.primoBarre
         } catch (e: IOException) {
             Log.e(TAG, e.localizedMessage, e)
@@ -403,7 +398,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                         val time = String.format(
                                 getSystemLocale(resources),
-//                                getSystemLocalWrapper(resources.configuration),
                                 "%02d:%02d",
                                 TimeUnit.MILLISECONDS.toMinutes(progress.toLong()),
                                 TimeUnit.MILLISECONDS.toSeconds(progress.toLong()) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(progress.toLong())))
@@ -545,8 +539,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 i.putExtra(
                         PdfExportService.DATA_LINGUA,
                         getSystemLocale(resources).language)
-//                        getSystemLocalWrapper(resources.configuration)
-//                                .language)
                 startService(i)
                 return true
             }
@@ -572,9 +564,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 mViewModel.notaCambio = mViewModel.primaNota
                 val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                 var convMin: HashMap<String, String>? = null
-//                if (getSystemLocalWrapper(resources.configuration).language
-                if (getSystemLocale(resources).language
-                                .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+                if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                     convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
@@ -606,10 +596,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 mViewModel.barreCambio = mViewModel.primoBarre
                 val convMap1 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                 var convMin1: HashMap<String, String>? = null
-//                if (getSystemLocalWrapper(resources.configuration)
-//                                .language
-                if (getSystemLocale(resources).language
-                                .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+                if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                     convMin1 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
@@ -629,10 +616,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mViewModel.notaCambio = item.titleCondensed.toString()
                     val convMap2 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                     var convMin2: HashMap<String, String>? = null
-//                    if (getSystemLocalWrapper(resources.configuration)
-//                                    .language
-                    if (getSystemLocale(resources).language
-                                    .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+                    if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                         convMin2 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
@@ -651,10 +635,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mViewModel.barreCambio = item.titleCondensed.toString()
                     val convMap3 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                     var convMin3: HashMap<String, String>? = null
-//                    if (getSystemLocalWrapper(resources.configuration)
-//                                    .language
-                    if (getSystemLocale(resources).language
-                                    .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+                    if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                         convMin3 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
@@ -800,7 +781,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             val out = BufferedWriter(
                     OutputStreamWriter(FileOutputStream(cantoTrasportato), "UTF-8"))
 
-//            val language = getSystemLocalWrapper(resources.configuration).language
             val language = getSystemLocale(resources).language
 
             val pattern: Pattern
@@ -1399,10 +1379,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
             var convMin: HashMap<String, String>? = null
-            if (getSystemLocale(resources).language
-//            if (getSystemLocalWrapper(resources.configuration)
-//                            .language
-                            .equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+            if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                 convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true)

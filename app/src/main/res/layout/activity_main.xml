@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,14 +10,14 @@
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        risuscito:elevation="@dimen/design_appbar_elevation">
+        risuscito:layout_scrollFlags="scroll|enterAlways">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             risuscito:layout_scrollFlags="scroll|enterAlways">
 
-            <include layout="@layout/risuscito_toolbar_noelevation" />
+            <include layout="@layout/common_top_toolbar" />
 
             <ViewStub
                 android:id="@+id/cab_stub"
@@ -37,7 +38,10 @@
             android:id="@+id/material_tabs"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:visibility="gone" />
+            android:elevation="@dimen/design_appbar_elevation"
+            android:visibility="gone"
+            risuscito:elevation="@dimen/design_appbar_elevation"
+            tools:ignore="UnusedAttribute" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

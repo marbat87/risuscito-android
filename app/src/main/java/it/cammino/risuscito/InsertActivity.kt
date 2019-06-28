@@ -5,8 +5,6 @@ import android.os.AsyncTask
 import android.os.AsyncTask.Status
 import android.os.Bundle
 import android.os.SystemClock
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
@@ -43,8 +41,8 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
-import kotlinx.android.synthetic.main.search_layout.*
+import kotlinx.android.synthetic.main.activity_insert_search.*
+import kotlinx.android.synthetic.main.common_top_toolbar.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import kotlinx.android.synthetic.main.view_custom_item_checkable.view.*
 import org.xmlpull.v1.XmlPullParserException
@@ -83,8 +81,6 @@ class InsertActivity : ThemeableActivity() {
         idLista = bundle?.getInt(ID_LISTA) ?: 0
         listPosition = bundle?.getInt(POSITION) ?: 0
 
-//        val args = Bundle().apply { putInt(Utility.TIPO_LISTA, 3) }
-//        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(this)
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
@@ -164,7 +160,7 @@ class InsertActivity : ThemeableActivity() {
             returnValue
         }
 
-        textfieldRicerca.doOnTextChanged {s: CharSequence?, _: Int, _: Int, _: Int ->
+        textfieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
             ricercaStringa(s.toString())
         }
 

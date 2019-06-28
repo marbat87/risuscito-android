@@ -12,10 +12,11 @@
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        risuscito:elevation="0dp">
+        risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
+            style="@style/AdaptiveScrimColor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"

@@ -63,7 +63,7 @@ import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.common_circle_progress.*
-import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
+import kotlinx.android.synthetic.main.common_top_toolbar.*
 import java.lang.ref.WeakReference
 import java.util.*
 

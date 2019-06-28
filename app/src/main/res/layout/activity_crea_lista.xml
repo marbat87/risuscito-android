@@ -11,10 +11,12 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="150dp"
+        risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
+            style="@style/AdaptiveScrimColor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
@@ -25,7 +27,6 @@
                 android:id="@+id/action_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?colorPrimary"
                 android:gravity="bottom"
                 risuscito:layout_collapseMode="parallax">
 

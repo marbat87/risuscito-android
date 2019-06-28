@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/risuscito_toolbar_noelevation" />
+        <include layout="@layout/common_top_toolbar" />
 
         <com.ferfalk.simplesearchview.SimpleSearchView
             android:id="@+id/searchView"
@@ -55,6 +55,7 @@
                     android:layout_gravity="center_horizontal"
                     risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab"
                     risuscito:cardCornerRadius="0dp"
+                    risuscito:cardElevation="@dimen/design_appbar_elevation"
                     risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior">
 
                     <com.google.android.material.tabs.TabLayout

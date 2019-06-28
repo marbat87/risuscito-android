@@ -3,7 +3,16 @@
 
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="fontFamily">@font/googlesans_medium</item>
+        <!--<item name="android:background">?colorSurface</item>-->
+    </style>
+
+    <style name="BottomToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="fontFamily">@font/googlesans_medium</item>
         <item name="android:background">?colorSurface</item>
+    </style>
+
+    <style name="AdaptiveScrimColor">
+        <item name="contentScrim">?colorSurface</item>
     </style>
 
     <style name="AdaptiveBackgroundColor">
