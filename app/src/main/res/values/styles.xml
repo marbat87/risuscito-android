@@ -18,6 +18,10 @@
         <item name="android:background">?colorPrimary</item>
     </style>
 
+    <style name="AdaptiveScrimColorDark">
+        <item name="contentScrim">?colorPrimaryVariant</item>
+    </style>
+
     <style name="AdaptiveBackgroundColorDark">
         <item name="android:background">?colorPrimaryDark</item>
     </style>

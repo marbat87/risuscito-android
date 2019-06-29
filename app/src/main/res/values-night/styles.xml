@@ -18,6 +18,10 @@
         <item name="android:background">?colorSurface</item>
     </style>
 
+    <style name="AdaptiveScrimColorDark">
+        <item name="contentScrim">@android:color/black</item>
+    </style>
+
     <style name="AdaptiveBackgroundColorDark">
         <item name="android:background">@android:color/black</item>
     </style>

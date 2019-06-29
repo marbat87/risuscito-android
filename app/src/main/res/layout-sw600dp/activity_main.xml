@@ -8,17 +8,17 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolbar_layout"
+        style="@style/AdaptiveBackgroundColorDark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?colorPrimaryDark"
         risuscito:layout_scrollFlags="scroll|enterAlways">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
+            style="@style/AdaptiveScrimColorDark"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            risuscito:contentScrim="?colorPrimaryDark"
             risuscito:layout_scrollFlags="scroll|enterAlways">
 
             <FrameLayout
