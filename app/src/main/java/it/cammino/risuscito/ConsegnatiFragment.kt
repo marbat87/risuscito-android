@@ -28,7 +28,6 @@ import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
-import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
@@ -62,7 +61,6 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     private val mCantiViewModel: ConsegnatiViewModel by viewModels()
     private var selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<CheckableItem>? = null
-    private var mBottomBar: BottomAppBar? = null
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
@@ -77,12 +75,8 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         mMainActivity?.setupToolbarTitle(R.string.title_activity_consegnati)
         mMainActivity?.setTabVisible(false)
         initFab()
-        mBottomBar = if (mMainActivity?.isOnTablet == true)
-            bottom_bar
-        else
-            activity?.bottom_bar
 
-        mBottomBar?.let {
+        activity?.bottom_bar?.let {
             it.menu?.clear()
             IconicsMenuInflaterUtil.inflate(
                     requireActivity().menuInflater, requireContext(), R.menu.consegnati, it.menu, false)
@@ -316,10 +310,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     }
 
     private fun enableBottombar(enabled: Boolean) {
-        if (mMainActivity?.isOnTablet == true)
-            mBottomBar?.visibility = if (enabled) View.VISIBLE else View.GONE
-        else
-            mMainActivity?.enableBottombar(enabled)
+        mMainActivity?.enableBottombar(enabled)
         if (!enabled)
             activity?.searchView?.closeSearch()
         activity?.invalidateOptionsMenu()
@@ -379,7 +370,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
-                                mBottomBar,
+                                requireActivity().bottom_bar,
                                 R.id.confirm_changes,
                                 getString(R.string.title_activity_consegnati),
                                 getString(R.string.showcase_consegnati_confirm))
@@ -388,7 +379,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark),
                         TapTarget.forToolbarMenuItem(
-                                mBottomBar,
+                                requireActivity().bottom_bar,
                                 R.id.cancel_change,
                                 getString(R.string.title_activity_consegnati),
                                 getString(R.string.showcase_consegnati_cancel))

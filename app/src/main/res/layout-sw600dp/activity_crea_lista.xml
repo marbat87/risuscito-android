@@ -25,7 +25,6 @@
 
             <RelativeLayout
                 android:id="@+id/action_title_bar"
-                style="@style/AdaptiveBackgroundColor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
@@ -78,66 +77,54 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <View
-        android:id="@+id/tabletToolbarBackground"
-        style="@style/AdaptiveBackgroundColor"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:layout_gravity="top"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <it.cammino.risuscito.ui.BoundedCardView
-        android:id="@+id/activity_main__frame_master"
-        style="@style/Widget.MaterialComponents.CardView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top"
-        risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab"
-        risuscito:cardCornerRadius="0dp"
+        android:orientation="vertical"
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="start|center_vertical"
+            android:paddingStart="@dimen/myListPreferredItemMargin"
+            android:paddingLeft="@dimen/myListPreferredItemMargin"
+            android:paddingEnd="@dimen/myListPreferredItemMargin"
+            android:paddingRight="@dimen/myListPreferredItemMargin"
+            android:text="@string/list_elements"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/toolbar_shadow" />
+
+        <TextView
+            android:id="@+id/noElementsAdded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_min_margin"
+            android:text="@string/no_elements_added" />
+
+        <include layout="@layout/hint_layout" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="start|center_vertical"
-                android:paddingStart="@dimen/myListPreferredItemMargin"
-                android:paddingLeft="@dimen/myListPreferredItemMargin"
-                android:paddingEnd="@dimen/myListPreferredItemMargin"
-                android:paddingRight="@dimen/myListPreferredItemMargin"
-                android:text="@string/list_elements"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+    </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:background="@drawable/toolbar_shadow" />
-
-            <TextView
-                android:id="@+id/noElementsAdded"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_min_margin"
-                android:text="@string/no_elements_added" />
-
-            <include layout="@layout/hint_layout" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:scrollbarStyle="outsideOverlay"
-                android:scrollbars="vertical" />
-
-        </LinearLayout>
-
-    </it.cammino.risuscito.ui.BoundedCardView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@id/appbarlayout"
+        android:background="@drawable/toolbar_shadow"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_crea_lista"
@@ -147,7 +134,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginEnd="@dimen/fab_margin_coord"
         android:layout_marginRight="@dimen/fab_margin_coord"
-        risuscito:layout_anchor="@id/tabletToolbarBackground"
+        risuscito:layout_anchor="@id/appbarlayout"
         risuscito:layout_anchorGravity="bottom|right|end" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

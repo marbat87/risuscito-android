@@ -3,7 +3,6 @@
 
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="fontFamily">@font/googlesans_medium</item>
-        <!--<item name="android:background">?colorSurface</item>-->
     </style>
 
     <style name="BottomToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
@@ -19,6 +18,10 @@
         <item name="android:background">?colorSurface</item>
     </style>
 
+    <style name="AdaptiveBackgroundColorDark">
+        <item name="android:background">@android:color/black</item>
+    </style>
+
     <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
@@ -32,6 +35,7 @@
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
         <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
 </resources>

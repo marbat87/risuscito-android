@@ -83,6 +83,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         private set
     var isGridLayout: Boolean = false
         private set
+    private var isLandscape: Boolean = false
+    private var isTabletWithFixedDrawer: Boolean = false
+    private var isTabletWithNoFixedDrawer: Boolean = false
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
     private lateinit var auth: FirebaseAuth
@@ -135,6 +138,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         setSupportActionBar(risuscito_toolbar)
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(!isTabletWithFixedDrawer)
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
             TranslationTask(this).execute()
@@ -146,9 +150,18 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "onCreate: hasThreeComlumns = $hasThreeColumns")
         isGridLayout = mLUtils?.isGridLayout ?: false
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
+        isLandscape = mLUtils?.isLandscape ?: false
+        Log.d(TAG, "onCreate: isLandscape = $isLandscape")
+        isTabletWithFixedDrawer = isOnTablet && isLandscape
+        Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithFixedDrawer")
+        isTabletWithNoFixedDrawer = isOnTablet && !isLandscape
+        Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithNoFixedDrawer")
 
-        if (isOnTablet)
-            Utility.setupTransparentTints(this, getStatusBarDefaultColor(this), false)
+        if (isOnTablet) {
+            Utility.setupTransparentTints(this, Color.TRANSPARENT, false)
+            if (LUtils.hasL())
+                toolbar_layout.setPadding(0, getStatusBarHeight(), 0, 0)
+        }
 
         setupNavDrawer(savedInstanceState)
 
@@ -157,7 +170,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
             }
         }
-        if (!isOnTablet) toolbar_layout?.setExpanded(true, false)
+        toolbar_layout?.setExpanded(true, false)
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -185,6 +198,16 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         // registra un receiver per ricevere la notifica di preparazione della registrazione
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(nextStepReceiver, IntentFilter(BROADCAST_NEXT_STEP))
+    }
+
+    private fun getStatusBarHeight(): Int {
+        var result = 0
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+
+        return result
     }
 
     override fun onDestroy() {
@@ -227,7 +250,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        fab_pager.expansionMode = if (mLUtils?.isFabScrollingActive == true) (if (mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP) else SpeedDialView.ExpansionMode.BOTTOM
+        if (!isOnTablet)
+            fab_pager.expansionMode = if (isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
@@ -240,8 +264,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .withTypeface(mRegularFont)
 
         // Create the AccountHeader
-        mAccountHeader = AccountHeaderBuilder().apply {
-            withTranslucentStatusBar(!isOnTablet)
+        mAccountHeader = AccountHeaderBuilder().withActivity(this).apply {
+            withTranslucentStatusBar(true)
             withSelectionListEnabledForSingleProfile(false)
             withSavedInstance(savedInstanceState)
             addProfiles(profile)
@@ -265,12 +289,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     return false
                 }
             })
-        }.withActivity(this).build()
+        }.build()
 
-        val mDrawerBuilder = DrawerBuilder().apply {
+        val mDrawerBuilder = DrawerBuilder().withActivity(this).apply {
             risuscito_toolbar?.let {
                 withToolbar(it)
             }
+            if (isTabletWithFixedDrawer)
+                withDrawerWidthDp(256)
             withHasStableIds(true)
             withAccountHeader(mAccountHeader)
             addDrawerItems(
@@ -332,8 +358,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     when (drawerItem.identifier) {
                         R.id.navigation_home.toLong() -> {
                             fragment = Risuscito()
-                            if (!isOnTablet)
-                                toolbar_layout?.setExpanded(true, true)
+                            toolbar_layout?.setExpanded(true, true)
                         }
                         R.id.navigation_search.toLong() -> fragment = SearchFragment()
                         R.id.navigation_indexes.toLong() -> fragment = GeneralIndex()
@@ -351,49 +376,52 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .findFragmentByTag(drawerItem.identifier.toString())
                     if (myFragment == null || !myFragment.isVisible) {
                         supportFragmentManager.commit {
-                            if (!isOnTablet)
-                                setCustomAnimations(
-                                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
+                            setCustomAnimations(
+                                    R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
                             replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
                         }
                     }
 
-                    if (isOnTablet) mMiniDrawer?.setSelection(drawerItem.identifier)
-                    return isOnTablet
+                    if (isTabletWithNoFixedDrawer) mMiniDrawer?.setSelection(drawerItem.identifier)
+                    return isTabletWithNoFixedDrawer
                 }
             })
-            withGenerateMiniDrawer(isOnTablet)
+            withGenerateMiniDrawer(isTabletWithNoFixedDrawer)
             withSavedInstance(savedInstanceState)
-            withTranslucentStatusBar(!isOnTablet)
-        }.withActivity(this)
+            withTranslucentStatusBar(true)
+        }
 
         if (isOnTablet) {
             drawer = mDrawerBuilder.buildView()
-            // the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
-            mMiniDrawer = drawer?.miniDrawer?.withEnableSelectedMiniDrawerItemBackground(true)?.withIncludeSecondaryDrawerItems(true)
+            if (isTabletWithFixedDrawer) {
+                fixed_drawer_content?.addView(drawer?.slider)
+            } else {
+                // the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
+                mMiniDrawer = drawer?.miniDrawer?.withEnableSelectedMiniDrawerItemBackground(true)?.withIncludeSecondaryDrawerItems(true)
 
-            // get the widths in px for the first and second panel
-            val firstWidth = UIUtils.convertDpToPixel(302f, this).toInt()
-            val secondWidth = UIUtils.convertDpToPixel(72f, this).toInt()
+                // get the widths in px for the first and second panel
+                val firstWidth = UIUtils.convertDpToPixel(302f, this).toInt()
+                val secondWidth = UIUtils.convertDpToPixel(72f, this).toInt()
 
-            // create and build our crossfader (see the MiniDrawer is also builded in here, as the build
-            // method returns the view to be used in the crossfader)
-            crossFader = Crossfader<CrossFadeSlidingPaneLayout>()
-                    .withContent(main_frame)
-                    .withFirst(drawer?.slider, firstWidth)
-                    .withSecond(mMiniDrawer?.build(this), secondWidth)
-                    .withSavedInstance(savedInstanceState)
-                    .withGmailStyleSwiping()
-                    .build()
+                // create and build our crossfader (see the MiniDrawer is also builded in here, as the build
+                // method returns the view to be used in the crossfader)
+                crossFader = Crossfader<CrossFadeSlidingPaneLayout>()
+                        .withContent(main_content)
+                        .withFirst(drawer?.slider, firstWidth)
+                        .withSecond(mMiniDrawer?.build(this), secondWidth)
+                        .withSavedInstance(savedInstanceState)
+                        .withGmailStyleSwiping()
+                        .build()
 
-            // define the crossfader to be used with the miniDrawer. This is required to be able to
-            // automatically toggle open / close
-            mMiniDrawer?.withCrossFader(CrossfadeWrapper(crossFader))
+                // define the crossfader to be used with the miniDrawer. This is required to be able to
+                // automatically toggle open / close
+                mMiniDrawer?.withCrossFader(CrossfadeWrapper(crossFader))
 
-            // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
-            // define the other one
-            crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-            crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
+                // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
+                // define the other one
+                crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
+                crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
+            }
         } else {
             drawer = mDrawerBuilder.build()
             drawer?.drawerLayout?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
@@ -412,12 +440,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             return
         }
 
-        if (isOnTablet) {
+        if (isTabletWithNoFixedDrawer) {
             if (crossFader?.isCrossFaded() == true) {
                 crossFader?.crossFade()
                 return
             }
-        } else {
+        }
+
+        if (!isOnTablet) {
             if (drawer?.isDrawerOpen == true) {
                 drawer?.closeDrawer()
                 return
@@ -645,13 +675,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun enableBottombar(enabled: Boolean) {
-        if (!isOnTablet) {
-            Log.d(TAG, "enableBottombar - enabled: $enabled")
-            if (enabled)
-                mLUtils?.animateIn(bottom_bar)
-            else
-                mLUtils?.animateOut(bottom_bar)
-        }
+        Log.d(TAG, "enableBottombar - enabled: $enabled")
+        if (enabled)
+            mLUtils?.animateIn(bottom_bar)
+        else
+            mLUtils?.animateOut(bottom_bar)
     }
 
     // [START signIn]
@@ -789,7 +817,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .withIcon(CommunityMaterial.Icon.cmd_account_key)
                                 .withIdentifier(R.id.gplus_revoke.toLong()))
             }
-            if (isOnTablet) mMiniDrawer?.onProfileClick()
+            if (isTabletWithNoFixedDrawer) mMiniDrawer?.onProfileClick()
         } else {
             val profile = ProfileDrawerItem()
                     .withName("")
@@ -804,7 +832,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 mAccountHeader.removeProfile(1)
             }
             mAccountHeader.updateProfile(profile)
-            if (isOnTablet) mMiniDrawer?.onProfileClick()
+            if (isTabletWithNoFixedDrawer) mMiniDrawer?.onProfileClick()
         }
         hideProgressDialog()
     }
@@ -858,7 +886,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected: " + item.itemId)
-        if (isOnTablet && item.itemId == android.R.id.home) {
+        if (isTabletWithNoFixedDrawer && item.itemId == android.R.id.home) {
             crossFader?.crossFade()
             return true
         }
@@ -885,11 +913,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             return
         }
 
-        if (isOnTablet)
+        if (isTabletWithNoFixedDrawer)
             mMiniDrawer?.setSelection(R.id.navigation_home.toLong())
-        else {
-            toolbar_layout?.setExpanded(true, true)
-        }
+        toolbar_layout?.setExpanded(true, true)
         drawer?.setSelection(R.id.navigation_home.toLong())
     }
 

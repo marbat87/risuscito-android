@@ -22,17 +22,17 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/toolbar_layout"
-            android:background="?colorPrimaryDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/black"
             risuscito:layout_scrollFlags="scroll|enterAlways">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/collapsingToolbarLayout"
-                risuscito:contentScrim="?colorPrimaryDark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
+                risuscito:contentScrim="@android:color/black"
                 risuscito:layout_scrollFlags="scroll|enterAlways">
 
                 <FrameLayout
