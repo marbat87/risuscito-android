@@ -35,7 +35,7 @@ class ThemeUtils(context: Context) {
             ContextCompat.getColor(mContext, R.color.md_purple_500) -> "pPurple"
             ContextCompat.getColor(mContext, R.color.md_teal_500) -> "pTeal"
             ContextCompat.getColor(mContext, R.color.md_red_500) -> "pRed"
-            ContextCompat.getColor(mContext, R.color.md_deep_orange_500) -> "pLightBlue"
+            ContextCompat.getColor(mContext, R.color.md_deep_orange_500) -> "pDeepOrange"
             ContextCompat.getColor(mContext, R.color.md_deep_purple_500) -> "pDeepPurple"
             ContextCompat.getColor(mContext, R.color.md_light_blue_500) -> "pLightBlue"
             ContextCompat.getColor(mContext, R.color.md_blue_grey_500) -> "pBlueGrey"
