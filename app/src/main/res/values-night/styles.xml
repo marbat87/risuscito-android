@@ -12,6 +12,7 @@
 
     <style name="AdaptiveScrimColor">
         <item name="contentScrim">?colorSurface</item>
+        <item name="statusBarScrim">@android:color/black</item>
     </style>
 
     <style name="AdaptiveBackgroundColor">

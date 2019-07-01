@@ -54,9 +54,7 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
         checkStoragePermissions()
 
         imageView1.setOnClickListener {
-            if (mMainActivity?.isOnTablet == true)
-                mMainActivity?.crossFader?.crossFade()
-            else
+            if (mMainActivity?.isOnTablet == false)
                 mMainActivity?.drawer?.openDrawer()
         }
 

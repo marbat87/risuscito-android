@@ -12,6 +12,7 @@
 
     <style name="AdaptiveScrimColor">
         <item name="contentScrim">?colorPrimary</item>
+        <item name="statusBarScrim">?colorPrimaryVariant</item>
     </style>
 
     <style name="AdaptiveBackgroundColor">
