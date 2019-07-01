@@ -1,5 +1,6 @@
 package it.cammino.risuscito
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
@@ -7,10 +8,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -72,6 +70,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         }
     }
 
+    @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -111,6 +110,12 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                     else -> titoliListe[position - 2]?.toUpperCase(l)
                 }
             }.attach()
+            // Iterate over all tabs and set the custom view
+            //SERVE PER EVITARE IL RESIZE ERRATO SU DUE RIGHE DEI TITOLI - DA TOGLIERE SE IL BUG 115396609 VIENE RISOLTO
+            for (i in 0 until it.tabCount) {
+                val tab = it.getTabAt(i)
+                tab?.customView = LayoutInflater.from(context).inflate(R.layout.custom_layout_tab_text, null)
+            }
         }
         view_pager.registerOnPageChangeCallback(mPageChange)
         subscribeUiListe()
