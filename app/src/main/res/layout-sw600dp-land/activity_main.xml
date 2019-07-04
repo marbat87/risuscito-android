@@ -8,7 +8,7 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/fixed_drawer_content"
-        android:layout_width="256dp"
+        android:layout_width="@dimen/drawer_tablet_fixed_widht"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true" />
 
@@ -16,8 +16,8 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="256dp"
-        android:layout_marginLeft="256dp"
+        android:layout_marginStart="@dimen/drawer_tablet_fixed_widht"
+        android:layout_marginLeft="@dimen/drawer_tablet_fixed_widht"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.AppBarLayout

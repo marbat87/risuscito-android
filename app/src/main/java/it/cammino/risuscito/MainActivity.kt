@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -22,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
+import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -74,8 +76,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     var drawer: Drawer? = null
         private set
     private var mMiniDrawer: MiniDrawer? = null
-    var crossFader: Crossfader<*>? = null
-        private set
+    private var crossFader: Crossfader<*>? = null
     private lateinit var mAccountHeader: AccountHeader
     var isOnTablet: Boolean = false
         private set
@@ -91,6 +92,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private lateinit var auth: FirebaseAuth
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
+    private lateinit var homeIcon: IconicsDrawable
+    private lateinit var backIcon: IconicsDrawable
+    private var mActionBarDrawerToggle: ActionBarDrawerToggle? = null
 
     private val nextStepReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -125,20 +129,22 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_menu)
+        homeIcon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_menu)
                 .colorInt(Color.WHITE)
                 .sizeDp(24)
                 .paddingDp(2)
+
+        backIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_arrow_left)
+                .colorInt(Color.WHITE)
+                .sizeDp(24)
+                .paddingDp(2)
+
 
         profileIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_account_circle)
                 .colorInt(themeColor(R.attr.colorPrimary))
                 .sizeDp(48)
 
-        risuscito_toolbar?.navigationIcon = icon
         setSupportActionBar(risuscito_toolbar)
-
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setDisplayHomeAsUpEnabled(!isTabletWithFixedDrawer)
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
             TranslationTask(this).execute()
@@ -292,13 +298,17 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }.build()
 
         val mDrawerBuilder = DrawerBuilder().withActivity(this).apply {
-            risuscito_toolbar?.let {
-                withToolbar(it)
+            if (!isOnTablet) {
+                risuscito_toolbar?.let {
+                    withToolbar(it)
+                }
             }
             if (isTabletWithFixedDrawer)
-                withDrawerWidthDp(256)
+                withDrawerWidthRes(R.dimen.drawer_tablet_fixed_widht)
             withHasStableIds(true)
             withAccountHeader(mAccountHeader)
+            withActionBarDrawerToggle(!isOnTablet)
+            withActionBarDrawerToggleAnimated(!isOnTablet)
             addDrawerItems(
                     PrimaryDrawerItem()
                             .withName(R.string.activity_homepage)
@@ -411,7 +421,24 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         .withSecond(mMiniDrawer?.build(this), secondWidth)
                         .withSavedInstance(savedInstanceState)
                         .withGmailStyleSwiping()
+                        .withPanelSlideListener(object : SlidingPaneLayout.PanelSlideListener {
+                            override fun onPanelSlide(panel: View, slideOffset: Float) {
+                                mActionBarDrawerToggle?.onDrawerSlide(panel, slideOffset)
+                            }
+
+                            override fun onPanelClosed(panel: View) {
+                                mActionBarDrawerToggle?.onDrawerClosed(panel)
+                            }
+
+                            override fun onPanelOpened(panel: View) {
+                                mActionBarDrawerToggle?.onDrawerOpened(panel)
+                            }
+                        })
                         .build()
+
+                mActionBarDrawerToggle = ActionBarDrawerToggle(this, drawer?.drawerLayout, risuscito_toolbar, R.string.material_drawer_open, R.string.material_drawer_close)
+                mActionBarDrawerToggle?.syncState()
+                risuscito_toolbar.setNavigationOnClickListener { crossFader?.crossFade() }
 
                 // define the crossfader to be used with the miniDrawer. This is required to be able to
                 // automatically toggle open / close
@@ -538,7 +565,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun setupToolbarTitle(titleResId: Int) {
-        risuscito_toolbar?.title = getString(titleResId)
+//        risuscito_toolbar?.title = getString(titleResId)
+        supportActionBar?.setTitle(titleResId)
     }
 
     fun closeFabMenu() {
