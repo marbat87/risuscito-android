@@ -36,10 +36,10 @@ import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.snackbar.Snackbar
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
+import com.mikepenz.iconics.IconicsColor.Companion.colorInt
 import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.colorInt
-import com.mikepenz.iconics.paddingDp
-import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.IconicsSize.Companion.dp
+import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -56,6 +56,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
+import kotlinx.android.synthetic.main.common_top_toolbar.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
@@ -368,10 +369,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         mLUtils = LUtils.getInstance(this)
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
-                .colorInt(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(4)
+//        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
+//                .colorInt(Color.WHITE)
+//                .sizeDp(24)
+//                .paddingDp(4)
+        val icon = iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
+            color = colorInt(Color.WHITE)
+            size = sizeDp(24)
+            padding = sizeDp(4)
+        }
         fab_canti.setMainFabClosedDrawable(icon)
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
@@ -954,27 +960,43 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun showPlaying(started: Boolean) {
         Log.d(TAG, "showPlaying: ")
-        val icon = IconicsDrawable(this, if (started) CommunityMaterial.Icon2.cmd_pause else CommunityMaterial.Icon2.cmd_play)
-                .colorInt(
-                        ContextCompat.getColor(
-                                this,
-                                R.color.text_color_secondary
-                        ))
-                .sizeDp(24)
-                .paddingDp(2)
+//        val icon = IconicsDrawable(this, if (started) CommunityMaterial.Icon2.cmd_pause else CommunityMaterial.Icon2.cmd_play)
+//                .colorInt(
+//                        ContextCompat.getColor(
+//                                this,
+//                                R.color.text_color_secondary
+//                        ))
+//                .sizeDp(24)
+//                .paddingDp(2)
+        val icon = iconicsDrawable(if (started) CommunityMaterial.Icon2.cmd_pause else CommunityMaterial.Icon2.cmd_play) {
+            color = colorInt(ContextCompat.getColor(
+                    this@PaginaRenderActivity,
+                    R.color.text_color_secondary
+            ))
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
         play_song.setImageDrawable(icon)
         play_song.visibility = if (mViewModel.retrieveDone) View.VISIBLE else View.GONE
         loadingBar.visibility = if (mViewModel.retrieveDone) View.GONE else View.VISIBLE
     }
 
     private fun showScrolling(scrolling: Boolean) {
-        val icon = IconicsDrawable(this, if (scrolling)
+//        val icon = IconicsDrawable(this, if (scrolling)
+//            CommunityMaterial.Icon2.cmd_pause_circle_outline
+//        else
+//            CommunityMaterial.Icon2.cmd_play_circle_outline)
+//                .colorInt(Color.WHITE)
+//                .sizeDp(24)
+//                .paddingDp(2)
+        val icon = iconicsDrawable(if (scrolling)
             CommunityMaterial.Icon2.cmd_pause_circle_outline
         else
-            CommunityMaterial.Icon2.cmd_play_circle_outline)
-                .colorInt(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(2)
+            CommunityMaterial.Icon2.cmd_play_circle_outline) {
+            color = colorInt(Color.WHITE)
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
         play_scroll.setImageDrawable(icon)
         play_scroll.isSelected = scrolling
     }
@@ -1521,10 +1543,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         fab_canti.clearActionItems()
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_fullscreen_on, IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen)
-                        .colorInt(iconColor)
-                        .sizeDp(24)
-                        .paddingDp(4))
+                SpeedDialActionItem.Builder(R.id.fab_fullscreen_on,
+//                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen)
+//                        .colorInt(iconColor)
+//                        .sizeDp(24)
+//                        .paddingDp(4)
+                        iconicsDrawable(CommunityMaterial.Icon.cmd_fullscreen) {
+                            color = colorInt(iconColor)
+                            size = sizeDp(24)
+                            padding = sizeDp(4)
+                        }
+                )
                         .setLabel(getString(R.string.fullscreen))
                         .setFabBackgroundColor(backgroundColor)
                         .setLabelBackgroundColor(backgroundColor)
@@ -1533,10 +1562,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         )
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_sound_off, IconicsDrawable(this, if (mostraAudioBool) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset)
-                        .colorInt(iconColor)
-                        .sizeDp(24)
-                        .paddingDp(4))
+                SpeedDialActionItem.Builder(R.id.fab_sound_off,
+//                        IconicsDrawable(this, if (mostraAudioBool) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset)
+//                        .colorInt(iconColor)
+//                        .sizeDp(24)
+//                        .paddingDp(4)
+                        iconicsDrawable(if (mostraAudioBool) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset) {
+                            color = colorInt(iconColor)
+                            size = sizeDp(24)
+                            padding = sizeDp(4)
+                        }
+                )
                         .setLabel(getString(if (mostraAudioBool) R.string.audio_off else R.string.audio_on))
                         .setFabBackgroundColor(backgroundColor)
                         .setLabelBackgroundColor(backgroundColor)
@@ -1546,9 +1582,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         if (mDownload) {
             val icon = IconicsDrawable(this)
-                    .colorInt(iconColor)
-                    .sizeDp(24)
-                    .paddingDp(4)
+                    .color(colorInt(iconColor))
+                    .size(dp(24))
+                    .padding(dp(4))
+//                    .colorInt(iconColor)
+//                    .sizeDp(24)
+//                    .paddingDp(4)
             val text = if (!personalUrl.isNullOrEmpty()) {
                 icon.icon(CommunityMaterial.Icon2.cmd_link_variant_off)
                 getString(R.string.dialog_delete_link_title)
@@ -1567,10 +1606,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         } else {
             if (!url.isNullOrEmpty())
                 fab_canti.addActionItem(
-                        SpeedDialActionItem.Builder(R.id.fab_save_file, IconicsDrawable(this, CommunityMaterial.Icon.cmd_download)
-                                .colorInt(iconColor)
-                                .sizeDp(24)
-                                .paddingDp(4))
+                        SpeedDialActionItem.Builder(R.id.fab_save_file,
+//                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_download)
+//                                .colorInt(iconColor)
+//                                .sizeDp(24)
+//                                .paddingDp(4)
+                                iconicsDrawable(CommunityMaterial.Icon.cmd_download) {
+                                    color = colorInt(iconColor)
+                                    size = sizeDp(24)
+                                    padding = sizeDp(4)
+                                }
+                        )
                                 .setLabel(getString(R.string.save_file))
                                 .setFabBackgroundColor(backgroundColor)
                                 .setLabelBackgroundColor(backgroundColor)
@@ -1578,10 +1624,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .create()
                 )
             fab_canti.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_link_file, IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant)
-                            .colorInt(iconColor)
-                            .sizeDp(24)
-                            .paddingDp(4))
+                    SpeedDialActionItem.Builder(R.id.fab_link_file,
+//                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant)
+//                            .colorInt(iconColor)
+//                            .sizeDp(24)
+//                            .paddingDp(4)
+                            iconicsDrawable(CommunityMaterial.Icon2.cmd_link_variant) {
+                                color = colorInt(iconColor)
+                                size = sizeDp(24)
+                                padding = sizeDp(4)
+                            }
+                    )
                             .setLabel(getString(R.string.only_link_title))
                             .setFabBackgroundColor(backgroundColor)
                             .setLabelBackgroundColor(backgroundColor)
@@ -1592,10 +1645,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
 
         fab_canti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_favorite, IconicsDrawable(this, if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart)
-                        .colorInt(iconColor)
-                        .sizeDp(24)
-                        .paddingDp(4))
+                SpeedDialActionItem.Builder(R.id.fab_favorite,
+//                        IconicsDrawable(this, if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart)
+//                        .colorInt(iconColor)
+//                        .sizeDp(24)
+//                        .paddingDp(4)
+                        iconicsDrawable(if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart) {
+                            color = colorInt(iconColor)
+                            size = sizeDp(24)
+                            padding = sizeDp(4)
+                        }
+                )
                         .setLabel(getString(if (mViewModel.mCurrentCanto?.favorite == 1) R.string.favorite_off else R.string.favorite_on))
                         .setFabBackgroundColor(backgroundColor)
                         .setLabelBackgroundColor(backgroundColor)

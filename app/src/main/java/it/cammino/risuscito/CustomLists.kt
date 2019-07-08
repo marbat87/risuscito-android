@@ -8,7 +8,10 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -29,10 +32,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.colorInt
-import com.mikepenz.iconics.paddingDp
-import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -112,13 +112,20 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             }.attach()
             // Iterate over all tabs and set the custom view
             //SERVE PER EVITARE IL RESIZE ERRATO SU DUE RIGHE DEI TITOLI - DA TOGLIERE SE IL BUG 115396609 VIENE RISOLTO
-            for (i in 0 until it.tabCount) {
-                val tab = it.getTabAt(i)
-                tab?.customView = LayoutInflater.from(context).inflate(R.layout.custom_layout_tab_text, null)
-            }
+//            for (i in 0 until it.tabCount) {
+//                val tab = it.getTabAt(i)
+//                tab?.customView = LayoutInflater.from(context).inflate(R.layout.custom_layout_tab_text, null)
+//            }
         }
         view_pager.registerOnPageChangeCallback(mPageChange)
         subscribeUiListe()
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        Log.d(TAG, "onViewStateRestored - currentItem: ${view_pager.currentItem}")
+        Log.d(TAG, "onViewStateRestored - mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
+        view_pager.currentItem = mCustomListsViewModel.indexToShow
     }
 
     override fun onDestroy() {
@@ -135,6 +142,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Log.d(TAG, "onActivityCreated")
         setHasOptionsMenu(true)
     }
 
@@ -192,14 +200,15 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             RESET_LIST -> {
                 view_pager.button_pulisci.performClick()
             }
-            DELETE_LIST ->
+            DELETE_LIST -> {
+                view_pager.currentItem = 0
                 ioThread {
                     val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
                     val listToDelete = ListaPers()
                     listToDelete.id = mCustomListsViewModel.idDaCanc
                     mDao.deleteList(listToDelete)
                     mCustomListsViewModel.indexToShow = 0
-                    movePage = true
+//                    movePage = true
                     Snackbar.make(
                             requireActivity().main_content,
                             getString(R.string.list_removed)
@@ -225,6 +234,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                                 }
                             }.show()
                 }
+            }
         }
     }
 
@@ -232,9 +242,13 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
 
     private fun playIntro() {
         enableFab(true)
-        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check)
-                .sizeDp(24)
-                .paddingDp(4)
+//        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check)
+//                .sizeDp(24)
+//                .paddingDp(4)
+        val doneDrawable = requireContext().iconicsDrawable(CommunityMaterial.Icon.cmd_check) {
+            size = sizeDp(24)
+            padding = sizeDp(4)
+        }
         TapTargetSequence(requireActivity())
                 .continueOnCancel(true)
                 .targets(
@@ -283,13 +297,19 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 titoliListe[i] = list[i].titolo
                 idListe[i] = list[i].id
             }
+//            Log.d(TAG, "movePage: $movePage")
+//            Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
+//            if (movePage) {
+//                view_pager.currentItem = mCustomListsViewModel.indexToShow
+//                movePage = false
+//            }
+            mSectionsPagerAdapter?.notifyDataSetChanged()
             Log.d(TAG, "movePage: $movePage")
             Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
             if (movePage) {
                 view_pager.currentItem = mCustomListsViewModel.indexToShow
                 movePage = false
             }
-            mSectionsPagerAdapter?.notifyDataSetChanged()
         }
     }
 
@@ -326,10 +346,15 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_plus)
-                .colorInt(Color.RED)
-                .sizeDp(24)
-                .paddingDp(4)
+//        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_plus)
+//                .colorInt(Color.RED)
+//                .sizeDp(24)
+//                .paddingDp(4)
+        val icon = requireContext().iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
+            color = colorInt(Color.WHITE)
+            size = sizeDp(24)
+            padding = sizeDp(4)
+        }
 
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {

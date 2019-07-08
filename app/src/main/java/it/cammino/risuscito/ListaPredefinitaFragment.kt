@@ -20,10 +20,7 @@ import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.colorInt
-import com.mikepenz.iconics.paddingDp
-import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.entities.Canto
@@ -172,14 +169,24 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                     Log.d(TAG, "MaterialCab onCreate")
                     posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
                     cantoAdapter.notifyItemChanged(longclickedPos)
-                    menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_shuffle)
-                            .sizeDp(24)
-                            .paddingDp(2)
-                            .colorInt(Color.WHITE)
-                    menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_delete)
-                            .sizeDp(24)
-                            .paddingDp(2)
-                            .colorInt(Color.WHITE)
+//                    menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_shuffle)
+//                            .sizeDp(24)
+//                            .paddingDp(2)
+//                            .colorInt(Color.WHITE)
+                    menu.findItem(R.id.action_switch_item).icon = requireContext().iconicsDrawable(CommunityMaterial.Icon2.cmd_shuffle) {
+                        color = colorInt(Color.WHITE)
+                        size = sizeDp(24)
+                        padding = sizeDp(2)
+                    }
+//                    menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_delete)
+//                            .sizeDp(24)
+//                            .paddingDp(2)
+//                            .colorInt(Color.WHITE)
+                    menu.findItem(R.id.action_remove_item).icon = requireContext().iconicsDrawable(CommunityMaterial.Icon.cmd_delete) {
+                        color = colorInt(Color.WHITE)
+                        size = sizeDp(24)
+                        padding = sizeDp(2)
+                    }
                     actionModeOk = false
                 }
 

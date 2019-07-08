@@ -66,8 +66,8 @@ android {
 }
 
 val preferenceFixVersion = "1.0.0"
-val fastAdapterVersion = "4.0.0"
-val materialDialogsVersion = "3.0.2"
+val fastAdapterVersion = "4.1.0-b01"
+val materialDialogsVersion = "3.1.0"
 val roomVersion = "2.1.0"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
@@ -75,9 +75,9 @@ dependencies {
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1") {}
-    implementation("com.mikepenz:materialdrawer:7.0.0-rc01")
+    implementation("com.mikepenz:materialdrawer:7.0.0-rc02")
     implementation("com.mikepenz:crossfader:1.6.0")
-    implementation("com.mikepenz:iconics-core:4.0.0")
+    implementation("com.mikepenz:iconics-core:4.0.1-b01")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation ("androidx.viewpager2:viewpager2:1.0.0-alpha05")
@@ -105,11 +105,11 @@ dependencies {
     implementation("pub.devrel:easypermissions:3.0.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha01")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha02")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("androidx.core:core-ktx:1.2.0-alpha02")
-    implementation("androidx.fragment:fragment-ktx:1.1.0-beta01")
+    implementation("androidx.fragment:fragment-ktx:1.1.0-rc01")
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.2")
     implementation("com.leinardi.android:speed-dial:2.0.1")
     implementation("com.github.mohammadatif:Animatoo:master")

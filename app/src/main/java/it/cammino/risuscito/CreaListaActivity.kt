@@ -38,10 +38,7 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe.SimpleSwipeCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.colorInt
-import com.mikepenz.iconics.paddingDp
-import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -82,10 +79,15 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
-                .colorInt(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(2)
+//        val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
+//                .colorInt(Color.WHITE)
+//                .sizeDp(24)
+//                .paddingDp(2)
+        val leaveBehindDrawable = iconicsDrawable(CommunityMaterial.Icon.cmd_delete) {
+            color = colorInt(Color.WHITE)
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
 
         val touchCallback = SimpleSwipeDragCallback(
                 this,
@@ -129,10 +131,15 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         SearchTask().execute()
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
-                .colorInt(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(4)
+//        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
+//                .colorInt(Color.WHITE)
+//                .sizeDp(24)
+//                .paddingDp(4)
+        val icon = iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
+            color = colorInt(Color.WHITE)
+            size = sizeDp(24)
+            padding = sizeDp(4)
+        }
         fab_crea_lista.setImageDrawable(icon)
 
         textTitleDescription.requestFocus()
