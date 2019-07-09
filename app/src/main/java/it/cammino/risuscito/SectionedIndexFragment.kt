@@ -249,7 +249,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        val mOutState = mAdapter.saveInstanceState(outState) ?: Bundle()
+        val mOutState = mAdapter.saveInstanceState(outState)
         super.onSaveInstanceState(mOutState)
     }
 

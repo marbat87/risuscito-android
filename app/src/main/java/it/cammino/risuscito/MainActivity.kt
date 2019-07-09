@@ -453,7 +453,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                 // define the crossfader to be used with the miniDrawer. This is required to be able to
                 // automatically toggle open / close
-                mMiniDrawer?.withCrossFader(CrossfadeWrapper(crossFader))
+                crossFader?.let { mMiniDrawer?.withCrossFader(CrossfadeWrapper(it)) }
 
                 // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
                 // define the other one

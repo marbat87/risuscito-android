@@ -80,9 +80,9 @@ class ThemeUtils(context: Context) {
     companion object {
 
         val TAG = ThemeUtils::class.java.canonicalName
-        const val LIGHT_MODE = "light"
-        const val DARK_MODE = "dark"
-        const val DEFAULT_MODE = "default"
+        private const val LIGHT_MODE = "light"
+        private const val DARK_MODE = "dark"
+        private const val DEFAULT_MODE = "default"
 
         fun getStatusBarDefaultColor(context: Context): Int {
             return if (isDarkMode(context))
@@ -92,7 +92,6 @@ class ThemeUtils(context: Context) {
 
         fun isDarkMode(context: Context): Boolean {
             Log.d(TAG, "isDarkMode: ${(context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES}")
-//            return context.resources.getBoolean(R.bool.is_nigth_mode)
             return (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         }
 
@@ -112,7 +111,7 @@ class ThemeUtils(context: Context) {
             }
         }
 
-        fun getPrefNightMode(context: Context): String {
+        private fun getPrefNightMode(context: Context): String {
             return PreferenceManager.getDefaultSharedPreferences(context).getString(NIGHT_MODE, DEFAULT_MODE)
                     ?: "default"
         }
