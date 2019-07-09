@@ -109,7 +109,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha02")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("androidx.core:core-ktx:1.2.0-alpha02")
-    implementation("androidx.fragment:fragment-ktx:1.1.0-rc01")
+    implementation("androidx.fragment:fragment-ktx:1.2.0-alpha01")
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.2")
     implementation("com.leinardi.android:speed-dial:2.0.1")
     implementation("com.github.mohammadatif:Animatoo:master")

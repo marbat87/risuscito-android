@@ -201,13 +201,14 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 view_pager.button_pulisci.performClick()
             }
             DELETE_LIST -> {
-                view_pager.currentItem = 0
+                view_pager.currentItem = view_pager.currentItem - 1
+//                mCustomListsViewModel.indexToShow = 0
                 ioThread {
                     val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
                     val listToDelete = ListaPers()
                     listToDelete.id = mCustomListsViewModel.idDaCanc
                     mDao.deleteList(listToDelete)
-                    mCustomListsViewModel.indexToShow = 0
+//                    mCustomListsViewModel.indexToShow = 0
 //                    movePage = true
                     Snackbar.make(
                             requireActivity().main_content,
