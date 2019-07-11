@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
@@ -110,22 +111,13 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                     else -> titoliListe[position - 2]?.toUpperCase(l)
                 }
             }.attach()
-            // Iterate over all tabs and set the custom view
-            //SERVE PER EVITARE IL RESIZE ERRATO SU DUE RIGHE DEI TITOLI - DA TOGLIERE SE IL BUG 115396609 VIENE RISOLTO
-//            for (i in 0 until it.tabCount) {
-//                val tab = it.getTabAt(i)
-//                tab?.customView = LayoutInflater.from(context).inflate(R.layout.custom_layout_tab_text, null)
-//            }
         }
         view_pager.registerOnPageChangeCallback(mPageChange)
+        (view_pager.getChildAt(0) as? RecyclerView)?.apply {
+            Log.d(TAG, "Setto TOUCH_SLOP_PAGING")
+            setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
+        }
         subscribeUiListe()
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        Log.d(TAG, "onViewStateRestored - currentItem: ${view_pager.currentItem}")
-        Log.d(TAG, "onViewStateRestored - mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
-        view_pager.currentItem = mCustomListsViewModel.indexToShow
     }
 
     override fun onDestroy() {
@@ -202,14 +194,11 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             }
             DELETE_LIST -> {
                 view_pager.currentItem = view_pager.currentItem - 1
-//                mCustomListsViewModel.indexToShow = 0
                 ioThread {
                     val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
                     val listToDelete = ListaPers()
                     listToDelete.id = mCustomListsViewModel.idDaCanc
                     mDao.deleteList(listToDelete)
-//                    mCustomListsViewModel.indexToShow = 0
-//                    movePage = true
                     Snackbar.make(
                             requireActivity().main_content,
                             getString(R.string.list_removed)
@@ -298,12 +287,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 titoliListe[i] = list[i].titolo
                 idListe[i] = list[i].id
             }
-//            Log.d(TAG, "movePage: $movePage")
-//            Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
-//            if (movePage) {
-//                view_pager.currentItem = mCustomListsViewModel.indexToShow
-//                movePage = false
-//            }
             mSectionsPagerAdapter?.notifyDataSetChanged()
             Log.d(TAG, "movePage: $movePage")
             Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
