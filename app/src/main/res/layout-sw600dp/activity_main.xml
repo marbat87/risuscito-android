@@ -14,7 +14,6 @@
         risuscito:layout_scrollFlags="scroll|enterAlways">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
             style="@style/AdaptiveScrimColorDark"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

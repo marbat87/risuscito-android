@@ -693,7 +693,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        fab_canti.expansionMode = if (mLUtils?.isFabScrollingActive == true && mLUtils?.isLandscape == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        fab_canti.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     public override fun onResume() {
@@ -1541,6 +1541,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 
         fab_canti.clearActionItems()
+        fab_canti.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
 
         fab_canti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_fullscreen_on,

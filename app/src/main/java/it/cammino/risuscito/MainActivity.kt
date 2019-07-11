@@ -267,8 +267,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        if (!isOnTablet)
-            fab_pager.expansionMode = if (isLandscape) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        fab_pager.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
@@ -596,7 +595,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 fab_pager?.close()
             else {
                 val params = fab_pager?.layoutParams as? CoordinatorLayout.LayoutParams
-                params?.behavior = if (mLUtils?.isFabScrollingActive == true) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
+                params?.behavior = SpeedDialView.ScrollingViewSnackbarBehavior()
                 fab_pager.requestLayout()
                 fab_pager.show()
             }
@@ -615,6 +614,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         enableFab(false)
         fab_pager.setMainFabClosedDrawable(icon)
         fab_pager.clearActionItems()
+        fab_pager.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         enableFab(true)
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 

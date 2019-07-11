@@ -28,11 +28,6 @@
 
     <dimen name="play_pause_padding">18dp</dimen>
 
-    <dimen name="bounded_cardview_max_width">1dp</dimen>
-
-    //mai usato in configurazione normale
-    <dimen name="bounded_cardview_max_width_fab">0dp</dimen>
-
     <dimen name="bottom_sheet_corner_radius">16dp</dimen>
     <dimen name="bottom_sheet_top_padding">8dp</dimen>
 

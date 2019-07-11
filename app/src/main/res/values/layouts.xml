@@ -5,6 +5,5 @@
     <bool name="has_three_columns">false</bool>
     <bool name="is_grid_layout">false</bool>
     <bool name="landscape">false</bool>
-    <bool name="fab_behavior_active">true</bool>
-    <bool name="is_nigth_mode">false</bool>
+    <bool name="fab_orientation_left">false</bool>
 </resources>

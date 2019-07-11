@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_scrim"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +11,8 @@
         android:id="@+id/fixed_drawer_content"
         android:layout_width="@dimen/drawer_tablet_fixed_widht"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true" />
+        android:fitsSystemWindows="true"
+        tools:ignore="InconsistentLayout" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
@@ -28,7 +30,6 @@
             risuscito:layout_scrollFlags="scroll|enterAlways">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:id="@+id/collapsingToolbarLayout"
                 style="@style/AdaptiveScrimColorDark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -91,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            risuscito:sdExpansionMode="top"
+            risuscito:sdExpansionMode="left"
             risuscito:sdOverlayLayout="@id/overlay" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -45,8 +45,8 @@ class LUtils private constructor(private val mActivity: Activity) {
     val isLandscape: Boolean
         get() = mActivity.resources.getBoolean(R.bool.landscape)
 
-    val isFabScrollingActive: Boolean
-        get() = mActivity.resources.getBoolean(R.bool.fab_behavior_active)
+    val isFabExpansionLeft: Boolean
+        get() = mActivity.resources.getBoolean(R.bool.fab_orientation_left)
 
     fun startActivityWithTransition(
             intent: Intent) {
