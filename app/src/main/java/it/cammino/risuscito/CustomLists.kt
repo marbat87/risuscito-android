@@ -113,10 +113,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             }.attach()
         }
         view_pager.registerOnPageChangeCallback(mPageChange)
-        (view_pager.getChildAt(0) as? RecyclerView)?.apply {
-            Log.d(TAG, "Setto TOUCH_SLOP_PAGING")
-            setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
-        }
+        (view_pager.getChildAt(0) as? RecyclerView)?.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
         subscribeUiListe()
     }
 
