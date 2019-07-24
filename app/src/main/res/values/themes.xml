@@ -11,8 +11,6 @@
         <item name="colorPrimaryLight">@color/theme_primary_light</item>
         <item name="colorAccent">@color/theme_accent</item>
         <item name="colorSecondary">@color/theme_accent</item>
-        <item name="colorControlHighlight">@color/ripple_color</item>
-        <item name="colorControlNormal">@color/dialtacts_secondary_text_color</item>
 
         <item name="customSelector">@drawable/custom_list_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>

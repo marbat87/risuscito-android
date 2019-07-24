@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.content.edit
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
@@ -34,7 +36,7 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
                 Log.d(
                         javaClass.name,
                         "DATA_VISIBLE: " + intent.getBooleanExtra(DATA_VISIBLE, false))
-                sign_in_button?.visibility = if (intent.getBooleanExtra(DATA_VISIBLE, false)) View.VISIBLE else View.INVISIBLE
+                sign_in_button?.isVisible = intent.getBooleanExtra(DATA_VISIBLE, false)
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
             }
@@ -59,11 +61,7 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
         }
 
         sign_in_button.setSize(SignInButton.SIZE_WIDE)
-        sign_in_button.visibility = if (PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(Utility.SIGNED_IN, false))
-            View.INVISIBLE
-        else
-            View.VISIBLE
+        sign_in_button.isInvisible = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Utility.SIGNED_IN, false)
         sign_in_button.setOnClickListener {
             mMainActivity?.setShowSnackbar()
             mMainActivity?.signIn()

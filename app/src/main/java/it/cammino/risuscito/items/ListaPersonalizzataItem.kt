@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
@@ -72,10 +73,10 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
         listItem?.let { list ->
             if (list.isNotEmpty()) {
                 if (titleItem?.isMultiple == true) {
-                    holder.addCanto?.visibility = View.VISIBLE
+                    holder.addCanto?.isVisible = true
                     createClickListener?.let { holder.addCanto?.setOnClickListener(it) }
                 } else
-                    holder.addCanto?.visibility = View.GONE
+                    holder.addCanto?.isVisible = false
                 for (i in list.indices) {
                     val canto = list[i]
                     itemView = inflater.inflate(R.layout.generic_card_item, holder.list, false)
@@ -98,14 +99,14 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                     if (canto.ismSelected()) {
                         val bgShape = itemView.selected_mark.background as? GradientDrawable
                         bgShape?.setColor(context.themeColor(R.attr.colorSecondary))
-                        itemView.text_page.visibility = View.INVISIBLE
-                        itemView.selected_mark.visibility = View.VISIBLE
+                        itemView.text_page.isVisible = false
+                        itemView.selected_mark.isVisible = true
                         cantoView.isSelected = true
                     } else {
                         val bgShape = itemView.text_page.background as? GradientDrawable
                         bgShape?.setColor(canto.color?.colorInt ?: Color.WHITE)
-                        itemView.text_page.visibility = View.VISIBLE
-                        itemView.selected_mark.visibility = View.INVISIBLE
+                        itemView.text_page.isVisible = true
+                        itemView.selected_mark.isVisible = false
                         cantoView.isSelected = false
                     }
 
@@ -114,7 +115,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                     holder.list?.addView(itemView)
                 }
             } else {
-                holder.addCanto?.visibility = View.VISIBLE
+                holder.addCanto?.isVisible = true
                 createClickListener?.let { holder.addCanto?.setOnClickListener(it) }
             }
         }

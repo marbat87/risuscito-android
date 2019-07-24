@@ -1,71 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_scrim"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:orientation="horizontal">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <FrameLayout
         android:id="@+id/fixed_drawer_content"
-        android:layout_width="@dimen/drawer_tablet_fixed_widht"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:ignore="InconsistentLayout" />
+        android:layout_width="@dimen/drawer_tablet_fixed_width"
+        android:layout_height="match_parent" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/drawer_tablet_fixed_widht"
-        android:layout_marginLeft="@dimen/drawer_tablet_fixed_widht"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/toolbar_layout"
-            style="@style/AdaptiveBackgroundColorDark"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            risuscito:layout_scrollFlags="scroll|enterAlways">
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                style="@style/AdaptiveScrimColorDark"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
+                android:layout_height="wrap_content"
                 risuscito:layout_scrollFlags="scroll|enterAlways">
 
-                <FrameLayout
+                <include layout="@layout/common_top_toolbar" />
+
+                <ViewStub
+                    android:id="@+id/cab_stub"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    risuscito:layout_collapseMode="none">
+                    android:layout_height="?actionBarSize" />
 
-                    <include layout="@layout/common_top_toolbar" />
+                <com.ferfalk.simplesearchview.SimpleSearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?colorPrimarySurface"
+                    android:hint="@string/title_filter"
+                    risuscito:type="card" />
 
-                    <ViewStub
-                        android:id="@+id/cab_stub"
-                        android:layout_width="match_parent"
-                        android:layout_height="?actionBarSize" />
-
-                    <com.ferfalk.simplesearchview.SimpleSearchView
-                        android:id="@+id/searchView"
-                        style="@style/AdaptiveBackgroundColor"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="@string/title_filter"
-                        risuscito:type="card" />
-
-                </FrameLayout>
-
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
+            </FrameLayout>
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/material_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                risuscito:layout_collapseMode="pin" />
+                android:visibility="gone" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -97,4 +78,4 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

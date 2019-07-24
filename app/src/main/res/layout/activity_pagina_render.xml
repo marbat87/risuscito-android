@@ -7,12 +7,16 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         risuscito:layout_scrollFlags="noScroll|enterAlways">
 
-        <include layout="@layout/common_top_toolbar" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/risuscito_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:theme="@style/ToolbarTheme"
+            risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -197,13 +201,14 @@
 
     <include layout="@layout/common_shadow" />
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
+        style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
-        android:theme="@style/BottomToolbarTheme"
-        risuscito:contentInsetStart="0dp">
+        risuscito:contentInsetStart="0dp"
+        risuscito:hideOnScroll="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -215,6 +220,7 @@
                 android:layout_width="50dip"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:fontFamily="@font/googlesans_medium"
                 android:gravity="end"
                 android:paddingStart="@dimen/activity_min_margin"
                 android:paddingLeft="@dimen/activity_min_margin"
@@ -248,7 +254,7 @@
 
         </LinearLayout>
 
-    </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.leinardi.android.speeddial.SpeedDialOverlayLayout
         android:id="@+id/overlay"

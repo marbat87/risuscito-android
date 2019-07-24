@@ -1,22 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
-        <item name="fontFamily">@font/googlesans_medium</item>
-    </style>
-
-    <style name="BottomToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
-        <item name="fontFamily">@font/googlesans_medium</item>
-        <item name="android:background">?colorSurface</item>
-    </style>
-
     <style name="AdaptiveScrimColor">
-        <item name="contentScrim">?colorSurface</item>
         <item name="statusBarScrim">@android:color/black</item>
-    </style>
-
-    <style name="AdaptiveBackgroundColor">
-        <item name="android:background">?colorSurface</item>
     </style>
 
     <style name="AdaptiveScrimColorDark">
@@ -34,13 +20,6 @@
     <style name="material_popup_theme" parent="Widget.MPM.Menu.Dark">
         <item name="android:popupBackground">@drawable/material_popup_bg</item>
         <item name="android:theme">@style/ThemeOverlay.AppCompat.DayNight</item>
-    </style>
-
-    <style name="Risuscito_tabstyle" parent="@style/Widget.MaterialComponents.TabLayout">
-        <item name="tabGravity">center</item>
-        <item name="tabMode">scrollable</item>
-        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito</item>
-        <item name="android:background">@android:color/transparent</item>
     </style>
 
 </resources>

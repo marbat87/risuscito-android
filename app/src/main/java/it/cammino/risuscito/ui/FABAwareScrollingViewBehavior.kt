@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -62,7 +64,7 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
                     @SuppressLint("RestrictedApi")
                     override fun onHidden(fab: FloatingActionButton?) {
                         super.onHidden(fab)
-                        fab?.visibility = View.INVISIBLE
+                        fab?.isInvisible = true
                     }
                 })
             }
@@ -72,7 +74,7 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
             dependencies
                     .filterIsInstance<//TEST per non dover togliere il behavior quando si nasconde il FAB volutamente
                             FloatingActionButton>()
-                    .filter { it.visibility != View.GONE }
+                    .filter { !it.isGone }
                     .forEach { it.show() }
         }
     }

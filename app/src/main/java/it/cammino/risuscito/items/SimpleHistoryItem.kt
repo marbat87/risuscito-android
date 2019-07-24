@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
@@ -107,8 +109,8 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
 
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-        holder.mPage?.visibility = if (isSelected) View.INVISIBLE else View.VISIBLE
-        holder.mPageSelected?.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+        holder.mPage?.isInvisible = isSelected
+        holder.mPageSelected?.isVisible = isSelected
         val bgShapeSelected = holder.mPageSelected?.background as? GradientDrawable
         bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
 
@@ -128,9 +130,9 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
             } else
                 df.format(dateTimestamp)
             holder.mTimestamp?.text = tempTimestamp
-            holder.mTimestamp?.visibility = View.VISIBLE
+            holder.mTimestamp?.isVisible = true
         } else
-            holder.mTimestamp?.visibility = View.GONE
+            holder.mTimestamp?.isVisible = false
     }
 
     override fun unbindView(holder: ViewHolder) {

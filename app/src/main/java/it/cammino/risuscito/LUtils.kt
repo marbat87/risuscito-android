@@ -15,6 +15,7 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
@@ -187,7 +188,7 @@ class LUtils private constructor(private val mActivity: Activity) {
     // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout
     // enters
     internal fun animateIn(view: View) {
-        view.visibility = View.VISIBLE
+        view.isVisible = true
         view.animate().translationY(0f).setInterpolator(AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L).setListener(null).start()
     }
 
@@ -195,7 +196,7 @@ class LUtils private constructor(private val mActivity: Activity) {
         view.animate().translationY(view.height.toFloat()).setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L).setListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator?) {
-                        view.visibility = View.GONE
+                        view.isVisible = false
                     }
                 }
         ).start()

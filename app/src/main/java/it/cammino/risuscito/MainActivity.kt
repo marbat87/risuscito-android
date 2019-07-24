@@ -19,6 +19,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -76,8 +77,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private var mMiniDrawer: MiniDrawer? = null
     private var crossFader: Crossfader<*>? = null
     private lateinit var mAccountHeader: AccountHeader
-    var isOnTablet: Boolean = false
-        private set
     var hasThreeColumns: Boolean = false
         private set
     var isGridLayout: Boolean = false
@@ -161,8 +160,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             TranslationTask(this).execute()
         }
 
-        isOnTablet = mLUtils?.isOnTablet ?: false
-        Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
         hasThreeColumns = mLUtils?.hasThreeColumns ?: false
         Log.d(TAG, "onCreate: hasThreeComlumns = $hasThreeColumns")
         isGridLayout = mLUtils?.isGridLayout ?: false
@@ -173,12 +170,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithFixedDrawer")
         isTabletWithNoFixedDrawer = isOnTablet && !isLandscape
         Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithNoFixedDrawer")
-
-        if (isOnTablet) {
-            Utility.setupTransparentTints(this, Color.TRANSPARENT, false)
-            if (LUtils.hasL())
-                toolbar_layout.setPadding(0, getStatusBarHeight(), 0, 0)
-        }
 
         setupNavDrawer(savedInstanceState)
 
@@ -215,16 +206,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         // registra un receiver per ricevere la notifica di preparazione della registrazione
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(nextStepReceiver, IntentFilter(BROADCAST_NEXT_STEP))
-    }
-
-    private fun getStatusBarHeight(): Int {
-        var result = 0
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        if (resourceId > 0) {
-            result = resources.getDimensionPixelSize(resourceId)
-        }
-
-        return result
     }
 
     override fun onDestroy() {
@@ -308,13 +289,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }.build()
 
         val mDrawerBuilder = DrawerBuilder().withActivity(this).apply {
-            if (!isOnTablet) {
+            if (!isOnTablet)
                 risuscito_toolbar?.let {
                     withToolbar(it)
                 }
-            }
             if (isTabletWithFixedDrawer)
-                withDrawerWidthRes(R.dimen.drawer_tablet_fixed_widht)
+                withDrawerWidthRes(R.dimen.drawer_tablet_fixed_width)
             withHasStableIds(true)
             withAccountHeader(mAccountHeader)
             withActionBarDrawerToggle(!isOnTablet)
@@ -575,7 +555,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun setupToolbarTitle(titleResId: Int) {
-//        risuscito_toolbar?.title = getString(titleResId)
         supportActionBar?.setTitle(titleResId)
     }
 
@@ -748,7 +727,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun setTabVisible(visible: Boolean) {
-        material_tabs.visibility = if (visible) View.VISIBLE else View.GONE
+        material_tabs.isVisible = visible
     }
 
     fun getMaterialTabs(): TabLayout {
@@ -919,11 +898,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun showProgressDialog() {
-        loadingBar?.visibility = View.VISIBLE
+        loadingBar?.isVisible = true
     }
 
     private fun hideProgressDialog() {
-        loadingBar?.visibility = View.GONE
+        loadingBar?.isVisible = false
     }
 
     fun setShowSnackbar() {

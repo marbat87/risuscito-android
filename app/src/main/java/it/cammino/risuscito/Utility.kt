@@ -194,15 +194,15 @@ object Utility {
     }
 
     @SuppressLint("NewApi")
-    fun setupTransparentTints(context: Activity, color: Int, hasNavDrawer: Boolean) {
-        if (!hasNavDrawer && LUtils.hasL())
+    fun setupTransparentTints(context: Activity, color: Int, hasNavDrawer: Boolean, isOnTablet: Boolean) {
+        if ((!hasNavDrawer || isOnTablet) && LUtils.hasL())
             context.window.statusBarColor = color
     }
 
     @SuppressLint("NewApi")
     fun setupNavBarColor(context: Activity) {
         if (LUtils.hasO()) {
-            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
             context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
             context.window.navigationBarColor = Color.TRANSPARENT

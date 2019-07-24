@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
+import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -243,7 +244,7 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
     private fun subscribeUiHistory() {
         mCronologiaViewModel.cronologiaCanti?.observe(this) {
             cantoAdapter.set(it)
-            no_history?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+            no_history?.isInvisible = cantoAdapter.adapterItemCount > 0
             activity?.invalidateOptionsMenu()
         }
     }

@@ -34,6 +34,6 @@
     <dimen name="mpm_popup_menu_item_section_label_text_size">13sp</dimen>
     <dimen name="mpm_popup_menu_item_label_text_size">14sp</dimen>
 
-    <dimen name="drawer_tablet_fixed_widht">256sp</dimen>
+    <dimen name="drawer_tablet_fixed_width">256dp</dimen>
 
 </resources>

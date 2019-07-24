@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -211,9 +212,9 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
                 searchTask?.let {
                     if (it.status == Status.RUNNING) it.cancel(true)
                 }
-                search_no_results.visibility = View.GONE
+                search_no_results.isVisible = false
                 cantoAdapter.clear()
-                search_progress.visibility = View.INVISIBLE
+                search_progress.isVisible = false
             }
         }
     }
@@ -282,24 +283,21 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
         override fun onPreExecute() {
             super.onPreExecute()
             if (isCancelled) return
-            fragmentReference.get()?.search_no_results?.visibility = View.GONE
-            fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
+            fragmentReference.get()?.search_no_results?.isVisible = false
+            fragmentReference.get()?.search_progress?.isVisible = true
         }
 
         override fun onPostExecute(titoliResult: ArrayList<SimpleItem>) {
             super.onPostExecute(titoliResult)
             if (isCancelled) return
             fragmentReference.get()?.cantoAdapter?.set(titoliResult)
-            fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
-            fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
-                View.VISIBLE
-            else
-                View.GONE
+            fragmentReference.get()?.search_progress?.isVisible = false
+            fragmentReference.get()?.search_no_results?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
         }
     }
 
     private fun subscribeUiCanti() {
-        mViewModel.itemsResult?.observe(this) {canti ->
+        mViewModel.itemsResult?.observe(this) { canti ->
             mViewModel.titoli = canti.sortedBy { it.title?.getText(context) }
         }
     }

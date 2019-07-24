@@ -40,11 +40,12 @@ import java.util.concurrent.ExecutionException
 abstract class ThemeableActivity : AppCompatActivity() {
 
     protected var hasNavDrawer = false
+    var isOnTablet = false
+        private set
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-        if (isMenuWorkaroundRequired) {
+        if (isMenuWorkaroundRequired)
             forceOverflowMenu()
-        }
 
         Log.d(TAG, "Configuration.UI_MODE_NIGHT_NO: ${Configuration.UI_MODE_NIGHT_NO}")
         Log.d(TAG, "Configuration.UI_MODE_NIGHT_YES: ${Configuration.UI_MODE_NIGHT_YES}")
@@ -56,8 +57,11 @@ abstract class ThemeableActivity : AppCompatActivity() {
         mLUtils.convertIntPreferences()
         setTheme(themeUtils.current)
 
+        isOnTablet = mLUtils.isOnTablet
+        Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
+
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(this, getStatusBarDefaultColor(this), hasNavDrawer)
+        Utility.setupTransparentTints(this, getStatusBarDefaultColor(this), hasNavDrawer, isOnTablet)
         Utility.setupNavBarColor(this)
 
         setTaskDescription()

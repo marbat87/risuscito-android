@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.content.edit
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -51,7 +52,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             sheet_title.setText(arguments?.getInt("title") ?: 0)
         else
             sheet_title.text = ""
-        sheet_title_area.visibility = if (showTitle) View.VISIBLE else View.GONE
+        sheet_title_area.isVisible = showTitle
 
         val intent = arguments?.getParcelable<Intent>("intent")
         val pm = requireActivity().packageManager

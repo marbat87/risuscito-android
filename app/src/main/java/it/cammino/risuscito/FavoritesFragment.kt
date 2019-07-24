@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
+import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -242,7 +243,7 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
     private fun subscribeUiFavorites() {
         mFavoritesViewModel.mFavoritesResult?.observe(this) { canti ->
             cantoAdapter.set(canti.sortedBy { it.title?.getText(context) })
-            no_favourites?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+            no_favourites?.isInvisible = cantoAdapter.adapterItemCount > 0
             activity?.invalidateOptionsMenu()
         }
     }

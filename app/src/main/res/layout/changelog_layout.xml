@@ -18,6 +18,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
+            risuscito:contentScrim="?colorPrimarySurface"
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
             risuscito:layout_scrollFlags="scroll|exitUntilCollapsed"
             risuscito:title="@string/changelog">

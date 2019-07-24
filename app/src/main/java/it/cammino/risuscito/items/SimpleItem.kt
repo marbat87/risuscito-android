@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.ViewCompat
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
@@ -134,8 +136,8 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-        holder.mPage?.visibility = if (isSelected) View.INVISIBLE else View.VISIBLE
-        holder.mPageSelected?.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+        holder.mPage?.isInvisible = isSelected
+        holder.mPageSelected?.isVisible = isSelected
         val bgShapeSelected = holder.mPageSelected?.background as? GradientDrawable
         bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
 

@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
@@ -100,7 +99,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         mSectionsPagerAdapter = SectionsPagerAdapter(this)
 
         tabs = mMainActivity?.getMaterialTabs()
-        tabs?.visibility = View.VISIBLE
         view_pager.adapter = mSectionsPagerAdapter
         tabs?.let {
             TabLayoutMediator(it, view_pager) { tab, position ->
@@ -113,7 +111,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             }.attach()
         }
         view_pager.registerOnPageChangeCallback(mPageChange)
-        (view_pager.getChildAt(0) as? RecyclerView)?.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
         subscribeUiListe()
     }
 

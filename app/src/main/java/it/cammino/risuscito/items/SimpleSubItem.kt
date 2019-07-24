@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
@@ -74,34 +75,19 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
-        // get the context
-//        val ctx = holder.itemView.context
-
         // set the text for the name
         StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
         StringHolder.applyToOrHide(page, holder.mPage)
 
-//        ViewCompat.setBackground(
-//                holder.view,
-//                FastAdapterUIUtils.getSelectableBackground(
-//                        ctx,
-//                        ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
-//                        true))
-
-//        if (isSelected) {
-//            holder.mPage?.visibility = View.INVISIBLE
-//            holder.mPageSelected?.visibility = View.VISIBLE
-//        } else {
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-        holder.mPage?.visibility = View.VISIBLE
-        holder.mPageSelected?.visibility = View.INVISIBLE
-//        }
+        holder.mPage?.isVisible = true
+        holder.mPageSelected?.isVisible = false
 
         holder.mId?.text = id.toString()
 
-        holder.mItemDivider?.visibility = if (isHasDivider) View.VISIBLE else View.INVISIBLE
+        holder.mItemDivider?.isVisible = isHasDivider
 
     }
 

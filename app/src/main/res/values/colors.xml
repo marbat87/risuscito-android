@@ -10,7 +10,7 @@
     <color name="ripple_color">#4D000000</color>
     <color name="ripple_color_light">#12000000</color>
 
-    <color name="dialtacts_secondary_text_color">#737373</color>
+    <!--<color name="dialtacts_secondary_text_color">#737373</color>-->
 
     <color name="risuscito_material_background">@color/design_default_color_background</color>
     <color name="risuscito_material_drawer_background">@color/design_default_color_surface</color>
@@ -19,6 +19,7 @@
     <color name="floating_background">@color/background_floating_material_light</color>
     <color name="material_divider">@color/md_light_dividers</color>
     <color name="background_dim_overlay">#44000000</color>
+    <color name="tablet_statusbar_color">#4D000000</color>
 
     <!--  light colors: 12% opacity -->
     <color name="md_amber_light">#1FFFC107</color>

@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
+            risuscito:contentScrim="?colorPrimarySurface"
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
             risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 

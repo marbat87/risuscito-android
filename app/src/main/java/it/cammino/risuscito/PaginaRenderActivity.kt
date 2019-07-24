@@ -25,6 +25,8 @@ import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
 import androidx.core.os.postDelayed
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -56,7 +58,6 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
-import kotlinx.android.synthetic.main.common_top_toolbar.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
@@ -701,8 +702,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         Log.d(TAG, "onResume: ")
 
-        music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
-
+        music_controls.isVisible = mostraAudioBool
 
         val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
 
@@ -977,8 +977,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             padding = sizeDp(2)
         }
         play_song.setImageDrawable(icon)
-        play_song.visibility = if (mViewModel.retrieveDone) View.VISIBLE else View.GONE
-        loadingBar.visibility = if (mViewModel.retrieveDone) View.GONE else View.VISIBLE
+        play_song.isVisible = mViewModel.retrieveDone
+        loadingBar.isGone = mViewModel.retrieveDone
     }
 
     private fun showScrolling(scrolling: Boolean) {
@@ -1097,7 +1097,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playIntroSmall() {
-        music_controls.visibility = View.VISIBLE
+        music_controls.isVisible = true
         TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
@@ -1147,21 +1147,21 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+                                music_controls.isVisible = mostraAudioBool
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+                                music_controls.isVisible = mostraAudioBool
                             }
                         })
                 .start()
     }
 
     private fun playIntroFull() {
-        music_controls.visibility = View.VISIBLE
+        music_controls.isVisible = true
         TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
@@ -1221,14 +1221,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+                                music_controls.isVisible = mostraAudioBool
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.visibility = if (mostraAudioBool) View.VISIBLE else View.GONE
+                                music_controls.isVisible = mostraAudioBool
                             }
                         })
                 .start()
@@ -1332,17 +1332,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mDownload = !(localUrl.isNullOrEmpty() && personalUrl.isNullOrEmpty())
 
             // almeno una registrazione c'è, quindi nascondo il messaggio di no_records
-            no_record.visibility = View.INVISIBLE
+            no_record.isVisible = false
             // mostra i pulsanti per il lettore musicale se ho una registrazione locale oppure se sono
             // online, altrimenti mostra il messaggio di mancata connessione
             Log.d(TAG, "isOnline ${Utility.isOnline(this)}")
-            music_buttons.visibility = if (Utility.isOnline(this) || mDownload) View.VISIBLE else View.INVISIBLE
-            no_connection.visibility = if (Utility.isOnline(this) || mDownload) View.INVISIBLE else View.VISIBLE
+            music_buttons.isVisible = Utility.isOnline(this) || mDownload
+            no_connection.isInvisible = Utility.isOnline(this) || mDownload
         } else {
             mDownload = !personalUrl.isNullOrEmpty()
             // Se c'è una registrazione locale mostro i pulsanti
-            music_buttons.visibility = if (mDownload) View.VISIBLE else View.INVISIBLE
-            no_record.visibility = if (mDownload) View.INVISIBLE else View.VISIBLE
+            music_buttons.isVisible = mDownload
+            no_record.isInvisible = mDownload
         }// NON c'è la registrazione online
         initFabOptions()
     }
@@ -1683,7 +1683,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 }
                 R.id.fab_sound_off -> {
                     fab_canti.close()
-                    music_controls.visibility = if (mostraAudioBool) View.GONE else View.VISIBLE
+                    music_controls.isInvisible = mostraAudioBool
                     mostraAudioBool = !mostraAudioBool
                     mViewModel.mostraAudio = mostraAudioBool.toString()
                     true

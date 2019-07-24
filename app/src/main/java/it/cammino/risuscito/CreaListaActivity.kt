@@ -20,6 +20,7 @@ import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -164,7 +165,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             }
 
                             override fun onDismiss(view: View, token: Any?) {
-                                main_hint_layout.visibility = View.GONE
+                                main_hint_layout.isVisible = false
                                 PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA_2, true) }
                             }
                         }))
@@ -198,8 +199,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 playIntro()
             }
         }
-        if (mAdapter.adapterItems.isEmpty() || mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false))
-            main_hint_layout.visibility = View.GONE
+        main_hint_layout.isVisible = mAdapter.adapterItems.isNotEmpty() && !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
         return true
     }
 
@@ -207,8 +207,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         when (item.itemId) {
             R.id.action_help -> {
                 playIntro()
-                if (mAdapter.adapterItems.isNotEmpty())
-                    main_hint_layout.visibility = View.VISIBLE
+                main_hint_layout.isVisible = mAdapter.adapterItems.isNotEmpty()
                 return true
             }
             R.id.action_save_list -> {
@@ -268,7 +267,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 mAdapter.notifyAdapterItemChanged(mViewModel.positionToRename)
             }
             ADD_POSITION -> {
-                noElementsAdded.visibility = View.GONE
+                noElementsAdded.isVisible = false
                 val mEditText = dialog.getInputField()
                 if (modifica) nomiCanti.add("")
                 if (mAdapter.adapterItemCount == 0) {
@@ -298,9 +297,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 Log.d(
                         TAG,
                         "onCreateOptionsMenu - INTRO_CREALISTA_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false))
-                if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)) {
-                    main_hint_layout.visibility = View.VISIBLE
-                }
+                main_hint_layout.isVisible = !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
             }
         }
     }
@@ -351,13 +348,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             itemOjb.swipedAction = null
             val position12 = mAdapter.getAdapterPosition(itemOjb)
             if (position12 != RecyclerView.NO_POSITION) {
-                //this sample uses a filter. If a filter is used we should use the methods provided by the filter (to make sure filter and normal state is updated)
                 mAdapter.remove(position12)
                 if (modifica) nomiCanti.removeAt(position12)
-                if (mAdapter.adapterItemCount == 0) {
-                    noElementsAdded.visibility = View.VISIBLE
-                    main_hint_layout.visibility = View.GONE
-                }
+                noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+                main_hint_layout.isVisible = mAdapter.adapterItemCount > 0
             }
             true
         }
@@ -496,7 +490,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 textfieldTitle.setText(mViewModel.tempTitle)
                 collapsingToolbarLayout.title = mViewModel.tempTitle
             }
-            if (elementi.size > 0) noElementsAdded.visibility = View.GONE
+            noElementsAdded.isVisible = (elementi.size == 0)
         }
     }
 

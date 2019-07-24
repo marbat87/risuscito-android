@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -89,9 +91,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                     }
                     R.id.cancel_change -> {
                         mCantiViewModel.editMode = false
-                        chooseRecycler?.visibility = View.INVISIBLE
+                        chooseRecycler?.isVisible = false
                         enableBottombar(false)
-                        selected_view?.visibility = View.VISIBLE
+                        selected_view?.isVisible = true
                         enableFab(true)
                         true
                     }
@@ -224,9 +226,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             var managed = false
             if (keyCode == KeyEvent.KEYCODE_BACK && mCantiViewModel.editMode) {
                 mCantiViewModel.editMode = false
-                chooseRecycler?.visibility = View.INVISIBLE
+                chooseRecycler?.isVisible = false
                 enableBottombar(false)
-                selected_view?.visibility = View.VISIBLE
+                selected_view?.isVisible = true
                 enableFab(true)
                 managed = true
             }
@@ -242,17 +244,10 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         LocalBroadcastManager.getInstance(requireActivity())
                 .registerReceiver(
                         completedBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED))
-        if (mCantiViewModel.editMode) {
-            chooseRecycler?.visibility = View.VISIBLE
-            enableBottombar(true)
-            selected_view?.visibility = View.INVISIBLE
-            enableFab(false)
-        } else {
-            chooseRecycler?.visibility = View.GONE
-            enableBottombar(false)
-            selected_view?.visibility = View.VISIBLE
-            enableFab(true)
-        }
+        chooseRecycler?.isVisible = mCantiViewModel.editMode
+        enableBottombar(mCantiViewModel.editMode)
+        selected_view?.isVisible = !mCantiViewModel.editMode
+        enableFab(!mCantiViewModel.editMode)
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
             fabIntro()
@@ -330,8 +325,8 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         val onClick = View.OnClickListener {
             mCantiViewModel.editMode = true
             UpdateChooseListTask(this).execute()
-            selected_view?.visibility = View.INVISIBLE
-            chooseRecycler?.visibility = View.VISIBLE
+            selected_view?.isVisible = false
+            chooseRecycler?.isVisible = true
             enableBottombar(true)
             enableFab(false)
             val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -408,7 +403,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         mCantiViewModel.mIndexResult?.observe(this) { cantos ->
             mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
             cantoAdapter.set(mCantiViewModel.titoli)
-            no_consegnati?.visibility = if (cantoAdapter.adapterItemCount > 0) View.INVISIBLE else View.VISIBLE
+            no_consegnati?.isInvisible = cantoAdapter.adapterItemCount > 0
         }
     }
 
@@ -473,9 +468,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 val fragment = ProgressDialogFragment.findVisible(
                         mMainActivity, CONSEGNATI_SAVING)
                 fragment?.dismiss()
-                chooseRecycler?.visibility = View.GONE
+                chooseRecycler?.isVisible = false
                 enableBottombar(false)
-                selected_view?.visibility = View.VISIBLE
+                selected_view?.isVisible = true
                 enableFab(true)
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)

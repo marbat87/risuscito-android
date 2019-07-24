@@ -27,5 +27,6 @@
     <color name="text_color_secondary">@color/secondary_text_default_material_dark</color>
     <color name="floating_background">@color/background_floating_material_dark</color>
     <color name="material_divider">@color/md_dark_dividers</color>
+    <color name="tablet_statusbar_color">#000000</color>
 
 </resources>

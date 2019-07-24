@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4416"
+    <release versionCode="4417"
         date="June 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANT[/b]: New Backup/Restore system, visually the procedure is the same, changes are only "under the hood". The old backup has been removed, you must upload a new one</new>

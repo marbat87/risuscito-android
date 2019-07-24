@@ -5,9 +5,9 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
@@ -69,13 +69,13 @@ class ProgressDialogFragment : DialogFragment() {
 
         if (mBuilder.mProgressIndeterminate) {
             dialog.customView(R.layout.indeterminate_progressbar)
-            dialog.getCustomView().md_content_indeterminate.visibility = if (mBuilder.mContent != null) View.VISIBLE else View.GONE
+            dialog.getCustomView().md_content_indeterminate.isVisible = mBuilder.mContent != null
             dialog.getCustomView().md_content_indeterminate.text = mBuilder.mContent ?: ""
         } else {
             dialog.customView(R.layout.linear_progressbar)
             dialog.getCustomView().working_progress.max = mBuilder.mProgressMax
-            dialog.getCustomView().md_minMax.visibility = if (mBuilder.mShowMinMax) View.VISIBLE else View.GONE
-            dialog.getCustomView().md_content_linear.visibility = if (mBuilder.mContent != null) View.VISIBLE else View.GONE
+            dialog.getCustomView().md_minMax.isVisible = mBuilder.mShowMinMax
+            dialog.getCustomView().md_content_linear.isVisible = mBuilder.mContent != null
             dialog.getCustomView().md_content_linear.text = mBuilder.mContent ?: ""
         }
 

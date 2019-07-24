@@ -3,6 +3,8 @@ package it.cammino.risuscito.items
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.drag.IExtendedDraggable
@@ -59,8 +61,8 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
         StringHolder.applyTo(name, holder.name)
         //set the text for the description or hide
 
-        holder.swipeResultContent?.visibility = if (swipedDirection != 0) View.VISIBLE else View.GONE
-        holder.itemContent?.visibility = if (swipedDirection != 0) View.GONE else View.VISIBLE
+        holder.swipeResultContent?.isVisible = swipedDirection != 0
+        holder.itemContent?.isInvisible = swipedDirection != 0
 
         var swipedAction: CharSequence? = null
         var swipedText: CharSequence? = null

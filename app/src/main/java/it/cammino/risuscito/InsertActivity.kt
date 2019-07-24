@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
@@ -242,9 +243,9 @@ class InsertActivity : ThemeableActivity() {
                 searchTask?.let {
                     if (it.status == Status.RUNNING) it.cancel(true)
                 }
-                search_no_results.visibility = View.GONE
+                search_no_results.isVisible = false
                 cantoAdapter.clear()
-                search_progress.visibility = View.INVISIBLE
+                search_progress.isVisible = false
             }
         }
     }
@@ -319,19 +320,16 @@ class InsertActivity : ThemeableActivity() {
         override fun onPreExecute() {
             super.onPreExecute()
             if (isCancelled) return
-            fragmentReference.get()?.search_no_results?.visibility = View.GONE
-            fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
+            fragmentReference.get()?.search_no_results?.isVisible = false
+            fragmentReference.get()?.search_progress?.isVisible = true
         }
 
         override fun onPostExecute(titoliResult: ArrayList<InsertItem>) {
             super.onPostExecute(titoliResult)
             if (isCancelled) return
             fragmentReference.get()?.cantoAdapter?.set(titoliResult)
-            fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
-            fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
-                View.VISIBLE
-            else
-                View.GONE
+            fragmentReference.get()?.search_progress?.isVisible = false
+            fragmentReference.get()?.search_no_results?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
         }
     }
 

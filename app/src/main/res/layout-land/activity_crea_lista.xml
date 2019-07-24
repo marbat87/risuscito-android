@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
+            risuscito:contentScrim="?colorPrimarySurface"
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
             risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -35,8 +36,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/textfieldTitle"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:text="@string/list_title"
                     android:textColor="@android:color/white" />
@@ -45,13 +46,14 @@
                     android:id="@+id/textfieldTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/activity_min_margin"
                     android:layout_marginLeft="@dimen/activity_min_margin"
                     android:layout_marginRight="@dimen/activity_min_margin"
+                    android:layout_marginBottom="@dimen/activity_min_margin"
                     android:layout_toEndOf="@id/textTitleDescription"
                     android:layout_toRightOf="@id/textTitleDescription"
                     android:hint="@string/list_title_modif"
                     android:imeOptions="actionDone"
+                    android:importantForAutofill="no"
                     android:inputType="text|textCapSentences"
                     android:maxLines="1"
                     android:scrollHorizontally="true"
@@ -59,7 +61,6 @@
                     android:textColorHighlight="@color/ripple_color_light"
                     android:textCursorDrawable="@null"
                     android:textSize="30sp"
-                    android:importantForAutofill="no"
                     tools:ignore="UnusedAttribute" />
 
             </RelativeLayout>
@@ -86,10 +87,10 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:gravity="start|center_vertical"
-            android:paddingEnd="@dimen/myListPreferredItemMargin"
-            android:paddingLeft="@dimen/myListPreferredItemMargin"
-            android:paddingRight="@dimen/myListPreferredItemMargin"
             android:paddingStart="@dimen/myListPreferredItemMargin"
+            android:paddingLeft="@dimen/myListPreferredItemMargin"
+            android:paddingEnd="@dimen/myListPreferredItemMargin"
+            android:paddingRight="@dimen/myListPreferredItemMargin"
             android:text="@string/list_elements"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
