@@ -137,15 +137,33 @@
                     android:textColor="?android:textColorPrimary"
                     tools:ignore="HardcodedText,RtlSymmetry" />
 
-                <SeekBar
-                    android:id="@+id/music_seekbar"
+                <FrameLayout
                     android:layout_width="0dip"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:maxHeight="1000dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp" />
+                    android:maxHeight="1000dp">
+
+                    <SeekBar
+                        android:id="@+id/music_seekbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp" />
+
+                    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                        android:id="@+id/music_loadingbar"
+                        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:indeterminate="true"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:visibility="gone"
+                        risuscito:mpb_progressStyle="horizontal" />
+
+                </FrameLayout>
 
                 <ImageView
                     android:id="@+id/play_song"

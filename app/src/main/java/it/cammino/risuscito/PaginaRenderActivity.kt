@@ -124,7 +124,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                 }
                 PlaybackStateCompat.STATE_ERROR -> {
-                    dismissProgressDialog(BUFFERING)
+//                    dismissProgressDialog(BUFFERING)
+                    music_seekbar.isVisible = true
+                    music_loadingbar.isVisible = false
                     stopSeekbarUpdate()
                     music_seekbar.progress = 0
                     music_seekbar.isEnabled = false
@@ -137,7 +139,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .show()
                 }
                 PlaybackStateCompat.STATE_PLAYING -> {
-                    dismissProgressDialog(BUFFERING)
+//                    dismissProgressDialog(BUFFERING)
+                    music_seekbar.isVisible = true
+                    music_loadingbar.isVisible = false
                     scheduleSeekbarUpdate()
                     showPlaying(true)
                     music_seekbar.isEnabled = true
@@ -1255,11 +1259,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playFromId(id: String) {
-        ProgressDialogFragment.Builder(this, null, BUFFERING)
-                .content(R.string.wait)
-                .progressIndeterminate(true)
-                .setCanceable()
-                .show()
+//        ProgressDialogFragment.Builder(this, null, BUFFERING)
+//                .content(R.string.wait)
+//                .progressIndeterminate(true)
+//                .setCanceable()
+//                .show()
+        music_seekbar.isVisible = false
+        music_loadingbar.isVisible = true
+        showPlaying(true)
         val controller = MediaControllerCompat.getMediaController(this)
         controller?.transportControls?.playFromMediaId(id, null)
     }
@@ -1764,7 +1771,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val DELETE_LINK = "DELETE_LINK"
         private const val DOWNLOAD_MP3 = "DOWNLOAD_MP3"
         private const val DELETE_MP3 = "DELETE_MP3"
-        private const val BUFFERING = "BUFFERING"
+//        private const val BUFFERING = "BUFFERING"
         private const val SAVE_TAB = "SAVE_TAB"
         private const val DEF_FILE_PATH = "file://"
         private const val FILE_PATH_PREFIX = "$DEF_FILE_PATH/android_asset/"
