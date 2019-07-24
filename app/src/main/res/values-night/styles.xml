@@ -9,10 +9,6 @@
         <item name="contentScrim">@android:color/black</item>
     </style>
 
-    <style name="AdaptiveBackgroundColorDark">
-        <item name="android:background">@android:color/black</item>
-    </style>
-
     <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>

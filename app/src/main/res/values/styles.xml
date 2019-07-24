@@ -9,10 +9,6 @@
         <item name="statusBarScrim">?colorPrimaryVariant</item>
     </style>
 
-    <style name="AdaptiveBackgroundColorDark">
-        <item name="android:background">?colorPrimaryDark</item>
-    </style>
-
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />
 
     <style name="TitoloSezione">
@@ -33,10 +29,6 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <!--<style name="Risuscito_tabstyle" parent="Risuscito_tabstyle_base" >-->
-        <!--<item name="android:background">@android:color/transparent</item>-->
-    <!--</style>-->
-
     <style name="TextAppearance.MaterialComponents.Button.Risuscito">
         <item name="fontFamily">@font/googlesans_medium</item>
         <item name="android:textSize">12sp</item>
@@ -44,10 +36,12 @@
 
     <style name="ActionBar.TitleText.Collapsed">
         <item name="android:textColor">@color/primary_text_default_material_dark</item>
+        <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
     <style name="ActionBar.TitleText.Expanded">
         <item name="android:textColor">@android:color/transparent</item>
+        <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
     <style name="BottomSheet" />

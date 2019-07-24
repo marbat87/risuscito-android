@@ -7,7 +7,6 @@
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
-        style="@style/AdaptiveBackgroundColorDark"
         android:layout_width="match_parent"
         android:layout_height="@dimen/about_appbarlayout_height"
         android:fitsSystemWindows="true">
