@@ -356,10 +356,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                     val fragment: Fragment
                     when (drawerItem.identifier) {
-                        R.id.navigation_home.toLong() -> {
-                            fragment = Risuscito()
-                            toolbar_layout?.setExpanded(true, true)
-                        }
+                        R.id.navigation_home.toLong() ->  fragment = Risuscito()
                         R.id.navigation_search.toLong() -> fragment = SearchFragment()
                         R.id.navigation_indexes.toLong() -> fragment = GeneralIndex()
                         R.id.navitagion_lists.toLong() -> fragment = CustomLists()
@@ -370,6 +367,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         R.id.navigation_history.toLong() -> fragment = HistoryFragment()
                         else -> return true
                     }
+                    toolbar_layout?.setExpanded(true, true)
 
                     // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
                     val myFragment = supportFragmentManager
@@ -728,6 +726,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     fun setTabVisible(visible: Boolean) {
         material_tabs.isVisible = visible
+    }
+
+    fun expandToolbar() {
+        toolbar_layout?.setExpanded(true, true)
     }
 
     fun getMaterialTabs(): TabLayout {

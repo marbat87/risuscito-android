@@ -111,7 +111,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:scrollbarStyle="outsideOverlay"
@@ -119,12 +119,7 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_below="@id/appbarlayout"
-        android:background="@drawable/toolbar_shadow"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <include layout="@layout/common_shadow" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_crea_lista"

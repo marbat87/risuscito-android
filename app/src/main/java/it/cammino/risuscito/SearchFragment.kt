@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -130,7 +131,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
         else
             LinearLayoutManager(context)
         matchedList.layoutManager = llm
-        matchedList.setHasFixedSize(true)
+//        matchedList.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
@@ -213,6 +214,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
                     if (it.status == Status.RUNNING) it.cancel(true)
                 }
                 search_no_results.isVisible = false
+                matchedList.isVisible = false
                 cantoAdapter.clear()
                 search_progress.isVisible = false
             }
@@ -293,6 +295,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
             fragmentReference.get()?.cantoAdapter?.set(titoliResult)
             fragmentReference.get()?.search_progress?.isVisible = false
             fragmentReference.get()?.search_no_results?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
+            fragmentReference.get()?.matchedList?.isGone = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
         }
     }
 

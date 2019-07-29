@@ -75,7 +75,7 @@ dependencies {
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1") {}
-    implementation("com.mikepenz:materialdrawer:7.0.0-rc03")
+    implementation("com.mikepenz:materialdrawer:7.0.0-rc04")
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:iconics-core:4.0.1-b01")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
@@ -111,7 +111,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.2.0-alpha02")
     implementation("androidx.fragment:fragment-ktx:1.1.0-rc03")
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.2")
-    implementation("com.leinardi.android:speed-dial:2.0.1")
+    implementation("com.leinardi.android:speed-dial:3.0.0")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation("com.github.Ferfalk:SimpleSearchView:0.1.3")
     implementation("com.github.MFlisar:changelog:1.1.6")

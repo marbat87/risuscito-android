@@ -104,7 +104,7 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (mActivity?.hasThreeColumns == true) 3 else 2)
         cantiList?.layoutManager = if (mActivity?.isGridLayout == true) glm else llm
-        cantiList?.setHasFixedSize(true)
+//        cantiList?.setHasFixedSize(true)
         cantiList?.adapter = mAdapter
         val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
         insetDivider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)

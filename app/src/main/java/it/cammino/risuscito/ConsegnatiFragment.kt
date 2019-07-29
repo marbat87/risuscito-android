@@ -150,7 +150,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         val glm = GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         val llm = LinearLayoutManager(context)
         cantiRecycler?.layoutManager = if (mMainActivity?.isGridLayout == true) glm else llm
-        cantiRecycler?.setHasFixedSize(true)
+//        cantiRecycler?.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), if (mMainActivity?.isGridLayout == true) glm.orientation else llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
@@ -189,7 +189,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         else
             LinearLayoutManager(context)
         chooseRecycler?.layoutManager = llm2
-        chooseRecycler?.setHasFixedSize(true)
+//        chooseRecycler?.setHasFixedSize(true)
         val insetDivider2 = DividerItemDecoration(requireContext(), llm2.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
@@ -226,6 +226,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             var managed = false
             if (keyCode == KeyEvent.KEYCODE_BACK && mCantiViewModel.editMode) {
                 mCantiViewModel.editMode = false
+                mMainActivity?.expandToolbar()
                 chooseRecycler?.isVisible = false
                 enableBottombar(false)
                 selected_view?.isVisible = true
@@ -404,6 +405,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
             cantoAdapter.set(mCantiViewModel.titoli)
             no_consegnati?.isInvisible = cantoAdapter.adapterItemCount > 0
+            cantiRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
         }
     }
 

@@ -8,10 +8,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chooseRecycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:fadeScrollbars="true"
-        android:scrollbars="vertical"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:scrollbars="vertical" />
 
     <FrameLayout
         android:id="@+id/selected_view"
@@ -21,10 +20,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cantiRecycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fadeScrollbars="true"
-            android:scrollbars="vertical"
-            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:scrollbars="vertical" />
 
         <RelativeLayout
             android:id="@+id/no_consegnati"

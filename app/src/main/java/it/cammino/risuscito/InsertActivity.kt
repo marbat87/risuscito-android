@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.observe
@@ -42,8 +43,8 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.activity_insert_search.*
 import kotlinx.android.synthetic.main.common_top_toolbar.*
+import kotlinx.android.synthetic.main.search_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import kotlinx.android.synthetic.main.view_custom_item_checkable.view.*
 import org.xmlpull.v1.XmlPullParserException
@@ -145,7 +146,7 @@ class InsertActivity : ThemeableActivity() {
         val glm = GridLayoutManager(this, if (mLUtils?.hasThreeColumns == true) 3 else 2)
         val llm = LinearLayoutManager(this)
         matchedList.layoutManager = if (mLUtils?.isGridLayout == true) glm else llm
-        matchedList.setHasFixedSize(true)
+//        matchedList.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(this, if (mLUtils?.isGridLayout == true) glm.orientation else llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(this, R.drawable.material_inset_divider)!!)
@@ -244,6 +245,7 @@ class InsertActivity : ThemeableActivity() {
                     if (it.status == Status.RUNNING) it.cancel(true)
                 }
                 search_no_results.isVisible = false
+                matchedList.isVisible = false
                 cantoAdapter.clear()
                 search_progress.isVisible = false
             }
@@ -330,6 +332,7 @@ class InsertActivity : ThemeableActivity() {
             fragmentReference.get()?.cantoAdapter?.set(titoliResult)
             fragmentReference.get()?.search_progress?.isVisible = false
             fragmentReference.get()?.search_no_results?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
+            fragmentReference.get()?.matchedList?.isGone = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
         }
     }
 

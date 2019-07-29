@@ -133,7 +133,7 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
         else
             LinearLayoutManager(context)
         history_recycler?.layoutManager = llm
-        history_recycler?.setHasFixedSize(true)
+//        history_recycler?.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
@@ -245,6 +245,7 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
         mCronologiaViewModel.cronologiaCanti?.observe(this) {
             cantoAdapter.set(it)
             no_history?.isInvisible = cantoAdapter.adapterItemCount > 0
+            history_recycler.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
         }
     }

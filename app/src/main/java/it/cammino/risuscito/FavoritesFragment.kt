@@ -131,7 +131,7 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
         else
             LinearLayoutManager(context)
         favouritesList?.layoutManager = llm
-        favouritesList?.setHasFixedSize(true)
+//        favouritesList?.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
@@ -244,6 +244,7 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
         mFavoritesViewModel.mFavoritesResult?.observe(this) { canti ->
             cantoAdapter.set(canti.sortedBy { it.title?.getText(context) })
             no_favourites?.isInvisible = cantoAdapter.adapterItemCount > 0
+            favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
         }
     }

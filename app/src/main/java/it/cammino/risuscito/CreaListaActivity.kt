@@ -120,7 +120,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         recycler_view?.layoutManager = llm
 
         recycler_view?.adapter = mAdapter
-        recycler_view?.setHasFixedSize(true) // Size of RV will not change
+//        recycler_view?.setHasFixedSize(true) // Size of RV will not change
 
         val insetDivider = DividerItemDecoration(this, llm.orientation)
         insetDivider.setDrawable(
