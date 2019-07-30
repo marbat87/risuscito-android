@@ -18,7 +18,7 @@ class ThemeUtils(context: Context) {
     private val mContext: Context = context
 
     val current: Int
-        get() = LUtils.getResId("RisuscitoTheme_${getPrimaryThemeName()}_${getSecondaryThemeName()}", R.style::class.java)
+        get() = LUtils.getResId("Risuscito_Theme_${getPrimaryThemeName()}_${getSecondaryThemeName()}", R.style::class.java)
 
     private fun getPrimaryThemeName(): String {
         return when (primaryColor()) {
