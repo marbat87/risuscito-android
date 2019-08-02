@@ -19,7 +19,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(29)
         multiDexEnabled = true
-        versionCode = 4417
+        versionCode = 4418
         versionName = "4.4.0"
     }
 
@@ -74,7 +74,7 @@ dependencies {
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
-    implementation("me.zhanghai.android.materialprogressbar:library:1.6.1") {}
+    implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:7.0.0-rc04")
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:iconics-core:4.0.1-b01")
@@ -82,6 +82,7 @@ dependencies {
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation ("com.google.android.material:material:1.1.0-alpha09")
     implementation ("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
     implementation("androidx.media:media:1.1.0-rc01")
     implementation("androidx.preference:preference:1.1.0-rc01")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
