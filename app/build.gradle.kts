@@ -13,7 +13,7 @@ plugins {
 android {
 
     compileSdkVersion(29)
-    buildToolsVersion("29.0.0")
+    buildToolsVersion("29.0.1")
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdkVersion(16)
@@ -80,7 +80,8 @@ dependencies {
     implementation("com.mikepenz:iconics-core:4.0.1-b01")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
-    implementation ("androidx.viewpager2:viewpager2:1.0.0-beta02")
+    implementation ("com.google.android.material:material:1.1.0-alpha09")
+    implementation ("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
     implementation("androidx.media:media:1.1.0-rc01")
     implementation("androidx.preference:preference:1.1.0-rc01")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
@@ -88,8 +89,8 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:17.0.0")
     implementation("com.google.firebase:firebase-core:17.0.1")
-    implementation("com.google.firebase:firebase-firestore-ktx:20.1.0")
-    implementation("com.google.firebase:firebase-storage:18.1.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:20.2.0")
+    implementation("com.google.firebase:firebase-storage:18.1.1")
     implementation("com.google.firebase:firebase-auth:18.1.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }
     implementation("com.afollestad:material-cab:1.3.1")
