@@ -19,7 +19,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(29)
         multiDexEnabled = true
-        versionCode = 4418
+        versionCode = 4419
         versionName = "4.4.0"
     }
 
@@ -75,12 +75,14 @@ dependencies {
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
-    implementation("com.mikepenz:materialdrawer:7.0.0-rc04")
+    implementation("com.mikepenz:materialdrawer:7.0.0-rc05")
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:iconics-core:4.0.1-b01")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation ("com.google.android.material:material:1.1.0-alpha09")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0-beta03")
+    implementation ("androidx.recyclerview:recyclerview:1.1.0-beta02")
     implementation ("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
     implementation("androidx.media:media:1.1.0-rc01")
@@ -110,8 +112,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0-rc01")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.1.0-rc01")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
-    implementation("androidx.core:core-ktx:1.2.0-alpha02")
-    implementation("androidx.fragment:fragment-ktx:1.1.0-rc03")
+    implementation("androidx.activity:activity-ktx:1.1.0-alpha02")
+    implementation("androidx.core:core-ktx:1.2.0-alpha03")
+    implementation("androidx.fragment:fragment-ktx:1.2.0-alpha02")
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.2")
     implementation("com.leinardi.android:speed-dial:3.0.0")
     implementation("com.github.mohammadatif:Animatoo:master")

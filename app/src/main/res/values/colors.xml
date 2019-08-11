@@ -13,7 +13,7 @@
     <!--<color name="dialtacts_secondary_text_color">#737373</color>-->
 
     <color name="risuscito_material_background">@color/design_default_color_background</color>
-    <color name="risuscito_material_drawer_background">@color/design_default_color_surface</color>
+    <color name="risuscito_material_drawer_background">@color/md_white_1000</color>
     <color name="text_color_primary">@color/design_default_color_on_background</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_light</color>
     <color name="floating_background">@color/background_floating_material_light</color>
