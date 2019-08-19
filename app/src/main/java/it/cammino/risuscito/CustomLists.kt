@@ -59,7 +59,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     private var mLastClickTime: Long = 0
     private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-            super.onPageSelected(position)
+//            super.onPageSelected(position)
             Log.d(TAG, "onPageSelected: $position")
             Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
             if (mCustomListsViewModel.indexToShow != position) {

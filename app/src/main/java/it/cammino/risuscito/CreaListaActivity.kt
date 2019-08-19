@@ -252,9 +252,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     }
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        super.onSaveInstanceState(savedInstanceState)
         mViewModel.dataDrag = mAdapter.adapterItems as ArrayList<SwipeableItem>
         if (modifica) mViewModel.data = nomiCanti
+        super.onSaveInstanceState(savedInstanceState)
     }
 
     override fun onPositive(tag: String, dialog: MaterialDialog) {

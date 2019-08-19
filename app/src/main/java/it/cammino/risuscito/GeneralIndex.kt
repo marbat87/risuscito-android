@@ -1,12 +1,14 @@
 package it.cammino.risuscito
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
+import androidx.viewpager.widget.ViewPager
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
 import kotlinx.android.synthetic.main.tabs_layout.*
@@ -16,6 +18,17 @@ class GeneralIndex : Fragment(R.layout.tabs_layout) {
     private var mMainActivity: MainActivity? = null
 
     private val mViewModel: GeneralIndexViewModel by viewModels()
+
+    private val mPageChange: ViewPager.OnPageChangeListener = object : ViewPager.OnPageChangeListener {
+        override fun onPageScrollStateChanged(state: Int) {}
+
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+        override fun onPageSelected(position: Int) {
+            Log.d(TAG, "onPageSelected: $position")
+            mViewModel.pageViewed = position
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,12 +47,8 @@ class GeneralIndex : Fragment(R.layout.tabs_layout) {
             view_pager.currentItem = mViewModel.pageViewed
         view_pager.offscreenPageLimit = 1
         view_pager.adapter = SectionsPagerAdapter(childFragmentManager)
+        view_pager.addOnPageChangeListener(mPageChange)
         mMainActivity?.getMaterialTabs()?.setupWithViewPager(view_pager)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        mViewModel.pageViewed = view_pager.currentItem
     }
 
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
@@ -60,7 +69,6 @@ class GeneralIndex : Fragment(R.layout.tabs_layout) {
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-//            val l = ThemeableActivity.getSystemLocalWrapper(requireActivity().resources.configuration)
             val l = getSystemLocale(resources)
             when (position) {
                 0 -> return getString(R.string.letter_order_text).toUpperCase(l)
