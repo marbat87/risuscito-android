@@ -10,7 +10,7 @@ class PaginaRenderViewModel : ViewModel() {
     var notaCambio: String = NOT_VAL
     var speedValue: String? = null
     var scrollPlaying: Boolean = false
-    var mostraAudio: String? = null
+    var mostraAudio: Boolean = false
     var barreCambio: String = NOT_VAL
 
     var mCurrentCanto: Canto? = null

@@ -71,7 +71,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     val cambioAccordi = CambioAccordi(this, null)
     private val mExecutorService = Executors.newSingleThreadScheduledExecutor()
-    var mostraAudioBool: Boolean = false
     private var mDownload: Boolean = false
 
     private val noChangesTabBarre: Boolean
@@ -473,10 +472,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
         }
 
-        if (mViewModel.mostraAudio == null) {
-            mViewModel.mostraAudio = mSharedPrefs.getBoolean(Utility.SHOW_AUDIO, true).toString()
-        }
-        mostraAudioBool = java.lang.Boolean.parseBoolean(mViewModel.mostraAudio)
+        if (savedInstanceState == null)
+            mViewModel.mostraAudio = mSharedPrefs.getBoolean(Utility.SHOW_AUDIO, true)
 
         val sFragment = ProgressDialogFragment.findVisible(this, DOWNLOAD_MP3)
         sFragment?.setmCallback(this)
@@ -706,7 +703,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         Log.d(TAG, "onResume: ")
 
-        music_controls.isVisible = mostraAudioBool
+        music_controls.isVisible = mViewModel.mostraAudio
 
         val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
 
@@ -1151,14 +1148,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.isVisible = mostraAudioBool
+                                music_controls.isVisible = mViewModel.mostraAudio
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.isVisible = mostraAudioBool
+                                music_controls.isVisible = mViewModel.mostraAudio
                             }
                         })
                 .start()
@@ -1225,14 +1222,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.isVisible = mostraAudioBool
+                                music_controls.isVisible = mViewModel.mostraAudio
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.isVisible = mostraAudioBool
+                                music_controls.isVisible = mViewModel.mostraAudio
                             }
                         })
                 .start()
@@ -1575,13 +1572,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                        .colorInt(iconColor)
 //                        .sizeDp(24)
 //                        .paddingDp(4)
-                        iconicsDrawable(if (mostraAudioBool) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset) {
+                        iconicsDrawable(if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset) {
                             color = colorInt(iconColor)
                             size = sizeDp(24)
                             padding = sizeDp(4)
                         }
                 )
-                        .setLabel(getString(if (mostraAudioBool) R.string.audio_off else R.string.audio_on))
+                        .setLabel(getString(if (mViewModel.mostraAudio) R.string.audio_off else R.string.audio_on))
                         .setFabBackgroundColor(backgroundColor)
                         .setLabelBackgroundColor(backgroundColor)
                         .setLabelColor(iconColor)
@@ -1690,9 +1687,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 }
                 R.id.fab_sound_off -> {
                     fab_canti.close()
-                    music_controls.isInvisible = mostraAudioBool
-                    mostraAudioBool = !mostraAudioBool
-                    mViewModel.mostraAudio = mostraAudioBool.toString()
+                    mViewModel.mostraAudio = !mViewModel.mostraAudio
+                    music_controls.isVisible = mViewModel.mostraAudio
+                    initFabOptions()
                     true
                 }
                 R.id.fab_delete_file -> {
@@ -1771,7 +1768,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val DELETE_LINK = "DELETE_LINK"
         private const val DOWNLOAD_MP3 = "DOWNLOAD_MP3"
         private const val DELETE_MP3 = "DELETE_MP3"
-//        private const val BUFFERING = "BUFFERING"
+        //        private const val BUFFERING = "BUFFERING"
         private const val SAVE_TAB = "SAVE_TAB"
         private const val DEF_FILE_PATH = "file://"
         private const val FILE_PATH_PREFIX = "$DEF_FILE_PATH/android_asset/"
