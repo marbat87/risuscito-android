@@ -51,6 +51,12 @@ class GeneralIndex : Fragment(R.layout.tabs_layout) {
         mMainActivity?.getMaterialTabs()?.setupWithViewPager(view_pager)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d(TAG, "onDestroyView")
+        view_pager.removeOnPageChangeListener(mPageChange)
+    }
+
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItem(position: Int): Fragment {
