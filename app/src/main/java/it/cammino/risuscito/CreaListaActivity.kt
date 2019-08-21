@@ -22,6 +22,7 @@ import androidx.core.os.postDelayed
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -51,6 +52,7 @@ import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
+import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.activity_crea_lista.*
 import kotlinx.android.synthetic.main.hint_layout.*
 import java.util.*
@@ -58,21 +60,23 @@ import kotlin.collections.ArrayList
 
 class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback, ItemTouchCallback, SimpleSwipeCallback.ItemSwipeCallback {
 
-    private val mViewModel: CreaListaViewModel by viewModels()
-    private var celebrazione: ListaPersonalizzata? = null
-    private var titoloLista: String? = null
+    private val mViewModel: CreaListaViewModel by viewModels {
+        ViewModelWithArgumentsFactory(application, Bundle().apply {
+            putInt(ID_DA_MODIF, intent.extras?.getInt(ID_DA_MODIF, 0) ?: 0)
+        })
+    }
+
     private var modifica: Boolean = false
-    private var idModifica: Int = 0
-    private var nomiCanti: ArrayList<String> = ArrayList()
     private var mAdapter: FastItemAdapter<SwipeableItem> = FastItemAdapter()
     private var mRegularFont: Typeface? = null
-    private var elementi: ArrayList<SwipeableItem> = ArrayList()
     // drag & drop
     private var mTouchHelper: ItemTouchHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crea_lista)
+
+        modifica = intent.extras?.getBoolean(EDIT_EXISTING_LIST) == true
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
@@ -102,7 +106,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         mTouchHelper = ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
 
-        mAdapter.add(elementi)
         mAdapter.onLongClickListener = { _: View?, _: IAdapter<SwipeableItem>, item: SwipeableItem, position: Int ->
             Log.d(TAG, "onItemLongClick: $position")
             mViewModel.positionToRename = position
@@ -120,7 +123,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         recycler_view?.layoutManager = llm
 
         recycler_view?.adapter = mAdapter
-//        recycler_view?.setHasFixedSize(true) // Size of RV will not change
 
         val insetDivider = DividerItemDecoration(this, llm.orientation)
         insetDivider.setDrawable(
@@ -129,8 +131,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         recycler_view?.addItemDecoration(insetDivider)
 
         mTouchHelper?.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
-
-        SearchTask().execute()
 
 //        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
 //                .colorInt(Color.WHITE)
@@ -184,6 +184,23 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     .show()
         }
 
+        if (modifica)
+            subscribeUiChanges()
+        else {
+            if (mViewModel.tempTitle.isEmpty())
+                mViewModel.tempTitle = intent.extras?.getString(LIST_TITLE) ?: ""
+            textfieldTitle.setText(mViewModel.tempTitle)
+            collapsingToolbarLayout.title = mViewModel.tempTitle
+            if (mViewModel.elementi == null)
+                mViewModel.elementi = ArrayList()
+            mViewModel.elementi?.let { mAdapter.set(it) }
+        }
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mViewModel.elementi = mAdapter.itemAdapter.adapterItems as? ArrayList<SwipeableItem>
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -251,12 +268,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
     }
 
-    public override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        mViewModel.dataDrag = mAdapter.adapterItems as ArrayList<SwipeableItem>
-        if (modifica) mViewModel.data = nomiCanti
-        super.onSaveInstanceState(savedInstanceState)
-    }
-
     override fun onPositive(tag: String, dialog: MaterialDialog) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
@@ -269,29 +280,11 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             ADD_POSITION -> {
                 noElementsAdded.isVisible = false
                 val mEditText = dialog.getInputField()
-                if (modifica) nomiCanti.add("")
-                if (mAdapter.adapterItemCount == 0) {
-                    elementi.clear()
-                    elementi.add(
-                            swipeableItem {
-                                identifier = Utility.random(0, 5000).toLong()
-                                touchHelper = mTouchHelper
-                                setName = mEditText.text.toString()
-                            }
-                    )
-                    mAdapter.add(elementi)
-                    mAdapter.notifyItemInserted(0)
-                } else {
-                    val mSize = mAdapter.adapterItemCount
-                    mAdapter.add(
-                            swipeableItem {
-                                identifier = Utility.random(0, 5000).toLong()
-                                touchHelper = mTouchHelper
-                                setName = mEditText.text.toString()
-                            }
-                    )
-                    mAdapter.notifyAdapterItemInserted(mSize)
-                }
+                mAdapter.add(swipeableItem {
+                    identifier = Utility.random(0, 5000).toLong()
+                    touchHelper = mTouchHelper
+                    setName = mEditText.text.toString()
+                })
                 Log.d(TAG, "onPositive - elementi.size(): " + mAdapter.adapterItems.size)
                 val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
                 Log.d(
@@ -324,8 +317,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     }
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
-        if (modifica) Collections.swap(nomiCanti, oldPosition, newPosition) // change canto
-        DragDropUtil.onMove(mAdapter.itemAdapter, oldPosition, newPosition)  // change position
+        DragDropUtil.onMove(mAdapter.itemAdapter, oldPosition, newPosition)
         return true
     }
 
@@ -342,16 +334,15 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         val item = mAdapter.getItem(position) ?: return
         item.swipedDirection = direction
 
-        val deleteHandler = Handler {
-            val itemOjb = it.obj as SwipeableItem
+        val deleteHandler = Handler { message ->
+            val itemOjb = message.obj as SwipeableItem
 
             itemOjb.swipedAction = null
             val position12 = mAdapter.getAdapterPosition(itemOjb)
             if (position12 != RecyclerView.NO_POSITION) {
                 mAdapter.remove(position12)
-                if (modifica) nomiCanti.removeAt(position12)
                 noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
-                main_hint_layout.isVisible = mAdapter.adapterItemCount > 0
+                if (mAdapter.adapterItemCount == 0) main_hint_layout.isVisible = false
             }
             true
         }
@@ -427,70 +418,37 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 .start()
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private inner class SearchTask : AsyncTask<Void, Void, Void>() {
+    private fun subscribeUiChanges() {
+        mViewModel.listaResult?.observe(this) { listaPers ->
 
-        override fun doInBackground(vararg savedInstanceState: Void): Void? {
-            val bundle = this@CreaListaActivity.intent.extras
-            modifica = bundle?.getBoolean("modifica") == true
+            val celebrazione = listaPers.lista
 
-            if (modifica) {
-                idModifica = bundle?.getInt("idDaModif") ?: 0
-                val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
-                val lista = mDao.getListById(idModifica)
-                titoloLista = lista?.titolo
-                celebrazione = lista?.lista
-            } else
-                titoloLista = bundle?.getString("titolo")
-
-            if (mViewModel.dataDrag != null) {
-                elementi = mViewModel.dataDrag ?: ArrayList()
-                for (elemento in elementi) elemento.touchHelper = mTouchHelper
-            } else {
-                if (modifica) {
-                    celebrazione?.let {
-                        for (i in 0 until it.numPosizioni) {
-                            elementi.add(
-                                    swipeableItem {
-                                        identifier = Utility.random(0, 5000).toLong()
-                                        touchHelper = mTouchHelper
-                                        setName = it.getNomePosizione(i)
-                                    }
-                            )
-                        }
+            mViewModel.elementi?.let {
+                Log.d(TAG, "Lista già valorizzata")
+                for (elemento in it) elemento.touchHelper = mTouchHelper
+            } ?: run {
+                Log.d(TAG, "Lista nulla")
+                mViewModel.elementi = ArrayList()
+                celebrazione?.let {
+                    for (i in 0 until it.numPosizioni) {
+                        mViewModel.elementi?.add(
+                                swipeableItem {
+                                    identifier = Utility.random(0, 5000).toLong()
+                                    touchHelper = mTouchHelper
+                                    setName = it.getNomePosizione(i)
+                                    idCanto = it.getCantoPosizione(i)
+                                }
+                        )
                     }
                 }
             }
 
-            Log.d(TAG, "doInBackground: modifica $modifica")
-            if (modifica) {
-                if (mViewModel.data != null) {
-                    nomiCanti = mViewModel.data ?: ArrayList()
-                    Log.d(TAG, "doInBackground: nomiCanti size " + nomiCanti.size)
-                } else {
-                    if (modifica) {
-                        celebrazione?.let {
-                            for (i in 0 until it.numPosizioni) {
-                                nomiCanti.add(it.getCantoPosizione(i))
-                            }
-                        }
-                    }
-                }
-            }
-            return null
-        }
-
-        override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
-            mAdapter.set(elementi)
-            if (mViewModel.tempTitle.isEmpty()) {
-                textfieldTitle.setText(titoloLista)
-                collapsingToolbarLayout.title = titoloLista
-            } else {
-                textfieldTitle.setText(mViewModel.tempTitle)
-                collapsingToolbarLayout.title = mViewModel.tempTitle
-            }
-            noElementsAdded.isVisible = (elementi.size == 0)
+            mViewModel.elementi?.let { mAdapter.set(it) }
+            if (mViewModel.tempTitle.isEmpty())
+                mViewModel.tempTitle = listaPers.titolo ?: DEFAULT_TITLE
+            textfieldTitle.setText(mViewModel.tempTitle)
+            collapsingToolbarLayout.title = mViewModel.tempTitle
+            noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
         }
     }
 
@@ -498,39 +456,40 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     private inner class SaveListTask : AsyncTask<Editable, Void, Int>() {
 
         override fun doInBackground(vararg titleText: Editable): Int {
+
+            val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
+
             var result = 0
-            celebrazione = ListaPersonalizzata()
+            val celebrazione = ListaPersonalizzata()
 
             if (titleText[0].isNotBlank()) {
-                titoloLista = titleText[0].toString()
-            } else
+                celebrazione.name = titleText[0].toString()
+            } else {
                 result += 100
+                celebrazione.name = if (modifica) mDao.getListById(mViewModel.idModifica)?.titolo
+                        ?: DEFAULT_TITLE else intent.extras?.getString(LIST_TITLE) ?: DEFAULT_TITLE
+            }
 
-            celebrazione?.name = titoloLista ?: ""
             Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
             for (i in 0 until mAdapter.adapterItems.size) {
                 mAdapter.getItem(i)?.let {
-                    if (celebrazione?.addPosizione(it.name?.text.toString()) == -2) {
+                    if (celebrazione.addPosizione(it.name?.text.toString()) == -2) {
                         return 1
                     }
+                    celebrazione.addCanto(it.idCanto, i)
                 }
             }
 
-            if (celebrazione?.getNomePosizione(0).equals("", ignoreCase = true))
+            if (celebrazione.getNomePosizione(0).equals("", ignoreCase = true))
                 return 2
 
-            if (modifica) {
-                for (i in 0 until mAdapter.adapterItems.size) {
-                    celebrazione?.addCanto(nomiCanti[i], i)
-                }
-            }
+            Log.d(TAG, "saveList - $celebrazione")
 
-            val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
             val listaToUpdate = ListaPers()
             listaToUpdate.lista = celebrazione
-            listaToUpdate.titolo = titoloLista
+            listaToUpdate.titolo = celebrazione.name
             if (modifica) {
-                listaToUpdate.id = idModifica
+                listaToUpdate.id = mViewModel.idModifica
                 mDao.updateLista(listaToUpdate)
             } else
                 mDao.insertLista(listaToUpdate)
@@ -568,5 +527,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         private const val RENAME = "RENAME"
         private const val ADD_POSITION = "ADD_POSITION"
         private const val SAVE_LIST = "SAVE_LIST"
+        const val ID_DA_MODIF = "idDaModif"
+        const val LIST_TITLE = "titoloLista"
+        const val EDIT_EXISTING_LIST = "modifica"
+        const val DEFAULT_TITLE = "NEW LIST"
     }
 }

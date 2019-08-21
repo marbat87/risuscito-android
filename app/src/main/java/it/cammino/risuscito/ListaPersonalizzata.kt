@@ -74,6 +74,14 @@ class ListaPersonalizzata : Serializable {
         return 0
     }
 
+    override fun toString(): String {
+        val mOutput = StringBuilder("CELEBRAZIONE\nTITOLO: $name\nPOSIZIONI:")
+        for (i in 0 until numPosizioni) {
+            mOutput.append("\n $i) ${getNomePosizione(i)} / ${getCantoPosizione(i)} ")
+        }
+        return mOutput.toString()
+    }
+
     // rimuove la posizione all'indice "index"
     fun removePosizione(index: Int): Int {
         if (index < 0 || index >= MAX_POSIZIONI)

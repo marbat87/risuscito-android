@@ -35,6 +35,9 @@ import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import it.cammino.risuscito.CreaListaActivity.Companion.EDIT_EXISTING_LIST
+import it.cammino.risuscito.CreaListaActivity.Companion.ID_DA_MODIF
+import it.cammino.risuscito.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
@@ -172,7 +175,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 val mEditText = dialog.getInputField()
                 mCustomListsViewModel.indDaModif = 2 + idListe.size
                 startActivityForResult(
-                        Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf("titolo" to mEditText.text.toString(), "modifica" to false)), TAG_CREA_LISTA)
+                        Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(LIST_TITLE to mEditText.text.toString(), EDIT_EXISTING_LIST to false)), TAG_CREA_LISTA)
                 Animatoo.animateSlideUp(activity)
             }
         }
@@ -200,7 +203,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                                     + "'!",
                             Snackbar.LENGTH_LONG)
                             .setAction(
-                                    getString(R.string.cancel).toUpperCase()
+                                    getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
                             ) {
                                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
                                     return@setAction
@@ -225,7 +228,8 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     override fun onNegative(tag: String) {}
 
     private fun playIntro() {
-        enableFab(true)
+//        enableFab(true)
+        mMainActivity?.enableFab(true)
 //        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check)
 //                .sizeDp(24)
 //                .paddingDp(4)
@@ -311,9 +315,9 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         return mMainActivity?.getFab()!!
     }
 
-    private fun enableFab(enabled: Boolean) {
-        mMainActivity?.enableFab(enabled)
-    }
+//    private fun enableFab(enabled: Boolean) {
+//        mMainActivity?.enableFab(enabled)
+//    }
 
     private fun closeFabMenu() {
         mMainActivity?.closeFabMenu()
@@ -370,7 +374,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = view_pager.currentItem
                     startActivityForResult(
-                            Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf("idDaModif" to idListe[view_pager.currentItem - 2], "modifica" to true)),
+                            Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(ID_DA_MODIF to idListe[view_pager.currentItem - 2], EDIT_EXISTING_LIST to true)),
                             TAG_MODIFICA_LISTA)
                     Animatoo.animateSlideUp(activity)
                     true

@@ -26,6 +26,8 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
             name = helperSetString(value)
         }
 
+    var idCanto: String = ""
+
     var swipedDirection: Int = 0
     var swipedAction: Runnable? = null
     override var touchHelper: ItemTouchHelper? = null
