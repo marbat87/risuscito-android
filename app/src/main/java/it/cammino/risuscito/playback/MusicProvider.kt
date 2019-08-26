@@ -16,22 +16,21 @@
 
 package it.cammino.risuscito.playback
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
+import it.cammino.risuscito.Utility.decodeSampledBitmapFromResource
+import it.cammino.risuscito.Utility.isDefaultLocationPublic
+import it.cammino.risuscito.Utility.isExternalStorageReadable
+import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
 import it.cammino.risuscito.ui.RisuscitoApplication
-import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 
 @Suppress("unused")
@@ -119,19 +118,6 @@ class MusicProvider internal constructor(private val mContext: Context) {
 //            Log.d(TAG, "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, ""))
 
             var mNewBase = mContext
-//            if (ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
-//                            .language != PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "")) {
-//                val config = Configuration()
-//                val locale = Locale(PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, "it") ?: "it")
-//                Locale.setDefault(locale)
-//                ThemeableActivity.setSystemLocalWrapper(config, locale)
-//                if (LUtils.hasJB()) {
-//                    mNewBase = mNewBase.createConfigurationContext(config)
-//                } else {
-//                    @Suppress("DEPRECATION")
-//                    mNewBase.resources.updateConfiguration(config, mNewBase.resources.displayMetrics)
-//                }
-//            }
             mNewBase = RisuscitoApplication.localeManager.setLocale(mNewBase)
 
             val art = decodeSampledBitmapFromResource(mNewBase.resources, R.drawable.ic_launcher_144dp, 320, 320)
@@ -153,13 +139,14 @@ class MusicProvider internal constructor(private val mContext: Context) {
                                 + if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link)
 
                 var url = if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link
-                if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//                if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (isExternalStorageReadable && isDefaultLocationPublic(mNewBase)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
-                    if (Utility.retrieveMediaFileLink(mContext, url, true).isNotEmpty())
-                        url = Utility.retrieveMediaFileLink(mContext, url, true)
+                    if (retrieveMediaFileLink(mContext, url, true).isNotEmpty())
+                        url = retrieveMediaFileLink(mContext, url, true)
                 } else {
-                    if (Utility.retrieveMediaFileLink(mContext, url, false).isNotEmpty())
-                        url = Utility.retrieveMediaFileLink(mContext, url, false)
+                    if (retrieveMediaFileLink(mContext, url, false).isNotEmpty())
+                        url = retrieveMediaFileLink(mContext, url, false)
                 }
 
                 Log.v(TAG, "retrieveMedia: " + canto.id + " / " + mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)) + " / " + url)
@@ -209,47 +196,6 @@ class MusicProvider internal constructor(private val mContext: Context) {
         NON_INITIALIZED,
         INITIALIZING,
         INITIALIZED
-    }
-
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
-        // Raw height and width of image
-        val (height: Int, width: Int) = options.run { outHeight to outWidth }
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-
-            val halfHeight: Int = height / 2
-            val halfWidth: Int = width / 2
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-
-        return inSampleSize
-    }
-
-    private fun decodeSampledBitmapFromResource(
-            res: Resources,
-            resId: Int,
-            reqWidth: Int,
-            reqHeight: Int
-    ): Bitmap {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        return BitmapFactory.Options().run {
-            inJustDecodeBounds = true
-            BitmapFactory.decodeResource(res, resId, this)
-
-            // Calculate inSampleSize
-            inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
-
-            // Decode bitmap with inSampleSize set
-            inJustDecodeBounds = false
-
-            BitmapFactory.decodeResource(res, resId, this)
-        }
     }
 
     /** Callback used by MusicService.  */

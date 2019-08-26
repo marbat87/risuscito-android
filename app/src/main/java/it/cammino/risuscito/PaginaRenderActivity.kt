@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.os.*
+import android.provider.MediaStore
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -44,6 +45,12 @@ import com.mikepenz.iconics.IconicsSize.Companion.dp
 import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import it.cammino.risuscito.LUtils.Companion.hasQ
+import it.cammino.risuscito.Utility.getExternalLink
+import it.cammino.risuscito.Utility.getExternalMediaIdByName
+import it.cammino.risuscito.Utility.isDefaultLocationPublic
+import it.cammino.risuscito.Utility.mediaScan
+import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
@@ -226,18 +233,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_COMPLETED")
                 dismissProgressDialog(DOWNLOAD_MP3)
-                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-                        ?: "0")
-                if (saveLocation == 1) {
-                    // initiate media scan and put the new things into the path array to
-                    // make the scanner aware of the location and the files you want to see
-                    MediaScannerConnection.scanFile(
-                            context,
-                            arrayOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
-                                    .absolutePath
-                                    + "/Risuscitò/"
-                                    + Utility.filterMediaLinkNew(url)), null, null)
-                }
+//                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
+//                        ?: "0")
+                // initiate media scan and put the new things into the path array to
+                // make the scanner aware of the location and the files you want to see
+                if (isDefaultLocationPublic(context) && !hasQ())
+                    mediaScan(context, url ?: "")
                 Snackbar.make(
                         findViewById(android.R.id.content),
                         R.string.download_completed,
@@ -576,7 +577,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
-                    val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true)
+                    val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                     if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
                     cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
@@ -608,7 +609,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     convMin1 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
-                    val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1, true)
+                    val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
                     if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
                     cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
@@ -628,7 +629,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         convMin2 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
-                        val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2, true)
+                        val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
                         if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
                         cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
@@ -647,7 +648,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         convMin3 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
-                        val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3, true)
+                        val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
                         if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
                         cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
@@ -774,8 +775,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun cambiaAccordi(
             conversione: HashMap<String, String>?,
             barre: String?,
-            conversioneMin: HashMap<String, String>?,
-            higlightDiff: Boolean): String? {
+            conversioneMin: HashMap<String, String>?): String? {
         val cantoTrasportato = this.filesDir.toString() + "/temporaneo.htm"
 
         var barreScritto = false
@@ -805,7 +805,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
 
             // serve per segnarsi se si è già evidenziato il primo accordo del testo
-            var notaHighlighed = !higlightDiff
+            var notaHighlighed = false
 
             while (line != null) {
                 Log.v(TAG, "RIGA DA ELAB: $line")
@@ -836,9 +836,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 if (Utility.isLowerCase(mViewModel.primaNota[0])) {
                                     var notaCambioMin = mViewModel.notaCambio
                                     notaCambioMin = if (notaCambioMin.length == 1)
-                                        notaCambioMin.toLowerCase()
+                                        notaCambioMin.toLowerCase(getSystemLocale(resources))
                                     else
-                                        notaCambioMin.substring(0, 1).toLowerCase() + notaCambioMin.substring(1)
+                                        notaCambioMin.substring(0, 1).toLowerCase(getSystemLocale(resources)) + notaCambioMin.substring(1)
                                     line = line.replaceFirst(notaCambioMin.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">$notaCambioMin</SPAN>")
                                 } else
                                     line = line.replaceFirst(mViewModel.notaCambio.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
@@ -873,7 +873,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     if (line.contains("<H3>")) {
                         if (barre != null && barre != "0") {
                             if (!barreScritto) {
-                                val oldLine: String = if (higlightDiff && !barre.equals(mViewModel.primoBarre, ignoreCase = true)) {
+                                val oldLine: String = if (!barre.equals(mViewModel.primoBarre, ignoreCase = true)) {
                                     ("<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
                                             + getString(R.string.barre_al_tasto, barre)
                                             + "</I></FONT></SPAN></H4>")
@@ -912,17 +912,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun startExternalDownload() {
         Log.d(TAG, " WRITE_EXTERNAL_STORAGE OK")
         if (Utility.isExternalStorageWritable) {
-            if (File(
-                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
-                            "Risuscitò")
-                            .mkdirs())
-                Log.d(TAG, "CARTELLA RISUSCITO CREATA")
-            else
-                Log.d(TAG, "CARTELLA RISUSCITO ESISTENTE")
-            val localFilePath = (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
-                    .absolutePath
-                    + "/Risuscitò/"
-                    + Utility.filterMediaLinkNew(url))
             ProgressDialogFragment.Builder(this, this, DOWNLOAD_MP3)
                     .content(R.string.download_running)
                     .progressIndeterminate(false)
@@ -933,7 +922,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             i.action = DownloadService.ACTION_DOWNLOAD
             val uri = url?.toUri()
             i.data = uri
-            i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath)
+            i.putExtra(DownloadService.DATA_DESTINATION_FILE, getExternalLink(url ?: ""))
+            i.putExtra(DownloadService.DATA_EXTERNAL_DOWNLOAD, true)
             startService(i)
         } else
             Snackbar.make(
@@ -1015,29 +1005,47 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
             DELETE_MP3 -> {
                 localUrl?.let {
-                    val fileToDelete = File(it)
-                    if (fileToDelete.delete()) {
-                        if (fileToDelete.absolutePath.contains("/Risuscit")) {
-                            // initiate media scan and put the new things into the path array to
-                            // make the scanner aware of the location and the files you want to see
-                            MediaScannerConnection.scanFile(
-                                    applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
-                        }
-                        Snackbar.make(
-                                findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
-                                .show()
-                    } else
-                        Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
-                                .show()
                     stopMedia()
-                    refreshCatalog()
+//                    val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
+//                            ?: "0")
+                    if (isDefaultLocationPublic(this) && hasQ()) {
+                        val toDelete = ContentUris.withAppendedId(MediaStore.Audio.Media
+                                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), getExternalMediaIdByName(this, it))
+                        Log.d(TAG, "DELETE_MP3 toDelete: $toDelete")
+                        if (contentResolver.delete(toDelete, null, null) > 0) {
+                            Snackbar.make(
+                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                    .show()
+                        } else
+                            Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
+                                    .show()
+
+                    } else {
+                        val fileToDelete = File(it)
+                        if (fileToDelete.delete()) {
+                            if (fileToDelete.absolutePath.contains("/Risuscit")) {
+                                // initiate media scan and put the new things into the path array to
+                                // make the scanner aware of the location and the files you want to see
+                                MediaScannerConnection.scanFile(
+                                        applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
+                            }
+                            Snackbar.make(
+                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                    .show()
+                        } else
+                            Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
+                                    .show()
+//                        stopMedia()
+//                        refreshCatalog()
+                    }
                 }
+                refreshCatalog()
                 RecordStateCheckerTask().execute()
             }
             DOWNLINK_CHOOSE -> {
-                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-                        ?: "0")
-                if (saveLocation == 1) {
+//                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
+//                        ?: "0")
+                if (isDefaultLocationPublic(this)) {
                     if (EasyPermissions.hasPermissions(
                                     this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
                     // Have permission, do the thing!
@@ -1083,7 +1091,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun createFileChooser() {
         if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             MaterialDialog(this)
-                    .fileChooser(filter = { it.isDirectory || it.extension.toLowerCase() == "mp3" }) { _, file ->
+                    .fileChooser(filter = { it.isDirectory || it.extension.toLowerCase(getSystemLocale(resources)) == "mp3" }) { _, file ->
                         val path = file.absolutePath
                         Snackbar.make(
                                 findViewById(android.R.id.content),
@@ -1314,13 +1322,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         // c'è la registrazione online
         if (!url.isNullOrEmpty()) {
             // controllo se ho scaricato un file in locale
-            val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-                    ?: "0")
-            if (saveLocation == 1) {
+//            val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
+//                    ?: "0")
+            if (isDefaultLocationPublic(this)) {
                 localUrl = if (EasyPermissions.hasPermissions(
                                 this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // Have permission, do the thing!
-                    Utility.retrieveMediaFileLink(this, url, true)
+                    retrieveMediaFileLink(this, url, true)
                 } else {
                     mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
@@ -1328,10 +1336,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             getString(R.string.external_storage_denied),
                             Snackbar.LENGTH_SHORT)
                             .show()
-                    Utility.retrieveMediaFileLink(this, url, false)
+                    retrieveMediaFileLink(this, url, false)
                 }
             } else
-                localUrl = Utility.retrieveMediaFileLink(this, url, false)
+                localUrl = retrieveMediaFileLink(this, url, false)
 
             mDownload = !(localUrl.isNullOrEmpty() && personalUrl.isNullOrEmpty())
 
@@ -1408,7 +1416,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
                 convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
             if (convMap != null) {
-                val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin, true)
+                val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                 if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
                 cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)

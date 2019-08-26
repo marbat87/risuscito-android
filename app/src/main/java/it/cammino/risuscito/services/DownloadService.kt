@@ -1,14 +1,18 @@
 package it.cammino.risuscito.services
 
+import android.annotation.TargetApi
 import android.app.IntentService
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
+import android.os.Build
 import android.os.PowerManager
+import android.provider.MediaStore
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import java.io.*
+import it.cammino.risuscito.LUtils.Companion.hasQ
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -22,17 +26,6 @@ class DownloadService : IntentService("DownloadService") {
 
     internal var isCancelled: Boolean = false
 
-    /**
-     * This method is invoked on the worker thread with a request to process.
-     * Only one Intent is processed at a time, but the processing happens on a
-     * worker thread that runs independently from other application logic.
-     * So, if this code takes a long time, it will hold up other requests to
-     * the same IntentService, but it will not hold up anything else.
-     * When all requests have been handled, the IntentService stops itself,
-     * so you should not call [.stopSelf].
-     *
-     * @param intent The value passed to [               ][Context.startService].
-     */
     override fun onHandleIntent(intent: Intent?) {
         isCancelled = false
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(cancelBRec, IntentFilter(ACTION_CANCEL))
@@ -41,7 +34,8 @@ class DownloadService : IntentService("DownloadService") {
 
     private fun startSaving(intent: Intent?) {
         val uri = intent?.data?.toString()
-        val mPath = intent?.getStringExtra(DATA_DESTINATION_FILE)
+        val mPath = intent?.getStringExtra(DATA_DESTINATION_FILE) ?: ""
+        val mExternal = intent?.getBooleanExtra(DATA_EXTERNAL_DOWNLOAD, false) ?: false
         Log.d(TAG, "startSaving DATA $uri")
         Log.d(TAG, "startSaving: DATA_DESTINATION_FILE $mPath")
 
@@ -50,100 +44,175 @@ class DownloadService : IntentService("DownloadService") {
                 javaClass.name)
         wakelock?.acquire(30000)
 
+        var input: InputStream? = null
+        var connection: HttpURLConnection? = null
+
         try {
-            var input: InputStream? = null
-            var output: OutputStream? = null
-            var connection: HttpURLConnection? = null
-            try {
-                val url = URL(uri)
-                connection = url.openConnection() as? HttpURLConnection
-                connection?.connect()
 
-                // expect HTTP 200 OK, so we don't mistakenly save error report
-                // instead of the file
-                if (connection?.responseCode != HttpURLConnection.HTTP_OK) {
-                    LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
-                    val erroreMessage = ("Server returned HTTP ${connection?.responseCode} ${connection?.responseMessage}")
-                    Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
-                    Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $erroreMessage")
-                    val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
-                    intentBroadcast.putExtra(DATA_ERROR, erroreMessage)
-                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-                    return
-                }
+            val url = URL(uri)
+            connection = url.openConnection() as? HttpURLConnection
+            connection?.connect()
 
-                // this will be useful to display download percentage
-                // might be -1: server did not report the length
-                val fileLength = connection.contentLength
-
-                // download the file
-                input = connection.inputStream
-                output = FileOutputStream(intent?.getStringExtra(DATA_DESTINATION_FILE))
-                //                    Log.i(PaginaRenderActivity.this.getClass().toString(), "URL[1]:" + sUrl[1]);
-
-                val data = ByteArray(4096)
-                var total: Long = 0
-                var count = input?.read(data) ?: 0
-                while (count != -1) {
-                    // allow canceling with back button
-                    if (isCancelled) {
-                        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
-                        try {
-                            @Suppress("UNNECESSARY_SAFE_CALL")
-                            output?.close()
-                            @Suppress("UNNECESSARY_SAFE_CALL")
-                            input?.close()
-                            mPath?.let { File(it).delete() }
-                        } catch (ignored: IOException) {
-                            Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
-                        }
-
-                        @Suppress("UNNECESSARY_SAFE_CALL")
-                        connection?.disconnect()
-
-                        Log.d(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_CANCELLED")
-                        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_DOWNLOAD_CANCELLED))
-                        return
-                    }
-                    total += count.toLong()
-                    // publishing the progress....
-                    if (fileLength > 0) {// only if total length is known
-                        val progress = total.toInt() * 100 / fileLength
-                        Log.v(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_PROGRESS")
-                        Log.v(TAG, "Sending broadcast notification: $DATA_PROGRESS: $progress")
-                        val intentBroadcast = Intent(BROADCAST_DOWNLOAD_PROGRESS)
-                        intentBroadcast.putExtra(DATA_PROGRESS, progress)
-                        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-                    }
-                    output.write(data, 0, count)
-                    count = input.read(data)
-                }
-            } catch (e: Exception) {
+            // expect HTTP 200 OK, so we don't mistakenly save error report
+            // instead of the file
+            if (connection?.responseCode != HttpURLConnection.HTTP_OK) {
                 LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
-                Log.e(javaClass.toString(), e.localizedMessage, e)
+                val erroreMessage = ("Server returned HTTP ${connection?.responseCode} ${connection?.responseMessage}")
                 Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
-                Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $e")
+                Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $erroreMessage")
                 val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
-                intentBroadcast.putExtra(DATA_ERROR, e.toString())
+                intentBroadcast.putExtra(DATA_ERROR, erroreMessage)
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 return
-            } finally {
-                try {
-                    output?.close()
-                    input?.close()
-                } catch (ignored: IOException) {
-                    Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
-                }
-
-                connection?.disconnect()
             }
+
+            val fileLength = connection.contentLength
+
+            // download the file
+            input = connection.inputStream
+
+            if (mExternal && hasQ())
+                startSavingO(input, mPath, fileLength)
+            else
+                startSavingLegacy(input, mPath, fileLength)
+
         } finally {
+            try {
+                input?.close()
+            } catch (ignored: IOException) {
+                Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
+            }
+            connection?.disconnect()
             if (wakelock?.isHeld == true)
                 wakelock.release()
         }
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
         Log.d(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_COMPLETED")
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_DOWNLOAD_COMPLETED))
+    }
+
+    @TargetApi(Build.VERSION_CODES.Q)
+    private fun startSavingO(input: InputStream?, mPath: String, fileLength: Int) {
+        val resolver = contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Audio.Media.DISPLAY_NAME, mPath)
+            put(MediaStore.Audio.Media.TITLE, "Risuscitò$mPath")
+//                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Audio.Media.RELATIVE_PATH, "Music/Risuscitò")
+            put(MediaStore.Audio.Media.IS_PENDING, 1)
+        }
+
+        val collection = MediaStore.Audio.Media
+                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val mUri = resolver.insert(collection, contentValues)
+
+        mUri?.let {
+            Log.d(TAG, "mUri ${it.path}")
+            Log.d(TAG, "mId ${ContentUris.parseId(it)}")
+            resolver.openOutputStream(it).use { outputStream ->
+                try {
+                    val data = ByteArray(4096)
+                    var total: Long = 0
+                    var count = input?.read(data) ?: 0
+                    while (count != -1) {
+                        // allow canceling with back button
+                        if (isCancelled) {
+                            LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
+                            try {
+                                outputStream?.close()
+                            } catch (ignored: IOException) {
+                                Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
+                            }
+
+                            Log.d(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_CANCELLED")
+                            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_DOWNLOAD_CANCELLED))
+                            return
+                        }
+                        total += count.toLong()
+                        // publishing the progress....
+                        if (fileLength > 0) {// only if total length is known
+                            val progress = total.toInt() * 100 / fileLength
+                            Log.v(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_PROGRESS")
+                            Log.v(TAG, "Sending broadcast notification: $DATA_PROGRESS: $progress")
+                            val intentBroadcast = Intent(BROADCAST_DOWNLOAD_PROGRESS)
+                            intentBroadcast.putExtra(DATA_PROGRESS, progress)
+                            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+                        }
+                        outputStream?.write(data, 0, count)
+                        count = input?.read(data) ?: 0
+                    }
+                } catch (e: Exception) {
+                    LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
+                    Log.e(javaClass.toString(), e.localizedMessage, e)
+                    Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
+                    Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $e")
+                    val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
+                    intentBroadcast.putExtra(DATA_ERROR, e.toString())
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+//                    return
+                } finally {
+                    try {
+                        outputStream?.close()
+                    } catch (ignored: IOException) {
+                        Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
+                    }
+                    contentValues.clear()
+                    contentValues.put(MediaStore.Audio.Media.IS_PENDING, 0)
+                    resolver.update(it, contentValues, null, null)
+                }
+            }
+        }
+    }
+
+    private fun startSavingLegacy(input: InputStream?, mPath: String, fileLength: Int) {
+        val output = FileOutputStream(mPath)
+        try {
+            val data = ByteArray(4096)
+            var total: Long = 0
+            var count = input?.read(data) ?: 0
+            while (count != -1) {
+                // allow canceling with back button
+                if (isCancelled) {
+                    LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
+                    try {
+                        output.close()
+                        mPath.let { File(it).delete() }
+                    } catch (ignored: IOException) {
+                        Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
+                    }
+
+                    Log.d(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_CANCELLED")
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_DOWNLOAD_CANCELLED))
+                    break
+                }
+                total += count.toLong()
+                // publishing the progress....
+                if (fileLength > 0) {// only if total length is known
+                    val progress = total.toInt() * 100 / fileLength
+                    Log.v(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_PROGRESS")
+                    Log.v(TAG, "Sending broadcast notification: $DATA_PROGRESS: $progress")
+                    val intentBroadcast = Intent(BROADCAST_DOWNLOAD_PROGRESS)
+                    intentBroadcast.putExtra(DATA_PROGRESS, progress)
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+                }
+                output.write(data, 0, count)
+                count = input?.read(data) ?: 0
+            }
+        } catch (e: Exception) {
+            LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(cancelBRec)
+            Log.e(javaClass.toString(), e.localizedMessage, e)
+            Log.e(TAG, "Sending broadcast notification: $BROADCAST_DOWNLOAD_ERROR")
+            Log.e(TAG, "Sending broadcast notification: $DATA_ERROR: $e")
+            val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
+            intentBroadcast.putExtra(DATA_ERROR, e.toString())
+            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+        } finally {
+            try {
+                output.close()
+            } catch (ignored: IOException) {
+                Log.e(javaClass.toString(), ignored.localizedMessage, ignored)
+            }
+        }
     }
 
     companion object {
@@ -157,6 +226,7 @@ class DownloadService : IntentService("DownloadService") {
         const val DATA_DESTINATION_FILE = "it.cammino.risuscito.services.data.DATA_DESTINATION_FILE"
         const val DATA_PROGRESS = "it.cammino.risuscito.services.data.DATA_PROGRESS"
         const val DATA_ERROR = "it.cammino.risuscito.services.data.DATA_ERROR"
+        const val DATA_EXTERNAL_DOWNLOAD = "it.cammino.risuscito.services.data.DATA_EXTERNAL_DOWNLOAD"
     }
 
 }

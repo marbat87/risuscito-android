@@ -220,6 +220,10 @@ class LUtils private constructor(private val mActivity: Activity) {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         }
 
+        fun hasQ(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        }
+
         fun hasJB(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
         }

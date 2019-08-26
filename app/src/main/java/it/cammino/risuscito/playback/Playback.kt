@@ -16,6 +16,7 @@
 package it.cammino.risuscito.playback
 
 import android.annotation.TargetApi
+import android.content.ContentUris
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
@@ -26,12 +27,17 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.PowerManager
+import android.provider.MediaStore
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.text.TextUtils
 import android.util.Log
 import it.cammino.risuscito.LUtils
+import it.cammino.risuscito.LUtils.Companion.hasQ
+import it.cammino.risuscito.Utility.getExternalMediaIdByName
+import it.cammino.risuscito.Utility.isDefaultLocationPublic
+import it.cammino.risuscito.Utility.isExternalStorageReadable
 import java.io.FileInputStream
 import java.io.IOException
 
@@ -148,9 +154,23 @@ class Playback internal constructor(private val mService: MusicService, //    pr
                 if (source?.startsWith("http") == true)
                     mMediaPlayer?.setDataSource(source)
                 else {
-                    val fileInputStream = FileInputStream(source)
-                    mMediaPlayer?.setDataSource(fileInputStream.fd)
-                    fileInputStream.close()
+                    if (hasQ() && isExternalStorageReadable && isDefaultLocationPublic(mService.applicationContext))
+                        source?.let { mSource ->
+                            val mUri = ContentUris.withAppendedId(MediaStore.Audio.Media
+                                    .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), getExternalMediaIdByName(mService.applicationContext, mSource))
+                            mMediaPlayer?.setDataSource(mService.applicationContext, mUri)
+                        } ?: run {
+                            mCallback?.onError("NULL AUDIO LINK")
+                        }
+                    else {
+                        source?.let {
+                            val fileInputStream = FileInputStream(it)
+                            mMediaPlayer?.setDataSource(fileInputStream.fd)
+                            fileInputStream.close()
+                        } ?: run {
+                            mCallback?.onError("NULL AUDIO LINK")
+                        }
+                    }
                 }
 
                 // Starts preparing the media player in the background. When
