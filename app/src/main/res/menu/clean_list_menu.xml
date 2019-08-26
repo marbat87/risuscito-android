@@ -8,7 +8,7 @@
         risuscito:showAsAction="ifRoom"
         android:title="@string/action_help"
         risuscito:ico_color="@android:color/white"
-        risuscito:ico_icon="cmd_eraser_variant"
+        risuscito:ico_icon="cmd_notification_clear_all"
         risuscito:ico_padding="2dp"
         risuscito:ico_size="24dp"
         />

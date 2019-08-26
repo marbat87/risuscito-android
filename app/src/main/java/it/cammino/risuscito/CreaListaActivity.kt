@@ -88,7 +88,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 //                .colorInt(Color.WHITE)
 //                .sizeDp(24)
 //                .paddingDp(2)
-        val leaveBehindDrawable = iconicsDrawable(CommunityMaterial.Icon.cmd_delete) {
+        val leaveBehindDrawable = iconicsDrawable(CommunityMaterial.Icon.cmd_delete_sweep) {
             color = colorInt(Color.WHITE)
             size = sizeDp(24)
             padding = sizeDp(2)

@@ -13,7 +13,7 @@ plugins {
 android {
 
     compileSdkVersion(29)
-    buildToolsVersion("29.0.1")
+    buildToolsVersion("29.0.2")
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdkVersion(16)
@@ -82,6 +82,7 @@ dependencies {
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.google.android.material:material:1.1.0-alpha09")
     implementation("androidx.viewpager2:viewpager2:1.0.0-beta03")
+    implementation("androidx.drawerlayout:drawerlayout:1.1.0-alpha03")
     implementation("androidx.recyclerview:recyclerview:1.1.0-beta03")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")

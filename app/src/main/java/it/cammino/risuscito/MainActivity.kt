@@ -264,6 +264,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         mAccountHeader = AccountHeaderBuilder().withActivity(this).apply {
             withTranslucentStatusBar(true)
             withSelectionListEnabledForSingleProfile(false)
+            withProfileImagesClickable(false)
             withSavedInstance(savedInstanceState)
             addProfiles(profile)
             mRegularFont?.let {
@@ -841,9 +842,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         if (signedIn) {
             val profile: IProfile<*>
             val profilePhoto = acct?.photoUrl
+            Log.d(TAG, "profilePhoto $profilePhoto")
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
                 personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length - 2) + 400
+                Log.d(TAG, "personPhotoUrl $personPhotoUrl")
                 profile = ProfileDrawerItem()
                         .withName(acct?.displayName)
                         .withEmail(acct?.email)
