@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.core.view.isVisible
-import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -21,28 +20,18 @@ import it.cammino.risuscito.Utility
 import it.cammino.risuscito.items.BottomSheetItem
 import kotlinx.android.synthetic.main.bottom_sheet.*
 
-@Suppress("unused")
 class BottomSheetFragment : BottomSheetDialogFragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0)
-    }
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setStyle(DialogFragment.STYLE_NO_TITLE, 0)
+//    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         return inflater.inflate(R.layout.bottom_sheet, container, false)
     }
 
-    /**
-     * Called immediately after [.onCreateView]
-     * has returned, but before any saved state has been restored in to the view.
-     * This gives subclasses a chance to initialize themselves once
-     * they know their view hierarchy has been completely created.  The fragment's
-     * view hierarchy is not however attached to its parent at this point.
-     * @param view The View returned by [.onCreateView].
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
-     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -104,14 +93,14 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object {
 
-        fun newInstance(intent: Intent): BottomSheetFragment {
-            val frag = BottomSheetFragment()
-            val args = Bundle()
-            args.putBoolean("showTitle", false)
-            args.putParcelable("intent", intent)
-            frag.arguments = args
-            return frag
-        }
+//        fun newInstance(intent: Intent): BottomSheetFragment {
+//            val frag = BottomSheetFragment()
+//            val args = Bundle()
+//            args.putBoolean("showTitle", false)
+//            args.putParcelable("intent", intent)
+//            frag.arguments = args
+//            return frag
+//        }
 
         fun newInstance(@StringRes title: Int, intent: Intent): BottomSheetFragment {
             val frag = BottomSheetFragment()

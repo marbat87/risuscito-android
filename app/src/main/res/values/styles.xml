@@ -25,7 +25,8 @@
     <style name="Risuscito_tabstyle" parent="@style/Widget.MaterialComponents.TabLayout.PrimarySurface">
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito</item>
+        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito
+        </item>
         <item name="android:background">@android:color/transparent</item>
     </style>
 
@@ -94,13 +95,21 @@
         <item name="fontFamily">@font/googlesans_regular</item>
     </style>
 
-    <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="AppBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
     <style name="AppModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
-        <item name="android:background">@drawable/bg_bottom_sheet_dialog</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Risuscito.BottomSheet</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Risuscito.BottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/bottom_sheet_corner_radius</item>
+        <item name="cornerSizeTopRight">@dimen/bottom_sheet_corner_radius</item>
+        <item name="cornerSizeBottomRight">@dimen/mtrl_shape_corner_size_large_component</item>
+        <item name="cornerSizeBottomLeft">@dimen/mtrl_shape_corner_size_large_component</item>
     </style>
 
     <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.AppCompat.DayNight">
@@ -115,8 +124,10 @@
         <item name="android:popupBackground">@color/floating_background</item>
     </style>
 
-    <style name="RisuscitoAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert" >
-        <item name="android:buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito</item>
+    <style name="RisuscitoAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:buttonBarButtonStyle">
+            @style/Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito
+        </item>
         <item name="android:windowBackground">@drawable/dialog_material_background</item>
     </style>
 

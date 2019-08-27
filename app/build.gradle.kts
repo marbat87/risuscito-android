@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-
 plugins {
     id("com.android.application")
     id("io.fabric")
@@ -33,7 +31,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    (kotlinOptions as KotlinJvmOptions).apply {
+    kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 

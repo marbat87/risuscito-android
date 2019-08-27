@@ -13,8 +13,6 @@
     <string name="label_play" translatable="false">Play</string>
     <string name="label_restart" translatable="false">Restart</string>
     <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
-    <string name="server_client_id" translatable="false">9545803189-eikvm3ecah7d908r81kuogqpn34ipb4a.apps.googleusercontent.com</string>
-
 
     <string name="private_memory">Memoria privata</string>
     <string name="public_memory">Memoria pubblica</string>
@@ -25,7 +23,6 @@
     <string name="page_order_text">Indice per pagina</string>
     <string name="search_name_text">Ricerca canto</string>
     <string name="arg_search_text">Indice per argomento</string>
-    <!--<string name="button_pulisci">PULISCI</string>-->
     <string name="always_on">No standby</string>
     <string name="always_on_summary">Impedisce allo schermo di andare in standby all\'interno dell\'applicazione.</string>
     <string name="title_activity_favourites">Preferiti</string>
