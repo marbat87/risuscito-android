@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
@@ -355,17 +354,16 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     // --> click on the footer
                     // those items don't contain a drawerItem
 
-                    val fragment: Fragment
-                    when (drawerItem.identifier) {
-                        R.id.navigation_home.toLong() ->  fragment = Risuscito()
-                        R.id.navigation_search.toLong() -> fragment = SearchFragment()
-                        R.id.navigation_indexes.toLong() -> fragment = GeneralIndex()
-                        R.id.navitagion_lists.toLong() -> fragment = CustomLists()
-                        R.id.navigation_favorites.toLong() -> fragment = FavoritesFragment()
-                        R.id.navigation_settings.toLong() -> fragment = SettingsFragment()
-                        R.id.navigation_changelog.toLong() -> fragment = AboutFragment()
-                        R.id.navigation_consegnati.toLong() -> fragment = ConsegnatiFragment()
-                        R.id.navigation_history.toLong() -> fragment = HistoryFragment()
+                    val fragment = when (drawerItem.identifier) {
+                        R.id.navigation_home.toLong() -> Risuscito()
+                        R.id.navigation_search.toLong() -> SearchFragment()
+                        R.id.navigation_indexes.toLong() -> GeneralIndex()
+                        R.id.navitagion_lists.toLong() -> CustomLists()
+                        R.id.navigation_favorites.toLong() -> FavoritesFragment()
+                        R.id.navigation_settings.toLong() -> SettingsFragment()
+                        R.id.navigation_changelog.toLong() -> AboutFragment()
+                        R.id.navigation_consegnati.toLong() -> ConsegnatiFragment()
+                        R.id.navigation_history.toLong() -> HistoryFragment()
                         else -> return true
                     }
                     toolbar_layout?.setExpanded(true, true)
@@ -842,11 +840,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         if (signedIn) {
             val profile: IProfile<*>
             val profilePhoto = acct?.photoUrl
-            Log.d(TAG, "profilePhoto $profilePhoto")
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
-                personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length - 2) + 400
-                Log.d(TAG, "personPhotoUrl $personPhotoUrl")
+                Log.d(TAG, "personPhotoUrl BEFORE $personPhotoUrl")
+//                personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length - 2) + 400
+                personPhotoUrl = personPhotoUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
+                Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
                 profile = ProfileDrawerItem()
                         .withName(acct?.displayName)
                         .withEmail(acct?.email)
@@ -1026,6 +1025,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         private const val REVOKE = "REVOKE"
         private const val RESTART = "RESTART"
         private const val RESTORE = "RESTORE"
+        private const val OLD_PHOTO_RES = "s96-c"
+        private const val NEW_PHOTO_RES = "s400-c"
         private val TAG = MainActivity::class.java.canonicalName
 
         private class TranslationTask(activity: MainActivity) : AsyncTask<Void, Void, Void>() {
