@@ -27,7 +27,9 @@ import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.utils.ThemeUtils
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import java.text.Normalizer
 import java.util.*
 import java.util.regex.Pattern
@@ -372,6 +374,23 @@ object Utility {
 
             BitmapFactory.decodeResource(res, resId, this)
         }
+    }
+
+    internal fun readTextFromResource(res: Resources, resourceID: Int): String? {
+        val raw = res.openRawResource(resourceID)
+        val stream = ByteArrayOutputStream()
+        try {
+            var line = raw.read()
+            while (line != -1) {
+                stream.write(line)
+                line = raw.read()
+            }
+            raw.close()
+        } catch (e: IOException) {
+            Log.e(TAG, "readTextFromResource", e)
+            return null
+        }
+        return stream.toString()
     }
 
 }

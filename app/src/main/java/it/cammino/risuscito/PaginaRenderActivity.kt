@@ -50,6 +50,7 @@ import it.cammino.risuscito.Utility.getExternalLink
 import it.cammino.risuscito.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.Utility.isDefaultLocationPublic
 import it.cammino.risuscito.Utility.mediaScan
+import it.cammino.risuscito.Utility.readTextFromResource
 import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.LocalLink
@@ -393,11 +394,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         try {
             mViewModel.primaNota = if (mViewModel.primaNota == PaginaRenderViewModel.NOT_VAL) CambioAccordi.recuperaPrimoAccordo(
-                    assets.open(mViewModel.pagina + FILE_PATH_SUFFIX),
+                    resources.openRawResource(LUtils.getResId(mViewModel.pagina, R.raw::class.java)),
                     getSystemLocale(resources).language)
             else mViewModel.primaNota
             mViewModel.primoBarre = if (mViewModel.primoBarre == PaginaRenderViewModel.NOT_VAL) cambioAccordi.recuperaBarre(
-                    assets.open(mViewModel.pagina + FILE_PATH_SUFFIX),
+                    resources.openRawResource(LUtils.getResId(mViewModel.pagina, R.raw::class.java)),
                     getSystemLocale(resources).language)
             else mViewModel.primoBarre
         } catch (e: IOException) {
@@ -580,7 +581,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                     if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
+                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         cantoView.setInitialScale(it.zoom)
@@ -612,7 +613,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
                     if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
+                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         cantoView.setInitialScale(it.zoom)
@@ -632,7 +633,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
                         if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
+                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             cantoView.setInitialScale(it.zoom)
@@ -651,7 +652,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
                         if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
+                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             cantoView.setInitialScale(it.zoom)
@@ -781,7 +782,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         var barreScritto = false
 
         try {
-            val br = BufferedReader(InputStreamReader(assets.open(mViewModel.pagina + FILE_PATH_SUFFIX), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "UTF-8"))
 
             var line: String? = br.readLine()
 
@@ -1419,7 +1420,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                 if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
-                cantoView.loadUrl(FILE_PATH_PREFIX + mViewModel.pagina + FILE_PATH_SUFFIX)
+                cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
 
             val webSettings = cantoView.settings
             webSettings.useWideViewPort = true
@@ -1776,10 +1777,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val DELETE_LINK = "DELETE_LINK"
         private const val DOWNLOAD_MP3 = "DOWNLOAD_MP3"
         private const val DELETE_MP3 = "DELETE_MP3"
-        //        private const val BUFFERING = "BUFFERING"
         private const val SAVE_TAB = "SAVE_TAB"
         private const val DEF_FILE_PATH = "file://"
-        private const val FILE_PATH_PREFIX = "$DEF_FILE_PATH/android_asset/"
-        private const val FILE_PATH_SUFFIX = ".htm"
     }
 }

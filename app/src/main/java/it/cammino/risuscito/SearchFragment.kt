@@ -31,8 +31,6 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
-import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
@@ -77,11 +75,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
         }
 
         try {
-            val inputStream: InputStream = when (getSystemLocale(resources).language) {
-                LANGUAGE_UKRAINIAN -> requireActivity().assets.open("fileout_uk.xml")
-                LANGUAGE_ENGLISH -> requireActivity().assets.open("fileout_en.xml")
-                else -> requireActivity().assets.open("fileout_new.xml")
-            }
+            val inputStream: InputStream = resources.openRawResource(R.raw.fileout)
             aTexts = CantiXmlParser().parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {

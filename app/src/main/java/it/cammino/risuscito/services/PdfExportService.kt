@@ -15,10 +15,10 @@ import it.cammino.risuscito.BuildConfig
 import it.cammino.risuscito.CambioAccordi
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.setSystemLocale
 import it.marbat.pdfjet.lib.*
 import java.io.*
 import java.util.*
@@ -87,13 +87,8 @@ class PdfExportService : IntentService("PdfExportService") {
         var testConvMin: HashMap<String, String>? = null
         if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
             testConvMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio)
-        var urlHtml = ""
-        if (testConv != null) {
-            val nuovoFile = cambiaAccordi(testConv, barreCambio, testConvMin)
-            if (nuovoFile != null) urlHtml = nuovoFile
-        } else {
-            urlHtml = "file:///android_asset/$pagina.htm"
-        }
+
+        val urlHtml = testConv?.let { cambiaAccordi(it, barreCambio, testConvMin) ?: "" } ?: ""
         try {
             localPDFPath = cacheDir.absolutePath + "/output.pdf"
             Log.d(javaClass.toString(), "localPath:$localPDFPath")
@@ -103,7 +98,8 @@ class PdfExportService : IntentService("PdfExportService") {
             f1.size = 14f
             try {
                 var line: String?
-                val br = BufferedReader(InputStreamReader(FileInputStream(urlHtml), "UTF-8"))
+                val br = if (urlHtml.isNotEmpty()) BufferedReader(InputStreamReader(FileInputStream(urlHtml), "UTF-8")) else
+                    BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(pagina, R.raw::class.java)), "UTF-8"))
 
                 line = br.readLine()
                 text = TextLine(f1)
@@ -190,14 +186,13 @@ class PdfExportService : IntentService("PdfExportService") {
         val cantoTrasportato = this.filesDir.toString() + "/temporaneo.htm"
 
         val conf = resources.configuration
-//        ThemeableActivity.setSystemLocalWrapper(conf, Locale(mLingua))
-        LocaleManager.setSystemLocale(conf, Locale(mLingua))
+        setSystemLocale(conf, Locale(mLingua))
         val resources = createConfigurationWrapper(conf)
 
         var barreScritto = false
 
         try {
-            val br = BufferedReader(InputStreamReader(assets.open("$pagina.htm"), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(pagina, R.raw::class.java)), "UTF-8"))
 
             var line: String? = br.readLine()
 

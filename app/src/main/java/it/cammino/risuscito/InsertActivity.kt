@@ -34,9 +34,6 @@ import com.mikepenz.fastadapter.listeners.ClickEventHook
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.InsertItem
-import it.cammino.risuscito.ui.LocaleManager
-import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
-import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
@@ -90,12 +87,7 @@ class InsertActivity : ThemeableActivity() {
         }
 
         try {
-            val inputStream: InputStream = when (LocaleManager.getSystemLocale(resources)
-                    .language) {
-                LANGUAGE_UKRAINIAN -> assets.open("fileout_uk.xml")
-                LANGUAGE_ENGLISH -> assets.open("fileout_en.xml")
-                else -> assets.open("fileout_new.xml")
-            }
+            val inputStream: InputStream = resources.openRawResource(R.raw.fileout)
             aTexts = CantiXmlParser().parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {
@@ -303,12 +295,12 @@ class InsertActivity : ThemeableActivity() {
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).toLowerCase()
+                    val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(fragment.resources))
                     Log.d(TAG, "onTextChanged: stringa $stringa")
                     fragment.mViewModel.titoliInsert.sortedBy { it.title?.getText(fragment) }
                             .filter {
                                 Utility.removeAccents(it.title?.getText(fragment)
-                                        ?: "").toLowerCase().contains(stringa) && (!consegnatiOnly || it.consegnato == 1)
+                                        ?: "").toLowerCase(getSystemLocale(fragment.resources)).contains(stringa) && (!consegnatiOnly || it.consegnato == 1)
                             }
                             .forEach {
                                 if (isCancelled) return titoliResult
