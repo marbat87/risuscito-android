@@ -1662,7 +1662,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                        .colorInt(iconColor)
 //                        .sizeDp(24)
 //                        .paddingDp(4)
-                        iconicsDrawable(if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart) {
+                        iconicsDrawable(if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart else CommunityMaterial.Icon2.cmd_heart_outline) {
                             color = colorInt(iconColor)
                             size = sizeDp(24)
                             padding = sizeDp(4)
