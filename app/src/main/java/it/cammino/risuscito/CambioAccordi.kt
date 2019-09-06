@@ -70,10 +70,8 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
         if (primaNota == "" || notaCambio == "")
             return null
 
-//        var language = ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration)
-//                .language
-        var language = getSystemLocale(mContext.resources).language
-        if (!mLanguage.isNullOrEmpty()) language = mLanguage
+        val language = if (mLanguage.isNullOrEmpty()) getSystemLocale(mContext.resources).language else mLanguage
+        val locale = Locale(language)
 
         Log.v(TAG, "diffSemiToni: language $language")
 
@@ -86,13 +84,13 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
             LANGUAGE_UKRAINIAN -> {
                 accordi = accordi_uk
                 primoAccordo = if (primoAccordo.length == 1)
-                    primoAccordo.toUpperCase()
+                    primoAccordo.toUpperCase(locale)
                 else
-                    primoAccordo.substring(0, 1).toUpperCase() + primoAccordo.substring(1)
+                    primoAccordo.substring(0, 1).toUpperCase(locale) + primoAccordo.substring(1)
                 cambioAccordo = if (cambioAccordo.length == 1)
-                    cambioAccordo.toUpperCase()
+                    cambioAccordo.toUpperCase(locale)
                 else
-                    cambioAccordo.substring(0, 1).toUpperCase() + cambioAccordo.substring(1)
+                    cambioAccordo.substring(0, 1).toUpperCase(locale) + cambioAccordo.substring(1)
             }
             LANGUAGE_ENGLISH -> accordi = accordi_en
             else -> accordi = accordi_it
@@ -129,6 +127,9 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
 
     fun diffSemiToniMin(primaNota: String?, notaCambio: String?): HashMap<String, String>? {
 
+        val language = if (mLanguage.isNullOrEmpty()) getSystemLocale(mContext.resources).language else mLanguage
+        val locale = Locale(language)
+
         Log.v(TAG, "diffSemiToniMin")
 
         if (primaNota == null || primaNota == "" || notaCambio == null || primaNota == "")
@@ -136,14 +137,14 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
 
         var primoAccordo: String = primaNota
         primoAccordo = if (primoAccordo.length == 1)
-            primoAccordo.toLowerCase()
+            primoAccordo.toLowerCase(locale)
         else
-            primoAccordo.substring(0, 1).toLowerCase() + primoAccordo.substring(1)
+            primoAccordo.substring(0, 1).toLowerCase(locale) + primoAccordo.substring(1)
         var cambioAccordo: String = notaCambio
         cambioAccordo = if (cambioAccordo.length == 1)
-            cambioAccordo.toLowerCase()
+            cambioAccordo.toLowerCase(locale)
         else
-            cambioAccordo.substring(0, 1).toLowerCase() + cambioAccordo.substring(1)
+            cambioAccordo.substring(0, 1).toLowerCase(locale) + cambioAccordo.substring(1)
 
         var start = 0
         while (start < accordi_uk_lower.size) {

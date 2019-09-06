@@ -69,7 +69,7 @@ class SimpleDialogFragment : DialogFragment() {
             dialog.customView(mBuilder.mCustomView)
         }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        dialog.cancelable(mBuilder.mCanceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false

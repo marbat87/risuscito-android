@@ -42,18 +42,18 @@ import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
-import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.services.ConsegnatiSaverService
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.layout_consegnati.*
 import java.lang.ref.WeakReference
 
-class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFragment.SimpleCallback {
+class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
 
     private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
 
@@ -150,7 +150,6 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         val glm = GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         val llm = LinearLayoutManager(context)
         cantiRecycler?.layoutManager = if (mMainActivity?.isGridLayout == true) glm else llm
-//        cantiRecycler?.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), if (mMainActivity?.isGridLayout == true) glm.orientation else llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
@@ -189,7 +188,6 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         else
             LinearLayoutManager(context)
         chooseRecycler?.layoutManager = llm2
-//        chooseRecycler?.setHasFixedSize(true)
         val insetDivider2 = DividerItemDecoration(requireContext(), llm2.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
@@ -202,10 +200,11 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val simplifiedString = Utility.removeAccents(newText ?: "").toLowerCase()
+                val simplifiedString = Utility.removeAccents(newText
+                        ?: "").toLowerCase(getSystemLocale(resources))
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
-                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter { Utility.removeAccents(it.title?.text.toString()).toLowerCase().contains(simplifiedString) }
+                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter { Utility.removeAccents(it.title?.text.toString()).toLowerCase(getSystemLocale(resources)).contains(simplifiedString) }
                     selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
                 } else
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.sortedWith(compareBy { it.title.toString() })
@@ -337,10 +336,6 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         }
         mMainActivity?.initFab(false, icon, onClick, null, false)
     }
-
-    override fun onPositive(tag: String) {}
-
-    override fun onNegative(tag: String) {}
 
     private fun fabIntro() {
         TapTargetView.showFor(

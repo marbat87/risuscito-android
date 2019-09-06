@@ -260,12 +260,12 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).toLowerCase()
+                    val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(fragment.resources))
                     Log.d(TAG, "onTextChanged: stringa $stringa")
                     fragment.mViewModel.titoli.sortedBy { it.title?.getText(fragment.context) }
                             .filter {
                                 Utility.removeAccents(it.title?.getText(fragment.context)
-                                        ?: "").toLowerCase().contains(stringa)
+                                        ?: "").toLowerCase(getSystemLocale(fragment.resources)).contains(stringa)
                             }
                             .forEach {
                                 if (isCancelled) return titoliResult

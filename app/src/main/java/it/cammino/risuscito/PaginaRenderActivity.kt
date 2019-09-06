@@ -708,7 +708,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         music_controls.isVisible = mViewModel.mostraAudio
 
         val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
-
         // registra un receiver per ricevere la notifica di preparazione della registrazione
         mLocalBroadcastManager.registerReceiver(
                 downloadPosBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_PROGRESS))
@@ -721,21 +720,20 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         mLocalBroadcastManager.registerReceiver(catalogReadyBR, IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC))
     }
 
+    override fun onPause() {
+        super.onPause()
+        val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
+        mLocalBroadcastManager.unregisterReceiver(downloadPosBRec)
+        mLocalBroadcastManager.unregisterReceiver(downloadCompletedBRec)
+        mLocalBroadcastManager.unregisterReceiver(downloadErrorBRec)
+        mLocalBroadcastManager.unregisterReceiver(exportCompleted)
+        mLocalBroadcastManager.unregisterReceiver(exportError)
+        mLocalBroadcastManager.unregisterReceiver(catalogReadyBR)
+    }
+
     public override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy(): $isFinishing")
-        try {
-            val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
-            mLocalBroadcastManager.unregisterReceiver(downloadPosBRec)
-            mLocalBroadcastManager.unregisterReceiver(downloadCompletedBRec)
-            mLocalBroadcastManager.unregisterReceiver(downloadErrorBRec)
-            mLocalBroadcastManager.unregisterReceiver(exportCompleted)
-            mLocalBroadcastManager.unregisterReceiver(exportError)
-            mLocalBroadcastManager.unregisterReceiver(catalogReadyBR)
-        } catch (e: IllegalArgumentException) {
-            Log.e(TAG, e.localizedMessage, e)
-        }
-
         if (isFinishing) stopMedia()
         stopSeekbarUpdate()
         mExecutorService.shutdown()

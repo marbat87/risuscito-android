@@ -19,7 +19,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_general_index">Indexes of Songs</string>
     <string name="default_index_title">Predefined index</string>
-    <string name="default_index_summary">Indicate which index must open at the selection of the page of indexes.</string>
+    <string name="default_index_summary">Indicate which index must open at the selection of the page of indexes:</string>
     <string name="title_activity_canti_parola">Celebration of the Word</string>
     <string name="canto_iniziale">Initial song</string>
     <string name="prima_lettura">In response to the first reading</string>
@@ -43,7 +43,7 @@
     <string name="about_subtitle">Version for Android smartphone/tablet</string>
     <string name="dialog_delete_mp3">Are you sure you want to delete the song from the memory of your device?</string>
     <string name="save_location_title">Predefined memory</string>
-    <string name="save_location_summary">Indicate if you want the downloaded files to appear visible to other applications (e.g music reader).</string>
+    <string name="save_location_summary">Indicate if you want the downloaded files to appear visible to other applications (e.g music reader):</string>
     <string name="favorite_added">Added favourites</string>
     <string name="favorite_removed">Deleted from favourites</string>
     <string name="file_delete">Deleted file</string>
@@ -167,7 +167,7 @@ You can add up to 30 elements.</string>
     <string name="title_trasporta_si">B</string>
     <string name="to_be_chosen">to choose</string>
     <string name="language_title">Language</string>
-    <string name="language_summary">Set the language for the menu and the songs.</string>
+    <string name="language_summary">Set the language for the menu and the songs:</string>
     <string name="page_contracted">PG.</string>
     <string name="translation_running">Translation in progress&#8230;</string>
     <string name="no_favourites_short">You have not added any favourite.</string>
@@ -269,7 +269,6 @@ Do you want to proceed?</string>
     <string name="consegnati_only">Look only for those delivered</string>
     <string name="permission_ok">Permission granted</string>
     <string name="night_theme_title">Dark Theme</string>
-    <string name="night_theme_desc">Enables the Dark Theme</string>
     <plurals name="item_selected">
         <item quantity="one">%1$d selected</item>
         <item quantity="other">%1$d selected</item>
@@ -293,7 +292,7 @@ Do you want to proceed?</string>
     <string name="ok">OK</string>
     <string name="import_confirm">import</string>
     <string name="default_search_title">Predefined search</string>
-    <string name="default_search_summary">Indicate which search type must open on entering the function</string>
+    <string name="default_search_summary">Indicate which search type must open on entering the function:</string>
     <string name="night_mode_light">Light</string>
     <string name="night_mode_dark">Dark</string>
     <string name="night_mode_auto_battery">Set by Battery Saver</string>

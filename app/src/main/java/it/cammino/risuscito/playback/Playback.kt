@@ -19,7 +19,6 @@ import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.Context
 import android.media.AudioAttributes
-import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.MediaPlayer.*
@@ -33,6 +32,9 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.text.TextUtils
 import android.util.Log
+import androidx.media.AudioAttributesCompat
+import androidx.media.AudioFocusRequestCompat
+import androidx.media.AudioManagerCompat
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.Utility.getExternalMediaIdByName
@@ -59,24 +61,16 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     private val mAudioManager: AudioManager
     private var mMediaPlayer: MediaPlayer? = null
 
-    private val mPlaybackAttributes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-    } else {
-        null
-    }
+    private val mPlaybackAttributes = AudioAttributesCompat.Builder()
+            .setUsage(AudioAttributesCompat.USAGE_MEDIA)
+            .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
+            .build()
     //    private val mFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-    private val mFocusRequest = if (LUtils.hasO()) {
-        AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).apply {
-            mPlaybackAttributes?.let { setAudioAttributes(it) }
-            setAcceptsDelayedFocusGain(true)
-            setOnAudioFocusChangeListener(this@Playback, Handler())
-        }.build()
-    } else {
-        null
-    }
+    private val mFocusRequest = AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)
+            .setAudioAttributes(mPlaybackAttributes)
+//            .setAcceptsDelayedFocusGain(true)
+            .setOnAudioFocusChangeListener(this@Playback, Handler())
+            .build()
 
     internal val isConnected: Boolean
         get() = true
@@ -235,7 +229,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     /** Try to get the system audio focus.  */
     private fun tryToGetAudioFocus() {
         Log.d(TAG, "tryToGetAudioFocus")
-        val result = requestAudioFocus()
+        val result = AudioManagerCompat.requestAudioFocus(mAudioManager, mFocusRequest)
         mAudioFocus = if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
             AUDIO_FOCUSED
         else
@@ -245,7 +239,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     /** Give up the audio focus.  */
     private fun giveUpAudioFocus() {
         Log.d(TAG, "giveUpAudioFocus")
-        if (abandonAudioFocus() == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+        if (AudioManagerCompat.abandonAudioFocusRequest(mAudioManager, mFocusRequest) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             mAudioFocus = AUDIO_NO_FOCUS_NO_DUCK
         }
     }
@@ -293,7 +287,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
      */
     override fun onAudioFocusChange(focusChange: Int) {
         Log.d(TAG, "onAudioFocusChange. focusChange= $focusChange")
-        if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+        if (focusChange == AudioManagerCompat.AUDIOFOCUS_GAIN) {
             // We have gained focus:
             mAudioFocus = AUDIO_FOCUSED
 
@@ -418,12 +412,12 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setStreamTypeLollipop() {
-        mPlaybackAttributes?.let { mMediaPlayer?.setAudioAttributes(it) }
+        (mPlaybackAttributes.unwrap() as? AudioAttributes)?.let { mMediaPlayer?.setAudioAttributes(it) }
     }
 
     @Suppress("DEPRECATION")
     private fun setStreamTypeLegacy() {
-        mMediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        mMediaPlayer?.setAudioStreamType(mPlaybackAttributes.legacyStreamType)
     }
 
     private fun setStreamType() {
@@ -431,41 +425,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
             setStreamTypeLollipop()
         else
             setStreamTypeLegacy()
-    }
-
-    private fun requestAudioFocus(): Int {
-        return if (LUtils.hasO())
-            requestAudioFocusO()
-        else
-            requestAudioFocusLegacy()
-    }
-
-    @Suppress("DEPRECATION")
-    private fun requestAudioFocusLegacy(): Int {
-        return mAudioManager.requestAudioFocus(
-                this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    private fun requestAudioFocusO(): Int {
-        return mAudioManager.requestAudioFocus(mFocusRequest!!)
-    }
-
-    private fun abandonAudioFocus(): Int {
-        return if (LUtils.hasO())
-            abandonAudioFocusO()
-        else
-            abandonAudioFocusLegacy()
-    }
-
-    @Suppress("DEPRECATION")
-    private fun abandonAudioFocusLegacy(): Int {
-        return mAudioManager.abandonAudioFocus(this)
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    private fun abandonAudioFocusO(): Int {
-        return mAudioManager.abandonAudioFocusRequest(mFocusRequest!!)
     }
 
     /* package */  interface Callback {

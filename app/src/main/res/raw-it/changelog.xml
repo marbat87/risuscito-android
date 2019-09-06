@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4421"
+    <release versionCode="4425"
         date="Settembre 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANTE[/b]: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le
@@ -18,6 +18,8 @@
         <new>Compabilità con Android 10</new>
         <new>Aggiunta opzione tema scuro automatico (segue le impostazioni sistema su Android 9, mentre è settato dalla modalità risparmio energetico).
             Il funzionamento dipende comunque dalla versione del S.O. e in alcuni casi dal produttore del dispositivo</new>
+        <new>Adesso l'applicazione occupa meno spazio perchè di default viene installata solo la lingua di sistema.
+            Eventuali risorse per lingue aggiuntive saranno scaricate nel momento in cui si cambia la relativa impostazione</new>
     </release>
 
     <release versionCode="0"

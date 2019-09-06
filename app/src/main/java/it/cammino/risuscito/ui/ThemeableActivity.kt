@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -108,6 +109,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
         RisuscitoApplication.localeManager.setLocale(this)
+        SplitCompat.install(this)
     }
 
     inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))

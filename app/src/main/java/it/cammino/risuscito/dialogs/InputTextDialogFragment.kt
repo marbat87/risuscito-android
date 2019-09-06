@@ -69,7 +69,7 @@ class InputTextDialogFragment : DialogFragment() {
             it.getInputField().selectAll()
         }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        dialog.cancelable(mBuilder.mCanceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false

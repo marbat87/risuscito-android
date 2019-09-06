@@ -39,7 +39,7 @@ object Utility {
     // Costanti per le impostazioni
     private val TAG = Utility::class.java.canonicalName
     const val SCREEN_ON = "sempre_acceso"
-    const val SYSTEM_LANGUAGE = "lingua_sistema"
+    const val SYSTEM_LANGUAGE = "lingua_sistema_new"
     const val DB_RESET = "db_reset"
     const val CHANGE_LANGUAGE = "changed"
     const val CLICK_DELAY: Long = 500

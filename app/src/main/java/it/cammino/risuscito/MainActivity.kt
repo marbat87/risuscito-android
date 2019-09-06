@@ -203,13 +203,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         setDialogCallback(REVOKE)
         setDialogCallback(RESTART)
 
-        // registra un receiver per ricevere la notifica di preparazione della registrazione
-        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(nextStepReceiver, IntentFilter(BROADCAST_NEXT_STEP))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
     }
 
     override fun onStart() {
@@ -237,7 +230,15 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "ONRESUME")
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(nextStepReceiver, IntentFilter(BROADCAST_NEXT_STEP))
         hideProgressDialog()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "ONPAUSE")
+        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {

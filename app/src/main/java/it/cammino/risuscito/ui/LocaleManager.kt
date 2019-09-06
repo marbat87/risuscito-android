@@ -33,7 +33,7 @@ class LocaleManager(context: Context) {
 //    }
 
     @SuppressLint("ApplySharedPref")
-    private fun persistLanguage(language: String) {
+    fun persistLanguage(language: String) {
         prefs.edit {
             putString(Utility.SYSTEM_LANGUAGE, language)
         }

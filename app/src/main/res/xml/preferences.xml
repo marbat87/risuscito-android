@@ -25,7 +25,7 @@
         <SimpleMenuPreference
             android:defaultValue="default"
             android:title="@string/night_theme_title"
-            android:summary="@string/night_theme_desc"
+            risuscito:useSimpleSummaryProvider="true"
             android:entries="@array/themeListArray"
             android:entryValues="@array/themeEntryArray"
             android:key="night_mode" />
@@ -61,7 +61,6 @@
         <SimpleMenuPreference
             android:defaultValue="0"
             android:title="@string/default_index_title"
-            android:summary="@string/default_index_summary"
             android:entries="@array/pref_default_index_entries"
             android:entryValues="@array/pref_default_index_values"
             android:key="indice_predefinito" />
@@ -69,7 +68,6 @@
         <SimpleMenuPreference
             android:defaultValue="0"
             android:title="@string/default_search_title"
-            android:summary="@string/default_search_summary"
             android:entries="@array/pref_default_search_entries"
             android:entryValues="@array/pref_default_search_values"
             android:key="ricerca_predefinita" />
@@ -93,17 +91,15 @@
         <SimpleMenuPreference
             android:defaultValue="0"
             android:title="@string/save_location_title"
-            android:summary="@string/save_location_summary"
             android:entries="@array/save_location_sd_entries"
             android:entryValues="@array/save_location_sd_values"
             android:key="memoria_salvataggio_scelta" />
 
         <SimpleMenuPreference
             android:title="@string/language_title"
-            android:summary="@string/language_summary"
             android:entries="@array/pref_languages_entries"
             android:entryValues="@array/pref_languages_values"
-            android:key="lingua_sistema" />
+            android:key="lingua_sistema_new" />
 
     </androidx.preference.PreferenceCategory>
 

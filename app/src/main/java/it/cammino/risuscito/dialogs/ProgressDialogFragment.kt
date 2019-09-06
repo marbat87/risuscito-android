@@ -79,7 +79,7 @@ class ProgressDialogFragment : DialogFragment() {
             dialog.getCustomView().md_content_linear.text = mBuilder.mContent ?: ""
         }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        dialog.cancelable(mBuilder.mCanceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false

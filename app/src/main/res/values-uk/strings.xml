@@ -19,7 +19,7 @@
     <string name="title_activity_settings">Налаштування</string>
     <string name="title_activity_general_index">Зміст пісень</string>
     <string name="default_index_title">Головний зміст</string>
-    <string name="default_index_summary">Вказує на те, який зміст має відкриватись при виборі сторінки змістів.</string>
+    <string name="default_index_summary">Вказує на те, який зміст має відкриватись при виборі сторінки змістів:</string>
     <string name="title_activity_canti_parola">Літургія слова</string>
     <string name="canto_iniziale">Пісня на вхід</string>
     <string name="prima_lettura">Як відповідь на перше читання</string>
@@ -43,7 +43,7 @@
     <string name="about_subtitle">Версія для смартфонів/планшетів Android</string>
     <string name="dialog_delete_mp3">Ти впевнений, що хочеш видалити пісню з пам\'яті пристрою?</string>
     <string name="save_location_title">Стандартна пам\'ять</string>
-    <string name="save_location_summary">Вкажіть, чи хочете, щоби завантажені файли були видимі іншим додаткам (наприкл. музичний програвач).</string>
+    <string name="save_location_summary">Вкажіть, чи хочете, щоби завантажені файли були видимі іншим додаткам (наприкл. музичний програвач):</string>
     <string name="favorite_added">Додано до закладок</string>
     <string name="favorite_removed">Видалено з закладок</string>
     <string name="file_delete">Файл був видалений</string>
@@ -167,7 +167,7 @@
     <string name="title_trasporta_si">H</string>
     <string name="to_be_chosen">вибрати</string>
     <string name="language_title">Мова</string>
-    <string name="language_summary">Налаштуй мову меню та пісень.</string>
+    <string name="language_summary">Налаштуй мову меню та пісень:</string>
     <string name="page_contracted">СТОР.</string>
     <string name="translation_running">Переклад&#8230;</string>
     <string name="no_favourites_short">Ви не додали жодної закладки.</string>
@@ -274,7 +274,6 @@
     <string name="consegnati_only">Шукати тільки у вручених</string>
     <string name="permission_ok">Дозвіл наданий</string>
     <string name="night_theme_title">Темна тема</string>
-    <string name="night_theme_desc">Ввімкнути темну тему</string>
     <plurals name="item_selected">
         <item quantity="one">%1$d обраний</item>
         <item quantity="other">%1$d обраний</item>
@@ -300,7 +299,7 @@
     <string name="ok">OK</string>
     <string name="import_confirm">Імпортувати</string>
     <string name="default_search_title">Пошук за замовчуванням</string>
-    <string name="default_search_summary">Визначте, який вид пошуку має вікриватись за замовчуванням, коли відкриваєте додаток</string>
+    <string name="default_search_summary">Визначте, який вид пошуку має вікриватись за замовчуванням, коли відкриваєте додаток:</string>
     <string name="night_mode_light">Chiaro</string>
     <string name="night_mode_dark">Scuro</string>
     <string name="night_mode_auto_battery">Automatico quando in risparmio energetico</string>

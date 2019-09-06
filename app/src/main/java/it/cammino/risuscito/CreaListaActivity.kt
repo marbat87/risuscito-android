@@ -471,7 +471,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             }
 
             Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
-            for (i in 0 until mAdapter.adapterItems.size) {
+            for (i in mAdapter.adapterItems.indices) {
                 mAdapter.getItem(i)?.let {
                     if (celebrazione.addPosizione(it.name?.text.toString()) == -2) {
                         return 1

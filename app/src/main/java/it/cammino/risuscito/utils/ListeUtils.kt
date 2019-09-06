@@ -19,6 +19,7 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.ref.WeakReference
 import java.sql.Date
@@ -215,7 +216,7 @@ object ListeUtils {
             val apiResult = Pair(fragmentReference.get(), mRemovedItems)
             apiResult.letCheckNull { fragment, removedItems ->
                 Snackbar.make(fragment.requireActivity().main_content, fragment.resources.getQuantityString(R.plurals.favorites_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
-                        .setAction(fragment.getString(R.string.cancel).toUpperCase()) {
+                        .setAction(fragment.getString(R.string.cancel).toUpperCase(getSystemLocale(fragment.resources))) {
                             for (removedItem in removedItems)
                                 UpdateFavoriteTask(fragment, false, removedItem.id).execute()
                         }.show()
@@ -397,7 +398,7 @@ object ListeUtils {
                         R.string.song_removed,
                         Snackbar.LENGTH_LONG)
                         .setAction(
-                                fragment.getString(R.string.cancel).toUpperCase()
+                                fragment.getString(R.string.cancel).toUpperCase(getSystemLocale(fragment.resources))
                         ) {
                             ReinsertPositionTask(fragment, idLista, posizioneDaCanc, idDaCanc, timestampDaCanc).execute()
                         }
@@ -446,7 +447,7 @@ object ListeUtils {
             val apiResult = Pair(fragmentReference.get(), mRemovedItems)
             apiResult.letCheckNull { fragment, removedItems ->
                 Snackbar.make(fragment.requireActivity().main_content, fragment.resources.getQuantityString(R.plurals.histories_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
-                        .setAction(fragment.getString(R.string.cancel).toUpperCase()) {
+                        .setAction(fragment.getString(R.string.cancel).toUpperCase(getSystemLocale(fragment.resources))) {
                             for (removedItem in removedItems)
                                 UpdateHistoryTask(fragment, removedItem.id, removedItem.timestamp?.text.toString()).execute()
                         }.show()

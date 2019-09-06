@@ -81,11 +81,10 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
     override fun onResume() {
         super.onResume()
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(signInVisibility, IntentFilter(BROADCAST_SIGNIN_VISIBLE))
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(signInVisibility)
     }
 
