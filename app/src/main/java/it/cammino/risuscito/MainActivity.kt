@@ -606,11 +606,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 //                            .sizeDp(24)
 //                            .paddingDp(4))
                             iconicsDrawable(CommunityMaterial.Icon.cmd_eraser_variant) {
-                                color = colorInt(iconColor)
                                 size = sizeDp(24)
                                 padding = sizeDp(4)
                             }
                     )
+                            .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.dialog_reset_list_title))
                             .setFabBackgroundColor(backgroundColor)
                             .setLabelBackgroundColor(backgroundColor)
@@ -625,11 +625,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 //                            .sizeDp(24)
 //                            .paddingDp(4)
                             iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
-                                color = colorInt(iconColor)
                                 size = sizeDp(24)
                                 padding = sizeDp(4)
                             }
                     )
+                            .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.action_add_list))
                             .setFabBackgroundColor(backgroundColor)
                             .setLabelBackgroundColor(backgroundColor)
@@ -644,11 +644,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 //                            .sizeDp(24)
 //                            .paddingDp(4)
                             iconicsDrawable(CommunityMaterial.Icon2.cmd_share_variant) {
-                                color = colorInt(iconColor)
                                 size = sizeDp(24)
                                 padding = sizeDp(4)
                             }
                     )
+                            .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.action_share))
                             .setFabBackgroundColor(backgroundColor)
                             .setLabelBackgroundColor(backgroundColor)
@@ -664,11 +664,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 //                                .sizeDp(24)
 //                                .paddingDp(4)
                                 iconicsDrawable(CommunityMaterial.Icon.cmd_attachment) {
-                                    color = colorInt(iconColor)
                                     size = sizeDp(24)
                                     padding = sizeDp(4)
                                 }
                         )
+                                .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_share_file))
                                 .setFabBackgroundColor(backgroundColor)
                                 .setLabelBackgroundColor(backgroundColor)
@@ -683,11 +683,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 //                                .sizeDp(24)
 //                                .paddingDp(4)
                                 iconicsDrawable(CommunityMaterial.Icon2.cmd_pencil) {
-                                    color = colorInt(iconColor)
                                     size = sizeDp(24)
                                     padding = sizeDp(4)
                                 }
                         )
+                                .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_edit_list))
                                 .setFabBackgroundColor(backgroundColor)
                                 .setLabelBackgroundColor(backgroundColor)
@@ -702,11 +702,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 //                                .sizeDp(24)
 //                                .paddingDp(4)
                                 iconicsDrawable(CommunityMaterial.Icon.cmd_delete) {
-                                    color = colorInt(iconColor)
                                     size = sizeDp(24)
                                     padding = sizeDp(4)
                                 }
                         )
+                                .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_remove_list))
                                 .setFabBackgroundColor(backgroundColor)
                                 .setLabelBackgroundColor(backgroundColor)

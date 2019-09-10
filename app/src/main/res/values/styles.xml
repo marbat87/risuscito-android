@@ -148,4 +148,11 @@
         <item name="android:scaleType">centerCrop</item>
     </style>
 
+    <style name="Risuscito_SpeedDialActionItem">
+        <item name="colorOnSecondary">@color/text_color_secondary</item>
+<!--        <item name="fabLabelColor">@color/text_color_secondary</item>-->
+<!--        <item name="fabBackgroundColor">@color/floating_background</item>-->
+<!--        <item name="fabLabelBackgroundColor">@color/floating_background</item>-->
+    </style>
+
 </resources>

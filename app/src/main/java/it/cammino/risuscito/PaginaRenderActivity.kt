@@ -39,7 +39,6 @@ import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.snackbar.Snackbar
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.iconics.IconicsColor.Companion.colorInt
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.IconicsSize.Companion.dp
 import com.mikepenz.iconics.dsl.iconicsDrawable
@@ -1561,11 +1560,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                        .sizeDp(24)
 //                        .paddingDp(4)
                         iconicsDrawable(CommunityMaterial.Icon.cmd_fullscreen) {
-                            color = colorInt(iconColor)
                             size = sizeDp(24)
                             padding = sizeDp(4)
                         }
                 )
+                        .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.fullscreen))
                         .setFabBackgroundColor(backgroundColor)
                         .setLabelBackgroundColor(backgroundColor)
@@ -1580,11 +1579,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                        .sizeDp(24)
 //                        .paddingDp(4)
                         iconicsDrawable(if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset) {
-                            color = colorInt(iconColor)
                             size = sizeDp(24)
                             padding = sizeDp(4)
                         }
                 )
+                        .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(if (mViewModel.mostraAudio) R.string.audio_off else R.string.audio_on))
                         .setFabBackgroundColor(backgroundColor)
                         .setLabelBackgroundColor(backgroundColor)
@@ -1594,12 +1593,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         if (mDownload) {
             val icon = IconicsDrawable(this)
-                    .color(colorInt(iconColor))
                     .size(dp(24))
                     .padding(dp(4))
-//                    .colorInt(iconColor)
-//                    .sizeDp(24)
-//                    .paddingDp(4)
             val text = if (!personalUrl.isNullOrEmpty()) {
                 icon.icon(CommunityMaterial.Icon2.cmd_link_variant_off)
                 getString(R.string.dialog_delete_link_title)
@@ -1609,6 +1604,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
             fab_canti.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_delete_file, icon)
+                            .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(text)
                             .setFabBackgroundColor(backgroundColor)
                             .setLabelBackgroundColor(backgroundColor)
@@ -1624,11 +1620,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                                .sizeDp(24)
 //                                .paddingDp(4)
                                 iconicsDrawable(CommunityMaterial.Icon.cmd_download) {
-                                    color = colorInt(iconColor)
                                     size = sizeDp(24)
                                     padding = sizeDp(4)
                                 }
                         )
+                                .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.save_file))
                                 .setFabBackgroundColor(backgroundColor)
                                 .setLabelBackgroundColor(backgroundColor)
@@ -1642,11 +1638,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                            .sizeDp(24)
 //                            .paddingDp(4)
                             iconicsDrawable(CommunityMaterial.Icon2.cmd_link_variant) {
-                                color = colorInt(iconColor)
                                 size = sizeDp(24)
                                 padding = sizeDp(4)
                             }
                     )
+                            .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.only_link_title))
                             .setFabBackgroundColor(backgroundColor)
                             .setLabelBackgroundColor(backgroundColor)
@@ -1663,11 +1659,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                        .sizeDp(24)
 //                        .paddingDp(4)
                         iconicsDrawable(if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_star else CommunityMaterial.Icon2.cmd_star_outline) {
-                            color = colorInt(iconColor)
                             size = sizeDp(24)
                             padding = sizeDp(4)
                         }
                 )
+                        .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(if (mViewModel.mCurrentCanto?.favorite == 1) R.string.favorite_off else R.string.favorite_on))
                         .setFabBackgroundColor(backgroundColor)
                         .setLabelBackgroundColor(backgroundColor)
