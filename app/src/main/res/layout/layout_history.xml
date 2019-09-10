@@ -17,8 +17,7 @@
             android:layout_height="120dip"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/history_empty"
-            android:src="@drawable/ic_sad_history"
-            android:tint="?colorPrimary" />
+            risuscito:srcCompat="@drawable/ic_history_clock" />
 
         <TextView
             android:id="@+id/no_history_text"

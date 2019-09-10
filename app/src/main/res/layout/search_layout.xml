@@ -30,6 +30,51 @@
 
     </FrameLayout>
 
+    <RelativeLayout
+        android:id="@+id/search_no_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textBoxRicerca"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/no_results_image"
+            android:layout_width="120dip"
+            android:layout_height="120dip"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/search_no_results"
+            risuscito:srcCompat="@drawable/ic_search_question_mark" />
+
+        <TextView
+            android:id="@+id/no_history_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/no_results_image"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/text_min_margin"
+            android:layout_marginRight="@dimen/text_min_margin"
+            android:gravity="center_horizontal"
+            android:text="@string/search_no_results"
+            android:textAppearance="@style/SuperStateViewSubTitle"
+            android:textColor="?android:textColorSecondary"
+            risuscito:fontFamily="@font/googlesans_italic"
+            tools:ignore="MissingPrefix" />
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/matchedList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textBoxRicerca"
+        android:fadeScrollbars="true"
+        android:scrollbars="vertical"
+        android:visibility="gone" />
+
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textBoxRicerca"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -63,26 +108,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/textBoxRicerca"
         android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:id="@+id/search_no_results"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textBoxRicerca"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="10dip"
-        android:text="@string/search_no_results"
-        android:textColor="?android:textColorSecondary"
-        android:textSize="15sp"
-        android:visibility="gone" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/matchedList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textBoxRicerca"
-        android:fadeScrollbars="true"
-        android:scrollbars="vertical"
-        android:visibility="gone" />
 
 </RelativeLayout>

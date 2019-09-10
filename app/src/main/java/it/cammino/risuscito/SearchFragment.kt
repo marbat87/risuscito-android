@@ -125,7 +125,6 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
         else
             LinearLayoutManager(context)
         matchedList.layoutManager = llm
-//        matchedList.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)

@@ -204,7 +204,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
                         ?: "").toLowerCase(getSystemLocale(resources))
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
-                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter { Utility.removeAccents(it.title?.text.toString()).toLowerCase(getSystemLocale(resources)).contains(simplifiedString) }
+                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter { Utility.removeAccents(it.title?.getText(context) ?: "").toLowerCase(getSystemLocale(resources)).contains(simplifiedString) }
                     selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
                 } else
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.sortedWith(compareBy { it.title.toString() })

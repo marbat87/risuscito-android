@@ -42,7 +42,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     private lateinit var mEntryValues: Array<String>
     internal var mMainActivity: MainActivity? = null
 
-    private var splitInstallManager: SplitInstallManager? = null
+    private lateinit var splitInstallManager: SplitInstallManager
     private var sessionId = 0
 
     private val listener = SplitInstallStateUpdatedListener { state ->
@@ -58,7 +58,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                             .show()
                 }
                 REQUIRES_USER_CONFIRMATION -> {
-                    splitInstallManager?.startConfirmationDialogForResult(state, activity, CONFIRMATION_REQUEST_CODE)
+                    splitInstallManager.startConfirmationDialogForResult(state, activity, CONFIRMATION_REQUEST_CODE)
                 }
                 DOWNLOADING -> {
                     val totalBytes = state.totalBytesToDownload()
@@ -98,40 +98,53 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     private val changeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+        val currentLang = getSystemLocale(resources).language
         Log.d(TAG, "OnPreferenceChangeListener - newValue: $newValue")
-        if (!getSystemLocale(resources)
-                        .language
-                        .equals(newValue as? String ?: "", ignoreCase = true)) {
-            mMainActivity?.let { activity ->
-                ProgressDialogFragment.Builder(
-                        activity, null, DOWNLOAD_LANGUAGE)
-                        .content(R.string.download_running)
-                        .progressIndeterminate(false)
-                        .progressMax(100)
-                        .show()
-            }
-            // Creates a request to download and install additional language resources.
-            val request = SplitInstallRequest.newBuilder()
-                    .addLanguage(Locale(newValue as? String ?: ""))
-                    .build()
+        if (!currentLang.equals(newValue as? String ?: currentLang, ignoreCase = true)) {
+            if (LUtils.hasL()) {
+                mMainActivity?.let { activity ->
+                    ProgressDialogFragment.Builder(
+                            activity, null, DOWNLOAD_LANGUAGE)
+                            .content(R.string.download_running)
+                            .progressIndeterminate(false)
+                            .progressMax(100)
+                            .show()
+                }
+                // Creates a request to download and install additional language resources.
+                val request = SplitInstallRequest.newBuilder()
+                        .addLanguage(Locale(newValue as? String ?: ""))
+                        .build()
 
-            // Submits the request to install the additional language resources.
-            splitInstallManager?.startInstall(request)
-                    // You should also add the following listener to handle any errors
-                    // processing the request.
-                    ?.addOnFailureListener { exception ->
-                        Log.e(TAG, "language download error", exception)
-                        ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
-                        Snackbar.make(
-                                requireActivity().main_content,
-                                "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
-                                Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-                    // When the platform accepts your request to download
-                    // an on demand module, it binds it to the following session ID.
-                    // You use this ID to track further status updates for the request.
-                    ?.addOnSuccessListener { id -> sessionId = id }
+                // Submits the request to install the additional language resources.
+                splitInstallManager.startInstall(request)
+                        // You should also add the following listener to handle any errors
+                        // processing the request.
+                        ?.addOnFailureListener { exception ->
+                            Log.e(TAG, "language download error", exception)
+                            ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
+                            Snackbar.make(
+                                    requireActivity().main_content,
+                                    "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
+                                    Snackbar.LENGTH_SHORT)
+                                    .show()
+                        }
+                        // When the platform accepts your request to download
+                        // an on demand module, it binds it to the following session ID.
+                        // You use this ID to track further status updates for the request.
+                        ?.addOnSuccessListener { id -> sessionId = id }
+            }
+            else {
+                RisuscitoApplication.localeManager.persistLanguage(newValue as? String ?: currentLang)
+                val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
+                mIntent?.let {
+                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    it.putExtra(DB_RESET, true)
+                    it.putExtra(
+                            CHANGE_LANGUAGE,
+                            "$currentLang-${newValue as? String ?: currentLang}")
+                    startActivity(it)
+                }
+            }
         }
         false
     }
@@ -140,15 +153,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         setPreferencesFromResource(R.xml.preferences, rootKey)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        splitInstallManager = SplitInstallManagerFactory.create(activity)
-    }
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
+        Log.d(TAG, "onCreateView")
         mMainActivity = activity as? MainActivity
+
+        splitInstallManager = SplitInstallManagerFactory.create(context)
+
         mMainActivity?.setupToolbarTitle(R.string.title_activity_settings)
 
         mMainActivity?.setTabVisible(false)
@@ -186,15 +197,32 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    override fun onResume() {
-        splitInstallManager?.registerListener(listener)
-        super.onResume()
+//    override fun onResume() {
+//        super.onResume()
+//        Log.d(TAG, "ON RESUME")
+//    }
+
+//    override fun onDestroyView() {
+//        Log.d(TAG, "onDestroyView")
+//        splitInstallManager.unregisterListener(listener)
+//        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+//        super.onDestroyView()
+//    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart")
+        splitInstallManager.registerListener(listener)
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onPause() {
-        splitInstallManager?.unregisterListener(listener)
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop")
+        try { splitInstallManager.unregisterListener(listener) }
+        catch (e: IllegalArgumentException) {
+            Log.e(TAG, "unregister error", e)
+        }
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 

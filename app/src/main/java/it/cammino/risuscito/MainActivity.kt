@@ -323,7 +323,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()
                             .withName(R.string.action_favourites)
-                            .withIcon(CommunityMaterial.Icon2.cmd_heart)
+                            .withIcon(CommunityMaterial.Icon2.cmd_star)
                             .withIdentifier(R.id.navigation_favorites.toLong())
                             .withTypeface(mMediumFont),
                     PrimaryDrawerItem()

@@ -36,8 +36,7 @@
                 android:layout_height="120dip"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="@string/no_consegnati"
-                android:src="@drawable/ic_sad_book"
-                android:tint="?colorPrimary" />
+                risuscito:srcCompat="@drawable/ic_sleeping_checklist" />
 
             <TextView
                 android:layout_width="match_parent"
