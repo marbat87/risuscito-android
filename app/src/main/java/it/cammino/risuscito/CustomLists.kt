@@ -83,6 +83,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
         mMainActivity?.enableBottombar(false)
         mMainActivity?.setTabVisible(true)
+        mMainActivity?.enableFab(true)
 
         movePage = savedInstanceState != null
 
