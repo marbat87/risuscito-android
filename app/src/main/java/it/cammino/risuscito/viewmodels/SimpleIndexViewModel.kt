@@ -3,13 +3,16 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.mikepenz.fastadapter.IItem
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.items.insertItem
+import it.cammino.risuscito.items.simpleItem
 
 class SimpleIndexViewModel(application: Application, args: Bundle) : GenericIndexViewModel(application) {
 
@@ -24,54 +27,57 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
         private set
 
     init {
-        tipoLista = args.getInt("tipoLista")
+        tipoLista = args.getInt(Utility.TIPO_LISTA)
         val mDb = RisuscitoDatabase.getInstance(getApplication())
         when (tipoLista) {
             0, 1 ->
-                itemsResult = Transformations.map(mDb.cantoDao().liveAll) { canti ->
+                itemsResult = mDb.cantoDao().liveAll.map { canti ->
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
-                                SimpleItem()
-                                        .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                                        .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                                        .withSource(LUtils.getResId(it.source, R.string::class.java))
-                                        .withColor(it.color!!)
-                                        .withId(it.id)
-                                        .withUndecodedSource(it.source ?: "")
+                                simpleItem {
+                                    setTitle = LUtils.getResId(it.titolo, R.string::class.java)
+                                    setPage = LUtils.getResId(it.pagina, R.string::class.java)
+                                    setSource = LUtils.getResId(it.source, R.string::class.java)
+                                    setColor = it.color
+                                    id = it.id
+                                    undecodedSource = it.source
+                                }
                         )
                     }
                     newList
                 }
             2 ->
-                itemsResult = Transformations.map(mDb.salmiDao().liveAll) { canti ->
+                itemsResult = mDb.salmiDao().liveAll.map { canti ->
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
-                                SimpleItem()
-                                        .withTitle(LUtils.getResId(it.titoloSalmo, R.string::class.java))
-                                        .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                                        .withSource(LUtils.getResId(it.source, R.string::class.java))
-                                        .withColor(it.color!!)
-                                        .withId(it.id)
-                                        .withNumSalmo(it.numSalmo!!)
+                                simpleItem {
+                                    setTitle = LUtils.getResId(it.titoloSalmo, R.string::class.java)
+                                    setPage = LUtils.getResId(it.pagina, R.string::class.java)
+                                    setSource = LUtils.getResId(it.source, R.string::class.java)
+                                    setColor = it.color
+                                    id = it.id
+                                    setNumSalmo = it.numSalmo
+                                }
                         )
                     }
                     newList
                 }
             3 ->
-                insertItemsResult = Transformations.map(mDb.consegnatiDao().liveChoosen) { canti ->
+                insertItemsResult = mDb.consegnatiDao().liveChoosen.map { canti ->
                     val newList = ArrayList<InsertItem>()
                     canti.forEach {
                         newList.add(
-                                InsertItem()
-                                        .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                                        .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                                        .withSource(LUtils.getResId(it.source, R.string::class.java))
-                                        .withColor(it.color!!)
-                                        .withId(it.id)
-                                        .withUndecodedSource(it.source ?: "")
-                                        .withConsegnato(it.consegnato)
+                                insertItem {
+                                    setTitle = LUtils.getResId(it.titolo, R.string::class.java)
+                                    setPage = LUtils.getResId(it.pagina, R.string::class.java)
+                                    setSource = LUtils.getResId(it.source, R.string::class.java)
+                                    setColor = it.color
+                                    id = it.id
+                                    undecodedSource = it.source ?: ""
+                                    consegnato = it.consegnato
+                                }
                         )
                     }
                     newList

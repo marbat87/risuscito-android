@@ -3,12 +3,13 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.items.simpleItem
 import java.util.*
 
 class ConsegnatiViewModel(application: Application) : AndroidViewModel(application) {
@@ -24,16 +25,17 @@ class ConsegnatiViewModel(application: Application) : AndroidViewModel(applicati
 
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
-        mIndexResult = Transformations.map(mDb.consegnatiDao().liveConsegnati) { canti ->
+        mIndexResult = mDb.consegnatiDao().liveConsegnati.map { canti ->
             val newList = ArrayList<SimpleItem>()
             canti.forEach {
                 newList.add(
-                        SimpleItem()
-                                .withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                                .withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                                .withSource(LUtils.getResId(it.source, R.string::class.java))
-                                .withColor(it.color!!)
-                                .withId(it.id)
+                        simpleItem {
+                            setTitle = LUtils.getResId(it.titolo, R.string::class.java)
+                            setPage = LUtils.getResId(it.pagina, R.string::class.java)
+                            setSource = LUtils.getResId(it.source, R.string::class.java)
+                            setColor = it.color
+                            id = it.id
+                        }
                 )
             }
             newList

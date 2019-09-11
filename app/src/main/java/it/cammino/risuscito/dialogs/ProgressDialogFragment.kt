@@ -3,12 +3,11 @@ package it.cammino.risuscito.dialogs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
@@ -27,11 +26,11 @@ class ProgressDialogFragment : DialogFragment() {
     private val progressNumberFormat = "%1d/%2d"
 
     private val builder: Builder?
-        get() = if (arguments == null || !arguments!!.containsKey("builder")) null else arguments!!.getSerializable("builder") as Builder
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
 
     override fun onDestroyView() {
-        if (dialog != null && retainInstance)
-            dialog.setDismissMessage(null)
+        if (retainInstance)
+            dialog?.setDismissMessage(null)
         super.onDestroyView()
     }
 
@@ -48,7 +47,7 @@ class ProgressDialogFragment : DialogFragment() {
         if (mCallback == null)
             mCallback = mBuilder.mListener
 
-        val dialog = MaterialDialog(activity!!)
+        val dialog = MaterialDialog(requireContext())
 
         if (mBuilder.mTitle != 0)
             dialog.title(res = mBuilder.mTitle)
@@ -58,45 +57,45 @@ class ProgressDialogFragment : DialogFragment() {
 
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) {
-                mCallback!!.onPositive(mBuilder.mTag)
+                mCallback?.onPositive(mBuilder.mTag)
             }
         }
 
         mBuilder.mNegativeButton?.let {
             dialog.negativeButton(text = it) {
-                mCallback!!.onNegative(mBuilder.mTag)
+                mCallback?.onNegative(mBuilder.mTag)
             }
         }
 
         if (mBuilder.mProgressIndeterminate) {
             dialog.customView(R.layout.indeterminate_progressbar)
-            dialog.getCustomView().md_content_indeterminate.visibility = if (mBuilder.mContent != null) View.VISIBLE else View.GONE
+            dialog.getCustomView().md_content_indeterminate.isVisible = mBuilder.mContent != null
             dialog.getCustomView().md_content_indeterminate.text = mBuilder.mContent ?: ""
         } else {
             dialog.customView(R.layout.linear_progressbar)
             dialog.getCustomView().working_progress.max = mBuilder.mProgressMax
-            dialog.getCustomView().md_minMax.visibility = if (mBuilder.mShowMinMax) View.VISIBLE else View.GONE
-            dialog.getCustomView().md_content_linear.visibility = if (mBuilder.mContent != null) View.VISIBLE else View.GONE
+            dialog.getCustomView().md_minMax.isVisible = mBuilder.mShowMinMax
+            dialog.getCustomView().md_content_linear.isVisible = mBuilder.mContent != null
             dialog.getCustomView().md_content_linear.text = mBuilder.mContent ?: ""
         }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        dialog.cancelable(mBuilder.mCanceable)
 
-        dialog.setOnKeyListener(DialogInterface.OnKeyListener
-        { arg0, keyCode, event ->
+        dialog.setOnKeyListener { arg0, keyCode, event ->
+            var returnValue = false
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
                 arg0.cancel()
-                return@OnKeyListener true
+                returnValue = true
             }
-            false
-        })
+            returnValue
+        }
 
         return dialog
     }
 
     @SuppressLint("CheckResult")
     fun setContent(@StringRes res: Int) {
-        (dialog as MaterialDialog).getCustomView().md_content_indeterminate.setText(res)
+        (dialog as? MaterialDialog)?.getCustomView()?.md_content_indeterminate?.setText(res)
     }
 
     fun setmCallback(callback: ProgressCallback) {
@@ -104,16 +103,16 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     fun setProgress(progress: Int) {
-        (dialog as MaterialDialog).getCustomView().working_progress.progress = progress
-        (dialog as MaterialDialog).getCustomView().md_label.text =
+        (dialog as? MaterialDialog)?.getCustomView()?.working_progress?.progress = progress
+        (dialog as? MaterialDialog)?.getCustomView()?.md_label?.text =
                 progressPercentFormat.format(
-                        progress.toFloat() / builder!!.mProgressMax.toFloat())
-        (dialog as MaterialDialog).getCustomView().md_minMax.text =
-                String.format(progressNumberFormat, progress, builder!!.mProgressMax)
+                        progress.toFloat() / (builder?.mProgressMax?.toFloat() ?: Float.MIN_VALUE))
+        (dialog as? MaterialDialog)?.getCustomView()?.md_minMax?.text =
+                String.format(progressNumberFormat, progress, builder?.mProgressMax)
     }
 
     fun cancel() {
-        dialog.cancel()
+        dialog?.cancel()
     }
 
     override fun dismiss() {
@@ -182,7 +181,7 @@ class ProgressDialogFragment : DialogFragment() {
         fun build(): ProgressDialogFragment {
             val dialog = ProgressDialogFragment()
             val args = Bundle()
-            args.putSerializable("builder", this)
+            args.putSerializable(BUILDER_TAG, this)
             dialog.arguments = args
             return dialog
         }
@@ -198,7 +197,7 @@ class ProgressDialogFragment : DialogFragment() {
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
         frag?.let {
-            (it as DialogFragment).dismiss()
+            (it as? DialogFragment)?.dismiss()
             context.supportFragmentManager.beginTransaction()
                     .remove(it).commit()
         }
@@ -219,10 +218,13 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     companion object {
-
-        fun findVisible(context: AppCompatActivity, tag: String): ProgressDialogFragment? {
-            val frag = context.supportFragmentManager.findFragmentByTag(tag)
-            return if (frag != null && frag is ProgressDialogFragment) frag else null
+        private const val BUILDER_TAG = "builder"
+        fun findVisible(context: AppCompatActivity?, tag: String): ProgressDialogFragment? {
+            context?.let {
+                val frag = it.supportFragmentManager.findFragmentByTag(tag)
+                return if (frag != null && frag is ProgressDialogFragment) frag else null
+            }
+            return null
         }
     }
 

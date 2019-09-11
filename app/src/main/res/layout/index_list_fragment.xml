@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-tools:context=".MainActivity">
-
-<androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/cantiList"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent">
 
-<com.turingtechnologies.materialscrollbar.TouchScrollBar
-    android:id="@+id/dragScrollBar"
-    android:layout_width="wrap_content"
-    app:msb_recyclerView="@id/cantiList"
-    app:msb_lightOnTouch="true"
-    android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentEnd="true" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cantiList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.turingtechnologies.materialscrollbar.TouchScrollBar
+        android:id="@+id/dragScrollBar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        app:msb_lightOnTouch="true"
+        app:msb_recyclerView="@id/cantiList" />
 
 </RelativeLayout>

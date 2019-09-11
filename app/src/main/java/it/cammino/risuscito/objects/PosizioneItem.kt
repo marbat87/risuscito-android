@@ -6,6 +6,8 @@ import androidx.annotation.StringRes
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 
+fun posizioneItem(block: PosizioneItem.() -> Unit): PosizioneItem = PosizioneItem().apply(block)
+
 @Suppress("unused")
 class PosizioneItem {
 

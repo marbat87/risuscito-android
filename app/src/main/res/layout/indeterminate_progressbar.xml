@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"
         risuscito:mpb_progressStyle="circular"
-        risuscito:mpb_progressTint="?colorAccent"
+        risuscito:mpb_progressTint="?colorSecondary"
         tools:ignore="UnusedAttribute" />
 
     <TextView

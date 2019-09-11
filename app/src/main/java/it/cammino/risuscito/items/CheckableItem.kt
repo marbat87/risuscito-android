@@ -5,61 +5,45 @@ import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.helperSetColor
+import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.checkable_row_item.view.*
+
+fun checkableItem(block: CheckableItem.() -> Unit): CheckableItem = CheckableItem().apply(block)
 
 class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
+        }
     var page: StringHolder? = null
         private set
+    var setPage: Any? = null
+        set(value) {
+            page = helperSetString(value)
+        }
     var color: ColorHolder? = null
         private set
+    var setColor: Any? = null
+        set(value) {
+            color = helperSetColor(value)
+        }
     var id: Int = 0
-        private set
-
-    fun withTitle(title: String): CheckableItem {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): CheckableItem {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withPage(page: String): CheckableItem {
-        this.page = StringHolder(page)
-        return this
-    }
-
-    fun withPage(@StringRes pageRes: Int): CheckableItem {
-        this.page = StringHolder(pageRes)
-        return this
-    }
-
-    fun withColor(color: String): CheckableItem {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): CheckableItem {
-        this.color = ColorHolder.fromColorRes(colorRes)
-        return this
-    }
-
-    fun withId(id: Int): CheckableItem {
-        this.id = id
-        identifier = id.toLong()
-        return this
-    }
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
 
     /**
      * defines the type defining this item. must be unique. preferably an id
@@ -85,20 +69,28 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
-        holder.checkBox!!.isChecked = isSelected
+        // get the context
+        val ctx = holder.itemView.context
 
+        holder.checkBox?.isChecked = isSelected
+        ViewCompat.setBackground(
+                holder.view,
+                FastAdapterUIUtils.getSelectableBackground(
+                        ctx,
+                        ctx.themeColor(R.attr.colorSecondaryLight),
+                        true))
         // set the text for the name
         StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
         StringHolder.applyToOrHide(page, holder.mPage)
-        val bgShape = holder.mPage!!.background as GradientDrawable
-        bgShape.setColor(color!!.colorInt)
+        val bgShape = holder.mPage?.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mTitle!!.text = null
-        holder.mPage!!.text = null
+        holder.mTitle?.text = null
+        holder.mPage?.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {
@@ -106,7 +98,7 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
     }
 
     /** our ViewHolder  */
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
 
         var mTitle: TextView? = null
         var mPage: TextView? = null

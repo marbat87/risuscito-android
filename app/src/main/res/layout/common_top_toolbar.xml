@@ -2,9 +2,8 @@
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:id="@+id/risuscito_toolbar"
-    android:layout_height="?attr/actionBarSize"
-    android:theme="@style/ToolbarTheme"
-    risuscito:popupTheme="@style/RisuscitoToolbarPopup"
     android:layout_width="match_parent"
-    android:background="?attr/colorPrimary"
-    risuscito:layout_scrollFlags="scroll|enterAlways" />
+    android:layout_height="?actionBarSize"
+    android:theme="@style/ToolbarTheme"
+    risuscito:layout_scrollFlags="scroll|enterAlways"
+    risuscito:popupTheme="@style/RisuscitoToolbarPopup" />

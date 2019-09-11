@@ -10,13 +10,11 @@ import java.io.InputStream
 
 internal class CantiXmlParser {
 
-    private var entries: Array<Array<String?>>? = null
-
-    // We don't use namespaces
+    private var entries = Array(300) { arrayOfNulls<String>(2) }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun parse(`in`: InputStream): Array<Array<String?>> {
-        `in`.use { mIn ->
+    fun parse(inputStream: InputStream): Array<Array<String?>> {
+        inputStream.use { mIn ->
             val parser = Xml.newPullParser()
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
             parser.setInput(mIn, "utf-8")
@@ -28,7 +26,6 @@ internal class CantiXmlParser {
     @Throws(XmlPullParserException::class, IOException::class)
     private fun readCanti(parser: XmlPullParser): Array<Array<String?>> {
 
-        entries = Array(300) { arrayOfNulls<String>(2) }
         var i = 0
 
         parser.require(XmlPullParser.START_TAG, ns, CANTI)
@@ -44,7 +41,7 @@ internal class CantiXmlParser {
                 skip(parser)
             }
         }
-        return entries as Array<Array<String?>>
+        return entries
     }
 
     // Parses the contents of an entry. If it encounters a title, summary, or link tag, hands them
@@ -65,9 +62,9 @@ internal class CantiXmlParser {
                 else -> skip(parser)
             }
         }
-        entries!![i][0] = title
+        entries[i][0] = title
         //        Log.i("TITOLO[:" + i + "][0]:", title);
-        entries!![i][1] = summary
+        entries[i][1] = summary
         //        Log.i("TESTO[:" + i + "][1]:", summary);
     }
 
@@ -105,9 +102,7 @@ internal class CantiXmlParser {
     // finds the matching END_TAG (as indicated by the value of "depth" being 0).
     @Throws(XmlPullParserException::class, IOException::class)
     private fun skip(parser: XmlPullParser) {
-        if (parser.eventType != XmlPullParser.START_TAG) {
-            throw IllegalStateException()
-        }
+        check(parser.eventType == XmlPullParser.START_TAG)
         var depth = 1
         while (depth != 0) {
             when (parser.next()) {

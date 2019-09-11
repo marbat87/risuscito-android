@@ -8,15 +8,14 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        risuscito:elevation="@dimen/design_appbar_elevation">
+        android:layout_height="wrap_content">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             risuscito:layout_scrollFlags="scroll|enterAlways">
 
-            <include layout="@layout/risuscito_toolbar_noelevation" />
+            <include layout="@layout/common_top_toolbar" />
 
             <ViewStub
                 android:id="@+id/cab_stub"
@@ -25,25 +24,25 @@
 
             <com.ferfalk.simplesearchview.SimpleSearchView
                 android:id="@+id/searchView"
-                risuscito:type="card"
-                android:hint="@string/title_filter"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?colorPrimary" />
+                android:background="?colorPrimarySurface"
+                android:hint="@string/title_filter"
+                risuscito:type="card" />
 
         </FrameLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/material_tabs"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:visibility="gone" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/common_circle_progress" />
 
-    <FrameLayout
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -52,16 +51,6 @@
     <include layout="@layout/common_shadow" />
 
     <include layout="@layout/common_bottom_bar" />
-
-    <!--<include layout="@layout/common_fab"/>-->
-    <!--<android.support.design.widget.FloatingActionButton xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:id="@+id/fab_pager"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="bottom|end"-->
-    <!--android:layout_marginBottom="@dimen/fab_margin_coord"-->
-    <!--android:layout_marginEnd="@dimen/fab_margin_coord"-->
-    <!--android:layout_marginRight="@dimen/fab_margin_coord" />-->
 
     <com.leinardi.android.speeddial.SpeedDialOverlayLayout
         android:id="@+id/overlay"

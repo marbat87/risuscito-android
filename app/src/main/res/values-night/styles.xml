@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.MaterialComponents.Dark">
-        <item name="fontFamily">@font/googlesans_regular</item>
+    <style name="AdaptiveScrimColor">
+        <item name="statusBarScrim">@android:color/black</item>
     </style>
 
-    <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    <style name="AdaptiveScrimColorDark">
+        <item name="contentScrim">@android:color/black</item>
     </style>
 
     <style name="material_popup_theme" parent="Widget.MPM.Menu.Dark">
         <item name="android:popupBackground">@drawable/material_popup_bg</item>
-        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Dark</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.DayNight</item>
     </style>
 
 </resources>

@@ -27,27 +27,28 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
     }
 
     private fun startSaving(intent: Intent?) {
-        val ids = intent!!.getIntegerArrayListExtra(IDS_CONSEGNATI)
+        val ids = intent?.getIntegerArrayListExtra(IDS_CONSEGNATI)
         var i = 0
         val mDao = RisuscitoDatabase.getInstance(applicationContext).consegnatiDao()
         mDao.emptyConsegnati()
+        ids?.let {
+            for (id in it) {
+                val tempConsegnato = Consegnato()
+                tempConsegnato.idConsegnato = ++i
+                tempConsegnato.idCanto = id
+                try {
+                    mDao.insertConsegnati(tempConsegnato)
+                    Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED")
+                    Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED - DONE = $i - $id")
+                    val intentBroadcast = Intent(BROADCAST_SINGLE_COMPLETED)
+                    intentBroadcast.putExtra(DATA_DONE, i)
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+                } catch (e: Exception) {
+                    Log.e(TAG, "ERRORE INSERT:", e)
+                    Crashlytics.logException(e)
+                }
 
-        for (id in ids) {
-            val tempConsegnato = Consegnato()
-            tempConsegnato.idConsegnato = ++i
-            tempConsegnato.idCanto = id
-            try {
-                mDao.insertConsegnati(tempConsegnato)
-                Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED")
-                Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED - DONE = $i - $id")
-                val intentBroadcast = Intent(BROADCAST_SINGLE_COMPLETED)
-                intentBroadcast.putExtra(DATA_DONE, i)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-            } catch (e: Exception) {
-                Log.e(TAG, "ERRORE INSERT:", e)
-                Crashlytics.logException(e)
             }
-
         }
         Log.d(TAG, "Sending broadcast notification: $BROADCAST_SAVING_COMPLETED")
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_SAVING_COMPLETED))

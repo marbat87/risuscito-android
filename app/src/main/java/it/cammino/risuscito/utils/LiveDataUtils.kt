@@ -1,5 +1,10 @@
+@file:Suppress("unused")
+
 package it.cammino.risuscito.utils
 
+import android.content.Context
+import android.util.TypedValue
+import androidx.annotation.AttrRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
@@ -164,4 +169,10 @@ fun <A, B> MediatorLiveData<A>.bidiMap(apply: (currentA: A, oldB: B?) -> B?, una
             }
         }
     }
+}
+
+fun Context.themeColor(@AttrRes attrRes: Int): Int {
+    val typedValue = TypedValue()
+    theme.resolveAttribute(attrRes, typedValue, true)
+    return typedValue.data
 }

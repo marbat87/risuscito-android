@@ -1,106 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <FrameLayout
+        android:id="@+id/fixed_drawer_content"
+        android:layout_width="@dimen/drawer_tablet_fixed_width"
+        android:layout_height="match_parent" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/risuscito_toolbar_noelevation" />
-
-        <com.ferfalk.simplesearchview.SimpleSearchView
-            android:id="@+id/searchView"
-            risuscito:type="card"
-            android:hint="@string/title_filter"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?colorPrimary" />
+            android:layout_height="wrap_content">
 
-        <ViewStub
-            android:id="@+id/cab_stub"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                risuscito:layout_scrollFlags="scroll|enterAlways">
 
-    </FrameLayout>
+                <include layout="@layout/common_top_toolbar" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?actionBarSize">
+                <ViewStub
+                    android:id="@+id/cab_stub"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize" />
+
+                <com.ferfalk.simplesearchview.SimpleSearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?colorPrimarySurface"
+                    android:hint="@string/title_filter"
+                    risuscito:type="card" />
+
+            </FrameLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/material_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <include layout="@layout/common_circle_progress" />
 
-        <FrameLayout
-            android:id="@+id/main_frame"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:id="@+id/main_content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        <include layout="@layout/common_shadow" />
 
-                <View
-                    android:id="@+id/tabletToolbarBackground"
-                    android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:background="?colorPrimary" />
+        <include layout="@layout/common_bottom_bar" />
 
-                <!--<android.support.design.widget.FloatingActionButton-->
-                <!--android:id="@+id/fab_pager"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_marginEnd="@dimen/fab_margin_coord"-->
-                <!--android:layout_marginRight="@dimen/fab_margin_coord"-->
-                <!--risuscito:layout_anchor="@id/tabletToolbarBackground"-->
-                <!--risuscito:layout_anchorGravity="bottom|right|end" />-->
+        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_dim_overlay" />
 
-                <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-                    android:id="@+id/overlay"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/background_dim_overlay" />
+        <com.leinardi.android.speeddial.SpeedDialView
+            android:id="@+id/fab_pager"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            risuscito:sdExpansionMode="left"
+            risuscito:sdOverlayLayout="@id/overlay" />
 
-                <com.leinardi.android.speeddial.SpeedDialView
-                    android:id="@+id/fab_pager"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="@dimen/fab_margin_coord"
-                    android:layout_marginRight="@dimen/fab_margin_coord"
-                    risuscito:sdExpansionMode="bottom"
-                    risuscito:sdOverlayLayout="@id/overlay" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-                <it.cammino.risuscito.ui.BoundedCardView
-                    android:id="@+id/activity_main__frame_master"
-                    style="@style/Widget.MaterialComponents.CardView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    risuscito:bounded_width="@dimen/bounded_cardview_max_width_fab"
-                    risuscito:cardCornerRadius="0dp">
-
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/material_tabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:elevation="@dimen/design_appbar_elevation"
-                        android:visibility="gone"
-                        tools:targetApi="lollipop" />
-
-                    <FrameLayout
-                        android:id="@+id/content_frame"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                </it.cammino.risuscito.ui.BoundedCardView>
-
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-        </FrameLayout>
-
-    </FrameLayout>
-
-</merge>
+</LinearLayout>

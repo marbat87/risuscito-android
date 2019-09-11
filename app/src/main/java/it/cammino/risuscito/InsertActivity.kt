@@ -5,19 +5,20 @@ import android.os.AsyncTask
 import android.os.AsyncTask.Status
 import android.os.Bundle
 import android.os.SystemClock
-import android.preference.PreferenceManager
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.observe
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,21 +31,16 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.colorRes
-import com.mikepenz.iconics.paddingDp
-import com.mikepenz.iconics.sizeDp
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.InsertItem
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.ui.makeClearableEditText
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.risuscito_toolbar_noelevation.*
+import kotlinx.android.synthetic.main.common_top_toolbar.*
 import kotlinx.android.synthetic.main.search_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
 import kotlinx.android.synthetic.main.view_custom_item_checkable.view.*
@@ -66,40 +62,33 @@ class InsertActivity : ThemeableActivity() {
     private var idLista: Int = 0
     private var listPosition: Int = 0
 
-    private lateinit var mViewModel: SimpleIndexViewModel
+    private val mViewModel: SimpleIndexViewModel by viewModels {
+        ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 3) })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_insert_search)
 
-        risuscito_toolbar.setBackgroundColor(themeUtils!!.primaryColor())
         risuscito_toolbar.title = getString(R.string.title_activity_inserisci_titolo)
         setSupportActionBar(risuscito_toolbar)
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val bundle = intent.extras
-        listaPredefinita = bundle!!.getInt("fromAdd")
-        idLista = bundle.getInt("idLista")
-        listPosition = bundle.getInt("position")
+        listaPredefinita = bundle?.getInt(FROM_ADD) ?: 0
+        idLista = bundle?.getInt(ID_LISTA) ?: 0
+        listPosition = bundle?.getInt(POSITION) ?: 0
 
-        val args = Bundle().apply { putInt("tipoLista", 3) }
-        mViewModel = ViewModelProviders.of(this, ViewModelWithArgumentsFactory(application, args)).get(SimpleIndexViewModel::class.java)
         if (savedInstanceState == null) {
-            val pref = PreferenceManager.getDefaultSharedPreferences(this@InsertActivity)
-            val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0")!!)
+            val pref = PreferenceManager.getDefaultSharedPreferences(this)
+            val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
             mViewModel.advancedSearch = currentItem != 0
         }
 
         try {
-            val inputStream: InputStream = when (ThemeableActivity.getSystemLocalWrapper(resources.configuration)
-                    .language) {
-                "uk" -> assets.open("fileout_uk.xml")
-                "en" -> assets.open("fileout_en.xml")
-                else -> assets.open("fileout_new.xml")
-            }
-            val parser = CantiXmlParser()
-            aTexts = parser.parse(inputStream)
+            val inputStream: InputStream = resources.openRawResource(R.raw.fileout)
+            aTexts = CantiXmlParser().parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {
             Log.e(TAG, "Error:", e)
@@ -109,20 +98,20 @@ class InsertActivity : ThemeableActivity() {
             Crashlytics.logException(e)
         }
 
-        mLUtils = LUtils.getInstance(this@InsertActivity)
+        mLUtils = LUtils.getInstance(this)
 
-        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(this@InsertActivity).listePersDao().all }
+        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(this).listePersDao().all }
 
-        ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+        textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 if (listaPredefinita == 1) {
-                    ListeUtils.addToListaDupAndFinish(this@InsertActivity, idLista, listPosition, item.id)
+                    ListeUtils.addToListaDupAndFinish(this, idLista, listPosition, item.id)
                 } else {
-                    ListeUtils.updateListaPersonalizzataAndFinish(this@InsertActivity, idLista, item.id, listPosition)
+                    ListeUtils.updateListaPersonalizzataAndFinish(this, idLista, item.id, listPosition)
                 }
                 consume = true
             }
@@ -138,54 +127,36 @@ class InsertActivity : ThemeableActivity() {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf("pagina" to item.source!!.getText(this@InsertActivity), "idCanto" to item.id))
-                mLUtils!!.startActivityWithTransition(intent)
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(this@InsertActivity), Utility.ID_CANTO to item.id))
+                mLUtils?.startActivityWithTransition(intent)
             }
         })
 
         cantoAdapter.setHasStableIds(true)
 
         matchedList.adapter = cantoAdapter
-        val llm = if (mLUtils!!.isGridLayout)
-            GridLayoutManager(this@InsertActivity, if (mLUtils!!.hasThreeColumns) 3 else 2)
-        else
-            LinearLayoutManager(this@InsertActivity)
-        matchedList.layoutManager = llm
-        matchedList.setHasFixedSize(true)
-        val insetDivider = DividerItemDecoration(this@InsertActivity, llm.orientation)
+        val glm = GridLayoutManager(this, if (mLUtils?.hasThreeColumns == true) 3 else 2)
+        val llm = LinearLayoutManager(this)
+        matchedList.layoutManager = if (mLUtils?.isGridLayout == true) glm else llm
+//        matchedList.setHasFixedSize(true)
+        val insetDivider = DividerItemDecoration(this, if (mLUtils?.isGridLayout == true) glm.orientation else llm.orientation)
         insetDivider.setDrawable(
-                ContextCompat.getDrawable(this@InsertActivity, R.drawable.material_inset_divider)!!)
+                ContextCompat.getDrawable(this, R.drawable.material_inset_divider)!!)
         matchedList.addItemDecoration(insetDivider)
 
-        val icon = IconicsDrawable(this@InsertActivity)
-                .icon(CommunityMaterial.Icon.cmd_close_circle)
-                .colorRes(R.color.text_color_secondary)
-                .sizeDp(32)
-                .paddingDp(8)
-        icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-        textfieldRicerca.makeClearableEditText(null, null, icon)
-
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
+            var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                (ContextCompat.getSystemService(this@InsertActivity, InputMethodManager::class.java) as InputMethodManager)
-                        .hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
-                return@setOnKeyListener true
+                ContextCompat.getSystemService(this, InputMethodManager::class.java)?.hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
+                returnValue = true
             }
-            return@setOnKeyListener false
+            returnValue
         }
 
-        textfieldRicerca.addTextChangedListener(
-                object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {}
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        ricercaStringa(s.toString())
-                    }
-                }
-        )
+        textfieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+            ricercaStringa(s.toString())
+        }
 
         more_options.setOnClickListener {
             val popupMenu = popupMenu {
@@ -198,7 +169,7 @@ class InsertActivity : ThemeableActivity() {
                             view.customItemCheckbox.isChecked = mViewModel.advancedSearch
                             view.customItemCheckbox.setOnCheckedChangeListener { _, isChecked ->
                                 mViewModel.advancedSearch = isChecked
-                                ricerca_subtitle.text = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+                                textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
                                 ricercaStringa(textfieldRicerca.text.toString())
                                 dismissPopup()
                             }
@@ -219,7 +190,7 @@ class InsertActivity : ThemeableActivity() {
                     }
                 }
             }
-            popupMenu.show(this@InsertActivity, it)
+            popupMenu.show(this, it)
         }
 
         subscribeUiFavorites()
@@ -230,7 +201,7 @@ class InsertActivity : ThemeableActivity() {
             android.R.id.home -> {
                 setResult(CustomLists.RESULT_CANCELED)
                 finish()
-                Animatoo.animateShrink(this@InsertActivity)
+                Animatoo.animateShrink(this)
                 return true
             }
         }
@@ -239,7 +210,9 @@ class InsertActivity : ThemeableActivity() {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
+        searchTask?.let {
+            if (it.status == Status.RUNNING) it.cancel(true)
+        }
         super.onDestroy()
     }
 
@@ -247,22 +220,26 @@ class InsertActivity : ThemeableActivity() {
         Log.d(TAG, "onBackPressed: ")
         setResult(CustomLists.RESULT_CANCELED)
         finish()
-        Animatoo.animateShrink(this@InsertActivity)
+        Animatoo.animateShrink(this)
     }
 
     private fun ricercaStringa(s: String) {
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
         if (s.trim { it <= ' ' }.length >= 3) {
-            if (searchTask != null && searchTask!!.status == Status.RUNNING) searchTask!!.cancel(true)
-            searchTask = SearchTask(this@InsertActivity)
-            searchTask!!.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch, mViewModel.consegnatiOnly)
+            searchTask?.let {
+                if (it.status == Status.RUNNING) it.cancel(true)
+            }
+            searchTask = SearchTask(this)
+            searchTask?.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch, mViewModel.consegnatiOnly)
         } else {
             if (s.isEmpty()) {
-                if (searchTask != null && searchTask!!.status == Status.RUNNING)
-                    searchTask!!.cancel(true)
-                search_no_results.visibility = View.GONE
+                searchTask?.let {
+                    if (it.status == Status.RUNNING) it.cancel(true)
+                }
+                search_no_results.isVisible = false
+                matchedList.isVisible = false
                 cantoAdapter.clear()
-                search_progress.visibility = View.INVISIBLE
+                search_progress.isVisible = false
             }
         }
     }
@@ -278,55 +255,58 @@ class InsertActivity : ThemeableActivity() {
             Log.d(TAG, "STRINGA: " + sSearchText[0])
             Log.d(TAG, "ADVANCED: " + sSearchText[1])
             Log.d(TAG, "CONSEGNATI ONLY: " + sSearchText[2])
-            val s = sSearchText[0] as String
-            val advanced = sSearchText[1] as Boolean
-            val consegnatiOnly = sSearchText[2] as Boolean
+            val s = sSearchText[0] as? String ?: ""
+            val advanced = sSearchText[1] as? Boolean ?: false
+            val consegnatiOnly = sSearchText[2] as? Boolean ?: false
+            fragmentReference.get()?.let { fragment ->
+                if (advanced) {
+                    val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-            if (advanced) {
-                val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-                var text: String
-
-                for (aText in fragmentReference.get()!!.aTexts) {
-                    if (isCancelled) return titoliResult
-
-                    if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
-
-                    var found = true
-                    for (word in words) {
+                    for (aText in fragment.aTexts) {
                         if (isCancelled) return titoliResult
 
-                        if (word.trim { it <= ' ' }.length > 1) {
-                            text = word.trim { it <= ' ' }
-                            text = text.toLowerCase(
-                                    getSystemLocalWrapper(
-                                            fragmentReference.get()!!.resources.configuration))
-                            text = Utility.removeAccents(text)
+                        if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
 
-                            if (!aText[1]!!.contains(text)) found = false
-                        }
-                    }
-
-                    if (found) {
-                        Log.d(TAG, "aText[0]: ${aText[0]}")
-                        fragmentReference.get()!!.mViewModel.titoliInsert.sortedBy { it.title!!.getText(fragmentReference.get()!!) }
-                                .filter { it.undecodedSource == aText[0]!! && (!consegnatiOnly || it.consegnato == 1) }
-                                .forEach {
-                                    if (isCancelled) return titoliResult
-                                    titoliResult.add(it)
-                                }
-
-                    }
-                }
-            } else {
-                val stringa = Utility.removeAccents(s).toLowerCase()
-                Log.d(TAG, "onTextChanged: stringa $stringa")
-                fragmentReference.get()!!.mViewModel.titoliInsert.sortedBy { it.title!!.getText(fragmentReference.get()!!) }
-                        .filter { Utility.removeAccents(it.title!!.getText(fragmentReference.get()!!)).toLowerCase().contains(stringa) && (!consegnatiOnly || it.consegnato == 1) }
-                        .forEach {
+                        var found = true
+                        for (word in words) {
                             if (isCancelled) return titoliResult
-                            titoliResult.add(it.withFilter(stringa))
+
+                            if (word.trim { it <= ' ' }.length > 1) {
+                                var text = word.trim { it <= ' ' }
+                                text = text.toLowerCase(getSystemLocale(fragment.resources))
+                                text = Utility.removeAccents(text)
+
+                                if (aText[1]?.contains(text) != true) found = false
+                            }
                         }
+
+                        if (found) {
+                            Log.d(TAG, "aText[0]: ${aText[0]}")
+                            fragment.mViewModel.titoliInsert.sortedBy { it.title?.getText(fragment) }
+                                    .filter {
+                                        (aText[0]
+                                                ?: "") == it.undecodedSource && (!consegnatiOnly || it.consegnato == 1)
+                                    }
+                                    .forEach {
+                                        if (isCancelled) return titoliResult
+                                        titoliResult.add(it)
+                                    }
+
+                        }
+                    }
+                } else {
+                    val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(fragment.resources))
+                    Log.d(TAG, "onTextChanged: stringa $stringa")
+                    fragment.mViewModel.titoliInsert.sortedBy { it.title?.getText(fragment) }
+                            .filter {
+                                Utility.removeAccents(it.title?.getText(fragment)
+                                        ?: "").toLowerCase(getSystemLocale(fragment.resources)).contains(stringa) && (!consegnatiOnly || it.consegnato == 1)
+                            }
+                            .forEach {
+                                if (isCancelled) return titoliResult
+                                titoliResult.add(it.apply { filter = stringa })
+                            }
+                }
             }
             return titoliResult
         }
@@ -334,35 +314,30 @@ class InsertActivity : ThemeableActivity() {
         override fun onPreExecute() {
             super.onPreExecute()
             if (isCancelled) return
-            fragmentReference.get()?.search_no_results?.visibility = View.GONE
-            fragmentReference.get()?.search_progress?.visibility = View.VISIBLE
+            fragmentReference.get()?.search_no_results?.isVisible = false
+            fragmentReference.get()?.search_progress?.isVisible = true
         }
 
         override fun onPostExecute(titoliResult: ArrayList<InsertItem>) {
             super.onPostExecute(titoliResult)
             if (isCancelled) return
             fragmentReference.get()?.cantoAdapter?.set(titoliResult)
-            fragmentReference.get()?.search_progress?.visibility = View.INVISIBLE
-            fragmentReference.get()?.search_no_results?.visibility = if (fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0)
-                View.VISIBLE
-            else
-                View.GONE
+            fragmentReference.get()?.search_progress?.isVisible = false
+            fragmentReference.get()?.search_no_results?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
+            fragmentReference.get()?.matchedList?.isGone = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
         }
     }
 
     private fun subscribeUiFavorites() {
-        mViewModel
-                .insertItemsResult!!
-                .observe(
-                        this,
-                        Observer<List<InsertItem>> { canti ->
-                            if (canti != null) {
-                                mViewModel.titoliInsert = canti.sortedBy { it.title!!.getText(this@InsertActivity) }
-                            }
-                        })
+        mViewModel.insertItemsResult?.observe(this) { canti ->
+            mViewModel.titoliInsert = canti.sortedBy { it.title?.getText(this) }
+        }
     }
 
     companion object {
         private val TAG = InsertActivity::class.java.canonicalName
+        internal const val FROM_ADD = "fromAdd"
+        internal const val ID_LISTA = "idLista"
+        internal const val POSITION = "position"
     }
 }

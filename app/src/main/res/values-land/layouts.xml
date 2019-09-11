@@ -2,4 +2,5 @@
 <resources>
     <bool name="is_bottom_sheet_limited">true</bool>
     <bool name="landscape">true</bool>
+    <bool name="fab_orientation_left">true</bool>
 </resources>

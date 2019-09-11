@@ -8,20 +8,22 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.preference.PreferenceManager
 import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
 import androidx.core.view.ViewCompat
-import androidx.lifecycle.ViewModelProviders
+import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.observe
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,10 +40,7 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe.SimpleSwipeCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.colorInt
-import com.mikepenz.iconics.paddingDp
-import com.mikepenz.iconics.sizeDp
+import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -49,10 +48,11 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
+import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
+import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.activity_crea_lista.*
 import kotlinx.android.synthetic.main.hint_layout.*
 import java.util.*
@@ -60,38 +60,39 @@ import kotlin.collections.ArrayList
 
 class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback, ItemTouchCallback, SimpleSwipeCallback.ItemSwipeCallback {
 
-    private var mViewModel: CreaListaViewModel? = null
-    private var celebrazione: ListaPersonalizzata? = null
-    private var titoloLista: String? = null
+    private val mViewModel: CreaListaViewModel by viewModels {
+        ViewModelWithArgumentsFactory(application, Bundle().apply {
+            putInt(ID_DA_MODIF, intent.extras?.getInt(ID_DA_MODIF, 0) ?: 0)
+        })
+    }
+
     private var modifica: Boolean = false
-    private var idModifica: Int = 0
-    private var nomiCanti: ArrayList<String>? = null
     private var mAdapter: FastItemAdapter<SwipeableItem> = FastItemAdapter()
     private var mRegularFont: Typeface? = null
-    private var elementi: ArrayList<SwipeableItem>? = null
     // drag & drop
-    private var touchHelper: ItemTouchHelper? = null
+    private var mTouchHelper: ItemTouchHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crea_lista)
 
-        mViewModel = ViewModelProviders.of(this).get(CreaListaViewModel::class.java)
+        modifica = intent.extras?.getBoolean(EDIT_EXISTING_LIST) == true
 
-        mRegularFont = ResourcesCompat.getFont(this@CreaListaActivity, R.font.googlesans_regular)
+        mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
-        risuscito_toolbar!!.setBackgroundColor(themeUtils!!.primaryColor())
         setSupportActionBar(risuscito_toolbar)
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        tabletToolbarBackground?.setBackgroundColor(themeUtils!!.primaryColor())
-        action_title_bar.setBackgroundColor(themeUtils!!.primaryColor())
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val leaveBehindDrawable = IconicsDrawable(this@CreaListaActivity)
-                .icon(CommunityMaterial.Icon.cmd_delete)
-                .colorInt(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(2)
+//        val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
+//                .colorInt(Color.WHITE)
+//                .sizeDp(24)
+//                .paddingDp(2)
+        val leaveBehindDrawable = iconicsDrawable(CommunityMaterial.Icon.cmd_delete_sweep) {
+            color = colorInt(Color.WHITE)
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
 
         val touchCallback = SimpleSwipeDragCallback(
                 this,
@@ -103,54 +104,53 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 .withLeaveBehindSwipeRight(leaveBehindDrawable)
         touchCallback.setIsDragEnabled(false)
 
-        touchHelper = ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
+        mTouchHelper = ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
 
-        elementi = ArrayList()
-        mAdapter.add(elementi!!)
         mAdapter.onLongClickListener = { _: View?, _: IAdapter<SwipeableItem>, item: SwipeableItem, position: Int ->
             Log.d(TAG, "onItemLongClick: $position")
-            mViewModel!!.positionToRename = position
+            mViewModel.positionToRename = position
             InputTextDialogFragment.Builder(
-                    this@CreaListaActivity, this@CreaListaActivity, "RENAME")
+                    this, this, RENAME)
                     .title(R.string.posizione_rename)
-                    .prefill(item.name.text.toString())
+                    .prefill(item.name?.text.toString())
                     .positiveButton(R.string.aggiungi_rename)
                     .negativeButton(android.R.string.cancel)
                     .show()
             true
         }
 
-        val llm = LinearLayoutManager(this@CreaListaActivity)
-        recycler_view!!.layoutManager = llm
+        val llm = LinearLayoutManager(this)
+        recycler_view?.layoutManager = llm
 
-        recycler_view!!.adapter = mAdapter
-        recycler_view!!.setHasFixedSize(true) // Size of RV will not change
+        recycler_view?.adapter = mAdapter
 
-        val insetDivider = DividerItemDecoration(this@CreaListaActivity, llm.orientation)
+        val insetDivider = DividerItemDecoration(this, llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(
-                        this@CreaListaActivity, R.drawable.preference_list_divider_material)!!)
-        recycler_view!!.addItemDecoration(insetDivider)
+                        this, R.drawable.preference_list_divider_material)!!)
+        recycler_view?.addItemDecoration(insetDivider)
 
-        touchHelper!!.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
+        mTouchHelper?.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
 
-        SearchTask().execute(savedInstanceState)
-
-        val icon = IconicsDrawable(this)
-                .icon(CommunityMaterial.Icon2.cmd_plus)
-                .colorInt(Color.WHITE)
-                .sizeDp(24)
-                .paddingDp(4)
+//        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
+//                .colorInt(Color.WHITE)
+//                .sizeDp(24)
+//                .paddingDp(4)
+        val icon = iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
+            color = colorInt(Color.WHITE)
+            size = sizeDp(24)
+            padding = sizeDp(4)
+        }
         fab_crea_lista.setImageDrawable(icon)
 
         textTitleDescription.requestFocus()
 
-        var iFragment = InputTextDialogFragment.findVisible(this@CreaListaActivity, "RENAME")
-        iFragment?.setmCallback(this@CreaListaActivity)
-        iFragment = InputTextDialogFragment.findVisible(this@CreaListaActivity, "ADD_POSITION")
-        iFragment?.setmCallback(this@CreaListaActivity)
-        val fragment = SimpleDialogFragment.findVisible(this@CreaListaActivity, "SAVE_LIST")
-        fragment?.setmCallback(this@CreaListaActivity)
+        var iFragment = InputTextDialogFragment.findVisible(this, RENAME)
+        iFragment?.setmCallback(this)
+        iFragment = InputTextDialogFragment.findVisible(this, ADD_POSITION)
+        iFragment?.setmCallback(this)
+        val fragment = SimpleDialogFragment.findVisible(this, SAVE_LIST)
+        fragment?.setmCallback(this)
 
         hint_text.setText(R.string.showcase_rename_desc)
         hint_text.append(System.getProperty("line.separator"))
@@ -165,40 +165,49 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             }
 
                             override fun onDismiss(view: View, token: Any?) {
-                                main_hint_layout.visibility = View.GONE
+                                main_hint_layout.isVisible = false
                                 PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA_2, true) }
                             }
                         }))
 
-        textfieldTitle.addTextChangedListener(
-                object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {}
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        collapsingToolbarLayout.title = s
-                        mViewModel!!.tempTitle = s.toString()
-                    }
-                }
-        )
+        textfieldTitle.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+            collapsingToolbarLayout.title = s
+            mViewModel.tempTitle = s.toString()
+        }
 
         fab_crea_lista.setOnClickListener {
             InputTextDialogFragment.Builder(
-                    this@CreaListaActivity, this@CreaListaActivity, "ADD_POSITION")
+                    this, this, ADD_POSITION)
                     .title(R.string.posizione_add_desc)
                     .positiveButton(R.string.aggiungi_confirm)
                     .negativeButton(R.string.cancel)
                     .show()
         }
 
+        if (modifica)
+            subscribeUiChanges()
+        else {
+            if (mViewModel.tempTitle.isEmpty())
+                mViewModel.tempTitle = intent.extras?.getString(LIST_TITLE) ?: ""
+            textfieldTitle.setText(mViewModel.tempTitle)
+            collapsingToolbarLayout.title = mViewModel.tempTitle
+            if (mViewModel.elementi == null)
+                mViewModel.elementi = ArrayList()
+            mViewModel.elementi?.let { mAdapter.set(it) }
+        }
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mViewModel.elementi = mAdapter.itemAdapter.adapterItems as? ArrayList<SwipeableItem>
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         IconicsMenuInflaterUtil.inflate(
-                menuInflater, this@CreaListaActivity, R.menu.crea_lista_menu, menu)
+                menuInflater, this, R.menu.crea_lista_menu, menu)
         super.onCreateOptionsMenu(menu)
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity)
+        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         Log.d(
                 TAG,
                 "onCreateOptionsMenu - INTRO_CREALISTA: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false))
@@ -207,9 +216,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 playIntro()
             }
         }
-//        if (mAdapter!!.adapterItems == null ||
-        if (mAdapter.adapterItems.isEmpty() || mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false))
-            main_hint_layout.visibility = View.GONE
+        main_hint_layout.isVisible = mAdapter.adapterItems.isNotEmpty() && !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
         return true
     }
 
@@ -217,25 +224,17 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         when (item.itemId) {
             R.id.action_help -> {
                 playIntro()
-//                if (mAdapter!!.adapterItems != null && mAdapter!!.adapterItems.isNotEmpty())
-                if (mAdapter.adapterItems.isNotEmpty())
-                    main_hint_layout.visibility = View.VISIBLE
+                main_hint_layout.isVisible = mAdapter.adapterItems.isNotEmpty()
                 return true
             }
             R.id.action_save_list -> {
-                ioThread {
-                    if (saveList()) {
-                        setResult(Activity.RESULT_OK)
-                        finish()
-                        Animatoo.animateSlideDown(this@CreaListaActivity)
-                    }
-                }
+                SaveListTask().execute(textfieldTitle.text)
                 return true
             }
             android.R.id.home -> {
                 if (mAdapter.adapterItems.isNotEmpty()) {
                     SimpleDialogFragment.Builder(
-                            this@CreaListaActivity, this@CreaListaActivity, "SAVE_LIST")
+                            this, this, SAVE_LIST)
                             .title(R.string.save_list_title)
                             .content(R.string.save_list_question)
                             .positiveButton(R.string.save_exit_confirm)
@@ -245,7 +244,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 } else {
                     setResult(Activity.RESULT_CANCELED)
                     finish()
-                    Animatoo.animateSlideDown(this@CreaListaActivity)
+                    Animatoo.animateSlideDown(this)
                 }
                 return true
             }
@@ -256,7 +255,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed: ")
         if (mAdapter.adapterItems.isNotEmpty()) {
-            SimpleDialogFragment.Builder(this@CreaListaActivity, this@CreaListaActivity, "SAVE_LIST")
+            SimpleDialogFragment.Builder(this, this, SAVE_LIST)
                     .title(R.string.save_list_title)
                     .content(R.string.save_list_question)
                     .positiveButton(R.string.save_exit_confirm)
@@ -265,110 +264,33 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         } else {
             setResult(Activity.RESULT_CANCELED)
             finish()
-            Animatoo.animateSlideDown(this@CreaListaActivity)
+            Animatoo.animateSlideDown(this)
         }
-    }
-
-    private fun saveList(): Boolean {
-        celebrazione = ListaPersonalizzata()
-
-        if (textfieldTitle.text != null && !textfieldTitle.text.toString().trim { it <= ' ' }.equals("", ignoreCase = true)) {
-            titoloLista = textfieldTitle.text.toString()
-        } else {
-            val toast = Toast.makeText(
-                    this@CreaListaActivity, getString(R.string.no_title_edited), Toast.LENGTH_SHORT)
-            toast.show()
-        }
-
-        celebrazione!!.name = titoloLista
-        var mElement: SwipeableItem
-        Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
-        for (i in 0 until mAdapter.adapterItems.size) {
-            mElement = mAdapter.getItem(i)!!
-            if (celebrazione!!.addPosizione(mElement.name.text.toString()) == -2) {
-                Snackbar.make(
-                        main_content,
-                        R.string.lista_pers_piena,
-                        Snackbar.LENGTH_SHORT)
-                        .show()
-                return false
-            }
-        }
-
-        if (celebrazione!!.getNomePosizione(0).equals("", ignoreCase = true)) {
-            Snackbar.make(
-                    main_content, R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
-                    .show()
-            return false
-        }
-
-        if (modifica) {
-            for (i in 0 until mAdapter.adapterItems.size) {
-                celebrazione!!.addCanto(nomiCanti!![i], i)
-            }
-        }
-
-        val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
-        val listaToUpdate = ListaPers()
-        listaToUpdate.lista = celebrazione
-        listaToUpdate.titolo = titoloLista
-        if (modifica) {
-            listaToUpdate.id = idModifica
-            mDao.updateLista(listaToUpdate)
-        } else
-            mDao.insertLista(listaToUpdate)
-
-        return true
-    }
-
-    public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
-        super.onSaveInstanceState(savedInstanceState)
-        mViewModel!!.dataDrag = mAdapter.adapterItems as java.util.ArrayList<SwipeableItem>
-        if (modifica) mViewModel!!.data = nomiCanti
     }
 
     override fun onPositive(tag: String, dialog: MaterialDialog) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
-            "RENAME" -> {
+            RENAME -> {
                 val mEditText = dialog.getInputField()
-                val mElement = mAdapter.adapterItems[mViewModel!!.positionToRename]
-                mElement.withName(mEditText.text.toString())
-                mAdapter.notifyAdapterItemChanged(mViewModel!!.positionToRename)
+                val mElement = mAdapter.adapterItems[mViewModel.positionToRename]
+                mElement.setName = mEditText.text.toString()
+                mAdapter.notifyAdapterItemChanged(mViewModel.positionToRename)
             }
-            "ADD_POSITION" -> {
-                noElementsAdded.visibility = View.GONE
+            ADD_POSITION -> {
+                noElementsAdded.isVisible = false
                 val mEditText = dialog.getInputField()
-                if (modifica) nomiCanti!!.add("")
-                if (mAdapter.adapterItemCount == 0) {
-                    elementi!!.clear()
-                    val mSwipeable = SwipeableItem()
-                    mSwipeable.identifier = Utility.random(0, 5000).toLong()
-                    mSwipeable.touchHelper = touchHelper
-                    elementi!!.add(
-                            mSwipeable
-                                    .withName(mEditText.text.toString()))
-                    mAdapter.add(elementi!!)
-                    mAdapter.notifyItemInserted(0)
-                } else {
-                    val mSize = mAdapter.adapterItemCount
-                    val mSwipeable = SwipeableItem()
-                    mSwipeable.identifier = Utility.random(0, 5000).toLong()
-                    mSwipeable.touchHelper = touchHelper
-                    mAdapter
-                            .add(
-                                    mSwipeable
-                                            .withName(mEditText.text.toString()))
-                    mAdapter.notifyAdapterItemInserted(mSize)
-                }
+                mAdapter.add(swipeableItem {
+                    identifier = Utility.random(0, 5000).toLong()
+                    touchHelper = mTouchHelper
+                    setName = mEditText.text.toString()
+                })
                 Log.d(TAG, "onPositive - elementi.size(): " + mAdapter.adapterItems.size)
-                val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity)
+                val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
                 Log.d(
                         TAG,
                         "onCreateOptionsMenu - INTRO_CREALISTA_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false))
-                if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)) {
-                    main_hint_layout.visibility = View.VISIBLE
-                }
+                main_hint_layout.isVisible = !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
             }
         }
     }
@@ -378,31 +300,24 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
-            "SAVE_LIST" ->
-                ioThread {
-                    if (saveList()) {
-                        setResult(Activity.RESULT_OK)
-                        finish()
-                        Animatoo.animateSlideDown(this@CreaListaActivity)
-                    }
-                }
+            SAVE_LIST ->
+                SaveListTask().execute(textfieldTitle.text)
         }
     }
 
     override fun onNegative(tag: String) {
         Log.d(TAG, "onNegative: $tag")
         when (tag) {
-            "SAVE_LIST" -> {
+            SAVE_LIST -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()
-                Animatoo.animateSlideDown(this@CreaListaActivity)
+                Animatoo.animateSlideDown(this)
             }
         }
     }
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
-        if (modifica) Collections.swap(nomiCanti!!, oldPosition, newPosition) // change canto
-        DragDropUtil.onMove(mAdapter.itemAdapter, oldPosition, newPosition)  // change position
+        DragDropUtil.onMove(mAdapter.itemAdapter, oldPosition, newPosition)
         return true
     }
 
@@ -417,65 +332,40 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         // -- Option 2: Delayed action --
         val item = mAdapter.getItem(position) ?: return
-        item.setSwipedDirection(direction)
+        item.swipedDirection = direction
 
-        // This can vary depending on direction but remove & archive simulated here both results in
-        // removal from list
-//        val removeRunnable = recycler_view!!.postDelayed(2000) {
-//            item.setSwipedAction(Runnable {})
-//            val mPosition = mAdapter.getAdapterPosition(item)
-//            if (mPosition != RecyclerView.NO_POSITION) {
-//                // this sample uses a filter. If a filter is used we should use the methods provided
-//                // by the filter (to make sure filter and normal state is updated)
-////                mAdapter!!.adapterItems.removeAt(mPosition)
-//                mAdapter.remove(mPosition)
-//                mAdapter.notifyAdapterItemRemoved(mPosition)
-//                if (modifica) nomiCanti!!.removeAt(mPosition)
-//                if (mAdapter.adapterItemCount == 0) {
-//                    noElementsAdded.visibility = View.VISIBLE
-//                    main_hint_layout.visibility = View.GONE
-//                }
-//            }
-//        }
+        val deleteHandler = Handler { message ->
+            val itemOjb = message.obj as SwipeableItem
 
-        val deleteHandler = Handler {
-            val itemOjb = it.obj as SwipeableItem
-
-            itemOjb.setSwipedAction(null)
+            itemOjb.swipedAction = null
             val position12 = mAdapter.getAdapterPosition(itemOjb)
             if (position12 != RecyclerView.NO_POSITION) {
-                //this sample uses a filter. If a filter is used we should use the methods provided by the filter (to make sure filter and normal state is updated)
                 mAdapter.remove(position12)
-                if (modifica) nomiCanti!!.removeAt(position12)
-                if (mAdapter.adapterItemCount == 0) {
-                    noElementsAdded.visibility = View.VISIBLE
-                    main_hint_layout.visibility = View.GONE
-                }
+                noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+                if (mAdapter.adapterItemCount == 0) main_hint_layout.isVisible = false
             }
             true
         }
 
-//        deleteHandler.sendMessageDelayed(Message.obtain().apply { what = message; obj = item }, 3000)
         // This can vary depending on direction but remove & archive simulated here both results in
         // removal from list
         val message = Random().nextInt()
         deleteHandler.sendMessageDelayed(Message.obtain().apply { what = message; obj = item }, 2000)
 
-        item.setSwipedAction(Runnable {
-            //            recycler_view!!.removeCallbacks(removeRunnable)
+        item.swipedAction = Runnable {
             deleteHandler.removeMessages(message)
-            item.setSwipedDirection(0)
+            item.swipedDirection = 0
             val mPosition = mAdapter.getAdapterPosition(item)
             if (mPosition != RecyclerView.NO_POSITION)
                 mAdapter.notifyItemChanged(mPosition)
-        })
+        }
 
         mAdapter.notifyItemChanged(position)
     }
 
     private fun playIntro() {
         fab_crea_lista.show()
-        TapTargetSequence(this@CreaListaActivity)
+        TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forView(
@@ -483,8 +373,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 getString(R.string.add_position),
                                 getString(R.string.showcase_add_pos_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -492,26 +380,22 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 .tintTarget(false)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
-                                risuscito_toolbar!!,
+                                risuscito_toolbar,
                                 R.id.action_save_list,
                                 getString(R.string.list_save_exit),
                                 getString(R.string.showcase_saveexit_desc))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
                         TapTarget.forToolbarMenuItem(
-                                risuscito_toolbar!!,
+                                risuscito_toolbar,
                                 R.id.action_help,
                                 getString(R.string.showcase_end_title),
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
-                                .outerCircleColorInt(
-                                        themeUtils!!.primaryColor()) // Specify a color for the outer circle
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -534,75 +418,118 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 .start()
     }
 
+    private fun subscribeUiChanges() {
+        mViewModel.listaResult?.observe(this) { listaPers ->
+
+            val celebrazione = listaPers.lista
+
+            mViewModel.elementi?.let {
+                Log.d(TAG, "Lista già valorizzata")
+                for (elemento in it) elemento.touchHelper = mTouchHelper
+            } ?: run {
+                Log.d(TAG, "Lista nulla")
+                mViewModel.elementi = ArrayList()
+                celebrazione?.let {
+                    for (i in 0 until it.numPosizioni) {
+                        mViewModel.elementi?.add(
+                                swipeableItem {
+                                    identifier = Utility.random(0, 5000).toLong()
+                                    touchHelper = mTouchHelper
+                                    setName = it.getNomePosizione(i)
+                                    idCanto = it.getCantoPosizione(i)
+                                }
+                        )
+                    }
+                }
+            }
+
+            mViewModel.elementi?.let { mAdapter.set(it) }
+            if (mViewModel.tempTitle.isEmpty())
+                mViewModel.tempTitle = listaPers.titolo ?: DEFAULT_TITLE
+            textfieldTitle.setText(mViewModel.tempTitle)
+            collapsingToolbarLayout.title = mViewModel.tempTitle
+            noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+        }
+    }
+
     @SuppressLint("StaticFieldLeak")
-    private inner class SearchTask : AsyncTask<Bundle, Void, Int>() {
+    private inner class SaveListTask : AsyncTask<Editable, Void, Int>() {
 
-        override fun doInBackground(vararg savedInstanceState: Bundle): Int? {
+        override fun doInBackground(vararg titleText: Editable): Int {
 
-            val bundle = this@CreaListaActivity.intent.extras
-            modifica = bundle != null && bundle.getBoolean("modifica")
+            val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
 
-            if (modifica) {
-                idModifica = bundle!!.getInt("idDaModif")
-                val mDao = RisuscitoDatabase.getInstance(this@CreaListaActivity).listePersDao()
-                val lista = mDao.getListById(idModifica)
-                titoloLista = lista?.titolo
-                celebrazione = lista?.lista
-            } else
-                titoloLista = bundle?.getString("titolo")
+            var result = 0
+            val celebrazione = ListaPersonalizzata()
 
-            if (mViewModel!!.dataDrag != null) {
-                elementi = mViewModel!!.dataDrag
-                for (elemento in elementi!!) elemento.touchHelper = touchHelper
+            if (titleText[0].isNotBlank()) {
+                celebrazione.name = titleText[0].toString()
             } else {
-                elementi = ArrayList()
-                if (modifica) {
-                    for (i in 0 until celebrazione!!.numPosizioni) {
-                        val mSwipeable = SwipeableItem()
-                        mSwipeable.identifier = Utility.random(0, 5000).toLong()
-                        mSwipeable.touchHelper = touchHelper
-                        elementi!!.add(
-                                mSwipeable
-                                        .withName(celebrazione!!.getNomePosizione(i)))
+                result += 100
+                celebrazione.name = if (modifica) mDao.getListById(mViewModel.idModifica)?.titolo
+                        ?: DEFAULT_TITLE else intent.extras?.getString(LIST_TITLE) ?: DEFAULT_TITLE
+            }
+
+            Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
+            for (i in mAdapter.adapterItems.indices) {
+                mAdapter.getItem(i)?.let {
+                    if (celebrazione.addPosizione(it.name?.text.toString()) == -2) {
+                        return 1
                     }
+                    celebrazione.addCanto(it.idCanto, i)
                 }
             }
 
-            Log.d(TAG, "doInBackground: modifica $modifica")
+            if (celebrazione.getNomePosizione(0).equals("", ignoreCase = true))
+                return 2
+
+            Log.d(TAG, "saveList - $celebrazione")
+
+            val listaToUpdate = ListaPers()
+            listaToUpdate.lista = celebrazione
+            listaToUpdate.titolo = celebrazione.name
             if (modifica) {
-                if (mViewModel!!.data != null) {
-                    nomiCanti = mViewModel!!.data
-                    Log.d(
-                            TAG, "doInBackground: nomiCanti size " + if (nomiCanti != null) nomiCanti!!.size else 0)
-                } else {
-                    nomiCanti = ArrayList()
-                    if (modifica) {
-                        for (i in 0 until celebrazione!!.numPosizioni) {
-                            //		        		Log.i("CANTO", celebrazione.getCantoPosizione(i));
-                            nomiCanti!!.add(celebrazione!!.getCantoPosizione(i))
-                        }
-                    }
-                }
-            }
+                listaToUpdate.id = mViewModel.idModifica
+                mDao.updateLista(listaToUpdate)
+            } else
+                mDao.insertLista(listaToUpdate)
 
-            return 0
+            return result
         }
 
-        override fun onPostExecute(result: Int?) {
-            mAdapter.set(elementi!!)
+        override fun onPostExecute(result: Int) {
+            super.onPostExecute(result)
+            if (result == 100)
+                Toast.makeText(this@CreaListaActivity, getString(R.string.no_title_edited), Toast.LENGTH_SHORT).show()
+            when (result) {
+                0, 100 -> {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                    Animatoo.animateSlideDown(this@CreaListaActivity)
+                }
+                1 ->
+                    Snackbar.make(
+                            this@CreaListaActivity.main_content,
+                            R.string.lista_pers_piena,
+                            Snackbar.LENGTH_SHORT)
+                            .show()
+                2 ->
+                    Snackbar.make(
+                            this@CreaListaActivity.main_content, R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
+                            .show()
 
-            if (mViewModel!!.tempTitle.isEmpty()) {
-                textfieldTitle.setText(titoloLista)
-                collapsingToolbarLayout.title = titoloLista
-            } else {
-                textfieldTitle.setText(mViewModel!!.tempTitle)
-                collapsingToolbarLayout.title = mViewModel!!.tempTitle
             }
-            if (elementi!!.size > 0) noElementsAdded.visibility = View.GONE
         }
     }
 
     companion object {
         private val TAG = CreaListaActivity::class.java.canonicalName
+        private const val RENAME = "RENAME"
+        private const val ADD_POSITION = "ADD_POSITION"
+        private const val SAVE_LIST = "SAVE_LIST"
+        const val ID_DA_MODIF = "idDaModif"
+        const val LIST_TITLE = "titoloLista"
+        const val EDIT_EXISTING_LIST = "modifica"
+        const val DEFAULT_TITLE = "NEW LIST"
     }
 }

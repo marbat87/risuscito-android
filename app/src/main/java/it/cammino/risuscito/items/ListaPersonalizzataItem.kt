@@ -6,75 +6,38 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
-import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
+import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.generic_card_item.view.*
 import kotlinx.android.synthetic.main.generic_list_item.view.*
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 
-@Suppress("unused")
+fun listaPersonalizzataItem(block: ListaPersonalizzataItem.() -> Unit): ListaPersonalizzataItem = ListaPersonalizzataItem().apply(block)
+
+fun ListaPersonalizzataItem.posizioneTitleItem(block: PosizioneTitleItem.() -> Unit) {
+    titleItem = PosizioneTitleItem().apply(block)
+}
+
 class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>() {
 
-    private var titleItem: PosizioneTitleItem? = null
+    var titleItem: PosizioneTitleItem? = null
     var listItem: List<PosizioneItem>? = null
-        private set
     var id: Int = 0
-        private set
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
 
-    private var selectedColor: ColorHolder? = null
-    private var createClickListener: View.OnClickListener? = null
-    private var createLongClickListener: View.OnLongClickListener? = null
-
-    fun withTitleItem(mTitleItem: PosizioneTitleItem): ListaPersonalizzataItem {
-        this.titleItem = mTitleItem
-        return this
-    }
-
-    fun withListItem(mListItem: List<PosizioneItem>): ListaPersonalizzataItem {
-        this.listItem = mListItem
-        return this
-    }
-
-    fun withId(id: Int): ListaPersonalizzataItem {
-        this.id = id
-        identifier = id.toLong()
-        return this
-    }
-
-    fun withSelectedColor(selectedColor: String): ListaPersonalizzataItem {
-        this.selectedColor = ColorHolder.fromColor(Color.parseColor(selectedColor))
-        return this
-    }
-
-    fun withSelectedColor(@ColorInt selectedColor: Int): ListaPersonalizzataItem {
-        this.selectedColor = ColorHolder.fromColor(selectedColor)
-        return this
-    }
-
-    fun withSelectedColorRes(@ColorRes selectedColorRes: Int): ListaPersonalizzataItem {
-        this.selectedColor = ColorHolder.fromColorRes(selectedColorRes)
-        return this
-    }
-
-    fun withClickListener(listener: View.OnClickListener): ListaPersonalizzataItem {
-        this.createClickListener = listener
-        return this
-    }
-
-    fun withLongClickListener(listener: View.OnLongClickListener): ListaPersonalizzataItem {
-        this.createLongClickListener = listener
-        return this
-    }
+    var createClickListener: View.OnClickListener? = null
+    var createLongClickListener: View.OnLongClickListener? = null
 
     /**
      * defines the type defining this item. must be unique. preferably an id
@@ -103,68 +66,70 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
         // get the context
         val context = holder.itemView.context
 
-        holder.list!!.removeAllViews()
+        holder.list?.removeAllViews()
         val inflater = LayoutInflater.from(context)
         var itemView: View
 
-        if (listItem!!.isNotEmpty()) {
-            if (titleItem!!.isMultiple) {
-                holder.addCanto!!.visibility = View.VISIBLE
-                if (createClickListener != null) holder.addCanto!!.setOnClickListener(createClickListener)
-            } else
-                holder.addCanto!!.visibility = View.GONE
-            for (i in listItem!!.indices) {
-                val canto = listItem!![i]
-                itemView = inflater.inflate(R.layout.generic_card_item, holder.list, false)
+        listItem?.let { list ->
+            if (list.isNotEmpty()) {
+                if (titleItem?.isMultiple == true) {
+                    holder.addCanto?.isVisible = true
+                    createClickListener?.let { holder.addCanto?.setOnClickListener(it) }
+                } else
+                    holder.addCanto?.isVisible = false
+                for (i in list.indices) {
+                    val canto = list[i]
+                    itemView = inflater.inflate(R.layout.generic_card_item, holder.list, false)
 
-                val cantoView = itemView.cantoGenericoContainer
+                    val cantoView = itemView.cantoGenericoContainer
 
-                StringHolder.applyTo(canto.title, itemView.text_title)
-                StringHolder.applyTo(canto.page, itemView.text_page)
-                StringHolder.applyTo(canto.source, itemView.text_source_canto)
-                StringHolder.applyTo(canto.timestamp, itemView.text_timestamp)
-                itemView.text_id_canto_card.text = canto.idCanto.toString()
-                itemView.item_tag.text = i.toString()
-                @Suppress("DEPRECATION")
-                UIUtils.setBackground(
-                        cantoView,
-                        FastAdapterUIUtils.getSelectableBackground(
-                                context,
-                                ContextCompat.getColor(holder.itemView.context, R.color.ripple_color),
-                                true))
-                if (canto.ismSelected()) {
-                    itemView.text_page.visibility = View.INVISIBLE
-                    itemView.selected_mark.visibility = View.VISIBLE
-                    val bgShape = itemView.selected_mark.background as GradientDrawable
-                    bgShape.setColor(selectedColor!!.colorInt)
-                    cantoView.isSelected = true
-                } else {
-                    val bgShape = itemView.text_page.background as GradientDrawable
-                    bgShape.setColor(canto.color!!.colorInt)
-                    itemView.text_page.visibility = View.VISIBLE
-                    itemView.selected_mark.visibility = View.INVISIBLE
-                    cantoView.isSelected = false
+                    StringHolder.applyTo(canto.title, itemView.text_title)
+                    StringHolder.applyTo(canto.page, itemView.text_page)
+                    StringHolder.applyTo(canto.source, itemView.text_source_canto)
+                    StringHolder.applyTo(canto.timestamp, itemView.text_timestamp)
+                    itemView.text_id_canto_card.text = canto.idCanto.toString()
+                    itemView.item_tag.text = i.toString()
+                    @Suppress("DEPRECATION")
+                    UIUtils.setBackground(
+                            cantoView,
+                            FastAdapterUIUtils.getSelectableBackground(
+                                    context,
+                                    context.themeColor(R.attr.colorSecondaryLight),
+                                    true))
+                    if (canto.ismSelected()) {
+                        val bgShape = itemView.selected_mark.background as? GradientDrawable
+                        bgShape?.setColor(context.themeColor(R.attr.colorSecondary))
+                        itemView.text_page.isVisible = false
+                        itemView.selected_mark.isVisible = true
+                        cantoView.isSelected = true
+                    } else {
+                        val bgShape = itemView.text_page.background as? GradientDrawable
+                        bgShape?.setColor(canto.color?.colorInt ?: Color.WHITE)
+                        itemView.text_page.isVisible = true
+                        itemView.selected_mark.isVisible = false
+                        cantoView.isSelected = false
+                    }
+
+                    createClickListener?.let { cantoView.setOnClickListener(it) }
+                    createLongClickListener?.let { cantoView.setOnLongClickListener(it) }
+                    holder.list?.addView(itemView)
                 }
-
-                if (createClickListener != null) cantoView.setOnClickListener(createClickListener)
-                if (createLongClickListener != null) cantoView.setOnLongClickListener(createLongClickListener)
-                holder.list!!.addView(itemView)
+            } else {
+                holder.addCanto?.isVisible = true
+                createClickListener?.let { holder.addCanto?.setOnClickListener(it) }
             }
-        } else {
-            holder.addCanto!!.visibility = View.VISIBLE
-            if (createClickListener != null) holder.addCanto!!.setOnClickListener(createClickListener)
         }
 
-        holder.idPosizione!!.text = titleItem!!.idPosizione.toString()
-        holder.nomePosizione!!.text = titleItem!!.titoloPosizione
-        holder.tag!!.text = titleItem!!.tag.toString()
+        holder.idPosizione?.text = titleItem?.idPosizione.toString()
+        holder.nomePosizione?.text = titleItem?.titoloPosizione
+        holder.tag?.text = titleItem?.tagPosizione.toString()
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.idPosizione!!.text = null
-        holder.nomePosizione!!.text = null
-        holder.tag!!.text = null
+        holder.idPosizione?.text = null
+        holder.nomePosizione?.text = null
+        holder.tag?.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

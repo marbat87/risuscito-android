@@ -3,7 +3,6 @@ package it.cammino.risuscito.services
 import android.app.IntentService
 import android.app.Notification
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -25,34 +24,24 @@ import java.io.InputStream
 
 class XmlImportService : IntentService("XmlImportService") {
 
-    /**
-     * This method is invoked on the worker thread with a request to process. Only one Intent is
-     * processed at a time, but the processing happens on a worker thread that runs independently from
-     * other application logic. So, if this code takes a long time, it will hold up other requests to
-     * the same IntentService, but it will not hold up anything else. When all requests have been
-     * handled, the IntentService stops itself, so you should not call [.stopSelf].
-     *
-     * @param intent The value passed to [Context.startService].
-     */
     override fun onHandleIntent(intent: Intent?) {
         Log.d(TAG, "onHandleIntent: Starting")
-        val data = intent!!.data
-        if (data != null) {
+        val data = intent?.data
+        data?.let {
             intent.data = null
-            importData(data)
+            importData(it)
         }
     }
 
     private fun importData(data: Uri) {
         Log.d(TAG, "importData: data = $data")
-        Log.d(TAG, "importData:  data.getScheme = " + data.scheme)
+        Log.d(TAG, "importData:  data.getScheme = ${data.scheme}")
         val scheme = data.scheme
 
         val mNotificationManager = NotificationManagerCompat.from(this)
         mNotificationManager.cancelAll()
         var mNotification: Notification
 
-//        if (LUtils.hasO()) createChannel()
         Utility.createNotificationChannelWrapper(applicationContext, CHANNEL_ID, "XML Import", "Importing selected XML")
 
         mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -153,15 +142,13 @@ class XmlImportService : IntentService("XmlImportService") {
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun parse(`in`: InputStream?): ListaPersonalizzata? {
-        try {
+    private fun parse(inputStream: InputStream?): ListaPersonalizzata? {
+        inputStream.use {
             val parser = Xml.newPullParser()
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-            parser.setInput(`in`, null)
+            parser.setInput(it, null)
             parser.nextTag()
             return readLista(parser)
-        } finally {
-            `in`!!.close()
         }
     }
 
@@ -186,7 +173,7 @@ class XmlImportService : IntentService("XmlImportService") {
             }
             val name = parser.name
             // Starts by looking for the entry tag
-            if (name == "position") {
+            if (name == POSITION_TAG) {
                 tempPos = readPosition(parser)
                 list.addPosizione(tempPos.name)
                 if (!tempPos.canto.equals("0", ignoreCase = true))
@@ -202,10 +189,10 @@ class XmlImportService : IntentService("XmlImportService") {
     @Throws(IOException::class, XmlPullParserException::class)
     private fun readPosition(parser: XmlPullParser): Position {
         val result = Position()
-        parser.require(XmlPullParser.START_TAG, ns, "position")
+        parser.require(XmlPullParser.START_TAG, ns, POSITION_TAG)
         val name = parser.getAttributeValue(null, "name")
         val canto = readCanto(parser)
-        parser.require(XmlPullParser.END_TAG, ns, "position")
+        parser.require(XmlPullParser.END_TAG, ns, POSITION_TAG)
         result.name = name.trim { it <= ' ' }
         result.canto = canto.trim { it <= ' ' }
         return result
@@ -224,9 +211,7 @@ class XmlImportService : IntentService("XmlImportService") {
 
     @Throws(XmlPullParserException::class, IOException::class)
     private fun skip(parser: XmlPullParser) {
-        if (parser.eventType != XmlPullParser.START_TAG) {
-            throw IllegalStateException()
-        }
+        check(parser.eventType == XmlPullParser.START_TAG)
         var depth = 1
         while (depth != 0) {
             when (parser.next()) {
@@ -235,23 +220,6 @@ class XmlImportService : IntentService("XmlImportService") {
             }
         }
     }
-
-//    @TargetApi(Build.VERSION_CODES.O)
-//    private fun createChannel() {
-//        val mNotificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        // The id of the channel.
-//        //        String id = CHANNEL_ID;
-//        // The user-visible name of the channel.
-//        val name = "XML Import"
-//        // The user-visible description of the channel.
-//        val description = "Importing selected XML"
-//        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
-//        // Configure the notification channel.
-//        mChannel.description = description
-//        mChannel.setShowBadge(false)
-//        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-//        mNotificationManager.createNotificationChannel(mChannel)
-//    }
 
     private class Position {
         lateinit var name: String
@@ -264,6 +232,7 @@ class XmlImportService : IntentService("XmlImportService") {
         const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
         const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
         private const val CHANNEL_ID = "itcr_import_channel"
+        private const val POSITION_TAG = "position"
         // We don't use namespaces
         private val ns: String? = null
     }

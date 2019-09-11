@@ -13,8 +13,6 @@
     <string name="label_play" translatable="false">Play</string>
     <string name="label_restart" translatable="false">Restart</string>
     <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
-    <string name="server_client_id" translatable="false">9545803189-eikvm3ecah7d908r81kuogqpn34ipb4a.apps.googleusercontent.com</string>
-
 
     <string name="private_memory">Memoria privata</string>
     <string name="public_memory">Memoria pubblica</string>
@@ -25,7 +23,6 @@
     <string name="page_order_text">Indice per pagina</string>
     <string name="search_name_text">Ricerca canto</string>
     <string name="arg_search_text">Indice per argomento</string>
-    <!--<string name="button_pulisci">PULISCI</string>-->
     <string name="always_on">No standby</string>
     <string name="always_on_summary">Impedisce allo schermo di andare in standby all\'interno dell\'applicazione.</string>
     <string name="title_activity_favourites">Preferiti</string>
@@ -34,7 +31,7 @@
     <string name="title_activity_settings">Impostazioni</string>
     <string name="title_activity_general_index">Indici dei canti</string>
     <string name="default_index_title">Indice predefinito</string>
-    <string name="default_index_summary">Indica quale indice deve aprirsi per default alla selezione della pagina degli indici.</string>
+    <string name="default_index_summary">Indica quale indice deve aprirsi per default alla selezione della pagina degli indici:</string>
     <string name="title_activity_canti_parola">Celebrazione della parola</string>
     <string name="canto_iniziale">Canto iniziale</string>
     <string name="prima_lettura">In risposta alla prima lettura</string>
@@ -58,7 +55,7 @@
     <string name="about_subtitle">Versione per smartphone/tablet Android</string>
     <string name="dialog_delete_mp3">Sei sicuro di voler cancellare il brano dalla memoria del dispositivo?</string>
     <string name="save_location_title">Memoria predefinita</string>
-    <string name="save_location_summary">Indica se vuoi rendere i file scaricati visibili alle altre applicazioni (per es. lettore musicale).</string>
+    <string name="save_location_summary">Indica se vuoi rendere i file scaricati visibili alle altre applicazioni (per es. lettore musicale):</string>
     <string name="favorite_added">Aggiunto ai preferiti</string>
     <string name="favorite_removed">Rimosso dai preferiti</string>
     <string name="file_delete">File cancellato</string>
@@ -182,7 +179,7 @@
     <string name="title_trasporta_si">Si</string>
     <string name="to_be_chosen">da scegliere</string>
     <string name="language_title">Lingua</string>
-    <string name="language_summary">Imposta la lingua per il menù e i canti.</string>
+    <string name="language_summary">Imposta la lingua per il menù e i canti:</string>
     <string name="page_contracted">PAG.</string>
     <string name="translation_running">Traduzione in corso&#8230;</string>
     <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
@@ -285,7 +282,6 @@
     <string name="consegnati_only">Cerca solo nei consegnati</string>
     <string name="permission_ok">Permesso concesso</string>
     <string name="night_theme_title">Tema Scuro</string>
-    <string name="night_theme_desc">Abilita il tema scuro</string>
     <plurals name="item_selected">
         <item quantity="one">%1$d selezionato</item>
         <item quantity="other">%1$d selezionati</item>
@@ -309,6 +305,10 @@
     <string name="ok">OK</string>
     <string name="import_confirm">importa</string>
     <string name="default_search_title">Ricerca predefinita</string>
-    <string name="default_search_summary">Indica quale tipo di ricerca deve aprirsi per default all\'ingresso nella funzione.</string>
+    <string name="default_search_summary">Indica quale tipo di ricerca deve aprirsi per default all\'ingresso nella funzione:</string>
+    <string name="night_mode_light">Chiaro</string>
+    <string name="night_mode_dark">Scuro</string>
+    <string name="night_mode_auto_battery">Automatico da risparmio energetico</string>
+    <string name="night_mode_auto_system">Automatico da sistema</string>
 </resources>
 
