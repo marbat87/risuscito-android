@@ -114,7 +114,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     .title(R.string.posizione_rename)
                     .prefill(item.name?.text.toString())
                     .positiveButton(R.string.aggiungi_rename)
-                    .negativeButton(android.R.string.cancel)
+                    .negativeButton(R.string.cancel)
                     .show()
             true
         }

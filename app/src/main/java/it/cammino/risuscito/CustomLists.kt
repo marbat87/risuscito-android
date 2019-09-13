@@ -62,7 +62,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     private var mLastClickTime: Long = 0
     private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-//            super.onPageSelected(position)
             Log.d(TAG, "onPageSelected: $position")
             Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
             if (mCustomListsViewModel.indexToShow != position) {
@@ -229,7 +228,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     override fun onNegative(tag: String) {}
 
     private fun playIntro() {
-//        enableFab(true)
         mMainActivity?.enableFab(true)
 //        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check)
 //                .sizeDp(24)
@@ -315,10 +313,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     private fun getFab(): FloatingActionButton {
         return mMainActivity?.getFab()!!
     }
-
-//    private fun enableFab(enabled: Boolean) {
-//        mMainActivity?.enableFab(enabled)
-//    }
 
     private fun closeFabMenu() {
         mMainActivity?.closeFabMenu()

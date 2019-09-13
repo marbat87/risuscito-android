@@ -6,4 +6,6 @@ class CantoConsegnato : Canto() {
 
     var consegnato: Int = 0
 
+    var txtNota: String = ""
+
 }

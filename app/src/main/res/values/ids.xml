@@ -20,6 +20,7 @@
     <item name="fastadapter_simple_item_id" type="id" />
     <item name="fastadapter_bottom_item_id" type="id" />
     <item name="fastadapter_insert_item_id" type="id" />
+    <item name="fastadapter_notable_item_id" type="id" />
     <item name="fastadapter_expandable_item_id" type="id" />
     <item name="fastadapter_swipable_item_id" type="id" />
     <item name="fab_fullscreen_on" type="id" />

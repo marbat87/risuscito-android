@@ -45,7 +45,7 @@
             <item
                 android:id="@+id/action_save_tab"
                 android:orderInCategory="90"
-                android:title="@string/action_salva_tonalita"
+                android:title="@string/action_salva"
                 risuscito:ico_color="@color/text_color_secondary"
                 risuscito:ico_icon="cmd_content_save"
                 risuscito:ico_padding="2dp"
@@ -106,7 +106,7 @@
             <item
                 android:id="@+id/action_save_barre"
                 android:orderInCategory="94"
-                android:title="@string/action_salva_tonalita"
+                android:title="@string/action_salva"
                 risuscito:ico_color="@color/text_color_secondary"
                 risuscito:ico_icon="cmd_content_save"
                 risuscito:ico_padding="2dp"

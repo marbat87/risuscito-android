@@ -12,7 +12,7 @@ import it.cammino.risuscito.database.dao.*
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.utils.ioThread
 
-@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 5, exportSchema = false)
+@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 6, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RisuscitoDatabase : RoomDatabase() {
 
@@ -78,6 +78,15 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 4 to 5")
                 reinsertDefaultOnlyCanti(database)
+            }
+        }
+
+        private val MIGRATION_5_6 = Migration5to6()
+
+        class Migration5to6 : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 5 to 6")
+                database.execSQL("ALTER TABLE Consegnato ADD COLUMN txtNota TEXT NOT NULL DEFAULT \"\"")
             }
         }
 
@@ -184,7 +193,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 Log.d(TAG, "getInstance: NULL")
                 synchronized(LOCK) {
                     sInstance = Room.databaseBuilder(context.applicationContext, RisuscitoDatabase::class.java, dbName)
-                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                             .addCallback(object : Callback() {
                                 /**
                                  * Called when the database is created for the first time. This is called after all the

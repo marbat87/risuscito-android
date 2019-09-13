@@ -75,7 +75,6 @@
     <string name="dialog_change_title">News</string>
     <string name="action_tonalita">Key</string>
     <string name="action_trasporta">Change</string>
-    <string name="action_salva_tonalita">Save</string>
     <string name="action_reset_tonalita">Predefined</string>
     <string name="action_trasporta_do">C / Cm</string>
     <string name="action_trasporta_dod">C# / C#m</string>
@@ -297,4 +296,8 @@ Do you want to proceed?</string>
     <string name="night_mode_dark">Dark</string>
     <string name="night_mode_auto_battery">Set by Battery Saver</string>
     <string name="night_mode_auto_system">System default</string>
+    <string name="note_title">Note</string>
+    <string name="action_salva">Save</string>
+    <string name="dialog_save_consegnati_title">Salva consegnati</string>
+    <string name="dialog_save_consegnati_desc">Attenzione: confermando, perderati eventuali note inserite sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
 </resources>

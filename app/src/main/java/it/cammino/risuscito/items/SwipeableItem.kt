@@ -69,7 +69,7 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
         var swipedAction: CharSequence? = null
         var swipedText: CharSequence? = null
         if (swipedDirection != 0) {
-            swipedAction = ctx.getString(android.R.string.cancel)
+            swipedAction = ctx.getString(R.string.cancel)
             swipedText = ctx.getString(R.string.generic_removed, name?.text)
             holder.swipeResultContent?.setBackgroundColor(ContextCompat.getColor(ctx, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
         }

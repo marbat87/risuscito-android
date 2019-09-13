@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.getCustomView
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -41,21 +43,26 @@ import com.mikepenz.iconics.typeface.library.community.material.CommunityMateria
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.entities.Consegnato
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
+import it.cammino.risuscito.dialogs.SimpleDialogFragment
+import it.cammino.risuscito.dialogs.TextAreaDialogFragment
 import it.cammino.risuscito.items.CheckableItem
-import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.services.ConsegnatiSaverService
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.layout_consegnati.*
+import kotlinx.android.synthetic.main.text_area.view.*
 import java.lang.ref.WeakReference
 
-class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
+class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 
-    private var cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
+    private var cantoAdapter: FastItemAdapter<NotableItem> = FastItemAdapter()
 
     private val mCantiViewModel: ConsegnatiViewModel by viewModels()
     private var selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
@@ -98,28 +105,15 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
                         true
                     }
                     R.id.confirm_changes -> {
-                        mCantiViewModel.editMode = false
-                        mMainActivity?.let { activity ->
-                            ProgressDialogFragment.Builder(
-                                    activity, null, CONSEGNATI_SAVING)
-                                    .content(R.string.save_consegnati_running)
-                                    .progressIndeterminate(false)
-                                    .progressMax(mCantiViewModel.titoliChoose.size)
+                        mMainActivity?.let { mainActivity ->
+                            SimpleDialogFragment.Builder(
+                                    mainActivity, this, CONFIRM_SAVE)
+                                    .title(R.string.dialog_save_consegnati_title)
+                                    .content(R.string.dialog_save_consegnati_desc)
+                                    .positiveButton(R.string.action_salva)
+                                    .negativeButton(R.string.cancel)
                                     .show()
                         }
-                        val mSelected = selectExtension?.selectedItems
-                        val mSelectedId = mSelected?.mapTo(ArrayList()) { item -> item.id }
-
-                        //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
-                        mCantiViewModel.titoliChoose.forEach { item ->
-                            if (item.isSelected)
-                                if (mSelectedId?.any { i -> i == item.id } != true)
-                                    mSelectedId?.add(item.id)
-                        }
-
-                        val intent = Intent(requireActivity().applicationContext, ConsegnatiSaverService::class.java)
-                        intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
-                        requireActivity().applicationContext.startService(intent)
                         true
                     }
                     else -> false
@@ -129,7 +123,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
 
         mLUtils = LUtils.getInstance(requireActivity())
 
-        cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+        cantoAdapter.onClickListener = { _: View?, _: IAdapter<NotableItem>, item: NotableItem, _: Int ->
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
@@ -143,6 +137,26 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
             }
             consume
         }
+
+        cantoAdapter.addEventHook(object : ClickEventHook<NotableItem>() {
+            override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
+                return (viewHolder as? NotableItem.ViewHolder)?.mEditNote
+            }
+
+            override fun onClick(v: View, position: Int, fastAdapter: FastAdapter<NotableItem>, item: NotableItem) {
+                mMainActivity?.let { activity ->
+                    mCantiViewModel.mIdConsegnatoSelected = item.idConsegnato
+                    mCantiViewModel.mIdCantoSelected = item.id
+                    TextAreaDialogFragment.Builder(
+                            activity, this@ConsegnatiFragment, ADD_NOTE)
+                            .title(R.string.note_title)
+                            .prefill(item.txtNota)
+                            .positiveButton(R.string.action_salva)
+                            .negativeButton(R.string.cancel)
+                            .show()
+                }
+            }
+        })
 
         cantoAdapter.set(mCantiViewModel.titoli)
 
@@ -204,7 +218,11 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
                         ?: "").toLowerCase(getSystemLocale(resources))
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
-                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter { Utility.removeAccents(it.title?.getText(context) ?: "").toLowerCase(getSystemLocale(resources)).contains(simplifiedString) }
+                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter {
+                        Utility.removeAccents(it.title?.getText(context)
+                                ?: "").toLowerCase(getSystemLocale(resources)).contains(simplifiedString)
+                    }
+                    mCantiViewModel.titoliChooseFiltered.forEach { it.filter = simplifiedString }
                     selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
                 } else
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.sortedWith(compareBy { it.title.toString() })
@@ -234,6 +252,10 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
             }
             managed
         }
+
+        TextAreaDialogFragment.findVisible(mMainActivity, ADD_NOTE)?.setmCallback(this)
+        TextAreaDialogFragment.findVisible(mMainActivity, CONFIRM_SAVE)?.setmCallback(this)
+
     }
 
     override fun onResume() {
@@ -476,8 +498,57 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati) {
         }
     }
 
+    override fun onPositive(tag: String, dialog: MaterialDialog) {
+        when (tag) {
+            ADD_NOTE -> {
+                val consegnato = Consegnato().apply {
+                    idConsegnato = mCantiViewModel.mIdConsegnatoSelected
+                    idCanto = mCantiViewModel.mIdCantoSelected
+                    txtNota = dialog.getCustomView().text_area_field.text.toString()
+                }
+                val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
+                ioThread { mDao.updateConsegnato(consegnato) }
+            }
+        }
+    }
+
+    override fun onNegative(tag: String, dialog: MaterialDialog) {}
+
+    override fun onPositive(tag: String) {
+        when (tag) {
+            CONFIRM_SAVE -> {
+                mCantiViewModel.editMode = false
+                mMainActivity?.let { activity ->
+                    ProgressDialogFragment.Builder(
+                            activity, null, CONSEGNATI_SAVING)
+                            .content(R.string.save_consegnati_running)
+                            .progressIndeterminate(false)
+                            .progressMax(mCantiViewModel.titoliChoose.size)
+                            .show()
+                }
+                val mSelected = selectExtension?.selectedItems
+                val mSelectedId = mSelected?.mapTo(ArrayList()) { item -> item.id }
+
+                //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
+                mCantiViewModel.titoliChoose.forEach { item ->
+                    if (item.isSelected)
+                        if (mSelectedId?.any { i -> i == item.id } != true)
+                            mSelectedId?.add(item.id)
+                }
+
+                val intent = Intent(requireActivity().applicationContext, ConsegnatiSaverService::class.java)
+                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
+                requireActivity().applicationContext.startService(intent)
+            }
+        }
+    }
+
+    override fun onNegative(tag: String) {}
+
     companion object {
         private val TAG = ConsegnatiFragment::class.java.canonicalName
         private const val CONSEGNATI_SAVING = "CONSEGNATI_SAVING"
+        private const val ADD_NOTE = "ADD_NOTE"
+        private const val CONFIRM_SAVE = "CONFIRM_SAVE"
     }
 }

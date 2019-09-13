@@ -87,7 +87,6 @@
     <string name="dialog_change_title">Novit&#224;</string>
     <string name="action_tonalita">Tonalit&#224;</string>
     <string name="action_trasporta">Cambia</string>
-    <string name="action_salva_tonalita">Salva</string>
     <string name="action_reset_tonalita">Predefinita</string>
     <string name="action_trasporta_do">Do / Do-</string>
     <string name="action_trasporta_dod">Do# / Do#-</string>
@@ -310,5 +309,9 @@
     <string name="night_mode_dark">Scuro</string>
     <string name="night_mode_auto_battery">Automatico da risparmio energetico</string>
     <string name="night_mode_auto_system">Automatico da sistema</string>
+    <string name="note_title">Nota</string>
+    <string name="action_salva">Salva</string>
+    <string name="dialog_save_consegnati_title">Salva consegnati</string>
+    <string name="dialog_save_consegnati_desc">Attenzione: confermando, perderati eventuali note inserite sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
 </resources>
 
