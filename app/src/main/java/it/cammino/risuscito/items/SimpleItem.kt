@@ -18,6 +18,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.simple_row_item.view.*
 
@@ -111,7 +112,7 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
             if (it.isNotEmpty()) {
                 val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
                         ?: "")
-                val mPosition = normalizedTitle.toLowerCase().indexOf(it)
+                val mPosition = normalizedTitle.toLowerCase(getSystemLocale(ctx.resources)).indexOf(it)
                 if (mPosition >= 0) {
                     val stringTitle = title?.getText(ctx)
                     val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)

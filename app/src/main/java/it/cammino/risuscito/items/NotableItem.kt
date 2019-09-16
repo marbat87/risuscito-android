@@ -3,14 +3,18 @@ package it.cammino.risuscito.items
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.row_item_notable.view.*
 
 fun notableItem(block: NotableItem.() -> Unit): NotableItem = NotableItem().apply(block)
@@ -51,6 +55,7 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
     var idConsegnato: Int = 0
 
     var txtNota: String = ""
+
     /**
      * defines the type defining this item. must be unique. preferably an id
      *
@@ -75,6 +80,9 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
+        // get the context
+        val ctx = holder.itemView.context
+
         //set the text for the name
         StringHolder.applyTo(title, holder.mTitle)
 
@@ -84,12 +92,20 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
 
+        val icon = ctx.iconicsDrawable(if (txtNota.isBlank()) CommunityMaterial.Icon2.cmd_note_plus else CommunityMaterial.Icon2.cmd_note_text) {
+            color = colorInt(if (txtNota.isBlank()) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary))
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
+        holder.mEditNoteImage?.setImageDrawable(icon)
+
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
         holder.mTitle?.text = null
         holder.mPage?.text = null
+        holder.mEditNoteImage?.setImageDrawable(null)
     }
 
     override fun getViewHolder(v: View): ViewHolder {
@@ -103,11 +119,13 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
         var mTitle: TextView? = null
         var mPage: TextView? = null
         var mEditNote: View? = null
+        var mEditNoteImage: ImageView? = null
 
         init {
             mTitle = view.text_title
             mPage = view.text_page
             mEditNote = view.edit_note
+            mEditNoteImage = view.edit_note_image
         }
     }
 
