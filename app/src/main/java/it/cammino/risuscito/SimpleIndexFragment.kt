@@ -107,7 +107,7 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
         cantiList?.setHasFixedSize(true)
         cantiList?.adapter = mAdapter
         val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
-        insetDivider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         cantiList?.addItemDecoration(insetDivider)
         dragScrollBar?.let {
             if (ViewCompat.isAttachedToWindow(it)) {

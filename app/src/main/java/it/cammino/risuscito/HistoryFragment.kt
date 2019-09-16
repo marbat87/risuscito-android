@@ -133,10 +133,8 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
         else
             LinearLayoutManager(context)
         history_recycler?.layoutManager = llm
-//        history_recycler?.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         history_recycler?.addItemDecoration(insetDivider)
         history_recycler?.itemAnimator = SlideRightAlphaAnimator()
     }

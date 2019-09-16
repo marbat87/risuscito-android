@@ -435,9 +435,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         Log.d(javaClass.toString(), "speedValue cambiato! " + mViewModel.speedValue)
                     }
 
-                    override fun onStartTrackingTouch(seekBar: SeekBar) {}
+                    override fun onStartTrackingTouch(seekBar: SeekBar) {
+                        // no-op
+                    }
 
-                    override fun onStopTrackingTouch(seekBar: SeekBar) {}
+                    override fun onStopTrackingTouch(seekBar: SeekBar) {
+                        // no-op
+                    }
                 })
 
         showScrolling(false)
@@ -580,7 +584,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                     if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         cantoView.setInitialScale(it.zoom)
@@ -612,7 +616,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
                     if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         cantoView.setInitialScale(it.zoom)
@@ -632,7 +636,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
                         if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             cantoView.setInitialScale(it.zoom)
@@ -651,7 +655,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
                         if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             cantoView.setInitialScale(it.zoom)
@@ -779,12 +783,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         var barreScritto = false
 
         try {
-            val br = BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(mViewModel.pagina, R.raw::class.java)), ECONDING_UTF8))
 
             var line: String? = br.readLine()
 
             val out = BufferedWriter(
-                    OutputStreamWriter(FileOutputStream(cantoTrasportato), "UTF-8"))
+                    OutputStreamWriter(FileOutputStream(cantoTrasportato), ECONDING_UTF8))
 
             val language = getSystemLocale(resources).language
 
@@ -1417,7 +1421,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                 if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
-                cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
 
             val webSettings = cantoView.settings
             webSettings.useWideViewPort = true
@@ -1578,7 +1582,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                        .colorInt(iconColor)
 //                        .sizeDp(24)
 //                        .paddingDp(4)
-                        iconicsDrawable(if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset) {
+                        iconicsDrawable(if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset else CommunityMaterial.Icon2.cmd_headset_off) {
                             size = sizeDp(24)
                             padding = sizeDp(4)
                         }
@@ -1773,5 +1777,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val DELETE_MP3 = "DELETE_MP3"
         private const val SAVE_TAB = "SAVE_TAB"
         private const val DEF_FILE_PATH = "file://"
+        private const val MIME_TYPE_HTML = "text/html"
+        private const val ECONDING_UTF8 = "utf-8"
+
     }
 }

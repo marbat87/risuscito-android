@@ -138,10 +138,8 @@ class InsertActivity : ThemeableActivity() {
         val glm = GridLayoutManager(this, if (mLUtils?.hasThreeColumns == true) 3 else 2)
         val llm = LinearLayoutManager(this)
         matchedList.layoutManager = if (mLUtils?.isGridLayout == true) glm else llm
-//        matchedList.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(this, if (mLUtils?.isGridLayout == true) glm.orientation else llm.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(this, R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(this, R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         matchedList.addItemDecoration(insetDivider)
 
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->

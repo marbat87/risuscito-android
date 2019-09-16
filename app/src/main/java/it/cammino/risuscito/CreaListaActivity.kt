@@ -295,7 +295,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
     }
 
-    override fun onNegative(tag: String, dialog: MaterialDialog) {}
+    override fun onNegative(tag: String, dialog: MaterialDialog) {
+        // no-op
+    }
 
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
@@ -408,7 +410,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA, true) }
                             }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
+                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                                // no-op
+                            }
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ")

@@ -20,9 +20,13 @@ class GeneralIndex : Fragment(R.layout.tabs_layout) {
     private val mViewModel: GeneralIndexViewModel by viewModels()
 
     private val mPageChange: ViewPager.OnPageChangeListener = object : ViewPager.OnPageChangeListener {
-        override fun onPageScrollStateChanged(state: Int) {}
+        override fun onPageScrollStateChanged(state: Int) {
+            // no-op
+        }
 
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            // no-op
+        }
 
         override fun onPageSelected(position: Int) {
             Log.d(TAG, "onPageSelected: $position")

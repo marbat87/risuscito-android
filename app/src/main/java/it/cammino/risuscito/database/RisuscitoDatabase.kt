@@ -177,7 +177,6 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             }
         }
 
-        /** The only instance  */
         private var sInstance: RisuscitoDatabase? = null
 
         /**

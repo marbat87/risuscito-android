@@ -32,7 +32,6 @@ import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -165,8 +164,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
         val llm = LinearLayoutManager(context)
         cantiRecycler?.layoutManager = if (mMainActivity?.isGridLayout == true) glm else llm
         val insetDivider = DividerItemDecoration(requireContext(), if (mMainActivity?.isGridLayout == true) glm.orientation else llm.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         cantiRecycler?.addItemDecoration(insetDivider)
         cantiRecycler?.itemAnimator = SlideRightAlphaAnimator()
 
@@ -185,7 +183,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
 
         selectableAdapter.addEventHook(object : ClickEventHook<CheckableItem>() {
             override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
-                return (viewHolder as? CheckableItem.ViewHolder)?.checkBox as View
+                return (viewHolder as? CheckableItem.ViewHolder)?.checkBox
             }
 
             override fun onClick(
@@ -203,8 +201,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
             LinearLayoutManager(context)
         chooseRecycler?.layoutManager = llm2
         val insetDivider2 = DividerItemDecoration(requireContext(), llm2.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider2.setDrawable(it) }
         chooseRecycler?.addItemDecoration(insetDivider2)
         chooseRecycler?.itemAnimator = SlideRightAlphaAnimator()
 
@@ -319,10 +316,6 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
         return false
     }
 
-    private fun getFab(): FloatingActionButton {
-        return mMainActivity?.getFab()!!
-    }
-
     private fun enableBottombar(enabled: Boolean) {
         mMainActivity?.enableBottombar(enabled)
         if (!enabled)
@@ -360,24 +353,26 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
     }
 
     private fun fabIntro() {
-        TapTargetView.showFor(
-                requireActivity(), // `this` is an Activity
-                TapTarget.forView(
-                        getFab(),
-                        getString(R.string.title_activity_consegnati),
-                        getString(R.string.showcase_consegnati_howto))
-                        .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                        .textTypeface(mRegularFont) // Specify a typeface for the text
-                        .titleTextColor(R.color.primary_text_default_material_dark)
-                        .textColor(R.color.secondary_text_default_material_dark)
-                        .tintTarget(false) // Whether to tint the target view's color
-                ,
-                object : TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
-                    override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
-                        super.onTargetDismissed(view, userInitiated)
-                        if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CONSEGNATI, true) }
-                    }
-                })
+        mMainActivity?.getFab()?.let { fab ->
+            TapTargetView.showFor(
+                    requireActivity(), // `this` is an Activity
+                    TapTarget.forView(
+                            fab,
+                            getString(R.string.title_activity_consegnati),
+                            getString(R.string.showcase_consegnati_howto))
+                            .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                            .textTypeface(mRegularFont) // Specify a typeface for the text
+                            .titleTextColor(R.color.primary_text_default_material_dark)
+                            .textColor(R.color.secondary_text_default_material_dark)
+                            .tintTarget(false) // Whether to tint the target view's color
+                    ,
+                    object : TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
+                        override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
+                            super.onTargetDismissed(view, userInitiated)
+                            if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CONSEGNATI, true) }
+                        }
+                    })
+        }
     }
 
     private fun managerIntro() {
@@ -408,7 +403,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
                                 if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
                             }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
+                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                                // no-op
+                            }
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
@@ -512,7 +509,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
         }
     }
 
-    override fun onNegative(tag: String, dialog: MaterialDialog) {}
+    override fun onNegative(tag: String, dialog: MaterialDialog) {
+        // no-op
+    }
 
     override fun onPositive(tag: String) {
         when (tag) {
@@ -543,7 +542,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     companion object {
         private val TAG = ConsegnatiFragment::class.java.canonicalName

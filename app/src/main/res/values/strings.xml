@@ -312,6 +312,6 @@
     <string name="note_title">Nota</string>
     <string name="action_salva">Salva</string>
     <string name="dialog_save_consegnati_title">Salva consegnati</string>
-    <string name="dialog_save_consegnati_desc">Attenzione: confermando, perderati eventuali note inserite sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
+    <string name="dialog_save_consegnati_desc">Attenzione: confermando perderai eventuali note inserite sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
 </resources>
 

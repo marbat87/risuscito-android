@@ -131,10 +131,8 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
         else
             LinearLayoutManager(context)
         favouritesList?.layoutManager = llm
-//        favouritesList?.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         favouritesList?.addItemDecoration(insetDivider)
         favouritesList?.itemAnimator = SlideRightAlphaAnimator()
 

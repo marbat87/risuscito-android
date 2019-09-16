@@ -27,7 +27,6 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -225,7 +224,9 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun playIntro() {
         mMainActivity?.enableFab(true)
@@ -236,42 +237,46 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             size = sizeDp(24)
             padding = sizeDp(4)
         }
-        TapTargetSequence(requireActivity())
-                .continueOnCancel(true)
-                .targets(
-                        TapTarget.forView(
-                                getFab(),
-                                getString(R.string.showcase_listepers_title),
-                                getString(R.string.showcase_listepers_desc1))
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
-                                .descriptionTextSize(15)
-                                .tintTarget(false) // Whether to tint the target view's color
-                        ,
-                        TapTarget.forView(
-                                getFab(),
-                                getString(R.string.showcase_listepers_title),
-                                getString(R.string.showcase_listepers_desc3))
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .icon(doneDrawable)
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark))
-                .listener(
-                        object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                            override fun onSequenceFinish() {
-                                if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                            }
+        mMainActivity?.getFab()?.let { fab ->
+            TapTargetSequence(requireActivity())
+                    .continueOnCancel(true)
+                    .targets(
+                            TapTarget.forView(
+                                    fab,
+                                    getString(R.string.showcase_listepers_title),
+                                    getString(R.string.showcase_listepers_desc1))
+                                    .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                                    .titleTextColor(R.color.primary_text_default_material_dark)
+                                    .textColor(R.color.secondary_text_default_material_dark)
+                                    .descriptionTextSize(15)
+                                    .tintTarget(false) // Whether to tint the target view's color
+                            ,
+                            TapTarget.forView(
+                                    fab,
+                                    getString(R.string.showcase_listepers_title),
+                                    getString(R.string.showcase_listepers_desc3))
+                                    .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                    .icon(doneDrawable)
+                                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                                    .titleTextColor(R.color.primary_text_default_material_dark)
+                                    .textColor(R.color.secondary_text_default_material_dark))
+                    .listener(
+                            object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+                                override fun onSequenceFinish() {
+                                    if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                                }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
+                                override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                                    // no-op
+                                }
 
-                            override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                            }
-                        })
-                .start()
+                                override fun onSequenceCanceled(tapTarget: TapTarget) {
+                                    if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                                }
+                            })
+                    .start()
+        }
     }
 
     private fun subscribeUiListe() {
@@ -308,10 +313,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             return 2 + titoliListe.size
         }
 
-    }
-
-    private fun getFab(): FloatingActionButton {
-        return mMainActivity?.getFab()!!
     }
 
     private fun closeFabMenu() {

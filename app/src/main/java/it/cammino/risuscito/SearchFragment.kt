@@ -126,8 +126,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
             LinearLayoutManager(context)
         matchedList.layoutManager = llm
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         matchedList.addItemDecoration(insetDivider)
 
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
@@ -191,7 +190,9 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun ricercaStringa(s: String) {
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
