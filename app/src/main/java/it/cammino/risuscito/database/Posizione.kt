@@ -1,11 +1,10 @@
 package it.cammino.risuscito.database
 
-import it.cammino.risuscito.database.entities.Canto
-
-class Posizione : Canto() {
-
-    var timestamp: java.sql.Date? = null
-
-    var position: Int = 0
-
-}
+data class Posizione(val id: Int,
+                     val pagina: String?,
+                     val titolo: String?,
+                     val source: String?,
+                     val color: String?,
+                     val timestamp: java.sql.Date?,
+                     val position: Int
+)

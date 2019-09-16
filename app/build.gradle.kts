@@ -20,6 +20,14 @@ android {
         versionCode = 4428
         versionName = "4.4.0"
         vectorDrawables.useSupportLibrary = true
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = mapOf (
+                    "room.schemaLocation" to "$projectDir/schemas",
+                    "room.incremental" to "true",
+                    "room.expandProjection" to "true")
+            }
+        }
     }
 
 //    sourceSets {
@@ -67,7 +75,7 @@ android {
 val preferenceFixVersion = "1.1.0-alpha05"
 val fastAdapterVersion = "4.1.0-b02"
 val materialDialogsVersion = "3.1.1"
-val roomVersion = "2.1.0"
+val roomVersion = "2.2.0-rc01"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.6.3")

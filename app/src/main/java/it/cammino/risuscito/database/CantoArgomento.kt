@@ -1,21 +1,9 @@
 package it.cammino.risuscito.database
 
-class CantoArgomento {
-
-    var id: Int = 0
-
-    var pagina: String? = null
-
-    var titolo: String? = null
-
-    var source: String? = null
-
-    var color: String? = null
-
-    var link: String? = null
-
-    var idArgomento: Int = 0
-
-    var nomeArgomento: String? = null
-
-}
+data class CantoArgomento(val id: Int,
+                          val pagina: String?,
+                          val titolo: String?,
+                          val source: String?,
+                          val color: String?,
+                          val idArgomento: Int,
+                          val nomeArgomento: String?)

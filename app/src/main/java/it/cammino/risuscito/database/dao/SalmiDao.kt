@@ -13,10 +13,10 @@ import it.cammino.risuscito.database.entities.Salmo
 @Dao
 interface SalmiDao {
 
-    @get:Query("SELECT B.*, A.numSalmo, A.titoloSalmo FROM salmo A, canto B WHERE A.id = B.id ORDER BY A.numSalmo ASC, A.titoloSalmo ASC")
+    @get:Query("SELECT B.pagina, B.source, B.color, B.id, A.numSalmo, A.titoloSalmo FROM salmo A, canto B WHERE A.id = B.id ORDER BY A.numSalmo ASC, A.titoloSalmo ASC")
     val liveAll: LiveData<List<SalmoCanto>>
 
-    @get:Query("SELECT B.*, A.numSalmo, A.titoloSalmo FROM salmo A, canto B WHERE A.id = B.id ORDER BY A.numSalmo ASC, A.titoloSalmo ASC")
+    @get:Query("SELECT B.pagina, B.source, B.color, B.id, A.numSalmo, A.numSalmo, A.titoloSalmo FROM salmo A, canto B WHERE A.id = B.id ORDER BY A.numSalmo ASC, A.titoloSalmo ASC")
     val all: List<SalmoCanto>
 
     @Query("DELETE FROM salmo")

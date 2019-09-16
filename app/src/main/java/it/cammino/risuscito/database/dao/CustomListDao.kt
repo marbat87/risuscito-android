@@ -15,7 +15,7 @@ interface CustomListDao {
     @Query("DELETE FROM customlist")
     fun truncateTable()
 
-    @Query("SELECT B.*, A.timestamp, A.position FROM customlist A, canto B WHERE A.id = :id AND A.idCanto = B.id ORDER BY A.timestamp ASC")
+    @Query("SELECT B.titolo, B.pagina, B.source, B.color, B.id, A.timestamp, A.position FROM customlist A, canto B WHERE A.id = :id AND A.idCanto = B.id ORDER BY A.timestamp ASC")
     fun getList(id: Int): LiveData<List<Posizione>>
 
     @Query("SELECT B.titolo FROM customlist A , canto B WHERE A.id = :id AND A.position = :position AND A.idCanto = B.id")

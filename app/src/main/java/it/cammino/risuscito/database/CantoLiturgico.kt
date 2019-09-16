@@ -1,11 +1,9 @@
 package it.cammino.risuscito.database
 
-import it.cammino.risuscito.database.entities.Canto
-
-class CantoLiturgico : Canto() {
-
-    var idIndice: Int = 0
-
-    var nome: String? = null
-
-}
+data class CantoLiturgico(val id: Int,
+                          val pagina: String?,
+                          val titolo: String?,
+                          val source: String?,
+                          val color: String?,
+                          val idIndice: Int,
+                          val nome: String)

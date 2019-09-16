@@ -13,16 +13,16 @@ import it.cammino.risuscito.database.entities.Consegnato
 @Dao
 interface ConsegnatiDao {
 
-    @get:Query("SELECT A.*, B.idConsegnato as consegnato, B.txtNota FROM canto A, consegnato B WHERE A.id = B.idCanto")
+    @get:Query("SELECT A.titolo, A.pagina, A.source, A.color, A.id, B.idConsegnato as consegnato, B.txtNota FROM canto A, consegnato B WHERE A.id = B.idCanto")
     val liveConsegnati: LiveData<List<CantoConsegnato>>
 
-    @get:Query("SELECT A.*, B.idConsegnato as consegnato, B.txtNota FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY a.titolo ASC")
+    @get:Query("SELECT A.titolo, A.pagina, A.source, A.color, A.id, B.idConsegnato as consegnato, B.txtNota FROM canto A, consegnato B WHERE A.id = B.idCanto ORDER BY a.titolo ASC")
     val consegnati: List<CantoConsegnato>
 
-    @get:Query("SELECT A.*, coalesce(B.idConsegnato,0) as consegnato, coalesce(B.txtNota, \"\") as txtNota FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto ORDER BY A.titolo ASC")
+    @get:Query("SELECT A.titolo, A.pagina, A.source, A.color, A.id, coalesce(B.idConsegnato,0) as consegnato, coalesce(B.txtNota, '') as txtNota FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto ORDER BY A.titolo ASC")
     val liveChoosen: LiveData<List<CantoConsegnato>>
 
-    @get:Query("SELECT A.*, coalesce(B.idConsegnato,0) as consegnato, coalesce(B.txtNota, \"\") as txtNota FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto")
+    @get:Query("SELECT A.titolo, A.pagina, A.source, A.color, A.id, coalesce(B.idConsegnato,0) as consegnato, coalesce(B.txtNota, '') as txtNota FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto")
     val choosen: List<CantoConsegnato>
 
     @Query("SELECT txtNota FROM consegnato WHERE idCanto = :id")
