@@ -1,4 +1,4 @@
-package it.cammino.risuscito.database
+package it.cammino.risuscito.database.pojo
 
 data class Posizione(val id: Int,
                      val pagina: String?,

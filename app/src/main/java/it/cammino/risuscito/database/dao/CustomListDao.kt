@@ -2,8 +2,8 @@ package it.cammino.risuscito.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.entities.CustomList
+import it.cammino.risuscito.database.pojo.Posizione
 
 @Suppress("unused")
 @Dao

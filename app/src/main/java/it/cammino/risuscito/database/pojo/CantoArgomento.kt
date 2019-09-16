@@ -1,9 +1,9 @@
-package it.cammino.risuscito.database
+package it.cammino.risuscito.database.pojo
 
-data class CantoLiturgico(val id: Int,
+data class CantoArgomento(val id: Int,
                           val pagina: String?,
                           val titolo: String?,
                           val source: String?,
                           val color: String?,
-                          val idIndice: Int,
-                          val nome: String)
+                          val idArgomento: Int,
+                          val nomeArgomento: String?)

@@ -4,10 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-
-import it.cammino.risuscito.database.CantoLiturgico
 import it.cammino.risuscito.database.entities.IndiceLiturgico
 import it.cammino.risuscito.database.entities.NomeLiturgico
+import it.cammino.risuscito.database.pojo.CantoLiturgico
 
 @Suppress("unused")
 @Dao

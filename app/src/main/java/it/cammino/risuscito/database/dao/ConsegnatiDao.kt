@@ -6,8 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Update
-import it.cammino.risuscito.database.CantoConsegnato
 import it.cammino.risuscito.database.entities.Consegnato
+import it.cammino.risuscito.database.pojo.CantoConsegnato
 
 @Suppress("unused")
 @Dao

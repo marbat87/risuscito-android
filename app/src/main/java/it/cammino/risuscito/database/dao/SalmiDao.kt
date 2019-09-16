@@ -5,9 +5,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-
-import it.cammino.risuscito.database.SalmoCanto
 import it.cammino.risuscito.database.entities.Salmo
+import it.cammino.risuscito.database.pojo.SalmoCanto
 
 @Suppress("unused")
 @Dao

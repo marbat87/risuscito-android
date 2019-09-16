@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import it.cammino.risuscito.database.CantoArgomento
 import it.cammino.risuscito.database.entities.Argomento
 import it.cammino.risuscito.database.entities.NomeArgomento
+import it.cammino.risuscito.database.pojo.CantoArgomento
 
 @Suppress("unused")
 @Dao

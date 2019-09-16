@@ -22,8 +22,8 @@ import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.database.pojo.Posizione
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.items.listaPersonalizzataItem
 import it.cammino.risuscito.items.posizioneTitleItem
