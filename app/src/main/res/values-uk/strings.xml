@@ -10,7 +10,6 @@
     <string name="page_order_text">Зміст по сторінкам</string>
     <string name="search_name_text">Пошук</string>
     <string name="arg_search_text">Літургічний зміст</string>
-    <!--<string name="button_pulisci">ОЧИСТИТИ</string>-->
     <string name="always_on">Відкл. сплячий режим</string>
     <string name="always_on_summary">Не переходить на сплячий режим поки відкритий додаток.</string>
     <string name="title_activity_favourites">Закладки</string>
@@ -298,13 +297,13 @@
     <string name="ok">OK</string>
     <string name="import_confirm">Імпортувати</string>
     <string name="default_search_title">Пошук за замовчуванням</string>
-    <string name="default_search_summary">Визначте,gdrive_restore_success який вид пошуку має вікриватись за замовчуванням, коли відкриваєте додаток:</string>
+    <string name="default_search_summary">Визначте, який вид пошуку має вікриватись за замовчуванням, коли відкриваєте додаток:</string>
     <string name="night_mode_light">Світла</string>
     <string name="night_mode_dark">Темна</string>
     <string name="night_mode_auto_battery">Автоматично для збереження енергії</string>
     <string name="night_mode_auto_system">Автоматично по системі</string>
     <string name="note_title">Нотаток</string>
     <string name="action_salva">Зберегти</string>
-    <string name="dialog_save_consegnati_title">Salva consegnati</string>
-    <string name="dialog_save_consegnati_desc">Attenzione: confermando, perderati eventuali note inserite sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
+    <string name="dialog_save_consegnati_title">Зберегти вручені</string>
+    <string name="dialog_save_consegnati_desc">Увага: підтвердивши, ти втратиш можливі нотатки у вручених піснях, які ти видаляєш. Продовжити видалення?</string>
 </resources>

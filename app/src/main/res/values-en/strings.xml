@@ -10,7 +10,6 @@
     <string name="page_order_text">Page index</string>
     <string name="search_name_text">Song searching</string>
     <string name="arg_search_text">Analytical index</string>
-    <!--<string name="button_pulisci">CLEAR</string>-->
     <string name="always_on">No standby</string>
     <string name="always_on_summary">It prevents the display to move to standby inside the application.</string>
     <string name="title_activity_favourites">Favorites</string>
@@ -298,6 +297,6 @@ Do you want to proceed?</string>
     <string name="night_mode_auto_system">System default</string>
     <string name="note_title">Note</string>
     <string name="action_salva">Save</string>
-    <string name="dialog_save_consegnati_title">Salva consegnati</string>
-    <string name="dialog_save_consegnati_desc">Attenzione: confermando, perderati eventuali note inserite sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
+    <string name="dialog_save_consegnati_title">Save delivered songs</string>
+    <string name="dialog_save_consegnati_desc">Attention: by confirming you will delete any notes saved on delivered songs you\'re removing. Do you want to continue saving?</string>
 </resources>
