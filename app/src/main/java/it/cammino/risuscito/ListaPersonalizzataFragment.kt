@@ -86,7 +86,7 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
 
         button_condividi.setOnClickListener {
             val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, shareIntent)
-            bottomSheetDialog.show(requireFragmentManager(), null)
+            bottomSheetDialog.show(parentFragmentManager, null)
         }
 
         button_invia_file.setOnClickListener {
@@ -95,7 +95,7 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
             @Suppress("SENSELESS_COMPARISON")
             if (exportUri != null) {
                 val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getSendIntent(exportUri))
-                bottomSheetDialog.show(requireFragmentManager(), null)
+                bottomSheetDialog.show(parentFragmentManager, null)
             } else
                 Snackbar.make(
                         requireActivity().main_content,
@@ -206,7 +206,7 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
                                 R.string.song_removed,
                                 Snackbar.LENGTH_LONG)
                                 .setAction(
-                                        getString(R.string.cancel).toUpperCase()
+                                        getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
                                 ) {
                                     mCantiViewModel.listaPersonalizzata?.addCanto(cantoDaCanc, posizioneDaCanc)
                                     runUpdate()

@@ -86,7 +86,7 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
 
         button_condividi.setOnClickListener {
             val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
-            bottomSheetDialog.show(requireFragmentManager(), null)
+            bottomSheetDialog.show(parentFragmentManager, null)
         }
     }
 

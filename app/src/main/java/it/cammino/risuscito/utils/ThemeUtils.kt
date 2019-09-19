@@ -103,13 +103,13 @@ class ThemeUtils(context: Context) {
             }
         }
 
-        fun getNightModeText(context: Context): String {
-            return when (getPrefNightMode(context)) {
-                LIGHT_MODE -> context.getString(R.string.night_mode_light)
-                DARK_MODE -> context.getString(R.string.night_mode_dark)
-                else -> context.getString(if (LUtils.hasP()) R.string.night_mode_auto_system else R.string.night_mode_auto_battery)
-            }
-        }
+//        fun getNightModeText(context: Context): String {
+//            return when (getPrefNightMode(context)) {
+//                LIGHT_MODE -> context.getString(R.string.night_mode_light)
+//                DARK_MODE -> context.getString(R.string.night_mode_dark)
+//                else -> context.getString(if (LUtils.hasP()) R.string.night_mode_auto_system else R.string.night_mode_auto_battery)
+//            }
+//        }
 
         private fun getPrefNightMode(context: Context): String {
             return PreferenceManager.getDefaultSharedPreferences(context).getString(NIGHT_MODE, DEFAULT_MODE)
