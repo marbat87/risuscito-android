@@ -17,7 +17,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(29)
         multiDexEnabled = true
-        versionCode = 4430
+        versionCode = 4431
         versionName = "4.4.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -101,8 +101,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:17.0.0")
     implementation("com.google.firebase:firebase-core:17.2.0")
     implementation("com.google.firebase:firebase-firestore-ktx:21.1.1")
-    implementation("com.google.firebase:firebase-storage:19.0.1")
-    implementation("com.google.firebase:firebase-auth:19.0.0")
+    implementation("com.google.firebase:firebase-storage-ktx:19.1.0")
+    implementation("com.google.firebase:firebase-auth:19.1.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")

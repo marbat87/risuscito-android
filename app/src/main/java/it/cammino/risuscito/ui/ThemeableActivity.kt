@@ -19,6 +19,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.mikepenz.iconics.utils.setIconicsFactory
@@ -201,7 +202,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (userId == null)
             throw NoIdException()
 
-        val storage = FirebaseStorage.getInstance()
+        val storage = Firebase.storage
         val storageRef = storage.reference
         val risuscitoDb = RisuscitoDatabase.getInstance(this)
 
