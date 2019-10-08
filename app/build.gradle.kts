@@ -73,7 +73,7 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0-alpha05"
-val fastAdapterVersion = "4.1.0-b02"
+val fastAdapterVersion = "4.1.0"
 val materialDialogsVersion = "3.1.1"
 val roomVersion = "2.2.0-rc01"
 dependencies {
@@ -82,9 +82,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.1.0-alpha03")
     implementation("androidx.core:core-ktx:1.2.0-alpha04")
     implementation("androidx.fragment:fragment-ktx:1.2.0-alpha04")
-    implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("com.google.android.material:material:1.1.0-alpha10")
-    implementation("androidx.viewpager2:viewpager2:1.0.0-beta04")
+    implementation("com.google.android.material:material:1.1.0-beta01")
     implementation("androidx.recyclerview:recyclerview:1.1.0-beta04")
     implementation("androidx.drawerlayout:drawerlayout:1.1.0-alpha03")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
@@ -108,7 +106,7 @@ dependencies {
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
-    implementation("com.mikepenz:materialdrawer:7.0.0-rc07")
+    implementation("com.mikepenz:materialdrawer:7.0.0-rc08")
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:iconics-core:4.0.1-b02")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
@@ -126,10 +124,10 @@ dependencies {
     implementation("pub.devrel:easypermissions:3.0.0")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.2")
-    implementation("com.leinardi.android:speed-dial:3.1.0")
+    implementation("com.leinardi.android:speed-dial:3.1.1")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation("com.github.Ferfalk:SimpleSearchView:0.1.3")
     implementation("com.github.MFlisar:changelog:1.1.6")
     implementation("com.github.zawadz88.materialpopupmenu:material-popup-menu:3.4.0")
-    implementation("com.github.stupacki:MultiFunctions:1.2.1")
+    implementation("com.github.stupacki:MultiFunctions:1.2.2")
 }
