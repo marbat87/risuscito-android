@@ -172,11 +172,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         setupNavDrawer(savedInstanceState)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
-            }
-        }
+//        if (savedInstanceState == null) {
+//            supportFragmentManager.commit {
+//                replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
+//            }
+//        }
         toolbar_layout?.setExpanded(true, false)
 
         // [START configure_signin]

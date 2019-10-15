@@ -75,23 +75,24 @@ android {
 val preferenceFixVersion = "1.1.0-alpha05"
 val fastAdapterVersion = "4.1.0"
 val materialDialogsVersion = "3.1.1"
-val roomVersion = "2.2.0-rc01"
+val roomVersion = "2.2.0"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.6.3")
-    implementation("androidx.activity:activity-ktx:1.1.0-alpha03")
-    implementation("androidx.core:core-ktx:1.2.0-alpha04")
-    implementation("androidx.fragment:fragment-ktx:1.2.0-alpha04")
+    implementation("androidx.activity:activity-ktx:1.1.0-beta01")
+    implementation("androidx.core:core-ktx:1.2.0-beta01")
+    implementation("androidx.fragment:fragment-ktx:1.2.0-beta02")
     implementation("com.google.android.material:material:1.1.0-beta01")
-    implementation("androidx.recyclerview:recyclerview:1.1.0-beta04")
+    implementation("androidx.viewpager2:viewpager2:1.0.0-beta05")
+    implementation("androidx.recyclerview:recyclerview:1.1.0-beta05")
     implementation("androidx.drawerlayout:drawerlayout:1.1.0-alpha03")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03")
     implementation("androidx.media:media:1.1.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha05")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha05")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-beta01")
     implementation("androidx.preference:preference-ktx:1.1.0")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
