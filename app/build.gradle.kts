@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+
 plugins {
     id("com.android.application")
     id("io.fabric")
@@ -17,7 +19,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(29)
         multiDexEnabled = true
-        versionCode = 4431
+        versionCode = 4433
         versionName = "4.4.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -40,7 +42,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    kotlinOptions {
+    (kotlinOptions as KotlinJvmOptions).apply {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
@@ -75,31 +77,32 @@ android {
 val preferenceFixVersion = "1.1.0-alpha05"
 val fastAdapterVersion = "4.1.0"
 val materialDialogsVersion = "3.1.1"
-val roomVersion = "2.2.0"
+val roomVersion = "2.2.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.play:core:1.6.3")
-    implementation("androidx.activity:activity-ktx:1.1.0-beta01")
+    implementation("com.google.android.play:core:1.6.4")
+    implementation("androidx.activity:activity-ktx:1.1.0-rc01")
     implementation("androidx.core:core-ktx:1.2.0-beta01")
-    implementation("androidx.fragment:fragment-ktx:1.2.0-beta02")
-    implementation("com.google.android.material:material:1.1.0-beta01")
-    implementation("androidx.viewpager2:viewpager2:1.0.0-beta05")
-    implementation("androidx.recyclerview:recyclerview:1.1.0-beta05")
+    implementation("androidx.fragment:fragment-ktx:1.2.0-rc01")
+    implementation("androidx.coordinatorlayout:coordinatorlayout:1.1.0-rc01")
+    implementation("com.google.android.material:material:1.2.0-alpha01")
+    implementation("androidx.viewpager2:viewpager2:1.0.0-rc01")
+    implementation("androidx.recyclerview:recyclerview:1.1.0-rc01")
     implementation("androidx.drawerlayout:drawerlayout:1.1.0-alpha03")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03")
-    implementation("androidx.media:media:1.1.0")
+    implementation("androidx.media:media:1.2.0-alpha01")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-beta01")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc01")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc01")
     implementation("androidx.preference:preference-ktx:1.1.0")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:17.0.0")
-    implementation("com.google.firebase:firebase-core:17.2.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.1.1")
+    implementation("com.google.firebase:firebase-core:17.2.1")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.2.1")
     implementation("com.google.firebase:firebase-storage-ktx:19.1.0")
     implementation("com.google.firebase:firebase-auth:19.1.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }
@@ -109,7 +112,7 @@ dependencies {
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:7.0.0-rc08")
     implementation("com.mikepenz:crossfader:1.6.0")
-    implementation("com.mikepenz:iconics-core:4.0.1-b02")
+    implementation("com.mikepenz:iconics-core:4.0.1")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.afollestad:material-cab:1.3.1")

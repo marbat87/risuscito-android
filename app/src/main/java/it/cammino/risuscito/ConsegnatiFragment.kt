@@ -26,12 +26,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.github.zawadz88.materialpopupmenu.ViewBoundCallback
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -43,9 +43,9 @@ import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
+import it.cammino.risuscito.dialogs.ListChoiceDialogFragment
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
-import it.cammino.risuscito.dialogs.TextAreaDialogFragment
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
@@ -55,11 +55,12 @@ import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
+import kotlinx.android.synthetic.main.common_top_toolbar.*
 import kotlinx.android.synthetic.main.layout_consegnati.*
-import kotlinx.android.synthetic.main.text_area.view.*
+import kotlinx.android.synthetic.main.view_custom_item_checkable.view.*
 import java.lang.ref.WeakReference
 
-class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
+class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFragment.SimpleCallback, ListChoiceDialogFragment.ListChoiceCallback {
 
     private var cantoAdapter: FastItemAdapter<NotableItem> = FastItemAdapter()
 
@@ -70,6 +71,8 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
     private var mRegularFont: Typeface? = null
+    private lateinit var passaggiArray: IntArray
+    private val passaggiValues: MutableMap<Int, Int> = mutableMapOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,6 +83,16 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
         mMainActivity?.setupToolbarTitle(R.string.title_activity_consegnati)
         mMainActivity?.setTabVisible(false)
         initFab()
+
+        passaggiArray = resources.getIntArray(R.array.passaggi_values)
+        for (i in passaggiArray.indices)
+            passaggiValues[passaggiArray[i]] = i
+
+        val passaggiTitles = resources.getStringArray(R.array.passaggi_entries)
+        if (mCantiViewModel.passaggiFilterList.isEmpty()) {
+            for (i in passaggiTitles.indices)
+                mCantiViewModel.passaggiFilterList.add(ConsegnatiViewModel.OptionValue(passaggiArray[i], passaggiTitles[i]))
+        }
 
         activity?.bottom_bar?.let {
             it.menu?.clear()
@@ -146,10 +159,12 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
                 mMainActivity?.let { activity ->
                     mCantiViewModel.mIdConsegnatoSelected = item.idConsegnato
                     mCantiViewModel.mIdCantoSelected = item.id
-                    TextAreaDialogFragment.Builder(
-                            activity, this@ConsegnatiFragment, ADD_NOTE)
-                            .title(R.string.note_title)
-                            .prefill(item.txtNota)
+                    val prefill = passaggiValues[item.numPassaggio] ?: -1
+                    ListChoiceDialogFragment.Builder(
+                            activity, this@ConsegnatiFragment, ADD_PASSAGE)
+                            .title(R.string.passage_title)
+                            .listArrayId(R.array.passaggi_entries)
+                            .initialSelection(prefill)
                             .positiveButton(R.string.action_salva)
                             .negativeButton(R.string.cancel)
                             .show()
@@ -158,7 +173,10 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
         })
 
         cantoAdapter.set(mCantiViewModel.titoli)
-
+        cantoAdapter.itemFilter.filterPredicate = { item: NotableItem, constraint: CharSequence? ->
+            val found = constraint?.split("|")?.filter { it.toInt() == item.numPassaggio }
+            !found.isNullOrEmpty()
+        }
         cantiRecycler?.adapter = cantoAdapter
         val glm = GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         val llm = LinearLayoutManager(context)
@@ -250,8 +268,8 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
             managed
         }
 
-        TextAreaDialogFragment.findVisible(mMainActivity, ADD_NOTE)?.setmCallback(this)
-        TextAreaDialogFragment.findVisible(mMainActivity, CONFIRM_SAVE)?.setmCallback(this)
+        ListChoiceDialogFragment.findVisible(mMainActivity, ADD_PASSAGE)?.setmCallback(this)
+        SimpleDialogFragment.findVisible(mMainActivity, CONFIRM_SAVE)?.setmCallback(this)
 
     }
 
@@ -296,15 +314,54 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
                     requireActivity().menuInflater, requireContext(), R.menu.consegnati_menu, menu)
             val item = menu.findItem(R.id.action_search)
             requireActivity().searchView.setMenuItem(item)
-        } else
+        } else {
+            var filterisSet = false
+            for (optionItem: ConsegnatiViewModel.OptionValue in mCantiViewModel.passaggiFilterList) {
+                if (optionItem.checked) {
+                    filterisSet = true
+                    break
+                }
+            }
             IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater, requireActivity(), R.menu.help_menu, menu)
+                    requireActivity().menuInflater, requireActivity(), if (filterisSet) R.menu.help_menu_with_reset_filter else R.menu.help_menu, menu)
+        }
 
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_filter -> {
+                val popupMenu = popupMenu {
+                    dropdownGravity = Gravity.END
+                    section {
+                        title = getString(R.string.passage_filter)
+                        for (optionItem: ConsegnatiViewModel.OptionValue in mCantiViewModel.passaggiFilterList) {
+                            customItem {
+                                layoutResId = R.layout.view_custom_item_checkable
+                                dismissOnSelect = false
+                                viewBoundCallback = ViewBoundCallback { view ->
+                                    view.customItemText.text = optionItem.title
+                                    view.customItemCheckbox.isChecked = optionItem.checked
+                                    view.customItemCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                                        optionItem.checked = isChecked
+                                        cantoAdapter.filter(mCantiViewModel.passaggiFilterList.filter { it.checked }.joinToString("|"))
+                                        activity?.invalidateOptionsMenu()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                popupMenu.show(requireContext(), requireActivity().risuscito_toolbar)
+                return true
+            }
+            R.id.action_filter_remove -> {
+                for (optionItem: ConsegnatiViewModel.OptionValue in mCantiViewModel.passaggiFilterList)
+                    optionItem.checked = false
+                cantoAdapter.filter(mCantiViewModel.passaggiFilterList.filter { it.checked }.joinToString("|"))
+                activity?.invalidateOptionsMenu()
+            }
             R.id.action_help -> {
                 if (mCantiViewModel.editMode)
                     managerIntro()
@@ -418,6 +475,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
         mCantiViewModel.mIndexResult?.observe(this) { cantos ->
             mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
             cantoAdapter.set(mCantiViewModel.titoli)
+            cantoAdapter.filter(mCantiViewModel.passaggiFilterList.filter { it.checked }.joinToString("|"))
             no_consegnati?.isInvisible = cantoAdapter.adapterItemCount > 0
             cantiRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
         }
@@ -495,22 +553,18 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
         }
     }
 
-    override fun onPositive(tag: String, dialog: MaterialDialog) {
+    override fun onPositive(tag: String, index: Int) {
         when (tag) {
-            ADD_NOTE -> {
+            ADD_PASSAGE -> {
                 val consegnato = Consegnato().apply {
                     idConsegnato = mCantiViewModel.mIdConsegnatoSelected
                     idCanto = mCantiViewModel.mIdCantoSelected
-                    txtNota = dialog.getCustomView().text_area_field.text.toString()
+                    numPassaggio = passaggiArray[index]
                 }
                 val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
                 ioThread { mDao.updateConsegnato(consegnato) }
             }
         }
-    }
-
-    override fun onNegative(tag: String, dialog: MaterialDialog) {
-        // no-op
     }
 
     override fun onPositive(tag: String) {
@@ -549,7 +603,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), TextAreaDialogF
     companion object {
         private val TAG = ConsegnatiFragment::class.java.canonicalName
         private const val CONSEGNATI_SAVING = "CONSEGNATI_SAVING"
-        private const val ADD_NOTE = "ADD_NOTE"
+        private const val ADD_PASSAGE = "ADD_PASSAGE"
         private const val CONFIRM_SAVE = "CONFIRM_SAVE"
     }
 }

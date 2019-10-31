@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4431"
-        date="October 2019"
+    <release versionCode="4433"
+        date="November 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANT[/b]: New Backup/Restore system, visually the procedure is the same, changes are only "under the hood". The old backup has been removed, you must upload a new one</new>
         <bugfix>Bugfixes</bugfix>
@@ -15,7 +15,7 @@
             However it depends on O.S. version and in some cases on device manufacturer</new>
         <new>Now the application uses less storage because only system language translation is installed by default.
             Additional languages will be downloaded at runtime when you change the related setting</new>
-        <new>New feature to add a note for each delivered Song (for example you can note the when it has been delivered)</new>
+        <new>New feature to select the passage delivered Sons and to filter them by the passage itself</new>
     </release>
 
     <release versionCode="0"

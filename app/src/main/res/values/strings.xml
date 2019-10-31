@@ -309,9 +309,26 @@
     <string name="night_mode_dark">Scuro</string>
     <string name="night_mode_auto_battery">Automatico da risparmio energetico</string>
     <string name="night_mode_auto_system">Automatico da sistema</string>
-    <string name="note_title">Nota</string>
     <string name="action_salva">Salva</string>
     <string name="dialog_save_consegnati_title">Salva consegnati</string>
     <string name="dialog_save_consegnati_desc">Attenzione: confermando perderai eventuali note inserite sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
+    <string name="passage_title">Seleziona passaggio</string>
+    <string name="passage_filter">Filtra per passaggio</string>
+    <string name="filters_remove">Rimuovi filtri</string>
+    <string name="catechesi_iniziali">Catechesi iniziali</string>
+    <string name="scrutinio_1">Primo scrutinio</string>
+    <string name="shema">Shemà</string>
+    <string name="scrutinio_2">Secondo scrutinio</string>
+    <string name="iniziazione_preghiera">Iniziazione alla preghiera</string>
+    <string name="traditio">Traditio</string>
+    <string name="ritraditio">Re-traditio</string>
+    <string name="redditio">Redditio</string>
+    <string name="padre_nostro_1">Padre nostro - 1^ parte</string>
+    <string name="padre_nostro_2">Padre nostro - 2^ parte</string>
+    <string name="padre_nostro_3">Padre nostro - conclusione</string>
+    <string name="elezione_1">Elezione - 1^ parte</string>
+    <string name="elezione_2">Elezione - Parte intermedia</string>
+    <string name="elezione_3">Elezione - finale</string>
+    <string name="passaggio_none">Nessuno</string>
 </resources>
 

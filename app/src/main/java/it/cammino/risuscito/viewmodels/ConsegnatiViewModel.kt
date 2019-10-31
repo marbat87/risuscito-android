@@ -26,6 +26,8 @@ class ConsegnatiViewModel(application: Application) : AndroidViewModel(applicati
     var mIdConsegnatoSelected: Int = 0
     var mIdCantoSelected: Int = 0
 
+    val passaggiFilterList: ArrayList<OptionValue> = ArrayList()
+
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
         mIndexResult = mDb.consegnatiDao().liveConsegnati.map { canti ->
@@ -39,11 +41,19 @@ class ConsegnatiViewModel(application: Application) : AndroidViewModel(applicati
                             setColor = it.color
                             id = it.id
                             idConsegnato = it.consegnato
-                            txtNota = it.txtNota
+                            numPassaggio = it.numPassaggio
                         }
                 )
             }
             newList
+        }
+    }
+
+    class OptionValue(var value: Int, var title: String) {
+        var checked: Boolean = false
+
+        override fun toString(): String {
+            return value.toString()
         }
     }
 

@@ -54,7 +54,7 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
 
     var idConsegnato: Int = 0
 
-    var txtNota: String = ""
+    var numPassaggio: Int = -1
 
     /**
      * defines the type defining this item. must be unique. preferably an id
@@ -92,8 +92,8 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
 
-        val icon = ctx.iconicsDrawable(if (txtNota.isBlank()) CommunityMaterial.Icon2.cmd_note_plus else CommunityMaterial.Icon2.cmd_note_text) {
-            color = colorInt(if (txtNota.isBlank()) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary))
+        val icon = ctx.iconicsDrawable(if (numPassaggio == -1) CommunityMaterial.Icon2.cmd_note_plus else CommunityMaterial.Icon2.cmd_note_text) {
+            color = colorInt(if (numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary))
             size = sizeDp(24)
             padding = sizeDp(2)
         }

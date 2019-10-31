@@ -3,6 +3,16 @@
     xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_filter_remove"
+        android:orderInCategory="98"
+        android:title="@string/passage_filter"
+        risuscito:ico_color="@android:color/white"
+        risuscito:ico_icon="cmd_filter_remove"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        risuscito:showAsAction="always" />
+
+    <item
         android:id="@+id/action_filter"
         android:orderInCategory="98"
         android:title="@string/passage_filter"

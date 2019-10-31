@@ -12,7 +12,7 @@ import it.cammino.risuscito.database.dao.*
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.utils.ioThread
 
-@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 6)
+@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 7)
 @TypeConverters(Converters::class)
 abstract class RisuscitoDatabase : RoomDatabase() {
 
@@ -87,6 +87,15 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 5 to 6")
                 database.execSQL("ALTER TABLE Consegnato ADD COLUMN txtNota TEXT NOT NULL DEFAULT \"\"")
+            }
+        }
+
+        private val MIGRATION_6_7 = Migration6to7()
+
+        class Migration6to7 : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 6 to 7")
+                database.execSQL("ALTER TABLE Consegnato ADD COLUMN numPassaggio INTEGER NOT NULL DEFAULT -1")
             }
         }
 
@@ -192,7 +201,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 Log.d(TAG, "getInstance: NULL")
                 synchronized(LOCK) {
                     sInstance = Room.databaseBuilder(context.applicationContext, RisuscitoDatabase::class.java, dbName)
-                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                             .addCallback(object : Callback() {
                                 /**
                                  * Called when the database is created for the first time. This is called after all the

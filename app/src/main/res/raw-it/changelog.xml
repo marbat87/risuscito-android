@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4431"
-        date="Ottobre 2019"
+    <release versionCode="4433"
+        date="Novembre 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANTE[/b]: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le
             modifiche sono solo "sotto il cofano". Devi creare un nuovo backup da uno dei tuoi
@@ -21,7 +21,7 @@
             Il funzionamento dipende comunque dalla versione del S.O. e in alcuni casi dal produttore del dispositivo</new>
         <new>Adesso l'applicazione occupa meno spazio perchè di default viene installata solo la lingua di sistema.
             Eventuali risorse per lingue aggiuntive saranno scaricate nel momento in cui si cambia la relativa impostazione</new>
-        <new>Nuova funzione per aggiungere una nota per ogni canto consegnato (per esempio puoi annotare quando ti è stato consegnato)</new>
+        <new>Nuova funzione per selezionare il passaggio per i canti consegnati e di filtrarli per passaggio</new>
     </release>
 
     <release versionCode="0"
