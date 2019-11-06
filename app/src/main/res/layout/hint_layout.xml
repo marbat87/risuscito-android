@@ -11,60 +11,60 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="@dimen/myListPreferredItemHeightMedium"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:orientation="vertical"
         android:weightSum="1">
 
         <View
             android:layout_width="2dp"
             android:layout_height="0dp"
-            android:background="@android:color/transparent"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:background="@android:color/transparent" />
 
         <View
             android:layout_width="2dp"
             android:layout_height="0dp"
-            android:background="#CCCCCC"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.5"
+            android:background="#CCCCCC" />
 
     </LinearLayout>
 
-    <ImageView
+    <com.mikepenz.iconics.view.IconicsImageView
         android:id="@+id/question_mark"
-        android:translationZ="1dp"
-        android:layout_centerInParent="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:gravity="center"
-        risuscito:ico_icon="cmd-help"
-        risuscito:ico_size="24dp"
-        risuscito:ico_padding="5dp"
-        risuscito:ico_color="@android:color/white"
-        android:background="@drawable/oval_bg_hint"
-        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
         android:layout_marginStart="@dimen/myListPreferredItemMargin"
+        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+        android:background="@drawable/oval_bg_hint"
+        android:contentDescription="@null"
+        android:gravity="center"
+        android:translationZ="1dp"
+        risuscito:iiv_color="@android:color/white"
+        risuscito:iiv_icon="cmd-help"
+        risuscito:iiv_padding="5dp"
+        risuscito:iiv_size="24dp"
         tools:ignore="MissingPrefix"
-        tools:targetApi="lollipop"
-        android:contentDescription="@null" />
+        tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/hint_text"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Design.Hint"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
-        tools:text="@string/showcase_rename_desc"
-        android:textColor="?android:textColorPrimary"
-        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
         android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
         android:layout_marginRight="@dimen/myListPreferredItemMargin"
-        android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
+        android:textAppearance="@style/TextAppearance.Design.Hint"
+        android:textColor="?android:textColorPrimary"
+        tools:text="@string/showcase_rename_desc" />
 
 </RelativeLayout>

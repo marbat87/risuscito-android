@@ -19,7 +19,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(29)
         multiDexEnabled = true
-        versionCode = 4433
+        versionCode = 4435
         versionName = "4.4.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -78,6 +78,7 @@ val preferenceFixVersion = "1.1.0-alpha05"
 val fastAdapterVersion = "4.1.0"
 val materialDialogsVersion = "3.1.1"
 val roomVersion = "2.2.1"
+val iconicVersion = "4.0.2"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.6.4")
@@ -112,7 +113,8 @@ dependencies {
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:7.0.0-rc08")
     implementation("com.mikepenz:crossfader:1.6.0")
-    implementation("com.mikepenz:iconics-core:4.0.1")
+    implementation("com.mikepenz:iconics-core:$iconicVersion")
+    implementation ("com.mikepenz:iconics-views:$iconicVersion")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.afollestad:material-cab:1.3.1")

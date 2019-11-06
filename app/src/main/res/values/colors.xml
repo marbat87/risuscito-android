@@ -3,6 +3,8 @@
 
     <color name="ic_launcher_background">#A24444</color>
 
+    <color name="ic_notification_color">#FFFFFFFF</color>
+
     <color name="theme_primary">@color/md_indigo_500</color>
     <color name="theme_accent">@color/md_orange_A200</color>
     <color name="theme_primary_dark">@color/md_indigo_700</color>

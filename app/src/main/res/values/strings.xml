@@ -311,7 +311,7 @@
     <string name="night_mode_auto_system">Automatico da sistema</string>
     <string name="action_salva">Salva</string>
     <string name="dialog_save_consegnati_title">Salva consegnati</string>
-    <string name="dialog_save_consegnati_desc">Attenzione: confermando perderai eventuali note inserite sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
+    <string name="dialog_save_consegnati_desc">Attenzione: confermando perderai eventuali passaggi inseriti sui canti consegnati che stai eliminando. Vuoi proseguire con il salvataggio?</string>
     <string name="passage_title">Seleziona passaggio</string>
     <string name="passage_filter">Filtra per passaggio</string>
     <string name="filters_remove">Rimuovi filtri</string>

@@ -31,13 +31,12 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
         var i = 0
         val mDao = RisuscitoDatabase.getInstance(applicationContext).consegnatiDao()
         val consegnati = ArrayList<Consegnato>()
-//        mDao.emptyConsegnati()
         ids?.let {
             for (id in it) {
                 val tempConsegnato = Consegnato()
                 tempConsegnato.idConsegnato = ++i
                 tempConsegnato.idCanto = id
-                tempConsegnato.txtNota = mDao.getNota(id) ?: ""
+                tempConsegnato.numPassaggio = mDao.getNumPassaggio(id)
                 consegnati.add(tempConsegnato)
                 try {
                     mDao.insertConsegnati(tempConsegnato)

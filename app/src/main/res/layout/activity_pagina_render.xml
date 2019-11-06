@@ -42,7 +42,7 @@
                 android:minHeight="@dimen/myListPreferredItemHeightMedium"
                 android:visibility="invisible">
 
-                <ImageView
+                <com.mikepenz.iconics.view.IconicsImageView
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:layout_alignParentStart="true"
@@ -53,10 +53,10 @@
                     android:contentDescription="@null"
                     android:gravity="center"
                     android:translationZ="1dp"
-                    risuscito:ico_color="?android:textColorSecondary"
-                    risuscito:ico_icon="cmd-music-note-off"
-                    risuscito:ico_padding="5dp"
-                    risuscito:ico_size="24dp"
+                    risuscito:iiv_color="?android:textColorSecondary"
+                    risuscito:iiv_icon="cmd-music-note-off"
+                    risuscito:iiv_padding="5dp"
+                    risuscito:iiv_size="24dp"
                     tools:ignore="MissingPrefix"
                     tools:targetApi="lollipop" />
 
@@ -84,7 +84,7 @@
                 android:minHeight="@dimen/myListPreferredItemHeightMedium"
                 android:visibility="invisible">
 
-                <ImageView
+                <com.mikepenz.iconics.view.IconicsImageView
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:layout_alignParentStart="true"
@@ -95,10 +95,10 @@
                     android:contentDescription="@null"
                     android:gravity="center"
                     android:translationZ="1dp"
-                    risuscito:ico_color="?android:textColorSecondary"
-                    risuscito:ico_icon="cmd-cloud-off-outline"
-                    risuscito:ico_padding="5dp"
-                    risuscito:ico_size="24dp"
+                    risuscito:iiv_color="?android:textColorSecondary"
+                    risuscito:iiv_icon="cmd-cloud-off-outline"
+                    risuscito:iiv_padding="5dp"
+                    risuscito:iiv_size="24dp"
                     tools:ignore="MissingPrefix"
                     tools:targetApi="lollipop" />
 
@@ -140,14 +140,14 @@
                 <FrameLayout
                     android:layout_width="0dip"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:maxHeight="1000dp">
+                    android:layout_weight="1">
 
                     <SeekBar
                         android:id="@+id/music_seekbar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
+                        android:maxHeight="1000dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp" />
 
@@ -157,15 +157,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:indeterminate="true"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
+                        android:indeterminate="true"
                         android:visibility="gone"
                         risuscito:mpb_progressStyle="horizontal" />
 
                 </FrameLayout>
 
-                <ImageView
+                <com.mikepenz.iconics.view.IconicsImageView
                     android:id="@+id/play_song"
                     android:layout_width="@dimen/abc_action_bar_default_height_material"
                     android:layout_height="@dimen/abc_action_bar_default_height_material"
@@ -179,10 +179,10 @@
                     android:scaleType="fitCenter"
                     android:soundEffectsEnabled="true"
                     android:visibility="gone"
-                    risuscito:ico_color="@color/text_color_secondary"
-                    risuscito:ico_icon="cmd-play"
-                    risuscito:ico_padding="2dp"
-                    risuscito:ico_size="24dp"
+                    risuscito:iiv_color="?android:textColorSecondary"
+                    risuscito:iiv_icon="cmd-play"
+                    risuscito:iiv_padding="2dp"
+                    risuscito:iiv_size="24dp"
                     tools:ignore="MissingPrefix" />
 
                 <me.zhanghai.android.materialprogressbar.MaterialProgressBar
@@ -208,8 +208,8 @@
 
         </FrameLayout>
 
-        <WebView
-            android:id="@+id/cantoView"
+        <include
+            layout="@layout/common_webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignWithParentIfMissing="true"

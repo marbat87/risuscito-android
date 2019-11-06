@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeightSmall"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     android:elevation="4dp"
     tools:ignore="UnusedAttribute">
 
     <LinearLayout
-        android:layout_toLeftOf="@+id/group_indicator"
-        android:layout_toStartOf="@+id/group_indicator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/myListPreferredItemMargin"
-        android:paddingStart="@dimen/myListPreferredItemMargin"
-        android:paddingRight="@dimen/myListPreferredItemMargin"
-        android:paddingEnd="@dimen/myListPreferredItemMargin"
         android:layout_centerInParent="true"
+        android:layout_toStartOf="@+id/group_indicator"
+        android:layout_toLeftOf="@+id/group_indicator"
         android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:paddingLeft="@dimen/myListPreferredItemMargin"
+        android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:paddingRight="@dimen/myListPreferredItemMargin">
 
         <TextView
             android:id="@+id/group_title"
@@ -26,38 +26,38 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
             android:textColor="?android:textColorPrimary"
-            tools:text="Header"/>
+            tools:text="Header" />
 
         <TextView
             android:id="@+id/group_subtitle"
-            android:layout_marginTop="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:visibility="gone"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="?android:textColorSecondary"
-            tools:text=""/>
+            android:visibility="gone"
+            tools:text="" />
 
     </LinearLayout>
 
 
-    <ImageView
+    <com.mikepenz.iconics.view.IconicsImageView
         android:id="@+id/group_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerInParent="true"
-        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-        android:layout_marginRight="@dimen/myListPreferredItemMargin"
         android:layout_marginStart="@dimen/myListPreferredItemMargin"
-        risuscito:ico_icon="cmd-chevron-up"
-        risuscito:ico_color="?android:textColorSecondary"
-        risuscito:ico_size="24dp"
-        risuscito:ico_padding="5dp"
+        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+        android:layout_marginRight="@dimen/myListPreferredItemMargin"
+        risuscito:iiv_color="?android:textColorSecondary"
+        risuscito:iiv_icon="cmd-chevron-up"
+        risuscito:iiv_padding="5dp"
+        risuscito:iiv_size="24dp"
         tools:ignore="ContentDescription,MissingPrefix" />
 
 </RelativeLayout>

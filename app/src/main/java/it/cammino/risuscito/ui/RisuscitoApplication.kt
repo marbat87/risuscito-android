@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.ImageView
 import androidx.multidex.MultiDexApplication
-import com.mikepenz.iconics.Iconics
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
@@ -23,7 +22,7 @@ class RisuscitoApplication : MultiDexApplication() {
         ThemeUtils.setDefaultNightMode(applicationContext)
 
         //only required if you add a custom or generic font on your own
-        Iconics.init(applicationContext)
+//        Iconics.init(applicationContext)
 
         ioThread {
             RisuscitoDatabase.getInstance(this).cantoDao().getCantoById(1)

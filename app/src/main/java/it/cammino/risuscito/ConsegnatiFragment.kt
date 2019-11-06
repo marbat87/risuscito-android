@@ -311,7 +311,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if (mCantiViewModel.editMode) {
             IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater, requireContext(), R.menu.consegnati_menu, menu)
+                    requireActivity().menuInflater, requireContext(), R.menu.consegnati_menu_edit_mode, menu)
             val item = menu.findItem(R.id.action_search)
             requireActivity().searchView.setMenuItem(item)
         } else {
@@ -323,7 +323,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 }
             }
             IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater, requireActivity(), if (filterisSet) R.menu.help_menu_with_reset_filter else R.menu.help_menu, menu)
+                    requireActivity().menuInflater, requireActivity(), if (filterisSet) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu, menu)
         }
 
         super.onCreateOptionsMenu(menu, inflater)

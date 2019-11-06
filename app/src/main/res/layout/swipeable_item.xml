@@ -60,7 +60,7 @@
         android:layout_marginRight="-3dp"
         android:layout_marginBottom="-5dp">
 
-        <ImageView
+        <com.mikepenz.iconics.view.IconicsImageView
             android:id="@+id/drag_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,10 +68,10 @@
             android:layout_marginEnd="@dimen/myListPreferredItemMargin"
             android:layout_marginRight="@dimen/myListPreferredItemMargin"
             android:contentDescription="@string/content_drag"
-            risuscito:ico_color="?android:textColorSecondary"
-            risuscito:ico_icon="cmd-reorder-horizontal"
-            risuscito:ico_padding="2dp"
-            risuscito:ico_size="24dp"
+            risuscito:iiv_color="?android:textColorSecondary"
+            risuscito:iiv_icon="cmd-reorder-horizontal"
+            risuscito:iiv_padding="2dp"
+            risuscito:iiv_size="24dp"
             tools:ignore="MissingPrefix" />
 
         <TextView

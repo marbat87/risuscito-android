@@ -22,7 +22,6 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.mikepenz.iconics.utils.setIconicsFactory
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -69,7 +68,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         setTaskDescription()
 
         // Iconic
-        layoutInflater.setIconicsFactory(delegate)
+//        layoutInflater.setIconicsFactory(delegate)
         super.onCreate(savedInstanceState)
     }
 

@@ -25,8 +25,8 @@ interface ConsegnatiDao {
     @get:Query("SELECT A.titolo, A.pagina, A.source, A.color, A.id, coalesce(B.idConsegnato,0) as consegnato, coalesce(B.txtNota, '') as txtNota, B.numPassaggio FROM canto A LEFT JOIN consegnato B ON A.id = B.idCanto")
     val choosen: List<CantoConsegnato>
 
-    @Query("SELECT txtNota FROM consegnato WHERE idCanto = :id")
-    fun getNota(id: Int): String?
+    @Query("SELECT COALESCE((SELECT numPassaggio FROM consegnato WHERE idCanto = :id), -1)")
+    fun getNumPassaggio(id: Int): Int
 
     @get:Query("SELECT * FROM consegnato")
     val all: List<Consegnato>

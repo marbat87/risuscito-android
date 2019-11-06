@@ -65,6 +65,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
+import kotlinx.android.synthetic.main.common_webview.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
@@ -130,7 +131,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                 }
                 PlaybackStateCompat.STATE_ERROR -> {
-//                    dismissProgressDialog(BUFFERING)
                     music_seekbar.isVisible = true
                     music_loadingbar.isVisible = false
                     stopSeekbarUpdate()
@@ -145,7 +145,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .show()
                 }
                 PlaybackStateCompat.STATE_PLAYING -> {
-//                    dismissProgressDialog(BUFFERING)
                     music_seekbar.isVisible = true
                     music_loadingbar.isVisible = false
                     scheduleSeekbarUpdate()
@@ -233,8 +232,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_COMPLETED")
                 dismissProgressDialog(DOWNLOAD_MP3)
-//                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-//                        ?: "0")
                 // initiate media scan and put the new things into the path array to
                 // make the scanner aware of the location and the files you want to see
                 if (isDefaultLocationPublic(context) && !hasQ())
@@ -361,9 +358,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     }
 
+    private lateinit var cantoView: WebView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagina_render)
+        cantoView = canto_view as WebView
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
@@ -1266,11 +1266,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playFromId(id: String) {
-//        ProgressDialogFragment.Builder(this, null, BUFFERING)
-//                .content(R.string.wait)
-//                .progressIndeterminate(true)
-//                .setCanceable()
-//                .show()
         music_seekbar.isVisible = false
         music_loadingbar.isVisible = true
         showPlaying(true)
@@ -1324,8 +1319,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         // c'è la registrazione online
         if (!url.isNullOrEmpty()) {
             // controllo se ho scaricato un file in locale
-//            val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-//                    ?: "0")
             if (isDefaultLocationPublic(this)) {
                 localUrl = if (EasyPermissions.hasPermissions(
                                 this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {

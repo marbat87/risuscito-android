@@ -92,7 +92,7 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
 
-        val icon = ctx.iconicsDrawable(if (numPassaggio == -1) CommunityMaterial.Icon2.cmd_note_plus else CommunityMaterial.Icon2.cmd_note_text) {
+        val icon = ctx.iconicsDrawable(if (numPassaggio == -1) CommunityMaterial.Icon2.cmd_tag_plus else CommunityMaterial.Icon2.cmd_tag_text_outline) {
             color = colorInt(if (numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary))
             size = sizeDp(24)
             padding = sizeDp(2)
