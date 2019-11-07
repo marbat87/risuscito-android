@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-
 plugins {
     id("com.android.application")
     id("io.fabric")
@@ -24,10 +22,10 @@ android {
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = mapOf (
-                    "room.schemaLocation" to "$projectDir/schemas",
-                    "room.incremental" to "true",
-                    "room.expandProjection" to "true")
+                arguments = mapOf(
+                        "room.schemaLocation" to "$projectDir/schemas",
+                        "room.incremental" to "true",
+                        "room.expandProjection" to "true")
             }
         }
     }
@@ -42,7 +40,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    (kotlinOptions as KotlinJvmOptions).apply {
+    kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
@@ -114,7 +112,7 @@ dependencies {
     implementation("com.mikepenz:materialdrawer:7.0.0-rc08")
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:iconics-core:$iconicVersion")
-    implementation ("com.mikepenz:iconics-views:$iconicVersion")
+    implementation("com.mikepenz:iconics-views:$iconicVersion")
     implementation("com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.afollestad:material-cab:1.3.1")
