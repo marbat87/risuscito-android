@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import androidx.activity.addCallback
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -24,9 +25,13 @@ class ChangelogActivity : ThemeableActivity() {
         ChangelogBuilder()
                 .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
                 .buildAndSetup(aboutText) // second parameter defines, if the dialog has a dark or light theme
+
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         finish()
         Animatoo.animateSlideDown(this)

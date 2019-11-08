@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -196,6 +197,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             mViewModel.elementi?.let { mAdapter.set(it) }
         }
 
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -252,7 +257,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         return false
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         if (mAdapter.adapterItems.isNotEmpty()) {
             SimpleDialogFragment.Builder(this, this, SAVE_LIST)

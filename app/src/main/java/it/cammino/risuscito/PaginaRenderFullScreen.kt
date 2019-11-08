@@ -8,6 +8,7 @@ import android.os.Handler
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.addCallback
 import androidx.core.view.postDelayed
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.mikepenz.iconics.dsl.iconicsDrawable
@@ -67,9 +68,13 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         }
         fab_fullscreen_off.setImageDrawable(icon)
         fab_fullscreen_off.setOnClickListener { saveZoom() }
+
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         saveZoom()
     }

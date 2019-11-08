@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -191,6 +192,10 @@ class InsertActivity : ThemeableActivity() {
             popupMenu.show(this, it)
         }
 
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
+
         subscribeUiFavorites()
     }
 
@@ -214,7 +219,7 @@ class InsertActivity : ThemeableActivity() {
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         setResult(CustomLists.RESULT_CANCELED)
         finish()

@@ -19,6 +19,7 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SeekBar
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -493,6 +494,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         mMediaBrowser = MediaBrowserCompat(
                 this, ComponentName(this, MusicService::
         class.java), mConnectionCallback, null)
+
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -668,7 +673,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         return false
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
 
         if (fab_canti.isOpen) {

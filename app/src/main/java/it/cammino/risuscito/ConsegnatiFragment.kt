@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
@@ -73,6 +74,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     private var mRegularFont: Typeface? = null
     private lateinit var passaggiArray: IntArray
     private val passaggiValues: MutableMap<Int, Int> = mutableMapOf()
+    private var backCallback: OnBackPressedCallback? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -110,6 +112,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                     }
                     R.id.cancel_change -> {
                         mCantiViewModel.editMode = false
+                        backCallback?.isEnabled = false
                         chooseRecycler?.isVisible = false
                         enableBottombar(false)
                         selected_view?.isVisible = true
@@ -254,19 +257,6 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
 
         view.isFocusableInTouchMode = true
         view.requestFocus()
-        view.setOnKeyListener { _, keyCode, _ ->
-            var managed = false
-            if (keyCode == KeyEvent.KEYCODE_BACK && mCantiViewModel.editMode) {
-                mCantiViewModel.editMode = false
-                mMainActivity?.expandToolbar()
-                chooseRecycler?.isVisible = false
-                enableBottombar(false)
-                selected_view?.isVisible = true
-                enableFab(true)
-                managed = true
-            }
-            managed
-        }
 
         ListChoiceDialogFragment.findVisible(mMainActivity, ADD_PASSAGE)?.setmCallback(this)
         SimpleDialogFragment.findVisible(mMainActivity, CONFIRM_SAVE)?.setmCallback(this)
@@ -285,6 +275,20 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         enableBottombar(mCantiViewModel.editMode)
         selected_view?.isVisible = !mCantiViewModel.editMode
         enableFab(!mCantiViewModel.editMode)
+        backCallback = object : OnBackPressedCallback(mCantiViewModel.editMode) {
+            override fun handleOnBackPressed() {
+                Log.d(TAG, "handleOnBackPressed")
+                mCantiViewModel.editMode = false
+                this.isEnabled = false
+                mMainActivity?.expandToolbar()
+                chooseRecycler?.isVisible = false
+                enableBottombar(false)
+                selected_view?.isVisible = true
+                enableFab(true)
+            }
+        }
+        // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
+        backCallback?.let { requireActivity().onBackPressedDispatcher.addCallback(this, it) }
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
             fabIntro()
@@ -396,6 +400,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         }
         val onClick = View.OnClickListener {
             mCantiViewModel.editMode = true
+            backCallback?.setEnabled(true)
             UpdateChooseListTask(this).execute()
             selected_view?.isVisible = false
             chooseRecycler?.isVisible = true
@@ -571,6 +576,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         when (tag) {
             CONFIRM_SAVE -> {
                 mCantiViewModel.editMode = false
+                backCallback?.isEnabled = false
                 mMainActivity?.let { activity ->
                     ProgressDialogFragment.Builder(
                             activity, null, CONSEGNATI_SAVING)
