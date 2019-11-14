@@ -11,11 +11,13 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
+import android.widget.PopupMenu
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.children
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -31,8 +33,6 @@ import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
-import com.github.zawadz88.materialpopupmenu.ViewBoundCallback
-import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -58,7 +58,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_bottom_bar.*
 import kotlinx.android.synthetic.main.common_top_toolbar.*
 import kotlinx.android.synthetic.main.layout_consegnati.*
-import kotlinx.android.synthetic.main.view_custom_item_checkable.view.*
 import java.lang.ref.WeakReference
 
 class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFragment.SimpleCallback, ListChoiceDialogFragment.ListChoiceCallback {
@@ -67,6 +66,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
 
     private val mCantiViewModel: ConsegnatiViewModel by viewModels()
     private var selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
+    private lateinit var mPopupMenu: PopupMenu
     private var selectExtension: SelectExtension<CheckableItem>? = null
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
@@ -89,12 +89,6 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         passaggiArray = resources.getIntArray(R.array.passaggi_values)
         for (i in passaggiArray.indices)
             passaggiValues[passaggiArray[i]] = i
-
-        val passaggiTitles = resources.getStringArray(R.array.passaggi_entries)
-        if (mCantiViewModel.passaggiFilterList.isEmpty()) {
-            for (i in passaggiTitles.indices)
-                mCantiViewModel.passaggiFilterList.add(ConsegnatiViewModel.OptionValue(passaggiArray[i], passaggiTitles[i]))
-        }
 
         activity?.bottom_bar?.let {
             it.menu?.clear()
@@ -255,6 +249,23 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
 
         })
 
+        val wrapper = ContextThemeWrapper(requireContext(), R.style.Widget_MaterialComponents_PopupMenu_Risuscito)
+        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, requireActivity().risuscito_toolbar, Gravity.END) else PopupMenu(wrapper, requireActivity().risuscito_toolbar)
+        mPopupMenu.inflate(R.menu.passage_filter_menu)
+        mPopupMenu.setOnMenuItemClickListener {
+            it.isChecked = !it.isChecked
+            // Keep the popup menu open
+            it.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW)
+            it.actionView = View(context)
+            cantoAdapter.filter(mPopupMenu.menu.children.filter { item -> item.isChecked }
+                    .map { item -> item.titleCondensed }
+                    .joinToString("|"))
+            activity?.invalidateOptionsMenu()
+            false
+        }
+//        if (LUtils.hasM())
+//            mPopupMenu.gravity = Gravity.END
+
         view.isFocusableInTouchMode = true
         view.requestFocus()
 
@@ -319,15 +330,8 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             val item = menu.findItem(R.id.action_search)
             requireActivity().searchView.setMenuItem(item)
         } else {
-            var filterisSet = false
-            for (optionItem: ConsegnatiViewModel.OptionValue in mCantiViewModel.passaggiFilterList) {
-                if (optionItem.checked) {
-                    filterisSet = true
-                    break
-                }
-            }
             IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater, requireActivity(), if (filterisSet) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu, menu)
+                    requireActivity().menuInflater, requireActivity(), if (mPopupMenu.menu.children.toList().any { it.isChecked }) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu, menu)
         }
 
         super.onCreateOptionsMenu(menu, inflater)
@@ -336,34 +340,12 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_filter -> {
-                val popupMenu = popupMenu {
-                    dropdownGravity = Gravity.END
-                    section {
-                        title = getString(R.string.passage_filter)
-                        for (optionItem: ConsegnatiViewModel.OptionValue in mCantiViewModel.passaggiFilterList) {
-                            customItem {
-                                layoutResId = R.layout.view_custom_item_checkable
-                                dismissOnSelect = false
-                                viewBoundCallback = ViewBoundCallback { view ->
-                                    view.customItemText.text = optionItem.title
-                                    view.customItemCheckbox.isChecked = optionItem.checked
-                                    view.customItemCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                                        optionItem.checked = isChecked
-                                        cantoAdapter.filter(mCantiViewModel.passaggiFilterList.filter { it.checked }.joinToString("|"))
-                                        activity?.invalidateOptionsMenu()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                popupMenu.show(requireContext(), requireActivity().risuscito_toolbar)
+                mPopupMenu.show()
                 return true
             }
             R.id.action_filter_remove -> {
-                for (optionItem: ConsegnatiViewModel.OptionValue in mCantiViewModel.passaggiFilterList)
-                    optionItem.checked = false
-                cantoAdapter.filter(mCantiViewModel.passaggiFilterList.filter { it.checked }.joinToString("|"))
+                mPopupMenu.menu.children.forEach { it.isChecked = false }
+                cantoAdapter.filter("")
                 activity?.invalidateOptionsMenu()
             }
             R.id.action_help -> {
@@ -400,7 +382,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         }
         val onClick = View.OnClickListener {
             mCantiViewModel.editMode = true
-            backCallback?.setEnabled(true)
+            backCallback?.isEnabled = true
             UpdateChooseListTask(this).execute()
             selected_view?.isVisible = false
             chooseRecycler?.isVisible = true
@@ -480,7 +462,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         mCantiViewModel.mIndexResult?.observe(this) { cantos ->
             mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
             cantoAdapter.set(mCantiViewModel.titoli)
-            cantoAdapter.filter(mCantiViewModel.passaggiFilterList.filter { it.checked }.joinToString("|"))
+            cantoAdapter.filter(mPopupMenu.menu.children.filter { item -> item.isChecked }
+                    .map { item -> item.titleCondensed }
+                    .joinToString("|"))
             no_consegnati?.isInvisible = cantoAdapter.adapterItemCount > 0
             cantiRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
         }

@@ -25,7 +25,7 @@
     <string name="seconda_lettura">In response to the second reading</string>
     <string name="terza_lettura">In response to the third reading</string>
     <string name="canto_fine">Final song</string>
-    <string name="select_canto">Add song</string>
+    <string name="select_canto">Add song:</string>
     <string name="reset_list_question">Are you sure you want to reset the list?</string>
     <string name="title_activity_canti_eucarestia">Eucharistic Celebration</string>
     <string name="canto_pace">At the exchange of peace</string>

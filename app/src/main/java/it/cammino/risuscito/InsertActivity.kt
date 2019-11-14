@@ -6,11 +6,13 @@ import android.os.AsyncTask.Status
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.PopupMenu
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -26,8 +28,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
-import com.github.zawadz88.materialpopupmenu.ViewBoundCallback
-import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -44,7 +44,6 @@ import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.common_top_toolbar.*
 import kotlinx.android.synthetic.main.search_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
-import kotlinx.android.synthetic.main.view_custom_item_checkable.view.*
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
@@ -62,6 +61,7 @@ class InsertActivity : ThemeableActivity() {
     private var listaPredefinita: Int = 0
     private var idLista: Int = 0
     private var listPosition: Int = 0
+    private lateinit var mPopupMenu: PopupMenu
 
     private val mViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 3) })
@@ -157,39 +157,32 @@ class InsertActivity : ThemeableActivity() {
             ricercaStringa(s.toString())
         }
 
-        more_options.setOnClickListener {
-            val popupMenu = popupMenu {
-                dropdownGravity = Gravity.END
-                section {
-                    customItem {
-                        layoutResId = R.layout.view_custom_item_checkable
-                        dismissOnSelect = false
-                        viewBoundCallback = ViewBoundCallback { view ->
-                            view.customItemCheckbox.isChecked = mViewModel.advancedSearch
-                            view.customItemCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                                mViewModel.advancedSearch = isChecked
-                                textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
-                                ricercaStringa(textfieldRicerca.text.toString())
-                                dismissPopup()
-                            }
-                        }
-                    }
-                    customItem {
-                        layoutResId = R.layout.view_custom_item_checkable
-                        dismissOnSelect = false
-                        viewBoundCallback = ViewBoundCallback { view ->
-                            view.customItemText.text = getString(R.string.consegnati_only)
-                            view.customItemCheckbox.isChecked = mViewModel.consegnatiOnly
-                            view.customItemCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                                mViewModel.consegnatiOnly = isChecked
-                                ricercaStringa(textfieldRicerca.text.toString())
-                                dismissPopup()
-                            }
-                        }
-                    }
+        val wrapper = ContextThemeWrapper(this, R.style.Widget_MaterialComponents_PopupMenu_Risuscito)
+        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, more_options, Gravity.END) else PopupMenu(wrapper, more_options)
+        mPopupMenu.inflate(R.menu.search_option_menu)
+        mPopupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.advanced_search -> {
+                    it.isChecked = !it.isChecked
+                    mViewModel.advancedSearch = it.isChecked
+                    textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+                    ricercaStringa(textfieldRicerca.text.toString())
+                    true
                 }
+                R.id.consegnaty_only -> {
+                    it.isChecked = !it.isChecked
+                    mViewModel.consegnatiOnly = it.isChecked
+                    ricercaStringa(textfieldRicerca.text.toString())
+                    true
+                }
+                else -> false
             }
-            popupMenu.show(this, it)
+        }
+//        if (LUtils.hasM())
+//            mPopupMenu.gravity = Gravity.END
+
+        more_options.setOnClickListener {
+            mPopupMenu.show()
         }
 
         onBackPressedDispatcher.addCallback(this) {

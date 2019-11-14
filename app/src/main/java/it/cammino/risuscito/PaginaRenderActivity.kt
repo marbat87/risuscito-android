@@ -104,9 +104,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun run() {
             mViewModel.speedValue?.let {
                 try {
-                    cantoView?.scrollBy(0, Integer.valueOf(it))
+                    cantoView.scrollBy(0, Integer.valueOf(it))
                 } catch (e: NumberFormatException) {
-                    cantoView?.scrollBy(0, 0)
+                    cantoView.scrollBy(0, 0)
                 }
 
                 mHandler.postDelayed(this, 700)

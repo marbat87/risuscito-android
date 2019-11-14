@@ -25,7 +25,7 @@
     <string name="seconda_lettura">Як відповідь на друге читання</string>
     <string name="terza_lettura">Як відповідь на третє читання</string>
     <string name="canto_fine">Пісня на вихід</string>
-    <string name="select_canto">Додати пісню</string>
+    <string name="select_canto">Додати пісню:</string>
     <string name="reset_list_question">Ти впевнений, що хочеш відновити список?</string>
     <string name="title_activity_canti_eucarestia">Літургія Євхаристії</string>
     <string name="canto_pace">На знак миру</string>

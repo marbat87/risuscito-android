@@ -132,6 +132,5 @@ dependencies {
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation("com.github.Ferfalk:SimpleSearchView:0.1.3")
     implementation("com.github.MFlisar:changelog:1.1.6")
-    implementation("com.github.zawadz88.materialpopupmenu:material-popup-menu:3.4.0")
     implementation("com.github.stupacki:MultiFunctions:1.2.2")
 }

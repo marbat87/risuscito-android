@@ -67,8 +67,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         setTaskDescription()
 
-        // Iconic
-//        layoutInflater.setIconicsFactory(delegate)
         super.onCreate(savedInstanceState)
     }
 
@@ -110,6 +108,17 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
         RisuscitoApplication.localeManager.setLocale(this)
         SplitCompat.install(this)
+    }
+
+    //FIX PER AppCompatDelegateImpl that overrides the configuration to a completely fresh configuration without a locale
+    //TO CHECK
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        if (overrideConfiguration != null) {
+            val uiMode = overrideConfiguration.uiMode
+            overrideConfiguration.setTo(baseContext.resources.configuration)
+            overrideConfiguration.uiMode = uiMode
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
     }
 
     inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))
