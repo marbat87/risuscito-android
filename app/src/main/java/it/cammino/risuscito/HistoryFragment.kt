@@ -191,7 +191,9 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {

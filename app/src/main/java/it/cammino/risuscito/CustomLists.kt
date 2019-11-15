@@ -204,19 +204,19 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                             .setAction(
                                     getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
                             ) {
-                                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                                    return@setAction
-                                mLastClickTime = SystemClock.elapsedRealtime()
-                                mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
-                                movePage = true
-                                ioThread {
-                                    val mListePersDao = RisuscitoDatabase.getInstance(requireContext())
-                                            .listePersDao()
-                                    val listaToRestore = ListaPers()
-                                    listaToRestore.id = mCustomListsViewModel.idDaCanc
-                                    listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
-                                    listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
-                                    mListePersDao.insertLista(listaToRestore)
+                                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                                    mLastClickTime = SystemClock.elapsedRealtime()
+                                    mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
+                                    movePage = true
+                                    ioThread {
+                                        val mListePersDao = RisuscitoDatabase.getInstance(requireContext())
+                                                .listePersDao()
+                                        val listaToRestore = ListaPers()
+                                        listaToRestore.id = mCustomListsViewModel.idDaCanc
+                                        listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+                                        listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
+                                        mListePersDao.insertLista(listaToRestore)
+                                    }
                                 }
                             }.show()
                 }

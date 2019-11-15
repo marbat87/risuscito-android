@@ -306,33 +306,34 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
         }
 
     private val click = OnClickListener { v ->
-        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
-        mLastClickTime = SystemClock.elapsedRealtime()
-        val parent = v.parent.parent as View
-        if (parent.addCantoGenerico.isVisible) {
-            if (mSwhitchMode) {
-                scambioConVuoto(
-                        Integer.valueOf(parent.text_id_posizione.text.toString()))
-            } else {
-                if (!MaterialCab.isActive) {
-                    val intent = Intent(activity, InsertActivity::class.java)
-                    intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 0,
-                            InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
-                            InsertActivity.POSITION to Integer.valueOf(parent.text_id_posizione.text.toString())))
-                    parentFragment?.startActivityForResult(intent, TAG_INSERT_PERS)
-                    Animatoo.animateShrink(activity)
+        if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+            mLastClickTime = SystemClock.elapsedRealtime()
+            val parent = v.parent.parent as View
+            if (parent.addCantoGenerico.isVisible) {
+                if (mSwhitchMode) {
+                    scambioConVuoto(
+                            Integer.valueOf(parent.text_id_posizione.text.toString()))
+                } else {
+                    if (!MaterialCab.isActive) {
+                        val intent = Intent(activity, InsertActivity::class.java)
+                        intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 0,
+                                InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
+                                InsertActivity.POSITION to Integer.valueOf(parent.text_id_posizione.text.toString())))
+                        parentFragment?.startActivityForResult(intent, TAG_INSERT_PERS)
+                        Animatoo.animateShrink(activity)
+                    }
                 }
-            }
-        } else {
-            if (!mSwhitchMode)
-                if (MaterialCab.isActive) {
-                    posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
-                    snackBarRimuoviCanto(v)
-                } else
-                    openPagina(v)
-            else {
-                scambioCanto(
-                        Integer.valueOf(parent.text_id_posizione.text.toString()))
+            } else {
+                if (!mSwhitchMode)
+                    if (MaterialCab.isActive) {
+                        posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
+                        snackBarRimuoviCanto(v)
+                    } else
+                        openPagina(v)
+                else {
+                    scambioCanto(
+                            Integer.valueOf(parent.text_id_posizione.text.toString()))
+                }
             }
         }
     }

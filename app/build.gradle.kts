@@ -101,7 +101,7 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:17.0.0")
     implementation("com.google.firebase:firebase-core:17.2.1")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.2.1")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.3.0")
     implementation("com.google.firebase:firebase-storage-ktx:19.1.0")
     implementation("com.google.firebase:firebase-auth:19.1.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }

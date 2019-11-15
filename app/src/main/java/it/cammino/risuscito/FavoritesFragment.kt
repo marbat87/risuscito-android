@@ -190,7 +190,9 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun removeFavorites() {
         ListeUtils.removeFavoritesWithUndo(this, selectExtension?.selectedItems)
