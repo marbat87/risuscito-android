@@ -211,16 +211,14 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
             }
 
             onSelection { item ->
-                Log.d(TAG, "MaterialCab onSelection")
-                when (item.itemId) {
-                    R.id.action_remove_item -> {
-                        removeHistories()
-                        actionModeOk = true
-                        destroy()
-                        true
-                    }
-                    else -> false
-                }
+                Log.d(TAG, "MaterialCab onSelection: ${item.itemId}")
+                if (item.itemId == R.id.action_remove_item) {
+                    removeHistories()
+                    actionModeOk = true
+                    destroy()
+                    true
+                } else
+                    false
             }
 
             onDestroy {

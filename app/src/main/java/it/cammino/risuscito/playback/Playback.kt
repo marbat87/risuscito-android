@@ -43,8 +43,6 @@ import it.cammino.risuscito.Utility.isExternalStorageReadable
 import java.io.FileInputStream
 import java.io.IOException
 
-
-/** A class that implements local media playback using [MediaPlayer]  */
 class Playback internal constructor(private val mService: MusicService,
                                     private var mMusicProvider: MusicProvider?) : AudioManager.OnAudioFocusChangeListener, OnCompletionListener, OnErrorListener, OnPreparedListener, OnSeekCompleteListener {
     private val mWifiLock: WifiManager.WifiLock
@@ -243,14 +241,6 @@ class Playback internal constructor(private val mService: MusicService,
         }
     }
 
-    /**
-     * Reconfigures MediaPlayer according to audio focus settings and starts/restarts it. This method
-     * starts/restarts the MediaPlayer respecting the current audio focus state. So if we have focus,
-     * it will play normally; if we don't have focus, it will either leave the MediaPlayer paused or
-     * set it to a low volume, depending on what is allowed by the current focus settings. This method
-     * assumes mPlayer != null, so if you are calling it, you have to do so from a context where you
-     * are sure this is the case.
-     */
     private fun configMediaPlayerState() {
         Log.d(TAG, "configMediaPlayerState. mAudioFocus=$mAudioFocus")
         if (mAudioFocus == AUDIO_NO_FOCUS_NO_DUCK) {
@@ -281,9 +271,6 @@ class Playback internal constructor(private val mService: MusicService,
         mCallback?.onPlaybackStatusChanged(state)
     }
 
-    /**
-     * Called by AudioManager on audio focus changes. Implementation of [ ].
-     */
     override fun onAudioFocusChange(focusChange: Int) {
         Log.d(TAG, "onAudioFocusChange. focusChange= $focusChange")
         if (focusChange == AudioManagerCompat.AUDIOFOCUS_GAIN) {
@@ -311,11 +298,6 @@ class Playback internal constructor(private val mService: MusicService,
         configMediaPlayerState()
     }
 
-    /**
-     * Called when MediaPlayer has completed a seek.
-     *
-     * @see OnSeekCompleteListener
-     */
     override fun onSeekComplete(player: MediaPlayer) {
         Log.d(TAG, "onSeekComplete from MediaPlayer:" + player.currentPosition)
         mCurrentPosition = player.currentPosition

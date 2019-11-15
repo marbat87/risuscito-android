@@ -268,7 +268,9 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     companion object {
         private val TAG = SectionedIndexFragment::class.java.canonicalName

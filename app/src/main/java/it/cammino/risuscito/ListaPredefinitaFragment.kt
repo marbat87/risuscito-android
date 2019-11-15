@@ -97,10 +97,10 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                 titoloPosizione = title
                 idPosizione = position
                 tagPosizione = tag
-                isMultiple = when (mCantiViewModel.defaultListaId) {
-                    2 -> (position == 4 || position == 3)
-                    else -> false
-                }
+                isMultiple = if (mCantiViewModel.defaultListaId == 2)
+                    (position == 4 || position == 3)
+                else
+                    false
             }
             listItem = posizioni.filter { it.position == position }.map {
                 posizioneItem {

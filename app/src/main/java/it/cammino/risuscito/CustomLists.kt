@@ -180,7 +180,9 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         }
     }
 
-    override fun onNegative(tag: String, dialog: MaterialDialog) {}
+    override fun onNegative(tag: String, dialog: MaterialDialog) {
+        // no-op
+    }
 
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")

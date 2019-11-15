@@ -966,7 +966,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun dismissProgressDialog(tag: String) {
         val sFragment = ProgressDialogFragment.findVisible(this, tag)
