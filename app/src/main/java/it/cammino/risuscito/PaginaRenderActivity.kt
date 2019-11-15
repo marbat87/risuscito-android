@@ -19,6 +19,7 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.SeekBar
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -65,6 +66,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.android.synthetic.main.activity_pagina_render.*
+import kotlinx.android.synthetic.main.common_webview.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
@@ -102,9 +104,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun run() {
             mViewModel.speedValue?.let {
                 try {
-                    cantoView?.scrollBy(0, Integer.valueOf(it))
+                    cantoView.scrollBy(0, Integer.valueOf(it))
                 } catch (e: NumberFormatException) {
-                    cantoView?.scrollBy(0, 0)
+                    cantoView.scrollBy(0, 0)
                 }
 
                 mHandler.postDelayed(this, 700)
@@ -130,7 +132,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                 }
                 PlaybackStateCompat.STATE_ERROR -> {
-//                    dismissProgressDialog(BUFFERING)
                     music_seekbar.isVisible = true
                     music_loadingbar.isVisible = false
                     stopSeekbarUpdate()
@@ -145,7 +146,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                             .show()
                 }
                 PlaybackStateCompat.STATE_PLAYING -> {
-//                    dismissProgressDialog(BUFFERING)
                     music_seekbar.isVisible = true
                     music_loadingbar.isVisible = false
                     scheduleSeekbarUpdate()
@@ -233,8 +233,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             try {
                 Log.d(TAG, "BROADCAST_DOWNLOAD_COMPLETED")
                 dismissProgressDialog(DOWNLOAD_MP3)
-//                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-//                        ?: "0")
                 // initiate media scan and put the new things into the path array to
                 // make the scanner aware of the location and the files you want to see
                 if (isDefaultLocationPublic(context) && !hasQ())
@@ -361,9 +359,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     }
 
+    private lateinit var cantoView: WebView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagina_render)
+        cantoView = canto_view as WebView
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
@@ -435,9 +436,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         Log.d(javaClass.toString(), "speedValue cambiato! " + mViewModel.speedValue)
                     }
 
-                    override fun onStartTrackingTouch(seekBar: SeekBar) {}
+                    override fun onStartTrackingTouch(seekBar: SeekBar) {
+                        // no-op
+                    }
 
-                    override fun onStopTrackingTouch(seekBar: SeekBar) {}
+                    override fun onStopTrackingTouch(seekBar: SeekBar) {
+                        // no-op
+                    }
                 })
 
         showScrolling(false)
@@ -489,6 +494,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         mMediaBrowser = MediaBrowserCompat(
                 this, ComponentName(this, MusicService::
         class.java), mConnectionCallback, null)
+
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -580,7 +589,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                     if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         cantoView.setInitialScale(it.zoom)
@@ -612,7 +621,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
                     if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         cantoView.setInitialScale(it.zoom)
@@ -632,7 +641,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
                         if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             cantoView.setInitialScale(it.zoom)
@@ -651,7 +660,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
                         if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             cantoView.setInitialScale(it.zoom)
@@ -664,7 +673,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         return false
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
 
         if (fab_canti.isOpen) {
@@ -779,12 +788,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         var barreScritto = false
 
         try {
-            val br = BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(mViewModel.pagina, R.raw::class.java)), ECONDING_UTF8))
 
             var line: String? = br.readLine()
 
             val out = BufferedWriter(
-                    OutputStreamWriter(FileOutputStream(cantoTrasportato), "UTF-8"))
+                    OutputStreamWriter(FileOutputStream(cantoTrasportato), ECONDING_UTF8))
 
             val language = getSystemLocale(resources).language
 
@@ -1157,7 +1166,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 music_controls.isVisible = mViewModel.mostraAudio
                             }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
+                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                                // no-op
+                            }
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
@@ -1231,7 +1242,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 music_controls.isVisible = mViewModel.mostraAudio
                             }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
+                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                                // no-op
+                            }
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
@@ -1262,11 +1275,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playFromId(id: String) {
-//        ProgressDialogFragment.Builder(this, null, BUFFERING)
-//                .content(R.string.wait)
-//                .progressIndeterminate(true)
-//                .setCanceable()
-//                .show()
         music_seekbar.isVisible = false
         music_loadingbar.isVisible = true
         showPlaying(true)
@@ -1320,8 +1328,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         // c'è la registrazione online
         if (!url.isNullOrEmpty()) {
             // controllo se ho scaricato un file in locale
-//            val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-//                    ?: "0")
             if (isDefaultLocationPublic(this)) {
                 localUrl = if (EasyPermissions.hasPermissions(
                                 this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -1417,7 +1423,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                 if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
-                cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), "text/html", "utf-8")
+                cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
 
             val webSettings = cantoView.settings
             webSettings.useWideViewPort = true
@@ -1578,7 +1584,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 //                        .colorInt(iconColor)
 //                        .sizeDp(24)
 //                        .paddingDp(4)
-                        iconicsDrawable(if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset_off else CommunityMaterial.Icon2.cmd_headset) {
+                        iconicsDrawable(if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset else CommunityMaterial.Icon2.cmd_headset_off) {
                             size = sizeDp(24)
                             padding = sizeDp(4)
                         }
@@ -1773,5 +1779,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val DELETE_MP3 = "DELETE_MP3"
         private const val SAVE_TAB = "SAVE_TAB"
         private const val DEF_FILE_PATH = "file://"
+        private const val MIME_TYPE_HTML = "text/html"
+        private const val ECONDING_UTF8 = "utf-8"
+
     }
 }

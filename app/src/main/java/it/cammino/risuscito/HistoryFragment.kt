@@ -133,10 +133,8 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
         else
             LinearLayoutManager(context)
         history_recycler?.layoutManager = llm
-//        history_recycler?.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         history_recycler?.addItemDecoration(insetDivider)
         history_recycler?.itemAnimator = SlideRightAlphaAnimator()
     }
@@ -193,7 +191,9 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun startCab() {
         MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
@@ -211,16 +211,14 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
             }
 
             onSelection { item ->
-                Log.d(TAG, "MaterialCab onSelection")
-                when (item.itemId) {
-                    R.id.action_remove_item -> {
-                        removeHistories()
-                        actionModeOk = true
-                        destroy()
-                        true
-                    }
-                    else -> false
-                }
+                Log.d(TAG, "MaterialCab onSelection: ${item.itemId}")
+                if (item.itemId == R.id.action_remove_item) {
+                    removeHistories()
+                    actionModeOk = true
+                    destroy()
+                    true
+                } else
+                    false
             }
 
             onDestroy {

@@ -120,8 +120,9 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="PopupMenuStyle" parent="Widget.AppCompat.Light.PopupMenu">
-        <item name="android:popupBackground">@color/floating_background</item>
+    <style name="Widget.MaterialComponents.PopupMenu.Risuscito">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/googlesans_regular</item>
     </style>
 
     <style name="RisuscitoAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
@@ -135,11 +136,6 @@
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
-    <style name="material_popup_theme" parent="Widget.MPM.Menu">
-        <item name="android:popupBackground">@drawable/material_popup_bg</item>
-        <item name="android:theme">@style/ThemeOverlay.AppCompat.DayNight</item>
-    </style>
-
     <!-- per l'icona profilo del drawer -->
     <style name="BezelImageView">
         <item name="biv_maskDrawable">@drawable/material_drawer_circle_mask</item>
@@ -150,9 +146,6 @@
 
     <style name="Risuscito_SpeedDialActionItem">
         <item name="colorOnSecondary">@color/text_color_secondary</item>
-<!--        <item name="fabLabelColor">@color/text_color_secondary</item>-->
-<!--        <item name="fabBackgroundColor">@color/floating_background</item>-->
-<!--        <item name="fabLabelBackgroundColor">@color/floating_background</item>-->
     </style>
 
 </resources>

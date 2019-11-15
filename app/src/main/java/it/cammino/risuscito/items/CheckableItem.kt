@@ -11,9 +11,12 @@ import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
+import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.checkable_row_item.view.*
 
@@ -44,6 +47,8 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
             identifier = value.toLong()
             field = value
         }
+
+    var filter: String? = null
 
     /**
      * defines the type defining this item. must be unique. preferably an id
@@ -80,9 +85,29 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
                         ctx.themeColor(R.attr.colorSecondaryLight),
                         true))
         // set the text for the name
-        StringHolder.applyTo(title, holder.mTitle)
+        filter?.let {
+            if (it.isNotEmpty()) {
+                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
+                        ?: "")
+                val mPosition = normalizedTitle.toLowerCase(getSystemLocale(ctx.resources)).indexOf(it)
+                if (mPosition >= 0) {
+                    val stringTitle = title?.getText(ctx)
+                    val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
+                            ?: "") else "")
+                            .append("<b>")
+                            .append(stringTitle?.substring(mPosition, mPosition + it.length))
+                            .append("</b>")
+                            .append(stringTitle?.substring(mPosition + it.length))
+                    holder.mTitle?.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                } else
+                    StringHolder.applyTo(title, holder.mTitle)
+            } else
+                StringHolder.applyTo(title, holder.mTitle)
+        } ?: StringHolder.applyTo(title, holder.mTitle)
+
         // set the text for the description or hide
         StringHolder.applyToOrHide(page, holder.mPage)
+
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
     }

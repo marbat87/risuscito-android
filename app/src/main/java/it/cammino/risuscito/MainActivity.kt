@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -120,6 +121,17 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        onBackPressedDispatcher.addCallback(this) {
+            when {
+                searchView.onBackPressed() -> {
+                }
+                fab_pager.isOpen -> fab_pager.close()
+                isTabletWithNoFixedDrawer && crossFader?.isCrossFaded() == true -> crossFader?.crossFade()
+                !isOnTablet && drawer?.isDrawerOpen == true -> drawer?.closeDrawer()
+                else -> backToHome(true)
+            }
+        }
+
         mLUtils = LUtils.getInstance(this)
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
@@ -172,11 +184,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         setupNavDrawer(savedInstanceState)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
-            }
-        }
         toolbar_layout?.setExpanded(true, false)
 
         // [START configure_signin]
@@ -443,34 +450,35 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
     }
 
-    override fun onBackPressed() {
-        Log.d(TAG, "onBackPressed: ")
-
-        if (searchView.onBackPressed()) {
-            return
-        }
-
-        if (fab_pager.isOpen) {
-            fab_pager.close()
-            return
-        }
-
-        if (isTabletWithNoFixedDrawer) {
-            if (crossFader?.isCrossFaded() == true) {
-                crossFader?.crossFade()
-                return
-            }
-        }
-
-        if (!isOnTablet) {
-            if (drawer?.isDrawerOpen == true) {
-                drawer?.closeDrawer()
-                return
-            }
-        }
-
-        backToHome(true)
-    }
+//    override fun onBackPressed() {
+//        super.onBackPressed()
+//        Log.d(TAG, "onBackPressed: ")
+//
+//        if (searchView.onBackPressed()) {
+//            return
+//        }
+//
+//        if (fab_pager.isOpen) {
+//            fab_pager.close()
+//            return
+//        }
+//
+//        if (isTabletWithNoFixedDrawer) {
+//            if (crossFader?.isCrossFaded() == true) {
+//                crossFader?.crossFade()
+//                return
+//            }
+//        }
+//
+//        if (!isOnTablet) {
+//            if (drawer?.isDrawerOpen == true) {
+//                drawer?.closeDrawer()
+//                return
+//            }
+//        }
+//
+//        backToHome(true)
+//    }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
     private fun convertTabs() {
@@ -777,11 +785,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "requestCode: $requestCode")
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        when (requestCode) {
-            RC_SIGN_IN -> handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
-            else -> {
-            }
-        }
+        if (requestCode == RC_SIGN_IN)
+            handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
     }
 
     // [START handleSignInResult]
@@ -958,7 +963,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun dismissProgressDialog(tag: String) {
         val sFragment = ProgressDialogFragment.findVisible(this, tag)

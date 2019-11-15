@@ -6,30 +6,30 @@
     android:layout_height="@dimen/myListPreferredItemHeightMedium">
 
     <LinearLayout
+        android:id="@+id/swipe_result_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/swipe_result_content"
-        android:paddingEnd="@dimen/myListPreferredItemMargin"
-        android:paddingLeft="@dimen/myListPreferredItemMargin"
-        android:paddingRight="@dimen/myListPreferredItemMargin"
-        android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:background="@color/md_red_900"
         android:gravity="center_vertical"
-        android:visibility="visible"
-        android:background="@color/md_red_900">
+        android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:paddingLeft="@dimen/myListPreferredItemMargin"
+        android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:paddingRight="@dimen/myListPreferredItemMargin"
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/swiped_text"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center_vertical|start"
             android:lines="1"
             android:maxLines="1"
-            android:textDirection="anyRtl"
             android:textColor="@color/primary_text_default_material_dark"
+            android:textDirection="anyRtl"
             android:textSize="@dimen/material_drawer_item_primary_text"
-            tools:text="@string/generic_removed"
-            tools:ignore="UnusedAttribute" />
+            tools:ignore="UnusedAttribute"
+            tools:text="@string/generic_removed" />
 
         <TextView
             android:id="@+id/swiped_action"
@@ -38,50 +38,50 @@
             android:gravity="center_vertical|start"
             android:lines="1"
             android:maxLines="1"
-            android:textDirection="anyRtl"
+            android:text="@android:string/cancel"
             android:textAllCaps="true"
             android:textColor="@color/primary_text_default_material_dark"
-            android:textStyle="bold"
+            android:textDirection="anyRtl"
             android:textSize="@dimen/material_drawer_item_primary_description"
-            android:text="@android:string/cancel"
+            android:textStyle="bold"
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.MaterialComponents.CardView"
         android:id="@+id/container"
-        android:layout_gravity="center"
+        style="@style/Widget.MaterialComponents.CardView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="-3dp"
+        android:layout_gravity="center"
         android:layout_marginStart="-3dp"
-        android:layout_marginRight="-3dp"
-        android:layout_marginEnd="-3dp">
+        android:layout_marginLeft="-3dp"
+        android:layout_marginEnd="-3dp"
+        android:layout_marginRight="-3dp">
 
-        <ImageView
+        <com.mikepenz.iconics.view.IconicsImageView
             android:id="@+id/drag_image"
-            android:contentDescription="@string/content_drag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-            risuscito:ico_color="?android:textColorSecondary"
-            risuscito:ico_icon="cmd-reorder-horizontal"
-            risuscito:ico_size="24dp"
-            risuscito:ico_padding="2dp"
+            android:contentDescription="@string/content_drag"
+            risuscito:iiv_color="?android:textColorSecondary"
+            risuscito:iiv_icon="cmd-reorder-horizontal"
+            risuscito:iiv_padding="5dp"
+            risuscito:iiv_size="24dp"
             tools:ignore="MissingPrefix" />
 
         <TextView
             android:id="@+id/swipeable_text1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="56dp"
-            android:layout_marginEnd="56dp"
-            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
             android:layout_marginStart="@dimen/myListPreferredItemMargin"
-            android:textColor="?android:textColorPrimary"
+            android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+            android:layout_marginEnd="56dp"
+            android:layout_marginRight="56dp"
             android:gravity="center_vertical|start"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:textColorPrimary"
             tools:ignore="RtlHardcoded" />
 
     </com.google.android.material.card.MaterialCardView>

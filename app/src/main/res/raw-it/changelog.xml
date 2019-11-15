@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4427"
-        date="Settembre 2019"
+    <release versionCode="4436"
+        date="Novembre 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANTE[/b]: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le
             modifiche sono solo "sotto il cofano". Devi creare un nuovo backup da uno dei tuoi
@@ -12,7 +12,7 @@
         <bugfix>Corretti numeri pagina dei canti più recenti</bugfix>
         <info>Cambiato link del canto Perchè le genti congiurano</info>
         <new>Nuova opzione per la selezionare la ricerca predefinita</new>
-        <new>Nuovo layout per la ricerca</new>
+        <new>Nuovo layout per la ricerca (adesso l'opzione di ricerca avanzata è dentro il [b]menù a 3 pallini[/b])</new>
         <new>Aggiunta la registrazione dell'Inno dei vespri da Pasqua all'Ascensione</new>
         <new>Aggiunto il nuovo canto Inno a Cristo Luce (1967)</new>
         <new>Compabilità con Android 10</new>
@@ -21,6 +21,7 @@
             Il funzionamento dipende comunque dalla versione del S.O. e in alcuni casi dal produttore del dispositivo</new>
         <new>Adesso l'applicazione occupa meno spazio perchè di default viene installata solo la lingua di sistema.
             Eventuali risorse per lingue aggiuntive saranno scaricate nel momento in cui si cambia la relativa impostazione</new>
+        <new>Nuova funzione per selezionare il passaggio per i canti consegnati e di filtrarli per passaggio</new>
     </release>
 
     <release versionCode="0"

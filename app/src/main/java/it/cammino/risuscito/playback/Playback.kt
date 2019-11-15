@@ -43,9 +43,7 @@ import it.cammino.risuscito.Utility.isExternalStorageReadable
 import java.io.FileInputStream
 import java.io.IOException
 
-
-/** A class that implements local media playback using [MediaPlayer]  */
-class Playback internal constructor(private val mService: MusicService, //    private final MusicProvider mMusicProvider;
+class Playback internal constructor(private val mService: MusicService,
                                     private var mMusicProvider: MusicProvider?) : AudioManager.OnAudioFocusChangeListener, OnCompletionListener, OnErrorListener, OnPreparedListener, OnSeekCompleteListener {
     private val mWifiLock: WifiManager.WifiLock
     var state = PlaybackStateCompat.STATE_NONE
@@ -56,16 +54,14 @@ class Playback internal constructor(private val mService: MusicService, //    pr
     private var mCurrentPosition: Int = 0
     @Volatile
     private var mCurrentMediaId: String? = null
-    // Type of audio focus we have:
     private var mAudioFocus = AUDIO_NO_FOCUS_NO_DUCK
-    private val mAudioManager: AudioManager
+    private var mAudioManager: AudioManager?
     private var mMediaPlayer: MediaPlayer? = null
 
     private val mPlaybackAttributes = AudioAttributesCompat.Builder()
             .setUsage(AudioAttributesCompat.USAGE_MEDIA)
             .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
             .build()
-    //    private val mFocusRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
     private val mFocusRequest = AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)
             .setAudioAttributes(mPlaybackAttributes)
 //            .setAcceptsDelayedFocusGain(true)
@@ -89,7 +85,7 @@ class Playback internal constructor(private val mService: MusicService, //    pr
 
     init {
         val context = mService.applicationContext
-        this.mAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        this.mAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
 
         // Create the Wifi lock (this does not acquire the lock, this just creates it).
 
@@ -226,32 +222,25 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         this.mCallback = callback
     }
 
-    /** Try to get the system audio focus.  */
     private fun tryToGetAudioFocus() {
         Log.d(TAG, "tryToGetAudioFocus")
-        val result = AudioManagerCompat.requestAudioFocus(mAudioManager, mFocusRequest)
-        mAudioFocus = if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
-            AUDIO_FOCUSED
-        else
-            AUDIO_NO_FOCUS_NO_DUCK
-    }
-
-    /** Give up the audio focus.  */
-    private fun giveUpAudioFocus() {
-        Log.d(TAG, "giveUpAudioFocus")
-        if (AudioManagerCompat.abandonAudioFocusRequest(mAudioManager, mFocusRequest) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            mAudioFocus = AUDIO_NO_FOCUS_NO_DUCK
+        mAudioManager?.let {
+            val result = AudioManagerCompat.requestAudioFocus(it, mFocusRequest)
+            mAudioFocus = if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+                AUDIO_FOCUSED
+            else
+                AUDIO_NO_FOCUS_NO_DUCK
         }
     }
 
-    /**
-     * Reconfigures MediaPlayer according to audio focus settings and starts/restarts it. This method
-     * starts/restarts the MediaPlayer respecting the current audio focus state. So if we have focus,
-     * it will play normally; if we don't have focus, it will either leave the MediaPlayer paused or
-     * set it to a low volume, depending on what is allowed by the current focus settings. This method
-     * assumes mPlayer != null, so if you are calling it, you have to do so from a context where you
-     * are sure this is the case.
-     */
+    private fun giveUpAudioFocus() {
+        Log.d(TAG, "giveUpAudioFocus")
+        mAudioManager?.let {
+            if (AudioManagerCompat.abandonAudioFocusRequest(it, mFocusRequest) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+                mAudioFocus = AUDIO_NO_FOCUS_NO_DUCK
+        }
+    }
+
     private fun configMediaPlayerState() {
         Log.d(TAG, "configMediaPlayerState. mAudioFocus=$mAudioFocus")
         if (mAudioFocus == AUDIO_NO_FOCUS_NO_DUCK) {
@@ -282,9 +271,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         mCallback?.onPlaybackStatusChanged(state)
     }
 
-    /**
-     * Called by AudioManager on audio focus changes. Implementation of [ ].
-     */
     override fun onAudioFocusChange(focusChange: Int) {
         Log.d(TAG, "onAudioFocusChange. focusChange= $focusChange")
         if (focusChange == AudioManagerCompat.AUDIOFOCUS_GAIN) {
@@ -312,11 +298,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         configMediaPlayerState()
     }
 
-    /**
-     * Called when MediaPlayer has completed a seek.
-     *
-     * @see OnSeekCompleteListener
-     */
     override fun onSeekComplete(player: MediaPlayer) {
         Log.d(TAG, "onSeekComplete from MediaPlayer:" + player.currentPosition)
         mCurrentPosition = player.currentPosition
@@ -327,11 +308,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         mCallback?.onPlaybackStatusChanged(state)
     }
 
-    /**
-     * Called when media player is done playing current song.
-     *
-     * @see OnCompletionListener
-     */
     override fun onCompletion(player: MediaPlayer) {
         Log.d(TAG, "onCompletion from MediaPlayer")
         // The media player finished playing the current song, so we go ahead
@@ -339,11 +315,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         mCallback?.onCompletion()
     }
 
-    /**
-     * Called when media player is done preparing.
-     *
-     * @see OnPreparedListener
-     */
     override fun onPrepared(player: MediaPlayer) {
         Log.d(TAG, "onPrepared from MediaPlayer")
         // The media player is done preparing. That means we can start playing if we
@@ -351,22 +322,12 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         configMediaPlayerState()
     }
 
-    /**
-     * Called when there's an error playing media. When this happens, the media player goes to the
-     * Error state. We warn the user about the error and reset the media player.
-     *
-     * @see OnErrorListener
-     */
     override fun onError(player: MediaPlayer, what: Int, extra: Int): Boolean {
         Log.e(TAG, "Media player error: what=$what, extra=$extra")
         mCallback?.onError("MediaPlayer error $what ($extra)")
         return true // true indicates we handled the error
     }
 
-    /**
-     * Makes sure the media player exists and has been reset. This will create the media player if
-     * needed, or reset the existing media player if one already exists.
-     */
     private fun createMediaPlayerIfNeeded() {
         Log.d(TAG, "createMediaPlayerIfNeeded. needed? " + (mMediaPlayer == null))
         if (mMediaPlayer == null) {
@@ -388,12 +349,6 @@ class Playback internal constructor(private val mService: MusicService, //    pr
         }
     }
 
-    /**
-     * Releases resources used by the service for playback. This includes the "foreground service"
-     * status, the wake locks and possibly the MediaPlayer.
-     *
-     * @param releaseMediaPlayer Indicates whether the Media Player should also be released or not.
-     */
     private fun relaxResources(releaseMediaPlayer: Boolean) {
         Log.d(TAG, "relaxResources. releaseMediaPlayer= $releaseMediaPlayer")
 
@@ -427,18 +382,9 @@ class Playback internal constructor(private val mService: MusicService, //    pr
             setStreamTypeLegacy()
     }
 
-    /* package */  interface Callback {
-        /** On current music completed.  */
+    interface Callback {
         fun onCompletion()
-
-        /**
-         * on Playback status changed Implementations can use this callback to update playback state on
-         * the media sessions.
-         */
         fun onPlaybackStatusChanged(state: Int)
-
-        /** @param error to be added to the PlaybackState
-         */
         fun onError(error: String?)
     }
 

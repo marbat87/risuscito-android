@@ -9,6 +9,9 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.media.session.MediaButtonReceiver
+import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
+import com.mikepenz.iconics.utils.toAndroidIconCompat
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 
@@ -35,13 +38,23 @@ internal object MediaNotificationHelper {
         }
 
         val isPlaying = mPlaybackState.state == PlaybackStateCompat.STATE_PLAYING
+        val iconPause = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_pause) {
+            color = colorRes(R.color.ic_notification_color)
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
+        val iconPlay = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_play) {
+            color = colorRes(R.color.ic_notification_color)
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
         val actionPlayPause = if (isPlaying)
-            NotificationCompat.Action(R.drawable.notification_pause,
+            NotificationCompat.Action(iconPause.toAndroidIconCompat(),
                     context.getString(R.string.label_pause),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                             PlaybackStateCompat.ACTION_PAUSE))
         else
-            NotificationCompat.Action(R.drawable.notification_play,
+            NotificationCompat.Action(iconPlay.toAndroidIconCompat(),
                     context.getString(R.string.label_play),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                             PlaybackStateCompat.ACTION_PLAY))
@@ -70,7 +83,12 @@ internal object MediaNotificationHelper {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         if (mPlaybackState.state == PlaybackStateCompat.STATE_PLAYING || mPlaybackState.state == PlaybackStateCompat.STATE_PAUSED) {
-            val actionRestart = NotificationCompat.Action(R.drawable.notification_restart,
+            val iconRestart = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_restart) {
+                color = colorRes(R.color.ic_notification_color)
+                size = sizeDp(24)
+                padding = sizeDp(2)
+            }
+            val actionRestart = NotificationCompat.Action(iconRestart.toAndroidIconCompat(),
                     context.getString(R.string.label_restart),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                             PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS))

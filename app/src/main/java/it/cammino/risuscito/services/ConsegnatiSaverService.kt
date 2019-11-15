@@ -30,12 +30,14 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
         val ids = intent?.getIntegerArrayListExtra(IDS_CONSEGNATI)
         var i = 0
         val mDao = RisuscitoDatabase.getInstance(applicationContext).consegnatiDao()
-        mDao.emptyConsegnati()
+        val consegnati = ArrayList<Consegnato>()
         ids?.let {
             for (id in it) {
                 val tempConsegnato = Consegnato()
                 tempConsegnato.idConsegnato = ++i
                 tempConsegnato.idCanto = id
+                tempConsegnato.numPassaggio = mDao.getNumPassaggio(id)
+                consegnati.add(tempConsegnato)
                 try {
                     mDao.insertConsegnati(tempConsegnato)
                     Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED")
@@ -50,6 +52,8 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
 
             }
         }
+        mDao.emptyConsegnati()
+        mDao.insertConsegnati(consegnati)
         Log.d(TAG, "Sending broadcast notification: $BROADCAST_SAVING_COMPLETED")
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_SAVING_COMPLETED))
     }

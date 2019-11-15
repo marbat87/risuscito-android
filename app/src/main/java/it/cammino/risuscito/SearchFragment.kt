@@ -6,10 +6,12 @@ import android.os.AsyncTask.Status
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
@@ -23,8 +25,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crashlytics.android.Crashlytics
-import com.github.zawadz88.materialpopupmenu.ViewBoundCallback
-import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -38,7 +38,6 @@ import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.android.synthetic.main.search_layout.*
 import kotlinx.android.synthetic.main.tinted_progressbar.*
-import kotlinx.android.synthetic.main.view_custom_item_checkable.view.*
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
@@ -58,6 +57,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
     private var searchTask: SearchTask? = null
     private var mLastClickTime: Long = 0
     private var mMainActivity: MainActivity? = null
+    private lateinit var mPopupMenu: PopupMenu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -126,8 +126,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
             LinearLayoutManager(context)
         matchedList.layoutManager = llm
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         matchedList.addItemDecoration(insetDivider)
 
         textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
@@ -144,26 +143,20 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
             ricercaStringa(s.toString())
         }
 
+        val wrapper = ContextThemeWrapper(requireContext(), R.style.Widget_MaterialComponents_PopupMenu_Risuscito)
+        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, more_options, Gravity.END) else PopupMenu(wrapper, more_options)
+        mPopupMenu.inflate(R.menu.search_option_menu)
+        mPopupMenu.menu.findItem(R.id.consegnaty_only).isVisible = false
+        mPopupMenu.setOnMenuItemClickListener {
+            it.isChecked = !it.isChecked
+            mViewModel.advancedSearch = it.isChecked
+            textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+            ricercaStringa(textfieldRicerca.text.toString())
+            true
+        }
+
         more_options.setOnClickListener {
-            val popupMenu = popupMenu {
-                dropdownGravity = Gravity.END
-                section {
-                    customItem {
-                        layoutResId = R.layout.view_custom_item_checkable
-                        dismissOnSelect = false
-                        viewBoundCallback = ViewBoundCallback { view ->
-                            view.customItemCheckbox.isChecked = mViewModel.advancedSearch
-                            view.customItemCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                                mViewModel.advancedSearch = isChecked
-                                textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
-                                ricercaStringa(textfieldRicerca.text.toString())
-                                dismissPopup()
-                            }
-                        }
-                    }
-                }
-            }
-            popupMenu.show(requireContext(), view)
+            mPopupMenu.show()
         }
 
     }
@@ -191,7 +184,9 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun ricercaStringa(s: String) {
         // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi

@@ -41,82 +41,6 @@ import it.cammino.risuscito.R
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-/**
- * This class provides a MediaBrowser through a service. It exposes the media library to a browsing
- * client, through the onGetRoot and onLoadChildren methods. It also creates a MediaSession and
- * exposes it through its MediaSession.Token, which allows the client to create a MediaController
- * that connects to and send control commands to the MediaSession remotely. This is useful for
- * user interfaces that need to interact with your media session, like Android Auto. You can
- * (should) also use the same service from your app's UI, which gives a seamless playback
- * experience to the user.
- *
- *
- * To implement a MediaBrowserService, you need to:
- *
- *
- *
- *
- *
- *  *  Extend [androidx.media.MediaBrowserServiceCompat], implementing the media
- * browsing related methods [androidx.media.MediaBrowserServiceCompat.onGetRoot] and
- * [androidx.media.MediaBrowserServiceCompat.onLoadChildren];
- *  *  In onCreate, start a new [android.support.v4.media.session.MediaSessionCompat] and
- * notify its parent with the session's token
- * [androidx.media.MediaBrowserServiceCompat.setSessionToken];
- *
- *
- *  *  Set a callback on the
- * [android.support.v4.media.session.MediaSessionCompat.setCallback].
- * The callback will receive all the user's actions, like play, pause, etc;
- *
- *
- *  *  Handle all the actual music playing using any method your app prefers (for example,
- * [android.media.MediaPlayer])
- *
- *
- *  *  Update playbackState, "now playing" metadata and queue, using MediaSession proper methods
- * [android.support.v4.media.session.MediaSessionCompat.setPlaybackState]
- * [android.support.v4.media.session.MediaSessionCompat.setMetadata] and
- * if your implementation allows it,
- * [android.support.v4.media.session.MediaSessionCompat.setQueue])
- *
- *
- *  *  Declare and export the service in AndroidManifest with an intent receiver for the action
- * android.media.browse.MediaBrowserService
- *  *  Declare a broadcast receiver to receive media button events. This is required if your app
- * supports Android KitKat or previous:
- * &lt;receiver android:name="android.support.v4.media.session.MediaButtonReceiver"&gt;
- * &lt;intent-filter&gt;
- * &lt;action android:name="android.intent.action.MEDIA_BUTTON" /&gt;
- * &lt;/intent-filter&gt;
- * &lt;/receiver&gt;
- *
- *
- *
- *
- *
- * To make your app compatible with Android Auto, you also need to:
- *
- *
- *
- *
- *
- *  *  Declare a meta-data tag in AndroidManifest.xml linking to a xml resource
- * with a &lt;automotiveApp&gt; root element. For a media app, this must include
- * an &lt;uses name="media"/&gt; element as a child.
- * For example, in AndroidManifest.xml:
- * &lt;meta-data android:name="com.google.android.gms.car.application"
- * android:resource="@xml/automotive_app_desc"/&gt;
- * And in res/values/automotive_app_desc.xml:
- * &lt;automotiveApp&gt;
- * &lt;uses name="media"/&gt;
- * &lt;/automotiveApp&gt;
- *
- *
- *
- *
- */
-
 class MusicService : MediaBrowserServiceCompat() {
 
     private var mMusicProvider: MusicProvider? = null
@@ -128,15 +52,8 @@ class MusicService : MediaBrowserServiceCompat() {
     private var mCurrentMedia: MediaSessionCompat.QueueItem? = null
     private var mAudioBecomingNoisyReceiver: AudioBecomingNoisyReceiver? = null
 
-    /**
-     * Custom [Handler] to process the delayed stop command.
-     */
     private val mDelayedStopHandler = Handler(Handler.Callback { msg ->
-        if (msg.what != STOP_CMD) {
-            return@Callback false
-        }
-
-        if (mPlayback?.isPlaying != true) {
+        if (msg.what == STOP_CMD && mPlayback?.isPlaying != true) {
             Log.d(TAG, "Stopping service")
             stopSelf()
             mServiceStarted = false
@@ -144,10 +61,6 @@ class MusicService : MediaBrowserServiceCompat() {
         false
     })
 
-    /*
-     * (non-Javadoc)
-     * @see android.app.Service#onCreate()
-     */
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "onCreate")
@@ -198,21 +111,11 @@ class MusicService : MediaBrowserServiceCompat() {
         updatePlaybackState(null)
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see android.app.Service.onStartCommand
-     */
     override fun onStartCommand(startIntent: Intent?, flags: Int, startId: Int): Int {
         MediaButtonReceiver.handleIntent(mSession, startIntent)
         return super.onStartCommand(startIntent, flags, startId)
     }
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see android.app.Service.onDestroy
-     */
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
         // Service is being killed, so make sure we release our resources
@@ -263,10 +166,6 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
-    /**
-     * Actual implementation of onLoadChildren that assumes that MusicProvider is already
-     * initialized.
-     */
     private fun loadChildrenImpl(parentMediaId: String,
                                  result: Result<List<MediaBrowserCompat.MediaItem>>) {
         val mediaItems = ArrayList<MediaBrowserCompat.MediaItem>()
@@ -357,9 +256,6 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
-    /**
-     * Handle a request to play music
-     */
     private fun handlePlayRequest() {
         Log.d(TAG, "handlePlayRequest: mState=${mPlayback?.state}")
 
@@ -387,9 +283,6 @@ class MusicService : MediaBrowserServiceCompat() {
         mPlayback?.play(mCurrentMedia)
     }
 
-    /**
-     * Handle a request to pause music
-     */
     private fun handlePauseRequest() {
         Log.d(TAG, "handlePauseRequest: mState=$${mPlayback?.state}")
         mPlayback?.pause()
@@ -399,9 +292,6 @@ class MusicService : MediaBrowserServiceCompat() {
         mDelayedStopHandler.sendEmptyMessageDelayed(STOP_CMD, STOP_DELAY)
     }
 
-    /**
-     * Handle a request to stop music
-     */
     private fun handleStopRequest() {
         Log.d(TAG, "handleStopRequest: mState=$${mPlayback?.state}")
         mPlayback?.stop()
@@ -421,11 +311,6 @@ class MusicService : MediaBrowserServiceCompat() {
 
     }
 
-    /**
-     * Update the current media player state, optionally showing an error message.
-     *
-     * @param error if not null, error message to present to the user.
-     */
     private fun updatePlaybackState(error: String?) {
         Log.d(TAG, "updatePlaybackState, playback mState=$${mPlayback?.state}")
         var position = PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN
@@ -474,8 +359,10 @@ class MusicService : MediaBrowserServiceCompat() {
                     .putString(MediaMetadataCompat.METADATA_KEY_GENRE, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_GENRE))
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
-                    .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) ?: 0)
-                    .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS) ?: 0)
+                    .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER)
+                            ?: 0)
+                    .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS)
+                            ?: 0)
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, oldMetadataCompat?.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART))
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, oldMetadataCompat?.getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON))
                     .build()
@@ -502,10 +389,6 @@ class MusicService : MediaBrowserServiceCompat() {
         mNotificationManager.notify(NOTIFICATION_ID, notification)
         return notification
     }
-
-    /**
-     * Implementation of the AudioManager.ACTION_AUDIO_BECOMING_NOISY Receiver.
-     */
 
     private inner class AudioBecomingNoisyReceiver(context: Context) : BroadcastReceiver() {
         private val mContext: Context = context.applicationContext

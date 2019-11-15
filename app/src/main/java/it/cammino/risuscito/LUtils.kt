@@ -212,6 +212,10 @@ class LUtils private constructor(private val mActivity: Activity) {
             return LUtils(activity)
         }
 
+        fun hasK(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        }
+
         fun hasL(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
         }

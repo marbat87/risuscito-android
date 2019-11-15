@@ -86,7 +86,7 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
 
         button_condividi.setOnClickListener {
             val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, shareIntent)
-            bottomSheetDialog.show(requireFragmentManager(), null)
+            bottomSheetDialog.show(parentFragmentManager, null)
         }
 
         button_invia_file.setOnClickListener {
@@ -95,7 +95,7 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
             @Suppress("SENSELESS_COMPARISON")
             if (exportUri != null) {
                 val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, getSendIntent(exportUri))
-                bottomSheetDialog.show(requireFragmentManager(), null)
+                bottomSheetDialog.show(parentFragmentManager, null)
             } else
                 Snackbar.make(
                         requireActivity().main_content,
@@ -206,7 +206,7 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
                                 R.string.song_removed,
                                 Snackbar.LENGTH_LONG)
                                 .setAction(
-                                        getString(R.string.cancel).toUpperCase()
+                                        getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
                                 ) {
                                     mCantiViewModel.listaPersonalizzata?.addCanto(cantoDaCanc, posizioneDaCanc)
                                     runUpdate()
@@ -306,33 +306,34 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
         }
 
     private val click = OnClickListener { v ->
-        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
-        mLastClickTime = SystemClock.elapsedRealtime()
-        val parent = v.parent.parent as View
-        if (parent.addCantoGenerico.isVisible) {
-            if (mSwhitchMode) {
-                scambioConVuoto(
-                        Integer.valueOf(parent.text_id_posizione.text.toString()))
-            } else {
-                if (!MaterialCab.isActive) {
-                    val intent = Intent(activity, InsertActivity::class.java)
-                    intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 0,
-                            InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
-                            InsertActivity.POSITION to Integer.valueOf(parent.text_id_posizione.text.toString())))
-                    parentFragment?.startActivityForResult(intent, TAG_INSERT_PERS)
-                    Animatoo.animateShrink(activity)
+        if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+            mLastClickTime = SystemClock.elapsedRealtime()
+            val parent = v.parent.parent as View
+            if (parent.addCantoGenerico.isVisible) {
+                if (mSwhitchMode) {
+                    scambioConVuoto(
+                            Integer.valueOf(parent.text_id_posizione.text.toString()))
+                } else {
+                    if (!MaterialCab.isActive) {
+                        val intent = Intent(activity, InsertActivity::class.java)
+                        intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 0,
+                                InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
+                                InsertActivity.POSITION to Integer.valueOf(parent.text_id_posizione.text.toString())))
+                        parentFragment?.startActivityForResult(intent, TAG_INSERT_PERS)
+                        Animatoo.animateShrink(activity)
+                    }
                 }
-            }
-        } else {
-            if (!mSwhitchMode)
-                if (MaterialCab.isActive) {
-                    posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
-                    snackBarRimuoviCanto(v)
-                } else
-                    openPagina(v)
-            else {
-                scambioCanto(
-                        Integer.valueOf(parent.text_id_posizione.text.toString()))
+            } else {
+                if (!mSwhitchMode)
+                    if (MaterialCab.isActive) {
+                        posizioneDaCanc = Integer.valueOf(parent.text_id_posizione.text.toString())
+                        snackBarRimuoviCanto(v)
+                    } else
+                        openPagina(v)
+                else {
+                    scambioCanto(
+                            Integer.valueOf(parent.text_id_posizione.text.toString()))
+                }
             }
         }
     }

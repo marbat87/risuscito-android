@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/advanced_search"
+            android:orderInCategory="1"
+            android:title="@string/advanced_search_title"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/consegnaty_only"
+            android:orderInCategory="2"
+            android:title="@string/consegnati_only"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+    </group>
+</menu>

@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -114,7 +115,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     .title(R.string.posizione_rename)
                     .prefill(item.name?.text.toString())
                     .positiveButton(R.string.aggiungi_rename)
-                    .negativeButton(android.R.string.cancel)
+                    .negativeButton(R.string.cancel)
                     .show()
             true
         }
@@ -196,6 +197,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             mViewModel.elementi?.let { mAdapter.set(it) }
         }
 
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -252,7 +257,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         return false
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         if (mAdapter.adapterItems.isNotEmpty()) {
             SimpleDialogFragment.Builder(this, this, SAVE_LIST)
@@ -295,7 +300,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
     }
 
-    override fun onNegative(tag: String, dialog: MaterialDialog) {}
+    override fun onNegative(tag: String, dialog: MaterialDialog) {
+        // no-op
+    }
 
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
@@ -408,7 +415,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA, true) }
                             }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
+                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                                // no-op
+                            }
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 Log.d(TAG, "onSequenceCanceled: ")

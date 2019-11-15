@@ -13,6 +13,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import kotlinx.android.synthetic.main.row_item_to_insert.view.*
 
 fun insertItem(block: InsertItem.() -> Unit): InsertItem = InsertItem().apply(block)
@@ -84,7 +85,7 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
             if (it.isNotEmpty()) {
                 val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
                         ?: "")
-                val mPosition = normalizedTitle.toLowerCase().indexOf(it)
+                val mPosition = normalizedTitle.toLowerCase(getSystemLocale(ctx.resources)).indexOf(it)
                 if (mPosition >= 0) {
                     val stringTitle = title?.getText(ctx)
                     val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)

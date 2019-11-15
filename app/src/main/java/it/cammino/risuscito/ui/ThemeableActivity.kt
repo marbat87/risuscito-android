@@ -19,9 +19,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.mikepenz.iconics.utils.setIconicsFactory
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -67,8 +67,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         setTaskDescription()
 
-        // Iconic
-        layoutInflater.setIconicsFactory(delegate)
         super.onCreate(savedInstanceState)
     }
 
@@ -110,6 +108,17 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
         RisuscitoApplication.localeManager.setLocale(this)
         SplitCompat.install(this)
+    }
+
+    //FIX PER AppCompatDelegateImpl that overrides the configuration to a completely fresh configuration without a locale
+    //TO CHECK
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        if (overrideConfiguration != null) {
+            val uiMode = overrideConfiguration.uiMode
+            overrideConfiguration.setTo(baseContext.resources.configuration)
+            overrideConfiguration.uiMode = uiMode
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
     }
 
     inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))
@@ -201,7 +210,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (userId == null)
             throw NoIdException()
 
-        val storage = FirebaseStorage.getInstance()
+        val storage = Firebase.storage
         val storageRef = storage.reference
         val risuscitoDb = RisuscitoDatabase.getInstance(this)
 

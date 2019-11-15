@@ -5,9 +5,8 @@ import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import it.cammino.risuscito.Utility
-
-import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.database.pojo.Posizione
 
 
 class DefaultListaViewModel(application: Application, args: Bundle) : AndroidViewModel(application) {

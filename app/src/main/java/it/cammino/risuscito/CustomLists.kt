@@ -27,7 +27,6 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -62,7 +61,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     private var mLastClickTime: Long = 0
     private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-//            super.onPageSelected(position)
             Log.d(TAG, "onPageSelected: $position")
             Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
             if (mCustomListsViewModel.indexToShow != position) {
@@ -182,7 +180,9 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         }
     }
 
-    override fun onNegative(tag: String, dialog: MaterialDialog) {}
+    override fun onNegative(tag: String, dialog: MaterialDialog) {
+        // no-op
+    }
 
     override fun onPositive(tag: String) {
         Log.d(TAG, "onPositive: $tag")
@@ -206,19 +206,19 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                             .setAction(
                                     getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
                             ) {
-                                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY)
-                                    return@setAction
-                                mLastClickTime = SystemClock.elapsedRealtime()
-                                mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
-                                movePage = true
-                                ioThread {
-                                    val mListePersDao = RisuscitoDatabase.getInstance(requireContext())
-                                            .listePersDao()
-                                    val listaToRestore = ListaPers()
-                                    listaToRestore.id = mCustomListsViewModel.idDaCanc
-                                    listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
-                                    listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
-                                    mListePersDao.insertLista(listaToRestore)
+                                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                                    mLastClickTime = SystemClock.elapsedRealtime()
+                                    mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
+                                    movePage = true
+                                    ioThread {
+                                        val mListePersDao = RisuscitoDatabase.getInstance(requireContext())
+                                                .listePersDao()
+                                        val listaToRestore = ListaPers()
+                                        listaToRestore.id = mCustomListsViewModel.idDaCanc
+                                        listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+                                        listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
+                                        mListePersDao.insertLista(listaToRestore)
+                                    }
                                 }
                             }.show()
                 }
@@ -226,10 +226,11 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun playIntro() {
-//        enableFab(true)
         mMainActivity?.enableFab(true)
 //        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check)
 //                .sizeDp(24)
@@ -238,42 +239,46 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             size = sizeDp(24)
             padding = sizeDp(4)
         }
-        TapTargetSequence(requireActivity())
-                .continueOnCancel(true)
-                .targets(
-                        TapTarget.forView(
-                                getFab(),
-                                getString(R.string.showcase_listepers_title),
-                                getString(R.string.showcase_listepers_desc1))
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
-                                .descriptionTextSize(15)
-                                .tintTarget(false) // Whether to tint the target view's color
-                        ,
-                        TapTarget.forView(
-                                getFab(),
-                                getString(R.string.showcase_listepers_title),
-                                getString(R.string.showcase_listepers_desc3))
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
-                                .icon(doneDrawable)
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark))
-                .listener(
-                        object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                            override fun onSequenceFinish() {
-                                if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                            }
+        mMainActivity?.getFab()?.let { fab ->
+            TapTargetSequence(requireActivity())
+                    .continueOnCancel(true)
+                    .targets(
+                            TapTarget.forView(
+                                    fab,
+                                    getString(R.string.showcase_listepers_title),
+                                    getString(R.string.showcase_listepers_desc1))
+                                    .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                                    .titleTextColor(R.color.primary_text_default_material_dark)
+                                    .textColor(R.color.secondary_text_default_material_dark)
+                                    .descriptionTextSize(15)
+                                    .tintTarget(false) // Whether to tint the target view's color
+                            ,
+                            TapTarget.forView(
+                                    fab,
+                                    getString(R.string.showcase_listepers_title),
+                                    getString(R.string.showcase_listepers_desc3))
+                                    .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                    .icon(doneDrawable)
+                                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                                    .titleTextColor(R.color.primary_text_default_material_dark)
+                                    .textColor(R.color.secondary_text_default_material_dark))
+                    .listener(
+                            object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+                                override fun onSequenceFinish() {
+                                    if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                                }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
+                                override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                                    // no-op
+                                }
 
-                            override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                            }
-                        })
-                .start()
+                                override fun onSequenceCanceled(tapTarget: TapTarget) {
+                                    if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                                }
+                            })
+                    .start()
+        }
     }
 
     private fun subscribeUiListe() {
@@ -311,14 +316,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         }
 
     }
-
-    private fun getFab(): FloatingActionButton {
-        return mMainActivity?.getFab()!!
-    }
-
-//    private fun enableFab(enabled: Boolean) {
-//        mMainActivity?.enableFab(enabled)
-//    }
 
     private fun closeFabMenu() {
         mMainActivity?.closeFabMenu()

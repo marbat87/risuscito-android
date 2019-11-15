@@ -107,7 +107,7 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
         cantiList?.setHasFixedSize(true)
         cantiList?.adapter = mAdapter
         val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
-        insetDivider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         cantiList?.addItemDecoration(insetDivider)
         dragScrollBar?.let {
             if (ViewCompat.isAttachedToWindow(it)) {
@@ -115,7 +115,9 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
                 it.setAutoHide(false)
             } else
                 it.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-                    override fun onViewDetachedFromWindow(p0: View?) {}
+                    override fun onViewDetachedFromWindow(p0: View?) {
+                        // no-op
+                    }
 
                     override fun onViewAttachedToWindow(p0: View?) {
                         (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
@@ -146,7 +148,9 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun subscribeUiChanges() {
         mCantiViewModel.itemsResult?.observe(this) { canti ->

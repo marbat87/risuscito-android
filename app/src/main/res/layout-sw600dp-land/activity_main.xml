@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
@@ -8,7 +9,8 @@
     <FrameLayout
         android:id="@+id/fixed_drawer_content"
         android:layout_width="@dimen/drawer_tablet_fixed_width"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:ignore="InconsistentLayout" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
@@ -54,8 +56,10 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/content_frame"
+            android:name="it.cammino.risuscito.Risuscito"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:tag="@id/navigation_home"
             risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
         <include layout="@layout/common_shadow" />

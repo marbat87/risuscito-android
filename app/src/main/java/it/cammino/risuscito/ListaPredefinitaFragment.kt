@@ -22,8 +22,8 @@ import com.crashlytics.android.Crashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import it.cammino.risuscito.database.Posizione
 import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.database.pojo.Posizione
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.items.listaPersonalizzataItem
 import it.cammino.risuscito.items.posizioneTitleItem
@@ -86,7 +86,7 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
 
         button_condividi.setOnClickListener {
             val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
-            bottomSheetDialog.show(requireFragmentManager(), null)
+            bottomSheetDialog.show(parentFragmentManager, null)
         }
     }
 
@@ -97,10 +97,10 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                 titoloPosizione = title
                 idPosizione = position
                 tagPosizione = tag
-                isMultiple = when (mCantiViewModel.defaultListaId) {
-                    2 -> (position == 4 || position == 3)
-                    else -> false
-                }
+                isMultiple = if (mCantiViewModel.defaultListaId == 2)
+                    (position == 4 || position == 3)
+                else
+                    false
             }
             listItem = posizioni.filter { it.position == position }.map {
                 posizioneItem {
@@ -405,52 +405,53 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
         }
 
     private val click = OnClickListener { v ->
-        if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return@OnClickListener
-        mLastClickTime = SystemClock.elapsedRealtime()
-        val parent = v.parent.parent as? View
-        if (v.id == R.id.addCantoGenerico) {
-            if (mSwhitchMode) {
-                actionModeOk = true
-                destroy()
-                ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent?.text_id_posizione?.text.toString()))
-            } else {
-                if (!MaterialCab.isActive) {
-                    val intent = Intent(activity, InsertActivity::class.java)
-                    intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 1,
-                            InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
-                            InsertActivity.POSITION to Integer.valueOf(parent?.text_id_posizione?.text.toString())))
-                    parentFragment?.startActivityForResult(intent, when (mCantiViewModel.defaultListaId) {
-                        1 -> TAG_INSERT_PAROLA
-                        2 -> TAG_INSERT_EUCARESTIA
-                        else -> TAG_INSERT_PAROLA
-                    })
-                    Animatoo.animateShrink(activity)
-                }
-            }
-        } else {
-            if (!mSwhitchMode)
-                if (MaterialCab.isActive) {
-                    posizioneDaCanc = Integer.valueOf(parent?.text_id_posizione?.text.toString())
-                    idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
-                    timestampDaCanc = v.text_timestamp.text.toString()
-                    snackBarRimuoviCanto(v)
+        if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+            mLastClickTime = SystemClock.elapsedRealtime()
+            val parent = v.parent.parent as? View
+            if (v.id == R.id.addCantoGenerico) {
+                if (mSwhitchMode) {
+                    actionModeOk = true
+                    destroy()
+                    ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent?.text_id_posizione?.text.toString()))
                 } else {
-                    //apri canto
-                    val intent = Intent(activity, PaginaRenderActivity::class.java)
-                    intent.putExtras(bundleOf(Utility.PAGINA to v.text_source_canto.text.toString(),
-                            Utility.ID_CANTO to Integer.valueOf(v.text_id_canto_card.text.toString())))
-                    mLUtils?.startActivityWithTransition(intent)
+                    if (!MaterialCab.isActive) {
+                        val intent = Intent(activity, InsertActivity::class.java)
+                        intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 1,
+                                InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
+                                InsertActivity.POSITION to Integer.valueOf(parent?.text_id_posizione?.text.toString())))
+                        parentFragment?.startActivityForResult(intent, when (mCantiViewModel.defaultListaId) {
+                            1 -> TAG_INSERT_PAROLA
+                            2 -> TAG_INSERT_EUCARESTIA
+                            else -> TAG_INSERT_PAROLA
+                        })
+                        Animatoo.animateShrink(activity)
+                    }
                 }
-            else {
-                actionModeOk = true
-                destroy()
-                ListeUtils.scambioCanto(this,
-                        mCantiViewModel.defaultListaId,
-                        posizioneDaCanc,
-                        idDaCanc,
-                        Integer.valueOf(parent?.text_id_posizione?.text.toString()),
-                        Integer.valueOf((v.text_id_canto_card).text.toString())
-                )
+            } else {
+                if (!mSwhitchMode)
+                    if (MaterialCab.isActive) {
+                        posizioneDaCanc = Integer.valueOf(parent?.text_id_posizione?.text.toString())
+                        idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
+                        timestampDaCanc = v.text_timestamp.text.toString()
+                        snackBarRimuoviCanto(v)
+                    } else {
+                        //apri canto
+                        val intent = Intent(activity, PaginaRenderActivity::class.java)
+                        intent.putExtras(bundleOf(Utility.PAGINA to v.text_source_canto.text.toString(),
+                                Utility.ID_CANTO to Integer.valueOf(v.text_id_canto_card.text.toString())))
+                        mLUtils?.startActivityWithTransition(intent)
+                    }
+                else {
+                    actionModeOk = true
+                    destroy()
+                    ListeUtils.scambioCanto(this,
+                            mCantiViewModel.defaultListaId,
+                            posizioneDaCanc,
+                            idDaCanc,
+                            Integer.valueOf(parent?.text_id_posizione?.text.toString()),
+                            Integer.valueOf((v.text_id_canto_card).text.toString())
+                    )
+                }
             }
         }
     }

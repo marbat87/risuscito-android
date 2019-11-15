@@ -131,10 +131,8 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
         else
             LinearLayoutManager(context)
         favouritesList?.layoutManager = llm
-//        favouritesList?.setHasFixedSize(true)
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
-        insetDivider.setDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         favouritesList?.addItemDecoration(insetDivider)
         favouritesList?.itemAnimator = SlideRightAlphaAnimator()
 
@@ -192,7 +190,9 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
         }
     }
 
-    override fun onNegative(tag: String) {}
+    override fun onNegative(tag: String) {
+        // no-op
+    }
 
     private fun removeFavorites() {
         ListeUtils.removeFavoritesWithUndo(this, selectExtension?.selectedItems)
@@ -214,16 +214,14 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
             }
 
             onSelection { item ->
-                Log.d(TAG, "MaterialCab onSelection")
-                when (item.itemId) {
-                    R.id.action_remove_item -> {
-                        removeFavorites()
-                        actionModeOk = true
-                        destroy()
-                        true
-                    }
-                    else -> false
-                }
+                Log.d(TAG, "MaterialCab onSelection: ${item.itemId}")
+                if (item.itemId == R.id.action_remove_item) {
+                    removeFavorites()
+                    actionModeOk = true
+                    destroy()
+                    true
+                } else
+                    false
             }
 
             onDestroy {

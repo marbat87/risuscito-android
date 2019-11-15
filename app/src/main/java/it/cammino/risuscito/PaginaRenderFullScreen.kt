@@ -8,6 +8,7 @@ import android.os.Handler
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.addCallback
 import androidx.core.view.postDelayed
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.mikepenz.iconics.dsl.iconicsDrawable
@@ -17,6 +18,7 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.ui.ThemeableActivity
 import kotlinx.android.synthetic.main.activity_pagina_render_fullscreen.*
+import kotlinx.android.synthetic.main.common_webview.*
 import java.lang.ref.WeakReference
 
 class PaginaRenderFullScreen : ThemeableActivity() {
@@ -39,11 +41,14 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     }
     private var mLUtils: LUtils? = null
 
+    private lateinit var cantoView: WebView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         mLUtils = LUtils.getInstance(this)
         mLUtils?.goFullscreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pagina_render_fullscreen)
+        cantoView = canto_view as WebView
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
@@ -63,9 +68,13 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         }
         fab_fullscreen_off.setImageDrawable(icon)
         fab_fullscreen_off.setOnClickListener { saveZoom() }
+
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         saveZoom()
     }

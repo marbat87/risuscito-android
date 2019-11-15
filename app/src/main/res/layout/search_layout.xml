@@ -16,16 +16,16 @@
         android:background="?attr/customSelectorRoundAccent"
         android:soundEffectsEnabled="true">
 
-        <ImageView
+        <com.mikepenz.iconics.view.IconicsImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@null"
             android:scaleType="fitCenter"
-            risuscito:ico_color="?android:textColorSecondary"
-            risuscito:ico_icon="cmd-dots-vertical"
-            risuscito:ico_padding="2dp"
-            risuscito:ico_size="24dp"
+            risuscito:iiv_color="?android:textColorSecondary"
+            risuscito:iiv_icon="cmd-dots-vertical"
+            risuscito:iiv_padding="2dp"
+            risuscito:iiv_size="24dp"
             tools:ignore="MissingPrefix" />
 
     </FrameLayout>

@@ -10,7 +10,6 @@
     <string name="page_order_text">Зміст по сторінкам</string>
     <string name="search_name_text">Пошук</string>
     <string name="arg_search_text">Літургічний зміст</string>
-    <!--<string name="button_pulisci">ОЧИСТИТИ</string>-->
     <string name="always_on">Відкл. сплячий режим</string>
     <string name="always_on_summary">Не переходить на сплячий режим поки відкритий додаток.</string>
     <string name="title_activity_favourites">Закладки</string>
@@ -26,7 +25,7 @@
     <string name="seconda_lettura">Як відповідь на друге читання</string>
     <string name="terza_lettura">Як відповідь на третє читання</string>
     <string name="canto_fine">Пісня на вихід</string>
-    <string name="select_canto">Додати пісню</string>
+    <string name="select_canto">Додати пісню:</string>
     <string name="reset_list_question">Ти впевнений, що хочеш відновити список?</string>
     <string name="title_activity_canti_eucarestia">Літургія Євхаристії</string>
     <string name="canto_pace">На знак миру</string>
@@ -75,7 +74,6 @@
     <string name="dialog_change_title">Новини</string>
     <string name="action_tonalita">Тональність</string>
     <string name="action_trasporta">Змінити</string>
-    <string name="action_salva_tonalita">Зберегти</string>
     <string name="action_reset_tonalita">Стандартна</string>
     <string name="action_trasporta_do">С / c</string>
     <string name="action_trasporta_dod">Cis / cis</string>
@@ -98,8 +96,7 @@
     <string name="showcase_end_title">Завершити</string>
     <string name="list_added">Додано до списку</string>
     <string name="posizione_rename">Перейменувати</string>
-    <string name="showcase_add_pos_desc">Цією кнопкою можна додати будь-який новий елемент (прикл. \"Пісня на вхід\", \"перше читання\", ітд.).
-        Можна додати до 30 елементів.</string>
+    <string name="showcase_add_pos_desc">Цією кнопкою можна додати будь-який новий елемент (прикл. \"Пісня на вхід\", \"перше читання\", ітд.).\nМожна додати до 30 елементів.</string>
     <string name="showcase_rename_desc">Тримайте назву елементу, щоб перейменувати його.</string>
     <string name="showcase_saveexit_desc">Завершивши, натисни сюди, щоб зберегти і побачити список разом з іншими.</string>
     <string name="showcase_delete_desc">Перетягніть вправо або вліво, щоб видалити елемент.</string>
@@ -205,15 +202,12 @@
         <item quantity="many">%1$d видалено з хронології</item>
         <item quantity="other">%1$d видалено з хронології</item>
     </plurals>
-    <string name="sc_tonalita_desc">З цього меню можна здійснити зміну тональності з наступними функціями: перенесення аккордів,
-         збереження встановленої тональності та відновлення стандартної.</string>
+    <string name="sc_tonalita_desc">З цього меню можна здійснити зміну тональності з наступними функціями: перенесення аккордів,\nзбереження встановленої тональності та відновлення стандартної.</string>
     <string name="sc_barre_desc">З цього меню можна здійснити зміну баре з тими самими трьома функціями тональності.</string>
     <string name="sc_audio_title">Відтворення аудіо</string>
-    <string name="sc_audio_desc">За допомогою цього меню можна відтворити запис пісні з функціями: відтворення, пауза,
-         переміщення по пісні завдяки строчці, візуалізація програнного часу.</string>
+    <string name="sc_audio_desc">За допомогою цього меню можна відтворити запис пісні з функціями: відтворення, пауза,\nпереміщення по пісні завдяки строчці, візуалізація програнного часу.</string>
     <string name="sc_scroll_title">Автоматичне перегортання тексту</string>
-    <string name="sc_scroll_desc">За допомогою цього меню можна зробити так, щоб текст перегортався автоматично та регулювати швидкість перегортання.
-        \nПОРАДА: Регулюйте зум для того, щоб отримати кращий ефект.</string>
+    <string name="sc_scroll_desc">За допомогою цього меню можна зробити так, щоб текст перегортався автоматично та регулювати швидкість перегортання.\nПОРАДА: Регулюйте зум для того, щоб отримати кращий ефект.</string>
     <string name="download_error">Помилка в завантаженні:</string>
     <string name="share_by">Поділитися з&#8230;</string>
     <string name="delete_list_dialog">Ві впевнені, що хочете видалити список?</string>
@@ -221,15 +215,13 @@
     <string name="barre_add_al">на</string>
     <string name="barre_al_tasto">Баре на %1$s лад</string>
     <string name="external_storage_denied">Немає доступу до публічної памяті.</string>
-    <string name="external_storage_pref_rationale">Додаток просить доступу до зовнішньої памяті. Це необхідно для того, щоб активувати збереження в публічну память.  Якщо Ви не згодитесь, опція стане невидимою.</string>
+    <string name="external_storage_pref_rationale">Додаток просить доступу до зовнішньої памяті. Це необхідно для того, щоб активувати збереження в публічну память. Якщо Ви не згодитесь, опція стане невидимою.</string>
     <string name="forced_private">Вимушене завантження на приватну память</string>
     <string name="connected_as">Ви ввійшли як %1$s</string>
     <string name="gplus_signout">Вийти з аккаунту</string>
     <string name="gplus_revoke">Відізвати права</string>
-    <string name="dialog_acc_disconn_text">Ви впевнені, що хочете відключити Христос Воскрес з аккаунту Google?
-\nПідключення потрібне для того, щоб онлайн функції бекап/обнулення налаштувань додатку були доступними</string>
-    <string name="dialog_acc_revoke_text">Ви впевнені, що хочете відключити Христос Воскрес з аккаунту Google та відізвати усі раніше надані права Google?
-\nПідключення потрібне для того, щоб онлайн функції бекап/обнулення налаштувань додатку були доступними</string>
+    <string name="dialog_acc_disconn_text">Ви впевнені, що хочете відключити Христос Воскрес з аккаунту Google?\nПідключення потрібне для того, щоб онлайн функції бекап/обнулення налаштувань додатку були доступними</string>
+    <string name="dialog_acc_revoke_text">Ви впевнені, що хочете відключити Христос Воскрес з аккаунту Google та відізвати усі раніше надані права Google?\nПідключення потрібне для того, щоб онлайн функції бекап/обнулення налаштувань додатку були доступними</string>
     <string name="disconnected">Відключено від Google</string>
     <string name="gdrive_backup">Бекап аккаунту</string>
     <string name="gdrive_backup_content">Буде здійснено бекап налаштувань на Вашому аккаунті. Попередній бекап (якщо він є) буде перезаписаний. Бажаєте продовжити?</string>
@@ -300,8 +292,29 @@
     <string name="import_confirm">Імпортувати</string>
     <string name="default_search_title">Пошук за замовчуванням</string>
     <string name="default_search_summary">Визначте, який вид пошуку має вікриватись за замовчуванням, коли відкриваєте додаток:</string>
-    <string name="night_mode_light">Chiaro</string>
-    <string name="night_mode_dark">Scuro</string>
-    <string name="night_mode_auto_battery">Automatico quando in risparmio energetico</string>
-    <string name="night_mode_auto_system">Automatico da sistema</string>
+    <string name="night_mode_light">Світла</string>
+    <string name="night_mode_dark">Темна</string>
+    <string name="night_mode_auto_battery">Автоматично для збереження енергії</string>
+    <string name="night_mode_auto_system">Автоматично по системі</string>
+    <string name="action_salva">Зберегти</string>
+    <string name="dialog_save_consegnati_title">Зберегти вручені</string>
+    <string name="dialog_save_consegnati_desc">Увага: підтвердивши, ти втратиш можливі етап у вручених піснях, які ти видаляєш. Продовжити видалення?</string>
+    <string name="passage_title">Оберіть етап</string>
+    <string name="passage_filter">Фільтрувати за етапом</string>
+    <string name="filters_remove">Видалити фільтри</string>
+    <string name="catechesi_iniziali">Початкові катехези</string>
+    <string name="scrutinio_1">Перший скрутініум</string>
+    <string name="shema">Шема</string>
+    <string name="scrutinio_2">Другий скрутініум</string>
+    <string name="iniziazione_preghiera">Посвячення в молитву</string>
+    <string name="traditio">Традіціо</string>
+    <string name="ritraditio">Ре-Традіціо</string>
+    <string name="redditio">Редіціо</string>
+    <string name="padre_nostro_1">Отче Наш - 1а частина</string>
+    <string name="padre_nostro_2">Отче Наш - 2а частина</string>
+    <string name="padre_nostro_3">Отче Наш - завершення</string>
+    <string name="elezione_1">Вибрання - 1а частина</string>
+    <string name="elezione_2">Вибрання - середня частина</string>
+    <string name="elezione_3">Вибрання - кінцева</string>
+    <string name="passaggio_none">Жоден</string>
 </resources>
