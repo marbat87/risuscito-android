@@ -135,101 +135,98 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
         recycler_view?.itemAnimator = SlideDownAlphaAnimator()
 
         ioThread {
-            when (mCantiViewModel.tipoLista) {
-                0 -> {
-                    val mDao = RisuscitoDatabase.getInstance(requireContext()).argomentiDao()
-                    val canti = mDao.all
-                    mCantiViewModel.titoliList.clear()
-                    var mSubItems = LinkedList<ISubItem<*>>()
-                    var totCanti = 0
+            if (mCantiViewModel.tipoLista == 0) {
+                val mDao = RisuscitoDatabase.getInstance(requireContext()).argomentiDao()
+                val canti = mDao.all
+                mCantiViewModel.titoliList.clear()
+                var mSubItems = LinkedList<ISubItem<*>>()
+                var totCanti = 0
 
-                    for (i in canti.indices) {
-                        mSubItems.add(
-                                simpleSubItem {
-                                    setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
-                                    setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
-                                    setSource = LUtils.getResId(canti[i].source, R.string::class.java)
-                                    setColor = canti[i].color
-                                    id = canti[i].id
-                                    identifier = (i * 1000).toLong()
-                                    isHasDivider = !((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento))
+                for (i in canti.indices) {
+                    mSubItems.add(
+                            simpleSubItem {
+                                setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
+                                setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
+                                setSource = LUtils.getResId(canti[i].source, R.string::class.java)
+                                setColor = canti[i].color
+                                id = canti[i].id
+                                identifier = (i * 1000).toLong()
+                                isHasDivider = !((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento))
+                            }
+                    )
+                    totCanti++
+
+                    if ((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento)) {
+                        // serve a non mettere il divisore sull'ultimo elemento della lista
+                        mCantiViewModel.titoliList.add(
+                                simpleSubExpandableItem {
+                                    setTitle = LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)
+                                    totItems = totCanti
+                                    onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
+                                        if (!item.isExpanded) {
+                                            if (mActivity?.isGridLayout == true)
+                                                glm?.scrollToPositionWithOffset(
+                                                        item.position, 0)
+                                            else
+                                                llm?.scrollToPositionWithOffset(
+                                                        item.position, 0)
+                                        }
+                                        false
+                                    }
+                                    identifier = canti[i].idArgomento.toLong()
+                                    subItems = mSubItems
+                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
                                 }
                         )
-                        totCanti++
-
-                        if ((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento)) {
-                            // serve a non mettere il divisore sull'ultimo elemento della lista
-                            mCantiViewModel.titoliList.add(
-                                    simpleSubExpandableItem {
-                                        setTitle = LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)
-                                        totItems = totCanti
-                                        onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
-                                            if (!item.isExpanded) {
-                                                if (mActivity?.isGridLayout == true)
-                                                    glm?.scrollToPositionWithOffset(
-                                                            item.position, 0)
-                                                else
-                                                    llm?.scrollToPositionWithOffset(
-                                                            item.position, 0)
-                                            }
-                                            false
-                                        }
-                                        identifier = canti[i].idArgomento.toLong()
-                                        subItems = mSubItems
-                                        subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
-                                    }
-                            )
-                            mSubItems = LinkedList()
-                            totCanti = 0
-                        }
+                        mSubItems = LinkedList()
+                        totCanti = 0
                     }
                 }
-                else -> {
-                    val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
-                    val canti = mDao.all
-                    mCantiViewModel.titoliList.clear()
-                    var mSubItems = LinkedList<ISubItem<*>>()
-                    var totCanti = 0
+            } else {
+                val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
+                val canti = mDao.all
+                mCantiViewModel.titoliList.clear()
+                var mSubItems = LinkedList<ISubItem<*>>()
+                var totCanti = 0
 
-                    for (i in canti.indices) {
-                        mSubItems.add(
-                                simpleSubItem {
-                                    setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
-                                    setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
-                                    setSource = LUtils.getResId(canti[i].source, R.string::class.java)
-                                    setColor = canti[i].color
-                                    id = canti[i].id
-                                    identifier = (i * 1000).toLong()
-                                    isHasDivider = !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
+                for (i in canti.indices) {
+                    mSubItems.add(
+                            simpleSubItem {
+                                setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
+                                setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
+                                setSource = LUtils.getResId(canti[i].source, R.string::class.java)
+                                setColor = canti[i].color
+                                id = canti[i].id
+                                identifier = (i * 1000).toLong()
+                                isHasDivider = !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
+                            }
+                    )
+                    totCanti++
+
+                    if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
+                        // serve a non mettere il divisore sull'ultimo elemento della lista
+                        mCantiViewModel.titoliList.add(
+                                simpleSubExpandableItem {
+                                    setTitle = LUtils.getResId(canti[i].nome, R.string::class.java)
+                                    totItems = totCanti
+                                    onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
+                                        if (!item.isExpanded) {
+                                            if (mActivity?.isGridLayout == true)
+                                                glm?.scrollToPositionWithOffset(
+                                                        item.position, 0)
+                                            else
+                                                llm?.scrollToPositionWithOffset(
+                                                        item.position, 0)
+                                        }
+                                        false
+                                    }
+                                    identifier = canti[i].idIndice.toLong()
+                                    subItems = mSubItems
+                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
                                 }
                         )
-                        totCanti++
-
-                        if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
-                            // serve a non mettere il divisore sull'ultimo elemento della lista
-                            mCantiViewModel.titoliList.add(
-                                    simpleSubExpandableItem {
-                                        setTitle = LUtils.getResId(canti[i].nome, R.string::class.java)
-                                        totItems = totCanti
-                                        onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
-                                            if (!item.isExpanded) {
-                                                if (mActivity?.isGridLayout == true)
-                                                    glm?.scrollToPositionWithOffset(
-                                                            item.position, 0)
-                                                else
-                                                    llm?.scrollToPositionWithOffset(
-                                                            item.position, 0)
-                                            }
-                                            false
-                                        }
-                                        identifier = canti[i].idIndice.toLong()
-                                        subItems = mSubItems
-                                        subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
-                                    }
-                            )
-                            mSubItems = LinkedList()
-                            totCanti = 0
-                        }
+                        mSubItems = LinkedList()
+                        totCanti = 0
                     }
                 }
             }

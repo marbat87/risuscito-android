@@ -1242,7 +1242,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 music_controls.isVisible = mViewModel.mostraAudio
                             }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {}
+                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                                // no-op
+                            }
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }

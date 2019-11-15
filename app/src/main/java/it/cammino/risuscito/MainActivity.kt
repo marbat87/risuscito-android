@@ -785,11 +785,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "requestCode: $requestCode")
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        when (requestCode) {
-            RC_SIGN_IN -> handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
-            else -> {
-            }
-        }
+        if (requestCode == RC_SIGN_IN)
+            handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
     }
 
     // [START handleSignInResult]
