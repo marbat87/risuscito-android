@@ -22,14 +22,20 @@
             risuscito:layout_scrollFlags="scroll|exitUntilCollapsed"
             risuscito:title="@string/changelog">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/floating_background"
+                android:fitsSystemWindows="true" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/app_name"
                 android:fitsSystemWindows="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/about_cover"
-                risuscito:layout_collapseMode="parallax" />
+                risuscito:layout_collapseMode="parallax"
+                risuscito:srcCompat="@drawable/ic_about_cover" />
 
             <View
                 android:layout_width="match_parent"

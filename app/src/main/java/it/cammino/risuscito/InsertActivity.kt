@@ -285,7 +285,7 @@ class InsertActivity : ThemeableActivity() {
                                     }
                                     .forEach {
                                         if (isCancelled) return titoliResult
-                                        titoliResult.add(it)
+                                        titoliResult.add(it.apply { filter = "" })
                                     }
 
                         }

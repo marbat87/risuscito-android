@@ -249,7 +249,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
                                     .filter { (aText[0] ?: "") == it.undecodedSource }
                                     .forEach {
                                         if (isCancelled) return titoliResult
-                                        titoliResult.add(it)
+                                        titoliResult.add(it.apply { filter = "" })
                                     }
                         }
                     }
