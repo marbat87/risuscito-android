@@ -17,7 +17,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(29)
         multiDexEnabled = true
-        versionCode = 4436
+        versionCode = 4438
         versionName = "4.4.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -73,20 +73,20 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0-alpha05"
-val fastAdapterVersion = "4.1.0"
+val fastAdapterVersion = "4.1.1"
 val materialDialogsVersion = "3.1.1"
-val roomVersion = "2.2.1"
+val roomVersion = "2.2.2"
 val iconicVersion = "4.0.2"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.6.4")
     implementation("androidx.activity:activity-ktx:1.1.0-rc02")
-    implementation("androidx.core:core-ktx:1.2.0-beta02")
+    implementation("androidx.core:core-ktx:1.2.0-rc01")
     implementation("androidx.fragment:fragment-ktx:1.2.0-rc02")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.1.0-rc01")
-    implementation("com.google.android.material:material:1.2.0-alpha01")
-    implementation("androidx.viewpager2:viewpager2:1.0.0-rc01")
-    implementation("androidx.recyclerview:recyclerview:1.1.0-rc01")
+    implementation("com.google.android.material:material:1.2.0-alpha02")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation("androidx.recyclerview:recyclerview:1.1.0")
     implementation("androidx.drawerlayout:drawerlayout:1.1.0-alpha03")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03")
@@ -103,7 +103,7 @@ dependencies {
     implementation("com.google.firebase:firebase-core:17.2.1")
     implementation("com.google.firebase:firebase-firestore-ktx:21.3.0")
     implementation("com.google.firebase:firebase-storage-ktx:19.1.0")
-    implementation("com.google.firebase:firebase-auth:19.1.0")
+    implementation("com.google.firebase:firebase-auth:19.2.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")

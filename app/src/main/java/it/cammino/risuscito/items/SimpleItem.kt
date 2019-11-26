@@ -124,7 +124,8 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
                     holder.mTitle?.text = LUtils.fromHtmlWrapper(highlighted.toString())
                 } else
                     StringHolder.applyTo(title, holder.mTitle)
-            }
+            } else
+                StringHolder.applyTo(title, holder.mTitle)
         } ?: StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
         StringHolder.applyToOrHide(page, holder.mPage)
