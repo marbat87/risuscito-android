@@ -197,18 +197,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        Log.d(TAG, "ON RESUME")
-//    }
-
-//    override fun onDestroyView() {
-//        Log.d(TAG, "onDestroyView")
-//        splitInstallManager.unregisterListener(listener)
-//        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-//        super.onDestroyView()
-//    }
-
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart")
