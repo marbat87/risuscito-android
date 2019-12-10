@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4438"
-        date="Novembre 2019"
+    <release versionCode="4439"
+        date="Dicembre 2019"
         versionName="4.4.0">
         <new>[b]IMPORTANTE[/b]: Nuova procedura di backup/ripristino, visivamente non cambia nulla, le
             modifiche sono solo "sotto il cofano". Devi creare un nuovo backup da uno dei tuoi
