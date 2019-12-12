@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
@@ -12,14 +11,17 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.GravityCompat.START
 import androidx.core.view.isVisible
 import androidx.fragment.app.commit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -43,13 +45,15 @@ import com.mikepenz.crossfader.view.CrossFadeSlidingPaneLayout
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.materialdrawer.*
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.widget.AccountHeaderView
+import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
+import com.mikepenz.materialdrawer.widget.MiniDrawerSliderView
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
@@ -67,16 +71,17 @@ import kotlinx.android.synthetic.main.common_circle_progress.*
 import kotlinx.android.synthetic.main.common_top_toolbar.*
 import java.lang.ref.WeakReference
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private val mViewModel: MainActivityViewModel by viewModels()
     private lateinit var profileIcon: IconicsDrawable
-    private var mLUtils: LUtils? = null
-    var drawer: Drawer? = null
-        private set
-    private var mMiniDrawer: MiniDrawer? = null
-    private var crossFader: Crossfader<*>? = null
-    private lateinit var mAccountHeader: AccountHeader
+    private lateinit var mLUtils: LUtils
+    private lateinit var mAccountHeader: AccountHeaderView
+    private lateinit var miniSliderView: MiniDrawerSliderView
+    private lateinit var sliderView: MaterialDrawerSliderView
+    private lateinit var crossFader: Crossfader<*>
     var hasThreeColumns: Boolean = false
         private set
     var isGridLayout: Boolean = false
@@ -89,9 +94,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private lateinit var auth: FirebaseAuth
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
-    private lateinit var homeIcon: IconicsDrawable
-    private lateinit var backIcon: IconicsDrawable
-    private var mActionBarDrawerToggle: ActionBarDrawerToggle? = null
+    private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
 
     private val nextStepReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -126,8 +129,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 searchView.onBackPressed() -> {
                 }
                 fab_pager.isOpen -> fab_pager.close()
-                isTabletWithNoFixedDrawer && crossFader?.isCrossFaded() == true -> crossFader?.crossFade()
-                !isOnTablet && drawer?.isDrawerOpen == true -> drawer?.closeDrawer()
+                isTabletWithNoFixedDrawer && crossFader.isCrossFaded() -> crossFader.crossFade()
+                !isOnTablet && root?.isDrawerOpen(START) == true -> root?.closeDrawer(START)
                 else -> backToHome(true)
             }
         }
@@ -137,32 +140,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
-//        homeIcon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_menu)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-        homeIcon = iconicsDrawable(CommunityMaterial.Icon2.cmd_menu) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(2)
-        }
-
-//        backIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_arrow_left)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-        backIcon = iconicsDrawable(CommunityMaterial.Icon.cmd_arrow_left) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(2)
-        }
-
-//        profileIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_account_circle)
-//                .colorInt(themeColor(R.attr.colorPrimary))
-//                .sizeDp(48)
         profileIcon = iconicsDrawable(CommunityMaterial.Icon.cmd_account_circle) {
             color = colorInt(themeColor(R.attr.colorPrimary))
-            size = sizeDp(48)
+            size = sizeDp(56)
         }
 
         setSupportActionBar(risuscito_toolbar)
@@ -171,11 +151,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             TranslationTask(this).execute()
         }
 
-        hasThreeColumns = mLUtils?.hasThreeColumns ?: false
-        Log.d(TAG, "onCreate: hasThreeComlumns = $hasThreeColumns")
-        isGridLayout = mLUtils?.isGridLayout ?: false
+        hasThreeColumns = mLUtils.hasThreeColumns
+        Log.d(TAG, "onCreate: hasThreeColumns = $hasThreeColumns")
+        isGridLayout = mLUtils.isGridLayout
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
-        isLandscape = mLUtils?.isLandscape ?: false
+        isLandscape = mLUtils.isLandscape
         Log.d(TAG, "onCreate: isLandscape = $isLandscape")
         isTabletWithFixedDrawer = isOnTablet && isLandscape
         Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithFixedDrawer")
@@ -248,14 +228,28 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        val mSavedInstanceState = drawer?.saveInstanceState(savedInstanceState)
-        super.onSaveInstanceState(mSavedInstanceState ?: savedInstanceState)
+    override fun onSaveInstanceState(_outState: Bundle) {
+        var outState = _outState
+        //add the values which need to be saved from the drawer to the bundle
+        slider?.let { outState = it.saveInstanceState(outState) }
+        //add the values, which need to be saved from the drawer to the bundle
+        if (::sliderView.isInitialized) {
+            outState = sliderView.saveInstanceState(outState)
+        }
+        //add the values, which need to be saved from the accountHeader to the bundle
+        if (::mAccountHeader.isInitialized) {
+            outState = mAccountHeader.saveInstanceState(outState)
+        }
+        //add the values, which need to be saved from the crossFader to the bundle
+        if (::crossFader.isInitialized) {
+            outState = crossFader.saveInstanceState(outState)
+        }
+        super.onSaveInstanceState(outState)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        fab_pager.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        fab_pager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
@@ -267,218 +261,226 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 .withIdentifier(PROF_ID)
                 .withTypeface(mRegularFont)
 
-        // Create the AccountHeader
-        mAccountHeader = AccountHeaderBuilder().withActivity(this).apply {
-            withTranslucentStatusBar(true)
-            withSelectionListEnabledForSingleProfile(false)
-            withProfileImagesClickable(false)
-            withSavedInstance(savedInstanceState)
-            addProfiles(profile)
+        mAccountHeader = AccountHeaderView(this).apply {
+            slider?.let { attachToSliderView(it) }
+            selectionListEnabledForSingleProfile = false
+            profileImagesClickable = false
             mRegularFont?.let {
-                withNameTypeface(it)
-                withEmailTypeface(it)
+                nameTypeface = it
+                emailTypeface = it
             }
-            withOnAccountHeaderListener(object : AccountHeader.OnAccountHeaderListener {
-                override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {
-                    // sample usage of the onProfileChanged listener
-                    // if the clicked item has the identifier 1 add a new profile ;)
-                    if (profile is IDrawerItem<*>) {
-                        when (profile.identifier) {
-                            R.id.gdrive_backup.toLong() -> showAccountRelatedDialog(BACKUP_ASK)
-                            R.id.gdrive_restore.toLong() -> showAccountRelatedDialog(RESTORE_ASK)
-                            R.id.gplus_signout.toLong() -> showAccountRelatedDialog(SIGNOUT)
-                            R.id.gplus_revoke.toLong() -> showAccountRelatedDialog(REVOKE)
-                        }
+            addProfiles(profile)
+            onAccountHeaderListener = { _, profile, _ ->
+                //sample usage of the onProfileChanged listener
+                //if the clicked item has the identifier 1 add a new profile ;)
+                if (profile is IDrawerItem<*>) {
+                    when (profile.identifier) {
+                        R.id.gdrive_backup.toLong() -> showAccountRelatedDialog(BACKUP_ASK)
+                        R.id.gdrive_restore.toLong() -> showAccountRelatedDialog(RESTORE_ASK)
+                        R.id.gplus_signout.toLong() -> showAccountRelatedDialog(SIGNOUT)
+                        R.id.gplus_revoke.toLong() -> showAccountRelatedDialog(REVOKE)
                     }
-                    // false if you have not consumed the event and it should close the drawer
-                    return false
                 }
-            })
-        }.build()
 
-        val mDrawerBuilder = DrawerBuilder().withActivity(this).apply {
-            if (!isOnTablet)
-                risuscito_toolbar?.let {
-                    withToolbar(it)
-                }
-            if (isTabletWithFixedDrawer)
-                withDrawerWidthRes(R.dimen.drawer_tablet_fixed_width)
-            withHasStableIds(true)
-            withAccountHeader(mAccountHeader)
-            withActionBarDrawerToggle(!isOnTablet)
-            withActionBarDrawerToggleAnimated(!isOnTablet)
-            addDrawerItems(
-                    PrimaryDrawerItem()
-                            .withName(R.string.activity_homepage)
-                            .withIcon(CommunityMaterial.Icon2.cmd_home)
-                            .withIdentifier(R.id.navigation_home.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.search_name_text)
-                            .withIcon(CommunityMaterial.Icon2.cmd_magnify)
-                            .withIdentifier(R.id.navigation_search.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_general_index)
-                            .withIcon(CommunityMaterial.Icon2.cmd_view_list)
-                            .withIdentifier(R.id.navigation_indexes.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_custom_lists)
-                            .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
-                            .withIdentifier(R.id.navitagion_lists.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.action_favourites)
-                            .withIcon(CommunityMaterial.Icon2.cmd_star)
-                            .withIdentifier(R.id.navigation_favorites.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_consegnati)
-                            .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
-                            .withIdentifier(R.id.navigation_consegnati.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_history)
-                            .withIcon(CommunityMaterial.Icon2.cmd_history)
-                            .withIdentifier(R.id.navigation_history.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_settings)
-                            .withIcon(CommunityMaterial.Icon2.cmd_settings)
-                            .withIdentifier(R.id.navigation_settings.toLong())
-                            .withTypeface(mMediumFont),
-                    DividerDrawerItem(),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_about)
-                            .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
-                            .withIdentifier(R.id.navigation_changelog.toLong())
-                            .withTypeface(mMediumFont))
-            withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
-                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    // check if the drawerItem is set.
-                    // there are different reasons for the drawerItem to be null
-                    // --> click on the header
-                    // --> click on the footer
-                    // those items don't contain a drawerItem
-
-                    val fragment = when (drawerItem.identifier) {
-                        R.id.navigation_home.toLong() -> Risuscito()
-                        R.id.navigation_search.toLong() -> SearchFragment()
-                        R.id.navigation_indexes.toLong() -> GeneralIndex()
-                        R.id.navitagion_lists.toLong() -> CustomLists()
-                        R.id.navigation_favorites.toLong() -> FavoritesFragment()
-                        R.id.navigation_settings.toLong() -> SettingsFragment()
-                        R.id.navigation_changelog.toLong() -> AboutFragment()
-                        R.id.navigation_consegnati.toLong() -> ConsegnatiFragment()
-                        R.id.navigation_history.toLong() -> HistoryFragment()
-                        else -> return true
-                    }
-                    toolbar_layout?.setExpanded(true, true)
-
-                    // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-                    val myFragment = supportFragmentManager
-                            .findFragmentByTag(drawerItem.identifier.toString())
-                    if (myFragment == null || !myFragment.isVisible) {
-                        supportFragmentManager.commit {
-                            setCustomAnimations(
-                                    R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
-                            replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
-                        }
-                    }
-
-                    if (isTabletWithNoFixedDrawer) mMiniDrawer?.setSelection(drawerItem.identifier)
-                    return isTabletWithNoFixedDrawer
-                }
-            })
-            withGenerateMiniDrawer(isTabletWithNoFixedDrawer)
+                //false if you have not consumed the event and it should close the drawer
+                false
+            }
             withSavedInstance(savedInstanceState)
-            withTranslucentStatusBar(true)
         }
 
         if (isOnTablet) {
-            drawer = mDrawerBuilder.buildView()
-            if (isTabletWithFixedDrawer) {
-                fixed_drawer_content?.addView(drawer?.slider)
-            } else {
-                // the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
-                mMiniDrawer = drawer?.miniDrawer?.withEnableSelectedMiniDrawerItemBackground(true)?.withIncludeSecondaryDrawerItems(true)
+            sliderView = MaterialDrawerSliderView(this).apply {
+                accountHeader = mAccountHeader
+                customWidth = MATCH_PARENT
+                itemAdapter.add(
+                        PrimaryDrawerItem()
+                                .withName(R.string.activity_homepage)
+                                .withIcon(CommunityMaterial.Icon2.cmd_home)
+                                .withIdentifier(R.id.navigation_home.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.search_name_text)
+                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
+                                .withIdentifier(R.id.navigation_search.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_general_index)
+                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
+                                .withIdentifier(R.id.navigation_indexes.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_custom_lists)
+                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
+                                .withIdentifier(R.id.navitagion_lists.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.action_favourites)
+                                .withIcon(CommunityMaterial.Icon2.cmd_star)
+                                .withIdentifier(R.id.navigation_favorites.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_consegnati)
+                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
+                                .withIdentifier(R.id.navigation_consegnati.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_history)
+                                .withIcon(CommunityMaterial.Icon2.cmd_history)
+                                .withIdentifier(R.id.navigation_history.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_settings)
+                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
+                                .withIdentifier(R.id.navigation_settings.toLong())
+                                .withTypeface(mMediumFont),
+                        DividerDrawerItem(),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_about)
+                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
+                                .withIdentifier(R.id.navigation_changelog.toLong())
+                                .withTypeface(mMediumFont)
+                )
+                onDrawerItemClickListener = { _, drawerItem, _ ->
+                    onDrawerItemClick(drawerItem)
+                }
+                withSavedInstance(savedInstanceState)
+            }
 
-                // get the widths in px for the first and second panel
+            if (savedInstanceState == null)
+                sliderView.setSelectionAtPosition(1, false)
+
+            if (isTabletWithFixedDrawer) {
+                fixed_drawer_content?.addView(sliderView)
+            } else {
+                miniSliderView = MiniDrawerSliderView(this).apply {
+                    drawer = sliderView
+                }
+                //get the widths in px for the first and second panel
                 val firstWidth = UIUtils.convertDpToPixel(302f, this).toInt()
                 val secondWidth = UIUtils.convertDpToPixel(72f, this).toInt()
-
-                // create and build our crossfader (see the MiniDrawer is also builded in here, as the build
-                // method returns the view to be used in the crossfader)
+                //create and build our crossfader (see the MiniDrawer is also builded in here, as the build method returns the view to be used in the crossfader)
+                //the crossfader library can be found here: https://github.com/mikepenz/Crossfader
                 crossFader = Crossfader<CrossFadeSlidingPaneLayout>()
                         .withContent(main_content)
-                        .withFirst(drawer?.slider, firstWidth)
-                        .withSecond(mMiniDrawer?.build(this), secondWidth)
+                        .withFirst(sliderView, firstWidth)
+                        .withSecond(miniSliderView, secondWidth)
                         .withSavedInstance(savedInstanceState)
                         .withGmailStyleSwiping()
                         .withPanelSlideListener(object : SlidingPaneLayout.PanelSlideListener {
                             override fun onPanelSlide(panel: View, slideOffset: Float) {
-                                mActionBarDrawerToggle?.onDrawerSlide(panel, slideOffset)
+                                (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.progress = min(1f, max(0f, slideOffset))
                             }
-
                             override fun onPanelClosed(panel: View) {
-                                mActionBarDrawerToggle?.onDrawerClosed(panel)
+                                (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(false)
                             }
-
                             override fun onPanelOpened(panel: View) {
-                                mActionBarDrawerToggle?.onDrawerOpened(panel)
+                                (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(true)
                             }
                         })
                         .build()
 
-                mActionBarDrawerToggle = ActionBarDrawerToggle(this, drawer?.drawerLayout, risuscito_toolbar, R.string.material_drawer_open, R.string.material_drawer_close)
-                mActionBarDrawerToggle?.syncState()
-                risuscito_toolbar.setNavigationOnClickListener { crossFader?.crossFade() }
-
-                // define the crossfader to be used with the miniDrawer. This is required to be able to
-                // automatically toggle open / close
-                crossFader?.let { mMiniDrawer?.withCrossFader(CrossfadeWrapper(it)) }
-
-                // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
-                // define the other one
-                crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-                crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
+                //define the crossfader to be used with the miniDrawer. This is required to be able to automatically toggle open / close
+                miniSliderView.crossFader = CrossfadeWrapper(crossFader)
+                //define a shadow (this is only for normal LTR layouts if you have a RTL app you need to define the other one
+                crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
+                risuscito_toolbar.navigationIcon = DrawerArrowDrawable(this)
+                risuscito_toolbar.setNavigationOnClickListener { crossFader.crossFade() }
             }
         } else {
-            drawer = mDrawerBuilder.build()
-            drawer?.drawerLayout?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
+            mActionBarDrawerToggle = ActionBarDrawerToggle(this, root, risuscito_toolbar, R.string.material_drawer_open, R.string.material_drawer_close)
+            mActionBarDrawerToggle.syncState()
+
+            slider?.apply {
+                itemAdapter.add(
+                        PrimaryDrawerItem()
+                                .withName(R.string.activity_homepage)
+                                .withIcon(CommunityMaterial.Icon2.cmd_home)
+                                .withIdentifier(R.id.navigation_home.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.search_name_text)
+                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
+                                .withIdentifier(R.id.navigation_search.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_general_index)
+                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
+                                .withIdentifier(R.id.navigation_indexes.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_custom_lists)
+                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
+                                .withIdentifier(R.id.navitagion_lists.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.action_favourites)
+                                .withIcon(CommunityMaterial.Icon2.cmd_star)
+                                .withIdentifier(R.id.navigation_favorites.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_consegnati)
+                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
+                                .withIdentifier(R.id.navigation_consegnati.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_history)
+                                .withIcon(CommunityMaterial.Icon2.cmd_history)
+                                .withIdentifier(R.id.navigation_history.toLong())
+                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_settings)
+                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
+                                .withIdentifier(R.id.navigation_settings.toLong())
+                                .withTypeface(mMediumFont),
+                        DividerDrawerItem(),
+                        PrimaryDrawerItem()
+                                .withName(R.string.title_activity_about)
+                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
+                                .withIdentifier(R.id.navigation_changelog.toLong())
+                                .withTypeface(mMediumFont)
+                )
+                onDrawerItemClickListener = { _, drawerItem, _ ->
+                    onDrawerItemClick(drawerItem)
+                }
+                tintStatusBar = true
+                hasStableIds = true
+                withSavedInstance(savedInstanceState)
+            }
+            if (savedInstanceState == null)
+                slider?.setSelectionAtPosition(1, false)
+            root?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
         }
     }
 
-//    override fun onBackPressed() {
-//        super.onBackPressed()
-//        Log.d(TAG, "onBackPressed: ")
-//
-//        if (searchView.onBackPressed()) {
-//            return
-//        }
-//
-//        if (fab_pager.isOpen) {
-//            fab_pager.close()
-//            return
-//        }
-//
-//        if (isTabletWithNoFixedDrawer) {
-//            if (crossFader?.isCrossFaded() == true) {
-//                crossFader?.crossFade()
-//                return
-//            }
-//        }
-//
-//        if (!isOnTablet) {
-//            if (drawer?.isDrawerOpen == true) {
-//                drawer?.closeDrawer()
-//                return
-//            }
-//        }
-//
-//        backToHome(true)
-//    }
+    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>): Boolean {
+        val fragment = when (drawerItem.identifier) {
+            R.id.navigation_home.toLong() -> Risuscito()
+            R.id.navigation_search.toLong() -> SearchFragment()
+            R.id.navigation_indexes.toLong() -> GeneralIndex()
+            R.id.navitagion_lists.toLong() -> CustomLists()
+            R.id.navigation_favorites.toLong() -> FavoritesFragment()
+            R.id.navigation_settings.toLong() -> SettingsFragment()
+            R.id.navigation_changelog.toLong() -> AboutFragment()
+            R.id.navigation_consegnati.toLong() -> ConsegnatiFragment()
+            R.id.navigation_history.toLong() -> HistoryFragment()
+            else -> Risuscito()
+        }
+        toolbar_layout?.setExpanded(true, true)
+
+        // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+        val myFragment = supportFragmentManager
+                .findFragmentByTag(drawerItem.identifier.toString())
+        if (myFragment == null || !myFragment.isVisible) {
+            supportFragmentManager.commit {
+                setCustomAnimations(
+                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
+                replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
+            }
+        }
+
+        if (isTabletWithNoFixedDrawer) miniSliderView.setSelection(drawerItem.identifier)
+        return isTabletWithNoFixedDrawer
+    }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
     private fun convertTabs() {
@@ -599,7 +601,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         enableFab(false)
         fab_pager.setMainFabClosedDrawable(icon)
         fab_pager.clearActionItems()
-        fab_pager.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        fab_pager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         enableFab(true)
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
@@ -609,10 +611,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_pulisci,
-//                            IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant)
-//                            .colorInt(iconColor)
-//                            .sizeDp(24)
-//                            .paddingDp(4))
                             iconicsDrawable(CommunityMaterial.Icon.cmd_eraser_variant) {
                                 size = sizeDp(24)
                                 padding = sizeDp(4)
@@ -628,10 +626,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista,
-//                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
-//                            .colorInt(iconColor)
-//                            .sizeDp(24)
-//                            .paddingDp(4)
                             iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
                                 size = sizeDp(24)
                                 padding = sizeDp(4)
@@ -647,10 +641,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi,
-//                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant)
-//                            .colorInt(iconColor)
-//                            .sizeDp(24)
-//                            .paddingDp(4)
                             iconicsDrawable(CommunityMaterial.Icon2.cmd_share_variant) {
                                 size = sizeDp(24)
                                 padding = sizeDp(4)
@@ -667,10 +657,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             if (customList) {
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_condividi_file,
-//                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment)
-//                                .colorInt(iconColor)
-//                                .sizeDp(24)
-//                                .paddingDp(4)
                                 iconicsDrawable(CommunityMaterial.Icon.cmd_attachment) {
                                     size = sizeDp(24)
                                     padding = sizeDp(4)
@@ -686,10 +672,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista,
-//                                IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil)
-//                                .colorInt(iconColor)
-//                                .sizeDp(24)
-//                                .paddingDp(4)
                                 iconicsDrawable(CommunityMaterial.Icon2.cmd_pencil) {
                                     size = sizeDp(24)
                                     padding = sizeDp(4)
@@ -705,10 +687,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_delete_lista,
-//                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
-//                                .colorInt(iconColor)
-//                                .sizeDp(24)
-//                                .paddingDp(4)
                                 iconicsDrawable(CommunityMaterial.Icon.cmd_delete) {
                                     size = sizeDp(24)
                                     padding = sizeDp(4)
@@ -747,9 +725,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     fun enableBottombar(enabled: Boolean) {
         Log.d(TAG, "enableBottombar - enabled: $enabled")
         if (enabled)
-            mLUtils?.animateIn(bottom_bar)
+            mLUtils.animateIn(bottom_bar)
         else
-            mLUtils?.animateOut(bottom_bar)
+            mLUtils.animateOut(bottom_bar)
     }
 
     // [START signIn]
@@ -887,7 +865,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .withIcon(CommunityMaterial.Icon.cmd_account_key)
                                 .withIdentifier(R.id.gplus_revoke.toLong()))
             }
-            if (isTabletWithNoFixedDrawer) mMiniDrawer?.onProfileClick()
+            if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         } else {
             val profile = ProfileDrawerItem()
                     .withName("")
@@ -896,13 +874,10 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     .withIdentifier(PROF_ID)
                     .withTypeface(mRegularFont)
             if ((mAccountHeader.profiles?.size ?: 0) > 1) {
-                mAccountHeader.removeProfile(1)
-                mAccountHeader.removeProfile(1)
-                mAccountHeader.removeProfile(1)
-                mAccountHeader.removeProfile(1)
+                mAccountHeader.removeAllViews()
             }
             mAccountHeader.updateProfile(profile)
-            if (isTabletWithNoFixedDrawer) mMiniDrawer?.onProfileClick()
+            if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         }
         hideProgressDialog()
     }
@@ -957,7 +932,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected: " + item.itemId)
         if (isTabletWithNoFixedDrawer && item.itemId == android.R.id.home) {
-            crossFader?.crossFade()
+            crossFader.crossFade()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -984,11 +959,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 finish()
             return
         }
-
-        if (isTabletWithNoFixedDrawer)
-            mMiniDrawer?.setSelection(R.id.navigation_home.toLong())
+        if (isTabletWithNoFixedDrawer) {
+            miniSliderView.setSelection(R.id.navigation_home.toLong())
+            sliderView.setSelection(R.id.navigation_home.toLong())
+        }
         toolbar_layout?.setExpanded(true, true)
-        drawer?.setSelection(R.id.navigation_home.toLong())
+        slider?.setSelection(R.id.navigation_home.toLong())
     }
 
     private fun showAccountRelatedDialog(tag: String) {

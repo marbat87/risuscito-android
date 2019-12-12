@@ -102,7 +102,7 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:17.0.0")
     implementation("com.google.firebase:firebase-core:17.2.1")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.3.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.3.1")
     implementation("com.google.firebase:firebase-storage-ktx:19.1.0")
     implementation("com.google.firebase:firebase-auth:19.2.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }
@@ -110,7 +110,7 @@ dependencies {
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
-    implementation("com.mikepenz:materialdrawer:7.0.0-rc08")
+    implementation("com.mikepenz:materialdrawer:8.0.0-a02")
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:iconics-core:$iconicVersion")
     implementation("com.mikepenz:iconics-views:$iconicVersion")

@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.content.edit
+import androidx.core.view.GravityCompat.START
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -57,7 +58,7 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
 
         imageView1.setOnClickListener {
             if (mMainActivity?.isOnTablet == false)
-                mMainActivity?.drawer?.openDrawer()
+                mMainActivity?.root?.openDrawer(START)
         }
 
         sign_in_button.setSize(SignInButton.SIZE_WIDE)
