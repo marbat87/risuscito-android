@@ -3,12 +3,11 @@
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_bar"
+    style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
     android:layout_gravity="bottom"
-    android:theme="@style/ToolbarTheme"
     android:visibility="invisible"
-    risuscito:backgroundTint="?colorPrimary"
     risuscito:hideOnScroll="true"
     risuscito:layout_scrollFlags="scroll|enterAlways"
     tools:ignore="BottomAppBar" />

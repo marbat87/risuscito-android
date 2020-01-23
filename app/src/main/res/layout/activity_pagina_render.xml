@@ -1,215 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:fitsSystemWindows="true">
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        risuscito:elevation="@dimen/design_appbar_elevation">
+        android:layout_height="wrap_content"
+        risuscito:layout_scrollFlags="noScroll|enterAlways">
 
-        <include layout="@layout/risuscito_toolbar_noelevation" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/risuscito_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:theme="@style/ToolbarTheme"
+            risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
+    <RelativeLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?actionBarSize"
-        android:layout_marginBottom="?actionBarSize">
+        android:layout_marginBottom="?actionBarSize"
+        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <RelativeLayout
-            android:id="@+id/container"
+        <FrameLayout
+            android:id="@+id/music_controls"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:layout_alignParentTop="true"
+            android:background="@color/risuscito_material_background">
 
-            <FrameLayout
-                android:id="@+id/music_controls"
+            <RelativeLayout
+                android:id="@+id/no_record"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
-                android:layout_alignParentTop="true"
-                android:background="?colorBackgroundFloating">
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:visibility="invisible">
 
-                <RelativeLayout
-                    android:id="@+id/no_record"
+                <com.mikepenz.iconics.view.IconicsImageView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                    android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                    android:contentDescription="@null"
+                    android:gravity="center"
+                    android:translationZ="1dp"
+                    risuscito:iiv_color="?android:textColorSecondary"
+                    risuscito:iiv_icon="cmd-music-note-off"
+                    risuscito:iiv_padding="5dp"
+                    risuscito:iiv_size="24dp"
+                    tools:ignore="MissingPrefix"
+                    tools:targetApi="lollipop" />
+
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:minHeight="@dimen/myListPreferredItemHeightMedium"
-                    android:visibility="invisible">
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+                    android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                    android:text="@string/no_record"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:textColor="?android:textColorPrimary" />
 
-                    <ImageView
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-                        android:contentDescription="@null"
-                        android:gravity="center"
-                        android:translationZ="1dp"
-                        risuscito:ico_color="?android:textColorSecondary"
-                        risuscito:ico_icon="cmd-music-note-off"
-                        risuscito:ico_padding="5dp"
-                        risuscito:ico_size="24dp"
-                        tools:ignore="MissingPrefix"
-                        tools:targetApi="lollipop" />
+            </RelativeLayout>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
-                        android:text="@string/no_record"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                        android:textColor="?android:textColorPrimary" />
+            <RelativeLayout
+                android:id="@+id/no_connection"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:minHeight="@dimen/myListPreferredItemHeightMedium"
+                android:visibility="invisible">
 
-                </RelativeLayout>
+                <com.mikepenz.iconics.view.IconicsImageView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                    android:layout_marginLeft="@dimen/myListPreferredItemMargin"
+                    android:contentDescription="@null"
+                    android:gravity="center"
+                    android:translationZ="1dp"
+                    risuscito:iiv_color="?android:textColorSecondary"
+                    risuscito:iiv_icon="cmd-cloud-off-outline"
+                    risuscito:iiv_padding="5dp"
+                    risuscito:iiv_size="24dp"
+                    tools:ignore="MissingPrefix"
+                    tools:targetApi="lollipop" />
 
-                <RelativeLayout
-                    android:id="@+id/no_connection"
+                <TextView
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+                    android:layout_marginRight="@dimen/myListPreferredItemMargin"
+                    android:text="@string/no_connection"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:textColor="?android:textColorPrimary" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/music_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/time_text"
+                    android:layout_width="50dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="end"
+                    android:paddingStart="@dimen/activity_min_margin"
+                    android:paddingLeft="@dimen/activity_min_margin"
+                    android:text="00:00"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat"
+                    android:textColor="?android:textColorPrimary"
+                    tools:ignore="HardcodedText,RtlSymmetry" />
+
+                <FrameLayout
+                    android:layout_width="0dip"
                     android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:minHeight="@dimen/myListPreferredItemHeightMedium"
-                    android:visibility="invisible">
-
-                    <ImageView
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-                        android:contentDescription="@null"
-                        android:gravity="center"
-                        android:translationZ="1dp"
-                        risuscito:ico_color="?android:textColorSecondary"
-                        risuscito:ico_icon="cmd-cloud-off-outline"
-                        risuscito:ico_padding="5dp"
-                        risuscito:ico_size="24dp"
-                        tools:ignore="MissingPrefix"
-                        tools:targetApi="lollipop" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
-                        android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                        android:layout_marginRight="@dimen/myListPreferredItemMargin"
-                        android:text="@string/no_connection"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                        android:textColor="?android:textColorPrimary" />
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:id="@+id/music_buttons"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/time_text"
-                        android:layout_width="50dip"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="end"
-                        android:paddingStart="@dimen/activity_min_margin"
-                        android:paddingLeft="@dimen/activity_min_margin"
-                        android:text="00:00"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat"
-                        android:textColor="?android:textColorPrimary"
-                        tools:ignore="HardcodedText,RtlSymmetry" />
+                    android:layout_weight="1">
 
                     <SeekBar
                         android:id="@+id/music_seekbar"
-                        android:layout_width="0dip"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
                         android:maxHeight="1000dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp" />
 
-                    <ImageView
-                        android:id="@+id/play_song"
-                        android:layout_width="@dimen/abc_action_bar_default_height_material"
-                        android:layout_height="@dimen/abc_action_bar_default_height_material"
-                        android:layout_gravity="center_vertical"
-                        android:background="?attr/customSelectorRoundAccent"
-                        android:clickable="true"
-                        android:contentDescription="@null"
-                        android:focusable="true"
-                        android:paddingLeft="@dimen/play_pause_padding"
-                        android:paddingRight="@dimen/play_pause_padding"
-                        android:scaleType="fitCenter"
-                        android:soundEffectsEnabled="true"
-                        android:visibility="gone"
-                        risuscito:ico_color="@color/text_color_secondary"
-                        risuscito:ico_icon="cmd-play"
-                        risuscito:ico_padding="2dp"
-                        risuscito:ico_size="24dp"
-                        tools:ignore="MissingPrefix" />
-
                     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-                        android:id="@+id/loadingBar"
-                        style="@style/Widget.MaterialProgressBar.ProgressBar"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/music_loadingbar"
+                        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minWidth="25dp"
-                        android:minHeight="25dp"
-                        android:maxHeight="25dp"
-                        android:maxWidth="25dp"
                         android:layout_gravity="center_vertical"
-                        android:elevation="1dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:indeterminate="true"
-                        android:paddingLeft="@dimen/play_pause_padding"
-                        android:paddingRight="@dimen/play_pause_padding"
-                        risuscito:mpb_progressBackgroundTint="@android:color/transparent"
-                        risuscito:mpb_progressStyle="circular"
-                        risuscito:mpb_progressTint="?colorAccent"
-                        tools:targetApi="lollipop" />
+                        android:visibility="gone"
+                        risuscito:mpb_progressStyle="horizontal" />
 
-                </LinearLayout>
+                </FrameLayout>
 
-            </FrameLayout>
+                <com.mikepenz.iconics.view.IconicsImageView
+                    android:id="@+id/play_song"
+                    android:layout_width="@dimen/abc_action_bar_default_height_material"
+                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    android:layout_gravity="center_vertical"
+                    android:background="?attr/customSelectorRoundAccent"
+                    android:clickable="true"
+                    android:contentDescription="@null"
+                    android:focusable="true"
+                    android:paddingLeft="@dimen/play_pause_padding"
+                    android:paddingRight="@dimen/play_pause_padding"
+                    android:scaleType="fitCenter"
+                    android:soundEffectsEnabled="true"
+                    android:visibility="gone"
+                    risuscito:iiv_color="?android:textColorSecondary"
+                    risuscito:iiv_icon="cmd-play"
+                    risuscito:iiv_padding="2dp"
+                    risuscito:iiv_size="24dp"
+                    tools:ignore="MissingPrefix" />
 
-            <WebView
-                android:id="@+id/cantoView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_below="@id/music_controls" />
+                <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                    android:id="@+id/loadingBar"
+                    style="@style/Widget.MaterialProgressBar.ProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:elevation="1dp"
+                    android:indeterminate="true"
+                    android:maxWidth="25dp"
+                    android:maxHeight="25dp"
+                    android:minWidth="25dp"
+                    android:minHeight="25dp"
+                    android:paddingLeft="@dimen/play_pause_padding"
+                    android:paddingRight="@dimen/play_pause_padding"
+                    risuscito:mpb_progressBackgroundTint="@android:color/transparent"
+                    risuscito:mpb_progressStyle="circular"
+                    risuscito:mpb_progressTint="?colorSecondary"
+                    tools:targetApi="lollipop" />
 
-        </RelativeLayout>
+            </LinearLayout>
 
-        <include layout="@layout/common_shadow_no_behavior" />
+        </FrameLayout>
 
-    </FrameLayout>
+        <include
+            layout="@layout/common_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@id/music_controls" />
 
-    <androidx.appcompat.widget.Toolbar
+    </RelativeLayout>
+
+    <include layout="@layout/common_shadow" />
+
+    <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
+        style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
-        android:theme="@style/ToolbarTheme"
-        risuscito:backgroundTint="?colorPrimary"
         risuscito:contentInsetStart="0dp"
-        risuscito:layout_scrollFlags="scroll|enterAlways">
+        risuscito:hideOnScroll="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -221,6 +238,7 @@
                 android:layout_width="50dip"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:fontFamily="@font/googlesans_medium"
                 android:gravity="end"
                 android:paddingStart="@dimen/activity_min_margin"
                 android:paddingLeft="@dimen/activity_min_margin"
@@ -254,7 +272,7 @@
 
         </LinearLayout>
 
-    </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.leinardi.android.speeddial.SpeedDialOverlayLayout
         android:id="@+id/overlay"
@@ -271,4 +289,4 @@
         risuscito:sdExpansionMode="top"
         risuscito:sdOverlayLayout="@id/overlay" />
 
-</merge>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

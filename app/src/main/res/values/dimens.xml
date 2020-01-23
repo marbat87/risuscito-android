@@ -2,18 +2,16 @@
 <resources>
 
     <dimen name="activity_min_margin">5dip</dimen>
+    <dimen name="activity_min_top_margin">10dip</dimen>
     <dimen name="myListPreferredItemMargin">16dip</dimen>
     <dimen name="myListPreferredTextMarginStart">72dip</dimen>
-    <dimen name="myListPreferredItemHeightSmall">48dip</dimen>
     <dimen name="myListPreferredItemHeightMedium">56dip</dimen>
     <dimen name="myListPreferredItemHeightLarge">72dip</dimen>
     <dimen name="max_bottomsheet_width">380dp</dimen>
-    <dimen name="min_button_margin">10dip</dimen>
 
     <dimen name="button_playbar_padding">14dp</dimen>
     <dimen name="fab_margin_coord">16dp</dimen>
     <dimen name="fab_margin_frame">8dp</dimen>
-    <!--<dimen name="fab_margin_bottombar">64dp</dimen>-->
 
     <dimen name="text_min_margin">20dip</dimen>
 
@@ -26,18 +24,16 @@
 
     <dimen name="custom_peek_height">335dp</dimen>
 
-    <dimen name="raised_button_default_elevation">2dp</dimen>
-    <dimen name="raised_button_pressed_elevation">8dp</dimen>
-
     <dimen name="about_appbarlayout_height">200dp</dimen>
 
     <dimen name="play_pause_padding">18dp</dimen>
 
-    <dimen name="bounded_cardview_max_width">1dp</dimen>
+    <dimen name="bottom_sheet_corner_radius">16dp</dimen>
+    <dimen name="bottom_sheet_top_padding">8dp</dimen>
 
-    <dimen name="colorpickerpreference_widget_size">24dp</dimen>
+    <dimen name="mpm_popup_menu_item_section_label_text_size">13sp</dimen>
+    <dimen name="mpm_popup_menu_item_label_text_size">14sp</dimen>
 
-    //mai usato in configurazione normale
-    <dimen name="bounded_cardview_max_width_fab">0dp</dimen>
+    <dimen name="drawer_tablet_fixed_width">256dp</dimen>
 
 </resources>

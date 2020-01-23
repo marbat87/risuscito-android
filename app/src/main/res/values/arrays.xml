@@ -9,12 +9,22 @@
         <item>@string/indice_liturgico_index</item>
     </string-array>
 
-    <string-array name="pref_default_index_values" translatable="false">
+    <string-array name="pref_default_index_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
+    </string-array>
+
+    <string-array name="pref_default_search_entries">
+        <item>@string/fast_search_title</item>
+        <item>@string/advanced_search_title</item>
+    </string-array>
+
+    <string-array name="pref_default_search_values">
+        <item>0</item>
+        <item>1</item>
     </string-array>
 
     <string-array name="save_location_sd_entries">
@@ -25,12 +35,12 @@
         <item>@string/private_memory</item>
     </string-array>
 
-    <string-array name="save_location_sd_values" translatable="false">
+    <string-array name="save_location_sd_values">
         <item>0</item>
         <item>1</item>
     </string-array>
 
-    <string-array name="save_location_nosd_values" translatable="false">
+    <string-array name="save_location_nosd_values">
         <item>0</item>
     </string-array>
 
@@ -87,5 +97,52 @@
         <item>@color/md_yellow_A200</item>
     </integer-array>
 
+    <string-array name="themeListArray">
+        <item>@string/night_mode_light</item>
+        <item>@string/night_mode_dark</item>
+        <item>@string/night_mode_auto_battery</item>
+    </string-array>
+
+    <string-array name="themeEntryArray">
+        <item>light</item>
+        <item>dark</item>
+        <item>default</item>
+    </string-array>
+
+    <string-array name="passaggi_entries">
+        <item>@string/passaggio_none</item>
+        <item>@string/catechesi_iniziali</item>
+        <item>@string/scrutinio_1</item>
+        <item>@string/shema</item>
+        <item>@string/scrutinio_2</item>
+        <item>@string/iniziazione_preghiera</item>
+        <item>@string/traditio</item>
+        <item>@string/ritraditio</item>
+        <item>@string/redditio</item>
+        <item>@string/padre_nostro_1</item>
+        <item>@string/padre_nostro_2</item>
+        <item>@string/padre_nostro_3</item>
+        <item>@string/elezione_1</item>
+        <item>@string/elezione_2</item>
+        <item>@string/elezione_3</item>
+    </string-array>
+
+    <integer-array name="passaggi_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+    </integer-array>
 
 </resources>

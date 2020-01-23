@@ -2,18 +2,18 @@ package it.cammino.risuscito.playback
 
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.media.session.MediaButtonReceiver
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
+import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
+import com.mikepenz.iconics.utils.toAndroidIconCompat
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 
 /**
  * Helper class for building Media style Notifications from a
@@ -24,28 +24,37 @@ internal object MediaNotificationHelper {
     private const val CHANNEL_ID = "itcr_media_playback_channel"
 
     fun createNotification(context: Context,
-                           mediaSession: MediaSessionCompat): Notification? {
+                           mediaSession: MediaSessionCompat?): Notification? {
 
         //Crezione notification channel per Android O
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            createChannel(context)
+        Utility.createNotificationChannelWrapper(context, CHANNEL_ID, "Media playback", "Media playback controls")
 
-        val controller = mediaSession.controller
-        val mMetadata = controller.metadata
-        val mPlaybackState = controller.playbackState
+        val controller = mediaSession?.controller
+        val mMetadata = controller?.metadata
+        val mPlaybackState = controller?.playbackState
 
         if (mMetadata == null || mPlaybackState == null) {
             return null
         }
 
         val isPlaying = mPlaybackState.state == PlaybackStateCompat.STATE_PLAYING
+        val iconPause = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_pause) {
+            color = colorRes(R.color.ic_notification_color)
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
+        val iconPlay = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_play) {
+            color = colorRes(R.color.ic_notification_color)
+            size = sizeDp(24)
+            padding = sizeDp(2)
+        }
         val actionPlayPause = if (isPlaying)
-            NotificationCompat.Action(R.drawable.notification_pause,
+            NotificationCompat.Action(iconPause.toAndroidIconCompat(),
                     context.getString(R.string.label_pause),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                             PlaybackStateCompat.ACTION_PAUSE))
         else
-            NotificationCompat.Action(R.drawable.notification_play,
+            NotificationCompat.Action(iconPlay.toAndroidIconCompat(),
                     context.getString(R.string.label_play),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                             PlaybackStateCompat.ACTION_PLAY))
@@ -74,7 +83,12 @@ internal object MediaNotificationHelper {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         if (mPlaybackState.state == PlaybackStateCompat.STATE_PLAYING || mPlaybackState.state == PlaybackStateCompat.STATE_PAUSED) {
-            val actionRestart = NotificationCompat.Action(R.drawable.notification_restart,
+            val iconRestart = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_restart) {
+                color = colorRes(R.color.ic_notification_color)
+                size = sizeDp(24)
+                padding = sizeDp(2)
+            }
+            val actionRestart = NotificationCompat.Action(iconRestart.toAndroidIconCompat(),
                     context.getString(R.string.label_restart),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                             PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS))
@@ -84,20 +98,4 @@ internal object MediaNotificationHelper {
         return notificationBuilder.build()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createChannel(context: Context) {
-        val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        // The id of the channel.
-        //        String id = CHANNEL_ID;
-        // The user-visible name of the channel.
-        val name = "Media playback"
-        // The user-visible description of the channel.
-        val description = "Media playback controls"
-        val mChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW)
-        // Configure the notification channel.
-        mChannel.description = description
-        mChannel.setShowBadge(false)
-        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-        mNotificationManager.createNotificationChannel(mChannel)
-    }
 }// Helper utility class; do not instantiate.

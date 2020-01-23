@@ -1,164 +1,113 @@
 package it.cammino.risuscito.items
 
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
-import com.mikepenz.fastadapter.IClickable
+import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.IExpandable
-import com.mikepenz.fastadapter.IItem
-import com.mikepenz.fastadapter.ISubItem
-import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
+import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.helperSetColor
+import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.simple_sub_item.view.*
 
-@Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
-class SimpleSubItem<Parent> : AbstractExpandableItem<Parent, SimpleSubItem.ViewHolder, SimpleSubItem<Parent>>() where Parent : IItem<*, *>, Parent : IExpandable<*, *>, Parent : ISubItem<*, *>, Parent : IClickable<*> {
+fun simpleSubItem(block: SimpleSubItem.() -> Unit): SimpleSubItem = SimpleSubItem().apply(block)
+
+class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpandable<SimpleSubItem.ViewHolder> {
 
     var title: StringHolder? = null
         private set
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
+        }
+
     var page: StringHolder? = null
         private set
+    var setPage: Any? = null
+        set(value) {
+            page = helperSetString(value)
+        }
+
     var source: StringHolder? = null
         private set
+    var setSource: Any? = null
+        set(value) {
+            source = helperSetString(value)
+        }
+
     var color: ColorHolder? = null
         private set
+    var setColor: Any? = null
+        set(value) {
+            color = helperSetColor(value)
+        }
+
     var id: Int = 0
-        private set
-    private var isHasDivider = false
 
-    private var createContextMenuListener: View.OnCreateContextMenuListener? = null
-
-    fun withTitle(title: String): SimpleSubItem<Parent> {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): SimpleSubItem<Parent> {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withPage(page: String): SimpleSubItem<Parent> {
-        this.page = StringHolder(page)
-        return this
-    }
-
-    fun withPage(@StringRes pageRes: Int): SimpleSubItem<Parent> {
-        this.page = StringHolder(pageRes)
-        return this
-    }
-
-    fun withSource(src: String): SimpleSubItem<Parent> {
-        this.source = StringHolder(src)
-        return this
-    }
-
-    fun withSource(@StringRes srcRes: Int): SimpleSubItem<Parent> {
-        this.source = StringHolder(srcRes)
-        return this
-    }
-
-    fun withColor(color: String): SimpleSubItem<Parent> {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): SimpleSubItem<Parent> {
-        this.color = ColorHolder.fromColorRes(colorRes)
-        return this
-    }
-
-    fun withId(id: Int): SimpleSubItem<Parent> {
-        this.id = id
-        return this
-    }
-
-    fun withContextMenuListener(listener: View.OnCreateContextMenuListener): SimpleSubItem<Parent> {
-        this.createContextMenuListener = listener
-        return this
-    }
-
-    fun withHasDivider(hasDivider: Boolean): SimpleSubItem<Parent> {
-        this.isHasDivider = hasDivider
-        return this
-    }
+    var isHasDivider = false
 
     /**
      * defines the type defining this item. must be unique. preferably an id
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_sub_item_id
-    }
+    override val type: Int
+        get() = R.id.fastadapter_sub_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.simple_sub_item
-    }
+    override val layoutRes: Int
+        get() = R.layout.simple_sub_item
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
         // get the context
-        val ctx = viewHolder.itemView.context
+        val ctx = holder.itemView.context
 
         // set the text for the name
-        StringHolder.applyTo(title, viewHolder.mTitle)
+        StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
-        StringHolder.applyToOrHide(page, viewHolder.mPage)
-
+        StringHolder.applyToOrHide(page, holder.mPage)
         ViewCompat.setBackground(
-                viewHolder.view,
+                holder.view,
                 FastAdapterUIUtils.getSelectableBackground(
                         ctx,
-                        ContextCompat.getColor(viewHolder.itemView.context, R.color.ripple_color),
+                        ctx.themeColor(R.attr.colorSecondaryLight),
                         true))
 
-        if (isSelected) {
-            viewHolder.mPage!!.visibility = View.INVISIBLE
-            viewHolder.mPageSelected!!.visibility = View.VISIBLE
-        } else {
-            val bgShape = viewHolder.mPage!!.background as GradientDrawable
-            bgShape.setColor(color!!.colorInt)
-            viewHolder.mPage!!.visibility = View.VISIBLE
-            viewHolder.mPageSelected!!.visibility = View.INVISIBLE
-        }
+        val bgShape = holder.mPage?.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        holder.mPage?.isVisible = true
+        holder.mPageSelected?.isVisible = false
 
-        viewHolder.mId!!.text = id.toString()
+        holder.mId?.text = id.toString()
 
-        viewHolder.mItemDivider!!.visibility = if (isHasDivider) View.VISIBLE else View.INVISIBLE
+        holder.mItemDivider?.isVisible = isHasDivider
 
-        if (createContextMenuListener != null) {
-            (viewHolder.itemView.context as Activity).registerForContextMenu(viewHolder.itemView)
-            viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
-        }
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mTitle!!.text = null
-        holder.mPage!!.text = null
-        holder.mId!!.text = null
+        holder.mTitle?.text = null
+        holder.mPage?.text = null
+        holder.mId?.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

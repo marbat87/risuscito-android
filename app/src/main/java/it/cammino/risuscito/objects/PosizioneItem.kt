@@ -1,24 +1,26 @@
 package it.cammino.risuscito.objects
 
-class PosizioneItem(pagina: String, titolo: String, colore: String, idCanto: Int, source: String, timestamp: String) {
+import android.graphics.Color
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import com.mikepenz.materialize.holder.ColorHolder
+import com.mikepenz.materialize.holder.StringHolder
 
-    var pagina: String? = null
-    var titolo: String? = null
-    var colore: String? = null
+fun posizioneItem(block: PosizioneItem.() -> Unit): PosizioneItem = PosizioneItem().apply(block)
+
+@Suppress("unused")
+class PosizioneItem {
+
+    var color: ColorHolder? = null
+    var title: StringHolder? = null
+        private set
+    var page: StringHolder? = null
+        private set
+    var source: StringHolder? = null
+        private set
     var idCanto: Int = 0
-    var timestamp: String? = null
-    var source: String? = null
+    var timestamp: StringHolder? = null
     private var mSelected: Boolean = false
-
-    init {
-        this.titolo = titolo
-        this.pagina = pagina
-        this.colore = colore
-        this.idCanto = idCanto
-        this.source = source
-        this.timestamp = timestamp
-        this.setmSelected(false)
-    }
 
     fun ismSelected(): Boolean {
         return mSelected
@@ -26,6 +28,56 @@ class PosizioneItem(pagina: String, titolo: String, colore: String, idCanto: Int
 
     fun setmSelected(mSelected: Boolean) {
         this.mSelected = mSelected
+    }
+
+    fun withTitle(title: String): PosizioneItem {
+        this.title = StringHolder(title)
+        return this
+    }
+
+    fun withTitle(@StringRes titleRes: Int): PosizioneItem {
+        this.title = StringHolder(titleRes)
+        return this
+    }
+
+    fun withPage(page: String): PosizioneItem {
+        this.page = StringHolder(page)
+        return this
+    }
+
+    fun withPage(@StringRes pageRes: Int): PosizioneItem {
+        this.page = StringHolder(pageRes)
+        return this
+    }
+
+    fun withSource(src: String): PosizioneItem {
+        this.source = StringHolder(src)
+        return this
+    }
+
+    fun withSource(@StringRes srcRes: Int): PosizioneItem {
+        this.source = StringHolder(srcRes)
+        return this
+    }
+
+    fun withColor(color: String): PosizioneItem {
+        this.color = ColorHolder.fromColor(Color.parseColor(color))
+        return this
+    }
+
+    fun withColor(@ColorRes colorRes: Int): PosizioneItem {
+        this.color = ColorHolder.fromColorRes(colorRes)
+        return this
+    }
+
+    fun withTimestamp(timestamp: String): PosizioneItem {
+        this.timestamp = StringHolder(timestamp)
+        return this
+    }
+
+    fun withId(id: Int): PosizioneItem {
+        this.idCanto = id
+        return this
     }
 
 }

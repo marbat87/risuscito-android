@@ -4,19 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-
-import it.cammino.risuscito.database.CantoLiturgico
 import it.cammino.risuscito.database.entities.IndiceLiturgico
 import it.cammino.risuscito.database.entities.NomeLiturgico
+import it.cammino.risuscito.database.pojo.CantoLiturgico
 
 @Suppress("unused")
 @Dao
 interface IndiceLiturgicoDao {
 
-    @get:Query("SELECT C.*, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.nome ASC, C.titolo ASC")
+    @get:Query("SELECT C.titolo, C.pagina, C.source, C.color, C.id, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.nome ASC, C.titolo ASC")
     val liveAll: LiveData<List<CantoLiturgico>>
 
-    @get:Query("SELECT C.*, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.nome ASC, C.titolo ASC")
+    @get:Query("SELECT C.titolo, C.pagina, C.source, C.color, C.id, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.nome ASC, C.titolo ASC")
     val all: List<CantoLiturgico>
 
     @Query("DELETE FROM indiceliturgico")

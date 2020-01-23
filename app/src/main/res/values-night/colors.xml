@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- OVERWRITE THESE COLORS FOR A DARK THEME -->
-    <!-- MaterialDrawer DEFAULT DARK colors -->
-    <color name="material_drawer_background">#303030</color>
-    <!-- MaterialDrawer DEFAULT DARK text / items colors -->
-    <color name="material_drawer_primary_text">@color/primary_text_default_material_dark</color>
-    <color name="material_drawer_primary_icon">@color/secondary_text_default_material_dark</color>
-    <color name="material_drawer_secondary_text">@color/secondary_text_default_material_dark</color>
-    <color name="material_drawer_hint_text">#42FFFFFF</color>
-    <color name="material_drawer_divider">#1FFFFFFF</color>
-    <!-- MaterialDrawer DEFAULT DARK drawer colors -->
-    <color name="material_drawer_selected">#202020</color>
-    <color name="material_drawer_selected_text">#2196F3</color>
-    <!--<color name="material_drawer_header_selection_text">@color/primary_text_default_material_dark</color>-->
-    <!--<color name="material_drawer_header_selection_subtext">@color/secondary_text_default_material_dark</color>-->
+    <color name="primary_color_amber">@color/md_amber_200</color>
+    <color name="primary_color_blue">@color/md_blue_200</color>
+    <color name="primary_color_brown">@color/md_brown_200</color>
+    <color name="primary_color_cyan">@color/md_cyan_200</color>
+    <color name="primary_color_green">@color/md_green_200</color>
+    <color name="primary_color_grey">@color/md_grey_200</color>
+    <color name="primary_color_indigo">@color/md_indigo_200</color>
+    <color name="primary_color_lime">@color/md_lime_200</color>
+    <color name="primary_color_orange">@color/md_orange_200</color>
+    <color name="primary_color_pink">@color/md_pink_200</color>
+    <color name="primary_color_purple">@color/md_purple_200</color>
+    <color name="primary_color_teal">@color/md_teal_200</color>
+    <color name="primary_color_red">@color/md_red_200</color>
+    <color name="primary_color_deep_orange">@color/md_deep_orange_200</color>
+    <color name="primary_color_deep_purple">@color/md_deep_purple_200</color>
+    <color name="primary_color_light_blue">@color/md_light_blue_200</color>
+    <color name="primary_color_blue_grey">@color/md_blue_grey_200</color>
+    <color name="primary_color_light_green">@color/md_light_green_200</color>
+    <color name="primary_color_yellow">@color/md_yellow_200</color>
 
-    <color name="text_color_primary">@color/primary_text_default_material_dark</color>
+    <color name="risuscito_material_background">@color/design_dark_default_color_background</color>
+    <color name="risuscito_material_drawer_background">@color/material_drawer_dark_background</color>
+    <color name="text_color_primary">@color/design_dark_default_color_on_background</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_dark</color>
     <color name="floating_background">@color/background_floating_material_dark</color>
-    <color name="text_color_secondary_disabled">@color/secondary_text_disabled_material_dark</color>
-    <color name="chglib_material_color_text_1">@color/primary_text_default_material_dark</color>
     <color name="material_divider">@color/md_dark_dividers</color>
+    <color name="tablet_statusbar_color">#000000</color>
 
 </resources>

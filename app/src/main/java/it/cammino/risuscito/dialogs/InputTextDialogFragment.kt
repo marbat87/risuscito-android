@@ -6,12 +6,12 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.KeyEvent
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onShow
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import java.io.Serializable
@@ -22,11 +22,11 @@ class InputTextDialogFragment : DialogFragment() {
     private var mCallback: SimpleInputCallback? = null
 
     private val builder: Builder?
-        get() = if (arguments == null || !arguments!!.containsKey("builder")) null else arguments!!.getSerializable("builder") as Builder
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
 
     override fun onDestroyView() {
-        if (dialog != null && retainInstance)
-            dialog.setDismissMessage(null)
+        if (retainInstance)
+            dialog?.setDismissMessage(null)
         super.onDestroyView()
     }
 
@@ -43,11 +43,9 @@ class InputTextDialogFragment : DialogFragment() {
         if (mCallback == null)
             mCallback = mBuilder.mListener
 
-//        val dialogBuilder = MaterialDialog.Builder(activity!!)
-//                .input("", if (mBuilder.mPrefill != null) mBuilder.mPrefill else "", false) { _, _ -> }
-//                .autoDismiss(mBuilder.mAutoDismiss)
-        val dialog = MaterialDialog(activity!!)
-                .input(prefill = if (mBuilder.mPrefill != null) mBuilder.mPrefill else "", inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
+        val dialog = MaterialDialog(requireContext())
+                .input(prefill = mBuilder.mPrefill
+                        ?: "", inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
 
         if (mBuilder.mTitle != 0)
             dialog.title(res = mBuilder.mTitle)
@@ -55,63 +53,32 @@ class InputTextDialogFragment : DialogFragment() {
         if (!mBuilder.mAutoDismiss)
             dialog.noAutoDismiss()
 
-        if (mBuilder.mPositiveButton != null) {
-            dialog.positiveButton(text = mBuilder.mPositiveButton) { mDialog ->
-                Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
-                mCallback!!.onPositive(mBuilder.mTag, mDialog)
+        mBuilder.mPositiveButton?.let {
+            dialog.positiveButton(text = it) { mDialog ->
+                mCallback?.onPositive(mBuilder.mTag, mDialog)
             }
         }
 
-        if (mBuilder.mNegativeButton != null) {
-            dialog.negativeButton(text = mBuilder.mNegativeButton) { mDialog ->
-                Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
-                mCallback!!.onNegative(mBuilder.mTag, mDialog)
+        mBuilder.mNegativeButton?.let {
+            dialog.negativeButton(text = it) { mDialog ->
+                mCallback?.onNegative(mBuilder.mTag, mDialog)
             }
         }
 
-
-//        if (mBuilder.mTitle != 0)
-//            dialogBuilder.title(mBuilder.mTitle)
-
-//        if (mBuilder.mPositiveButton != null) {
-//            dialogBuilder.positiveText(mBuilder.mPositiveButton!!)
-//                    .onPositive(object : MaterialDialog.SingleButtonCallback {
-//                        override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-//                            Log.d(javaClass.name, "onClick: mCallback " + mCallback!!)
-//                            mCallback!!.onPositive(mBuilder.mTag, dialog)
-//                        }
-//                    })
-//        }
-
-//        if (mBuilder.mNegativeButton != null) {
-//            dialogBuilder.negativeText(mBuilder.mNegativeButton!!)
-//                    .onNegative { dialog, _ -> mCallback!!.onNegative(mBuilder.mTag, dialog) }
-//        }
-
-//        dialogBuilder.typeface(ResourcesCompat.getFont(activity!!, R.font.googlesans_medium), ResourcesCompat.getFont(activity!!, R.font.googlesans_regular))
-
-//        val dialog = dialogBuilder.build()
-
-        val mEditText = dialog.getInputField()
-        if (mEditText != null) {
-
-            if (mBuilder.mPrefill != null)
-                mEditText.selectAll()
-
-//            mEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-
+        dialog.onShow {
+            it.getInputField().selectAll()
         }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        dialog.cancelable(mBuilder.mCanceable)
 
-        dialog.setOnKeyListener(DialogInterface.OnKeyListener
-        { arg0, keyCode, event ->
+        dialog.setOnKeyListener { arg0, keyCode, event ->
+            var returnValue = false
             if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
                 arg0.cancel()
-                return@OnKeyListener true
+                returnValue = true
             }
-            false
-        })
+            returnValue
+        }
 
         return dialog
     }
@@ -121,11 +88,11 @@ class InputTextDialogFragment : DialogFragment() {
     }
 
     fun cancel() {
-        dialog.cancel()
+        dialog?.cancel()
     }
 
     fun setOnCancelListener(listener: DialogInterface.OnCancelListener) {
-        dialog.setOnCancelListener(listener)
+        dialog?.setOnCancelListener(listener)
     }
 
     class Builder(context: AppCompatActivity, @field:Transient var mListener: SimpleInputCallback, val mTag: String) : Serializable {
@@ -178,32 +145,32 @@ class InputTextDialogFragment : DialogFragment() {
         fun build(): InputTextDialogFragment {
             val dialog = InputTextDialogFragment()
             val args = Bundle()
-            args.putSerializable("builder", this)
+            args.putSerializable(BUILDER_TAG, this)
             dialog.arguments = args
             return dialog
         }
 
         fun show(): InputTextDialogFragment {
             val dialog = build()
-            dialog.show(mContext)
+            if (!mContext.isFinishing)
+                dialog.show(mContext)
             return dialog
         }
     }
 
     private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
         val frag = context.supportFragmentManager.findFragmentByTag(tag)
-        if (frag != null) {
-            (frag as DialogFragment).dismiss()
+        frag?.let {
+            (it as? DialogFragment)?.dismiss()
             context.supportFragmentManager.beginTransaction()
-                    .remove(frag).commit()
+                    .remove(it).commit()
         }
     }
 
     fun show(context: AppCompatActivity): InputTextDialogFragment {
-        val builder = builder
-        if (builder != null) {
-            dismissIfNecessary(context, builder.mTag)
-            show(context.supportFragmentManager, builder.mTag)
+        builder?.let {
+            dismissIfNecessary(context, it.mTag)
+            show(context.supportFragmentManager, it.mTag)
         }
         return this
     }
@@ -211,15 +178,19 @@ class InputTextDialogFragment : DialogFragment() {
     interface SimpleInputCallback {
         fun onPositive(tag: String, dialog: MaterialDialog)
         fun onNegative(tag: String, dialog: MaterialDialog)
-//        fun onNeutral(tag: String, dialog: MaterialDialog)
     }
 
     companion object {
-
-        fun findVisible(context: AppCompatActivity, tag: String): InputTextDialogFragment? {
-            val frag = context.supportFragmentManager.findFragmentByTag(tag)
-            return if (frag != null && frag is InputTextDialogFragment) frag else null
+        private const val BUILDER_TAG = "builder"
+        fun findVisible(context: AppCompatActivity?, tag: String): InputTextDialogFragment? {
+            context?.let {
+                val frag = it.supportFragmentManager.findFragmentByTag(tag)
+                return if (frag != null && frag is InputTextDialogFragment) frag else null
+            }
+            return null
         }
+
+        private val TAG = InputTextDialogFragment::class.java.canonicalName
     }
 
 }

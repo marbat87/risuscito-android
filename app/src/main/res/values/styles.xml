@@ -5,37 +5,44 @@
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
+    <style name="AdaptiveScrimColor">
+        <item name="statusBarScrim">?colorPrimaryVariant</item>
+    </style>
+
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />
 
     <style name="TitoloSezione">
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment" tools:targetApi="JELLY_BEAN_MR1">viewStart</item>
         <item name="fontFamily">@font/googlesans_medium</item>
-        <item name="android:textColor">?colorAccent</item>
+        <item name="android:textColor">?colorSecondary</item>
         <item name="android:textSize">14sp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
-    <style name="Risuscito_tabstyle" parent="@style/Widget.MaterialComponents.TabLayout.Colored">
+    <style name="Risuscito_tabstyle" parent="@style/Widget.MaterialComponents.TabLayout.PrimarySurface">
         <item name="tabGravity">center</item>
         <item name="tabMode">scrollable</item>
-        <item name="android:background">?colorPrimary</item>
-        <item name="tabIndicatorColor">?colorAccent</item>
-        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Tab.Risuscito</item>
+        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito
+        </item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <style name="TextAppearance.MaterialComponents.Tab.Risuscito">
+    <style name="TextAppearance.MaterialComponents.Button.Risuscito">
         <item name="fontFamily">@font/googlesans_medium</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="ActionBar.TitleText.Collapsed">
         <item name="android:textColor">@color/primary_text_default_material_dark</item>
+        <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
     <style name="ActionBar.TitleText.Expanded">
         <item name="android:textColor">@android:color/transparent</item>
+        <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
     <style name="BottomSheet" />
@@ -88,15 +95,24 @@
         <item name="fontFamily">@font/googlesans_regular</item>
     </style>
 
-    <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="AppBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
     <style name="AppModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Risuscito.BottomSheet</item>
     </style>
 
-    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.MaterialComponents.Light">
+    <style name="ShapeAppearanceOverlay.Risuscito.BottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/bottom_sheet_corner_radius</item>
+        <item name="cornerSizeTopRight">@dimen/bottom_sheet_corner_radius</item>
+        <item name="cornerSizeBottomRight">@dimen/mtrl_shape_corner_size_large_component</item>
+        <item name="cornerSizeBottomLeft">@dimen/mtrl_shape_corner_size_large_component</item>
+    </style>
+
+    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.AppCompat.DayNight">
         <item name="fontFamily">@font/googlesans_regular</item>
     </style>
 
@@ -104,8 +120,32 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="PopupMenuStyle" parent="Widget.AppCompat.Light.PopupMenu">
-        <item name="android:popupBackground">@color/floating_background</item>
+    <style name="Widget.MaterialComponents.PopupMenu.Risuscito">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/googlesans_regular</item>
+    </style>
+
+    <style name="RisuscitoAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:buttonBarButtonStyle">
+            @style/Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito
+        </item>
+        <item name="android:windowBackground">@drawable/dialog_material_background</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito">
+        <item name="fontFamily">@font/googlesans_medium</item>
+    </style>
+
+    <!-- per l'icona profilo del drawer -->
+    <style name="BezelImageView">
+        <item name="biv_maskDrawable">@drawable/material_drawer_circle_mask</item>
+        <item name="biv_drawCircularShadow">true</item>
+        <item name="biv_selectorOnPress">?colorPrimary</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+    <style name="Risuscito_SpeedDialActionItem">
+        <item name="colorOnSecondary">@color/text_color_secondary</item>
     </style>
 
 </resources>

@@ -8,10 +8,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chooseRecycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:fadeScrollbars="true"
-        android:scrollbars="vertical"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:scrollbars="vertical" />
 
     <FrameLayout
         android:id="@+id/selected_view"
@@ -21,10 +20,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cantiRecycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fadeScrollbars="true"
-            android:scrollbars="vertical"
-            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:scrollbars="vertical" />
 
         <RelativeLayout
             android:id="@+id/no_consegnati"
@@ -38,7 +36,7 @@
                 android:layout_height="120dip"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="@string/no_consegnati"
-                android:src="@drawable/ic_sad_book" />
+                risuscito:srcCompat="@drawable/ic_sleeping_checklist" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -48,10 +46,10 @@
                 android:layout_marginLeft="@dimen/text_min_margin"
                 android:layout_marginRight="@dimen/text_min_margin"
                 android:gravity="center_horizontal"
-                risuscito:fontFamily="@font/googlesans_italic"
                 android:text="@string/no_consegnati"
                 android:textAppearance="@style/SuperStateViewSubTitle"
                 android:textColor="?android:textColorSecondary"
+                risuscito:fontFamily="@font/googlesans_italic"
                 tools:ignore="MissingPrefix" />
 
         </RelativeLayout>

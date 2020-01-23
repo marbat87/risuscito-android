@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,20 +11,18 @@
     android:paddingRight="24dp"
     android:paddingBottom="8dp">
 
-    <me.zhanghai.android.materialprogressbar.MaterialProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/working_progress"
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/working_progress_indeterminate"
         style="@style/Widget.MaterialProgressBar.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
         risuscito:mpb_progressStyle="circular"
-        risuscito:mpb_progressTint="?colorAccent"
+        risuscito:mpb_progressTint="?colorSecondary"
         tools:ignore="UnusedAttribute" />
 
     <TextView
-        android:id="@+id/md_content"
+        android:id="@+id/md_content_indeterminate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"

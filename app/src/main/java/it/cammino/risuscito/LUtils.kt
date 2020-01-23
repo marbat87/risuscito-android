@@ -1,11 +1,12 @@
 package it.cammino.risuscito
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.preference.PreferenceManager
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
@@ -14,12 +15,14 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import androidx.core.view.ViewCompat
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.core.view.isVisible
+import androidx.preference.PreferenceManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.animation.AnimationUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.utils.ioThread
 import java.io.*
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -43,42 +46,30 @@ class LUtils private constructor(private val mActivity: Activity) {
     val isLandscape: Boolean
         get() = mActivity.resources.getBoolean(R.bool.landscape)
 
-    val isFabScrollingActive: Boolean
-        get() = mActivity.resources.getBoolean(R.bool.fab_behavior_active)
+    val isFabExpansionLeft: Boolean
+        get() = mActivity.resources.getBoolean(R.bool.fab_orientation_left)
 
     fun startActivityWithTransition(
             intent: Intent) {
         mActivity.startActivity(intent)
-//        mActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.hold_on)
         Animatoo.animateSlideLeft(mActivity)
 
-        Thread(
-                Runnable {
-                    val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
-                    val cronologia = Cronologia()
-                    cronologia.idCanto = intent.extras!!.getInt("idCanto")
-                    mDao.insertCronologia(cronologia)
-                })
-                .start()
+        ioThread {
+            val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
+            val cronologia = Cronologia()
+            cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
+            mDao.insertCronologia(cronologia)
+        }
     }
 
     fun startActivityWithFadeIn(intent: Intent) {
         mActivity.startActivity(intent)
-//        mActivity.overridePendingTransition(R.anim.image_fade_in, R.anim.hold_on)
         Animatoo.animateZoom(mActivity)
     }
 
     fun closeActivityWithTransition() {
         mActivity.finish()
-//        mActivity.overridePendingTransition(0, R.anim.slide_out_right)
         Animatoo.animateSlideRight(mActivity)
-    }
-
-    internal fun closeActivityWithFadeOut() {
-        mActivity.finish()
-//        mActivity.overridePendingTransition(0, R.anim.image_fade_out)
-        Animatoo.animateZoom(mActivity)
-
     }
 
     internal fun goFullscreen() {
@@ -110,73 +101,76 @@ class LUtils private constructor(private val mActivity: Activity) {
             mActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
-    internal fun listToXML(lista: ListaPersonalizzata): Uri? {
+    internal fun listToXML(lista: ListaPersonalizzata?): Uri? {
+        lista?.let {
+            try {
+                val docFactory = DocumentBuilderFactory.newInstance()
+                val docBuilder = docFactory.newDocumentBuilder()
 
-        try {
-            val docFactory = DocumentBuilderFactory.newInstance()
-            val docBuilder = docFactory.newDocumentBuilder()
+                // root elements
+                val doc = docBuilder.newDocument()
+                val rootElement = doc.createElement("list")
+                rootElement.setAttribute("title", it.name)
+                doc.appendChild(rootElement)
 
-            // root elements
-            val doc = docBuilder.newDocument()
-            val rootElement = doc.createElement("list")
-            rootElement.setAttribute("title", lista.name)
-            doc.appendChild(rootElement)
+                for (i in 0 until it.numPosizioni) {
+                    val position = doc.createElement("position")
+                    position.setAttribute("name", it.getNomePosizione(i))
+                    if (it.getCantoPosizione(i) != "")
+                        position.appendChild(doc.createTextNode(it.getCantoPosizione(i)))
+                    else
+                        position.appendChild(doc.createTextNode("0"))
+                    rootElement.appendChild(position)
+                }
 
-            for (i in 0 until lista.numPosizioni) {
-                val position = doc.createElement("position")
-                position.setAttribute("name", lista.getNomePosizione(i))
-                if (lista.getCantoPosizione(i) != "")
-                    position.appendChild(doc.createTextNode(lista.getCantoPosizione(i)))
-                else
-                    position.appendChild(doc.createTextNode("0"))
-                rootElement.appendChild(position)
+                val domSource = DOMSource(doc)
+                val writer = StringWriter()
+                val result = StreamResult(writer)
+                val tf = TransformerFactory.newInstance()
+                val transformer = tf.newTransformer()
+                transformer.transform(domSource, result)
+                Log.d(TAG, "listToXML: $writer")
+                //            writer.toString();
+
+                val exportFile = File(mActivity.cacheDir.absolutePath + "/" + it.name + FILE_FORMAT)
+                Log.d(TAG, "listToXML: exportFile = " + exportFile.absolutePath)
+                val fos = FileOutputStream(exportFile)
+                val dataWrite = writer.toString()
+                fos.write(dataWrite.toByteArray())
+                fos.close()
+
+                return FileProvider.getUriForFile(mActivity, "it.cammino.risuscito.fileprovider", exportFile)
+
+            } catch (e: ParserConfigurationException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
+            } catch (e: TransformerConfigurationException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
+            } catch (e: TransformerException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
+            } catch (e: FileNotFoundException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
+            } catch (e: IOException) {
+                Log.e(TAG, "listToXML: " + e.localizedMessage, e)
+                Crashlytics.logException(e)
+                return null
             }
-
-            val domSource = DOMSource(doc)
-            val writer = StringWriter()
-            val result = StreamResult(writer)
-            val tf = TransformerFactory.newInstance()
-            val transformer = tf.newTransformer()
-            transformer.transform(domSource, result)
-            Log.d(TAG, "listToXML: $writer")
-            //            writer.toString();
-
-            val exportFile = File(mActivity.cacheDir.absolutePath + "/" + lista.name + FILE_FORMAT)
-            Log.d(TAG, "listToXML: exportFile = " + exportFile.absolutePath)
-            val fos = FileOutputStream(exportFile)
-            val dataWrite = writer.toString()
-            fos.write(dataWrite.toByteArray())
-            fos.close()
-
-            return FileProvider.getUriForFile(mActivity, "it.cammino.risuscito.fileprovider", exportFile)
-
-        } catch (e: ParserConfigurationException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
-        } catch (e: TransformerConfigurationException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
-        } catch (e: TransformerException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
-        } catch (e: FileNotFoundException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
-        } catch (e: IOException) {
-            Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-            Crashlytics.logException(e)
-            return null
         }
-
+        Log.e(TAG, "input lista null")
+        return null
     }
 
     fun convertIntPreferences() {
         convert(Utility.DEFAULT_INDEX)
         convert(Utility.SAVE_LOCATION)
+        convert(Utility.DEFAULT_SEARCH)
     }
 
     private fun convert(prefName: String) {
@@ -194,24 +188,32 @@ class LUtils private constructor(private val mActivity: Activity) {
     // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout
     // enters
     internal fun animateIn(view: View) {
-        view.visibility = View.VISIBLE
-        ViewCompat.animate(view)
-                .setDuration(200)
-                .translationY(0f)
-                .setInterpolator(INTERPOLATOR)
-                .withLayer()
-                .setListener(null)
-                .start()
+        view.isVisible = true
+        view.animate().translationY(0f).setInterpolator(AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L).setListener(null).start()
+    }
+
+    internal fun animateOut(view: View) {
+        view.animate().translationY(view.height.toFloat()).setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L).setListener(
+                object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        view.isVisible = false
+                    }
+                }
+        ).start()
     }
 
     companion object {
 
-        private val INTERPOLATOR = FastOutSlowInInterpolator()
+        //        private val INTERPOLATOR = FastOutSlowInInterpolator()
         private const val FILE_FORMAT = ".risuscito"
         internal val TAG = LUtils::class.java.canonicalName
 
         fun getInstance(activity: Activity): LUtils {
             return LUtils(activity)
+        }
+
+        fun hasK(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
         }
 
         fun hasL(): Boolean {
@@ -222,8 +224,16 @@ class LUtils private constructor(private val mActivity: Activity) {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         }
 
+        fun hasQ(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        }
+
         fun hasJB(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
+        }
+
+        fun hasM(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
         }
 
         fun hasN(): Boolean {
@@ -233,6 +243,10 @@ class LUtils private constructor(private val mActivity: Activity) {
         fun hasP(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
         }
+
+//        fun hasQ(): Boolean {
+//            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+//        }
 
         @Suppress("DEPRECATION")
         private fun fromHtmlLegacy(input: String): Spanned {
@@ -245,21 +259,24 @@ class LUtils private constructor(private val mActivity: Activity) {
         }
 
         fun fromHtmlWrapper(input: String): Spanned {
-            return if (LUtils.hasN())
+            return if (hasN())
                 fromHtml(input)
             else
                 fromHtmlLegacy(input)
         }
 
         fun getResId(resName: String?, c: Class<*>): Int {
-            return try {
-                val idField = c.getDeclaredField(resName!!)
-                idField.getInt(idField)
-            } catch (e: Exception) {
-                Log.e(TAG, "getResId: " + e.localizedMessage, e)
-                -1
+            resName?.let {
+                return try {
+                    val idField = c.getDeclaredField(it)
+                    idField.getInt(idField)
+                } catch (e: Exception) {
+                    Log.e(TAG, "getResId: " + e.localizedMessage, e)
+                    -1
+                }
             }
-
+            Log.e(TAG, "resName NULL")
+            return -1
         }
     }
 

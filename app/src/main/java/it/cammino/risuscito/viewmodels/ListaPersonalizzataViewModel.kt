@@ -1,96 +1,82 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
+import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import android.util.Log
+import androidx.lifecycle.LiveData
+import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.ListaPersonalizzata
+import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.ListaPersonalizzataItem
+import it.cammino.risuscito.items.listaPersonalizzataItem
+import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.PosizioneItem
-import it.cammino.risuscito.objects.PosizioneTitleItem
+import it.cammino.risuscito.objects.posizioneItem
+import it.cammino.risuscito.utils.map
+import it.cammino.risuscito.utils.zipLiveDataNullable
 
 
-class ListaPersonalizzataViewModel(application: Application) : AndroidViewModel(application) {
+class ListaPersonalizzataViewModel(application: Application, args: Bundle) : AndroidViewModel(application) {
 
     var posizioniList: List<ListaPersonalizzataItem> = ArrayList()
     var listaPersonalizzataId: Int = 0
     var listaPersonalizzata: ListaPersonalizzata? = null
     var listaPersonalizzataTitle: String? = null
 
-    var listaPersonalizzataResult: MutableLiveData<MutableList<ListaPersonalizzataItem>> = MutableLiveData()
+    var listaPersonalizzataResult: LiveData<List<ListaPersonalizzataItem>>? = null
         private set
 
-    private var listaPersonalizzataMediator: MediatorLiveData<ListaPers> = MediatorLiveData()
+    init {
+        listaPersonalizzataId = args.getInt(Utility.TIPO_LISTA)
+        val mDb = RisuscitoDatabase.getInstance(getApplication())
+        mDb.listePersDao().getLiveListById(listaPersonalizzataId)?.let { liveList ->
+            listaPersonalizzataResult = zipLiveDataNullable(liveList, mDb.cantoDao().liveAll).map { result ->
+                val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
+                listaPersonalizzata = result.first?.lista
+                listaPersonalizzataTitle = result.first?.titolo
 
-    var mDb: RisuscitoDatabase? = null
-        private set
-
-    fun createDb() {
-        mDb = RisuscitoDatabase.getInstance(getApplication())
-        // Receive changes
-        subscribeToDbChanges()
-    }
-
-    private fun subscribeToDbChanges() {
-        val listaPers = mDb!!.listePersDao().getLiveListById(listaPersonalizzataId)
-        listaPersonalizzataMediator.addSource(listaPers!!) { mListaPers ->
-            listaPersonalizzataMediator.postValue(mListaPers)
-        }
-        listaPersonalizzataMediator.observeForever { mListaPers ->
-            if (mListaPers == null) {
-                listaPersonalizzataResult.postValue(ArrayList())
-                return@observeForever
-            }
-            listaPersonalizzata = mListaPers.lista
-            listaPersonalizzataTitle = mListaPers.titolo
-            Thread(
-                    Runnable {
-                        val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
-
-                        for (cantoIndex in 0 until listaPersonalizzata!!.numPosizioni) {
-                            val list = ArrayList<PosizioneItem>()
-                            if (listaPersonalizzata!!.getCantoPosizione(cantoIndex).isNotEmpty()) {
-
-                                val mCantoDao = mDb!!.cantoDao()
-
-                                val cantoTemp = mCantoDao.getCantoById(
-                                        Integer.parseInt(
-                                                listaPersonalizzata!!.getCantoPosizione(cantoIndex)))
-
+                listaPersonalizzata?.let { lista ->
+                    for (cantoIndex in 0 until lista.numPosizioni) {
+                        val list = ArrayList<PosizioneItem>()
+                        if (lista.getCantoPosizione(cantoIndex).isNotEmpty()) {
+                            result.second?.find {
+                                it.id == Integer.parseInt(
+                                        lista.getCantoPosizione(cantoIndex))
+                            }?.let {
                                 list.add(
-                                        PosizioneItem(
-                                                cantoTemp.pagina!!,
-                                                cantoTemp.titolo!!,
-                                                cantoTemp.color!!,
-                                                cantoTemp.id,
-                                                cantoTemp.source!!,
-                                                ""))
+                                        posizioneItem {
+                                            withTitle(LUtils.getResId(it.titolo, R.string::class.java))
+                                            withPage(LUtils.getResId(it.pagina, R.string::class.java))
+                                            withSource(LUtils.getResId(it.source, R.string::class.java))
+                                            withColor(it.color ?: Canto.BIANCO)
+                                            withId(it.id)
+                                            withTimestamp("")
+                                        })
                             }
-
-                            Log.d(TAG, "cantoIndex: $cantoIndex")
-                            val result = ListaPersonalizzataItem()
-                                    .withTitleItem(PosizioneTitleItem(
-                                            listaPersonalizzata!!.getNomePosizione(cantoIndex),
-                                            listaPersonalizzataId,
-                                            cantoIndex,
-                                            cantoIndex,
-                                            false))
-                                    .withListItem(list)
-                                    .withId(cantoIndex)
-
-
-                            mPosizioniList.add(result)
                         }
-                        listaPersonalizzataResult.postValue(mPosizioniList)
-                    }).start()
+
+                        val listaResult = listaPersonalizzataItem {
+                            posizioneTitleItem {
+                                titoloPosizione = lista.getNomePosizione(cantoIndex)
+                                idPosizione = cantoIndex
+                                tagPosizione = cantoIndex
+                            }
+                            listItem = list
+                            id = cantoIndex
+                        }
+
+                        mPosizioniList.add(listaResult)
+                    }
+                }
+                mPosizioniList
+            }
         }
     }
 
     companion object {
         internal val TAG = ListaPersonalizzataViewModel::class.java.canonicalName
     }
-
 }

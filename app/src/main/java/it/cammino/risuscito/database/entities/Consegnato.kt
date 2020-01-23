@@ -9,4 +9,8 @@ class Consegnato {
 
     var idCanto: Int = 0
 
+    var txtNota: String = ""
+    
+    var numPassaggio: Int = -1
+
 }

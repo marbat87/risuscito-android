@@ -10,7 +10,6 @@
     <string name="page_order_text">Page index</string>
     <string name="search_name_text">Song searching</string>
     <string name="arg_search_text">Analytical index</string>
-    <string name="button_pulisci">CLEAR</string>
     <string name="always_on">No standby</string>
     <string name="always_on_summary">It prevents the display to move to standby inside the application.</string>
     <string name="title_activity_favourites">Favorites</string>
@@ -19,14 +18,14 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_general_index">Indexes of Songs</string>
     <string name="default_index_title">Predefined index</string>
-    <string name="default_index_summary">Indicate which index must open at the selection of the page of indexes.</string>
+    <string name="default_index_summary">Indicate which index must open at the selection of the page of indexes:</string>
     <string name="title_activity_canti_parola">Celebration of the Word</string>
     <string name="canto_iniziale">Initial song</string>
     <string name="prima_lettura">In response to the first reading</string>
     <string name="seconda_lettura">In response to the second reading</string>
     <string name="terza_lettura">In response to the third reading</string>
     <string name="canto_fine">Final song</string>
-    <string name="select_canto">Add song</string>
+    <string name="select_canto">Add song:</string>
     <string name="reset_list_question">Are you sure you want to reset the list?</string>
     <string name="title_activity_canti_eucarestia">Eucharistic Celebration</string>
     <string name="canto_pace">At the exchange of peace</string>
@@ -43,7 +42,7 @@
     <string name="about_subtitle">Version for Android smartphone/tablet</string>
     <string name="dialog_delete_mp3">Are you sure you want to delete the song from the memory of your device?</string>
     <string name="save_location_title">Predefined memory</string>
-    <string name="save_location_summary">Indicate if you want the downloaded files to appear visible to other applications (e.g music reader).</string>
+    <string name="save_location_summary">Indicate if you want the downloaded files to appear visible to other applications (e.g music reader):</string>
     <string name="favorite_added">Added favourites</string>
     <string name="favorite_removed">Deleted from favourites</string>
     <string name="file_delete">Deleted file</string>
@@ -75,7 +74,6 @@
     <string name="dialog_change_title">News</string>
     <string name="action_tonalita">Key</string>
     <string name="action_trasporta">Change</string>
-    <string name="action_salva_tonalita">Save</string>
     <string name="action_reset_tonalita">Predefined</string>
     <string name="action_trasporta_do">C / Cm</string>
     <string name="action_trasporta_dod">C# / C#m</string>
@@ -98,8 +96,7 @@
     <string name="showcase_end_title">End</string>
     <string name="list_added">Added to the list</string>
     <string name="posizione_rename">Rename element</string>
-    <string name="showcase_add_pos_desc">With this button you can add a new element of your choice (e.g. \"Initial song\", \"first reading\", etc.).
-You can add up to 30 elements.</string>
+    <string name="showcase_add_pos_desc">With this button you can add a new element of your choice (e.g. \"Initial song\", \"first reading\", etc.).\nYou can add up to 30 elements.</string>
     <string name="showcase_rename_desc">Press on the name of an element to rename it.</string>
     <string name="showcase_saveexit_desc">Once finished, press here to save and view your list together with the others.</string>
     <string name="showcase_delete_desc">Scroll on the right or on the left to remove an element.</string>
@@ -167,7 +164,7 @@ You can add up to 30 elements.</string>
     <string name="title_trasporta_si">B</string>
     <string name="to_be_chosen">to choose</string>
     <string name="language_title">Language</string>
-    <string name="language_summary">Set the language for the menu and the songs.</string>
+    <string name="language_summary">Set the language for the menu and the songs:</string>
     <string name="page_contracted">PG.</string>
     <string name="translation_running">Translation in progress&#8230;</string>
     <string name="no_favourites_short">You have not added any favourite.</string>
@@ -206,8 +203,7 @@ You can add up to 30 elements.</string>
     <string name="sc_audio_title">Reproduction audio</string>
     <string name="sc_audio_desc">Using this control you can reproduce the recording of the song with the functions of: play, pause, positioning in the track against the bar, display to the passed time.</string>
     <string name="sc_scroll_title">Automatic scroll of the text</string>
-    <string name="sc_scroll_desc">Using these controls you can automatically scroll the text and regulate its speed of scrolling.
-\nADVICE: Regulate the zoom to obtain a better effect.</string>
+    <string name="sc_scroll_desc">Using these controls you can automatically scroll the text and regulate its speed of scrolling.\nADVICE: Regulate the zoom to obtain a better effect.</string>
     <string name="download_error">Download error:</string>
     <string name="share_by">Share with&#8230;</string>
     <string name="delete_list_dialog">Are you sure you want to delete the list?</string>
@@ -220,14 +216,11 @@ You can add up to 30 elements.</string>
     <string name="connected_as">You are connected as %1$s</string>
     <string name="gplus_signout">Disconnect account</string>
     <string name="gplus_revoke">Revoke permission</string>
-    <string name="dialog_acc_disconn_text">Are you sure you want to disconnect He Rose from Death from your Google account?
-Connection is necessary if you wish to use the online backup/restore of the application setup</string>
-    <string name="dialog_acc_revoke_text">Are you sure you want to disconnect He Rose from Death from your Google account and to revoke it all the granted Google permission?
-Connection is necessary if you wish to use the online backup/restore of the application setup</string>
+    <string name="dialog_acc_disconn_text">Are you sure you want to disconnect He Rose from Death from your Google account?\nConnection is necessary if you wish to use the online backup/restore of the application setup</string>
+    <string name="dialog_acc_revoke_text">Are you sure you want to disconnect He Rose from Death from your Google account and to revoke it all the granted Google permission?\nConnection is necessary if you wish to use the online backup/restore of the application setup</string>
     <string name="disconnected">Disconnected from Google</string>
     <string name="gdrive_backup">Backup on account</string>
-    <string name="gdrive_backup_content">The setup will be backed up in your account. The previous backup (if existing) will be overwritten.
-Do you want to proceed?</string>
+    <string name="gdrive_backup_content">The setup will be backed up in your account. The previous backup (if existing) will be overwritten.\nDo you want to proceed?</string>
     <string name="gdrive_restore_content">He Rose From Death will now be restored from the setup existing in your account. Do you want to proceed?</string>
     <string name="backup_running">Backup in progress&#8230;</string>
     <string name="restore_running">Restore in progress&#8230;</string>
@@ -254,7 +247,7 @@ Do you want to proceed?</string>
     <string name="favorite_off">Remove favourite</string>
     <string name="showcase_listepers_title">Export/import lists</string>
     <string name="showcase_listepers_desc1">From this version you can export and import skeleton and chosen songs of the created lists (not the default).\nClick on the floating button for additional options and select the new option file Enter to choose how and who send the list to</string>
-    <string name="showcase_listepers_desc3">To import a list, open the file in the format \".he rose from death\" you received, directly from the program through which you received it or from  a file manager.</string>
+    <string name="showcase_listepers_desc3">To import a list, open the file in the format \".he rose from death\" you received, directly from the program through which you received it or from a file manager.</string>
     <string name="show_offertorio_title">Eucharist - Offertory</string>
     <string name="show_offertorio_summary">Enable the offertory song for the Eucharist</string>
     <string name="canto_offertorio">At the offertory</string>
@@ -269,7 +262,6 @@ Do you want to proceed?</string>
     <string name="consegnati_only">Look only for those delivered</string>
     <string name="permission_ok">Permission granted</string>
     <string name="night_theme_title">Dark Theme</string>
-    <string name="night_theme_desc">Enables the Dark Theme</string>
     <plurals name="item_selected">
         <item quantity="one">%1$d selected</item>
         <item quantity="other">%1$d selected</item>
@@ -289,4 +281,34 @@ Do you want to proceed?</string>
     <string name="unlink_confirm">disconnect</string>
     <string name="create_confirm">create</string>
     <string name="title_filter">filter by title</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="import_confirm">import</string>
+    <string name="default_search_title">Predefined search</string>
+    <string name="default_search_summary">Indicate which search type must open on entering the function:</string>
+    <string name="night_mode_light">Light</string>
+    <string name="night_mode_dark">Dark</string>
+    <string name="night_mode_auto_battery">Set by Battery Saver</string>
+    <string name="night_mode_auto_system">System default</string>
+    <string name="action_salva">Save</string>
+    <string name="dialog_save_consegnati_title">Save delivered songs</string>
+    <string name="dialog_save_consegnati_desc">Attention: by confirming you will delete any step saved on delivered songs you\'re removing. Do you want to continue saving?</string>
+    <string name="passage_title">Select step</string>
+    <string name="passage_filter">Filter by step</string>
+    <string name="filters_remove">Remove filters</string>
+    <string name="catechesi_iniziali">Initial catechesis</string>
+    <string name="scrutinio_1">First scrutiny</string>
+    <string name="shema">Shema</string>
+    <string name="scrutinio_2">Second scrutiny</string>
+    <string name="iniziazione_preghiera">Initiation to prayer</string>
+    <string name="traditio">Traditio</string>
+    <string name="ritraditio">Re-traditio</string>
+    <string name="redditio">Redditio</string>
+    <string name="padre_nostro_1">Our Father (First)</string>
+    <string name="padre_nostro_2">Our Father (Second)</string>
+    <string name="padre_nostro_3">Our Father (Third)</string>
+    <string name="elezione_1">Election (First)</string>
+    <string name="elezione_2">Election (Second)</string>
+    <string name="elezione_3">Election - final</string>
+    <string name="passaggio_none">None</string>
 </resources>

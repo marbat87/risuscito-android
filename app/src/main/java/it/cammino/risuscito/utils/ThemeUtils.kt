@@ -1,105 +1,119 @@
 package it.cammino.risuscito.utils
 
-import android.app.Activity
 import android.content.Context
-import android.preference.PreferenceManager
+import android.content.res.Configuration
+import android.graphics.Color
+import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
+import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
+import it.cammino.risuscito.Utility.NIGHT_MODE
+import it.cammino.risuscito.Utility.PRIMARY_COLOR
+import it.cammino.risuscito.Utility.SECONDARY_COLOR
 
-class ThemeUtils(context: Activity) {
+class ThemeUtils(context: Context) {
 
-    private val mContext: Context
-    private var mPrimaryDarkMap: HashMap<Int, Int>? = null
+    private val mContext: Context = context
 
     val current: Int
-        get() {
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_amber_A200))
-                return R.style.RisuscitoTheme_Amber
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_blue_A200))
-                return R.style.RisuscitoTheme_Blue
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_cyan_A200))
-                return R.style.RisuscitoTheme_Cyan
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_green_A200))
-                return R.style.RisuscitoTheme_Green
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_indigo_A200))
-                return R.style.RisuscitoTheme_Indigo
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_lime_A200))
-                return R.style.RisuscitoTheme_Lime
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_orange_A200))
-                return R.style.RisuscitoTheme_Orange
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_pink_A200))
-                return R.style.RisuscitoTheme_Pink
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_purple_A200))
-                return R.style.RisuscitoTheme_Purple
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_teal_A200))
-                return R.style.RisuscitoTheme_Teal
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_red_A200))
-                return R.style.RisuscitoTheme_Red
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_deep_orange_A200))
-                return R.style.RisuscitoTheme_DeepOrange
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_deep_purple_A200))
-                return R.style.RisuscitoTheme_DeepPurple
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_light_blue_A200))
-                return R.style.RisuscitoTheme_LightBlue
-            if (accentColor() == ContextCompat.getColor(mContext, R.color.md_light_green_A200))
-                return R.style.RisuscitoTheme_LightGreen
-            return if (accentColor() == ContextCompat.getColor(mContext, R.color.md_yellow_A200))
-                R.style.RisuscitoTheme_Yellow
-            else
-                R.style.RisuscitoTheme
+        get() = LUtils.getResId("Risuscito_Theme_${getPrimaryThemeName()}_${getSecondaryThemeName()}", R.style::class.java)
+
+    private fun getPrimaryThemeName(): String {
+        return when (primaryColor()) {
+            ContextCompat.getColor(mContext, R.color.md_amber_500) -> "pAmber"
+            ContextCompat.getColor(mContext, R.color.md_blue_500) -> "pBlue"
+            ContextCompat.getColor(mContext, R.color.md_brown_500) -> "pBrown"
+            ContextCompat.getColor(mContext, R.color.md_cyan_500) -> "pCyan"
+            ContextCompat.getColor(mContext, R.color.md_green_500) -> "pGreen"
+            ContextCompat.getColor(mContext, R.color.md_grey_500) -> "pGrey"
+            ContextCompat.getColor(mContext, R.color.md_indigo_500) -> "pIndigo"
+            ContextCompat.getColor(mContext, R.color.md_lime_500) -> "pLime"
+            ContextCompat.getColor(mContext, R.color.md_orange_500) -> "pOrange"
+            ContextCompat.getColor(mContext, R.color.md_pink_500) -> "pPink"
+            ContextCompat.getColor(mContext, R.color.md_purple_500) -> "pPurple"
+            ContextCompat.getColor(mContext, R.color.md_teal_500) -> "pTeal"
+            ContextCompat.getColor(mContext, R.color.md_red_500) -> "pRed"
+            ContextCompat.getColor(mContext, R.color.md_deep_orange_500) -> "pDeepOrange"
+            ContextCompat.getColor(mContext, R.color.md_deep_purple_500) -> "pDeepPurple"
+            ContextCompat.getColor(mContext, R.color.md_light_blue_500) -> "pLightBlue"
+            ContextCompat.getColor(mContext, R.color.md_blue_grey_500) -> "pBlueGrey"
+            ContextCompat.getColor(mContext, R.color.md_light_green_500) -> "pLightGreen"
+            ContextCompat.getColor(mContext, R.color.md_yellow_500) -> "pYellow"
+            else -> "pIndigo"
         }
-
-//    val isLightTheme: Boolean
-//        get() {
-//            val color = primaryColor()
-//            val a = 1 - (Color.red(color) * 0.299 + Color.green(color) * 0.587 + Color.blue(color) * 0.114) / 255
-//            return a < 0.5
-//        }
-
-    init {
-        mContext = context
-
-        mPrimaryDarkMap = hashMapOf(ContextCompat.getColor(mContext, R.color.md_amber_500) to ContextCompat.getColor(mContext, R.color.md_amber_700)
-                , ContextCompat.getColor(mContext, R.color.md_blue_500) to ContextCompat.getColor(mContext, R.color.md_blue_700)
-                , ContextCompat.getColor(mContext, R.color.md_brown_500) to ContextCompat.getColor(mContext, R.color.md_brown_700)
-                , ContextCompat.getColor(mContext, R.color.md_cyan_500) to ContextCompat.getColor(mContext, R.color.md_cyan_700)
-                , ContextCompat.getColor(mContext, R.color.md_green_500) to ContextCompat.getColor(mContext, R.color.md_green_700)
-                , ContextCompat.getColor(mContext, R.color.md_grey_500) to ContextCompat.getColor(mContext, R.color.md_grey_700)
-                , ContextCompat.getColor(mContext, R.color.md_indigo_500) to ContextCompat.getColor(mContext, R.color.md_indigo_700)
-                , ContextCompat.getColor(mContext, R.color.md_lime_500) to ContextCompat.getColor(mContext, R.color.md_lime_700)
-                , ContextCompat.getColor(mContext, R.color.md_orange_500) to ContextCompat.getColor(mContext, R.color.md_orange_700)
-                , ContextCompat.getColor(mContext, R.color.md_pink_500) to ContextCompat.getColor(mContext, R.color.md_pink_700)
-                , ContextCompat.getColor(mContext, R.color.md_purple_500) to ContextCompat.getColor(mContext, R.color.md_purple_700)
-                , ContextCompat.getColor(mContext, R.color.md_teal_500) to ContextCompat.getColor(mContext, R.color.md_teal_700)
-                , ContextCompat.getColor(mContext, R.color.md_red_500) to ContextCompat.getColor(mContext, R.color.md_red_700)
-                , ContextCompat.getColor(mContext, R.color.md_deep_orange_500) to ContextCompat.getColor(mContext, R.color.md_deep_orange_700)
-                , ContextCompat.getColor(mContext, R.color.md_deep_purple_500) to ContextCompat.getColor(mContext, R.color.md_deep_purple_700)
-                , ContextCompat.getColor(mContext, R.color.md_light_blue_500) to ContextCompat.getColor(mContext, R.color.md_light_blue_700)
-                , ContextCompat.getColor(mContext, R.color.md_blue_grey_500) to ContextCompat.getColor(mContext, R.color.md_blue_grey_700)
-                , ContextCompat.getColor(mContext, R.color.md_light_green_500) to ContextCompat.getColor(mContext, R.color.md_light_green_700)
-                , ContextCompat.getColor(mContext, R.color.md_yellow_500) to ContextCompat.getColor(mContext, R.color.md_yellow_700)
-        )
     }
 
-    fun primaryColor(): Int {
+    private fun getSecondaryThemeName(): String {
+        return when (accentColor()) {
+            ContextCompat.getColor(mContext, R.color.md_amber_A200) -> "Amber"
+            ContextCompat.getColor(mContext, R.color.md_blue_A200) -> "Blue"
+            ContextCompat.getColor(mContext, R.color.md_cyan_A200) -> "Cyan"
+            ContextCompat.getColor(mContext, R.color.md_green_A200) -> "Green"
+            ContextCompat.getColor(mContext, R.color.md_indigo_A200) -> "Indigo"
+            ContextCompat.getColor(mContext, R.color.md_lime_A200) -> "Lime"
+            ContextCompat.getColor(mContext, R.color.md_orange_A200) -> "Orange"
+            ContextCompat.getColor(mContext, R.color.md_pink_A200) -> "Pink"
+            ContextCompat.getColor(mContext, R.color.md_purple_A200) -> "Purple"
+            ContextCompat.getColor(mContext, R.color.md_teal_A200) -> "Teal"
+            ContextCompat.getColor(mContext, R.color.md_red_A200) -> "Red"
+            ContextCompat.getColor(mContext, R.color.md_deep_orange_A200) -> "DeepOrange"
+            ContextCompat.getColor(mContext, R.color.md_deep_purple_A200) -> "DeepPurple"
+            ContextCompat.getColor(mContext, R.color.md_light_blue_A200) -> "LightBlue"
+            ContextCompat.getColor(mContext, R.color.md_light_green_A200) -> "LightGreen"
+            ContextCompat.getColor(mContext, R.color.md_yellow_A200) -> "Yellow"
+            else -> "Orange"
+        }
+    }
+
+    private fun primaryColor(): Int {
         val defaultColor = ContextCompat.getColor(mContext, R.color.theme_primary)
-        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt("new_primary_color", defaultColor)
-    }
-
-    fun primaryColorDark(): Int {
-        return mPrimaryDarkMap!![primaryColor()]!!
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt(PRIMARY_COLOR, defaultColor)
     }
 
     private fun accentColor(): Int {
         val defaultColor = ContextCompat.getColor(mContext, R.color.theme_accent)
-        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt("new_accent_color", defaultColor)
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt(SECONDARY_COLOR, defaultColor)
     }
 
     companion object {
 
+        val TAG = ThemeUtils::class.java.canonicalName
+        private const val LIGHT_MODE = "light"
+        private const val DARK_MODE = "dark"
+        private const val DEFAULT_MODE = "default"
+
+        fun getStatusBarDefaultColor(context: Context): Int {
+            return if (isDarkMode(context))
+                Color.BLACK
+            else context.themeColor(R.attr.colorPrimaryVariant)
+        }
+
         fun isDarkMode(context: Context): Boolean {
-            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-            return prefs.getBoolean("dark_mode", false)
+            Log.d(TAG, "isDarkMode: ${(context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES}")
+            return (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        }
+
+        fun setDefaultNightMode(context: Context) {
+            when (getPrefNightMode(context)) {
+                LIGHT_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                DARK_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                DEFAULT_MODE -> AppCompatDelegate.setDefaultNightMode(if (LUtils.hasP()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+            }
+        }
+
+//        fun getNightModeText(context: Context): String {
+//            return when (getPrefNightMode(context)) {
+//                LIGHT_MODE -> context.getString(R.string.night_mode_light)
+//                DARK_MODE -> context.getString(R.string.night_mode_dark)
+//                else -> context.getString(if (LUtils.hasP()) R.string.night_mode_auto_system else R.string.night_mode_auto_battery)
+//            }
+//        }
+
+        private fun getPrefNightMode(context: Context): String {
+            return PreferenceManager.getDefaultSharedPreferences(context).getString(NIGHT_MODE, DEFAULT_MODE)
+                    ?: "default"
         }
 
     }

@@ -3,5 +3,9 @@
 /.idea/workspace.xml
 /.idea/libraries
 app/app.iml
-app/build
 .idea/caches/
+app/release/
+app/src/release/
+build
+/.idea/compiler.xml
+/.idea/encodings.xml

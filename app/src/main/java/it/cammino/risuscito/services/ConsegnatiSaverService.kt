@@ -3,8 +3,9 @@ package it.cammino.risuscito.services
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.crashlytics.android.Crashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
 
@@ -26,28 +27,33 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
     }
 
     private fun startSaving(intent: Intent?) {
-        val ids = intent!!.getIntegerArrayListExtra(IDS_CONSEGNATI)
+        val ids = intent?.getIntegerArrayListExtra(IDS_CONSEGNATI)
         var i = 0
         val mDao = RisuscitoDatabase.getInstance(applicationContext).consegnatiDao()
-        mDao.emptyConsegnati()
+        val consegnati = ArrayList<Consegnato>()
+        ids?.let {
+            for (id in it) {
+                val tempConsegnato = Consegnato()
+                tempConsegnato.idConsegnato = ++i
+                tempConsegnato.idCanto = id
+                tempConsegnato.numPassaggio = mDao.getNumPassaggio(id)
+                consegnati.add(tempConsegnato)
+                try {
+                    mDao.insertConsegnati(tempConsegnato)
+                    Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED")
+                    Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED - DONE = $i - $id")
+                    val intentBroadcast = Intent(BROADCAST_SINGLE_COMPLETED)
+                    intentBroadcast.putExtra(DATA_DONE, i)
+                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+                } catch (e: Exception) {
+                    Log.e(TAG, "ERRORE INSERT:", e)
+                    Crashlytics.logException(e)
+                }
 
-        for (id in ids) {
-            val tempConsegnato = Consegnato()
-            tempConsegnato.idConsegnato = ++i
-            tempConsegnato.idCanto = id
-            try {
-                mDao.insertConsegnati(tempConsegnato)
-                Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED")
-                Log.d(TAG, "Sending broadcast notification: $BROADCAST_SINGLE_COMPLETED - DONE = $i - $id")
-                val intentBroadcast = Intent(BROADCAST_SINGLE_COMPLETED)
-                intentBroadcast.putExtra(DATA_DONE, i)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-            } catch (e: Exception) {
-                Log.e(javaClass.toString(), "ERRORE INSERT:")
-                e.printStackTrace()
             }
-
         }
+        mDao.emptyConsegnati()
+        mDao.insertConsegnati(consegnati)
         Log.d(TAG, "Sending broadcast notification: $BROADCAST_SAVING_COMPLETED")
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(BROADCAST_SAVING_COMPLETED))
     }

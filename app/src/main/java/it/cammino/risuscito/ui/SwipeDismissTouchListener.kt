@@ -9,6 +9,9 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.ListView
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [View.OnTouchListener] that makes any [View] dismissable when the
@@ -107,7 +110,7 @@ class SwipeDismissTouchListener
                 mDownY = motionEvent.rawY
                 return if (mCallbacks.canDismiss(mToken)) {
                     mVelocityTracker = VelocityTracker.obtain()
-                    mVelocityTracker!!.addMovement(motionEvent)
+                    mVelocityTracker?.addMovement(motionEvent)
                     true
                 } else
                     false
@@ -119,14 +122,14 @@ class SwipeDismissTouchListener
                 }
 
                 val deltaX = motionEvent.rawX - mDownX
-                mVelocityTracker!!.addMovement(motionEvent)
-                mVelocityTracker!!.computeCurrentVelocity(1000)
-                val velocityX = mVelocityTracker!!.xVelocity
-                val absVelocityX = Math.abs(velocityX)
-                val absVelocityY = Math.abs(mVelocityTracker!!.yVelocity)
+                mVelocityTracker?.addMovement(motionEvent)
+                mVelocityTracker?.computeCurrentVelocity(1000)
+                val velocityX = mVelocityTracker?.xVelocity ?: 0f
+                val absVelocityX = abs(velocityX)
+                val absVelocityY = abs(mVelocityTracker?.yVelocity ?: 0f)
                 var dismiss = false
                 var dismissRight = false
-                if (Math.abs(deltaX) > mViewWidth / 2 && mSwiping) {
+                if (abs(deltaX) > mViewWidth / 2 && mSwiping) {
                     dismiss = true
                     dismissRight = deltaX > 0
                 } else if (mMinFlingVelocity <= absVelocityX && absVelocityX <= mMaxFlingVelocity
@@ -134,7 +137,7 @@ class SwipeDismissTouchListener
                         && absVelocityY < absVelocityX && mSwiping) {
                     // dismiss only if flinging in the same direction as dragging
                     dismiss = velocityX < 0 == deltaX < 0
-                    dismissRight = mVelocityTracker!!.xVelocity > 0
+                    dismissRight = (mVelocityTracker?.xVelocity ?: 0f) > 0
                 }
                 if (dismiss) {
                     // dismiss
@@ -155,7 +158,7 @@ class SwipeDismissTouchListener
                             .setDuration(mAnimationTime)
                             .setListener(null)
                 }
-                mVelocityTracker!!.recycle()
+                mVelocityTracker?.recycle()
                 mVelocityTracker = null
                 mTranslationX = 0f
                 mDownX = 0f
@@ -173,7 +176,7 @@ class SwipeDismissTouchListener
                         .alpha(1f)
                         .setDuration(mAnimationTime)
                         .setListener(null)
-                mVelocityTracker!!.recycle()
+                mVelocityTracker?.recycle()
                 mVelocityTracker = null
                 mTranslationX = 0f
                 mDownX = 0f
@@ -186,10 +189,10 @@ class SwipeDismissTouchListener
                     return false
                 }
 
-                mVelocityTracker!!.addMovement(motionEvent)
+                mVelocityTracker?.addMovement(motionEvent)
                 val deltaX = motionEvent.rawX - mDownX
                 val deltaY = motionEvent.rawY - mDownY
-                if (Math.abs(deltaX) > mSlop && Math.abs(deltaY) < Math.abs(deltaX) / 2) {
+                if (abs(deltaX) > mSlop && abs(deltaY) < abs(deltaX) / 2) {
                     mSwiping = true
                     mSwipingSlop = if (deltaX > 0) mSlop else -mSlop
                     mView.parent.requestDisallowInterceptTouchEvent(true)
@@ -205,8 +208,7 @@ class SwipeDismissTouchListener
                     mTranslationX = deltaX
                     mView.translationX = deltaX - mSwipingSlop
                     // TODO: use an ease-out interpolator or such
-                    mView.alpha = Math.max(0f, Math.min(1f,
-                            1f - 2f * Math.abs(deltaX) / mViewWidth))
+                    mView.alpha = max(0f, min(1f, 1f - 2f * abs(deltaX) / mViewWidth))
                     return true
                 }
             }
@@ -236,7 +238,7 @@ class SwipeDismissTouchListener
         })
 
         animator.addUpdateListener { valueAnimator ->
-            lp.height = valueAnimator.animatedValue as Int
+            lp.height = valueAnimator.animatedValue as? Int ?: 0
             mView.layoutParams = lp
         }
 

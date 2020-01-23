@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,7 +11,7 @@
     android:paddingBottom="8dp">
 
     <TextView
-        android:id="@+id/md_content"
+        android:id="@+id/md_content_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -24,15 +25,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <me.zhanghai.android.materialprogressbar.MaterialProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/working_progress"
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             risuscito:mpb_progressStyle="horizontal"
-            risuscito:mpb_progressTint="?colorAccent" />
+            risuscito:mpb_progressTint="?colorSecondary" />
 
         <TextView
             android:id="@+id/md_label"

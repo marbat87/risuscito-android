@@ -17,11 +17,10 @@
             android:layout_height="120dip"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/no_favourites_short"
-            android:src="@drawable/ic_sad_heart" />
+            risuscito:srcCompat="@drawable/ic_sunglassed_star" />
 
         <TextView
             android:id="@+id/favorites_text"
-            risuscito:fontFamily="@font/googlesans_italic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/favorites_image"
@@ -32,26 +31,16 @@
             android:text="@string/no_favourites_short"
             android:textAppearance="@style/SuperStateViewSubTitle"
             android:textColor="?android:textColorSecondary"
+            risuscito:fontFamily="@font/googlesans_italic"
             tools:ignore="MissingPrefix" />
 
     </RelativeLayout>
 
-    <!--<com.cipolat.superstateview.SuperStateView-->
-    <!--android:id="@+id/no_favourites"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_gravity="center"-->
-    <!--risuscito:imageState="@drawable/ic_sad_heart"-->
-    <!--risuscito:subTitleStyle="@style/SuperStateViewSubTitle"-->
-    <!--risuscito:setSubTitleText="@string/no_favourites_short"-->
-    <!--risuscito:setSubTitleFont="Roboto-Light.ttf" />-->
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favouritesList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:fadeScrollbars="true"
-        android:scrollbars="vertical"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:scrollbars="vertical" />
 
 </FrameLayout>

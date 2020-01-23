@@ -3,9 +3,9 @@
     xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_search"
+        android:id="@+id/action_filter"
         android:orderInCategory="98"
-        android:title="@string/title_filter"
+        android:title="@string/passage_filter"
         risuscito:ico_color="@android:color/white"
         risuscito:ico_icon="cmd_filter"
         risuscito:ico_padding="2dp"

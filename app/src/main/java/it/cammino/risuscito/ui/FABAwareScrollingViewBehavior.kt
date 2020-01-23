@@ -2,12 +2,14 @@ package it.cammino.risuscito.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.google.android.material.appbar.AppBarLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.core.view.ViewCompat
 import android.util.AttributeSet
 import android.view.View
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 @Suppress("unused")
 class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
@@ -25,10 +27,35 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes, type)
     }
 
-    override fun onNestedScroll(coordinatorLayout: CoordinatorLayout, child: View,
-                                target: View, dxConsumed: Int, dyConsumed: Int,
-                                dxUnconsumed: Int, dyUnconsumed: Int, type: Int) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type)
+//    override fun onNestedScroll(coordinatorLayout: CoordinatorLayout, child: View,
+//                                target: View, dxConsumed: Int, dyConsumed: Int,
+//                                dxUnconsumed: Int, dyUnconsumed: Int, type: Int) {
+//        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type)
+//        if (dyConsumed > 0) {
+//            // User scrolled down -> hide the FAB
+//            val dependencies = coordinatorLayout.getDependencies(child)
+//            for (view in dependencies) {
+//                (view as? FloatingActionButton)?.hide(object : FloatingActionButton.OnVisibilityChangedListener() {
+//                    @SuppressLint("RestrictedApi")
+//                    override fun onHidden(fab: FloatingActionButton?) {
+//                        super.onHidden(fab)
+//                        fab?.visibility = View.INVISIBLE
+//                    }
+//                })
+//            }
+//        } else if (dyConsumed < 0) {
+//            // User scrolled up -> show the FAB
+//            val dependencies = coordinatorLayout.getDependencies(child)
+//            dependencies
+//                    .filterIsInstance<//TEST per non dover togliere il behavior quando si nasconde il FAB volutamente
+//                            FloatingActionButton>()
+//                    .filter { it.visibility != View.GONE }
+//                    .forEach { it.show() }
+//        }
+//    }
+
+    override fun onNestedScroll(coordinatorLayout: CoordinatorLayout, child: View, target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, type: Int, consumed: IntArray) {
+        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed)
         if (dyConsumed > 0) {
             // User scrolled down -> hide the FAB
             val dependencies = coordinatorLayout.getDependencies(child)
@@ -37,7 +64,7 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
                     @SuppressLint("RestrictedApi")
                     override fun onHidden(fab: FloatingActionButton?) {
                         super.onHidden(fab)
-                        fab!!.visibility = View.INVISIBLE
+                        fab?.isInvisible = true
                     }
                 })
             }
@@ -47,7 +74,7 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
             dependencies
                     .filterIsInstance<//TEST per non dover togliere il behavior quando si nasconde il FAB volutamente
                             FloatingActionButton>()
-                    .filter { it.visibility != View.GONE }
+                    .filter { !it.isGone }
                     .forEach { it.show() }
         }
     }

@@ -36,7 +36,7 @@ open class Canto {
     companion object {
 
         private const val GIALLO = "#EBD0A5"
-        private const val BIANCO = "#FCFCFC"
+        const val BIANCO = "#FCFCFC"
         private const val AZZURRO = "#6F949A"
         private const val VERDE = "#8FC490"
         private const val GRIGIO = "#CAC8BC"
@@ -3271,6 +3271,20 @@ open class Canto {
             mCanto.favorite = 0
             mCanto.color = BIANCO
             mCanto.link = "e_paziente_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 236
+            mCanto.pagina = "inno_cristo_luce_page"
+            mCanto.titolo = "inno_cristo_luce_title"
+            mCanto.source = "inno_cristo_luce_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "inno_cristo_luce_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
             mCanto.scrollY = 0

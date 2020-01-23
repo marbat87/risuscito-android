@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <group android:checkableBehavior="all">
+        <item
+            android:checkable="false"
+            android:enabled="false"
+            android:title="@string/passage_filter" />
+        <item
+            android:id="@+id/passaggio_none"
+            android:orderInCategory="1"
+            android:title="@string/passaggio_none"
+            android:titleCondensed="-1"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/catechesi_iniziali"
+            android:orderInCategory="2"
+            android:title="@string/catechesi_iniziali"
+            android:titleCondensed="0"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/scrutinio_1"
+            android:orderInCategory="3"
+            android:title="@string/scrutinio_1"
+            android:titleCondensed="1"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/shema"
+            android:orderInCategory="4"
+            android:title="@string/shema"
+            android:titleCondensed="2"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/scrutinio_2"
+            android:orderInCategory="5"
+            android:title="@string/scrutinio_2"
+            android:titleCondensed="3"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/iniziazione_preghiera"
+            android:orderInCategory="6"
+            android:title="@string/iniziazione_preghiera"
+            android:titleCondensed="4"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/traditio"
+            android:orderInCategory="7"
+            android:title="@string/traditio"
+            android:titleCondensed="5"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/ritraditio"
+            android:orderInCategory="8"
+            android:title="@string/ritraditio"
+            android:titleCondensed="6"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/redditio"
+            android:orderInCategory="9"
+            android:title="@string/redditio"
+            android:titleCondensed="7"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/padre_nostro_1"
+            android:orderInCategory="10"
+            android:title="@string/padre_nostro_1"
+            android:titleCondensed="8"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/padre_nostro_2"
+            android:orderInCategory="11"
+            android:title="@string/padre_nostro_2"
+            android:titleCondensed="9"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/padre_nostro_3"
+            android:orderInCategory="12"
+            android:title="@string/padre_nostro_3"
+            android:titleCondensed="10"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/elezione_1"
+            android:orderInCategory="13"
+            android:title="@string/elezione_1"
+            android:titleCondensed="11"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/elezione_2"
+            android:orderInCategory="14"
+            android:title="@string/elezione_2"
+            android:titleCondensed="12"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+
+        <item
+            android:id="@+id/elezione_3"
+            android:orderInCategory="15"
+            android:title="@string/elezione_3"
+            android:titleCondensed="13"
+            risuscito:showAsAction="always"
+            tools:ignore="AlwaysShowAction" />
+    </group>
+</menu>

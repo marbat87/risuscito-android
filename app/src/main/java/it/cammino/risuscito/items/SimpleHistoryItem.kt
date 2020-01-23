@@ -1,212 +1,146 @@
 package it.cammino.risuscito.items
 
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
-import com.mikepenz.fastadapter.commons.utils.FastAdapterUIUtils
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.materialize.holder.ColorHolder
 import com.mikepenz.materialize.holder.StringHolder
 import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.Utility.helperSetColor
+import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.themeColor
 import kotlinx.android.synthetic.main.row_item_history.view.*
 import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-@Suppress("unused")
-class SimpleHistoryItem : AbstractItem<SimpleHistoryItem, SimpleHistoryItem.ViewHolder>() {
+fun simpleHistoryItem(block: SimpleHistoryItem.() -> Unit): SimpleHistoryItem = SimpleHistoryItem().apply(block)
+
+class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
+    var setTitle: Any? = null
+        set(value) {
+            title = helperSetString(value)
+        }
+
     var page: StringHolder? = null
         private set
+    var setPage: Any? = null
+        set(value) {
+            page = helperSetString(value)
+        }
+
     var timestamp: StringHolder? = null
         private set
+    var setTimestamp: Any? = null
+        set(value) {
+            timestamp = helperSetString(value)
+        }
+
     var source: StringHolder? = null
         private set
+    var setSource: Any? = null
+        set(value) {
+            source = helperSetString(value)
+        }
+
     var color: ColorHolder? = null
         private set
-    private var selectedColor: ColorHolder? = null
+    var setColor: Any? = null
+        set(value) {
+            color = helperSetColor(value)
+        }
+
     var id: Int = 0
-        private set
-
-    private var createContextMenuListener: View.OnCreateContextMenuListener? = null
-
-    fun withTitle(title: String): SimpleHistoryItem {
-        this.title = StringHolder(title)
-        return this
-    }
-
-    fun withTitle(@StringRes titleRes: Int): SimpleHistoryItem {
-        this.title = StringHolder(titleRes)
-        return this
-    }
-
-    fun withPage(page: String): SimpleHistoryItem {
-        this.page = StringHolder(page)
-        return this
-    }
-
-    fun withPage(@StringRes pageRes: Int): SimpleHistoryItem {
-        this.page = StringHolder(pageRes)
-        return this
-    }
-
-    fun withTimestamp(timestamp: String): SimpleHistoryItem {
-        this.timestamp = StringHolder(timestamp)
-        return this
-    }
-
-    fun withTimestamp(@StringRes timestampRes: Int): SimpleHistoryItem {
-        this.timestamp = StringHolder(timestampRes)
-        return this
-    }
-
-    fun withSource(src: String): SimpleHistoryItem {
-        this.source = StringHolder(src)
-        return this
-    }
-
-    fun withSource(@StringRes srcRes: Int): SimpleHistoryItem {
-        this.source = StringHolder(srcRes)
-        return this
-    }
-
-    fun withColor(color: String): SimpleHistoryItem {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): SimpleHistoryItem {
-        this.color = ColorHolder.fromColorRes(colorRes)
-        return this
-    }
-
-    fun withId(id: Int): SimpleHistoryItem {
-        this.id = id
-        return this
-    }
-
-    fun withSelectedColor(selectedColor: String): SimpleHistoryItem {
-        this.selectedColor = ColorHolder.fromColor(Color.parseColor(selectedColor))
-        return this
-    }
-
-    fun withSelectedColor(@ColorInt selectedColor: Int): SimpleHistoryItem {
-        this.selectedColor = ColorHolder.fromColor(selectedColor)
-        return this
-    }
-
-    fun withSelectedColorRes(@ColorRes selectedColorRes: Int): SimpleHistoryItem {
-        this.selectedColor = ColorHolder.fromColorRes(selectedColorRes)
-        return this
-    }
-
-    fun withContextMenuListener(listener: View.OnCreateContextMenuListener): SimpleHistoryItem {
-        this.createContextMenuListener = listener
-        return this
-    }
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
 
     /**
      * defines the type defining this item. must be unique. preferably an id
      *
      * @return the type
      */
-    override fun getType(): Int {
-        return R.id.fastadapter_history_item_id
-    }
-
-    override fun getIdentifier(): Long {
-        return id.toLong()
-    }
+    override val type: Int
+        get() = R.id.fastadapter_history_item_id
 
     /**
      * defines the layout which will be used for this item in the list
      *
      * @return the layout for this item
      */
-    override fun getLayoutRes(): Int {
-        return R.layout.row_item_history
-    }
+    override val layoutRes: Int
+        get() = R.layout.row_item_history
 
     /**
      * binds the data of this item onto the viewHolder
      *
-     * @param viewHolder the viewHolder of this item
+     * @param holder the viewHolder of this item
      */
-    override fun bindView(viewHolder: ViewHolder, payloads: List<Any>) {
-        super.bindView(viewHolder, payloads)
+    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
+        super.bindView(holder, payloads)
 
         // get the context
-        val ctx = viewHolder.itemView.context
+        val ctx = holder.itemView.context
 
         // set the text for the name
-        StringHolder.applyTo(title, viewHolder.mTitle)
+        StringHolder.applyTo(title, holder.mTitle)
         // set the text for the description or hide
-        StringHolder.applyToOrHide(page, viewHolder.mPage)
+        StringHolder.applyToOrHide(page, holder.mPage)
 
         @Suppress("DEPRECATION")
         UIUtils.setBackground(
-                viewHolder.view,
+                holder.view,
                 FastAdapterUIUtils.getSelectableBackground(
                         ctx,
-                        ContextCompat.getColor(viewHolder.itemView.context, R.color.ripple_color),
+                        ctx.themeColor(R.attr.colorSecondaryLight),
                         true))
 
-        if (isSelected) {
-            viewHolder.mPage!!.visibility = View.INVISIBLE
-            viewHolder.mPageSelected!!.visibility = View.VISIBLE
-            val bgShape = viewHolder.mPageSelected!!.background as GradientDrawable
-            bgShape.setColor(selectedColor!!.colorInt)
-        } else {
-            val bgShape = viewHolder.mPage!!.background as GradientDrawable
-            bgShape.setColor(color!!.colorInt)
-            viewHolder.mPage!!.visibility = View.VISIBLE
-            viewHolder.mPageSelected!!.visibility = View.INVISIBLE
-        }
+        val bgShape = holder.mPage?.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        holder.mPage?.isInvisible = isSelected
+        holder.mPageSelected?.isVisible = isSelected
+        val bgShapeSelected = holder.mPageSelected?.background as? GradientDrawable
+        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
 
-        viewHolder.mId!!.text = id.toString()
+        holder.mId?.text = id.toString()
 
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
             val df = DateFormat.getDateTimeInstance(
-//                    DateFormat.SHORT, DateFormat.MEDIUM, ctx.resources.configuration.locale)
-                    DateFormat.SHORT, DateFormat.MEDIUM, ThemeableActivity.getSystemLocalWrapper(ctx.resources.configuration))
+                    DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
             val tempTimestamp: String
 
-            val dateTimestamp = Date(java.lang.Long.parseLong(timestamp!!.text.toString()))
+            val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.text.toString()))
             tempTimestamp = if (df is SimpleDateFormat) {
                 val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
                 df.applyPattern(pattern)
                 df.format(dateTimestamp)
             } else
                 df.format(dateTimestamp)
-            viewHolder.mTimestamp!!.text = tempTimestamp
-            viewHolder.mTimestamp!!.visibility = View.VISIBLE
+            holder.mTimestamp?.text = tempTimestamp
+            holder.mTimestamp?.isVisible = true
         } else
-            viewHolder.mTimestamp!!.visibility = View.GONE
-
-        if (createContextMenuListener != null) {
-            (viewHolder.itemView.context as Activity).registerForContextMenu(viewHolder.itemView)
-            viewHolder.itemView.setOnCreateContextMenuListener(createContextMenuListener)
-        }
+            holder.mTimestamp?.isVisible = false
     }
 
     override fun unbindView(holder: ViewHolder) {
         super.unbindView(holder)
-        holder.mTitle!!.text = null
-        holder.mPage!!.text = null
-        holder.mId!!.text = null
-        holder.mTimestamp!!.text = null
+        holder.mTitle?.text = null
+        holder.mPage?.text = null
+        holder.mId?.text = null
+        holder.mTimestamp?.text = null
     }
 
     override fun getViewHolder(v: View): ViewHolder {

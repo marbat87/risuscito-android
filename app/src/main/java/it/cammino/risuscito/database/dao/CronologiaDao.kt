@@ -3,17 +3,17 @@ package it.cammino.risuscito.database.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import it.cammino.risuscito.database.CantoCronologia
 import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.database.pojo.CantoCronologia
 
 @Suppress("unused")
 @Dao
 interface CronologiaDao {
 
-    @get:Query("SELECT A.*, B.ultimaVisita FROM canto A, cronologia B WHERE A.id = B.idCanto ORDER BY B.ultimaVisita DESC")
+    @get:Query("SELECT A.titolo, A.pagina, A.source, A.color, A.id, B.ultimaVisita FROM canto A, cronologia B WHERE A.id = B.idCanto ORDER BY B.ultimaVisita DESC")
     val liveCronologia: LiveData<List<CantoCronologia>>
 
-    @get:Query("SELECT A.*, B.ultimaVisita FROM canto A, cronologia B WHERE A.id = B.idCanto ORDER BY B.ultimaVisita DESC")
+    @get:Query("SELECT A.titolo, A.pagina, A.source, A.color, A.id, B.ultimaVisita FROM canto A, cronologia B WHERE A.id = B.idCanto ORDER BY B.ultimaVisita DESC")
     val cronologia: List<CantoCronologia>
 
     @get:Query("SELECT * FROM cronologia")

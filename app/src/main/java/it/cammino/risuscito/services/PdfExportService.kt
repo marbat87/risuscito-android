@@ -7,15 +7,18 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import it.cammino.risuscito.BuildConfig
 import it.cammino.risuscito.CambioAccordi
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.setSystemLocale
 import it.marbat.pdfjet.lib.*
 import java.io.*
 import java.util.*
@@ -40,9 +43,9 @@ class PdfExportService : IntentService("PdfExportService") {
             page = Page(pdf, A4.PORTRAIT)
             startingY = START_Y
         }
-        text!!.setLocation(START_X, startingY)
-        text!!.text = line
-        text!!.drawOn(page)
+        text?.setLocation(START_X, startingY)
+        text?.text = line
+        text?.drawOn(page)
         startingY += 20f
     }
 
@@ -62,35 +65,30 @@ class PdfExportService : IntentService("PdfExportService") {
 
     private fun exportPdf(intent: Intent?) {
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, "exportPdf: DATA_PRIMA_NOTA " + intent!!.getStringExtra(DATA_PRIMA_NOTA))
-            Log.d(TAG, "exportPdf: DATA_NOTA_CAMBIO " + intent.getStringExtra(DATA_NOTA_CAMBIO))
-            Log.d(TAG, "exportPdf: PRIMO_BARRE " + intent.getStringExtra(DATA_PRIMO_BARRE))
-            Log.d(TAG, "exportPdf: DATA_BARRE_CAMBIO " + intent.getStringExtra(DATA_BARRE_CAMBIO))
-            Log.d(TAG, "exportPdf: DATA_PAGINA " + intent.getStringExtra(DATA_PAGINA))
-            Log.d(TAG, "exportPdf: DATA_LINGUA " + intent.getStringExtra(DATA_LINGUA))
+            Log.d(TAG, "exportPdf: DATA_PRIMA_NOTA ${intent?.getStringExtra(DATA_PRIMA_NOTA)}")
+            Log.d(TAG, "exportPdf: DATA_NOTA_CAMBIO ${intent?.getStringExtra(DATA_NOTA_CAMBIO)}")
+            Log.d(TAG, "exportPdf: PRIMO_BARRE ${intent?.getStringExtra(DATA_PRIMO_BARRE)}")
+            Log.d(TAG, "exportPdf: DATA_BARRE_CAMBIO ${intent?.getStringExtra(DATA_BARRE_CAMBIO)}")
+            Log.d(TAG, "exportPdf: DATA_PAGINA ${intent?.getStringExtra(DATA_PAGINA)}")
+            Log.d(TAG, "exportPdf: DATA_LINGUA ${intent?.getStringExtra(DATA_LINGUA)}")
         }
 
-        primaNota = intent!!.getStringExtra(DATA_PRIMA_NOTA)
-        notaCambio = intent.getStringExtra(DATA_NOTA_CAMBIO)
-        primoBarre = intent.getStringExtra(DATA_PRIMO_BARRE)
-        val barreCambio = intent.getStringExtra(DATA_BARRE_CAMBIO)
-        pagina = intent.getStringExtra(DATA_PAGINA)
+        primaNota = intent?.getStringExtra(DATA_PRIMA_NOTA) ?: ""
+        notaCambio = intent?.getStringExtra(DATA_NOTA_CAMBIO) ?: ""
+        primoBarre = intent?.getStringExtra(DATA_PRIMO_BARRE) ?: ""
+        val barreCambio = intent?.getStringExtra(DATA_BARRE_CAMBIO) ?: ""
+        pagina = intent?.getStringExtra(DATA_PAGINA) ?: ""
         localPDFPath = ""
-        mLingua = intent.getStringExtra(DATA_LINGUA)
+        mLingua = intent?.getStringExtra(DATA_LINGUA) ?: ""
 
         val cambioAccordi = CambioAccordi(applicationContext, mLingua)
 
         val testConv = cambioAccordi.diffSemiToni(primaNota, notaCambio)
         var testConvMin: HashMap<String, String>? = null
-        if (mLingua.equals("uk", ignoreCase = true))
+        if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
             testConvMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio)
-        var urlHtml = ""
-        if (testConv != null) {
-            val nuovoFile = cambiaAccordi(testConv, barreCambio, testConvMin)
-            if (nuovoFile != null) urlHtml = nuovoFile
-        } else {
-            urlHtml = "file:///android_asset/$pagina.htm"
-        }
+
+        val urlHtml = testConv?.let { cambiaAccordi(it, barreCambio, testConvMin) ?: "" } ?: ""
         try {
             localPDFPath = cacheDir.absolutePath + "/output.pdf"
             Log.d(javaClass.toString(), "localPath:$localPDFPath")
@@ -100,7 +98,8 @@ class PdfExportService : IntentService("PdfExportService") {
             f1.size = 14f
             try {
                 var line: String?
-                val br = BufferedReader(InputStreamReader(FileInputStream(urlHtml), "UTF-8"))
+                val br = if (urlHtml.isNotEmpty()) BufferedReader(InputStreamReader(FileInputStream(urlHtml), "UTF-8")) else
+                    BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(pagina, R.raw::class.java)), "UTF-8"))
 
                 line = br.readLine()
                 text = TextLine(f1)
@@ -108,11 +107,11 @@ class PdfExportService : IntentService("PdfExportService") {
                 while (line != null) {
                     if ((line.contains("000000") || line.contains("A13F3C")) && !line.contains("BGCOLOR")) {
                         if (line.contains("000000")) {
-                            text!!.color = Color.black
+                            text?.color = Color.black
                         }
 
                         if (line.contains("A13F3C")) {
-                            text!!.color = Color.red
+                            text?.color = Color.red
                         }
                         line = line.replace("<H4>".toRegex(), "")
                         line = line.replace("</H4>".toRegex(), "")
@@ -159,7 +158,7 @@ class PdfExportService : IntentService("PdfExportService") {
                 return
             }
 
-            pdf!!.close()
+            pdf?.close()
         } catch (e: FileNotFoundException) {
             Log.e(javaClass.name, e.localizedMessage, e)
             Log.e(TAG, "Sending broadcast notification: $BROADCAST_EXPORT_ERROR")
@@ -187,13 +186,13 @@ class PdfExportService : IntentService("PdfExportService") {
         val cantoTrasportato = this.filesDir.toString() + "/temporaneo.htm"
 
         val conf = resources.configuration
-        ThemeableActivity.setSystemLocalWrapper(conf, Locale(mLingua))
+        setSystemLocale(conf, Locale(mLingua))
         val resources = createConfigurationWrapper(conf)
 
         var barreScritto = false
 
         try {
-            val br = BufferedReader(InputStreamReader(assets.open("$pagina.htm"), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(resources.openRawResource(LUtils.getResId(pagina, R.raw::class.java)), "UTF-8"))
 
             var line: String? = br.readLine()
 
@@ -203,39 +202,41 @@ class PdfExportService : IntentService("PdfExportService") {
             val pattern: Pattern
             var patternMinore: Pattern? = null
             when (mLingua) {
-                "it" -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
-                "uk" -> {
+                LANGUAGE_ITALIAN -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
+                LANGUAGE_UKRAINIAN -> {
                     pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H")
                     // inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
                     patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h")
                 }
-                "en" -> pattern = Pattern.compile("C|C#|D|Eb|E|F|F#|G|G#|A|Bb|B")
+                LANGUAGE_ENGLISH -> pattern = Pattern.compile("C|C#|D|Eb|E|F|F#|G|G#|A|Bb|B")
                 else -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
             }
 
             while (line != null) {
                 Log.d(javaClass.name, "RIGA DA ELAB: $line")
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-                    if (mLingua.equals("uk", ignoreCase = true) || mLingua.equals("en", ignoreCase = true)) {
+                    if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || mLingua.equals(LANGUAGE_ENGLISH, ignoreCase = true)) {
                         line = line.replace("</FONT><FONT COLOR=\"#A13F3C\">".toRegex(), "<K>")
                         line = line.replace("</FONT><FONT COLOR=\"#000000\">".toRegex(), "<K2>")
                     }
                     val matcher = pattern.matcher(line)
                     val sb = StringBuffer()
                     val sb2 = StringBuffer()
-                    while (matcher.find()) matcher.appendReplacement(sb, conversione[matcher.group(0)])
+                    while (matcher.find()) matcher.appendReplacement(sb, conversione[matcher.group(0)
+                            ?: ""] ?: "")
                     matcher.appendTail(sb)
-                    if (mLingua.equals("uk", ignoreCase = true) && patternMinore != null) {
+                    if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) && patternMinore != null) {
                         val matcherMin = patternMinore.matcher(sb.toString())
                         while (matcherMin.find())
-                            matcherMin.appendReplacement(sb2, conversioneMin!![matcherMin.group(0)])
+                            matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0)
+                                    ?: "") ?: "")
                         matcherMin.appendTail(sb2)
                         line = sb2.toString()
                         line = line.replace("<K>".toRegex(), "</FONT><FONT COLOR='#A13F3C'>")
                         line = line.replace("<K2>".toRegex(), "</FONT><FONT COLOR='#000000'>")
                     } else {
                         line = sb.toString()
-                        if (mLingua.equals("en", ignoreCase = true)) {
+                        if (mLingua.equals(LANGUAGE_ENGLISH, ignoreCase = true)) {
                             line = line.replace("<K>".toRegex(), "</FONT><FONT COLOR='#A13F3C'>")
                             line = line.replace("<K2>".toRegex(), "</FONT><FONT COLOR='#000000'>")
                         }
@@ -296,9 +297,7 @@ class PdfExportService : IntentService("PdfExportService") {
     @Suppress("DEPRECATION")
     private fun createConfContextLegacy(conf: Configuration): Resources {
         val metrics = DisplayMetrics()
-        (getSystemService(Context.WINDOW_SERVICE) as WindowManager)
-                .defaultDisplay
-                .getMetrics(metrics)
+        (getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.defaultDisplay?.getMetrics(metrics)
         return Resources(assets, metrics, conf)
     }
 

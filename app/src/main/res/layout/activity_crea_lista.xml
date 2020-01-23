@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:focusableInTouchMode="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="150dp"
+        risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
+            style="@style/AdaptiveScrimColor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
+            risuscito:contentScrim="?colorPrimarySurface"
             risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
             risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -24,7 +27,6 @@
                 android:id="@+id/action_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorPrimary"
                 android:gravity="bottom"
                 risuscito:layout_collapseMode="parallax">
 
@@ -42,18 +44,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/textTitleDescription"
-                    android:layout_marginBottom="@dimen/activity_min_margin"
                     android:layout_marginLeft="@dimen/activity_min_margin"
                     android:layout_marginRight="@dimen/activity_min_margin"
+                    android:layout_marginBottom="@dimen/activity_min_margin"
                     android:hint="@string/list_title_modif"
                     android:imeOptions="actionDone"
+                    android:importantForAutofill="no"
                     android:inputType="text|textCapSentences"
                     android:maxLines="1"
                     android:scrollHorizontally="true"
                     android:textColor="@android:color/white"
                     android:textColorHighlight="@color/ripple_color_light"
                     android:textCursorDrawable="@null"
-                    android:textSize="30sp" />
+                    android:textSize="30sp"
+                    tools:ignore="UnusedAttribute" />
 
             </RelativeLayout>
 
@@ -61,8 +65,7 @@
                 android:id="@+id/risuscito_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+                android:theme="@style/ToolbarTheme"
                 risuscito:layout_collapseMode="pin"
                 risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 
@@ -81,10 +84,10 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:gravity="start|center_vertical"
-            android:paddingEnd="@dimen/myListPreferredItemMargin"
-            android:paddingLeft="@dimen/myListPreferredItemMargin"
-            android:paddingRight="@dimen/myListPreferredItemMargin"
             android:paddingStart="@dimen/myListPreferredItemMargin"
+            android:paddingLeft="@dimen/myListPreferredItemMargin"
+            android:paddingEnd="@dimen/myListPreferredItemMargin"
+            android:paddingRight="@dimen/myListPreferredItemMargin"
             android:text="@string/list_elements"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
@@ -100,7 +103,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:scrollbarStyle="outsideOverlay"

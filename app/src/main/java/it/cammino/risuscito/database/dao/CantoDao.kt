@@ -65,19 +65,4 @@ interface CantoDao {
             savedBarre: String?,
             savedSpeed: String?)
 
-    class Backup(
-            var id: Int = 0
-            , var zoom: Int = 0
-            , var scrollX: Int = 0
-            , var scrollY: Int = 0
-            , var favorite: Int = 0
-            , var savedTab: String? = null
-            , var savedBarre: String? = null
-            , var savedSpeed: String? = null
-    ) {
-        override fun toString(): String {
-            return "id: $id / zoom: $zoom / scrollX: $scrollX / scrollY: $scrollY / favorite: $favorite / savedTab: $savedTab / savedBarre: $savedBarre / savedSpeed: $savedSpeed"
-        }
-    }
-
 }
