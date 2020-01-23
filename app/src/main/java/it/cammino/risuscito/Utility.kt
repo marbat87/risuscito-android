@@ -23,8 +23,8 @@ import android.view.WindowManager
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.utils.ThemeUtils
 import java.io.ByteArrayOutputStream

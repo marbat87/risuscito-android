@@ -41,9 +41,12 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe.SimpleSwipeCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
@@ -85,16 +88,11 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-//        val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-        val leaveBehindDrawable = iconicsDrawable(CommunityMaterial.Icon.cmd_delete_sweep) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete_sweep).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 2
         }
-
         val touchCallback = SimpleSwipeDragCallback(
                 this,
                 this,
@@ -113,7 +111,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             InputTextDialogFragment.Builder(
                     this, this, RENAME)
                     .title(R.string.posizione_rename)
-                    .prefill(item.name?.text.toString())
+                    .prefill(item.name?.getText(this).toString())
                     .positiveButton(R.string.aggiungi_rename)
                     .negativeButton(R.string.cancel)
                     .show()
@@ -133,14 +131,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         mTouchHelper?.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
 
-//        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(4)
-        val icon = iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(4)
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 4
         }
         fab_crea_lista.setImageDrawable(icon)
 
@@ -482,7 +476,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
             for (i in mAdapter.adapterItems.indices) {
                 mAdapter.getItem(i)?.let {
-                    if (celebrazione.addPosizione(it.name?.text.toString()) == -2) {
+                    if (celebrazione.addPosizione(it.name?.getText(this@CreaListaActivity).toString()) == -2) {
                         return 1
                     }
                     celebrazione.addCanto(it.idCanto, i)

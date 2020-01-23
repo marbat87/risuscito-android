@@ -11,8 +11,11 @@ import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.core.view.postDelayed
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import io.multifunctions.letCheckNull
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
@@ -57,14 +60,10 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
 
-//        val icon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen_exit)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-        val icon = iconicsDrawable(CommunityMaterial.Icon.cmd_fullscreen_exit) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen_exit).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 2
         }
         fab_fullscreen_off.setImageDrawable(icon)
         fab_fullscreen_off.setOnClickListener { saveZoom() }

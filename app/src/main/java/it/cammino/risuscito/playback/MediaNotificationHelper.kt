@@ -9,8 +9,11 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.media.session.MediaButtonReceiver
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
+import com.mikepenz.iconics.utils.colorRes
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import com.mikepenz.iconics.utils.toAndroidIconCompat
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -38,15 +41,15 @@ internal object MediaNotificationHelper {
         }
 
         val isPlaying = mPlaybackState.state == PlaybackStateCompat.STATE_PLAYING
-        val iconPause = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_pause) {
-            color = colorRes(R.color.ic_notification_color)
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        val iconPause = IconicsDrawable(context, CommunityMaterial.Icon2.cmd_pause).apply {
+            colorRes = R.color.ic_notification_color
+            sizeDp = 24
+            paddingDp = 2
         }
-        val iconPlay = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_play) {
-            color = colorRes(R.color.ic_notification_color)
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        val iconPlay = IconicsDrawable(context, CommunityMaterial.Icon2.cmd_play).apply {
+            colorRes = R.color.ic_notification_color
+            sizeDp = 24
+            paddingDp = 2
         }
         val actionPlayPause = if (isPlaying)
             NotificationCompat.Action(iconPause.toAndroidIconCompat(),
@@ -83,10 +86,10 @@ internal object MediaNotificationHelper {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         if (mPlaybackState.state == PlaybackStateCompat.STATE_PLAYING || mPlaybackState.state == PlaybackStateCompat.STATE_PAUSED) {
-            val iconRestart = context.iconicsDrawable(CommunityMaterial.Icon2.cmd_restart) {
-                color = colorRes(R.color.ic_notification_color)
-                size = sizeDp(24)
-                padding = sizeDp(2)
+            val iconRestart = IconicsDrawable(context, CommunityMaterial.Icon2.cmd_restart).apply {
+                colorRes = R.color.ic_notification_color
+                sizeDp = 24
+                paddingDp = 2
             }
             val actionRestart = NotificationCompat.Action(iconRestart.toAndroidIconCompat(),
                     context.getString(R.string.label_restart),

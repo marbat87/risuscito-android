@@ -31,9 +31,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.CreaListaActivity.Companion.EDIT_EXISTING_LIST
 import it.cammino.risuscito.CreaListaActivity.Companion.ID_DA_MODIF
 import it.cammino.risuscito.CreaListaActivity.Companion.LIST_TITLE
@@ -232,12 +235,10 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
 
     private fun playIntro() {
         mMainActivity?.enableFab(true)
-//        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check)
-//                .sizeDp(24)
-//                .paddingDp(4)
-        val doneDrawable = requireContext().iconicsDrawable(CommunityMaterial.Icon.cmd_check) {
-            size = sizeDp(24)
-            padding = sizeDp(4)
+        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check).apply {
+            //            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 4
         }
         mMainActivity?.getFab()?.let { fab ->
             TapTargetSequence(requireActivity())
@@ -326,16 +327,11 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     }
 
     fun initFabOptions(customList: Boolean) {
-//        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_plus)
-//                .colorInt(Color.RED)
-//                .sizeDp(24)
-//                .paddingDp(4)
-        val icon = requireContext().iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(4)
+        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_plus).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 4
         }
-
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {
                 R.id.fab_pulisci -> {

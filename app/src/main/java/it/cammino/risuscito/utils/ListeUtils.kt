@@ -449,7 +449,7 @@ object ListeUtils {
                 Snackbar.make(fragment.requireActivity().main_content, fragment.resources.getQuantityString(R.plurals.histories_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
                         .setAction(fragment.getString(R.string.cancel).toUpperCase(getSystemLocale(fragment.resources))) {
                             for (removedItem in removedItems)
-                                UpdateHistoryTask(fragment, removedItem.id, removedItem.timestamp?.text.toString()).execute()
+                                UpdateHistoryTask(fragment, removedItem.id, removedItem.timestamp?.getText(fragment.requireContext()).toString()).execute()
                         }.show()
             }
         }

@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString

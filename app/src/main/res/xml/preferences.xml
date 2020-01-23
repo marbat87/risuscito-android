@@ -14,7 +14,7 @@
             risuscito:pref_colors="@array/primary_colors_list" />
 
         <ColorPickerPreference
-            android:defaultValue="@color/md_orange_A200"
+            android:defaultValue="@color/md_orange_a200"
             android:dialogTitle="@string/accent_color"
             android:key="new_accent_color"
             android:summary="@string/accent_color_desc"

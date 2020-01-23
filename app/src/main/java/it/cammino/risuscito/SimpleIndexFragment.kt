@@ -81,7 +81,7 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(
-                        Utility.PAGINA to item.source?.getText(context),
+                        Utility.PAGINA to item.source?.getText(requireContext()),
                         Utility.ID_CANTO to item.id
                 ))
                 mLUtils?.startActivityWithTransition(intent)
@@ -156,8 +156,8 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
         mCantiViewModel.itemsResult?.observe(this) { canti ->
             mAdapter.set(
                     when (mCantiViewModel.tipoLista) {
-                        0 -> canti.sortedBy { it.title?.getText(context) }
-                        1 -> canti.sortedBy { it.page?.getText(context)?.toInt() }
+                        0 -> canti.sortedBy { it.title?.getText(requireContext()) }
+                        1 -> canti.sortedBy { it.page?.getText(requireContext())?.toInt() }
                         2 -> canti
                         else -> canti
                     }

@@ -9,9 +9,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
-import com.mikepenz.materialize.util.UIUtils
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
@@ -100,12 +99,10 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
         StringHolder.applyToOrHide(page, holder.mPage)
 
         @Suppress("DEPRECATION")
-        UIUtils.setBackground(
-                holder.view,
-                FastAdapterUIUtils.getSelectableBackground(
-                        ctx,
-                        ctx.themeColor(R.attr.colorSecondaryLight),
-                        true))
+        holder.view.background = FastAdapterUIUtils.getSelectableBackground(
+                ctx,
+                ctx.themeColor(R.attr.colorSecondaryLight),
+                true)
 
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
@@ -122,7 +119,7 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
                     DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
             val tempTimestamp: String
 
-            val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.text.toString()))
+            val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.getText(ctx).toString()))
             tempTimestamp = if (df is SimpleDateFormat) {
                 val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
                 df.applyPattern(pattern)

@@ -80,7 +80,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to (item as SimpleSubItem).source?.getText(context), Utility.ID_CANTO to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to (item as SimpleSubItem).source?.getText(requireContext()), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
@@ -175,7 +175,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                                     }
                                     identifier = canti[i].idArgomento.toLong()
                                     subItems = mSubItems
-                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
+                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
                                 }
                         )
                         mSubItems = LinkedList()
@@ -222,7 +222,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                                     }
                                     identifier = canti[i].idIndice.toLong()
                                     subItems = mSubItems
-                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
+                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
                                 }
                         )
                         mSubItems = LinkedList()
@@ -232,7 +232,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
             }
 
             var totListe = 0
-            mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(context) }
+            mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) }
             mCantiViewModel.titoliList.forEach { (it as? SimpleSubExpandableItem)?.position = totListe++ }
             mAdapter.set(mCantiViewModel.titoliList)
             mAdapter.withSavedInstanceState(savedInstanceState)

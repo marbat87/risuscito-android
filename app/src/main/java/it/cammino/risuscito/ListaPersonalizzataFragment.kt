@@ -287,10 +287,10 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
                     mCantiViewModel.posizioniList[i].listItem?.let {
                         for (tempItem in it) {
                             result
-                                    .append(tempItem.title?.getText(context))
+                                    .append(tempItem.title?.getText(requireContext()))
                                     .append(" - ")
                                     .append(getString(R.string.page_contracted))
-                                    .append(tempItem.page?.getText(context))
+                                    .append(tempItem.page?.getText(requireContext()))
                             result.append("\n")
                         }
                     }

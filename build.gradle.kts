@@ -7,7 +7,7 @@ buildscript {
         maven(url = "https://maven.fabric.io/public")
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.2")
+        classpath("com.android.tools.build:gradle:3.5.3")
         classpath("com.google.gms:google-services:4.3.3")
         classpath(kotlin("gradle-plugin", version = "1.3.61"))
         classpath("io.fabric.tools:gradle:1.31.2")
@@ -19,7 +19,9 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven(url = "https://dl.bintray.com/mikepenz/maven")
         maven(url = "https://jitpack.io")
+        maven(url = "http://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/")
         google()
     }
 }

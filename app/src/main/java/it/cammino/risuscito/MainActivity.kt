@@ -41,20 +41,27 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.crossfader.Crossfader
+import com.mikepenz.crossfader.util.UIUtils.convertDpToPixel
 import com.mikepenz.crossfader.view.CrossFadeSlidingPaneLayout
 import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
+import com.mikepenz.materialdrawer.holder.ImageHolder
+import com.mikepenz.materialdrawer.holder.StringHolder
+import com.mikepenz.materialdrawer.iconics.IconicsImageHolder
+import com.mikepenz.materialdrawer.iconics.iconicsIcon
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.util.setItems
 import com.mikepenz.materialdrawer.widget.AccountHeaderView
 import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
 import com.mikepenz.materialdrawer.widget.MiniDrawerSliderView
-import com.mikepenz.materialize.util.UIUtils
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
@@ -140,9 +147,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
-        profileIcon = iconicsDrawable(CommunityMaterial.Icon.cmd_account_circle) {
-            color = colorInt(themeColor(R.attr.colorPrimary))
-            size = sizeDp(56)
+        profileIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_account_circle).apply {
+            colorInt = themeColor(R.attr.colorPrimary)
+            sizeDp = 56
         }
 
         setSupportActionBar(risuscito_toolbar)
@@ -254,12 +261,18 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
 
-        val profile = ProfileDrawerItem()
-                .withName("")
-                .withEmail("")
-                .withIcon(profileIcon)
-                .withIdentifier(PROF_ID)
-                .withTypeface(mRegularFont)
+        val profile = ProfileDrawerItem().apply {
+            name = StringHolder("")
+            description = StringHolder("")
+            icon = ImageHolder(profileIcon)
+            identifier = PROF_ID
+            typeface = mRegularFont
+        }
+//                .withName("")
+//                .withEmail("")
+//                .withIcon(profileIcon)
+//                .withIdentifier(PROF_ID)
+//                .withTypeface(mRegularFont)
 
         mAccountHeader = AccountHeaderView(this).apply {
             slider?.let { attachToSliderView(it) }
@@ -290,60 +303,115 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         if (isOnTablet) {
             sliderView = MaterialDrawerSliderView(this).apply {
+                //                hasStableIds = true
                 accountHeader = mAccountHeader
                 customWidth = MATCH_PARENT
-                itemAdapter.add(
-                        PrimaryDrawerItem()
-                                .withName(R.string.activity_homepage)
-                                .withIcon(CommunityMaterial.Icon2.cmd_home)
-                                .withIdentifier(R.id.navigation_home.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.search_name_text)
-                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
-                                .withIdentifier(R.id.navigation_search.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_general_index)
-                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
-                                .withIdentifier(R.id.navigation_indexes.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_custom_lists)
-                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
-                                .withIdentifier(R.id.navitagion_lists.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.action_favourites)
-                                .withIcon(CommunityMaterial.Icon2.cmd_star)
-                                .withIdentifier(R.id.navigation_favorites.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_consegnati)
-                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
-                                .withIdentifier(R.id.navigation_consegnati.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_history)
-                                .withIcon(CommunityMaterial.Icon2.cmd_history)
-                                .withIdentifier(R.id.navigation_history.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_settings)
-                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
-                                .withIdentifier(R.id.navigation_settings.toLong())
-                                .withTypeface(mMediumFont),
+                setItems(
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.activity_homepage)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_home)
+                            identifier = R.id.navigation_home.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.activity_homepage)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_home)
+//                                .withIdentifier(R.id.navigation_home.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.search_name_text)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_magnify)
+                            identifier = R.id.navigation_search.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.search_name_text)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
+//                                .withIdentifier(R.id.navigation_search.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_general_index)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_view_list)
+                            identifier = R.id.navigation_indexes.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_general_index)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
+//                                .withIdentifier(R.id.navigation_indexes.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_custom_lists)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_view_carousel)
+                            identifier = R.id.navitagion_lists.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_custom_lists)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
+//                                .withIdentifier(R.id.navitagion_lists.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.action_favourites)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_star)
+                            identifier = R.id.navigation_favorites.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.action_favourites)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_star)
+//                                .withIdentifier(R.id.navigation_favorites.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_consegnati)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_clipboard_check)
+                            identifier = R.id.navigation_consegnati.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_consegnati)
+//                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
+//                                .withIdentifier(R.id.navigation_consegnati.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_history)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_history)
+                            identifier = R.id.navigation_history.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_history)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_history)
+//                                .withIdentifier(R.id.navigation_history.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_settings)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_settings)
+                            identifier = R.id.navigation_settings.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_settings)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
+//                                .withIdentifier(R.id.navigation_settings.toLong())
+//                                .withTypeface(mMediumFont),
                         DividerDrawerItem(),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_about)
-                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
-                                .withIdentifier(R.id.navigation_changelog.toLong())
-                                .withTypeface(mMediumFont)
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_about)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_information_outline)
+                            identifier = R.id.navigation_changelog.toLong()
+                            typeface = mMediumFont
+                        }
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_about)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
+//                                .withIdentifier(R.id.navigation_changelog.toLong())
+//                                .withTypeface(mMediumFont)
                 )
                 onDrawerItemClickListener = { _, drawerItem, _ ->
                     onDrawerItemClick(drawerItem)
                 }
-                withSavedInstance(savedInstanceState)
+                setSavedInstance(savedInstanceState)
             }
 
             if (savedInstanceState == null)
@@ -356,8 +424,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     drawer = sliderView
                 }
                 //get the widths in px for the first and second panel
-                val firstWidth = UIUtils.convertDpToPixel(302f, this).toInt()
-                val secondWidth = UIUtils.convertDpToPixel(72f, this).toInt()
+                val firstWidth = convertDpToPixel(302f, this).toInt()
+                val secondWidth = convertDpToPixel(72f, this).toInt()
                 //create and build our crossfader (see the MiniDrawer is also builded in here, as the build method returns the view to be used in the crossfader)
                 //the crossfader library can be found here: https://github.com/mikepenz/Crossfader
                 crossFader = Crossfader<CrossFadeSlidingPaneLayout>()
@@ -370,9 +438,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             override fun onPanelSlide(panel: View, slideOffset: Float) {
                                 (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.progress = min(1f, max(0f, slideOffset))
                             }
+
                             override fun onPanelClosed(panel: View) {
                                 (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(false)
                             }
+
                             override fun onPanelOpened(panel: View) {
                                 (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(true)
                             }
@@ -391,64 +461,119 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             mActionBarDrawerToggle.syncState()
 
             slider?.apply {
-                itemAdapter.add(
-                        PrimaryDrawerItem()
-                                .withName(R.string.activity_homepage)
-                                .withIcon(CommunityMaterial.Icon2.cmd_home)
-                                .withIdentifier(R.id.navigation_home.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.search_name_text)
-                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
-                                .withIdentifier(R.id.navigation_search.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_general_index)
-                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
-                                .withIdentifier(R.id.navigation_indexes.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_custom_lists)
-                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
-                                .withIdentifier(R.id.navitagion_lists.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.action_favourites)
-                                .withIcon(CommunityMaterial.Icon2.cmd_star)
-                                .withIdentifier(R.id.navigation_favorites.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_consegnati)
-                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
-                                .withIdentifier(R.id.navigation_consegnati.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_history)
-                                .withIcon(CommunityMaterial.Icon2.cmd_history)
-                                .withIdentifier(R.id.navigation_history.toLong())
-                                .withTypeface(mMediumFont),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_settings)
-                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
-                                .withIdentifier(R.id.navigation_settings.toLong())
-                                .withTypeface(mMediumFont),
+                //                hasStableIds = true
+                setItems(
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.activity_homepage)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_home)
+                            identifier = R.id.navigation_home.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.activity_homepage)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_home)
+//                                .withIdentifier(R.id.navigation_home.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.search_name_text)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_magnify)
+                            identifier = R.id.navigation_search.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.search_name_text)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
+//                                .withIdentifier(R.id.navigation_search.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_general_index)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_view_list)
+                            identifier = R.id.navigation_indexes.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_general_index)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
+//                                .withIdentifier(R.id.navigation_indexes.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_custom_lists)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_view_carousel)
+                            identifier = R.id.navitagion_lists.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_custom_lists)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
+//                                .withIdentifier(R.id.navitagion_lists.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.action_favourites)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_star)
+                            identifier = R.id.navigation_favorites.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.action_favourites)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_star)
+//                                .withIdentifier(R.id.navigation_favorites.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_consegnati)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_clipboard_check)
+                            identifier = R.id.navigation_consegnati.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_consegnati)
+//                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
+//                                .withIdentifier(R.id.navigation_consegnati.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_history)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_history)
+                            identifier = R.id.navigation_history.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_history)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_history)
+//                                .withIdentifier(R.id.navigation_history.toLong())
+//                                .withTypeface(mMediumFont),
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_settings)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_settings)
+                            identifier = R.id.navigation_settings.toLong()
+                            typeface = mMediumFont
+                        },
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_settings)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
+//                                .withIdentifier(R.id.navigation_settings.toLong())
+//                                .withTypeface(mMediumFont),
                         DividerDrawerItem(),
-                        PrimaryDrawerItem()
-                                .withName(R.string.title_activity_about)
-                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
-                                .withIdentifier(R.id.navigation_changelog.toLong())
-                                .withTypeface(mMediumFont)
+                        PrimaryDrawerItem().apply {
+                            name = StringHolder(R.string.title_activity_about)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_information_outline)
+                            identifier = R.id.navigation_changelog.toLong()
+                            typeface = mMediumFont
+                        }
+//                        PrimaryDrawerItem()
+//                                .withName(R.string.title_activity_about)
+//                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
+//                                .withIdentifier(R.id.navigation_changelog.toLong())
+//                                .withTypeface(mMediumFont)
                 )
                 onDrawerItemClickListener = { _, drawerItem, _ ->
                     onDrawerItemClick(drawerItem)
                 }
                 tintStatusBar = true
-                hasStableIds = true
-                withSavedInstance(savedInstanceState)
+                setSavedInstance(savedInstanceState)
             }
             if (savedInstanceState == null)
                 slider?.setSelectionAtPosition(1, false)
             root?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
+            root?.addDrawerListener(mActionBarDrawerToggle)
         }
     }
 
@@ -611,9 +736,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_pulisci,
-                            iconicsDrawable(CommunityMaterial.Icon.cmd_eraser_variant) {
-                                size = sizeDp(24)
-                                padding = sizeDp(4)
+                            IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant).apply {
+                                sizeDp = 24
+                                paddingDp = 4
                             }
                     )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -626,9 +751,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista,
-                            iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
-                                size = sizeDp(24)
-                                padding = sizeDp(4)
+                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+                                sizeDp = 24
+                                paddingDp = 4
                             }
                     )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -641,9 +766,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             fab_pager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi,
-                            iconicsDrawable(CommunityMaterial.Icon2.cmd_share_variant) {
-                                size = sizeDp(24)
-                                padding = sizeDp(4)
+                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant).apply {
+                                sizeDp = 24
+                                paddingDp = 4
                             }
                     )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -657,9 +782,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             if (customList) {
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_condividi_file,
-                                iconicsDrawable(CommunityMaterial.Icon.cmd_attachment) {
-                                    size = sizeDp(24)
-                                    padding = sizeDp(4)
+                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
                                 }
                         )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -672,9 +797,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista,
-                                iconicsDrawable(CommunityMaterial.Icon2.cmd_pencil) {
-                                    size = sizeDp(24)
-                                    padding = sizeDp(4)
+                                IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
                                 }
                         )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -687,9 +812,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                 fab_pager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_delete_lista,
-                                iconicsDrawable(CommunityMaterial.Icon.cmd_delete) {
-                                    size = sizeDp(24)
-                                    padding = sizeDp(4)
+                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
                                 }
                         )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -822,7 +947,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
         if (signedIn) {
-            val profile: IProfile<*>
+            val profile: IProfile
             val profilePhoto = acct?.photoUrl
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
@@ -830,49 +955,88 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 //                personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length - 2) + 400
                 personPhotoUrl = personPhotoUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
                 Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
-                profile = ProfileDrawerItem()
-                        .withName(acct?.displayName)
-                        .withEmail(acct?.email)
-                        .withIcon(personPhotoUrl)
-                        .withIdentifier(PROF_ID)
-                        .withTypeface(mRegularFont)
+                profile = ProfileDrawerItem().apply {
+                    name = StringHolder(acct?.displayName)
+                    description = StringHolder(acct?.email)
+                    icon = ImageHolder(personPhotoUrl)
+                    identifier = PROF_ID
+                    typeface = mRegularFont
+                }
+//                        .withName(acct?.displayName)
+//                        .withEmail(acct?.email)
+//                        .withIcon(personPhotoUrl)
+//                        .withIdentifier(PROF_ID)
+//                        .withTypeface(mRegularFont)
             } else {
-                profile = ProfileDrawerItem()
-                        .withName(acct?.displayName)
-                        .withEmail(acct?.email)
-                        .withIcon(profileIcon)
-                        .withIdentifier(PROF_ID)
-                        .withTypeface(mRegularFont)
+                profile = ProfileDrawerItem().apply {
+                    name = StringHolder(acct?.displayName)
+                    description = StringHolder(acct?.email)
+                    icon = ImageHolder(profileIcon)
+                    identifier = PROF_ID
+                    typeface = mRegularFont
+                }
+//                        .withName(acct?.displayName)
+//                        .withEmail(acct?.email)
+//                        .withIcon(profileIcon)
+//                        .withIdentifier(PROF_ID)
+//                        .withTypeface(mRegularFont)
             }
             // Create the AccountHeader
             mAccountHeader.updateProfile(profile)
             if (mAccountHeader.profiles?.size == 1) {
                 mAccountHeader.addProfiles(
-                        ProfileSettingDrawerItem()
-                                .withName(getString(R.string.gdrive_backup))
-                                .withIcon(CommunityMaterial.Icon.cmd_cloud_upload)
-                                .withIdentifier(R.id.gdrive_backup.toLong()),
-                        ProfileSettingDrawerItem()
-                                .withName(getString(R.string.gdrive_restore))
-                                .withIcon(CommunityMaterial.Icon.cmd_cloud_download)
-                                .withIdentifier(R.id.gdrive_restore.toLong()),
-                        ProfileSettingDrawerItem()
-                                .withName(getString(R.string.gplus_signout))
-                                .withIcon(CommunityMaterial.Icon.cmd_account_remove)
-                                .withIdentifier(R.id.gplus_signout.toLong()),
-                        ProfileSettingDrawerItem()
-                                .withName(getString(R.string.gplus_revoke))
-                                .withIcon(CommunityMaterial.Icon.cmd_account_key)
-                                .withIdentifier(R.id.gplus_revoke.toLong()))
+                        ProfileSettingDrawerItem().apply {
+                            name = StringHolder(R.string.gdrive_backup)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_cloud_upload)
+                            identifier = R.id.gdrive_backup.toLong()
+                        },
+//                        ProfileSettingDrawerItem()
+//                                .withName(getString(R.string.gdrive_backup))
+//                                .withIcon(CommunityMaterial.Icon.cmd_cloud_upload)
+//                                .withIdentifier(R.id.gdrive_backup.toLong()),
+                        ProfileSettingDrawerItem().apply {
+                            name = StringHolder(R.string.gdrive_restore)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_cloud_download)
+                            identifier = R.id.gdrive_restore.toLong()
+                        },
+//                        ProfileSettingDrawerItem()
+//                                .withName(getString(R.string.gdrive_restore))
+//                                .withIcon(CommunityMaterial.Icon.cmd_cloud_download)
+//                                .withIdentifier(R.id.gdrive_restore.toLong()),
+                        ProfileSettingDrawerItem().apply {
+                            name = StringHolder(R.string.gplus_signout)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_account_remove)
+                            identifier = R.id.gplus_signout.toLong()
+                        },
+//                        ProfileSettingDrawerItem()
+//                                .withName(getString(R.string.gplus_signout))
+//                                .withIcon(CommunityMaterial.Icon.cmd_account_remove)
+//                                .withIdentifier(R.id.gplus_signout.toLong()),
+                        ProfileSettingDrawerItem().apply {
+                            name = StringHolder(R.string.gplus_revoke)
+                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_account_key)
+                            identifier = R.id.gplus_revoke.toLong()
+                        }
+//                        ProfileSettingDrawerItem()
+//                                .withName(getString(R.string.gplus_revoke))
+//                                .withIcon(CommunityMaterial.Icon.cmd_account_key)
+//                                .withIdentifier(R.id.gplus_revoke.toLong()))
+                )
             }
             if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         } else {
-            val profile = ProfileDrawerItem()
-                    .withName("")
-                    .withEmail("")
-                    .withIcon(profileIcon)
-                    .withIdentifier(PROF_ID)
-                    .withTypeface(mRegularFont)
+            val profile = ProfileDrawerItem().apply {
+                name = StringHolder("")
+                description = StringHolder("")
+                icon = ImageHolder(profileIcon)
+                identifier = PROF_ID
+                typeface = mRegularFont
+            }
+//                    .withName("")
+//                    .withEmail("")
+//                    .withIcon(profileIcon)
+//                    .withIdentifier(PROF_ID)
+//                    .withTypeface(mRegularFont)
             if ((mAccountHeader.profiles?.size ?: 0) > 1) {
                 mAccountHeader.removeAllViews()
             }

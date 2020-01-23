@@ -99,7 +99,7 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
                 mLastClickTime = SystemClock.elapsedRealtime()
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(context), Utility.ID_CANTO to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
@@ -240,7 +240,7 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
 
     private fun subscribeUiFavorites() {
         mFavoritesViewModel.mFavoritesResult?.observe(this) { canti ->
-            cantoAdapter.set(canti.sortedBy { it.title?.getText(context) })
+            cantoAdapter.set(canti.sortedBy { it.title?.getText(requireContext()) })
             no_favourites?.isInvisible = cantoAdapter.adapterItemCount > 0
             favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()

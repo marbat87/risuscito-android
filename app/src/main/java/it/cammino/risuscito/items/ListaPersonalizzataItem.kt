@@ -10,8 +10,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
-import com.mikepenz.materialize.holder.StringHolder
-import com.mikepenz.materialize.util.UIUtils
+import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
@@ -89,13 +88,10 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                     StringHolder.applyTo(canto.timestamp, itemView.text_timestamp)
                     itemView.text_id_canto_card.text = canto.idCanto.toString()
                     itemView.item_tag.text = i.toString()
-                    @Suppress("DEPRECATION")
-                    UIUtils.setBackground(
-                            cantoView,
-                            FastAdapterUIUtils.getSelectableBackground(
+                    holder.view.background = FastAdapterUIUtils.getSelectableBackground(
                                     context,
                                     context.themeColor(R.attr.colorSecondaryLight),
-                                    true))
+                                    true)
                     if (canto.ismSelected()) {
                         val bgShape = itemView.selected_mark.background as? GradientDrawable
                         bgShape?.setColor(context.themeColor(R.attr.colorSecondary))

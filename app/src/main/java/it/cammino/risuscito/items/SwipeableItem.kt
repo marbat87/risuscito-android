@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.drag.IExtendedDraggable
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.swipe.ISwipeable
+import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.fastadapter.utils.DragDropUtil
-import com.mikepenz.materialize.holder.StringHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetString
 import kotlinx.android.synthetic.main.swipeable_item.view.*
@@ -70,7 +70,7 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
         var swipedText: CharSequence? = null
         if (swipedDirection != 0) {
             swipedAction = ctx.getString(R.string.cancel)
-            swipedText = ctx.getString(R.string.generic_removed, name?.text)
+            swipedText = ctx.getString(R.string.generic_removed, name?.getText(ctx))
             holder.swipeResultContent?.setBackgroundColor(ContextCompat.getColor(ctx, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
         }
         holder.swipedAction?.text = swipedAction ?: ""

@@ -6,7 +6,7 @@
     <color name="ic_notification_color">#FFFFFFFF</color>
 
     <color name="theme_primary">@color/md_indigo_500</color>
-    <color name="theme_accent">@color/md_orange_A200</color>
+    <color name="theme_accent">@color/md_deep_orange_a200</color>
     <color name="theme_primary_dark">@color/md_indigo_700</color>
     <color name="theme_primary_light">@color/md_indigo_200</color>
     <color name="ripple_color">#4D000000</color>
@@ -16,11 +16,11 @@
 
     <color name="material_drawer_dark_selected_text">?colorPrimary</color>
     <color name="risuscito_material_background">@color/design_default_color_background</color>
-    <color name="risuscito_material_drawer_background">@color/md_white_1000</color>
+<!--    <color name="risuscito_material_drawer_background">@color/md_white_1000</color>-->
     <color name="text_color_primary">@color/design_default_color_on_background</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_light</color>
     <color name="floating_background">@color/background_floating_material_light</color>
-    <color name="material_divider">@color/md_light_dividers</color>
+    <color name="material_divider">#1F000000</color>
     <color name="background_dim_overlay">#44000000</color>
     <color name="tablet_statusbar_color">#4D000000</color>
 

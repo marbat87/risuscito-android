@@ -7,10 +7,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.items.AbstractItem
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
+import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
@@ -92,10 +95,13 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
         val bgShape = holder.mPage?.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
 
-        val icon = ctx.iconicsDrawable(if (numPassaggio == -1) CommunityMaterial.Icon2.cmd_tag_plus else CommunityMaterial.Icon2.cmd_tag_text_outline) {
-            color = colorInt(if (numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary))
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        val icon = IconicsDrawable(ctx, if (numPassaggio == -1)
+            CommunityMaterial.Icon2.cmd_tag_plus
+        else
+            CommunityMaterial.Icon2.cmd_tag_text_outline).apply {
+            colorInt = if (numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary)
+            sizeDp = 24
+            paddingDp = 2
         }
         holder.mEditNoteImage?.setImageDrawable(icon)
 

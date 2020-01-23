@@ -38,9 +38,12 @@ import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
 import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
@@ -138,7 +141,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(
-                        Utility.PAGINA to item.source?.getText(context),
+                        Utility.PAGINA to item.source?.getText(requireContext()),
                         Utility.ID_CANTO to item.id
                 ))
                 mLUtils?.startActivityWithTransition(intent)
@@ -231,7 +234,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter {
-                        Utility.removeAccents(it.title?.getText(context)
+                        Utility.removeAccents(it.title?.getText(requireContext())
                                 ?: "").toLowerCase(getSystemLocale(resources)).contains(simplifiedString)
                     }
                     mCantiViewModel.titoliChooseFiltered.forEach { it.filter = simplifiedString }
@@ -371,14 +374,10 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     }
 
     private fun initFab() {
-//        val icon = IconicsDrawable(requireActivity(), CommunityMaterial.Icon2.cmd_pencil)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(4)
-        val icon = requireContext().iconicsDrawable(CommunityMaterial.Icon2.cmd_pencil) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(4)
+        val icon = IconicsDrawable(requireActivity(), CommunityMaterial.Icon2.cmd_pencil).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 4
         }
         val onClick = View.OnClickListener {
             mCantiViewModel.editMode = true
@@ -460,7 +459,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
 
     private fun subscribeUiConsegnati() {
         mCantiViewModel.mIndexResult?.observe(this) { cantos ->
-            mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
+            mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(requireContext()) })
             cantoAdapter.set(mCantiViewModel.titoli)
             cantoAdapter.filter(mPopupMenu.menu.children.filter { item -> item.isChecked }
                     .map { item -> item.titleCondensed }

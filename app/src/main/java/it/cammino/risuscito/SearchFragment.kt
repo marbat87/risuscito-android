@@ -104,7 +104,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(requireActivity().applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(context), Utility.ID_CANTO to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
@@ -245,7 +245,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
 
                         if (found) {
                             Log.d(TAG, "aText[0]: ${aText[0]}")
-                            fragment.mViewModel.titoli.sortedBy { it.title?.getText(fragment.context) }
+                            fragment.mViewModel.titoli.sortedBy { it.title?.getText(fragment.requireContext()) }
                                     .filter { (aText[0] ?: "") == it.undecodedSource }
                                     .forEach {
                                         if (isCancelled) return titoliResult
@@ -256,9 +256,9 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
                 } else {
                     val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(fragment.resources))
                     Log.d(TAG, "onTextChanged: stringa $stringa")
-                    fragment.mViewModel.titoli.sortedBy { it.title?.getText(fragment.context) }
+                    fragment.mViewModel.titoli.sortedBy { it.title?.getText(fragment.requireContext()) }
                             .filter {
-                                Utility.removeAccents(it.title?.getText(fragment.context)
+                                Utility.removeAccents(it.title?.getText(fragment.requireContext())
                                         ?: "").toLowerCase(getSystemLocale(fragment.resources)).contains(stringa)
                             }
                             .forEach {
@@ -289,7 +289,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
 
     private fun subscribeUiCanti() {
         mViewModel.itemsResult?.observe(this) { canti ->
-            mViewModel.titoli = canti.sortedBy { it.title?.getText(context) }
+            mViewModel.titoli = canti.sortedBy { it.title?.getText(requireContext()) }
         }
     }
 
