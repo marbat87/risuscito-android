@@ -147,8 +147,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
-        profileIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_account_circle).apply {
+        profileIcon = IconicsDrawable(this).apply {
             colorInt = themeColor(R.attr.colorPrimary)
+            icon = CommunityMaterial.Icon.cmd_account_circle
             sizeDp = 56
         }
 
