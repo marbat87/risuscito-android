@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <release versionCode="4500"
+        date="Marzo 2020"
+        versionName="4.5.0">
+        <bugfix>Bugfixes</bugfix>
+    </release>
+
     <release versionCode="4439"
         date="Dicembre 2019"
         versionName="4.4.0">

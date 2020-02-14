@@ -11,14 +11,14 @@ plugins {
 android {
 
     compileSdkVersion(29)
-    buildToolsVersion("29.0.2")
+    buildToolsVersion("29.0.3")
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdkVersion(16)
         targetSdkVersion(29)
         multiDexEnabled = true
-        versionCode = 4439
-        versionName = "4.4.0"
+        versionCode = 4500
+        versionName = "4.5.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
             annotationProcessorOptions {
