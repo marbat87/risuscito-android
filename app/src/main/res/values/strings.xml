@@ -38,7 +38,8 @@
     <string name="seconda_lettura">In risposta alla seconda lettura</string>
     <string name="terza_lettura">In risposta alla terza lettura</string>
     <string name="canto_fine">Canto finale</string>
-    <string name="select_canto">Aggiungi canto:</string>
+    <string name="select_canto">Aggiungi canto</string>
+    <string name="select_canto_popup">Aggiungi canto:</string>
     <string name="reset_list_question">Sei sicuro di voler resettare la lista?</string>
     <string name="title_activity_canti_eucarestia">Celebrazione dell\'Eucarestia</string>
     <string name="canto_pace">Alla pace</string>

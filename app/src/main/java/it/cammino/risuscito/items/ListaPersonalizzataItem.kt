@@ -88,7 +88,7 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                     StringHolder.applyTo(canto.timestamp, itemView.text_timestamp)
                     itemView.text_id_canto_card.text = canto.idCanto.toString()
                     itemView.item_tag.text = i.toString()
-                    holder.view.background = FastAdapterUIUtils.getSelectableBackground(
+                    cantoView.background = FastAdapterUIUtils.getSelectableBackground(
                                     context,
                                     context.themeColor(R.attr.colorSecondaryLight),
                                     true)

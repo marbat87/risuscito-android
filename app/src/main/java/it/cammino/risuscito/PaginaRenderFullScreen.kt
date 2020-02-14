@@ -21,7 +21,6 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.ui.ThemeableActivity
 import kotlinx.android.synthetic.main.activity_pagina_render_fullscreen.*
-import kotlinx.android.synthetic.main.common_webview.*
 import java.lang.ref.WeakReference
 
 class PaginaRenderFullScreen : ThemeableActivity() {

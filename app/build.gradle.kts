@@ -73,19 +73,19 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.0.0-a03"
-val materialDrawerVersion = "8.0.0-a07"
-val materialDialogsVersion = "3.1.1"
+val fastAdapterVersion = "5.0.0-a05"
+val materialDrawerVersion = "8.0.0-b01"
+val materialDialogsVersion = "3.2.1"
 val roomVersion = "2.2.3"
-val iconicVersion = "5.0.0-a02"
+val iconicVersion = "5.0.0-a04"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.6.4")
     implementation("androidx.activity:activity-ktx:1.1.0")
-    implementation("androidx.appcompat:appcompat:1.2.0-alpha01")
-    implementation("androidx.core:core-ktx:1.2.0-rc01")
-    implementation("androidx.fragment:fragment-ktx:1.2.0")
-    implementation("com.google.android.material:material:1.2.0-alpha04")
+    implementation("androidx.appcompat:appcompat:1.1.0")
+    implementation("androidx.core:core-ktx:1.2.0")
+    implementation("androidx.fragment:fragment-ktx:1.2.1")
+    implementation("com.google.android.material:material:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
     implementation("androidx.drawerlayout:drawerlayout:1.1.0-alpha03")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
@@ -101,8 +101,8 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:17.0.0")
     implementation("com.google.firebase:firebase-core:17.2.2")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.3.1")
-    implementation("com.google.firebase:firebase-storage-ktx:19.1.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.4.0")
+    implementation("com.google.firebase:firebase-storage-ktx:19.1.1")
     implementation("com.google.firebase:firebase-auth:19.2.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
