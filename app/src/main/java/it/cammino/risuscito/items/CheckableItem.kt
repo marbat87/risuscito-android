@@ -7,7 +7,9 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.IItemVHFactory
+import com.mikepenz.fastadapter.items.BaseItem
+import com.mikepenz.fastadapter.items.BaseItemFactory
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
@@ -22,7 +24,12 @@ import kotlinx.android.synthetic.main.checkable_row_item.view.*
 
 fun checkableItem(block: CheckableItem.() -> Unit): CheckableItem = CheckableItem().apply(block)
 
-class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
+class CheckableItem : BaseItem<CheckableItem.ViewHolder>() {
+
+    override val type: Int
+        get() = R.id.fastadapter_checkable_item_id
+
+    override val factory: IItemVHFactory<ViewHolder> = CheckableItemFactory
 
     var title: StringHolder? = null
         private set
@@ -50,27 +57,6 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
 
     var filter: String? = null
 
-    /**
-     * defines the type defining this item. must be unique. preferably an id
-     *
-     * @return the type
-     */
-    override val type: Int
-        get() = R.id.fastadapter_checkable_item_id
-
-    /**
-     * defines the layout which will be used for this item in the list
-     *
-     * @return the layout for this item
-     */
-    override val layoutRes: Int
-        get() = R.layout.checkable_row_item
-
-    /**
-     * binds the data of this item onto the viewHolder
-     *
-     * @param holder the viewHolder of this item
-     */
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
@@ -118,11 +104,6 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
         holder.mPage?.text = null
     }
 
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
-    }
-
-    /** our ViewHolder  */
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
 
         var mTitle: TextView? = null
@@ -134,6 +115,20 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
             mPage = view.text_page
             checkBox = view.check_box
         }
+    }
+
+}
+
+object CheckableItemFactory : BaseItemFactory<CheckableItem.ViewHolder>() {
+
+    override val type: Int
+        get() = R.id.fastadapter_checkable_item_id
+
+    override val layoutRes: Int
+        get() = R.layout.checkable_row_item
+
+    override fun getViewHolder(v: View): CheckableItem.ViewHolder {
+        return CheckableItem.ViewHolder(v)
     }
 
 }

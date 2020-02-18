@@ -7,7 +7,9 @@ import android.widget.TextView
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.IItemVHFactory
+import com.mikepenz.fastadapter.items.BaseItem
+import com.mikepenz.fastadapter.items.BaseItemFactory
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
@@ -23,7 +25,12 @@ import java.text.SimpleDateFormat
 
 fun simpleHistoryItem(block: SimpleHistoryItem.() -> Unit): SimpleHistoryItem = SimpleHistoryItem().apply(block)
 
-class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
+class SimpleHistoryItem : BaseItem<SimpleHistoryItem.ViewHolder>() {
+
+    override val type: Int
+        get() = R.id.fastadapter_history_item_id
+
+    override val factory: IItemVHFactory<ViewHolder> = SimpleHistoryItemFactory
 
     var title: StringHolder? = null
         private set
@@ -66,27 +73,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
             field = value
         }
 
-    /**
-     * defines the type defining this item. must be unique. preferably an id
-     *
-     * @return the type
-     */
-    override val type: Int
-        get() = R.id.fastadapter_history_item_id
-
-    /**
-     * defines the layout which will be used for this item in the list
-     *
-     * @return the layout for this item
-     */
-    override val layoutRes: Int
-        get() = R.layout.row_item_history
-
-    /**
-     * binds the data of this item onto the viewHolder
-     *
-     * @param holder the viewHolder of this item
-     */
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
@@ -140,11 +126,6 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
         holder.mTimestamp?.text = null
     }
 
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
-    }
-
-    /** our ViewHolder  */
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
 
         var mTitle: TextView? = null
@@ -161,4 +142,18 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
             mId = view.text_id_canto
         }
     }
+}
+
+object SimpleHistoryItemFactory : BaseItemFactory<SimpleHistoryItem.ViewHolder>() {
+
+    override val type: Int
+        get() = R.id.fastadapter_history_item_id
+
+    override val layoutRes: Int
+        get() = R.layout.row_item_history
+
+    override fun getViewHolder(v: View): SimpleHistoryItem.ViewHolder {
+        return SimpleHistoryItem.ViewHolder(v)
+    }
+
 }

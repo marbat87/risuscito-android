@@ -8,7 +8,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.IItemVHFactory
+import com.mikepenz.fastadapter.items.BaseItem
+import com.mikepenz.fastadapter.items.BaseItemFactory
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
@@ -25,7 +27,12 @@ fun ListaPersonalizzataItem.posizioneTitleItem(block: PosizioneTitleItem.() -> U
     titleItem = PosizioneTitleItem().apply(block)
 }
 
-class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>() {
+class ListaPersonalizzataItem : BaseItem<ListaPersonalizzataItem.ViewHolder>() {
+
+    override val type: Int
+        get() = R.id.fastadapter_listapers_item_id
+
+    override val factory: IItemVHFactory<ViewHolder> = ListaPersonalizzataItemFactory
 
     var titleItem: PosizioneTitleItem? = null
     var listItem: List<PosizioneItem>? = null
@@ -38,27 +45,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
     var createClickListener: View.OnClickListener? = null
     var createLongClickListener: View.OnLongClickListener? = null
 
-    /**
-     * defines the type defining this item. must be unique. preferably an id
-     *
-     * @return the type
-     */
-    override val type: Int
-        get() = R.id.fastadapter_listapers_item_id
-
-    /**
-     * defines the layout which will be used for this item in the list
-     *
-     * @return the layout for this item
-     */
-    override val layoutRes: Int
-        get() = R.layout.generic_list_item
-
-    /**
-     * binds the data of this item onto the viewHolder
-     *
-     * @param holder the viewHolder of this item
-     */
     override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
         super.bindView(holder, payloads)
 
@@ -89,9 +75,9 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
                     itemView.text_id_canto_card.text = canto.idCanto.toString()
                     itemView.item_tag.text = i.toString()
                     cantoView.background = FastAdapterUIUtils.getSelectableBackground(
-                                    context,
-                                    context.themeColor(R.attr.colorSecondaryLight),
-                                    true)
+                            context,
+                            context.themeColor(R.attr.colorSecondaryLight),
+                            true)
                     if (canto.ismSelected()) {
                         val bgShape = itemView.selected_mark.background as? GradientDrawable
                         bgShape?.setColor(context.themeColor(R.attr.colorSecondary))
@@ -128,11 +114,6 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
         holder.tag?.text = null
     }
 
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
-    }
-
-    /** our ViewHolder  */
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
 
         var idPosizione: TextView? = null
@@ -149,4 +130,18 @@ class ListaPersonalizzataItem : AbstractItem<ListaPersonalizzataItem.ViewHolder>
             list = itemView.generic_list
         }
     }
+}
+
+object ListaPersonalizzataItemFactory : BaseItemFactory<ListaPersonalizzataItem.ViewHolder>() {
+
+    override val type: Int
+        get() = R.id.fastadapter_listapers_item_id
+
+    override val layoutRes: Int
+        get() = R.layout.generic_list_item
+
+    override fun getViewHolder(v: View): ListaPersonalizzataItem.ViewHolder {
+        return ListaPersonalizzataItem.ViewHolder(v)
+    }
+
 }

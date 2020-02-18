@@ -73,14 +73,14 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.0.0-a05"
-val materialDrawerVersion = "8.0.0-b01"
-val materialDialogsVersion = "3.2.1"
+val fastAdapterVersion = "5.0.0-a06"
+val materialDrawerVersion = "8.0.0-b02"
+val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.3"
 val iconicVersion = "5.0.0-a04"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.play:core:1.6.4")
+    implementation("com.google.android.play:core:1.6.5")
     implementation("androidx.activity:activity-ktx:1.1.0")
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.core:core-ktx:1.2.0")
