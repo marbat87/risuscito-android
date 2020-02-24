@@ -61,10 +61,10 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             val mList = list.map { BottomSheetItem().withItem(it) }
 
             val mOnClickListener = { _: View?, _: IAdapter<BottomSheetItem>, item: BottomSheetItem, _: Int ->
-                PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.item?.activityInfo?.packageName) }
+                PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.infoItem?.activityInfo?.packageName) }
 
-                val name = ComponentName(item.item?.activityInfo?.packageName
-                        ?: "", item.item?.activityInfo?.name ?: "")
+                val name = ComponentName(item.infoItem?.activityInfo?.packageName
+                        ?: "", item.infoItem?.activityInfo?.name ?: "")
                 val newIntent = mIntent.clone() as? Intent
                 newIntent?.component = name
                 activity?.startActivity(newIntent)
@@ -92,15 +92,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-
-//        fun newInstance(intent: Intent): BottomSheetFragment {
-//            val frag = BottomSheetFragment()
-//            val args = Bundle()
-//            args.putBoolean("showTitle", false)
-//            args.putParcelable("intent", intent)
-//            frag.arguments = args
-//            return frag
-//        }
 
         fun newInstance(@StringRes title: Int, intent: Intent): BottomSheetFragment {
             val frag = BottomSheetFragment()

@@ -5,10 +5,8 @@ import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.IItemVHFactory
-import com.mikepenz.fastadapter.items.BaseItem
-import com.mikepenz.fastadapter.items.BaseItemFactory
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
@@ -24,12 +22,7 @@ import kotlinx.android.synthetic.main.row_item_notable.view.*
 
 fun notableItem(block: NotableItem.() -> Unit): NotableItem = NotableItem().apply(block)
 
-class NotableItem : BaseItem<NotableItem.ViewHolder>() {
-
-    override val type: Int
-        get() = R.id.fastadapter_notable_item_id
-
-    override val factory: IItemVHFactory<ViewHolder> = NotableItemFactory
+class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
@@ -66,45 +59,48 @@ class NotableItem : BaseItem<NotableItem.ViewHolder>() {
 
     var numPassaggio: Int = -1
 
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
+    override val type: Int
+        get() = R.id.fastadapter_notable_item_id
 
-        // get the context
-        val ctx = holder.itemView.context
+    override val layoutRes: Int
+        get() = R.layout.row_item_notable
 
-        //set the text for the name
-        StringHolder.applyTo(title, holder.mTitle)
-
-        //set the text for the description or hide
-        StringHolder.applyToOrHide(page, holder.mPage)
-
-        val bgShape = holder.mPage?.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-
-        val icon = IconicsDrawable(ctx, if (numPassaggio == -1)
-            CommunityMaterial.Icon2.cmd_tag_plus
-        else
-            CommunityMaterial.Icon2.cmd_tag_text_outline).apply {
-            colorInt = if (numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary)
-            sizeDp = 24
-            paddingDp = 2
-        }
-        holder.mEditNoteImage?.setImageDrawable(icon)
-
+    override fun getViewHolder(v: View): ViewHolder {
+        return ViewHolder(v)
     }
 
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.mTitle?.text = null
-        holder.mPage?.text = null
-        holder.mEditNoteImage?.setImageDrawable(null)
-    }
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(var view: View) : FastAdapter.ViewHolder<NotableItem>(view) {
         var mTitle: TextView? = null
-        var mPage: TextView? = null
+        private var mPage: TextView? = null
         var mEditNote: View? = null
-        var mEditNoteImage: ImageView? = null
+        private var mEditNoteImage: ImageView? = null
+
+        override fun bindView(item: NotableItem, payloads: List<Any>) {
+            val ctx = itemView.context
+
+            StringHolder.applyTo(item.title, mTitle)
+
+            StringHolder.applyToOrHide(item.page, mPage)
+
+            val bgShape = mPage?.background as? GradientDrawable
+            bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
+
+            val icon = IconicsDrawable(ctx, if (item.numPassaggio == -1)
+                CommunityMaterial.Icon2.cmd_tag_plus
+            else
+                CommunityMaterial.Icon2.cmd_tag_text_outline).apply {
+                colorInt = if (item.numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary)
+                sizeDp = 24
+                paddingDp = 2
+            }
+            mEditNoteImage?.setImageDrawable(icon)
+        }
+
+        override fun unbindView(item: NotableItem) {
+            mTitle?.text = null
+            mPage?.text = null
+            mEditNoteImage?.setImageDrawable(null)
+        }
 
         init {
             mTitle = view.text_title
@@ -112,20 +108,6 @@ class NotableItem : BaseItem<NotableItem.ViewHolder>() {
             mEditNote = view.edit_note
             mEditNoteImage = view.edit_note_image
         }
-    }
-
-}
-
-object NotableItemFactory : BaseItemFactory<NotableItem.ViewHolder>() {
-
-    override val type: Int
-        get() = R.id.fastadapter_notable_item_id
-
-    override val layoutRes: Int
-        get() = R.layout.row_item_notable
-
-    override fun getViewHolder(v: View): NotableItem.ViewHolder {
-        return NotableItem.ViewHolder(v)
     }
 
 }

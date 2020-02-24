@@ -4,55 +4,20 @@ import android.content.pm.ResolveInfo
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.IItemVHFactory
-import com.mikepenz.fastadapter.items.BaseItem
-import com.mikepenz.fastadapter.items.BaseItemFactory
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.items.AbstractItem
 import it.cammino.risuscito.R
 import kotlinx.android.synthetic.main.bottom_item.view.*
 
-class BottomSheetItem : BaseItem<BottomSheetItem.ViewHolder>() {
+class BottomSheetItem : AbstractItem<BottomSheetItem.ViewHolder>() {
 
-    override val type: Int
-        get() = R.id.fastadapter_bottom_item_id
-
-    override val factory: IItemVHFactory<ViewHolder> = BottomSheetItemFactory
-
-    var item: ResolveInfo? = null
+    var infoItem: ResolveInfo? = null
         private set
 
     fun withItem(item: ResolveInfo): BottomSheetItem {
-        this.item = item
+        this.infoItem = item
         return this
     }
-
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
-
-        val pm = holder.itemView.context.packageManager
-        holder.mIcon?.setImageDrawable(item?.loadIcon(pm))
-        holder.mLabel?.text = item?.loadLabel(pm)
-
-    }
-
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.mLabel?.text = null
-        holder.mIcon?.setImageDrawable(null)
-    }
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        internal var mIcon: ImageView? = null
-        internal var mLabel: TextView? = null
-
-        init {
-            mIcon = view.app_icon
-            mLabel = view.app_label
-        }
-    }
-}
-
-object BottomSheetItemFactory : BaseItemFactory<BottomSheetItem.ViewHolder>() {
 
     override val type: Int
         get() = R.id.fastadapter_bottom_item_id
@@ -60,8 +25,29 @@ object BottomSheetItemFactory : BaseItemFactory<BottomSheetItem.ViewHolder>() {
     override val layoutRes: Int
         get() = R.layout.bottom_item
 
-    override fun getViewHolder(v: View): BottomSheetItem.ViewHolder {
-        return BottomSheetItem.ViewHolder(v)
+    override fun getViewHolder(v: View): ViewHolder {
+        return ViewHolder(v)
+    }
+
+    class ViewHolder(view: View) : FastAdapter.ViewHolder<BottomSheetItem>(view) {
+        private var mIcon: ImageView? = null
+        private var mLabel: TextView? = null
+
+        override fun bindView(item: BottomSheetItem, payloads: List<Any>) {
+            val pm = itemView.context.packageManager
+            mIcon?.setImageDrawable(item.infoItem?.loadIcon(pm))
+            mLabel?.text = item.infoItem?.loadLabel(pm)
+        }
+
+        override fun unbindView(item: BottomSheetItem) {
+            mLabel?.text = null
+            mIcon?.setImageDrawable(null)
+        }
+
+        init {
+            mIcon = view.app_icon
+            mLabel = view.app_label
+        }
     }
 
 }

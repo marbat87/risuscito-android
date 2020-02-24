@@ -5,13 +5,10 @@ import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import androidx.core.view.ViewCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.IItemVHFactory
-import com.mikepenz.fastadapter.items.BaseItem
-import com.mikepenz.fastadapter.items.BaseItemFactory
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
@@ -26,12 +23,7 @@ import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 fun simpleItem(block: SimpleItem.() -> Unit): SimpleItem = SimpleItem().apply(block)
 
-class SimpleItem : BaseItem<SimpleItem.ViewHolder>() {
-
-    override val type: Int
-        get() = R.id.fastadapter_simple_item_id
-
-    override val factory: IItemVHFactory<ViewHolder> = SimpleItemFactory
+class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
@@ -87,66 +79,69 @@ class SimpleItem : BaseItem<SimpleItem.ViewHolder>() {
             field = value
         }
 
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
+    override val type: Int
+        get() = R.id.fastadapter_simple_item_id
 
-        // get the context
-        val ctx = holder.itemView.context
+    override val layoutRes: Int
+        get() = R.layout.simple_row_item
 
-        // set the text for the name
-        filter?.let {
-            if (it.isNotEmpty()) {
-                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
-                        ?: "")
-                val mPosition = normalizedTitle.toLowerCase(getSystemLocale(ctx.resources)).indexOf(it)
-                if (mPosition >= 0) {
-                    val stringTitle = title?.getText(ctx)
-                    val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
-                            ?: "") else "")
-                            .append("<b>")
-                            .append(stringTitle?.substring(mPosition, mPosition + it.length))
-                            .append("</b>")
-                            .append(stringTitle?.substring(mPosition + it.length))
-                    holder.mTitle?.text = LUtils.fromHtmlWrapper(highlighted.toString())
-                } else
-                    StringHolder.applyTo(title, holder.mTitle)
-            } else
-                StringHolder.applyTo(title, holder.mTitle)
-        } ?: StringHolder.applyTo(title, holder.mTitle)
-        // set the text for the description or hide
-        StringHolder.applyToOrHide(page, holder.mPage)
-        ViewCompat.setBackground(
-                holder.view,
-                FastAdapterUIUtils.getSelectableBackground(
-                        ctx,
-                        ctx.themeColor(R.attr.colorSecondaryLight),
-                        true))
-
-        val bgShape = holder.mPage?.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-        holder.mPage?.isInvisible = isSelected
-        holder.mPageSelected?.isVisible = isSelected
-        val bgShapeSelected = holder.mPageSelected?.background as? GradientDrawable
-        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
-
-        holder.mId?.text = id.toString()
-
-        holder.itemView.setTag(com.mikepenz.fastadapter.R.id.fastadapter_item, id)
+    override fun getViewHolder(v: View): ViewHolder {
+        return ViewHolder(v)
     }
 
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.mTitle?.text = null
-        holder.mPage?.text = null
-        holder.mId?.text = null
-    }
-
-    class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+    /** our ViewHolder  */
+    class ViewHolder(var view: View) : FastAdapter.ViewHolder<SimpleItem>(view) {
 
         var mTitle: TextView? = null
-        var mPage: TextView? = null
-        var mPageSelected: View? = null
-        var mId: TextView? = null
+        private var mPage: TextView? = null
+        private var mPageSelected: View? = null
+        private var mId: TextView? = null
+
+        override fun bindView(item: SimpleItem, payloads: List<Any>) {
+            val ctx = itemView.context
+
+            item.filter?.let {
+                if (it.isNotEmpty()) {
+                    val normalizedTitle = Utility.removeAccents(item.title?.getText(ctx)
+                            ?: "")
+                    val mPosition = normalizedTitle.toLowerCase(getSystemLocale(ctx.resources)).indexOf(it)
+                    if (mPosition >= 0) {
+                        val stringTitle = item.title?.getText(ctx)
+                        val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
+                                ?: "") else "")
+                                .append("<b>")
+                                .append(stringTitle?.substring(mPosition, mPosition + it.length))
+                                .append("</b>")
+                                .append(stringTitle?.substring(mPosition + it.length))
+                        mTitle?.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                    } else
+                        StringHolder.applyTo(item.title, mTitle)
+                } else
+                    StringHolder.applyTo(item.title, mTitle)
+            } ?: StringHolder.applyTo(item.title, mTitle)
+            StringHolder.applyToOrHide(item.page, mPage)
+            view.background = FastAdapterUIUtils.getSelectableBackground(
+                    ctx,
+                    ctx.themeColor(R.attr.colorSecondaryLight),
+                    true)
+
+            val bgShape = mPage?.background as? GradientDrawable
+            bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
+            mPage?.isInvisible = item.isSelected
+            mPageSelected?.isVisible = item.isSelected
+            val bgShapeSelected = mPageSelected?.background as? GradientDrawable
+            bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
+
+            mId?.text = item.id.toString()
+
+            itemView.setTag(com.mikepenz.fastadapter.R.id.fastadapter_item, item.id)
+        }
+
+        override fun unbindView(item: SimpleItem) {
+            mTitle?.text = null
+            mPage?.text = null
+            mId?.text = null
+        }
 
         init {
             mTitle = view.text_title
@@ -155,18 +150,4 @@ class SimpleItem : BaseItem<SimpleItem.ViewHolder>() {
             mId = view.text_id_canto
         }
     }
-}
-
-object SimpleItemFactory : BaseItemFactory<SimpleItem.ViewHolder>() {
-
-    override val type: Int
-        get() = R.id.fastadapter_simple_item_id
-
-    override val layoutRes: Int
-        get() = R.layout.simple_row_item
-
-    override fun getViewHolder(v: View): SimpleItem.ViewHolder {
-        return SimpleItem.ViewHolder(v)
-    }
-
 }

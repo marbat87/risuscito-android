@@ -7,10 +7,9 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.IItemVHFactory
+import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.drag.IExtendedDraggable
-import com.mikepenz.fastadapter.items.BaseItem
-import com.mikepenz.fastadapter.items.BaseItemFactory
+import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.swipe.ISwipeable
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.fastadapter.utils.DragDropUtil
@@ -20,12 +19,7 @@ import kotlinx.android.synthetic.main.swipeable_item.view.*
 
 fun swipeableItem(block: SwipeableItem.() -> Unit): SwipeableItem = SwipeableItem().apply(block)
 
-class SwipeableItem : BaseItem<SwipeableItem.ViewHolder>(), ISwipeable, IExtendedDraggable<RecyclerView.ViewHolder> {
-
-    override val type: Int
-        get() = R.id.fastadapter_swipable_item_id
-
-    override val factory: IItemVHFactory<ViewHolder> = SwipeableItemFactory
+class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExtendedDraggable<RecyclerView.ViewHolder> {
 
     var name: StringHolder? = null
     var setName: Any? = null
@@ -39,39 +33,14 @@ class SwipeableItem : BaseItem<SwipeableItem.ViewHolder>(), ISwipeable, IExtende
     var swipedAction: Runnable? = null
     override var touchHelper: ItemTouchHelper? = null
 
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
+    override val type: Int
+        get() = R.id.fastadapter_swipable_item_id
 
-        // get the context
-        val ctx = holder.itemView.context
+    override val layoutRes: Int
+        get() = R.layout.swipeable_item
 
-        //set the text for the name
-        StringHolder.applyTo(name, holder.name)
-        //set the text for the description or hide
-
-        holder.swipeResultContent?.isVisible = swipedDirection != 0
-        holder.itemContent?.isInvisible = swipedDirection != 0
-
-        var swipedAction: CharSequence? = null
-        var swipedText: CharSequence? = null
-        if (swipedDirection != 0) {
-            swipedAction = ctx.getString(R.string.cancel)
-            swipedText = ctx.getString(R.string.generic_removed, name?.getText(ctx))
-            holder.swipeResultContent?.setBackgroundColor(ContextCompat.getColor(ctx, if (swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
-        }
-        holder.swipedAction?.text = swipedAction ?: ""
-        holder.swipedText?.text = swipedText ?: ""
-        holder.swipedActionRunnable = this.swipedAction
-
-        DragDropUtil.bindDragHandle(holder, this)
-    }
-
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.name?.text = null
-        holder.swipedAction?.text = null
-        holder.swipedText?.text = null
-        holder.swipedActionRunnable = null
+    override fun getViewHolder(v: View): ViewHolder {
+        return ViewHolder(v)
     }
 
     override fun getDragView(viewHolder: RecyclerView.ViewHolder): View? {
@@ -81,10 +50,7 @@ class SwipeableItem : BaseItem<SwipeableItem.ViewHolder>(), ISwipeable, IExtende
     override var isSwipeable = true
     override var isDraggable = true
 
-    /**
-     * our ViewHolder
-     */
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : FastAdapter.ViewHolder<SwipeableItem>(view) {
         internal var name: TextView? = null
         internal var swipeResultContent: View? = null
         internal var itemContent: View? = null
@@ -94,6 +60,35 @@ class SwipeableItem : BaseItem<SwipeableItem.ViewHolder>(), ISwipeable, IExtende
 
         internal var swipedActionRunnable: Runnable? = null
 
+        override fun bindView(item: SwipeableItem, payloads: List<Any>) {
+            val ctx = itemView.context
+
+            StringHolder.applyTo(item.name, name)
+
+            swipeResultContent?.isVisible = item.swipedDirection != 0
+            itemContent?.isInvisible = item.swipedDirection != 0
+
+            var mSwipedAction: CharSequence? = null
+            var mSwipedText: CharSequence? = null
+            if (item.swipedDirection != 0) {
+                mSwipedAction = ctx.getString(R.string.cancel)
+                mSwipedText = ctx.getString(R.string.generic_removed, item.name?.getText(ctx))
+                swipeResultContent?.setBackgroundColor(ContextCompat.getColor(ctx, if (item.swipedDirection == ItemTouchHelper.LEFT) R.color.md_red_900 else R.color.md_red_900))
+            }
+            swipedAction?.text = mSwipedAction ?: ""
+            swipedText?.text = mSwipedText ?: ""
+            swipedActionRunnable = item.swipedAction
+
+            DragDropUtil.bindDragHandle(this, item)
+        }
+
+        override fun unbindView(item: SwipeableItem) {
+            name?.text = null
+            swipedAction?.text = null
+            swipedText?.text = null
+            swipedActionRunnable = null
+        }
+        
         init {
             name = view.swipeable_text1
             swipeResultContent = view.swipe_result_content
@@ -106,18 +101,4 @@ class SwipeableItem : BaseItem<SwipeableItem.ViewHolder>(), ISwipeable, IExtende
             }
         }
     }
-}
-
-object SwipeableItemFactory : BaseItemFactory<SwipeableItem.ViewHolder>() {
-
-    override val type: Int
-        get() = R.id.fastadapter_swipable_item_id
-
-    override val layoutRes: Int
-        get() = R.layout.swipeable_item
-
-    override fun getViewHolder(v: View): SwipeableItem.ViewHolder {
-        return SwipeableItem.ViewHolder(v)
-    }
-
 }

@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.RecyclerView
+import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.IClickable
 import com.mikepenz.fastadapter.ISubItem
@@ -64,69 +64,46 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
             super.isSelectable = value
         }
 
-    /**
-     * defines the type defining this item. must be unique. preferably an id
-     *
-     * @return the type
-     */
     override val type: Int
         get() = R.id.fastadapter_expandable_item_id
 
-    /**
-     * defines the layout which will be used for this item in the list
-     *
-     * @return the layout for this item
-     */
     override val layoutRes: Int
         get() = R.layout.list_group_item
-
-    /**
-     * binds the data of this item onto the viewHolder
-     *
-     * @param holder the viewHolder of this item
-     */
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
-
-        // get the context
-        val ctx = holder.itemView.context
-
-        // set the background for the item
-        ViewCompat.setBackground(
-                holder.view,
-                FastAdapterUIUtils.getRippleDrawable(
-                        ContextCompat.getColor(ctx, R.color.floating_background),
-                        ContextCompat.getColor(ctx, R.color.ripple_color),
-                        10))
-        // set the text for the name
-        val newTitle = "${title?.getText(ctx)} ($totItems)"
-        holder.mTitle?.text = newTitle
-        StringHolder.applyToOrHide(subTitle, holder.mSubTitle)
-
-        if (isExpanded)
-            holder.mIndicator?.rotation = 0f
-        else
-            holder.mIndicator?.rotation = 180f
-    }
-
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.mTitle?.text = null
-        holder.mSubTitle?.text = null
-        // make sure all animations are stopped
-        holder.mIndicator?.clearAnimation()
-    }
 
     override fun getViewHolder(v: View): ViewHolder {
         return ViewHolder(v)
     }
 
-    /** our ViewHolder  */
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(var view: View) : FastAdapter.ViewHolder<SimpleSubExpandableItem>(view) {
 
-        var mTitle: TextView? = null
-        var mSubTitle: TextView? = null
-        var mIndicator: ImageView? = null
+        private var mTitle: TextView? = null
+        private var mSubTitle: TextView? = null
+        private var mIndicator: ImageView? = null
+
+        override fun bindView(item: SimpleSubExpandableItem, payloads: List<Any>) {
+            val ctx = itemView.context
+
+            view.background = FastAdapterUIUtils.getRippleDrawable(
+                    ContextCompat.getColor(ctx, R.color.floating_background),
+                    ContextCompat.getColor(ctx, R.color.ripple_color),
+                    10)
+            // set the text for the name
+            val newTitle = "${item.title?.getText(ctx)} (${item.totItems})"
+            mTitle?.text = newTitle
+            StringHolder.applyToOrHide(item.subTitle, mSubTitle)
+
+            if (item.isExpanded)
+                mIndicator?.rotation = 0f
+            else
+                mIndicator?.rotation = 180f
+        }
+
+        override fun unbindView(item: SimpleSubExpandableItem) {
+            mTitle?.text = null
+            mSubTitle?.text = null
+            // make sure all animations are stopped
+            mIndicator?.clearAnimation()
+        }
 
         init {
             mTitle = view.group_title

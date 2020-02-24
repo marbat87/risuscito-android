@@ -6,10 +6,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.IItemVHFactory
-import com.mikepenz.fastadapter.items.BaseItem
-import com.mikepenz.fastadapter.items.BaseItemFactory
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
@@ -25,12 +23,7 @@ import java.text.SimpleDateFormat
 
 fun simpleHistoryItem(block: SimpleHistoryItem.() -> Unit): SimpleHistoryItem = SimpleHistoryItem().apply(block)
 
-class SimpleHistoryItem : BaseItem<SimpleHistoryItem.ViewHolder>() {
-
-    override val type: Int
-        get() = R.id.fastadapter_history_item_id
-
-    override val factory: IItemVHFactory<ViewHolder> = SimpleHistoryItemFactory
+class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
 
     var title: StringHolder? = null
         private set
@@ -73,66 +66,69 @@ class SimpleHistoryItem : BaseItem<SimpleHistoryItem.ViewHolder>() {
             field = value
         }
 
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
+    override val type: Int
+        get() = R.id.fastadapter_history_item_id
 
-        // get the context
-        val ctx = holder.itemView.context
+    override val layoutRes: Int
+        get() = R.layout.row_item_history
 
-        // set the text for the name
-        StringHolder.applyTo(title, holder.mTitle)
-        // set the text for the description or hide
-        StringHolder.applyToOrHide(page, holder.mPage)
-
-        @Suppress("DEPRECATION")
-        holder.view.background = FastAdapterUIUtils.getSelectableBackground(
-                ctx,
-                ctx.themeColor(R.attr.colorSecondaryLight),
-                true)
-
-        val bgShape = holder.mPage?.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-        holder.mPage?.isInvisible = isSelected
-        holder.mPageSelected?.isVisible = isSelected
-        val bgShapeSelected = holder.mPageSelected?.background as? GradientDrawable
-        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
-
-        holder.mId?.text = id.toString()
-
-        if (timestamp != null) {
-            // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
-            val df = DateFormat.getDateTimeInstance(
-                    DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
-            val tempTimestamp: String
-
-            val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.getText(ctx).toString()))
-            tempTimestamp = if (df is SimpleDateFormat) {
-                val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
-                df.applyPattern(pattern)
-                df.format(dateTimestamp)
-            } else
-                df.format(dateTimestamp)
-            holder.mTimestamp?.text = tempTimestamp
-            holder.mTimestamp?.isVisible = true
-        } else
-            holder.mTimestamp?.isVisible = false
+    override fun getViewHolder(v: View): ViewHolder {
+        return ViewHolder(v)
     }
 
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.mTitle?.text = null
-        holder.mPage?.text = null
-        holder.mId?.text = null
-        holder.mTimestamp?.text = null
-    }
-
-    class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(var view: View) : FastAdapter.ViewHolder<SimpleHistoryItem>(view) {
 
         var mTitle: TextView? = null
-        var mPage: TextView? = null
-        var mPageSelected: View? = null
-        var mTimestamp: TextView? = null
-        var mId: TextView? = null
+        private var mPage: TextView? = null
+        private var mPageSelected: View? = null
+        private var mTimestamp: TextView? = null
+        private var mId: TextView? = null
+
+        override fun bindView(item: SimpleHistoryItem, payloads: List<Any>) {
+            val ctx = itemView.context
+
+            StringHolder.applyTo(item.title, mTitle)
+            StringHolder.applyToOrHide(item.page, mPage)
+
+            view.background = FastAdapterUIUtils.getSelectableBackground(
+                    ctx,
+                    ctx.themeColor(R.attr.colorSecondaryLight),
+                    true)
+
+            val bgShape = mPage?.background as? GradientDrawable
+            bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
+            mPage?.isInvisible = item.isSelected
+            mPageSelected?.isVisible = item.isSelected
+            val bgShapeSelected = mPageSelected?.background as? GradientDrawable
+            bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
+
+            mId?.text = item.id.toString()
+
+            if (item.timestamp != null) {
+                // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
+                val df = DateFormat.getDateTimeInstance(
+                        DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
+                val tempTimestamp: String
+
+                val dateTimestamp = Date(java.lang.Long.parseLong(item.timestamp?.getText(ctx).toString()))
+                tempTimestamp = if (df is SimpleDateFormat) {
+                    val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
+                    df.applyPattern(pattern)
+                    df.format(dateTimestamp)
+                } else
+                    df.format(dateTimestamp)
+                mTimestamp?.text = tempTimestamp
+                mTimestamp?.isVisible = true
+            } else
+                mTimestamp?.isVisible = false
+        }
+
+        override fun unbindView(item: SimpleHistoryItem) {
+            mTitle?.text = null
+            mPage?.text = null
+            mId?.text = null
+            mTimestamp?.text = null
+        }
 
         init {
             mTitle = view.text_title
@@ -142,18 +138,4 @@ class SimpleHistoryItem : BaseItem<SimpleHistoryItem.ViewHolder>() {
             mId = view.text_id_canto
         }
     }
-}
-
-object SimpleHistoryItemFactory : BaseItemFactory<SimpleHistoryItem.ViewHolder>() {
-
-    override val type: Int
-        get() = R.id.fastadapter_history_item_id
-
-    override val layoutRes: Int
-        get() = R.layout.row_item_history
-
-    override fun getViewHolder(v: View): SimpleHistoryItem.ViewHolder {
-        return SimpleHistoryItem.ViewHolder(v)
-    }
-
 }
