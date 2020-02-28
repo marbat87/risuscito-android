@@ -153,7 +153,7 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
     }
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.itemsResult?.observe(this) { canti ->
+        mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mAdapter.set(
                     when (mCantiViewModel.tipoLista) {
                         0 -> canti.sortedBy { it.title?.getText(requireContext()) }

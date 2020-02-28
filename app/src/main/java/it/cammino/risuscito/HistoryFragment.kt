@@ -240,7 +240,7 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
     }
 
     private fun subscribeUiHistory() {
-        mCronologiaViewModel.cronologiaCanti?.observe(this) {
+        mCronologiaViewModel.cronologiaCanti?.observe(viewLifecycleOwner) {
             cantoAdapter.set(it)
             no_history?.isInvisible = cantoAdapter.adapterItemCount > 0
             history_recycler.isInvisible = cantoAdapter.adapterItemCount == 0

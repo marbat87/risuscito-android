@@ -11,7 +11,7 @@ plugins {
 android {
 
     compileSdkVersion(29)
-    buildToolsVersion("29.0.3")
+    buildToolsVersion("30.0.0-rc1")
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdkVersion(16)
@@ -131,7 +131,7 @@ dependencies {
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.2")
     implementation("com.leinardi.android:speed-dial:3.1.1")
     implementation("com.github.mohammadatif:Animatoo:master")
-    implementation("com.github.Ferfalk:SimpleSearchView:0.1.3")
+    implementation("com.github.Ferfalk:SimpleSearchView:0.1.5")
     implementation("com.github.MFlisar:changelog:1.1.6")
     implementation("com.github.stupacki:MultiFunctions:1.2.2")
     implementation("com.wada811:android-material-design-colors:3.0.0")

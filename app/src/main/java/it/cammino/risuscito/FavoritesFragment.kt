@@ -239,7 +239,7 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
     }
 
     private fun subscribeUiFavorites() {
-        mFavoritesViewModel.mFavoritesResult?.observe(this) { canti ->
+        mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
             cantoAdapter.set(canti.sortedBy { it.title?.getText(requireContext()) })
             no_favourites?.isInvisible = cantoAdapter.adapterItemCount > 0
             favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0

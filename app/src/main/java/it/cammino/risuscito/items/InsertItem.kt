@@ -65,7 +65,7 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
 
     class ViewHolder(view: View) : FastAdapter.ViewHolder<InsertItem>(view) {
         var mTitle: TextView? = null
-        var mPage: TextView? = null
+        private var mPage: TextView? = null
         var mPreview: View? = null
 
         override fun bindView(item: InsertItem, payloads: List<Any>) {

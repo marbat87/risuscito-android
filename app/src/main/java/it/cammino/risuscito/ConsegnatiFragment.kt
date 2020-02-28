@@ -458,7 +458,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     }
 
     private fun subscribeUiConsegnati() {
-        mCantiViewModel.mIndexResult?.observe(this) { cantos ->
+        mCantiViewModel.mIndexResult?.observe(viewLifecycleOwner) { cantos ->
             mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(requireContext()) })
             cantoAdapter.set(mCantiViewModel.titoli)
             cantoAdapter.filter(mPopupMenu.menu.children.filter { item -> item.isChecked }

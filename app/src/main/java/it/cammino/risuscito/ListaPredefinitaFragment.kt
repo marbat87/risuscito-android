@@ -227,7 +227,7 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
     }
 
     private fun subscribeUiFavorites() {
-        mCantiViewModel.cantiResult?.observe(this) { mCanti ->
+        mCantiViewModel.cantiResult?.observe(viewLifecycleOwner) { mCanti ->
             var progressiveTag = 0
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             posizioniList.clear()

@@ -52,13 +52,13 @@ class SwipeableItem : AbstractItem<SwipeableItem.ViewHolder>(), ISwipeable, IExt
 
     class ViewHolder(view: View) : FastAdapter.ViewHolder<SwipeableItem>(view) {
         internal var name: TextView? = null
-        internal var swipeResultContent: View? = null
-        internal var itemContent: View? = null
-        internal var swipedText: TextView? = null
-        internal var swipedAction: TextView? = null
+        private var swipeResultContent: View? = null
+        private var itemContent: View? = null
+        private var swipedText: TextView? = null
+        private var swipedAction: TextView? = null
         internal var mDragHandler: View? = null
 
-        internal var swipedActionRunnable: Runnable? = null
+        private var swipedActionRunnable: Runnable? = null
 
         override fun bindView(item: SwipeableItem, payloads: List<Any>) {
             val ctx = itemView.context

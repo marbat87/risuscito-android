@@ -260,7 +260,7 @@ class ListaPersonalizzataFragment : Fragment(R.layout.activity_lista_personalizz
     }
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.listaPersonalizzataResult?.observe(this) { listaPersonalizzataResult ->
+        mCantiViewModel.listaPersonalizzataResult?.observe(viewLifecycleOwner) { listaPersonalizzataResult ->
             mCantiViewModel.posizioniList = listaPersonalizzataResult.map {
                 it.apply {
                     createClickListener = click

@@ -288,7 +288,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
     }
 
     private fun subscribeUiCanti() {
-        mViewModel.itemsResult?.observe(this) { canti ->
+        mViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mViewModel.titoli = canti.sortedBy { it.title?.getText(requireContext()) }
         }
     }

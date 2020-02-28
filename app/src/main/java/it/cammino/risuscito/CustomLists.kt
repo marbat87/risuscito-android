@@ -283,7 +283,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     }
 
     private fun subscribeUiListe() {
-        mCustomListsViewModel.customListResult?.observe(this) { list ->
+        mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->
             Log.d(TAG, "list size ${list.size}")
             titoliListe = arrayOfNulls(list.size)
             idListe = IntArray(list.size)
