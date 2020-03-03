@@ -73,8 +73,8 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.0.0-a08"
-val materialDrawerVersion = "8.0.0-b03"
+val fastAdapterVersion = "5.0.0-b01"
+val materialDrawerVersion = "8.0.0-b04"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.4"
 val iconicVersion = "5.0.0-a04"
@@ -100,8 +100,8 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:17.0.0")
-    implementation("com.google.firebase:firebase-core:17.2.2")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.4.0")
+    implementation("com.google.firebase:firebase-core:17.2.3")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.4.1")
     implementation("com.google.firebase:firebase-storage-ktx:19.1.1")
     implementation("com.google.firebase:firebase-auth:19.2.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }

@@ -49,8 +49,6 @@ import com.mikepenz.iconics.utils.colorInt
 import com.mikepenz.iconics.utils.paddingDp
 import com.mikepenz.iconics.utils.sizeDp
 import com.mikepenz.materialdrawer.holder.ImageHolder
-import com.mikepenz.materialdrawer.holder.StringHolder
-import com.mikepenz.materialdrawer.iconics.IconicsImageHolder
 import com.mikepenz.materialdrawer.iconics.iconicsIcon
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -58,6 +56,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.model.utils.nameRes
 import com.mikepenz.materialdrawer.util.setItems
 import com.mikepenz.materialdrawer.widget.AccountHeaderView
 import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
@@ -70,6 +69,9 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
+import it.cammino.risuscito.utils.descriptionText
+import it.cammino.risuscito.utils.nameRes
+import it.cammino.risuscito.utils.nameText
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -263,17 +265,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
 
         val profile = ProfileDrawerItem().apply {
-            name = StringHolder("")
-            description = StringHolder("")
+            nameText = ""
+            descriptionText = ""
             icon = ImageHolder(profileIcon)
             identifier = PROF_ID
             typeface = mRegularFont
         }
-//                .withName("")
-//                .withEmail("")
-//                .withIcon(profileIcon)
-//                .withIdentifier(PROF_ID)
-//                .withTypeface(mRegularFont)
 
         mAccountHeader = AccountHeaderView(this).apply {
             slider?.let { attachToSliderView(it) }
@@ -309,105 +306,60 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 customWidth = MATCH_PARENT
                 setItems(
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.activity_homepage)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_home)
+                            nameRes = R.string.activity_homepage
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_home
                             identifier = R.id.navigation_home.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.activity_homepage)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_home)
-//                                .withIdentifier(R.id.navigation_home.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.search_name_text)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_magnify)
+                            nameRes = R.string.search_name_text
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
                             identifier = R.id.navigation_search.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.search_name_text)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
-//                                .withIdentifier(R.id.navigation_search.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_general_index)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_view_list)
+                            nameRes = R.string.title_activity_general_index
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
                             identifier = R.id.navigation_indexes.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_general_index)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
-//                                .withIdentifier(R.id.navigation_indexes.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_custom_lists)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_view_carousel)
+                            nameRes = R.string.title_activity_custom_lists
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
                             identifier = R.id.navitagion_lists.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_custom_lists)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
-//                                .withIdentifier(R.id.navitagion_lists.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.action_favourites)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_star)
+                            nameRes = R.string.action_favourites
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_star
                             identifier = R.id.navigation_favorites.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.action_favourites)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_star)
-//                                .withIdentifier(R.id.navigation_favorites.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_consegnati)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_clipboard_check)
+                            nameRes = R.string.title_activity_consegnati
+                            iconicsIcon = CommunityMaterial.Icon.cmd_clipboard_check
                             identifier = R.id.navigation_consegnati.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_consegnati)
-//                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
-//                                .withIdentifier(R.id.navigation_consegnati.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_history)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_history)
+                            nameRes = R.string.title_activity_history
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_history
                             identifier = R.id.navigation_history.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_history)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_history)
-//                                .withIdentifier(R.id.navigation_history.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_settings)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_settings)
+                            nameRes = R.string.title_activity_settings
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_settings
                             identifier = R.id.navigation_settings.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_settings)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
-//                                .withIdentifier(R.id.navigation_settings.toLong())
-//                                .withTypeface(mMediumFont),
                         DividerDrawerItem(),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_about)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_information_outline)
+                            nameRes = R.string.title_activity_about
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_information_outline
                             identifier = R.id.navigation_changelog.toLong()
                             typeface = mMediumFont
                         }
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_about)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
-//                                .withIdentifier(R.id.navigation_changelog.toLong())
-//                                .withTypeface(mMediumFont)
                 )
                 onDrawerItemClickListener = { _, drawerItem, _ ->
                     onDrawerItemClick(drawerItem)
@@ -465,105 +417,60 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 //                hasStableIds = true
                 setItems(
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.activity_homepage)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_home)
+                            nameRes = R.string.activity_homepage
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_home
                             identifier = R.id.navigation_home.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.activity_homepage)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_home)
-//                                .withIdentifier(R.id.navigation_home.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.search_name_text)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_magnify)
+                            nameRes = R.string.search_name_text
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
                             identifier = R.id.navigation_search.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.search_name_text)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_magnify)
-//                                .withIdentifier(R.id.navigation_search.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_general_index)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_view_list)
+                            nameRes = R.string.title_activity_general_index
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
                             identifier = R.id.navigation_indexes.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_general_index)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_view_list)
-//                                .withIdentifier(R.id.navigation_indexes.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_custom_lists)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_view_carousel)
+                            nameRes = R.string.title_activity_custom_lists
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
                             identifier = R.id.navitagion_lists.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_custom_lists)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
-//                                .withIdentifier(R.id.navitagion_lists.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.action_favourites)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_star)
+                            nameRes = R.string.action_favourites
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_star
                             identifier = R.id.navigation_favorites.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.action_favourites)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_star)
-//                                .withIdentifier(R.id.navigation_favorites.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_consegnati)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_clipboard_check)
+                            nameRes = R.string.title_activity_consegnati
+                            iconicsIcon = CommunityMaterial.Icon.cmd_clipboard_check
                             identifier = R.id.navigation_consegnati.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_consegnati)
-//                                .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
-//                                .withIdentifier(R.id.navigation_consegnati.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_history)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_history)
+                            nameRes = R.string.title_activity_history
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_history
                             identifier = R.id.navigation_history.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_history)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_history)
-//                                .withIdentifier(R.id.navigation_history.toLong())
-//                                .withTypeface(mMediumFont),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_settings)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_settings)
+                            nameRes = R.string.title_activity_settings
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_settings
                             identifier = R.id.navigation_settings.toLong()
                             typeface = mMediumFont
                         },
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_settings)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_settings)
-//                                .withIdentifier(R.id.navigation_settings.toLong())
-//                                .withTypeface(mMediumFont),
                         DividerDrawerItem(),
                         PrimaryDrawerItem().apply {
-                            name = StringHolder(R.string.title_activity_about)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon2.cmd_information_outline)
+                            nameRes = R.string.title_activity_about
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_information_outline
                             identifier = R.id.navigation_changelog.toLong()
                             typeface = mMediumFont
                         }
-//                        PrimaryDrawerItem()
-//                                .withName(R.string.title_activity_about)
-//                                .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
-//                                .withIdentifier(R.id.navigation_changelog.toLong())
-//                                .withTypeface(mMediumFont)
                 )
                 onDrawerItemClickListener = { _, drawerItem, _ ->
                     onDrawerItemClick(drawerItem)
@@ -953,95 +860,61 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
                 Log.d(TAG, "personPhotoUrl BEFORE $personPhotoUrl")
-//                personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length - 2) + 400
                 personPhotoUrl = personPhotoUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
                 Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
                 profile = ProfileDrawerItem().apply {
-                    name = StringHolder(acct?.displayName)
-                    description = StringHolder(acct?.email)
+                    nameText = acct?.displayName
+                    descriptionText = acct?.email
                     icon = ImageHolder(personPhotoUrl)
                     identifier = PROF_ID
                     typeface = mRegularFont
                 }
-//                        .withName(acct?.displayName)
-//                        .withEmail(acct?.email)
-//                        .withIcon(personPhotoUrl)
-//                        .withIdentifier(PROF_ID)
-//                        .withTypeface(mRegularFont)
             } else {
                 profile = ProfileDrawerItem().apply {
-                    name = StringHolder(acct?.displayName)
-                    description = StringHolder(acct?.email)
+                    nameText = acct?.displayName
+                    descriptionText = acct?.email
                     icon = ImageHolder(profileIcon)
                     identifier = PROF_ID
                     typeface = mRegularFont
                 }
-//                        .withName(acct?.displayName)
-//                        .withEmail(acct?.email)
-//                        .withIcon(profileIcon)
-//                        .withIdentifier(PROF_ID)
-//                        .withTypeface(mRegularFont)
             }
             // Create the AccountHeader
             mAccountHeader.updateProfile(profile)
             if (mAccountHeader.profiles?.size == 1) {
                 mAccountHeader.addProfiles(
                         ProfileSettingDrawerItem().apply {
-                            name = StringHolder(R.string.gdrive_backup)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_cloud_upload)
+                            nameRes = R.string.gdrive_backup
+                            iconicsIcon = CommunityMaterial.Icon.cmd_cloud_upload
                             identifier = R.id.gdrive_backup.toLong()
                         },
-//                        ProfileSettingDrawerItem()
-//                                .withName(getString(R.string.gdrive_backup))
-//                                .withIcon(CommunityMaterial.Icon.cmd_cloud_upload)
-//                                .withIdentifier(R.id.gdrive_backup.toLong()),
                         ProfileSettingDrawerItem().apply {
-                            name = StringHolder(R.string.gdrive_restore)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_cloud_download)
+                            nameRes = R.string.gdrive_restore
+                            iconicsIcon = CommunityMaterial.Icon.cmd_cloud_download
                             identifier = R.id.gdrive_restore.toLong()
                         },
-//                        ProfileSettingDrawerItem()
-//                                .withName(getString(R.string.gdrive_restore))
-//                                .withIcon(CommunityMaterial.Icon.cmd_cloud_download)
-//                                .withIdentifier(R.id.gdrive_restore.toLong()),
                         ProfileSettingDrawerItem().apply {
-                            name = StringHolder(R.string.gplus_signout)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_account_remove)
+                            nameRes = R.string.gplus_signout
+                            iconicsIcon = CommunityMaterial.Icon.cmd_account_remove
                             identifier = R.id.gplus_signout.toLong()
                         },
-//                        ProfileSettingDrawerItem()
-//                                .withName(getString(R.string.gplus_signout))
-//                                .withIcon(CommunityMaterial.Icon.cmd_account_remove)
-//                                .withIdentifier(R.id.gplus_signout.toLong()),
                         ProfileSettingDrawerItem().apply {
-                            name = StringHolder(R.string.gplus_revoke)
-                            iconicsIcon = IconicsImageHolder(CommunityMaterial.Icon.cmd_account_key)
+                            nameRes = R.string.gplus_revoke
+                            iconicsIcon = CommunityMaterial.Icon.cmd_account_key
                             identifier = R.id.gplus_revoke.toLong()
                         }
-//                        ProfileSettingDrawerItem()
-//                                .withName(getString(R.string.gplus_revoke))
-//                                .withIcon(CommunityMaterial.Icon.cmd_account_key)
-//                                .withIdentifier(R.id.gplus_revoke.toLong()))
                 )
             }
             if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         } else {
             val profile = ProfileDrawerItem().apply {
-                name = StringHolder("")
-                description = StringHolder("")
+                nameText = ""
+                descriptionText = ""
                 icon = ImageHolder(profileIcon)
                 identifier = PROF_ID
                 typeface = mRegularFont
             }
-//                    .withName("")
-//                    .withEmail("")
-//                    .withIcon(profileIcon)
-//                    .withIdentifier(PROF_ID)
-//                    .withTypeface(mRegularFont)
-            if ((mAccountHeader.profiles?.size ?: 0) > 1) {
-                mAccountHeader.removeAllViews()
-            }
-            mAccountHeader.updateProfile(profile)
+            mAccountHeader.clear()
+            mAccountHeader.addProfiles(profile)
             if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         }
         hideProgressDialog()
