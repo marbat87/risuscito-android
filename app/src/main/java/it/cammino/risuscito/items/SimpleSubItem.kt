@@ -15,7 +15,6 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.utils.themeColor
-import kotlinx.android.synthetic.main.simple_sub_item.view.*
 
 fun simpleSubItem(block: SimpleSubItem.() -> Unit): SimpleSubItem = SimpleSubItem().apply(block)
 
@@ -98,11 +97,11 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         }
 
         init {
-            mTitle = view.text_title
-            mPage = view.text_page
-            mPageSelected = view.selected_mark
-            mId = view.text_id_canto
-            mItemDivider = view.item_divider
+            mTitle = view.findViewById(R.id.text_title)
+            mPage = view.findViewById(R.id.text_page)
+            mPageSelected = view.findViewById(R.id.selected_mark)
+            mId = view.findViewById(R.id.text_id_canto)
+            mItemDivider = view.findViewById(R.id.item_divider)
         }
     }
 }

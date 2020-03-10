@@ -19,8 +19,8 @@ import com.mikepenz.iconics.utils.sizeDp
 import io.multifunctions.letCheckNull
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.databinding.ActivityPaginaRenderFullscreenBinding
 import it.cammino.risuscito.ui.ThemeableActivity
-import kotlinx.android.synthetic.main.activity_pagina_render_fullscreen.*
 import java.lang.ref.WeakReference
 
 class PaginaRenderFullScreen : ThemeableActivity() {
@@ -33,9 +33,9 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     private val mScrollDown: Runnable = object : Runnable {
         override fun run() {
             try {
-                cantoView.scrollBy(0, speedValue)
+                binding.cantoView.scrollBy(0, speedValue)
             } catch (e: NumberFormatException) {
-                cantoView.scrollBy(0, 0)
+                binding.cantoView.scrollBy(0, 0)
             }
 
             mHandler.postDelayed(this, 700)
@@ -43,14 +43,18 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     }
     private var mLUtils: LUtils? = null
 
-    private lateinit var cantoView: WebView
+//    private lateinit var cantoView: WebView
+
+    private lateinit var binding: ActivityPaginaRenderFullscreenBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mLUtils = LUtils.getInstance(this)
         mLUtils?.goFullscreen()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pagina_render_fullscreen)
-        cantoView = canto_view as WebView
+        binding = ActivityPaginaRenderFullscreenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+//        setContentView(R.layout.activity_pagina_render_fullscreen)
+//        cantoView = canto_view as WebView
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
@@ -64,8 +68,8 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             sizeDp = 24
             paddingDp = 2
         }
-        fab_fullscreen_off.setImageDrawable(icon)
-        fab_fullscreen_off.setOnClickListener { saveZoom() }
+        binding.fabFullscreenOff.setImageDrawable(icon)
+        binding.fabFullscreenOff.setOnClickListener { saveZoom() }
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
@@ -80,11 +84,11 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     public override fun onResume() {
         super.onResume()
 
-        cantoView.loadUrl(urlCanto)
+        binding.cantoView.loadUrl(urlCanto)
         if (scrollPlaying)
             mScrollDown.run()
 
-        val webSettings = cantoView.settings
+        val webSettings = binding.cantoView.settings
         webSettings.useWideViewPort = true
         webSettings.setSupportZoom(true)
         webSettings.loadWithOverviewMode = true
@@ -92,16 +96,16 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         webSettings.builtInZoomControls = true
         webSettings.displayZoomControls = false
 
-        cantoView.webViewClient = MyWebViewClient()
+        binding.cantoView.webViewClient = MyWebViewClient()
     }
 
     private fun saveZoom() {
         @Suppress("DEPRECATION")
         //aggiunto per evitare che la pagina venga chiusa troppo velocemente prima del caricamento del canto
         currentCanto?.let {
-            it.zoom = (cantoView.scale * 100).toInt()
-            it.scrollX = cantoView.scrollX
-            it.scrollY = cantoView.scrollY
+            it.zoom = (binding.cantoView.scale * 100).toInt()
+            it.scrollX = binding.cantoView.scrollX
+            it.scrollY = binding.cantoView.scrollY
             Log.d(TAG, "it.id ${it.id} / it.zoom ${it.zoom} / it.scrollX ${it.scrollX} / it.scrollY ${it.scrollY}")
             ZoomSaverTask(this, it).execute()
             return
@@ -161,9 +165,9 @@ class PaginaRenderFullScreen : ThemeableActivity() {
                 val apiResult = Pair(activityReference.get(), activityReference.get()?.currentCanto)
                 apiResult.letCheckNull { activity, canto ->
                     Log.d(TAG, "onPostExecute: ${canto.zoom} - ${canto.scrollX} - ${canto.scrollY}")
-                    if (canto.zoom > 0) activity.cantoView.setInitialScale(canto.zoom)
+                    if (canto.zoom > 0) activity.binding.cantoView.setInitialScale(canto.zoom)
                     if (canto.scrollX > 0 || canto.scrollY > 0)
-                        activity.cantoView.scrollTo(canto.scrollX, canto.scrollY)
+                        activity.binding.cantoView.scrollTo(canto.scrollX, canto.scrollY)
                 }
             }
         }

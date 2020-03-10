@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -32,6 +29,7 @@ import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.databinding.ActivityFavouritesBinding
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
@@ -39,10 +37,8 @@ import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
-import kotlinx.android.synthetic.main.activity_favourites.*
-import kotlinx.android.synthetic.main.activity_main.*
 
-class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFragment.SimpleCallback {
+class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
@@ -50,6 +46,22 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
+
+    private var _binding: ActivityFavouritesBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = ActivityFavouritesBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -109,7 +121,7 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
         cantoAdapter.onPreLongClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
             if (!MaterialCab.isActive) {
                 if (mMainActivity?.isOnTablet != true)
-                    mMainActivity?.toolbar_layout?.setExpanded(true, true)
+                    mMainActivity?.expandToolbar()
                 cantoAdapter.getAdapterItem(position).isSelected = true
                 cantoAdapter.notifyAdapterItemChanged(position)
                 startCab()
@@ -125,16 +137,16 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
 
         cantoAdapter.setHasStableIds(true)
 
-        favouritesList?.adapter = cantoAdapter
+        binding.favouritesList.adapter = cantoAdapter
         val llm = if (mMainActivity?.isGridLayout == true)
             GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         else
             LinearLayoutManager(context)
-        favouritesList?.layoutManager = llm
+        binding.favouritesList.layoutManager = llm
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        favouritesList?.addItemDecoration(insetDivider)
-        favouritesList?.itemAnimator = SlideRightAlphaAnimator()
+        binding.favouritesList.addItemDecoration(insetDivider)
+        binding.favouritesList.itemAnimator = SlideRightAlphaAnimator()
 
     }
 
@@ -241,8 +253,8 @@ class FavoritesFragment : Fragment(R.layout.activity_favourites), SimpleDialogFr
     private fun subscribeUiFavorites() {
         mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
             cantoAdapter.set(canti.sortedBy { it.title?.getText(requireContext()) })
-            no_favourites?.isInvisible = cantoAdapter.adapterItemCount > 0
-            favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
+            binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
+            binding.favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
         }
     }

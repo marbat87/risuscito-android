@@ -5,9 +5,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
+import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -27,6 +30,7 @@ import com.mikepenz.iconics.utils.paddingDp
 import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.pojo.Posizione
+import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.items.listaPersonalizzataItem
 import it.cammino.risuscito.items.posizioneTitleItem
@@ -38,13 +42,8 @@ import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.activity_lista_personalizzata.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.generic_card_item.view.*
-import kotlinx.android.synthetic.main.generic_list_item.view.*
-import kotlinx.android.synthetic.main.lista_pers_button.*
 
-class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata) {
+class ListaPredefinitaFragment : Fragment() {
 
     private val mCantiViewModel: DefaultListaViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
@@ -65,6 +64,22 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
     private var mLastClickTime: Long = 0
     private var mLUtils: LUtils? = null
 
+    private var _binding: ActivityListaPersonalizzataBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = ActivityListaPersonalizzataBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -76,18 +91,18 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
         // Creating new adapter object
         cantoAdapter.setHasStableIds(true)
         cantoAdapter.set(posizioniList)
-        recycler_list?.adapter = cantoAdapter
+        binding.recyclerList.adapter = cantoAdapter
 
         // Setting the layoutManager
-        recycler_list?.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerList.layoutManager = LinearLayoutManager(activity)
 
         subscribeUiFavorites()
 
-        button_pulisci.setOnClickListener {
+        binding.buttonPulisci.setOnClickListener {
             ListeUtils.cleanList(requireContext(), mCantiViewModel.defaultListaId)
         }
 
-        button_condividi.setOnClickListener {
+        binding.buttonCondividi.setOnClickListener {
             val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
             bottomSheetDialog.show(parentFragmentManager, null)
         }
@@ -147,10 +162,10 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
     private fun snackBarRimuoviCanto(view: View) {
         destroy()
         val parent = view.parent.parent as? View
-        longclickedPos = Integer.valueOf(parent?.generic_tag?.text.toString())
-        longClickedChild = Integer.valueOf(view.item_tag.text.toString())
+        longclickedPos = Integer.valueOf(parent?.findViewById<TextView>(R.id.generic_tag)?.text.toString())
+        longClickedChild = Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
         if (mMainActivity?.isOnTablet != true)
-            activity?.toolbar_layout?.setExpanded(true, true)
+            mMainActivity?.expandToolbar()
         startCab(false)
     }
 
@@ -198,9 +213,9 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                         R.id.action_switch_item -> {
                             startCab(true)
                             Toast.makeText(
-                                    activity,
-                                    resources.getString(R.string.switch_tooltip),
-                                    Toast.LENGTH_SHORT)
+                                            activity,
+                                            resources.getString(R.string.switch_tooltip),
+                                            Toast.LENGTH_SHORT)
                                     .show()
                             true
                         }
@@ -403,17 +418,17 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
         if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
             mLastClickTime = SystemClock.elapsedRealtime()
             val parent = v.parent.parent as? View
-            if (v.id == R.id.addCantoGenerico) {
+            if (v.id == R.id.add_canto_generico) {
                 if (mSwhitchMode) {
                     actionModeOk = true
                     destroy()
-                    ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent?.text_id_posizione?.text.toString()))
+                    ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString()))
                 } else {
                     if (!MaterialCab.isActive) {
                         val intent = Intent(activity, InsertActivity::class.java)
                         intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 1,
                                 InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
-                                InsertActivity.POSITION to Integer.valueOf(parent?.text_id_posizione?.text.toString())))
+                                InsertActivity.POSITION to Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())))
                         parentFragment?.startActivityForResult(intent, when (mCantiViewModel.defaultListaId) {
                             1 -> TAG_INSERT_PAROLA
                             2 -> TAG_INSERT_EUCARESTIA
@@ -425,15 +440,15 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
             } else {
                 if (!mSwhitchMode)
                     if (MaterialCab.isActive) {
-                        posizioneDaCanc = Integer.valueOf(parent?.text_id_posizione?.text.toString())
-                        idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
-                        timestampDaCanc = v.text_timestamp.text.toString()
+                        posizioneDaCanc = Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
+                        idDaCanc = Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
+                        timestampDaCanc = v.findViewById<TextView>(R.id.text_timestamp).text.toString()
                         snackBarRimuoviCanto(v)
                     } else {
                         //apri canto
                         val intent = Intent(activity, PaginaRenderActivity::class.java)
-                        intent.putExtras(bundleOf(Utility.PAGINA to v.text_source_canto.text.toString(),
-                                Utility.ID_CANTO to Integer.valueOf(v.text_id_canto_card.text.toString())))
+                        intent.putExtras(bundleOf(Utility.PAGINA to v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
+                                Utility.ID_CANTO to Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())))
                         mLUtils?.startActivityWithTransition(intent)
                     }
                 else {
@@ -443,8 +458,8 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
                             mCantiViewModel.defaultListaId,
                             posizioneDaCanc,
                             idDaCanc,
-                            Integer.valueOf(parent?.text_id_posizione?.text.toString()),
-                            Integer.valueOf((v.text_id_canto_card).text.toString())
+                            Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString()),
+                            Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
                     )
                 }
             }
@@ -453,9 +468,9 @@ class ListaPredefinitaFragment : Fragment(R.layout.activity_lista_personalizzata
 
     private val longClick = OnLongClickListener { v ->
         val parent = v.parent.parent as? View
-        posizioneDaCanc = Integer.valueOf(parent?.text_id_posizione?.text.toString())
-        idDaCanc = Integer.valueOf(v.text_id_canto_card.text.toString())
-        timestampDaCanc = v.text_timestamp.text.toString()
+        posizioneDaCanc = Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
+        idDaCanc = Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
+        timestampDaCanc = v.findViewById<TextView>(R.id.text_timestamp).text.toString()
         snackBarRimuoviCanto(v)
         true
     }

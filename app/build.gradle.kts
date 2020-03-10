@@ -3,7 +3,6 @@ plugins {
     id("io.fabric")
     id("com.google.gms.google-services")
     kotlin("android")
-    kotlin("android.extensions")
     kotlin("kapt")
 }
 
@@ -27,6 +26,9 @@ android {
                         "room.incremental" to "true",
                         "room.expandProjection" to "true")
             }
+        }
+        viewBinding {
+            isEnabled = true
         }
     }
 
@@ -73,8 +75,8 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.0.0-b01"
-val materialDrawerVersion = "8.0.0-b04"
+val fastAdapterVersion = "5.0.0"
+val materialDrawerVersion = "8.0.0-rc01"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.4"
 val iconicVersion = "5.0.0-a04"
@@ -87,7 +89,6 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.2.2")
     implementation("com.google.android.material:material:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
-    implementation("androidx.drawerlayout:drawerlayout:1.1.0-alpha03")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03")
     implementation("androidx.media:media:1.2.0-alpha01")
@@ -124,6 +125,7 @@ dependencies {
     implementation("com.mikepenz:fastadapter-extensions-swipe:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-expandable:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-ui:$fastAdapterVersion")
+    implementation("com.mikepenz:fastadapter-extensions-binding:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation("pub.devrel:easypermissions:3.0.0")

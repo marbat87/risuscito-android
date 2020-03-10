@@ -8,7 +8,9 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat.START
 import androidx.core.view.isInvisible
@@ -19,14 +21,13 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.snackbar.Snackbar
 import com.michaelflisar.changelog.ChangelogBuilder
+import it.cammino.risuscito.databinding.ActivityRisuscitoBinding
 import it.cammino.risuscito.utils.ThemeUtils
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_risuscito.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.PermissionRequest
 
-class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.PermissionCallbacks {
+class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private var mMainActivity: MainActivity? = null
     private val signInVisibility = object : BroadcastReceiver() {
@@ -37,12 +38,28 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
                 Log.d(
                         javaClass.name,
                         "DATA_VISIBLE: " + intent.getBooleanExtra(DATA_VISIBLE, false))
-                sign_in_button?.isVisible = intent.getBooleanExtra(DATA_VISIBLE, false)
+                binding.signInButton.isVisible = intent.getBooleanExtra(DATA_VISIBLE, false)
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
             }
 
         }
+    }
+
+    private var _binding: ActivityRisuscitoBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = ActivityRisuscitoBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,14 +73,14 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
 
         checkStoragePermissions()
 
-        imageView1.setOnClickListener {
+        binding.imageView1.setOnClickListener {
             if (mMainActivity?.isOnTablet == false)
-                mMainActivity?.root?.openDrawer(START)
+                mMainActivity?.activityDrawer?.openDrawer(START)
         }
 
-        sign_in_button.setSize(SignInButton.SIZE_WIDE)
-        sign_in_button.isInvisible = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Utility.SIGNED_IN, false)
-        sign_in_button.setOnClickListener {
+        binding.signInButton.setSize(SignInButton.SIZE_WIDE)
+        binding.signInButton.isInvisible = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Utility.SIGNED_IN, false)
+        binding.signInButton.setOnClickListener {
             mMainActivity?.setShowSnackbar()
             mMainActivity?.signIn()
         }
@@ -108,9 +125,9 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
                         requireContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             EasyPermissions.requestPermissions(
                     PermissionRequest.Builder(
-                            this,
-                            Utility.WRITE_STORAGE_RC,
-                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    this,
+                                    Utility.WRITE_STORAGE_RC,
+                                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             .setRationale(R.string.external_storage_pref_rationale)
                             .build())
         }
@@ -119,15 +136,18 @@ class Risuscito : Fragment(R.layout.activity_risuscito), EasyPermissions.Permiss
     override fun onPermissionsGranted(requestCode: Int, list: List<String>) {
         // Some permissions have been
         Log.d(TAG, "onPermissionsGranted: ")
-        Snackbar.make(requireActivity().main_content, getString(R.string.permission_ok), Snackbar.LENGTH_SHORT).show()
+        mMainActivity?.let {
+            Snackbar.make(it.activityMainContent, getString(R.string.permission_ok), Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     override fun onPermissionsDenied(requestCode: Int, list: List<String>) {
         // Some permissions have been denied
         Log.d(TAG, "onPermissionsDenied: ")
         PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.SAVE_LOCATION, "0") }
-        Snackbar.make(requireActivity().main_content, getString(R.string.external_storage_denied), Snackbar.LENGTH_SHORT)
-                .show()
+        mMainActivity?.let {
+            Snackbar.make(it.activityMainContent, getString(R.string.external_storage_denied), Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.P)

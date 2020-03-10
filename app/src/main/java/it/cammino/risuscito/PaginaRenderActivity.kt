@@ -55,6 +55,7 @@ import it.cammino.risuscito.Utility.readTextFromResource
 import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.LocalLink
+import it.cammino.risuscito.databinding.ActivityPaginaRenderBinding
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.playback.MusicService
@@ -66,7 +67,6 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
-import kotlinx.android.synthetic.main.activity_pagina_render.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
@@ -104,9 +104,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun run() {
             mViewModel.speedValue?.let {
                 try {
-                    cantoView.scrollBy(0, Integer.valueOf(it))
+                    binding.cantoView.scrollBy(0, Integer.valueOf(it))
                 } catch (e: NumberFormatException) {
-                    cantoView.scrollBy(0, 0)
+                    binding.cantoView.scrollBy(0, 0)
                 }
 
                 mHandler.postDelayed(this, 700)
@@ -123,34 +123,34 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 PlaybackStateCompat.STATE_PAUSED -> {
                     stopSeekbarUpdate()
                     showPlaying(false)
-                    music_seekbar.isEnabled = true
+                    binding.musicSeekbar.isEnabled = true
                 }
                 PlaybackStateCompat.STATE_STOPPED -> {
                     stopSeekbarUpdate()
-                    music_seekbar.progress = 0
-                    music_seekbar.isEnabled = false
+                    binding.musicSeekbar.progress = 0
+                    binding.musicSeekbar.isEnabled = false
                     showPlaying(false)
                 }
                 PlaybackStateCompat.STATE_ERROR -> {
-                    music_seekbar.isVisible = true
-                    music_loadingbar.isVisible = false
+                    binding.musicSeekbar.isVisible = true
+                    binding.musicLoadingbar.isVisible = false
                     stopSeekbarUpdate()
-                    music_seekbar.progress = 0
-                    music_seekbar.isEnabled = false
+                    binding.musicSeekbar.progress = 0
+                    binding.musicSeekbar.isEnabled = false
                     showPlaying(false)
                     Log.e(TAG, "onPlaybackStateChanged: " + state.errorMessage)
                     Snackbar.make(
-                            findViewById(android.R.id.content),
-                            state.errorMessage,
-                            Snackbar.LENGTH_SHORT)
+                                    findViewById(android.R.id.content),
+                                    state.errorMessage,
+                                    Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 PlaybackStateCompat.STATE_PLAYING -> {
-                    music_seekbar.isVisible = true
-                    music_loadingbar.isVisible = false
+                    binding.musicSeekbar.isVisible = true
+                    binding.musicLoadingbar.isVisible = false
                     scheduleSeekbarUpdate()
                     showPlaying(true)
-                    music_seekbar.isEnabled = true
+                    binding.musicSeekbar.isEnabled = true
                 }
             }
         }
@@ -159,11 +159,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             Log.d(TAG, "onMetadataChanged")
             if (metadata != null) {
                 val duration = metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt()
-                music_seekbar.max = duration
-                music_seekbar.isEnabled = true
+                binding.musicSeekbar.max = duration
+                binding.musicSeekbar.isEnabled = true
             }
         }
     }
+
     //  private int savedSpeed;
     private var mLUtils: LUtils? = null
     private var mMediaBrowser: MediaBrowserCompat? = null
@@ -181,7 +182,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         scheduleSeekbarUpdate()
                     }
                     showPlaying(mLastPlaybackState?.state == PlaybackStateCompat.STATE_PLAYING)
-                    music_seekbar.isEnabled = mLastPlaybackState?.state == PlaybackStateCompat.STATE_PLAYING || mLastPlaybackState?.state == PlaybackStateCompat.STATE_PAUSED
+                    binding.musicSeekbar.isEnabled = mLastPlaybackState?.state == PlaybackStateCompat.STATE_PLAYING || mLastPlaybackState?.state == PlaybackStateCompat.STATE_PAUSED
 
                     if (mediaController.metadata != null) {
                         Log.d(
@@ -189,12 +190,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 "onConnected: duration " + mediaController
                                         .metadata
                                         .getLong(MediaMetadataCompat.METADATA_KEY_DURATION))
-                        music_seekbar.max = mediaController
+                        binding.musicSeekbar.max = mediaController
                                 .metadata
                                 .getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt()
                     }
                     Log.d(TAG, "onConnected: mLastPlaybackState.getPosition() ${mLastPlaybackState?.position}")
-                    music_seekbar.progress = mLastPlaybackState?.position?.toInt() ?: 0
+                    binding.musicSeekbar.progress = mLastPlaybackState?.position?.toInt() ?: 0
                 } ?: Log.e(TAG, "onConnected: mMediaBrowser is NULL")
             } catch (e: RemoteException) {
                 Log.e(TAG, "onConnected: could not connect media controller", e)
@@ -238,9 +239,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 if (isDefaultLocationPublic(context) && !hasQ())
                     mediaScan(context, url ?: "")
                 Snackbar.make(
-                        findViewById(android.R.id.content),
-                        R.string.download_completed,
-                        Snackbar.LENGTH_SHORT)
+                                findViewById(android.R.id.content),
+                                R.string.download_completed,
+                                Snackbar.LENGTH_SHORT)
                         .show()
                 stopMedia()
                 refreshCatalog()
@@ -260,11 +261,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 Log.d(TAG, "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR))
                 dismissProgressDialog(DOWNLOAD_MP3)
                 Snackbar.make(
-                        findViewById(android.R.id.content),
-                        getString(R.string.download_error)
-                                + " "
-                                + intent.getStringExtra(DownloadService.DATA_ERROR),
-                        Snackbar.LENGTH_SHORT)
+                                findViewById(android.R.id.content),
+                                getString(R.string.download_error)
+                                        + " "
+                                        + intent.getStringExtra(DownloadService.DATA_ERROR),
+                                Snackbar.LENGTH_SHORT)
                         .show()
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
@@ -292,9 +293,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     startActivity(intent2)
                 } catch (e: ActivityNotFoundException) {
                     Snackbar.make(
-                            findViewById(android.R.id.content),
-                            R.string.no_pdf_reader,
-                            Snackbar.LENGTH_SHORT)
+                                    findViewById(android.R.id.content),
+                                    R.string.no_pdf_reader,
+                                    Snackbar.LENGTH_SHORT)
                             .show()
                 }
             }
@@ -311,10 +312,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         "$PdfExportService.DATA_EXPORT_ERROR: ${intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)}")
                 dismissProgressDialog(EXPORT_PDF)
                 Snackbar.make(
-                        findViewById(android.R.id.content),
-                        intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)
-                                ?: getString(R.string.error),
-                        Snackbar.LENGTH_SHORT)
+                                findViewById(android.R.id.content),
+                                intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)
+                                        ?: getString(R.string.error),
+                                Snackbar.LENGTH_SHORT)
                         .show()
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
@@ -332,7 +333,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 Log.d(TAG, "MSG_RETRIEVE_DONE: $done")
                 mViewModel.retrieveDone = done
                 showPlaying(false)
-                play_song.isEnabled = done
+                binding.playSong.isEnabled = done
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
             }
@@ -359,16 +360,20 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     }
 
-    private lateinit var cantoView: WebView
+//    private lateinit var cantoView: WebView
+
+    private lateinit var binding: ActivityPaginaRenderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pagina_render)
-        cantoView = canto_view as WebView
+        binding = ActivityPaginaRenderBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+//        setContentView(R.layout.activity_pagina_render)
+//        cantoView = canto_view as WebView
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
-        setSupportActionBar(risuscito_toolbar)
+        setSupportActionBar(binding.risuscitoToolbar)
         supportActionBar?.setTitle(R.string.canto_title_activity)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -380,7 +385,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             sizeDp = 24
             paddingDp = 4
         }
-        fab_canti.setMainFabClosedDrawable(icon)
+        binding.fabCanti.setMainFabClosedDrawable(icon)
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
@@ -401,7 +406,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             Log.e(TAG, e.localizedMessage, e)
         }
 
-        music_seekbar.setOnSeekBarChangeListener(
+        binding.musicSeekbar.setOnSeekBarChangeListener(
                 object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                         val time = String.format(
@@ -409,7 +414,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 "%02d:%02d",
                                 TimeUnit.MILLISECONDS.toMinutes(progress.toLong()),
                                 TimeUnit.MILLISECONDS.toSeconds(progress.toLong()) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(progress.toLong())))
-                        time_text.text = time
+                        binding.timeText.text = time
                     }
 
                     override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -424,11 +429,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     }
                 })
 
-        speed_seekbar.setOnSeekBarChangeListener(
+        binding.speedSeekbar.setOnSeekBarChangeListener(
                 object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                         mViewModel.speedValue = progress.toString()
-                        slider_text.text = getString(R.string.percent_progress, progress)
+                        binding.sliderText.text = getString(R.string.percent_progress, progress)
                         Log.d(javaClass.toString(), "speedValue cambiato! " + mViewModel.speedValue)
                     }
 
@@ -445,7 +450,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         DataRetrieverTask().execute(mViewModel.idCanto)
 
-        play_song.setOnClickListener {
+        binding.playSong.setOnClickListener {
             val controller = MediaControllerCompat.getMediaController(this)
             val stateObj = controller.playbackState
             val state = stateObj?.state ?: PlaybackStateCompat.STATE_NONE
@@ -462,7 +467,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             }
         }
 
-        play_scroll.setOnClickListener { v ->
+        binding.playScroll.setOnClickListener { v ->
             if (v.isSelected) {
                 showScrolling(false)
                 mViewModel.scrollPlaying = false
@@ -503,7 +508,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: ${mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)}")
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
             Handler().postDelayed(1500) {
-                if (music_buttons.isVisible)
+                if (binding.musicButtons.isVisible)
                     playIntroFull()
                 else
                     playIntroSmall()
@@ -530,7 +535,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     return true
                 } else {
                     SimpleDialogFragment.Builder(
-                            this, this, SAVE_TAB)
+                                    this, this, SAVE_TAB)
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
                             .positiveButton(R.string.save_exit_confirm)
@@ -557,7 +562,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 return true
             }
             R.id.action_help_canto -> {
-                if (music_buttons.isVisible)
+                if (binding.musicButtons.isVisible)
                     playIntroFull()
                 else
                     playIntroSmall()
@@ -569,7 +574,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     UpdateCantoTask().execute(1)
                 } else {
                     Snackbar.make(
-                            findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
+                                    findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 return true
@@ -583,14 +588,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-                    if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                    binding.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
-                        cantoView.setInitialScale(it.zoom)
+                        binding.cantoView.setInitialScale(it.zoom)
                 }
-                cantoView.webViewClient = MyWebViewClient()
+                binding.cantoView.webViewClient = MyWebViewClient()
                 return true
             }
             R.id.action_save_barre -> {
@@ -599,9 +604,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     UpdateCantoTask().execute(2)
                 } else {
                     Snackbar.make(
-                            findViewById(android.R.id.content),
-                            R.string.barre_not_saved,
-                            Snackbar.LENGTH_SHORT)
+                                    findViewById(android.R.id.content),
+                                    R.string.barre_not_saved,
+                                    Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 return true
@@ -615,14 +620,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
-                    if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                    binding.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
-                        cantoView.setInitialScale(it.zoom)
+                        binding.cantoView.setInitialScale(it.zoom)
                 }
-                cantoView.webViewClient = MyWebViewClient()
+                binding.cantoView.webViewClient = MyWebViewClient()
                 return true
             }
             else -> {
@@ -635,14 +640,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
-                        if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                        binding.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
-                            cantoView.setInitialScale(it.zoom)
+                            binding.cantoView.setInitialScale(it.zoom)
                     }
-                    cantoView.webViewClient = MyWebViewClient()
+                    binding.cantoView.webViewClient = MyWebViewClient()
                     return true
                 }
                 if (item.groupId == R.id.menu_gruppo_barre) {
@@ -654,14 +659,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
-                        if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                        binding.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
-                            cantoView.setInitialScale(it.zoom)
+                            binding.cantoView.setInitialScale(it.zoom)
                     }
-                    cantoView.webViewClient = MyWebViewClient()
+                    binding.cantoView.webViewClient = MyWebViewClient()
                     return true
                 }
             }
@@ -672,8 +677,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
 
-        if (fab_canti.isOpen) {
-            fab_canti.close()
+        if (binding.fabCanti.isOpen) {
+            binding.fabCanti.close()
             return
         }
 
@@ -690,7 +695,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mLUtils?.closeActivityWithTransition()
         } else {
             SimpleDialogFragment.Builder(
-                    this, this, SAVE_TAB)
+                            this, this, SAVE_TAB)
                     .title(R.string.dialog_save_tab_title)
                     .content(R.string.dialog_save_tab)
                     .positiveButton(R.string.save_exit_confirm)
@@ -701,7 +706,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        fab_canti.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabCanti.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     public override fun onResume() {
@@ -709,7 +714,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         Log.d(TAG, "onResume: ")
 
-        music_controls.isVisible = mViewModel.mostraAudio
+        binding.musicControls.isVisible = mViewModel.mostraAudio
 
         val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
         // registra un receiver per ricevere la notifica di preparazione della registrazione
@@ -759,9 +764,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun saveZoom(andSpeedAlso: Boolean, andSaveTabAlso: Boolean) {
         mViewModel.mCurrentCanto?.let {
             @Suppress("DEPRECATION")
-            it.zoom = (cantoView.scale * 100).toInt()
-            it.scrollX = cantoView.scrollX
-            it.scrollY = cantoView.scrollY
+            it.zoom = (binding.cantoView.scale * 100).toInt()
+            it.scrollX = binding.cantoView.scrollX
+            it.scrollY = binding.cantoView.scrollY
 
             if (andSpeedAlso) it.savedSpeed = mViewModel.speedValue
                     ?: "2"
@@ -930,9 +935,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             startService(i)
         } else
             Snackbar.make(
-                    findViewById(android.R.id.content),
-                    R.string.no_memory_writable,
-                    Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content),
+                            R.string.no_memory_writable,
+                            Snackbar.LENGTH_SHORT)
                     .show()
     }
 
@@ -965,9 +970,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             sizeDp = 24
             paddingDp = 2
         }
-        play_song.setImageDrawable(icon)
-        play_song.isVisible = mViewModel.retrieveDone
-        loadingBar.isGone = mViewModel.retrieveDone
+        binding.playSong.setImageDrawable(icon)
+        binding.playSong.isVisible = mViewModel.retrieveDone
+        binding.loadingBar.isGone = mViewModel.retrieveDone
     }
 
     private fun showScrolling(scrolling: Boolean) {
@@ -979,8 +984,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             sizeDp = 24
             paddingDp = 2
         }
-        play_scroll.setImageDrawable(icon)
-        play_scroll.isSelected = scrolling
+        binding.playScroll.setImageDrawable(icon)
+        binding.playScroll.isSelected = scrolling
     }
 
     override fun onPositive(tag: String) {
@@ -989,7 +994,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             DOWNLOAD_MP3 -> LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
             DELETE_LINK -> {
                 Snackbar.make(
-                        findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                                findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                         .show()
                 stopMedia()
                 DeleteLinkTask().execute(mViewModel.idCanto)
@@ -1005,7 +1010,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         Log.d(TAG, "DELETE_MP3 toDelete: $toDelete")
                         if (contentResolver.delete(toDelete, null, null) > 0) {
                             Snackbar.make(
-                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                            findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
                                     .show()
                         } else
                             Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
@@ -1021,7 +1026,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                         applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
                             }
                             Snackbar.make(
-                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                            findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
                                     .show()
                         } else
                             Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
@@ -1044,9 +1049,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     else {
                         mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                         Snackbar.make(
-                                findViewById(android.R.id.content),
-                                R.string.forced_private,
-                                Snackbar.LENGTH_SHORT)
+                                        findViewById(android.R.id.content),
+                                        R.string.forced_private,
+                                        Snackbar.LENGTH_SHORT)
                                 .show()
                         startInternalDownload()
                     }
@@ -1085,9 +1090,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     .fileChooser(context = this, filter = { it.isDirectory || it.extension.toLowerCase(getSystemLocale(resources)) == "mp3" }) { _, file ->
                         val path = file.absolutePath
                         Snackbar.make(
-                                findViewById(android.R.id.content),
-                                getString(R.string.file_selected) + ": " + path,
-                                Snackbar.LENGTH_SHORT)
+                                        findViewById(android.R.id.content),
+                                        getString(R.string.file_selected) + ": " + path,
+                                        Snackbar.LENGTH_SHORT)
                                 .show()
                         stopMedia()
                         InsertLinkTask().execute(mViewModel.idCanto.toString(), path)
@@ -1097,15 +1102,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playIntroSmall() {
-        music_controls.isVisible = true
+        binding.musicControls.isVisible = true
         TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
-                                risuscito_toolbar,
-                                R.id.tonalita,
-                                getString(R.string.action_tonalita),
-                                getString(R.string.sc_tonalita_desc))
+                                        binding.risuscitoToolbar,
+                                        R.id.tonalita,
+                                        getString(R.string.action_tonalita),
+                                        getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1113,10 +1118,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
-                                risuscito_toolbar,
-                                R.id.barre,
-                                getString(R.string.action_barre),
-                                getString(R.string.sc_barre_desc))
+                                        binding.risuscitoToolbar,
+                                        R.id.barre,
+                                        getString(R.string.action_barre),
+                                        getString(R.string.sc_barre_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1124,9 +1129,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
                         TapTarget.forView(
-                                play_scroll,
-                                getString(R.string.sc_scroll_title),
-                                getString(R.string.sc_scroll_desc))
+                                        binding.playScroll,
+                                        getString(R.string.sc_scroll_title),
+                                        getString(R.string.sc_scroll_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1134,9 +1139,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3),
                         TapTarget.forToolbarOverflow(
-                                risuscito_toolbar,
-                                getString(R.string.showcase_end_title),
-                                getString(R.string.showcase_help_general))
+                                        binding.risuscitoToolbar,
+                                        getString(R.string.showcase_end_title),
+                                        getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1147,7 +1152,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.isVisible = mViewModel.mostraAudio
+                                binding.musicControls.isVisible = mViewModel.mostraAudio
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
@@ -1156,22 +1161,22 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.isVisible = mViewModel.mostraAudio
+                                binding.musicControls.isVisible = mViewModel.mostraAudio
                             }
                         })
                 .start()
     }
 
     private fun playIntroFull() {
-        music_controls.isVisible = true
+        binding.musicControls.isVisible = true
         TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
-                                risuscito_toolbar,
-                                R.id.tonalita,
-                                getString(R.string.action_tonalita),
-                                getString(R.string.sc_tonalita_desc))
+                                        binding.risuscitoToolbar,
+                                        R.id.tonalita,
+                                        getString(R.string.action_tonalita),
+                                        getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1179,10 +1184,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
-                                risuscito_toolbar,
-                                R.id.barre,
-                                getString(R.string.action_barre),
-                                getString(R.string.sc_barre_desc))
+                                        binding.risuscitoToolbar,
+                                        R.id.barre,
+                                        getString(R.string.action_barre),
+                                        getString(R.string.sc_barre_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1190,9 +1195,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
                         TapTarget.forView(
-                                play_song,
-                                getString(R.string.sc_audio_title),
-                                getString(R.string.sc_audio_desc))
+                                        binding.playSong,
+                                        getString(R.string.sc_audio_title),
+                                        getString(R.string.sc_audio_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1200,9 +1205,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3),
                         TapTarget.forView(
-                                play_scroll,
-                                getString(R.string.sc_scroll_title),
-                                getString(R.string.sc_scroll_desc))
+                                        binding.playScroll,
+                                        getString(R.string.sc_scroll_title),
+                                        getString(R.string.sc_scroll_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1210,9 +1215,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(4),
                         TapTarget.forToolbarOverflow(
-                                risuscito_toolbar,
-                                getString(R.string.showcase_end_title),
-                                getString(R.string.showcase_help_general))
+                                        binding.risuscitoToolbar,
+                                        getString(R.string.showcase_end_title),
+                                        getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1223,7 +1228,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.isVisible = mViewModel.mostraAudio
+                                binding.musicControls.isVisible = mViewModel.mostraAudio
                             }
 
                             override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
@@ -1232,7 +1237,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
                             override fun onSequenceCanceled(tapTarget: TapTarget) {
                                 mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                music_controls.isVisible = mViewModel.mostraAudio
+                                binding.musicControls.isVisible = mViewModel.mostraAudio
                             }
                         })
                 .start()
@@ -1259,8 +1264,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     }
 
     private fun playFromId(id: String) {
-        music_seekbar.isVisible = false
-        music_loadingbar.isVisible = true
+        binding.musicSeekbar.isVisible = false
+        binding.musicLoadingbar.isVisible = true
         showPlaying(true)
         val controller = MediaControllerCompat.getMediaController(this)
         controller?.transportControls?.playFromMediaId(id, null)
@@ -1268,7 +1273,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun refreshCatalog() {
         Log.d(TAG, "refreshCatalog")
-        play_song.isEnabled = false
+        binding.playSong.isEnabled = false
         val controller = MediaControllerCompat.getMediaController(this)
         controller?.transportControls?.sendCustomAction(MusicService.ACTION_REFRESH, null)
     }
@@ -1304,8 +1309,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             currentPosition += (timeDelta.toInt() * (mLastPlaybackState?.playbackSpeed
                     ?: 0F)).toLong()
         }
-        music_seekbar.isEnabled = true
-        music_seekbar.progress = currentPosition.toInt()
+        binding.musicSeekbar.isEnabled = true
+        binding.musicSeekbar.progress = currentPosition.toInt()
     }
 
     private fun checkRecordsState() {
@@ -1320,9 +1325,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 } else {
                     mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
-                            findViewById(android.R.id.content),
-                            getString(R.string.external_storage_denied),
-                            Snackbar.LENGTH_SHORT)
+                                    findViewById(android.R.id.content),
+                                    getString(R.string.external_storage_denied),
+                                    Snackbar.LENGTH_SHORT)
                             .show()
                     retrieveMediaFileLink(this, url, false)
                 }
@@ -1331,18 +1336,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             mDownload = !(localUrl.isNullOrEmpty() && personalUrl.isNullOrEmpty())
 
-            // almeno una registrazione c'è, quindi nascondo il messaggio di no_records
-            no_record.isVisible = false
+            // almeno una registrazione c'è, quindi nascondo il messaggio di binding.noRecords
+            binding.noRecord.isVisible = false
             // mostra i pulsanti per il lettore musicale se ho una registrazione locale oppure se sono
             // online, altrimenti mostra il messaggio di mancata connessione
             Log.d(TAG, "isOnline ${Utility.isOnline(this)}")
-            music_buttons.isVisible = Utility.isOnline(this) || mDownload
-            no_connection.isInvisible = Utility.isOnline(this) || mDownload
+            binding.musicButtons.isVisible = Utility.isOnline(this) || mDownload
+            binding.noConnection.isInvisible = Utility.isOnline(this) || mDownload
         } else {
             mDownload = !personalUrl.isNullOrEmpty()
             // Se c'è una registrazione locale mostro i pulsanti
-            music_buttons.isVisible = mDownload
-            no_record.isInvisible = mDownload
+            binding.musicButtons.isVisible = mDownload
+            binding.noRecord.isInvisible = mDownload
         }// NON c'è la registrazione online
         initFabOptions()
     }
@@ -1352,7 +1357,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             view.postDelayed(600) {
                 if ((mViewModel.mCurrentCanto?.scrollX
                                 ?: 0) > 0 || (mViewModel.mCurrentCanto?.scrollY ?: 0) > 0)
-                    cantoView.scrollTo(
+                    binding.cantoView.scrollTo(
                             mViewModel.mCurrentCanto?.scrollX
                                     ?: 0, mViewModel.mCurrentCanto?.scrollY ?: 0)
             }
@@ -1397,7 +1402,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             // fix per crash su android 4.1
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
-                cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+                binding.cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
 
             val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
             var convMin: HashMap<String, String>? = null
@@ -1405,11 +1410,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-                if (nuovoFile != null) cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
-                cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                binding.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
 
-            val webSettings = cantoView.settings
+            val webSettings = binding.cantoView.settings
             webSettings.useWideViewPort = true
             webSettings.setSupportZoom(true)
             webSettings.loadWithOverviewMode = true
@@ -1419,20 +1424,20 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             mViewModel.mCurrentCanto?.let {
                 if (it.zoom > 0)
-                    cantoView.setInitialScale(it.zoom)
+                    binding.cantoView.setInitialScale(it.zoom)
             }
-            cantoView.webViewClient = MyWebViewClient()
+            binding.cantoView.webViewClient = MyWebViewClient()
 
             if (mViewModel.speedValue == null)
                 try {
-                    speed_seekbar.progress = Integer.valueOf(mViewModel.mCurrentCanto?.savedSpeed
+                    binding.speedSeekbar.progress = Integer.valueOf(mViewModel.mCurrentCanto?.savedSpeed
                             ?: "2")
                 } catch (e: NumberFormatException) {
                     Log.e(TAG, "savedSpeed ${mViewModel.mCurrentCanto?.savedSpeed}", e)
-                    speed_seekbar.progress = 2
+                    binding.speedSeekbar.progress = 2
                 }
             else
-                speed_seekbar.progress = Integer.valueOf(mViewModel.speedValue ?: "0")
+                binding.speedSeekbar.progress = Integer.valueOf(mViewModel.speedValue ?: "0")
 
             //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
             if (mViewModel.scrollPlaying) {
@@ -1507,9 +1512,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun onPostExecute(integer: Int?) {
             super.onPostExecute(integer)
             Snackbar.make(
-                    findViewById(android.R.id.content),
-                    if (integer == 1) R.string.favorite_added else R.string.favorite_removed,
-                    Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content),
+                            if (integer == 1) R.string.favorite_added else R.string.favorite_removed,
+                            Snackbar.LENGTH_SHORT)
                     .show()
             initFabOptions()
         }
@@ -1529,9 +1534,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             super.onPostExecute(integer)
             if (integer != 0)
                 Snackbar.make(
-                        findViewById(android.R.id.content),
-                        if (integer == 1) R.string.tab_saved else R.string.barre_saved,
-                        Snackbar.LENGTH_SHORT)
+                                findViewById(android.R.id.content),
+                                if (integer == 1) R.string.tab_saved else R.string.barre_saved,
+                                Snackbar.LENGTH_SHORT)
                         .show()
         }
     }
@@ -1540,17 +1545,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
         val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 
-        fab_canti.clearActionItems()
-        fab_canti.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabCanti.clearActionItems()
+        binding.fabCanti.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
 
-        fab_canti.addActionItem(
+        binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_fullscreen_on,
-                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen).apply {
-                            //                            colorInt = iconColor
-                            sizeDp = 24
-                            paddingDp = 2
-                        }
-                )
+                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen).apply {
+                                    //                            colorInt = iconColor
+                                    sizeDp = 24
+                                    paddingDp = 2
+                                }
+                        )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.fullscreen))
                         .setFabBackgroundColor(backgroundColor)
@@ -1559,14 +1564,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         .create()
         )
 
-        fab_canti.addActionItem(
+        binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_sound_off,
-                        IconicsDrawable(this, if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset else CommunityMaterial.Icon2.cmd_headset_off).apply {
-                            sizeDp = 24
-                            paddingDp = 4
+                                IconicsDrawable(this, if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset else CommunityMaterial.Icon2.cmd_headset_off).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
 //                            colorInt = iconColor
-                        }
-                )
+                                }
+                        )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(if (mViewModel.mostraAudio) R.string.audio_off else R.string.audio_on))
                         .setFabBackgroundColor(backgroundColor)
@@ -1587,7 +1592,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 icon.icon = CommunityMaterial.Icon.cmd_delete
                 getString(R.string.fab_delete_unlink)
             }
-            fab_canti.addActionItem(
+            binding.fabCanti.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_delete_file, icon)
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(text)
@@ -1598,14 +1603,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             )
         } else {
             if (!url.isNullOrEmpty())
-                fab_canti.addActionItem(
+                binding.fabCanti.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_save_file,
-                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_download).apply {
-                                    sizeDp = 24
-                                    paddingDp = 4
+                                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_download).apply {
+                                            sizeDp = 24
+                                            paddingDp = 4
 //                                    colorInt = iconColor
-                                }
-                        )
+                                        }
+                                )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.save_file))
                                 .setFabBackgroundColor(backgroundColor)
@@ -1613,14 +1618,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .setLabelColor(iconColor)
                                 .create()
                 )
-            fab_canti.addActionItem(
+            binding.fabCanti.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_link_file,
-                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant).apply {
-                                sizeDp = 24
-                                paddingDp = 4
+                                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant).apply {
+                                        sizeDp = 24
+                                        paddingDp = 4
 //                                colorInt = iconColor
-                            }
-                    )
+                                    }
+                            )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.only_link_title))
                             .setFabBackgroundColor(backgroundColor)
@@ -1631,14 +1636,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         }
 
-        fab_canti.addActionItem(
+        binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_favorite,
-                        IconicsDrawable(this, if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart).apply {
-                            sizeDp = 24
-                            paddingDp = 4
+                                IconicsDrawable(this, if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
 //                            colorInt = iconColor
-                        }
-                )
+                                }
+                        )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(if (mViewModel.mCurrentCanto?.favorite == 1) R.string.favorite_off else R.string.favorite_on))
                         .setFabBackgroundColor(backgroundColor)
@@ -1647,15 +1652,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         .create()
         )
 
-        fab_canti.setOnActionSelectedListener {
+        binding.fabCanti.setOnActionSelectedListener {
             when (it.id) {
                 R.id.fab_fullscreen_on -> {
-                    fab_canti.close()
+                    binding.fabCanti.close()
                     mHandler.removeCallbacks(mScrollDown)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     val bundle = Bundle()
-                    bundle.putString(Utility.URL_CANTO, cantoView.url)
-                    bundle.putInt(Utility.SPEED_VALUE, speed_seekbar.progress)
+                    bundle.putString(Utility.URL_CANTO, binding.cantoView.url)
+                    bundle.putInt(Utility.SPEED_VALUE, binding.speedSeekbar.progress)
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel.scrollPlaying)
                     bundle.putInt(Utility.ID_CANTO, mViewModel.idCanto)
 
@@ -1665,17 +1670,17 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     true
                 }
                 R.id.fab_sound_off -> {
-                    fab_canti.close()
+                    binding.fabCanti.close()
                     mViewModel.mostraAudio = !mViewModel.mostraAudio
-                    music_controls.isVisible = mViewModel.mostraAudio
+                    binding.musicControls.isVisible = mViewModel.mostraAudio
                     initFabOptions()
                     true
                 }
                 R.id.fab_delete_file -> {
-                    fab_canti.close()
+                    binding.fabCanti.close()
                     if (!url.isNullOrEmpty() && personalUrl.isNullOrEmpty()) {
                         SimpleDialogFragment.Builder(
-                                this, this, DELETE_MP3)
+                                        this, this, DELETE_MP3)
                                 .title(R.string.dialog_delete_mp3_title)
                                 .content(R.string.dialog_delete_mp3)
                                 .positiveButton(R.string.delete_confirm)
@@ -1683,7 +1688,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .show()
                     } else {
                         SimpleDialogFragment.Builder(
-                                this, this, DELETE_LINK)
+                                        this, this, DELETE_LINK)
                                 .title(R.string.dialog_delete_link_title)
                                 .content(R.string.dialog_delete_link)
                                 .positiveButton(R.string.unlink_confirm)
@@ -1693,9 +1698,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     true
                 }
                 R.id.fab_save_file -> {
-                    fab_canti.close()
+                    binding.fabCanti.close()
                     SimpleDialogFragment.Builder(
-                            this, this, DOWNLINK_CHOOSE)
+                                    this, this, DOWNLINK_CHOOSE)
                             .title(R.string.save_file)
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
@@ -1704,9 +1709,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     true
                 }
                 R.id.fab_link_file -> {
-                    fab_canti.close()
+                    binding.fabCanti.close()
                     SimpleDialogFragment.Builder(
-                            this, this, ONLY_LINK)
+                                    this, this, ONLY_LINK)
                             .title(R.string.only_link_title)
                             .content(R.string.only_link)
                             .positiveButton(R.string.associate_confirm)
@@ -1715,7 +1720,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     true
                 }
                 R.id.fab_favorite -> {
-                    fab_canti.close()
+                    binding.fabCanti.close()
                     val favoriteYet = mViewModel.mCurrentCanto?.favorite == 1
                     UpdateFavoriteTask().execute(if (favoriteYet) 0 else 1)
                     true

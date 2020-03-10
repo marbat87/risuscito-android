@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chooseRecycler"
+        android:id="@+id/choose_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fadeScrollbars="true"
@@ -18,7 +18,7 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/cantiRecycler"
+            android:id="@+id/canti_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fadeScrollbars="true"

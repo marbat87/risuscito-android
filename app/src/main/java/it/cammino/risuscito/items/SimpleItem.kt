@@ -3,12 +3,11 @@ package it.cammino.risuscito.items
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.Log
-import android.view.View
-import android.widget.TextView
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import com.mikepenz.fastadapter.FastAdapter
-import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
@@ -17,13 +16,13 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.databinding.SimpleRowItemBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.themeColor
-import kotlinx.android.synthetic.main.simple_row_item.view.*
 
 fun simpleItem(block: SimpleItem.() -> Unit): SimpleItem = SimpleItem().apply(block)
 
-class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
+class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
 
     var title: StringHolder? = null
         private set
@@ -82,72 +81,50 @@ class SimpleItem : AbstractItem<SimpleItem.ViewHolder>() {
     override val type: Int
         get() = R.id.fastadapter_simple_item_id
 
-    override val layoutRes: Int
-        get() = R.layout.simple_row_item
-
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
+    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): SimpleRowItemBinding {
+        return SimpleRowItemBinding.inflate(inflater, parent, false)
     }
 
-    /** our ViewHolder  */
-    class ViewHolder(var view: View) : FastAdapter.ViewHolder<SimpleItem>(view) {
+    override fun bindView(binding: SimpleRowItemBinding, payloads: List<Any>) {
+        val ctx = binding.root.context
 
-        var mTitle: TextView? = null
-        private var mPage: TextView? = null
-        private var mPageSelected: View? = null
-        private var mId: TextView? = null
-
-        override fun bindView(item: SimpleItem, payloads: List<Any>) {
-            val ctx = itemView.context
-
-            item.filter?.let {
-                if (it.isNotEmpty()) {
-                    val normalizedTitle = Utility.removeAccents(item.title?.getText(ctx)
-                            ?: "")
-                    val mPosition = normalizedTitle.toLowerCase(getSystemLocale(ctx.resources)).indexOf(it)
-                    if (mPosition >= 0) {
-                        val stringTitle = item.title?.getText(ctx)
-                        val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
-                                ?: "") else "")
-                                .append("<b>")
-                                .append(stringTitle?.substring(mPosition, mPosition + it.length))
-                                .append("</b>")
-                                .append(stringTitle?.substring(mPosition + it.length))
-                        mTitle?.text = LUtils.fromHtmlWrapper(highlighted.toString())
-                    } else
-                        StringHolder.applyTo(item.title, mTitle)
+        filter?.let {
+            if (it.isNotEmpty()) {
+                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
+                        ?: "")
+                val mPosition = normalizedTitle.toLowerCase(getSystemLocale(ctx.resources)).indexOf(it)
+                if (mPosition >= 0) {
+                    val stringTitle = title?.getText(ctx)
+                    val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
+                            ?: "") else "")
+                            .append("<b>")
+                            .append(stringTitle?.substring(mPosition, mPosition + it.length))
+                            .append("</b>")
+                            .append(stringTitle?.substring(mPosition + it.length))
+                    binding.textTitle.text = LUtils.fromHtmlWrapper(highlighted.toString())
                 } else
-                    StringHolder.applyTo(item.title, mTitle)
-            } ?: StringHolder.applyTo(item.title, mTitle)
-            StringHolder.applyToOrHide(item.page, mPage)
-            view.background = FastAdapterUIUtils.getSelectableBackground(
-                    ctx,
-                    ctx.themeColor(R.attr.colorSecondaryLight),
-                    true)
+                    StringHolder.applyTo(title, binding.textTitle)
+            } else
+                StringHolder.applyTo(title, binding.textTitle)
+        } ?: StringHolder.applyTo(title, binding.textTitle)
+        StringHolder.applyToOrHide(page, binding.textPage)
+        binding.root.background = FastAdapterUIUtils.getSelectableBackground(
+                ctx,
+                ctx.themeColor(R.attr.colorSecondaryLight),
+                true)
 
-            val bgShape = mPage?.background as? GradientDrawable
-            bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
-            mPage?.isInvisible = item.isSelected
-            mPageSelected?.isVisible = item.isSelected
-            val bgShapeSelected = mPageSelected?.background as? GradientDrawable
-            bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
+        val bgShape = binding.textPage.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        binding.textPage.isInvisible = isSelected
+        binding.selectedMark.isVisible = isSelected
+        val bgShapeSelected = binding.selectedMark.background as? GradientDrawable
+        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
 
-            mId?.text = item.id.toString()
-
-            itemView.setTag(com.mikepenz.fastadapter.R.id.fastadapter_item, item.id)
-        }
-
-        override fun unbindView(item: SimpleItem) {
-            mTitle?.text = null
-            mPage?.text = null
-            mId?.text = null
-        }
-
-        init {
-            mTitle = view.text_title
-            mPage = view.text_page
-            mPageSelected = view.selected_mark
-            mId = view.text_id_canto
-        }
     }
+
+    override fun unbindView(binding: SimpleRowItemBinding) {
+        binding.textTitle.text = null
+        binding.textPage.text = null
+    }
+
 }

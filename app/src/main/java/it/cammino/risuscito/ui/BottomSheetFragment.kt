@@ -17,19 +17,25 @@ import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
+import it.cammino.risuscito.databinding.BottomSheetBinding
 import it.cammino.risuscito.items.BottomSheetItem
-import kotlinx.android.synthetic.main.bottom_sheet.*
 
 class BottomSheetFragment : BottomSheetDialogFragment() {
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setStyle(DialogFragment.STYLE_NO_TITLE, 0)
-//    }
+    private var _binding: BottomSheetBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        return inflater.inflate(R.layout.bottom_sheet, container, false)
+        _binding = BottomSheetBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,10 +44,10 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val showTitle = arguments?.getBoolean("showTitle") ?: false
 
         if (showTitle)
-            sheet_title.setText(arguments?.getInt("title") ?: 0)
+            binding.sheetTitle.setText(arguments?.getInt("title") ?: 0)
         else
-            sheet_title.text = ""
-        sheet_title_area.isVisible = showTitle
+            binding.sheetTitle.text = ""
+        binding.sheetTitleArea.isVisible = showTitle
 
         val intent = arguments?.getParcelable<Intent>("intent")
         val pm = requireActivity().packageManager
@@ -75,8 +81,8 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             val adapter = FastItemAdapter<BottomSheetItem>()
             adapter.add(mList)
             adapter.onClickListener = mOnClickListener
-            shareList.adapter = adapter
-            shareList.layoutManager = GridLayoutManager(activity, 3)
+            binding.shareList.adapter = adapter
+            binding.shareList.layoutManager = GridLayoutManager(activity, 3)
         }
     }
 

@@ -14,7 +14,6 @@ import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetString
-import kotlinx.android.synthetic.main.list_group_item.view.*
 
 fun simpleSubExpandableItem(block: SimpleSubExpandableItem.() -> Unit): SimpleSubExpandableItem = SimpleSubExpandableItem().apply(block)
 
@@ -28,6 +27,7 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
         }
 
     private var subTitle: StringHolder? = null
+
     @Suppress("unused")
     var setSubTitle: Any? = null
         set(value) {
@@ -43,9 +43,9 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
     override var onItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = { v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int ->
         v?.let {
             if (!item.isExpanded) {
-                ViewCompat.animate(it.group_indicator).rotation(180f).start()
+                ViewCompat.animate(it.findViewById(R.id.group_indicator)).rotation(180f).start()
             } else {
-                ViewCompat.animate(it.group_indicator).rotation(0f).start()
+                ViewCompat.animate(it.findViewById(R.id.group_indicator)).rotation(0f).start()
             }
         }
         mOnClickListener?.invoke(v, adapter, item, position) ?: true
@@ -106,9 +106,9 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
         }
 
         init {
-            mTitle = view.group_title
-            mSubTitle = view.group_subtitle
-            mIndicator = view.group_indicator
+            mTitle = view.findViewById(R.id.group_title)
+            mSubTitle = view.findViewById(R.id.group_subtitle)
+            mIndicator = view.findViewById(R.id.group_indicator)
         }
     }
 }

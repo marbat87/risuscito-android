@@ -1,15 +1,13 @@
 package it.cammino.risuscito.items
 
 import android.content.pm.ResolveInfo
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import com.mikepenz.fastadapter.FastAdapter
-import com.mikepenz.fastadapter.items.AbstractItem
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import it.cammino.risuscito.R
-import kotlinx.android.synthetic.main.bottom_item.view.*
+import it.cammino.risuscito.databinding.BottomItemBinding
 
-class BottomSheetItem : AbstractItem<BottomSheetItem.ViewHolder>() {
+class BottomSheetItem : AbstractBindingItem<BottomItemBinding>() {
 
     var infoItem: ResolveInfo? = null
         private set
@@ -22,32 +20,19 @@ class BottomSheetItem : AbstractItem<BottomSheetItem.ViewHolder>() {
     override val type: Int
         get() = R.id.fastadapter_bottom_item_id
 
-    override val layoutRes: Int
-        get() = R.layout.bottom_item
-
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
+    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): BottomItemBinding {
+        return BottomItemBinding.inflate(inflater, parent, false)
     }
 
-    class ViewHolder(view: View) : FastAdapter.ViewHolder<BottomSheetItem>(view) {
-        private var mIcon: ImageView? = null
-        private var mLabel: TextView? = null
+    override fun bindView(binding: BottomItemBinding, payloads: List<Any>) {
+        val pm = binding.root.context.packageManager
+        binding.appIcon.setImageDrawable(infoItem?.loadIcon(pm))
+        binding.appLabel.text = infoItem?.loadLabel(pm)
+    }
 
-        override fun bindView(item: BottomSheetItem, payloads: List<Any>) {
-            val pm = itemView.context.packageManager
-            mIcon?.setImageDrawable(item.infoItem?.loadIcon(pm))
-            mLabel?.text = item.infoItem?.loadLabel(pm)
-        }
-
-        override fun unbindView(item: BottomSheetItem) {
-            mLabel?.text = null
-            mIcon?.setImageDrawable(null)
-        }
-
-        init {
-            mIcon = view.app_icon
-            mLabel = view.app_label
-        }
+    override fun unbindView(binding: BottomItemBinding) {
+        binding.appLabel.text = null
+        binding.appIcon.setImageDrawable(null)
     }
 
 }

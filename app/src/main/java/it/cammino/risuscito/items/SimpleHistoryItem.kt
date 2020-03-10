@@ -2,28 +2,27 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.view.View
-import android.widget.TextView
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import com.mikepenz.fastadapter.FastAdapter
-import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.databinding.RowItemHistoryBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.themeColor
-import kotlinx.android.synthetic.main.row_item_history.view.*
 import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 fun simpleHistoryItem(block: SimpleHistoryItem.() -> Unit): SimpleHistoryItem = SimpleHistoryItem().apply(block)
 
-class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
+class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
 
     var title: StringHolder? = null
         private set
@@ -69,73 +68,51 @@ class SimpleHistoryItem : AbstractItem<SimpleHistoryItem.ViewHolder>() {
     override val type: Int
         get() = R.id.fastadapter_history_item_id
 
-    override val layoutRes: Int
-        get() = R.layout.row_item_history
-
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
+    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): RowItemHistoryBinding {
+        return RowItemHistoryBinding.inflate(inflater, parent, false)
     }
 
-    class ViewHolder(var view: View) : FastAdapter.ViewHolder<SimpleHistoryItem>(view) {
+    override fun bindView(binding: RowItemHistoryBinding, payloads: List<Any>) {
+        val ctx = binding.root.context
 
-        var mTitle: TextView? = null
-        private var mPage: TextView? = null
-        private var mPageSelected: View? = null
-        private var mTimestamp: TextView? = null
-        private var mId: TextView? = null
+        StringHolder.applyTo(title, binding.textTitle)
+        StringHolder.applyToOrHide(page, binding.textPage)
 
-        override fun bindView(item: SimpleHistoryItem, payloads: List<Any>) {
-            val ctx = itemView.context
+        binding.root.background = FastAdapterUIUtils.getSelectableBackground(
+                ctx,
+                ctx.themeColor(R.attr.colorSecondaryLight),
+                true)
 
-            StringHolder.applyTo(item.title, mTitle)
-            StringHolder.applyToOrHide(item.page, mPage)
+        val bgShape = binding.textPage.background as? GradientDrawable
+        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        binding.textPage.isInvisible = isSelected
+        binding.selectedMark.isVisible = isSelected
+        val bgShapeSelected = binding.selectedMark.background as? GradientDrawable
+        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
 
-            view.background = FastAdapterUIUtils.getSelectableBackground(
-                    ctx,
-                    ctx.themeColor(R.attr.colorSecondaryLight),
-                    true)
+        if (timestamp != null) {
+            // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
+            val df = DateFormat.getDateTimeInstance(
+                    DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
+            val tempTimestamp: String
 
-            val bgShape = mPage?.background as? GradientDrawable
-            bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
-            mPage?.isInvisible = item.isSelected
-            mPageSelected?.isVisible = item.isSelected
-            val bgShapeSelected = mPageSelected?.background as? GradientDrawable
-            bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
-
-            mId?.text = item.id.toString()
-
-            if (item.timestamp != null) {
-                // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
-                val df = DateFormat.getDateTimeInstance(
-                        DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
-                val tempTimestamp: String
-
-                val dateTimestamp = Date(java.lang.Long.parseLong(item.timestamp?.getText(ctx).toString()))
-                tempTimestamp = if (df is SimpleDateFormat) {
-                    val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
-                    df.applyPattern(pattern)
-                    df.format(dateTimestamp)
-                } else
-                    df.format(dateTimestamp)
-                mTimestamp?.text = tempTimestamp
-                mTimestamp?.isVisible = true
+            val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.getText(ctx).toString()))
+            tempTimestamp = if (df is SimpleDateFormat) {
+                val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
+                df.applyPattern(pattern)
+                df.format(dateTimestamp)
             } else
-                mTimestamp?.isVisible = false
-        }
-
-        override fun unbindView(item: SimpleHistoryItem) {
-            mTitle?.text = null
-            mPage?.text = null
-            mId?.text = null
-            mTimestamp?.text = null
-        }
-
-        init {
-            mTitle = view.text_title
-            mPage = view.text_page
-            mPageSelected = view.selected_mark
-            mTimestamp = view.text_timestamp
-            mId = view.text_id_canto
-        }
+                df.format(dateTimestamp)
+            binding.textTimestamp.text = tempTimestamp
+            binding.textTimestamp.isVisible = true
+        } else
+            binding.textTimestamp.isVisible = false
     }
+
+    override fun unbindView(binding: RowItemHistoryBinding) {
+        binding.textTitle.text = null
+        binding.textPage.text = null
+        binding.textTimestamp.text = null
+    }
+
 }

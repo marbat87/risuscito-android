@@ -17,21 +17,25 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
+import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat.START
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
+import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -54,14 +58,13 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
-import com.mikepenz.materialdrawer.model.interfaces.IProfile
-import com.mikepenz.materialdrawer.model.utils.nameRes
+import com.mikepenz.materialdrawer.model.interfaces.*
 import com.mikepenz.materialdrawer.util.setItems
 import com.mikepenz.materialdrawer.widget.AccountHeaderView
 import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
 import com.mikepenz.materialdrawer.widget.MiniDrawerSliderView
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
@@ -69,15 +72,8 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
-import it.cammino.risuscito.utils.descriptionText
-import it.cammino.risuscito.utils.nameRes
-import it.cammino.risuscito.utils.nameText
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.common_bottom_bar.*
-import kotlinx.android.synthetic.main.common_circle_progress.*
-import kotlinx.android.synthetic.main.common_top_toolbar.*
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.max
@@ -105,6 +101,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private var mMediumFont: Typeface? = null
     private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
 
+    private lateinit var binding: ActivityMainBinding
+
     private val nextStepReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // Implement UI change code here once notification is received
@@ -131,15 +129,17 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.hasNavDrawer = true
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         onBackPressedDispatcher.addCallback(this) {
             when {
-                searchView.onBackPressed() -> {
+                binding.searchView.onBackPressed() -> {
                 }
-                fab_pager.isOpen -> fab_pager.close()
+                binding.fabPager.isOpen -> binding.fabPager.close()
                 isTabletWithNoFixedDrawer && crossFader.isCrossFaded() -> crossFader.crossFade()
-                !isOnTablet && root?.isDrawerOpen(START) == true -> root?.closeDrawer(START)
+                !isOnTablet && binding.drawer?.isDrawerOpen(START) == true -> binding.drawer?.closeDrawer(START)
                 else -> backToHome(true)
             }
         }
@@ -155,7 +155,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             sizeDp = 56
         }
 
-        setSupportActionBar(risuscito_toolbar)
+        setSupportActionBar(binding.risuscitoToolbar)
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
             TranslationTask(this).execute()
@@ -174,7 +174,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         setupNavDrawer(savedInstanceState)
 
-        toolbar_layout?.setExpanded(true, false)
+        binding.toolbarLayout.setExpanded(true, false)
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -241,7 +241,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onSaveInstanceState(_outState: Bundle) {
         var outState = _outState
         //add the values which need to be saved from the drawer to the bundle
-        slider?.let { outState = it.saveInstanceState(outState) }
+        binding.slider?.let { outState = it.saveInstanceState(outState) }
         //add the values, which need to be saved from the drawer to the bundle
         if (::sliderView.isInitialized) {
             outState = sliderView.saveInstanceState(outState)
@@ -259,7 +259,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        fab_pager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabPager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
@@ -273,7 +273,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         }
 
         mAccountHeader = AccountHeaderView(this).apply {
-            slider?.let { attachToSliderView(it) }
+            binding.slider?.let { attachToSliderView(it) }
             selectionListEnabledForSingleProfile = false
             profileImagesClickable = false
             mRegularFont?.let {
@@ -292,7 +292,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         R.id.gplus_revoke.toLong() -> showAccountRelatedDialog(REVOKE)
                     }
                 }
-
                 //false if you have not consumed the event and it should close the drawer
                 false
             }
@@ -301,7 +300,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         if (isOnTablet) {
             sliderView = MaterialDrawerSliderView(this).apply {
-                //                hasStableIds = true
                 accountHeader = mAccountHeader
                 customWidth = MATCH_PARENT
                 setItems(
@@ -371,7 +369,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 sliderView.setSelectionAtPosition(1, false)
 
             if (isTabletWithFixedDrawer) {
-                fixed_drawer_content?.addView(sliderView)
+                binding.fixedDrawerContent?.addView(sliderView)
             } else {
                 miniSliderView = MiniDrawerSliderView(this).apply {
                     drawer = sliderView
@@ -382,22 +380,22 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 //create and build our crossfader (see the MiniDrawer is also builded in here, as the build method returns the view to be used in the crossfader)
                 //the crossfader library can be found here: https://github.com/mikepenz/Crossfader
                 crossFader = Crossfader<CrossFadeSlidingPaneLayout>()
-                        .withContent(main_content)
+                        .withContent(binding.mainContent)
                         .withFirst(sliderView, firstWidth)
                         .withSecond(miniSliderView, secondWidth)
                         .withSavedInstance(savedInstanceState)
                         .withGmailStyleSwiping()
                         .withPanelSlideListener(object : SlidingPaneLayout.PanelSlideListener {
                             override fun onPanelSlide(panel: View, slideOffset: Float) {
-                                (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.progress = min(1f, max(0f, slideOffset))
+                                (binding.risuscitoToolbar.navigationIcon as? DrawerArrowDrawable)?.progress = min(1f, max(0f, slideOffset))
                             }
 
                             override fun onPanelClosed(panel: View) {
-                                (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(false)
+                                (binding.risuscitoToolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(false)
                             }
 
                             override fun onPanelOpened(panel: View) {
-                                (risuscito_toolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(true)
+                                (binding.risuscitoToolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(true)
                             }
                         })
                         .build()
@@ -406,15 +404,14 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 miniSliderView.crossFader = CrossfadeWrapper(crossFader)
                 //define a shadow (this is only for normal LTR layouts if you have a RTL app you need to define the other one
                 crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-                risuscito_toolbar.navigationIcon = DrawerArrowDrawable(this)
-                risuscito_toolbar.setNavigationOnClickListener { crossFader.crossFade() }
+                binding.risuscitoToolbar.navigationIcon = DrawerArrowDrawable(this)
+                binding.risuscitoToolbar.setNavigationOnClickListener { crossFader.crossFade() }
             }
         } else {
-            mActionBarDrawerToggle = ActionBarDrawerToggle(this, root, risuscito_toolbar, R.string.material_drawer_open, R.string.material_drawer_close)
+            mActionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawer, binding.risuscitoToolbar, R.string.material_drawer_open, R.string.material_drawer_close)
             mActionBarDrawerToggle.syncState()
 
-            slider?.apply {
-                //                hasStableIds = true
+            binding.slider?.apply {
                 setItems(
                         PrimaryDrawerItem().apply {
                             nameRes = R.string.activity_homepage
@@ -479,9 +476,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 setSavedInstance(savedInstanceState)
             }
             if (savedInstanceState == null)
-                slider?.setSelectionAtPosition(1, false)
-            root?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
-            root?.addDrawerListener(mActionBarDrawerToggle)
+                binding.slider?.setSelectionAtPosition(1, false)
+            binding.drawer?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
+            binding.drawer?.addDrawerListener(mActionBarDrawerToggle)
         }
     }
 
@@ -498,7 +495,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             R.id.navigation_history.toLong() -> HistoryFragment()
             else -> Risuscito()
         }
-        toolbar_layout?.setExpanded(true, true)
+        binding.toolbarLayout.setExpanded(true, true)
 
         // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
         val myFragment = supportFragmentManager
@@ -600,41 +597,41 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun closeFabMenu() {
-        if (fab_pager?.isOpen == true)
-            fab_pager?.close()
+        if (binding.fabPager.isOpen)
+            binding.fabPager.close()
     }
 
     fun toggleFabMenu() {
-        fab_pager?.toggle()
+        binding.fabPager.toggle()
     }
 
     fun enableFab(enable: Boolean) {
         Log.d(TAG, "enableFab: $enable")
         if (enable) {
-            if (fab_pager?.isOpen == true)
-                fab_pager?.close()
+            if (binding.fabPager.isOpen)
+                binding.fabPager.close()
             else {
-                val params = fab_pager?.layoutParams as? CoordinatorLayout.LayoutParams
+                val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
                 params?.behavior = SpeedDialView.ScrollingViewSnackbarBehavior()
-                fab_pager.requestLayout()
-                fab_pager.show()
+                binding.fabPager.requestLayout()
+                binding.fabPager.show()
             }
         } else {
-            if (fab_pager?.isOpen == true)
-                fab_pager?.close()
-            fab_pager.hide()
-            val params = fab_pager?.layoutParams as? CoordinatorLayout.LayoutParams
+            if (binding.fabPager.isOpen)
+                binding.fabPager.close()
+            binding.fabPager.hide()
+            val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
             params?.behavior = SpeedDialView.NoBehavior()
-            fab_pager.requestLayout()
+            binding.fabPager.requestLayout()
         }
     }
 
     fun initFab(optionMenu: Boolean, icon: Drawable, click: View.OnClickListener, action: SpeedDialView.OnActionSelectedListener?, customList: Boolean) {
         Log.d(TAG, "initFab()")
         enableFab(false)
-        fab_pager.setMainFabClosedDrawable(icon)
-        fab_pager.clearActionItems()
-        fab_pager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabPager.setMainFabClosedDrawable(icon)
+        binding.fabPager.clearActionItems()
+        binding.fabPager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         enableFab(true)
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
@@ -642,13 +639,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
             val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 
-            fab_pager.addActionItem(
+            binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_pulisci,
-                            IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant).apply {
-                                sizeDp = 24
-                                paddingDp = 4
-                            }
-                    )
+                                    IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant).apply {
+                                        sizeDp = 24
+                                        paddingDp = 4
+                                    }
+                            )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.dialog_reset_list_title))
                             .setFabBackgroundColor(backgroundColor)
@@ -657,13 +654,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .create()
             )
 
-            fab_pager.addActionItem(
+            binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista,
-                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
-                                sizeDp = 24
-                                paddingDp = 4
-                            }
-                    )
+                                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+                                        sizeDp = 24
+                                        paddingDp = 4
+                                    }
+                            )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.action_add_list))
                             .setFabBackgroundColor(backgroundColor)
@@ -672,13 +669,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .create()
             )
 
-            fab_pager.addActionItem(
+            binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi,
-                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant).apply {
-                                sizeDp = 24
-                                paddingDp = 4
-                            }
-                    )
+                                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant).apply {
+                                        sizeDp = 24
+                                        paddingDp = 4
+                                    }
+                            )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.action_share))
                             .setFabBackgroundColor(backgroundColor)
@@ -688,13 +685,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             )
 
             if (customList) {
-                fab_pager.addActionItem(
+                binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_condividi_file,
-                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment).apply {
-                                    sizeDp = 24
-                                    paddingDp = 4
-                                }
-                        )
+                                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment).apply {
+                                            sizeDp = 24
+                                            paddingDp = 4
+                                        }
+                                )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_share_file))
                                 .setFabBackgroundColor(backgroundColor)
@@ -703,13 +700,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .create()
                 )
 
-                fab_pager.addActionItem(
+                binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista,
-                                IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil).apply {
-                                    sizeDp = 24
-                                    paddingDp = 4
-                                }
-                        )
+                                        IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil).apply {
+                                            sizeDp = 24
+                                            paddingDp = 4
+                                        }
+                                )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_edit_list))
                                 .setFabBackgroundColor(backgroundColor)
@@ -718,13 +715,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .create()
                 )
 
-                fab_pager.addActionItem(
+                binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_delete_lista,
-                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete).apply {
-                                    sizeDp = 24
-                                    paddingDp = 4
-                                }
-                        )
+                                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete).apply {
+                                            sizeDp = 24
+                                            paddingDp = 4
+                                        }
+                                )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_remove_list))
                                 .setFabBackgroundColor(backgroundColor)
@@ -733,34 +730,49 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .create()
                 )
             }
-            fab_pager.setOnActionSelectedListener(action)
+            binding.fabPager.setOnActionSelectedListener(action)
 
         }
-        fab_pager.mainFab.setOnClickListener(click)
+        binding.fabPager.mainFab.setOnClickListener(click)
     }
 
     fun getFab(): FloatingActionButton {
-        return fab_pager.mainFab
+        return binding.fabPager.mainFab
     }
 
     fun setTabVisible(visible: Boolean) {
-        material_tabs.isVisible = visible
+        binding.materialTabs.isVisible = visible
     }
 
     fun expandToolbar() {
-        toolbar_layout?.setExpanded(true, true)
+        binding.toolbarLayout.setExpanded(true, true)
     }
 
     fun getMaterialTabs(): TabLayout {
-        return material_tabs
+        return binding.materialTabs
     }
+
+    val activityDrawer: DrawerLayout?
+        get() = binding.drawer
+
+    val activityBottomBar: BottomAppBar
+        get() = binding.bottomBar
+
+    val activitySearchView: SimpleSearchView
+        get() = binding.searchView
+
+    val activityMainContent: View
+        get() = binding.mainContent
+
+    val activityToolbar: Toolbar
+        get() = binding.risuscitoToolbar
 
     fun enableBottombar(enabled: Boolean) {
         Log.d(TAG, "enableBottombar - enabled: $enabled")
         if (enabled)
-            mLUtils.animateIn(bottom_bar)
+            mLUtils.animateIn(binding.bottomBar)
         else
-            mLUtils.animateOut(bottom_bar)
+            mLUtils.animateOut(binding.bottomBar)
     }
 
     // [START signIn]
@@ -811,9 +823,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         } else {
             // Sign in failed, handle failure and update UI
             Toast.makeText(this, getString(
-                    R.string.login_failed,
-                    -1,
-                    task.exception?.localizedMessage), Toast.LENGTH_SHORT)
+                            R.string.login_failed,
+                            -1,
+                            task.exception?.localizedMessage), Toast.LENGTH_SHORT)
                     .show()
             acct = null
             updateUI(false)
@@ -840,9 +852,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                         Toast.makeText(this, getString(
-                                R.string.login_failed,
-                                -1,
-                                task.exception?.localizedMessage), Toast.LENGTH_SHORT)
+                                        R.string.login_failed,
+                                        -1,
+                                        task.exception?.localizedMessage), Toast.LENGTH_SHORT)
                                 .show()
                     }
                 }
@@ -863,16 +875,16 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 personPhotoUrl = personPhotoUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
                 Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
                 profile = ProfileDrawerItem().apply {
-                    nameText = acct?.displayName
-                    descriptionText = acct?.email
+                    nameText = acct?.displayName as? CharSequence ?: ""
+                    descriptionText = acct?.email as? CharSequence ?: ""
                     icon = ImageHolder(personPhotoUrl)
                     identifier = PROF_ID
                     typeface = mRegularFont
                 }
             } else {
                 profile = ProfileDrawerItem().apply {
-                    nameText = acct?.displayName
-                    descriptionText = acct?.email
+                    nameText = acct?.displayName as? CharSequence ?: ""
+                    descriptionText = acct?.email as? CharSequence ?: ""
                     icon = ImageHolder(profileIcon)
                     identifier = PROF_ID
                     typeface = mRegularFont
@@ -921,11 +933,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     private fun showProgressDialog() {
-        loadingBar?.isVisible = true
+        binding.loadingBar.isVisible = true
     }
 
     private fun hideProgressDialog() {
-        loadingBar?.isVisible = false
+        binding.loadingBar.isVisible = false
     }
 
     fun setShowSnackbar() {
@@ -1001,8 +1013,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             miniSliderView.setSelection(R.id.navigation_home.toLong())
             sliderView.setSelection(R.id.navigation_home.toLong())
         }
-        toolbar_layout?.setExpanded(true, true)
-        slider?.setSelection(R.id.navigation_home.toLong())
+        binding.toolbarLayout.setExpanded(true, true)
+        binding.slider?.setSelection(R.id.navigation_home.toLong())
     }
 
     private fun showAccountRelatedDialog(tag: String) {
@@ -1115,12 +1127,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     it.dismissProgressDialog(BACKUP_RUNNING)
                     if (result.isEmpty())
                         Snackbar.make(
-                                it.main_content,
-                                R.string.gdrive_backup_success,
-                                Snackbar.LENGTH_LONG)
+                                        it.binding.mainContent,
+                                        R.string.gdrive_backup_success,
+                                        Snackbar.LENGTH_LONG)
                                 .show()
                     else
-                        Snackbar.make(it.main_content, result, Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(it.binding.mainContent, result, Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
@@ -1158,7 +1170,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .positiveButton(R.string.ok)
                                 .show()
                     else
-                        Snackbar.make(it.main_content, result, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(it.binding.mainContent, result, Snackbar.LENGTH_LONG).show()
                 }
             }
 

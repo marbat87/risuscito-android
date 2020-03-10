@@ -33,7 +33,6 @@ import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.utils.ThemeUtils
-import kotlinx.android.synthetic.main.activity_main.*
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 
@@ -51,11 +50,14 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 FAILED -> {
                     Log.e(TAG, "Module install failed with ${state.errorCode()}")
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
-                    Snackbar.make(
-                            requireActivity().main_content,
-                            "Module install failed with ${state.errorCode()}",
-                            Snackbar.LENGTH_SHORT)
-                            .show()
+                    mMainActivity?.let {
+                        Snackbar.make(
+                                        it.activityMainContent,
+                                        "Module install failed with ${state.errorCode()}",
+                                        Snackbar.LENGTH_SHORT)
+                                .show()
+                    }
+
                 }
                 REQUIRES_USER_CONFIRMATION -> {
                     splitInstallManager.startConfirmationDialogForResult(state, activity, CONFIRMATION_REQUEST_CODE)
@@ -85,11 +87,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         }
                     } else {
                         Log.e(TAG, "Module install failed: empyt language list")
-                        Snackbar.make(
-                                requireActivity().main_content,
-                                "Module install failed: no language installed!",
-                                Snackbar.LENGTH_SHORT)
-                                .show()
+                        mMainActivity?.let {
+                            Snackbar.make(
+                                            it.activityMainContent,
+                                            "Module install failed: no language installed!",
+                                            Snackbar.LENGTH_SHORT)
+                                    .show()
+                        }
                     }
                 }
                 else -> Log.d(TAG, "Status: ${state.status()}")
@@ -104,7 +108,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             if (LUtils.hasL()) {
                 mMainActivity?.let { activity ->
                     ProgressDialogFragment.Builder(
-                            activity, null, DOWNLOAD_LANGUAGE)
+                                    activity, null, DOWNLOAD_LANGUAGE)
                             .content(R.string.download_running)
                             .progressIndeterminate(false)
                             .progressMax(100)
@@ -122,19 +126,21 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         ?.addOnFailureListener { exception ->
                             Log.e(TAG, "language download error", exception)
                             ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
-                            Snackbar.make(
-                                    requireActivity().main_content,
-                                    "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
-                                    Snackbar.LENGTH_SHORT)
-                                    .show()
+                            mMainActivity?.let {
+                                Snackbar.make(
+                                                it.activityMainContent,
+                                                "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
+                                                Snackbar.LENGTH_SHORT)
+                                        .show()
+                            }
                         }
                         // When the platform accepts your request to download
                         // an on demand module, it binds it to the following session ID.
                         // You use this ID to track further status updates for the request.
                         ?.addOnSuccessListener { id -> sessionId = id }
-            }
-            else {
-                RisuscitoApplication.localeManager.persistLanguage(newValue as? String ?: currentLang)
+            } else {
+                RisuscitoApplication.localeManager.persistLanguage(newValue as? String
+                        ?: currentLang)
                 val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
                 mIntent?.let {
                     it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -207,8 +213,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop")
-        try { splitInstallManager.unregisterListener(listener) }
-        catch (e: IllegalArgumentException) {
+        try {
+            splitInstallManager.unregisterListener(listener)
+        } catch (e: IllegalArgumentException) {
             Log.e(TAG, "unregister error", e)
         }
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
@@ -224,11 +231,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             if (resultCode == Activity.RESULT_CANCELED) {
                 Log.e(TAG, "download cancelled by user")
                 ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
-                Snackbar.make(
-                        requireActivity().main_content,
-                        "download cancelled by user",
-                        Snackbar.LENGTH_SHORT)
-                        .show()
+                mMainActivity?.let {
+                    Snackbar.make(
+                                    it.activityMainContent,
+                                    "download cancelled by user",
+                                    Snackbar.LENGTH_SHORT)
+                            .show()
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)

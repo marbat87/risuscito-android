@@ -6,9 +6,7 @@ import android.os.AsyncTask.Status
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.ContextThemeWrapper
-import android.view.Gravity
-import android.view.View
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
@@ -29,6 +27,7 @@ import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.databinding.SearchLayoutBinding
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
@@ -36,14 +35,12 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.search_layout.*
-import kotlinx.android.synthetic.main.tinted_progressbar.*
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
 
-class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.SimpleCallback {
+class SearchFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private val mViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
@@ -58,6 +55,22 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
     private var mLastClickTime: Long = 0
     private var mMainActivity: MainActivity? = null
     private lateinit var mPopupMenu: PopupMenu
+
+    private var _binding: SearchLayoutBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = SearchLayoutBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -97,7 +110,7 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
 
         subscribeUiCanti()
 
-        textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+        binding.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             var consume = false
@@ -119,43 +132,43 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
 
         cantoAdapter.setHasStableIds(true)
 
-        matchedList.adapter = cantoAdapter
+        binding.matchedList.adapter = cantoAdapter
         val llm = if (mMainActivity?.isGridLayout == true)
             GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         else
             LinearLayoutManager(context)
-        matchedList.layoutManager = llm
+        binding.matchedList.layoutManager = llm
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        matchedList.addItemDecoration(insetDivider)
+        binding.matchedList.addItemDecoration(insetDivider)
 
-        textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
+        binding.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)?.hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
+                ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)?.hideSoftInputFromWindow(binding.textFieldRicerca.windowToken, 0)
                 returnValue = true
             }
             returnValue
         }
 
-        textfieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+        binding.textFieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
             ricercaStringa(s.toString())
         }
 
         val wrapper = ContextThemeWrapper(requireContext(), R.style.Widget_MaterialComponents_PopupMenu_Risuscito)
-        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, more_options, Gravity.END) else PopupMenu(wrapper, more_options)
+        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, binding.moreOptions, Gravity.END) else PopupMenu(wrapper, binding.moreOptions)
         mPopupMenu.inflate(R.menu.search_option_menu)
         mPopupMenu.menu.findItem(R.id.consegnaty_only).isVisible = false
         mPopupMenu.setOnMenuItemClickListener {
             it.isChecked = !it.isChecked
             mViewModel.advancedSearch = it.isChecked
-            textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
-            ricercaStringa(textfieldRicerca.text.toString())
+            binding.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+            ricercaStringa(binding.textFieldRicerca.text.toString())
             true
         }
 
-        more_options.setOnClickListener {
+        binding.moreOptions.setOnClickListener {
             mPopupMenu.show()
         }
 
@@ -195,16 +208,16 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
                 if (it.status == Status.RUNNING) it.cancel(true)
             }
             searchTask = SearchTask(this)
-            searchTask?.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch)
+            searchTask?.execute(binding.textFieldRicerca.text.toString(), mViewModel.advancedSearch)
         } else {
             if (s.isEmpty()) {
                 searchTask?.let {
                     if (it.status == Status.RUNNING) it.cancel(true)
                 }
-                search_no_results.isVisible = false
-                matchedList.isVisible = false
+                binding.searchNoResults.isVisible = false
+                binding.matchedList.isVisible = false
                 cantoAdapter.clear()
-                search_progress.isVisible = false
+                binding.searchProgress.isVisible = false
             }
         }
     }
@@ -273,17 +286,17 @@ class SearchFragment : Fragment(R.layout.search_layout), SimpleDialogFragment.Si
         override fun onPreExecute() {
             super.onPreExecute()
             if (isCancelled) return
-            fragmentReference.get()?.search_no_results?.isVisible = false
-            fragmentReference.get()?.search_progress?.isVisible = true
+            fragmentReference.get()?.binding?.searchNoResults?.isVisible = false
+            fragmentReference.get()?.binding?.searchProgress?.isVisible = true
         }
 
         override fun onPostExecute(titoliResult: ArrayList<SimpleItem>) {
             super.onPostExecute(titoliResult)
             if (isCancelled) return
             fragmentReference.get()?.cantoAdapter?.set(titoliResult)
-            fragmentReference.get()?.search_progress?.isVisible = false
-            fragmentReference.get()?.search_no_results?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
-            fragmentReference.get()?.matchedList?.isGone = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
+            fragmentReference.get()?.binding?.searchProgress?.isVisible = false
+            fragmentReference.get()?.binding?.searchNoResults?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
+            fragmentReference.get()?.binding?.matchedList?.isGone = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
         }
     }
 
