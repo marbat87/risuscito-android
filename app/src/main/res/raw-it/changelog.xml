@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4500"
-        date="Marzo 2020"
+    <release versionCode="4501"
+        date="Aprile 2020"
         versionName="4.5.0">
-        <bugfix>Bugfixes</bugfix>
+        <bugfix>Ordinamento degli elementi checkabili nella sezione dei Canti Consegnati</bugfix>
     </release>
 
     <release versionCode="4439"
