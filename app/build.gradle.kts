@@ -78,19 +78,19 @@ val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.0.0"
 val materialDrawerVersion = "8.0.0-rc01"
 val materialDialogsVersion = "3.3.0"
-val roomVersion = "2.2.4"
-val iconicVersion = "5.0.0-a04"
+val roomVersion = "2.2.5"
+val iconicVersion = "5.0.0-b01"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.play:core:1.6.5")
+    implementation("com.google.android.play:core:1.7.1")
     implementation("androidx.activity:activity-ktx:1.1.0")
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.core:core-ktx:1.2.0")
-    implementation("androidx.fragment:fragment-ktx:1.2.2")
+    implementation("androidx.fragment:fragment-ktx:1.2.3")
     implementation("com.google.android.material:material:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-beta01")
     implementation("androidx.media:media:1.2.0-alpha01")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
@@ -104,7 +104,7 @@ dependencies {
     implementation("com.google.firebase:firebase-core:17.2.3")
     implementation("com.google.firebase:firebase-firestore-ktx:21.4.1")
     implementation("com.google.firebase:firebase-storage-ktx:19.1.1")
-    implementation("com.google.firebase:firebase-auth:19.2.0")
+    implementation("com.google.firebase:firebase-auth:19.3.0")
     implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
