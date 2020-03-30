@@ -347,7 +347,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         },
                         PrimaryDrawerItem().apply {
                             nameRes = R.string.title_activity_settings
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_settings
+                            iconicsIcon = CommunityMaterial.Icon.cmd_cog
                             identifier = R.id.navigation_settings.toLong()
                             typeface = mMediumFont
                         },
@@ -457,7 +457,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         },
                         PrimaryDrawerItem().apply {
                             nameRes = R.string.title_activity_settings
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_settings
+                            iconicsIcon = CommunityMaterial.Icon.cmd_cog
                             identifier = R.id.navigation_settings.toLong()
                             typeface = mMediumFont
                         },

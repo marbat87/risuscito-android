@@ -76,10 +76,10 @@ android {
 
 val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.0.0"
-val materialDrawerVersion = "8.0.0-rc02"
+val materialDrawerVersion = "8.0.0"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.5"
-val iconicVersion = "5.0.0"
+val iconicVersion = "5.0.1"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.7.1")
@@ -115,7 +115,7 @@ dependencies {
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:iconics-core:$iconicVersion")
     implementation("com.mikepenz:iconics-views:$iconicVersion")
-    implementation("com.mikepenz:community-material-typeface:3.7.95.4-kotlin@aar")
+    implementation("com.mikepenz:community-material-typeface:5.0.45.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.afollestad:material-cab:1.3.1")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.3")
