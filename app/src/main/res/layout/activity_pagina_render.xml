@@ -208,8 +208,9 @@
 
         </FrameLayout>
 
-        <WebView
+        <include
             android:id="@+id/canto_view"
+            layout="@layout/common_webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignWithParentIfMissing="true"

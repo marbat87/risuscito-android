@@ -33,17 +33,15 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     private val mScrollDown: Runnable = object : Runnable {
         override fun run() {
             try {
-                binding.cantoView.scrollBy(0, speedValue)
+                binding.cantoView.cantoView.scrollBy(0, speedValue)
             } catch (e: NumberFormatException) {
-                binding.cantoView.scrollBy(0, 0)
+                binding.cantoView.cantoView.scrollBy(0, 0)
             }
 
             mHandler.postDelayed(this, 700)
         }
     }
     private var mLUtils: LUtils? = null
-
-//    private lateinit var cantoView: WebView
 
     private lateinit var binding: ActivityPaginaRenderFullscreenBinding
 
@@ -53,8 +51,6 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPaginaRenderFullscreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        setContentView(R.layout.activity_pagina_render_fullscreen)
-//        cantoView = canto_view as WebView
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
@@ -84,11 +80,11 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     public override fun onResume() {
         super.onResume()
 
-        binding.cantoView.loadUrl(urlCanto)
+        binding.cantoView.cantoView.loadUrl(urlCanto)
         if (scrollPlaying)
             mScrollDown.run()
 
-        val webSettings = binding.cantoView.settings
+        val webSettings = binding.cantoView.cantoView.settings
         webSettings.useWideViewPort = true
         webSettings.setSupportZoom(true)
         webSettings.loadWithOverviewMode = true
@@ -96,16 +92,16 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         webSettings.builtInZoomControls = true
         webSettings.displayZoomControls = false
 
-        binding.cantoView.webViewClient = MyWebViewClient()
+        binding.cantoView.cantoView.webViewClient = MyWebViewClient()
     }
 
     private fun saveZoom() {
         @Suppress("DEPRECATION")
         //aggiunto per evitare che la pagina venga chiusa troppo velocemente prima del caricamento del canto
         currentCanto?.let {
-            it.zoom = (binding.cantoView.scale * 100).toInt()
-            it.scrollX = binding.cantoView.scrollX
-            it.scrollY = binding.cantoView.scrollY
+            it.zoom = (binding.cantoView.cantoView.scale * 100).toInt()
+            it.scrollX = binding.cantoView.cantoView.scrollX
+            it.scrollY = binding.cantoView.cantoView.scrollY
             Log.d(TAG, "it.id ${it.id} / it.zoom ${it.zoom} / it.scrollX ${it.scrollX} / it.scrollY ${it.scrollY}")
             ZoomSaverTask(this, it).execute()
             return
@@ -165,9 +161,9 @@ class PaginaRenderFullScreen : ThemeableActivity() {
                 val apiResult = Pair(activityReference.get(), activityReference.get()?.currentCanto)
                 apiResult.letCheckNull { activity, canto ->
                     Log.d(TAG, "onPostExecute: ${canto.zoom} - ${canto.scrollX} - ${canto.scrollY}")
-                    if (canto.zoom > 0) activity.binding.cantoView.setInitialScale(canto.zoom)
+                    if (canto.zoom > 0) activity.binding.cantoView.cantoView.setInitialScale(canto.zoom)
                     if (canto.scrollX > 0 || canto.scrollY > 0)
-                        activity.binding.cantoView.scrollTo(canto.scrollX, canto.scrollY)
+                        activity.binding.cantoView.cantoView.scrollTo(canto.scrollX, canto.scrollY)
                 }
             }
         }

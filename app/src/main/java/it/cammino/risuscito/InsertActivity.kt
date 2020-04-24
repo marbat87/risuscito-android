@@ -70,7 +70,6 @@ class InsertActivity : ThemeableActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityInsertSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        setContentView(R.layout.activity_insert_search)
 
         binding.risuscitoToolbar.risuscitoToolbar.title = getString(R.string.title_activity_inserisci_titolo)
         setSupportActionBar(binding.risuscitoToolbar.risuscitoToolbar)
