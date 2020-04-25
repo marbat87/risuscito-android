@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4501"
-        date="April 2020"
+    <release versionCode="4502"
+        date="May 2020"
         versionName="4.5.0">
         <bugfix>List order of checkable items in Delivered Songs section</bugfix>
+        <new>Added Turkish language (if Turkish is your systema language, please delete application data or uninstall and then resintall it)</new>
     </release>
 
     <release versionCode="4439"

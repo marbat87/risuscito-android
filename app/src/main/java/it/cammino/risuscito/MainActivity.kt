@@ -69,6 +69,7 @@ import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
@@ -521,6 +522,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         when (conversion?.substring(0, 2)) {
             LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
             LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
+            LANGUAGE_TURKISH -> accordi1 = CambioAccordi.accordi_tr
         }
 
         var accordi2 = CambioAccordi.accordi_it
@@ -528,6 +530,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         when (conversion?.substring(3, 5)) {
             LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
             LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
+            LANGUAGE_TURKISH -> accordi2 = CambioAccordi.accordi_tr
         }
 
         val mappa = HashMap<String, String>()
@@ -561,6 +564,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         when (conversion?.substring(0, 2)) {
             LANGUAGE_UKRAINIAN -> barre1 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
+            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
         }
 
         var barre2 = CambioAccordi.barre_it
@@ -568,6 +572,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         when (conversion?.substring(3, 5)) {
             LANGUAGE_UKRAINIAN -> barre2 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
+            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
         }
 
         val mappa = HashMap<String, String>()

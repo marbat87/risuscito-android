@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4501"
-        date="Aprile 2020"
+    <release versionCode="4502"
+        date="Maggio 2020"
         versionName="4.5.0">
         <bugfix>Ordinamento degli elementi checkabili nella sezione dei Canti Consegnati</bugfix>
+        <new>Aggiunta traduzione in Turco (se il tuo dispositivo è in Turco, cancella i dati dell'applicazione oppure disinstallala e reinstallala)</new>
     </release>
 
     <release versionCode="4439"
