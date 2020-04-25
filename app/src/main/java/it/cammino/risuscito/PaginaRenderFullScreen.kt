@@ -33,9 +33,9 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     private val mScrollDown: Runnable = object : Runnable {
         override fun run() {
             try {
-                binding.cantoView.cantoView.scrollBy(0, speedValue)
+                findViewById<WebView>(R.id.canto_view).scrollBy(0, speedValue)
             } catch (e: NumberFormatException) {
-                binding.cantoView.cantoView.scrollBy(0, 0)
+                findViewById<WebView>(R.id.canto_view).scrollBy(0, 0)
             }
 
             mHandler.postDelayed(this, 700)
@@ -80,11 +80,11 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     public override fun onResume() {
         super.onResume()
 
-        binding.cantoView.cantoView.loadUrl(urlCanto)
+        findViewById<WebView>(R.id.canto_view).loadUrl(urlCanto)
         if (scrollPlaying)
             mScrollDown.run()
 
-        val webSettings = binding.cantoView.cantoView.settings
+        val webSettings = findViewById<WebView>(R.id.canto_view).settings
         webSettings.useWideViewPort = true
         webSettings.setSupportZoom(true)
         webSettings.loadWithOverviewMode = true
@@ -92,16 +92,16 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         webSettings.builtInZoomControls = true
         webSettings.displayZoomControls = false
 
-        binding.cantoView.cantoView.webViewClient = MyWebViewClient()
+        findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
     }
 
     private fun saveZoom() {
         @Suppress("DEPRECATION")
         //aggiunto per evitare che la pagina venga chiusa troppo velocemente prima del caricamento del canto
         currentCanto?.let {
-            it.zoom = (binding.cantoView.cantoView.scale * 100).toInt()
-            it.scrollX = binding.cantoView.cantoView.scrollX
-            it.scrollY = binding.cantoView.cantoView.scrollY
+            it.zoom = (findViewById<WebView>(R.id.canto_view).scale * 100).toInt()
+            it.scrollX = findViewById<WebView>(R.id.canto_view).scrollX
+            it.scrollY = findViewById<WebView>(R.id.canto_view).scrollY
             Log.d(TAG, "it.id ${it.id} / it.zoom ${it.zoom} / it.scrollX ${it.scrollX} / it.scrollY ${it.scrollY}")
             ZoomSaverTask(this, it).execute()
             return
@@ -161,9 +161,9 @@ class PaginaRenderFullScreen : ThemeableActivity() {
                 val apiResult = Pair(activityReference.get(), activityReference.get()?.currentCanto)
                 apiResult.letCheckNull { activity, canto ->
                     Log.d(TAG, "onPostExecute: ${canto.zoom} - ${canto.scrollX} - ${canto.scrollY}")
-                    if (canto.zoom > 0) activity.binding.cantoView.cantoView.setInitialScale(canto.zoom)
+                    if (canto.zoom > 0) activity.findViewById<WebView>(R.id.canto_view).setInitialScale(canto.zoom)
                     if (canto.scrollX > 0 || canto.scrollY > 0)
-                        activity.binding.cantoView.cantoView.scrollTo(canto.scrollX, canto.scrollY)
+                        activity.findViewById<WebView>(R.id.canto_view).scrollTo(canto.scrollX, canto.scrollY)
                 }
             }
         }

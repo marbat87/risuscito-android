@@ -104,9 +104,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun run() {
             mViewModel.speedValue?.let {
                 try {
-                    binding.cantoView.cantoView.scrollBy(0, Integer.valueOf(it))
+                    findViewById<WebView>(R.id.canto_view).scrollBy(0, Integer.valueOf(it))
                 } catch (e: NumberFormatException) {
-                    binding.cantoView.cantoView.scrollBy(0, 0)
+                    findViewById<WebView>(R.id.canto_view).scrollBy(0, 0)
                 }
 
                 mHandler.postDelayed(this, 700)
@@ -584,14 +584,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-                    if (nuovoFile != null) binding.cantoView.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                    if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    binding.cantoView.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                    findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
-                        binding.cantoView.cantoView.setInitialScale(it.zoom)
+                        findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
                 }
-                binding.cantoView.cantoView.webViewClient = MyWebViewClient()
+                findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
                 return true
             }
             R.id.action_save_barre -> {
@@ -616,14 +616,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
-                    if (nuovoFile != null) binding.cantoView.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                    if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    binding.cantoView.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                    findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
-                        binding.cantoView.cantoView.setInitialScale(it.zoom)
+                        findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
                 }
-                binding.cantoView.cantoView.webViewClient = MyWebViewClient()
+                findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
                 return true
             }
             else -> {
@@ -636,14 +636,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
-                        if (nuovoFile != null) binding.cantoView.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                        if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        binding.cantoView.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                        findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
-                            binding.cantoView.cantoView.setInitialScale(it.zoom)
+                            findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
                     }
-                    binding.cantoView.cantoView.webViewClient = MyWebViewClient()
+                    findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
                     return true
                 }
                 if (item.groupId == R.id.menu_gruppo_barre) {
@@ -655,14 +655,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
-                        if (nuovoFile != null) binding.cantoView.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                        if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        binding.cantoView.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                        findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
-                            binding.cantoView.cantoView.setInitialScale(it.zoom)
+                            findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
                     }
-                    binding.cantoView.cantoView.webViewClient = MyWebViewClient()
+                    findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
                     return true
                 }
             }
@@ -760,9 +760,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun saveZoom(andSpeedAlso: Boolean, andSaveTabAlso: Boolean) {
         mViewModel.mCurrentCanto?.let {
             @Suppress("DEPRECATION")
-            it.zoom = (binding.cantoView.cantoView.scale * 100).toInt()
-            it.scrollX = binding.cantoView.cantoView.scrollX
-            it.scrollY = binding.cantoView.cantoView.scrollY
+            it.zoom = (findViewById<WebView>(R.id.canto_view).scale * 100).toInt()
+            it.scrollX = findViewById<WebView>(R.id.canto_view).scrollX
+            it.scrollY = findViewById<WebView>(R.id.canto_view).scrollY
 
             if (andSpeedAlso) it.savedSpeed = mViewModel.speedValue
                     ?: "2"
@@ -1353,7 +1353,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             view.postDelayed(600) {
                 if ((mViewModel.mCurrentCanto?.scrollX
                                 ?: 0) > 0 || (mViewModel.mCurrentCanto?.scrollY ?: 0) > 0)
-                    binding.cantoView.cantoView.scrollTo(
+                    findViewById<WebView>(R.id.canto_view).scrollTo(
                             mViewModel.mCurrentCanto?.scrollX
                                     ?: 0, mViewModel.mCurrentCanto?.scrollY ?: 0)
             }
@@ -1398,7 +1398,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             // fix per crash su android 4.1
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
-                binding.cantoView.cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+                findViewById<WebView>(R.id.canto_view).setLayerType(View.LAYER_TYPE_SOFTWARE, null)
 
             val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
             var convMin: HashMap<String, String>? = null
@@ -1406,11 +1406,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
             if (convMap != null) {
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-                if (nuovoFile != null) binding.cantoView.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
-                binding.cantoView.cantoView.loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
 
-            val webSettings = binding.cantoView.cantoView.settings
+            val webSettings = findViewById<WebView>(R.id.canto_view).settings
             webSettings.useWideViewPort = true
             webSettings.setSupportZoom(true)
             webSettings.loadWithOverviewMode = true
@@ -1420,9 +1420,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
             mViewModel.mCurrentCanto?.let {
                 if (it.zoom > 0)
-                    binding.cantoView.cantoView.setInitialScale(it.zoom)
+                    findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
             }
-            binding.cantoView.cantoView.webViewClient = MyWebViewClient()
+            findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
 
             if (mViewModel.speedValue == null)
                 try {
@@ -1655,7 +1655,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mHandler.removeCallbacks(mScrollDown)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     val bundle = Bundle()
-                    bundle.putString(Utility.URL_CANTO, binding.cantoView.cantoView.url)
+                    bundle.putString(Utility.URL_CANTO, findViewById<WebView>(R.id.canto_view).url)
                     bundle.putInt(Utility.SPEED_VALUE, binding.speedSeekbar.progress)
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel.scrollPlaying)
                     bundle.putInt(Utility.ID_CANTO, mViewModel.idCanto)
