@@ -32,11 +32,6 @@ android {
         }
     }
 
-//    sourceSets {
-//        val main by getting
-//        main.java.srcDirs("src/main/kotlin")
-//    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
