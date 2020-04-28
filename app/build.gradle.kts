@@ -113,7 +113,7 @@ dependencies {
     implementation("com.mikepenz:community-material-typeface:5.0.45.1-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.afollestad:material-cab:1.3.1")
-    implementation("com.github.jrvansuita:MaterialAbout:0.2.3")
+    implementation("com.github.jrvansuita:MaterialAbout:0.2.4")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.0")
     implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-drag:$fastAdapterVersion")
