@@ -141,9 +141,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     showPlaying(false)
                     Log.e(TAG, "onPlaybackStateChanged: " + state.errorMessage)
                     Snackbar.make(
-                                    findViewById(android.R.id.content),
-                                    state.errorMessage,
-                                    Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content),
+                            state.errorMessage,
+                            Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 PlaybackStateCompat.STATE_PLAYING -> {
@@ -240,9 +240,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 if (isDefaultLocationPublic(context) && !hasQ())
                     mediaScan(context, url ?: "")
                 Snackbar.make(
-                                findViewById(android.R.id.content),
-                                R.string.download_completed,
-                                Snackbar.LENGTH_SHORT)
+                        findViewById(android.R.id.content),
+                        R.string.download_completed,
+                        Snackbar.LENGTH_SHORT)
                         .show()
                 stopMedia()
                 refreshCatalog()
@@ -262,11 +262,11 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 Log.d(TAG, "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR))
                 dismissProgressDialog(DOWNLOAD_MP3)
                 Snackbar.make(
-                                findViewById(android.R.id.content),
-                                getString(R.string.download_error)
-                                        + " "
-                                        + intent.getStringExtra(DownloadService.DATA_ERROR),
-                                Snackbar.LENGTH_SHORT)
+                        findViewById(android.R.id.content),
+                        getString(R.string.download_error)
+                                + " "
+                                + intent.getStringExtra(DownloadService.DATA_ERROR),
+                        Snackbar.LENGTH_SHORT)
                         .show()
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
@@ -294,9 +294,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     startActivity(intent2)
                 } catch (e: ActivityNotFoundException) {
                     Snackbar.make(
-                                    findViewById(android.R.id.content),
-                                    R.string.no_pdf_reader,
-                                    Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content),
+                            R.string.no_pdf_reader,
+                            Snackbar.LENGTH_SHORT)
                             .show()
                 }
             }
@@ -313,10 +313,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         "$PdfExportService.DATA_EXPORT_ERROR: ${intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)}")
                 dismissProgressDialog(EXPORT_PDF)
                 Snackbar.make(
-                                findViewById(android.R.id.content),
-                                intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)
-                                        ?: getString(R.string.error),
-                                Snackbar.LENGTH_SHORT)
+                        findViewById(android.R.id.content),
+                        intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)
+                                ?: getString(R.string.error),
+                        Snackbar.LENGTH_SHORT)
                         .show()
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
@@ -532,7 +532,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     return true
                 } else {
                     SimpleDialogFragment.Builder(
-                                    this, this, SAVE_TAB)
+                            this, this, SAVE_TAB)
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
                             .positiveButton(R.string.save_exit_confirm)
@@ -571,7 +571,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     UpdateCantoTask().execute(1)
                 } else {
                     Snackbar.make(
-                                    findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 return true
@@ -587,7 +587,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                     if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                    findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina!!))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
@@ -601,9 +601,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     UpdateCantoTask().execute(2)
                 } else {
                     Snackbar.make(
-                                    findViewById(android.R.id.content),
-                                    R.string.barre_not_saved,
-                                    Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content),
+                            R.string.barre_not_saved,
+                            Snackbar.LENGTH_SHORT)
                             .show()
                 }
                 return true
@@ -619,7 +619,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
                     if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                    findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina!!))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
@@ -639,7 +639,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
                         if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                        findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina!!))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
@@ -658,7 +658,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
                         if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                        findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina!!))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
@@ -692,7 +692,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             mLUtils?.closeActivityWithTransition()
         } else {
             SimpleDialogFragment.Builder(
-                            this, this, SAVE_TAB)
+                    this, this, SAVE_TAB)
                     .title(R.string.dialog_save_tab_title)
                     .content(R.string.dialog_save_tab)
                     .positiveButton(R.string.save_exit_confirm)
@@ -933,9 +933,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             startService(i)
         } else
             Snackbar.make(
-                            findViewById(android.R.id.content),
-                            R.string.no_memory_writable,
-                            Snackbar.LENGTH_SHORT)
+                    findViewById(android.R.id.content),
+                    R.string.no_memory_writable,
+                    Snackbar.LENGTH_SHORT)
                     .show()
     }
 
@@ -992,7 +992,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             DOWNLOAD_MP3 -> LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
             DELETE_LINK -> {
                 Snackbar.make(
-                                findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                        findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                         .show()
                 stopMedia()
                 DeleteLinkTask().execute(mViewModel.idCanto)
@@ -1008,7 +1008,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         Log.d(TAG, "DELETE_MP3 toDelete: $toDelete")
                         if (contentResolver.delete(toDelete, null, null) > 0) {
                             Snackbar.make(
-                                            findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
                                     .show()
                         } else
                             Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
@@ -1024,7 +1024,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                         applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
                             }
                             Snackbar.make(
-                                            findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
                                     .show()
                         } else
                             Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
@@ -1047,9 +1047,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     else {
                         mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                         Snackbar.make(
-                                        findViewById(android.R.id.content),
-                                        R.string.forced_private,
-                                        Snackbar.LENGTH_SHORT)
+                                findViewById(android.R.id.content),
+                                R.string.forced_private,
+                                Snackbar.LENGTH_SHORT)
                                 .show()
                         startInternalDownload()
                     }
@@ -1088,9 +1088,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     .fileChooser(context = this, filter = { it.isDirectory || it.extension.toLowerCase(getSystemLocale(resources)) == "mp3" }) { _, file ->
                         val path = file.absolutePath
                         Snackbar.make(
-                                        findViewById(android.R.id.content),
-                                        getString(R.string.file_selected) + ": " + path,
-                                        Snackbar.LENGTH_SHORT)
+                                findViewById(android.R.id.content),
+                                getString(R.string.file_selected) + ": " + path,
+                                Snackbar.LENGTH_SHORT)
                                 .show()
                         stopMedia()
                         InsertLinkTask().execute(mViewModel.idCanto.toString(), path)
@@ -1105,10 +1105,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
-                                        binding.risuscitoToolbar,
-                                        R.id.tonalita,
-                                        getString(R.string.action_tonalita),
-                                        getString(R.string.sc_tonalita_desc))
+                                binding.risuscitoToolbar,
+                                R.id.tonalita,
+                                getString(R.string.action_tonalita),
+                                getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1116,10 +1116,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
-                                        binding.risuscitoToolbar,
-                                        R.id.barre,
-                                        getString(R.string.action_barre),
-                                        getString(R.string.sc_barre_desc))
+                                binding.risuscitoToolbar,
+                                R.id.barre,
+                                getString(R.string.action_barre),
+                                getString(R.string.sc_barre_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1127,9 +1127,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
                         TapTarget.forView(
-                                        binding.playScroll,
-                                        getString(R.string.sc_scroll_title),
-                                        getString(R.string.sc_scroll_desc))
+                                binding.playScroll,
+                                getString(R.string.sc_scroll_title),
+                                getString(R.string.sc_scroll_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1137,9 +1137,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3),
                         TapTarget.forToolbarOverflow(
-                                        binding.risuscitoToolbar,
-                                        getString(R.string.showcase_end_title),
-                                        getString(R.string.showcase_help_general))
+                                binding.risuscitoToolbar,
+                                getString(R.string.showcase_end_title),
+                                getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1171,10 +1171,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
-                                        binding.risuscitoToolbar,
-                                        R.id.tonalita,
-                                        getString(R.string.action_tonalita),
-                                        getString(R.string.sc_tonalita_desc))
+                                binding.risuscitoToolbar,
+                                R.id.tonalita,
+                                getString(R.string.action_tonalita),
+                                getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1182,10 +1182,10 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
-                                        binding.risuscitoToolbar,
-                                        R.id.barre,
-                                        getString(R.string.action_barre),
-                                        getString(R.string.sc_barre_desc))
+                                binding.risuscitoToolbar,
+                                R.id.barre,
+                                getString(R.string.action_barre),
+                                getString(R.string.sc_barre_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1193,9 +1193,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
                         TapTarget.forView(
-                                        binding.playSong,
-                                        getString(R.string.sc_audio_title),
-                                        getString(R.string.sc_audio_desc))
+                                binding.playSong,
+                                getString(R.string.sc_audio_title),
+                                getString(R.string.sc_audio_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1203,9 +1203,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(3),
                         TapTarget.forView(
-                                        binding.playScroll,
-                                        getString(R.string.sc_scroll_title),
-                                        getString(R.string.sc_scroll_desc))
+                                binding.playScroll,
+                                getString(R.string.sc_scroll_title),
+                                getString(R.string.sc_scroll_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1213,9 +1213,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(4),
                         TapTarget.forToolbarOverflow(
-                                        binding.risuscitoToolbar,
-                                        getString(R.string.showcase_end_title),
-                                        getString(R.string.showcase_help_general))
+                                binding.risuscitoToolbar,
+                                getString(R.string.showcase_end_title),
+                                getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -1323,9 +1323,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 } else {
                     mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
-                                    findViewById(android.R.id.content),
-                                    getString(R.string.external_storage_denied),
-                                    Snackbar.LENGTH_SHORT)
+                            findViewById(android.R.id.content),
+                            getString(R.string.external_storage_denied),
+                            Snackbar.LENGTH_SHORT)
                             .show()
                     retrieveMediaFileLink(this, url, false)
                 }
@@ -1410,7 +1410,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                 if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
-                findViewById<WebView>(R.id.canto_view).loadData(readTextFromResource(resources, LUtils.getResId(mViewModel.pagina, R.raw::class.java)), MIME_TYPE_HTML, ECONDING_UTF8)
+                findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina!!))
 
             val webSettings = findViewById<WebView>(R.id.canto_view).settings
             webSettings.useWideViewPort = true
@@ -1510,9 +1510,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         override fun onPostExecute(integer: Int?) {
             super.onPostExecute(integer)
             Snackbar.make(
-                            findViewById(android.R.id.content),
-                            if (integer == 1) R.string.favorite_added else R.string.favorite_removed,
-                            Snackbar.LENGTH_SHORT)
+                    findViewById(android.R.id.content),
+                    if (integer == 1) R.string.favorite_added else R.string.favorite_removed,
+                    Snackbar.LENGTH_SHORT)
                     .show()
             initFabOptions()
         }
@@ -1532,9 +1532,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             super.onPostExecute(integer)
             if (integer != 0)
                 Snackbar.make(
-                                findViewById(android.R.id.content),
-                                if (integer == 1) R.string.tab_saved else R.string.barre_saved,
-                                Snackbar.LENGTH_SHORT)
+                        findViewById(android.R.id.content),
+                        if (integer == 1) R.string.tab_saved else R.string.barre_saved,
+                        Snackbar.LENGTH_SHORT)
                         .show()
         }
     }
@@ -1548,12 +1548,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_fullscreen_on,
-                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen).apply {
-                                    //                            colorInt = iconColor
-                                    sizeDp = 24
-                                    paddingDp = 2
-                                }
-                        )
+                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen).apply {
+                            //                            colorInt = iconColor
+                            sizeDp = 24
+                            paddingDp = 2
+                        }
+                )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.fullscreen))
                         .setFabBackgroundColor(backgroundColor)
@@ -1564,12 +1564,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_sound_off,
-                                IconicsDrawable(this, if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset else CommunityMaterial.Icon2.cmd_headset_off).apply {
-                                    sizeDp = 24
-                                    paddingDp = 4
+                        IconicsDrawable(this, if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset else CommunityMaterial.Icon2.cmd_headset_off).apply {
+                            sizeDp = 24
+                            paddingDp = 4
 //                            colorInt = iconColor
-                                }
-                        )
+                        }
+                )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(if (mViewModel.mostraAudio) R.string.audio_off else R.string.audio_on))
                         .setFabBackgroundColor(backgroundColor)
@@ -1603,12 +1603,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             if (!url.isNullOrEmpty())
                 binding.fabCanti.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_save_file,
-                                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_download).apply {
-                                            sizeDp = 24
-                                            paddingDp = 4
+                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_download).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
 //                                    colorInt = iconColor
-                                        }
-                                )
+                                }
+                        )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.save_file))
                                 .setFabBackgroundColor(backgroundColor)
@@ -1618,12 +1618,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 )
             binding.fabCanti.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_link_file,
-                                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant).apply {
-                                        sizeDp = 24
-                                        paddingDp = 4
+                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant).apply {
+                                sizeDp = 24
+                                paddingDp = 4
 //                                colorInt = iconColor
-                                    }
-                            )
+                            }
+                    )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.only_link_title))
                             .setFabBackgroundColor(backgroundColor)
@@ -1636,12 +1636,12 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_favorite,
-                                IconicsDrawable(this, if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart).apply {
-                                    sizeDp = 24
-                                    paddingDp = 4
+                        IconicsDrawable(this, if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart).apply {
+                            sizeDp = 24
+                            paddingDp = 4
 //                            colorInt = iconColor
-                                }
-                        )
+                        }
+                )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(if (mViewModel.mCurrentCanto?.favorite == 1) R.string.favorite_off else R.string.favorite_on))
                         .setFabBackgroundColor(backgroundColor)
@@ -1678,7 +1678,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     binding.fabCanti.close()
                     if (!url.isNullOrEmpty() && personalUrl.isNullOrEmpty()) {
                         SimpleDialogFragment.Builder(
-                                        this, this, DELETE_MP3)
+                                this, this, DELETE_MP3)
                                 .title(R.string.dialog_delete_mp3_title)
                                 .content(R.string.dialog_delete_mp3)
                                 .positiveButton(R.string.delete_confirm)
@@ -1686,7 +1686,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 .show()
                     } else {
                         SimpleDialogFragment.Builder(
-                                        this, this, DELETE_LINK)
+                                this, this, DELETE_LINK)
                                 .title(R.string.dialog_delete_link_title)
                                 .content(R.string.dialog_delete_link)
                                 .positiveButton(R.string.unlink_confirm)
@@ -1698,7 +1698,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 R.id.fab_save_file -> {
                     binding.fabCanti.close()
                     SimpleDialogFragment.Builder(
-                                    this, this, DOWNLINK_CHOOSE)
+                            this, this, DOWNLINK_CHOOSE)
                             .title(R.string.save_file)
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
@@ -1709,7 +1709,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 R.id.fab_link_file -> {
                     binding.fabCanti.close()
                     SimpleDialogFragment.Builder(
-                                    this, this, ONLY_LINK)
+                            this, this, ONLY_LINK)
                             .title(R.string.only_link_title)
                             .content(R.string.only_link)
                             .positiveButton(R.string.associate_confirm)
@@ -1752,7 +1752,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val DELETE_MP3 = "DELETE_MP3"
         private const val SAVE_TAB = "SAVE_TAB"
         private const val DEF_FILE_PATH = "file://"
-        private const val MIME_TYPE_HTML = "text/html"
         private const val ECONDING_UTF8 = "utf-8"
 
     }
