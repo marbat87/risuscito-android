@@ -587,7 +587,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                     if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina!!))
+                    findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
@@ -619,7 +619,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
                     if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina!!))
+                    findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
@@ -639,7 +639,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
                         if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina!!))
+                        findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
@@ -658,7 +658,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
                         if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina!!))
+                        findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
@@ -1410,7 +1410,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
                 if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
             } else
-                findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina!!))
+                findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina ?: NO_CANTO))
 
             val webSettings = findViewById<WebView>(R.id.canto_view).settings
             webSettings.useWideViewPort = true
@@ -1753,6 +1753,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         private const val SAVE_TAB = "SAVE_TAB"
         private const val DEF_FILE_PATH = "file://"
         private const val ECONDING_UTF8 = "utf-8"
+        private const val NO_CANTO = "no_canto"
 
     }
 }
