@@ -67,7 +67,7 @@ class XmlImportService : IntentService("XmlImportService") {
                     mDao.insertLista(listaPers)
 
                     mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-                            .setSmallIcon(R.drawable.ic_stat_action_done)
+                            .setSmallIcon(R.drawable.ic_notification_done)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setContentTitle(getString(R.string.app_name))
                             .setContentText(getString(R.string.import_done))
@@ -87,7 +87,7 @@ class XmlImportService : IntentService("XmlImportService") {
                     stopSelf()
                 } else {
                     mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-                            .setSmallIcon(R.drawable.ic_stat_alert_error)
+                            .setSmallIcon(R.drawable.ic_notification_error)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setContentTitle(getString(R.string.app_name))
                             .setTicker(getString(R.string.import_error))
@@ -105,7 +105,7 @@ class XmlImportService : IntentService("XmlImportService") {
                 Log.e(TAG, "importData: " + e.localizedMessage, e)
                 Crashlytics.logException(e)
                 mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_stat_alert_error)
+                        .setSmallIcon(R.drawable.ic_notification_error)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .setContentTitle(getString(R.string.app_name))
                         .setTicker(getString(R.string.import_error))
@@ -121,7 +121,7 @@ class XmlImportService : IntentService("XmlImportService") {
             } catch (e: SecurityException) {
                 Log.e(TAG, "importData: " + e.localizedMessage, e)
                 Crashlytics.logException(e)
-                mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_stat_alert_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
+                mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
                 Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
                 val intentBroadcast = Intent(ACTION_FINISH)
@@ -130,7 +130,7 @@ class XmlImportService : IntentService("XmlImportService") {
             } catch (e: IOException) {
                 Log.e(TAG, "importData: " + e.localizedMessage, e)
                 Crashlytics.logException(e)
-                mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_stat_alert_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
+                mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
                 Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
                 val intentBroadcast = Intent(ACTION_FINISH)

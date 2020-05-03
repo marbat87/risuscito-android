@@ -9,15 +9,11 @@
             android:gravity="center"
             android:src="@drawable/ic_launcher_144dp" />
     </item>
-    <!--    <item-->
-    <!--        android:bottom="@dimen/brand_name_bottom">-->
-    <!--        <bitmap-->
-    <!--            android:src="@drawable/brand_logo"-->
-    <!--            android:gravity="center_horizontal|bottom"/>-->
-    <!--    </item>-->
     <!-- logo -->
     <item
-        android:bottom="@dimen/brand_name_bottom"
-        android:drawable="@drawable/ic_brand_logo"
-        android:gravity="center_horizontal|bottom" />
+        android:bottom="@dimen/brand_name_bottom">
+        <bitmap
+            android:src="@drawable/brand_logo"
+            android:gravity="center_horizontal|bottom"/>
+    </item>
 </layer-list>

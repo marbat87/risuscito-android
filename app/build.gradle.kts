@@ -16,7 +16,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(29)
         multiDexEnabled = true
-        versionCode = 4502
+        versionCode = 4503
         versionName = "4.5.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -80,11 +80,13 @@ dependencies {
     implementation("com.google.android.play:core:1.7.2")
     implementation("androidx.activity:activity-ktx:1.1.0")
     implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.core:core-ktx:1.2.0")
+    implementation("androidx.core:core-ktx:1.3.0-rc01")
     implementation("androidx.fragment:fragment-ktx:1.2.4")
     implementation("com.google.android.material:material:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
+    implementation("androidx.drawerlayout:drawerlayout:1.1.0-beta01")
+    implementation("androidx.customview:customview:1.1.0-beta01")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01")
     implementation("androidx.media:media:1.2.0-alpha02")
     implementation("androidx.room:room-runtime:$roomVersion")
