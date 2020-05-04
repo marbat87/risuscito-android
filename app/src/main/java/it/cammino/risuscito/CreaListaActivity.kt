@@ -41,11 +41,15 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe.SimpleSwipeCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.databinding.ActivityCreaListaBinding
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
@@ -54,8 +58,6 @@ import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.activity_crea_lista.*
-import kotlinx.android.synthetic.main.hint_layout.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -70,31 +72,33 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     private var modifica: Boolean = false
     private var mAdapter: FastItemAdapter<SwipeableItem> = FastItemAdapter()
     private var mRegularFont: Typeface? = null
+
     // drag & drop
     private var mTouchHelper: ItemTouchHelper? = null
 
+    private lateinit var binding: ActivityCreaListaBinding
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_crea_lista)
+        binding = ActivityCreaListaBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+//        setContentView(R.layout.activity_crea_lista)
 
         modifica = intent.extras?.getBoolean(EDIT_EXISTING_LIST) == true
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
-        setSupportActionBar(risuscito_toolbar)
+        setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-//        val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-        val leaveBehindDrawable = iconicsDrawable(CommunityMaterial.Icon.cmd_delete_sweep) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete_sweep).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 2
         }
-
         val touchCallback = SimpleSwipeDragCallback(
                 this,
                 this,
@@ -111,9 +115,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             Log.d(TAG, "onItemLongClick: $position")
             mViewModel.positionToRename = position
             InputTextDialogFragment.Builder(
-                    this, this, RENAME)
+                            this, this, RENAME)
                     .title(R.string.posizione_rename)
-                    .prefill(item.name?.text.toString())
+                    .prefill(item.name?.getText(this).toString())
                     .positiveButton(R.string.aggiungi_rename)
                     .negativeButton(R.string.cancel)
                     .show()
@@ -121,30 +125,26 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         }
 
         val llm = LinearLayoutManager(this)
-        recycler_view?.layoutManager = llm
+        binding.recyclerView.layoutManager = llm
 
-        recycler_view?.adapter = mAdapter
+        binding.recyclerView.adapter = mAdapter
 
         val insetDivider = DividerItemDecoration(this, llm.orientation)
         insetDivider.setDrawable(
                 ContextCompat.getDrawable(
                         this, R.drawable.preference_list_divider_material)!!)
-        recycler_view?.addItemDecoration(insetDivider)
+        binding.recyclerView.addItemDecoration(insetDivider)
 
-        mTouchHelper?.attachToRecyclerView(recycler_view) // Attach ItemTouchHelper to RecyclerView
+        mTouchHelper?.attachToRecyclerView(binding.recyclerView) // Attach ItemTouchHelper to RecyclerView
 
-//        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(4)
-        val icon = iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(4)
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 4
         }
-        fab_crea_lista.setImageDrawable(icon)
+        binding.fabCreaLista.setImageDrawable(icon)
 
-        textTitleDescription.requestFocus()
+        binding.textTitleDescription.requestFocus()
 
         var iFragment = InputTextDialogFragment.findVisible(this, RENAME)
         iFragment?.setmCallback(this)
@@ -153,32 +153,32 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         val fragment = SimpleDialogFragment.findVisible(this, SAVE_LIST)
         fragment?.setmCallback(this)
 
-        hint_text.setText(R.string.showcase_rename_desc)
-        hint_text.append(System.getProperty("line.separator"))
-        hint_text.append(getString(R.string.showcase_delete_desc))
-        ViewCompat.setElevation(question_mark, 1f)
-        main_hint_layout.setOnTouchListener(
+        binding.mainHintLayout.hintText.setText(R.string.showcase_rename_desc)
+        binding.mainHintLayout.hintText.append(System.getProperty("line.separator"))
+        binding.mainHintLayout.hintText.append(getString(R.string.showcase_delete_desc))
+        ViewCompat.setElevation(binding.mainHintLayout.questionMark, 1f)
+        binding.mainHintLayout.mainHintLayout.setOnTouchListener(
                 SwipeDismissTouchListener(
-                        main_hint_layout, null,
+                        binding.mainHintLayout.mainHintLayout, null,
                         object : SwipeDismissTouchListener.DismissCallbacks {
                             override fun canDismiss(token: Any?): Boolean {
                                 return true
                             }
 
                             override fun onDismiss(view: View, token: Any?) {
-                                main_hint_layout.isVisible = false
+                                binding.mainHintLayout.mainHintLayout.isVisible = false
                                 PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity).edit { putBoolean(Utility.INTRO_CREALISTA_2, true) }
                             }
                         }))
 
-        textfieldTitle.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
-            collapsingToolbarLayout.title = s
+        binding.textFieldTitle.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+            binding.collapsingToolbarLayout.title = s
             mViewModel.tempTitle = s.toString()
         }
 
-        fab_crea_lista.setOnClickListener {
+        binding.fabCreaLista.setOnClickListener {
             InputTextDialogFragment.Builder(
-                    this, this, ADD_POSITION)
+                            this, this, ADD_POSITION)
                     .title(R.string.posizione_add_desc)
                     .positiveButton(R.string.aggiungi_confirm)
                     .negativeButton(R.string.cancel)
@@ -190,8 +190,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         else {
             if (mViewModel.tempTitle.isEmpty())
                 mViewModel.tempTitle = intent.extras?.getString(LIST_TITLE) ?: ""
-            textfieldTitle.setText(mViewModel.tempTitle)
-            collapsingToolbarLayout.title = mViewModel.tempTitle
+            binding.textFieldTitle.setText(mViewModel.tempTitle)
+            binding.collapsingToolbarLayout.title = mViewModel.tempTitle
             if (mViewModel.elementi == null)
                 mViewModel.elementi = ArrayList()
             mViewModel.elementi?.let { mAdapter.set(it) }
@@ -221,7 +221,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 playIntro()
             }
         }
-        main_hint_layout.isVisible = mAdapter.adapterItems.isNotEmpty() && !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
+        binding.mainHintLayout.mainHintLayout.isVisible = mAdapter.adapterItems.isNotEmpty() && !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
         return true
     }
 
@@ -229,17 +229,17 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         when (item.itemId) {
             R.id.action_help -> {
                 playIntro()
-                main_hint_layout.isVisible = mAdapter.adapterItems.isNotEmpty()
+                binding.mainHintLayout.mainHintLayout.isVisible = mAdapter.adapterItems.isNotEmpty()
                 return true
             }
             R.id.action_save_list -> {
-                SaveListTask().execute(textfieldTitle.text)
+                SaveListTask().execute(binding.textFieldTitle.text)
                 return true
             }
             android.R.id.home -> {
                 if (mAdapter.adapterItems.isNotEmpty()) {
                     SimpleDialogFragment.Builder(
-                            this, this, SAVE_LIST)
+                                    this, this, SAVE_LIST)
                             .title(R.string.save_list_title)
                             .content(R.string.save_list_question)
                             .positiveButton(R.string.save_exit_confirm)
@@ -283,7 +283,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 mAdapter.notifyAdapterItemChanged(mViewModel.positionToRename)
             }
             ADD_POSITION -> {
-                noElementsAdded.isVisible = false
+                binding.noElementsAdded.isVisible = false
                 val mEditText = dialog.getInputField()
                 mAdapter.add(swipeableItem {
                     identifier = Utility.random(0, 5000).toLong()
@@ -295,7 +295,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 Log.d(
                         TAG,
                         "onCreateOptionsMenu - INTRO_CREALISTA_2: " + mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false))
-                main_hint_layout.isVisible = !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
+                binding.mainHintLayout.mainHintLayout.isVisible = !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
             }
         }
     }
@@ -308,7 +308,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             SAVE_LIST ->
-                SaveListTask().execute(textfieldTitle.text)
+                SaveListTask().execute(binding.textFieldTitle.text)
         }
     }
 
@@ -348,8 +348,8 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             val position12 = mAdapter.getAdapterPosition(itemOjb)
             if (position12 != RecyclerView.NO_POSITION) {
                 mAdapter.remove(position12)
-                noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
-                if (mAdapter.adapterItemCount == 0) main_hint_layout.isVisible = false
+                binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+                if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible = false
             }
             true
         }
@@ -371,14 +371,14 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
     }
 
     private fun playIntro() {
-        fab_crea_lista.show()
+        binding.fabCreaLista.show()
         TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forView(
-                                fab_crea_lista,
-                                getString(R.string.add_position),
-                                getString(R.string.showcase_add_pos_desc))
+                                        binding.fabCreaLista,
+                                        getString(R.string.add_position),
+                                        getString(R.string.showcase_add_pos_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -387,10 +387,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 .tintTarget(false)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
-                                risuscito_toolbar,
-                                R.id.action_save_list,
-                                getString(R.string.list_save_exit),
-                                getString(R.string.showcase_saveexit_desc))
+                                        binding.risuscitoToolbar,
+                                        R.id.action_save_list,
+                                        getString(R.string.list_save_exit),
+                                        getString(R.string.showcase_saveexit_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -398,10 +398,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
                         TapTarget.forToolbarMenuItem(
-                                risuscito_toolbar,
-                                R.id.action_help,
-                                getString(R.string.showcase_end_title),
-                                getString(R.string.showcase_help_general))
+                                        binding.risuscitoToolbar,
+                                        R.id.action_help,
+                                        getString(R.string.showcase_end_title),
+                                        getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -455,9 +455,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             mViewModel.elementi?.let { mAdapter.set(it) }
             if (mViewModel.tempTitle.isEmpty())
                 mViewModel.tempTitle = listaPers.titolo ?: DEFAULT_TITLE
-            textfieldTitle.setText(mViewModel.tempTitle)
-            collapsingToolbarLayout.title = mViewModel.tempTitle
-            noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+            binding.textFieldTitle.setText(mViewModel.tempTitle)
+            binding.collapsingToolbarLayout.title = mViewModel.tempTitle
+            binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
         }
     }
 
@@ -482,7 +482,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             Log.d(TAG, "saveList - elementi.size(): " + mAdapter.adapterItems.size)
             for (i in mAdapter.adapterItems.indices) {
                 mAdapter.getItem(i)?.let {
-                    if (celebrazione.addPosizione(it.name?.text.toString()) == -2) {
+                    if (celebrazione.addPosizione(it.name?.getText(this@CreaListaActivity).toString()) == -2) {
                         return 1
                     }
                     celebrazione.addCanto(it.idCanto, i)
@@ -518,13 +518,14 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 }
                 1 ->
                     Snackbar.make(
-                            this@CreaListaActivity.main_content,
-                            R.string.lista_pers_piena,
-                            Snackbar.LENGTH_SHORT)
+                                    binding.mainContent,
+                                    R.string.lista_pers_piena,
+                                    Snackbar.LENGTH_SHORT)
                             .show()
                 2 ->
                     Snackbar.make(
-                            this@CreaListaActivity.main_content, R.string.lista_pers_vuota, Snackbar.LENGTH_SHORT)
+                                    binding.mainContent, R.string.lista_pers_vuota,
+                                    Snackbar.LENGTH_SHORT)
                             .show()
 
             }

@@ -25,15 +25,15 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
-import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.listeners.ClickEventHook
+import com.mikepenz.fastadapter.binding.listeners.addClickListener
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.databinding.ActivityInsertSearchBinding
+import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -41,9 +41,6 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.common_top_toolbar.*
-import kotlinx.android.synthetic.main.search_layout.*
-import kotlinx.android.synthetic.main.tinted_progressbar.*
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
@@ -67,12 +64,15 @@ class InsertActivity : ThemeableActivity() {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 3) })
     }
 
+    private lateinit var binding: ActivityInsertSearchBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_insert_search)
+        binding = ActivityInsertSearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        risuscito_toolbar.title = getString(R.string.title_activity_inserisci_titolo)
-        setSupportActionBar(risuscito_toolbar)
+        binding.risuscitoToolbar.risuscitoToolbar.title = getString(R.string.title_activity_inserisci_titolo)
+        setSupportActionBar(binding.risuscitoToolbar.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -103,7 +103,7 @@ class InsertActivity : ThemeableActivity() {
 
         ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(this).listePersDao().all }
 
-        textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+        binding.searchLayout.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
             var consume = false
@@ -119,60 +119,55 @@ class InsertActivity : ThemeableActivity() {
             consume
         }
 
-        cantoAdapter.addEventHook(object : ClickEventHook<InsertItem>() {
-            override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
-                return (viewHolder as? InsertItem.ViewHolder)?.mPreview
-            }
-
-            override fun onClick(v: View, position: Int, fastAdapter: FastAdapter<InsertItem>, item: InsertItem) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < Utility.CLICK_DELAY) return
+        cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { _, _, _, item ->
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(applicationContext, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(this@InsertActivity), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
             }
-        })
+        }
 
         cantoAdapter.setHasStableIds(true)
 
-        matchedList.adapter = cantoAdapter
+        binding.searchLayout.matchedList.adapter = cantoAdapter
         val glm = GridLayoutManager(this, if (mLUtils?.hasThreeColumns == true) 3 else 2)
         val llm = LinearLayoutManager(this)
-        matchedList.layoutManager = if (mLUtils?.isGridLayout == true) glm else llm
+        binding.searchLayout.matchedList.layoutManager = if (mLUtils?.isGridLayout == true) glm else llm
         val insetDivider = DividerItemDecoration(this, if (mLUtils?.isGridLayout == true) glm.orientation else llm.orientation)
         ContextCompat.getDrawable(this, R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        matchedList.addItemDecoration(insetDivider)
+        binding.searchLayout.matchedList.addItemDecoration(insetDivider)
 
-        textfieldRicerca.setOnKeyListener { _, keyCode, _ ->
+        binding.searchLayout.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                ContextCompat.getSystemService(this, InputMethodManager::class.java)?.hideSoftInputFromWindow(textfieldRicerca.windowToken, 0)
+                ContextCompat.getSystemService(this, InputMethodManager::class.java)?.hideSoftInputFromWindow(binding.searchLayout.textFieldRicerca.windowToken, 0)
                 returnValue = true
             }
             returnValue
         }
 
-        textfieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+        binding.searchLayout.textFieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
             ricercaStringa(s.toString())
         }
 
         val wrapper = ContextThemeWrapper(this, R.style.Widget_MaterialComponents_PopupMenu_Risuscito)
-        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, more_options, Gravity.END) else PopupMenu(wrapper, more_options)
+        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, binding.searchLayout.moreOptions, Gravity.END) else PopupMenu(wrapper, binding.searchLayout.moreOptions)
         mPopupMenu.inflate(R.menu.search_option_menu)
         mPopupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.advanced_search -> {
                     it.isChecked = !it.isChecked
                     mViewModel.advancedSearch = it.isChecked
-                    textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
-                    ricercaStringa(textfieldRicerca.text.toString())
+                    binding.searchLayout.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+                    ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
                     true
                 }
                 R.id.consegnaty_only -> {
                     it.isChecked = !it.isChecked
                     mViewModel.consegnatiOnly = it.isChecked
-                    ricercaStringa(textfieldRicerca.text.toString())
+                    ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
                     true
                 }
                 else -> false
@@ -181,7 +176,7 @@ class InsertActivity : ThemeableActivity() {
 //        if (LUtils.hasM())
 //            mPopupMenu.gravity = Gravity.END
 
-        more_options.setOnClickListener {
+        binding.searchLayout.moreOptions.setOnClickListener {
             mPopupMenu.show()
         }
 
@@ -226,16 +221,16 @@ class InsertActivity : ThemeableActivity() {
                 if (it.status == Status.RUNNING) it.cancel(true)
             }
             searchTask = SearchTask(this)
-            searchTask?.execute(textfieldRicerca.text.toString(), mViewModel.advancedSearch, mViewModel.consegnatiOnly)
+            searchTask?.execute(binding.searchLayout.textFieldRicerca.text.toString(), mViewModel.advancedSearch, mViewModel.consegnatiOnly)
         } else {
             if (s.isEmpty()) {
                 searchTask?.let {
                     if (it.status == Status.RUNNING) it.cancel(true)
                 }
-                search_no_results.isVisible = false
-                matchedList.isVisible = false
+                binding.searchLayout.searchNoResults.isVisible = false
+                binding.searchLayout.matchedList.isVisible = false
                 cantoAdapter.clear()
-                search_progress.isVisible = false
+                binding.searchLayout.searchProgress.isVisible = false
             }
         }
     }
@@ -310,17 +305,17 @@ class InsertActivity : ThemeableActivity() {
         override fun onPreExecute() {
             super.onPreExecute()
             if (isCancelled) return
-            fragmentReference.get()?.search_no_results?.isVisible = false
-            fragmentReference.get()?.search_progress?.isVisible = true
+            fragmentReference.get()?.binding?.searchLayout?.searchNoResults?.isVisible = false
+            fragmentReference.get()?.binding?.searchLayout?.searchProgress?.isVisible = true
         }
 
         override fun onPostExecute(titoliResult: ArrayList<InsertItem>) {
             super.onPostExecute(titoliResult)
             if (isCancelled) return
             fragmentReference.get()?.cantoAdapter?.set(titoliResult)
-            fragmentReference.get()?.search_progress?.isVisible = false
-            fragmentReference.get()?.search_no_results?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
-            fragmentReference.get()?.matchedList?.isGone = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
+            fragmentReference.get()?.binding?.searchLayout?.searchProgress?.isVisible = false
+            fragmentReference.get()?.binding?.searchLayout?.searchNoResults?.isVisible = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
+            fragmentReference.get()?.binding?.searchLayout?.matchedList?.isGone = fragmentReference.get()?.cantoAdapter?.adapterItemCount == 0
         }
     }
 

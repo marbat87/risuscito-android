@@ -3,8 +3,8 @@ package it.cammino.risuscito.objects
 import android.graphics.Color
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.materialdrawer.holder.ColorHolder
 
 fun posizioneItem(block: PosizioneItem.() -> Unit): PosizioneItem = PosizioneItem().apply(block)
 

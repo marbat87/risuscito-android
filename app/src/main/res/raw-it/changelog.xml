@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <release versionCode="4503"
+        date="Maggio 2020"
+        versionName="4.5.0">
+        <new>Aggiunta traduzione in Turco(se il tuo dispositivo è in Turco, potrebbe essere necessario cancellare i dati o reinstallare l'applicazione)</new>
+        <new>Cambiato il layout del profilo nel menu laterale</new>
+        <bugfix>Ordinamento degli elementi checkabili nella sezione dei Canti Consegnati</bugfix>
+        <bugfix>Risolto un problema con la visualizzazione dei canti mancanti in lingue diverse dall'Italiano</bugfix>
+        <bugfix>Risolto un crash su alcune versioni di Android durante la riproduzione audio</bugfix>
+    </release>
+
     <release versionCode="4439"
         date="Dicembre 2019"
         versionName="4.4.0">

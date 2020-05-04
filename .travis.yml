@@ -3,12 +3,13 @@ jdk: oraclejdk8
 
 before_install:
  - chmod +x gradlew
+ - yes | sdkmanager "build-tools;30.0.0-rc1"
 
 android:
   components:
     - tools
     - platform-tools
-    - build-tools-29.0.2
+    - build-tools-30.0.0-rc1
     - android-29
     - extra-android-m2repository
     - extra-google-m2repository

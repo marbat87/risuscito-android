@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <release versionCode="4503"
+        date="May 2020"
+        versionName="4.5.0">
+        <new>Added Turkish language (if Turkish is your systema language, you may need to delete application data or uninstall and then resintall it)</new>
+        <new>Changed profile layout in left menu</new>
+        <bugfix>List order of checkable items in Delivered Songs section</bugfix>
+        <bugfix>Solved an issue with rendering of missing songs in languages different from Italian</bugfix>
+        <bugfix>Fixed crash on some Android versions during audio playback</bugfix>
+    </release>
+
     <release versionCode="4439"
         date="December 2019"
         versionName="4.4.0">

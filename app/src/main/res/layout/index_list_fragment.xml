@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cantiList"
+        android:id="@+id/canti_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -17,6 +17,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         app:msb_lightOnTouch="true"
-        app:msb_recyclerView="@id/cantiList" />
+        app:msb_recyclerView="@id/canti_list" />
 
 </RelativeLayout>

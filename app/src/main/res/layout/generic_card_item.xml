@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/canto_generico_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/cantoGenericoContainer">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/text_id_canto_card"
@@ -28,6 +28,8 @@
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
-    <include layout="@layout/simple_row_item" />
+    <include
+        android:id="@+id/siple_row_item"
+        layout="@layout/simple_row_item" />
 
 </FrameLayout>

@@ -48,12 +48,14 @@
         <item>@string/lang_it</item>
         <item>@string/lang_uk</item>
         <item>@string/lang_en</item>
+        <item>@string/lang_tr</item>
     </string-array>
 
     <string-array name="pref_languages_values">
         <item>@string/lang_it_value</item>
         <item>@string/lang_uk_value</item>
         <item>@string/lang_en_value</item>
+        <item>@string/lang_tr_value</item>
     </string-array>
 
     <integer-array name="primary_colors_list">
@@ -79,22 +81,22 @@
     </integer-array>
 
     <integer-array name="accent_colors_list">
-        <item>@color/md_amber_A200</item>
-        <item>@color/md_blue_A200</item>
-        <item>@color/md_cyan_A200</item>
-        <item>@color/md_green_A200</item>
-        <item>@color/md_indigo_A200</item>
-        <item>@color/md_lime_A200</item>
-        <item>@color/md_orange_A200</item>
-        <item>@color/md_pink_A200</item>
-        <item>@color/md_purple_A200</item>
-        <item>@color/md_teal_A200</item>
-        <item>@color/md_red_A200</item>
-        <item>@color/md_deep_orange_A200</item>
-        <item>@color/md_deep_purple_A200</item>
-        <item>@color/md_light_blue_A200</item>
-        <item>@color/md_light_green_A200</item>
-        <item>@color/md_yellow_A200</item>
+        <item>@color/md_amber_a200</item>
+        <item>@color/md_blue_a200</item>
+        <item>@color/md_cyan_a200</item>
+        <item>@color/md_green_a200</item>
+        <item>@color/md_indigo_a200</item>
+        <item>@color/md_lime_a200</item>
+        <item>@color/md_orange_a200</item>
+        <item>@color/md_pink_a200</item>
+        <item>@color/md_purple_a200</item>
+        <item>@color/md_teal_a200</item>
+        <item>@color/md_red_a200</item>
+        <item>@color/md_deep_orange_a200</item>
+        <item>@color/md_deep_purple_a200</item>
+        <item>@color/md_light_blue_a200</item>
+        <item>@color/md_light_green_a200</item>
+        <item>@color/md_yellow_a200</item>
     </integer-array>
 
     <string-array name="themeListArray">

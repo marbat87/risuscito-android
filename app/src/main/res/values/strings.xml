@@ -4,9 +4,11 @@
     <string name="lang_it" translatable="false">Italiano</string>
     <string name="lang_uk" translatable="false">Українська</string>
     <string name="lang_en" translatable="false">English</string>
+    <string name="lang_tr" translatable="false">Türkçe</string>
     <string name="lang_it_value" translatable="false">it</string>
     <string name="lang_uk_value" translatable="false">uk</string>
     <string name="lang_en_value" translatable="false">en</string>
+    <string name="lang_tr_value" translatable="false">tr</string>
     <!--<string name="lang_pt" translatable="false">Portugu&#234;s</string>-->
     <string name="percent_progress" translatable="false">%1$d%%</string>
     <string name="label_pause" translatable="false">Pause</string>
@@ -38,7 +40,8 @@
     <string name="seconda_lettura">In risposta alla seconda lettura</string>
     <string name="terza_lettura">In risposta alla terza lettura</string>
     <string name="canto_fine">Canto finale</string>
-    <string name="select_canto">Aggiungi canto:</string>
+    <string name="select_canto">Aggiungi canto</string>
+    <string name="select_canto_popup">Aggiungi canto:</string>
     <string name="reset_list_question">Sei sicuro di voler resettare la lista?</string>
     <string name="title_activity_canti_eucarestia">Celebrazione dell\'Eucarestia</string>
     <string name="canto_pace">Alla pace</string>

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/risuscito-android.iml" filepath="$PROJECT_DIR$/risuscito-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="risuscito-android/app" />
+      <module fileurl="file://$PROJECT_DIR$/risuscito-android.iml" filepath="$PROJECT_DIR$/risuscito-android.iml" group="risuscito-android" />
     </modules>
   </component>
 </project>

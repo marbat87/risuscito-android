@@ -27,11 +27,6 @@ class LocaleManager(context: Context) {
         return updateResources(c, language)
     }
 
-//    fun setNewLocale(c: Context, language: String): Context {
-//        persistLanguage(language)
-//        return updateResources(c, language)
-//    }
-
     @SuppressLint("ApplySharedPref")
     fun persistLanguage(language: String) {
         prefs.edit {
@@ -55,6 +50,7 @@ class LocaleManager(context: Context) {
             val mLanguage = when (getSystemLocale(res).language) {
                 LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
                 LANGUAGE_ENGLISH -> LANGUAGE_ENGLISH
+                LANGUAGE_TURKISH -> LANGUAGE_TURKISH
                 else -> LANGUAGE_ITALIAN
             }
             Log.d(TAG, "attachBaseContext - default language set: $mLanguage")
@@ -96,6 +92,7 @@ class LocaleManager(context: Context) {
         const val LANGUAGE_ITALIAN = "it"
         const val LANGUAGE_ENGLISH = "en"
         const val LANGUAGE_UKRAINIAN = "uk"
+        const val LANGUAGE_TURKISH = "tr"
 
         @Suppress("DEPRECATION")
         private fun getSystemLocaleLegacy(config: Configuration): Locale {

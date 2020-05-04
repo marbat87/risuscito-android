@@ -2,23 +2,22 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.view.View
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.items.AbstractItem
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.mikepenz.fastadapter.binding.AbstractBindingItem
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import kotlinx.android.synthetic.main.row_item_to_insert.view.*
 
 fun insertItem(block: InsertItem.() -> Unit): InsertItem = InsertItem().apply(block)
 
-class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
+class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
 
     var title: StringHolder? = null
         private set
@@ -53,32 +52,16 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
         }
     var consegnato: Int = 0
 
-    /**
-     * defines the type defining this item. must be unique. preferably an id
-     *
-     * @return the type
-     */
     override val type: Int
         get() = R.id.fastadapter_insert_item_id
 
-    /**
-     * defines the layout which will be used for this item in the list
-     *
-     * @return the layout for this item
-     */
-    override val layoutRes: Int
-        get() = R.layout.row_item_to_insert
+    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): RowItemToInsertBinding {
+        return RowItemToInsertBinding.inflate(inflater, parent, false)
+    }
 
-    /**
-     * binds the data of this item onto the viewHolder
-     *
-     * @param holder the viewHolder of this item
-     */
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
-
+    override fun bindView(binding: RowItemToInsertBinding, payloads: List<Any>) {
         // get the context
-        val ctx = holder.itemView.context
+        val ctx = binding.root.context
 
         //set the text for the name
         filter?.let {
@@ -94,43 +77,22 @@ class InsertItem : AbstractItem<InsertItem.ViewHolder>() {
                             .append(stringTitle?.substring(mPosition, mPosition + it.length))
                             .append("</b>")
                             .append(stringTitle?.substring(mPosition + it.length))
-                    holder.mTitle?.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                    binding.textTitle.text = LUtils.fromHtmlWrapper(highlighted.toString())
                 } else
-                    StringHolder.applyTo(title, holder.mTitle)
+                    StringHolder.applyTo(title, binding.textTitle)
             } else
-                StringHolder.applyTo(title, holder.mTitle)
-        } ?: StringHolder.applyTo(title, holder.mTitle)
+                StringHolder.applyTo(title, binding.textTitle)
+        } ?: StringHolder.applyTo(title, binding.textTitle)
 
         //set the text for the description or hide
-        StringHolder.applyToOrHide(page, holder.mPage)
-        val bgShape = holder.mPage?.background as? GradientDrawable
+        StringHolder.applyToOrHide(page, binding.textPage)
+        val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
-
     }
 
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.mTitle?.text = null
-        holder.mPage?.text = null
-    }
-
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
-    }
-
-    /**
-     * our ViewHolder
-     */
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var mTitle: TextView? = null
-        var mPage: TextView? = null
-        var mPreview: View? = null
-
-        init {
-            mTitle = view.text_title
-            mPage = view.text_page
-            mPreview = view.preview
-        }
+    override fun unbindView(binding: RowItemToInsertBinding) {
+        binding.textTitle.text = null
+        binding.textPage.text = null
     }
 
 }

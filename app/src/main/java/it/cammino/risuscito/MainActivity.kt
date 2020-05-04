@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.AsyncTask
@@ -12,24 +11,31 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
+import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.GravityCompat.START
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
+import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -39,44 +45,49 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.crossfader.Crossfader
+import com.mikepenz.crossfader.util.UIUtils.convertDpToPixel
 import com.mikepenz.crossfader.view.CrossFadeSlidingPaneLayout
 import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.dsl.iconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.materialdrawer.*
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
+import com.mikepenz.materialdrawer.holder.ImageHolder
+import com.mikepenz.materialdrawer.iconics.iconicsIcon
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
-import com.mikepenz.materialdrawer.model.interfaces.IProfile
-import com.mikepenz.materialize.util.UIUtils
+import com.mikepenz.materialdrawer.model.interfaces.*
+import com.mikepenz.materialdrawer.util.setItems
+import com.mikepenz.materialdrawer.widget.AccountHeaderView
+import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
+import com.mikepenz.materialdrawer.widget.MiniDrawerSliderView
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.common_bottom_bar.*
-import kotlinx.android.synthetic.main.common_circle_progress.*
-import kotlinx.android.synthetic.main.common_top_toolbar.*
 import java.lang.ref.WeakReference
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private val mViewModel: MainActivityViewModel by viewModels()
     private lateinit var profileIcon: IconicsDrawable
-    private var mLUtils: LUtils? = null
-    var drawer: Drawer? = null
-        private set
-    private var mMiniDrawer: MiniDrawer? = null
-    private var crossFader: Crossfader<*>? = null
-    private lateinit var mAccountHeader: AccountHeader
+    private lateinit var mLUtils: LUtils
+    private lateinit var mAccountHeader: AccountHeaderView
+    private lateinit var miniSliderView: MiniDrawerSliderView
+    private lateinit var sliderView: MaterialDrawerSliderView
+    private lateinit var crossFader: Crossfader<*>
     var hasThreeColumns: Boolean = false
         private set
     var isGridLayout: Boolean = false
@@ -89,9 +100,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private lateinit var auth: FirebaseAuth
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
-    private lateinit var homeIcon: IconicsDrawable
-    private lateinit var backIcon: IconicsDrawable
-    private var mActionBarDrawerToggle: ActionBarDrawerToggle? = null
+    private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
+
+    private lateinit var binding: ActivityMainBinding
 
     private val nextStepReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -119,15 +130,17 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.hasNavDrawer = true
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         onBackPressedDispatcher.addCallback(this) {
             when {
-                searchView.onBackPressed() -> {
+                binding.searchView.onBackPressed() -> {
                 }
-                fab_pager.isOpen -> fab_pager.close()
-                isTabletWithNoFixedDrawer && crossFader?.isCrossFaded() == true -> crossFader?.crossFade()
-                !isOnTablet && drawer?.isDrawerOpen == true -> drawer?.closeDrawer()
+                binding.fabPager.isOpen -> binding.fabPager.close()
+                isTabletWithNoFixedDrawer && crossFader.isCrossFaded() -> crossFader.crossFade()
+                !isOnTablet && binding.drawer?.isDrawerOpen(START) == true -> binding.drawer?.closeDrawer(START)
                 else -> backToHome(true)
             }
         }
@@ -137,45 +150,23 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
-//        homeIcon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_menu)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-        homeIcon = iconicsDrawable(CommunityMaterial.Icon2.cmd_menu) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        profileIcon = IconicsDrawable(this).apply {
+            colorInt = themeColor(R.attr.colorPrimary)
+            icon = CommunityMaterial.Icon.cmd_account_circle
+            sizeDp = 56
         }
 
-//        backIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_arrow_left)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-        backIcon = iconicsDrawable(CommunityMaterial.Icon.cmd_arrow_left) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(2)
-        }
-
-//        profileIcon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_account_circle)
-//                .colorInt(themeColor(R.attr.colorPrimary))
-//                .sizeDp(48)
-        profileIcon = iconicsDrawable(CommunityMaterial.Icon.cmd_account_circle) {
-            color = colorInt(themeColor(R.attr.colorPrimary))
-            size = sizeDp(48)
-        }
-
-        setSupportActionBar(risuscito_toolbar)
+        setSupportActionBar(binding.risuscitoToolbar)
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
             TranslationTask(this).execute()
         }
 
-        hasThreeColumns = mLUtils?.hasThreeColumns ?: false
-        Log.d(TAG, "onCreate: hasThreeComlumns = $hasThreeColumns")
-        isGridLayout = mLUtils?.isGridLayout ?: false
+        hasThreeColumns = mLUtils.hasThreeColumns
+        Log.d(TAG, "onCreate: hasThreeColumns = $hasThreeColumns")
+        isGridLayout = mLUtils.isGridLayout
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
-        isLandscape = mLUtils?.isLandscape ?: false
+        isLandscape = mLUtils.isLandscape
         Log.d(TAG, "onCreate: isLandscape = $isLandscape")
         isTabletWithFixedDrawer = isOnTablet && isLandscape
         Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithFixedDrawer")
@@ -184,7 +175,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
         setupNavDrawer(savedInstanceState)
 
-        toolbar_layout?.setExpanded(true, false)
+        binding.toolbarLayout.setExpanded(true, false)
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -248,237 +239,279 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        val mSavedInstanceState = drawer?.saveInstanceState(savedInstanceState)
-        super.onSaveInstanceState(mSavedInstanceState ?: savedInstanceState)
+    override fun onSaveInstanceState(_outState: Bundle) {
+        var outState = _outState
+        //add the values which need to be saved from the drawer to the bundle
+        binding.slider?.let { outState = it.saveInstanceState(outState) }
+        //add the values, which need to be saved from the drawer to the bundle
+        if (::sliderView.isInitialized) {
+            outState = sliderView.saveInstanceState(outState)
+        }
+        //add the values, which need to be saved from the accountHeader to the bundle
+        if (::mAccountHeader.isInitialized) {
+            outState = mAccountHeader.saveInstanceState(outState)
+        }
+        //add the values, which need to be saved from the crossFader to the bundle
+        if (::crossFader.isInitialized) {
+            outState = crossFader.saveInstanceState(outState)
+        }
+        super.onSaveInstanceState(outState)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        fab_pager.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabPager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
 
-        val profile = ProfileDrawerItem()
-                .withName("")
-                .withEmail("")
-                .withIcon(profileIcon)
-                .withIdentifier(PROF_ID)
-                .withTypeface(mRegularFont)
+        val profile = ProfileDrawerItem().apply {
+            nameText = ""
+            descriptionText = ""
+            icon = ImageHolder(profileIcon)
+            identifier = PROF_ID
+            typeface = mRegularFont
+        }
 
-        // Create the AccountHeader
-        mAccountHeader = AccountHeaderBuilder().withActivity(this).apply {
-            withTranslucentStatusBar(true)
-            withSelectionListEnabledForSingleProfile(false)
-            withProfileImagesClickable(false)
-            withSavedInstance(savedInstanceState)
-            addProfiles(profile)
+        mAccountHeader = AccountHeaderView(this).apply {
+            binding.slider?.let { attachToSliderView(it) }
+            selectionListEnabledForSingleProfile = false
+            profileImagesClickable = false
             mRegularFont?.let {
-                withNameTypeface(it)
-                withEmailTypeface(it)
+                nameTypeface = it
+                emailTypeface = it
             }
-            withOnAccountHeaderListener(object : AccountHeader.OnAccountHeaderListener {
-                override fun onProfileChanged(view: View?, profile: IProfile<*>, current: Boolean): Boolean {
-                    // sample usage of the onProfileChanged listener
-                    // if the clicked item has the identifier 1 add a new profile ;)
-                    if (profile is IDrawerItem<*>) {
-                        when (profile.identifier) {
-                            R.id.gdrive_backup.toLong() -> showAccountRelatedDialog(BACKUP_ASK)
-                            R.id.gdrive_restore.toLong() -> showAccountRelatedDialog(RESTORE_ASK)
-                            R.id.gplus_signout.toLong() -> showAccountRelatedDialog(SIGNOUT)
-                            R.id.gplus_revoke.toLong() -> showAccountRelatedDialog(REVOKE)
-                        }
+            addProfiles(profile)
+            onAccountHeaderListener = { _, profile, _ ->
+                //sample usage of the onProfileChanged listener
+                //if the clicked item has the identifier 1 add a new profile ;)
+                if (profile is IDrawerItem<*>) {
+                    when (profile.identifier) {
+                        R.id.gdrive_backup.toLong() -> showAccountRelatedDialog(BACKUP_ASK)
+                        R.id.gdrive_restore.toLong() -> showAccountRelatedDialog(RESTORE_ASK)
+                        R.id.gplus_signout.toLong() -> showAccountRelatedDialog(SIGNOUT)
+                        R.id.gplus_revoke.toLong() -> showAccountRelatedDialog(REVOKE)
                     }
-                    // false if you have not consumed the event and it should close the drawer
-                    return false
                 }
-            })
-        }.build()
-
-        val mDrawerBuilder = DrawerBuilder().withActivity(this).apply {
-            if (!isOnTablet)
-                risuscito_toolbar?.let {
-                    withToolbar(it)
-                }
-            if (isTabletWithFixedDrawer)
-                withDrawerWidthRes(R.dimen.drawer_tablet_fixed_width)
-            withHasStableIds(true)
-            withAccountHeader(mAccountHeader)
-            withActionBarDrawerToggle(!isOnTablet)
-            withActionBarDrawerToggleAnimated(!isOnTablet)
-            addDrawerItems(
-                    PrimaryDrawerItem()
-                            .withName(R.string.activity_homepage)
-                            .withIcon(CommunityMaterial.Icon2.cmd_home)
-                            .withIdentifier(R.id.navigation_home.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.search_name_text)
-                            .withIcon(CommunityMaterial.Icon2.cmd_magnify)
-                            .withIdentifier(R.id.navigation_search.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_general_index)
-                            .withIcon(CommunityMaterial.Icon2.cmd_view_list)
-                            .withIdentifier(R.id.navigation_indexes.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_custom_lists)
-                            .withIcon(CommunityMaterial.Icon2.cmd_view_carousel)
-                            .withIdentifier(R.id.navitagion_lists.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.action_favourites)
-                            .withIcon(CommunityMaterial.Icon2.cmd_star)
-                            .withIdentifier(R.id.navigation_favorites.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_consegnati)
-                            .withIcon(CommunityMaterial.Icon.cmd_clipboard_check)
-                            .withIdentifier(R.id.navigation_consegnati.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_history)
-                            .withIcon(CommunityMaterial.Icon2.cmd_history)
-                            .withIdentifier(R.id.navigation_history.toLong())
-                            .withTypeface(mMediumFont),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_settings)
-                            .withIcon(CommunityMaterial.Icon2.cmd_settings)
-                            .withIdentifier(R.id.navigation_settings.toLong())
-                            .withTypeface(mMediumFont),
-                    DividerDrawerItem(),
-                    PrimaryDrawerItem()
-                            .withName(R.string.title_activity_about)
-                            .withIcon(CommunityMaterial.Icon2.cmd_information_outline)
-                            .withIdentifier(R.id.navigation_changelog.toLong())
-                            .withTypeface(mMediumFont))
-            withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
-                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    // check if the drawerItem is set.
-                    // there are different reasons for the drawerItem to be null
-                    // --> click on the header
-                    // --> click on the footer
-                    // those items don't contain a drawerItem
-
-                    val fragment = when (drawerItem.identifier) {
-                        R.id.navigation_home.toLong() -> Risuscito()
-                        R.id.navigation_search.toLong() -> SearchFragment()
-                        R.id.navigation_indexes.toLong() -> GeneralIndex()
-                        R.id.navitagion_lists.toLong() -> CustomLists()
-                        R.id.navigation_favorites.toLong() -> FavoritesFragment()
-                        R.id.navigation_settings.toLong() -> SettingsFragment()
-                        R.id.navigation_changelog.toLong() -> AboutFragment()
-                        R.id.navigation_consegnati.toLong() -> ConsegnatiFragment()
-                        R.id.navigation_history.toLong() -> HistoryFragment()
-                        else -> return true
-                    }
-                    toolbar_layout?.setExpanded(true, true)
-
-                    // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-                    val myFragment = supportFragmentManager
-                            .findFragmentByTag(drawerItem.identifier.toString())
-                    if (myFragment == null || !myFragment.isVisible) {
-                        supportFragmentManager.commit {
-                            setCustomAnimations(
-                                    R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
-                            replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
-                        }
-                    }
-
-                    if (isTabletWithNoFixedDrawer) mMiniDrawer?.setSelection(drawerItem.identifier)
-                    return isTabletWithNoFixedDrawer
-                }
-            })
-            withGenerateMiniDrawer(isTabletWithNoFixedDrawer)
+                //false if you have not consumed the event and it should close the drawer
+                false
+            }
             withSavedInstance(savedInstanceState)
-            withTranslucentStatusBar(true)
         }
 
         if (isOnTablet) {
-            drawer = mDrawerBuilder.buildView()
+            sliderView = MaterialDrawerSliderView(this).apply {
+                accountHeader = mAccountHeader
+                customWidth = MATCH_PARENT
+                setItems(
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.activity_homepage
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_home
+                            identifier = R.id.navigation_home.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.search_name_text
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
+                            identifier = R.id.navigation_search.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_general_index
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
+                            identifier = R.id.navigation_indexes.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_custom_lists
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
+                            identifier = R.id.navitagion_lists.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.action_favourites
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_star
+                            identifier = R.id.navigation_favorites.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_consegnati
+                            iconicsIcon = CommunityMaterial.Icon.cmd_clipboard_check
+                            identifier = R.id.navigation_consegnati.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_history
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_history
+                            identifier = R.id.navigation_history.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_settings
+                            iconicsIcon = CommunityMaterial.Icon.cmd_cog
+                            identifier = R.id.navigation_settings.toLong()
+                            typeface = mMediumFont
+                        },
+                        DividerDrawerItem(),
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_about
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_information_outline
+                            identifier = R.id.navigation_changelog.toLong()
+                            typeface = mMediumFont
+                        }
+                )
+                onDrawerItemClickListener = { _, drawerItem, _ ->
+                    onDrawerItemClick(drawerItem)
+                }
+                setSavedInstance(savedInstanceState)
+            }
+
+            if (savedInstanceState == null)
+                sliderView.setSelectionAtPosition(1, false)
+
             if (isTabletWithFixedDrawer) {
-                fixed_drawer_content?.addView(drawer?.slider)
+                binding.fixedDrawerContent?.addView(sliderView)
             } else {
-                // the MiniDrawer is managed by the Drawer and we just get it to hook it into the Crossfader
-                mMiniDrawer = drawer?.miniDrawer?.withEnableSelectedMiniDrawerItemBackground(true)?.withIncludeSecondaryDrawerItems(true)
-
-                // get the widths in px for the first and second panel
-                val firstWidth = UIUtils.convertDpToPixel(302f, this).toInt()
-                val secondWidth = UIUtils.convertDpToPixel(72f, this).toInt()
-
-                // create and build our crossfader (see the MiniDrawer is also builded in here, as the build
-                // method returns the view to be used in the crossfader)
+                miniSliderView = MiniDrawerSliderView(this).apply {
+                    drawer = sliderView
+                }
+                //get the widths in px for the first and second panel
+                val firstWidth = convertDpToPixel(302f, this).toInt()
+                val secondWidth = convertDpToPixel(72f, this).toInt()
+                //create and build our crossfader (see the MiniDrawer is also builded in here, as the build method returns the view to be used in the crossfader)
+                //the crossfader library can be found here: https://github.com/mikepenz/Crossfader
                 crossFader = Crossfader<CrossFadeSlidingPaneLayout>()
-                        .withContent(main_content)
-                        .withFirst(drawer?.slider, firstWidth)
-                        .withSecond(mMiniDrawer?.build(this), secondWidth)
+                        .withContent(binding.mainContent)
+                        .withFirst(sliderView, firstWidth)
+                        .withSecond(miniSliderView, secondWidth)
                         .withSavedInstance(savedInstanceState)
                         .withGmailStyleSwiping()
                         .withPanelSlideListener(object : SlidingPaneLayout.PanelSlideListener {
                             override fun onPanelSlide(panel: View, slideOffset: Float) {
-                                mActionBarDrawerToggle?.onDrawerSlide(panel, slideOffset)
+                                (binding.risuscitoToolbar.navigationIcon as? DrawerArrowDrawable)?.progress = min(1f, max(0f, slideOffset))
                             }
 
                             override fun onPanelClosed(panel: View) {
-                                mActionBarDrawerToggle?.onDrawerClosed(panel)
+                                (binding.risuscitoToolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(false)
                             }
 
                             override fun onPanelOpened(panel: View) {
-                                mActionBarDrawerToggle?.onDrawerOpened(panel)
+                                (binding.risuscitoToolbar.navigationIcon as? DrawerArrowDrawable)?.setVerticalMirror(true)
                             }
                         })
                         .build()
 
-                mActionBarDrawerToggle = ActionBarDrawerToggle(this, drawer?.drawerLayout, risuscito_toolbar, R.string.material_drawer_open, R.string.material_drawer_close)
-                mActionBarDrawerToggle?.syncState()
-                risuscito_toolbar.setNavigationOnClickListener { crossFader?.crossFade() }
-
-                // define the crossfader to be used with the miniDrawer. This is required to be able to
-                // automatically toggle open / close
-                crossFader?.let { mMiniDrawer?.withCrossFader(CrossfadeWrapper(it)) }
-
-                // define a shadow (this is only for normal LTR layouts if you have a RTL app you need to
-                // define the other one
-                crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-                crossFader?.getCrossFadeSlidingPaneLayout()?.setShadowResourceRight(R.drawable.material_drawer_shadow_right)
+                //define the crossfader to be used with the miniDrawer. This is required to be able to automatically toggle open / close
+                miniSliderView.crossFader = CrossfadeWrapper(crossFader)
+                //define a shadow (this is only for normal LTR layouts if you have a RTL app you need to define the other one
+                crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
+                binding.risuscitoToolbar.navigationIcon = DrawerArrowDrawable(this)
+                binding.risuscitoToolbar.setNavigationOnClickListener { crossFader.crossFade() }
             }
         } else {
-            drawer = mDrawerBuilder.build()
-            drawer?.drawerLayout?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
+            mActionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawer, binding.risuscitoToolbar, R.string.material_drawer_open, R.string.material_drawer_close)
+            mActionBarDrawerToggle.syncState()
+
+            binding.slider?.apply {
+                setItems(
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.activity_homepage
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_home
+                            identifier = R.id.navigation_home.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.search_name_text
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
+                            identifier = R.id.navigation_search.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_general_index
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
+                            identifier = R.id.navigation_indexes.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_custom_lists
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
+                            identifier = R.id.navitagion_lists.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.action_favourites
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_star
+                            identifier = R.id.navigation_favorites.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_consegnati
+                            iconicsIcon = CommunityMaterial.Icon.cmd_clipboard_check
+                            identifier = R.id.navigation_consegnati.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_history
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_history
+                            identifier = R.id.navigation_history.toLong()
+                            typeface = mMediumFont
+                        },
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_settings
+                            iconicsIcon = CommunityMaterial.Icon.cmd_cog
+                            identifier = R.id.navigation_settings.toLong()
+                            typeface = mMediumFont
+                        },
+                        DividerDrawerItem(),
+                        PrimaryDrawerItem().apply {
+                            nameRes = R.string.title_activity_about
+                            iconicsIcon = CommunityMaterial.Icon2.cmd_information_outline
+                            identifier = R.id.navigation_changelog.toLong()
+                            typeface = mMediumFont
+                        }
+                )
+                onDrawerItemClickListener = { _, drawerItem, _ ->
+                    onDrawerItemClick(drawerItem)
+                }
+                tintStatusBar = true
+                setSavedInstance(savedInstanceState)
+            }
+            if (savedInstanceState == null)
+                binding.slider?.setSelectionAtPosition(1, false)
+            binding.drawer?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
+            binding.drawer?.addDrawerListener(mActionBarDrawerToggle)
         }
     }
 
-//    override fun onBackPressed() {
-//        super.onBackPressed()
-//        Log.d(TAG, "onBackPressed: ")
-//
-//        if (searchView.onBackPressed()) {
-//            return
-//        }
-//
-//        if (fab_pager.isOpen) {
-//            fab_pager.close()
-//            return
-//        }
-//
-//        if (isTabletWithNoFixedDrawer) {
-//            if (crossFader?.isCrossFaded() == true) {
-//                crossFader?.crossFade()
-//                return
-//            }
-//        }
-//
-//        if (!isOnTablet) {
-//            if (drawer?.isDrawerOpen == true) {
-//                drawer?.closeDrawer()
-//                return
-//            }
-//        }
-//
-//        backToHome(true)
-//    }
+    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>): Boolean {
+        val fragment = when (drawerItem.identifier) {
+            R.id.navigation_home.toLong() -> Risuscito()
+            R.id.navigation_search.toLong() -> SearchFragment()
+            R.id.navigation_indexes.toLong() -> GeneralIndex()
+            R.id.navitagion_lists.toLong() -> CustomLists()
+            R.id.navigation_favorites.toLong() -> FavoritesFragment()
+            R.id.navigation_settings.toLong() -> SettingsFragment()
+            R.id.navigation_changelog.toLong() -> AboutFragment()
+            R.id.navigation_consegnati.toLong() -> ConsegnatiFragment()
+            R.id.navigation_history.toLong() -> HistoryFragment()
+            else -> Risuscito()
+        }
+        binding.toolbarLayout.setExpanded(true, true)
+
+        // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
+        val myFragment = supportFragmentManager
+                .findFragmentByTag(drawerItem.identifier.toString())
+        if (myFragment == null || !myFragment.isVisible) {
+            supportFragmentManager.commit {
+                setCustomAnimations(
+                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
+                replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
+            }
+        }
+
+        if (isTabletWithNoFixedDrawer) miniSliderView.setSelection(drawerItem.identifier)
+        return isTabletWithNoFixedDrawer
+    }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
     private fun convertTabs() {
@@ -489,6 +522,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         when (conversion?.substring(0, 2)) {
             LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
             LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
+            LANGUAGE_TURKISH -> accordi1 = CambioAccordi.accordi_tr
         }
 
         var accordi2 = CambioAccordi.accordi_it
@@ -496,6 +530,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         when (conversion?.substring(3, 5)) {
             LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
             LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
+            LANGUAGE_TURKISH -> accordi2 = CambioAccordi.accordi_tr
         }
 
         val mappa = HashMap<String, String>()
@@ -529,6 +564,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         when (conversion?.substring(0, 2)) {
             LANGUAGE_UKRAINIAN -> barre1 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
+            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
         }
 
         var barre2 = CambioAccordi.barre_it
@@ -536,6 +572,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         when (conversion?.substring(3, 5)) {
             LANGUAGE_UKRAINIAN -> barre2 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
+            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
         }
 
         val mappa = HashMap<String, String>()
@@ -565,41 +602,41 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun closeFabMenu() {
-        if (fab_pager?.isOpen == true)
-            fab_pager?.close()
+        if (binding.fabPager.isOpen)
+            binding.fabPager.close()
     }
 
     fun toggleFabMenu() {
-        fab_pager?.toggle()
+        binding.fabPager.toggle()
     }
 
     fun enableFab(enable: Boolean) {
         Log.d(TAG, "enableFab: $enable")
         if (enable) {
-            if (fab_pager?.isOpen == true)
-                fab_pager?.close()
+            if (binding.fabPager.isOpen)
+                binding.fabPager.close()
             else {
-                val params = fab_pager?.layoutParams as? CoordinatorLayout.LayoutParams
+                val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
                 params?.behavior = SpeedDialView.ScrollingViewSnackbarBehavior()
-                fab_pager.requestLayout()
-                fab_pager.show()
+                binding.fabPager.requestLayout()
+                binding.fabPager.show()
             }
         } else {
-            if (fab_pager?.isOpen == true)
-                fab_pager?.close()
-            fab_pager.hide()
-            val params = fab_pager?.layoutParams as? CoordinatorLayout.LayoutParams
+            if (binding.fabPager.isOpen)
+                binding.fabPager.close()
+            binding.fabPager.hide()
+            val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
             params?.behavior = SpeedDialView.NoBehavior()
-            fab_pager.requestLayout()
+            binding.fabPager.requestLayout()
         }
     }
 
     fun initFab(optionMenu: Boolean, icon: Drawable, click: View.OnClickListener, action: SpeedDialView.OnActionSelectedListener?, customList: Boolean) {
         Log.d(TAG, "initFab()")
         enableFab(false)
-        fab_pager.setMainFabClosedDrawable(icon)
-        fab_pager.clearActionItems()
-        fab_pager.expansionMode = if (mLUtils?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabPager.setMainFabClosedDrawable(icon)
+        binding.fabPager.clearActionItems()
+        binding.fabPager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         enableFab(true)
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
@@ -607,17 +644,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
             val backgroundColor = ContextCompat.getColor(this, R.color.floating_background)
 
-            fab_pager.addActionItem(
+            binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_pulisci,
-//                            IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant)
-//                            .colorInt(iconColor)
-//                            .sizeDp(24)
-//                            .paddingDp(4))
-                            iconicsDrawable(CommunityMaterial.Icon.cmd_eraser_variant) {
-                                size = sizeDp(24)
-                                padding = sizeDp(4)
-                            }
-                    )
+                                    IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant).apply {
+                                        sizeDp = 24
+                                        paddingDp = 4
+                                    }
+                            )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.dialog_reset_list_title))
                             .setFabBackgroundColor(backgroundColor)
@@ -626,17 +659,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .create()
             )
 
-            fab_pager.addActionItem(
+            binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista,
-//                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus)
-//                            .colorInt(iconColor)
-//                            .sizeDp(24)
-//                            .paddingDp(4)
-                            iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
-                                size = sizeDp(24)
-                                padding = sizeDp(4)
-                            }
-                    )
+                                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+                                        sizeDp = 24
+                                        paddingDp = 4
+                                    }
+                            )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.action_add_list))
                             .setFabBackgroundColor(backgroundColor)
@@ -645,17 +674,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                             .create()
             )
 
-            fab_pager.addActionItem(
+            binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi,
-//                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant)
-//                            .colorInt(iconColor)
-//                            .sizeDp(24)
-//                            .paddingDp(4)
-                            iconicsDrawable(CommunityMaterial.Icon2.cmd_share_variant) {
-                                size = sizeDp(24)
-                                padding = sizeDp(4)
-                            }
-                    )
+                                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant).apply {
+                                        sizeDp = 24
+                                        paddingDp = 4
+                                    }
+                            )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.action_share))
                             .setFabBackgroundColor(backgroundColor)
@@ -665,17 +690,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             )
 
             if (customList) {
-                fab_pager.addActionItem(
+                binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_condividi_file,
-//                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment)
-//                                .colorInt(iconColor)
-//                                .sizeDp(24)
-//                                .paddingDp(4)
-                                iconicsDrawable(CommunityMaterial.Icon.cmd_attachment) {
-                                    size = sizeDp(24)
-                                    padding = sizeDp(4)
-                                }
-                        )
+                                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment).apply {
+                                            sizeDp = 24
+                                            paddingDp = 4
+                                        }
+                                )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_share_file))
                                 .setFabBackgroundColor(backgroundColor)
@@ -684,17 +705,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .create()
                 )
 
-                fab_pager.addActionItem(
+                binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista,
-//                                IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil)
-//                                .colorInt(iconColor)
-//                                .sizeDp(24)
-//                                .paddingDp(4)
-                                iconicsDrawable(CommunityMaterial.Icon2.cmd_pencil) {
-                                    size = sizeDp(24)
-                                    padding = sizeDp(4)
-                                }
-                        )
+                                        IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil).apply {
+                                            sizeDp = 24
+                                            paddingDp = 4
+                                        }
+                                )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_edit_list))
                                 .setFabBackgroundColor(backgroundColor)
@@ -703,17 +720,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .create()
                 )
 
-                fab_pager.addActionItem(
+                binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_delete_lista,
-//                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete)
-//                                .colorInt(iconColor)
-//                                .sizeDp(24)
-//                                .paddingDp(4)
-                                iconicsDrawable(CommunityMaterial.Icon.cmd_delete) {
-                                    size = sizeDp(24)
-                                    padding = sizeDp(4)
-                                }
-                        )
+                                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete).apply {
+                                            sizeDp = 24
+                                            paddingDp = 4
+                                        }
+                                )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_remove_list))
                                 .setFabBackgroundColor(backgroundColor)
@@ -722,34 +735,49 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .create()
                 )
             }
-            fab_pager.setOnActionSelectedListener(action)
+            binding.fabPager.setOnActionSelectedListener(action)
 
         }
-        fab_pager.mainFab.setOnClickListener(click)
+        binding.fabPager.mainFab.setOnClickListener(click)
     }
 
     fun getFab(): FloatingActionButton {
-        return fab_pager.mainFab
+        return binding.fabPager.mainFab
     }
 
     fun setTabVisible(visible: Boolean) {
-        material_tabs.isVisible = visible
+        binding.materialTabs.isVisible = visible
     }
 
     fun expandToolbar() {
-        toolbar_layout?.setExpanded(true, true)
+        binding.toolbarLayout.setExpanded(true, true)
     }
 
     fun getMaterialTabs(): TabLayout {
-        return material_tabs
+        return binding.materialTabs
     }
+
+    val activityDrawer: DrawerLayout?
+        get() = binding.drawer
+
+    val activityBottomBar: BottomAppBar
+        get() = binding.bottomBar
+
+    val activitySearchView: SimpleSearchView
+        get() = binding.searchView
+
+    val activityMainContent: View
+        get() = binding.mainContent
+
+    val activityToolbar: Toolbar
+        get() = binding.risuscitoToolbar
 
     fun enableBottombar(enabled: Boolean) {
         Log.d(TAG, "enableBottombar - enabled: $enabled")
         if (enabled)
-            mLUtils?.animateIn(bottom_bar)
+            mLUtils.animateIn(binding.bottomBar)
         else
-            mLUtils?.animateOut(bottom_bar)
+            mLUtils.animateOut(binding.bottomBar)
     }
 
     // [START signIn]
@@ -800,9 +828,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         } else {
             // Sign in failed, handle failure and update UI
             Toast.makeText(this, getString(
-                    R.string.login_failed,
-                    -1,
-                    task.exception?.localizedMessage), Toast.LENGTH_SHORT)
+                            R.string.login_failed,
+                            -1,
+                            task.exception?.localizedMessage), Toast.LENGTH_SHORT)
                     .show()
             acct = null
             updateUI(false)
@@ -829,9 +857,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                         Toast.makeText(this, getString(
-                                R.string.login_failed,
-                                -1,
-                                task.exception?.localizedMessage), Toast.LENGTH_SHORT)
+                                        R.string.login_failed,
+                                        -1,
+                                        task.exception?.localizedMessage), Toast.LENGTH_SHORT)
                                 .show()
                     }
                 }
@@ -844,75 +872,77 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
         if (signedIn) {
-            val profile: IProfile<*>
+            val profile: IProfile
             val profilePhoto = acct?.photoUrl
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
                 Log.d(TAG, "personPhotoUrl BEFORE $personPhotoUrl")
-//                personPhotoUrl = personPhotoUrl.substring(0, personPhotoUrl.length - 2) + 400
                 personPhotoUrl = personPhotoUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
                 Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
-                profile = ProfileDrawerItem()
-                        .withName(acct?.displayName)
-                        .withEmail(acct?.email)
-                        .withIcon(personPhotoUrl)
-                        .withIdentifier(PROF_ID)
-                        .withTypeface(mRegularFont)
+                profile = ProfileDrawerItem().apply {
+                    nameText = acct?.displayName as? CharSequence ?: ""
+                    descriptionText = acct?.email as? CharSequence ?: ""
+                    icon = ImageHolder(personPhotoUrl)
+                    identifier = PROF_ID
+                    typeface = mRegularFont
+                }
             } else {
-                profile = ProfileDrawerItem()
-                        .withName(acct?.displayName)
-                        .withEmail(acct?.email)
-                        .withIcon(profileIcon)
-                        .withIdentifier(PROF_ID)
-                        .withTypeface(mRegularFont)
+                profile = ProfileDrawerItem().apply {
+                    nameText = acct?.displayName as? CharSequence ?: ""
+                    descriptionText = acct?.email as? CharSequence ?: ""
+                    icon = ImageHolder(profileIcon)
+                    identifier = PROF_ID
+                    typeface = mRegularFont
+                }
             }
             // Create the AccountHeader
             mAccountHeader.updateProfile(profile)
             if (mAccountHeader.profiles?.size == 1) {
                 mAccountHeader.addProfiles(
-                        ProfileSettingDrawerItem()
-                                .withName(getString(R.string.gdrive_backup))
-                                .withIcon(CommunityMaterial.Icon.cmd_cloud_upload)
-                                .withIdentifier(R.id.gdrive_backup.toLong()),
-                        ProfileSettingDrawerItem()
-                                .withName(getString(R.string.gdrive_restore))
-                                .withIcon(CommunityMaterial.Icon.cmd_cloud_download)
-                                .withIdentifier(R.id.gdrive_restore.toLong()),
-                        ProfileSettingDrawerItem()
-                                .withName(getString(R.string.gplus_signout))
-                                .withIcon(CommunityMaterial.Icon.cmd_account_remove)
-                                .withIdentifier(R.id.gplus_signout.toLong()),
-                        ProfileSettingDrawerItem()
-                                .withName(getString(R.string.gplus_revoke))
-                                .withIcon(CommunityMaterial.Icon.cmd_account_key)
-                                .withIdentifier(R.id.gplus_revoke.toLong()))
+                        ProfileSettingDrawerItem().apply {
+                            nameRes = R.string.gdrive_backup
+                            iconicsIcon = CommunityMaterial.Icon.cmd_cloud_upload
+                            identifier = R.id.gdrive_backup.toLong()
+                        },
+                        ProfileSettingDrawerItem().apply {
+                            nameRes = R.string.gdrive_restore
+                            iconicsIcon = CommunityMaterial.Icon.cmd_cloud_download
+                            identifier = R.id.gdrive_restore.toLong()
+                        },
+                        ProfileSettingDrawerItem().apply {
+                            nameRes = R.string.gplus_signout
+                            iconicsIcon = CommunityMaterial.Icon.cmd_account_remove
+                            identifier = R.id.gplus_signout.toLong()
+                        },
+                        ProfileSettingDrawerItem().apply {
+                            nameRes = R.string.gplus_revoke
+                            iconicsIcon = CommunityMaterial.Icon.cmd_account_key
+                            identifier = R.id.gplus_revoke.toLong()
+                        }
+                )
             }
-            if (isTabletWithNoFixedDrawer) mMiniDrawer?.onProfileClick()
+            if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         } else {
-            val profile = ProfileDrawerItem()
-                    .withName("")
-                    .withEmail("")
-                    .withIcon(profileIcon)
-                    .withIdentifier(PROF_ID)
-                    .withTypeface(mRegularFont)
-            if ((mAccountHeader.profiles?.size ?: 0) > 1) {
-                mAccountHeader.removeProfile(1)
-                mAccountHeader.removeProfile(1)
-                mAccountHeader.removeProfile(1)
-                mAccountHeader.removeProfile(1)
+            val profile = ProfileDrawerItem().apply {
+                nameText = ""
+                descriptionText = ""
+                icon = ImageHolder(profileIcon)
+                identifier = PROF_ID
+                typeface = mRegularFont
             }
-            mAccountHeader.updateProfile(profile)
-            if (isTabletWithNoFixedDrawer) mMiniDrawer?.onProfileClick()
+            mAccountHeader.clear()
+            mAccountHeader.addProfiles(profile)
+            if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         }
         hideProgressDialog()
     }
 
     private fun showProgressDialog() {
-        loadingBar?.isVisible = true
+        binding.loadingBar.isVisible = true
     }
 
     private fun hideProgressDialog() {
-        loadingBar?.isVisible = false
+        binding.loadingBar.isVisible = false
     }
 
     fun setShowSnackbar() {
@@ -957,7 +987,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected: " + item.itemId)
         if (isTabletWithNoFixedDrawer && item.itemId == android.R.id.home) {
-            crossFader?.crossFade()
+            crossFader.crossFade()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -984,11 +1014,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 finish()
             return
         }
-
-        if (isTabletWithNoFixedDrawer)
-            mMiniDrawer?.setSelection(R.id.navigation_home.toLong())
-        toolbar_layout?.setExpanded(true, true)
-        drawer?.setSelection(R.id.navigation_home.toLong())
+        if (isTabletWithNoFixedDrawer) {
+            miniSliderView.setSelection(R.id.navigation_home.toLong())
+            sliderView.setSelection(R.id.navigation_home.toLong())
+        }
+        binding.toolbarLayout.setExpanded(true, true)
+        binding.slider?.setSelection(R.id.navigation_home.toLong())
     }
 
     private fun showAccountRelatedDialog(tag: String) {
@@ -1101,12 +1132,12 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     it.dismissProgressDialog(BACKUP_RUNNING)
                     if (result.isEmpty())
                         Snackbar.make(
-                                it.main_content,
-                                R.string.gdrive_backup_success,
-                                Snackbar.LENGTH_LONG)
+                                        it.binding.mainContent,
+                                        R.string.gdrive_backup_success,
+                                        Snackbar.LENGTH_LONG)
                                 .show()
                     else
-                        Snackbar.make(it.main_content, result, Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(it.binding.mainContent, result, Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
@@ -1144,7 +1175,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                                 .positiveButton(R.string.ok)
                                 .show()
                     else
-                        Snackbar.make(it.main_content, result, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(it.binding.mainContent, result, Snackbar.LENGTH_LONG).show()
                 }
             }
 

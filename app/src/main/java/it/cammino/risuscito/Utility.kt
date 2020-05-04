@@ -23,13 +23,11 @@ import android.view.WindowManager
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.utils.ThemeUtils
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
+import java.io.*
 import java.text.Normalizer
 import java.util.*
 import java.util.regex.Pattern
@@ -376,21 +374,27 @@ object Utility {
         }
     }
 
-    internal fun readTextFromResource(res: Resources, resourceID: Int): String? {
-        val raw = res.openRawResource(resourceID)
-        val stream = ByteArrayOutputStream()
-        try {
-            var line = raw.read()
-            while (line != -1) {
-                stream.write(line)
-                line = raw.read()
-            }
-            raw.close()
-        } catch (e: IOException) {
-            Log.e(TAG, "readTextFromResource", e)
-            return null
+    internal fun readTextFromResource(ctx: Context, resourceID: String): String? {
+        val inputStream = ctx.resources.openRawResource(LUtils.getResId(resourceID, R.raw::class.java))
+        val br = BufferedReader(InputStreamReader(inputStream, ECONDING_UTF8))
+        var line: String? = br.readLine()
+        val cantoTrasportato = ctx.filesDir.toString() + "/temporaneo.htm"
+        val out = BufferedWriter(
+                OutputStreamWriter(FileOutputStream(cantoTrasportato), ECONDING_UTF8))
+
+        while (line != null) {
+//            Log.d(TAG, "line: $line")
+            out.write(line)
+            out.newLine()
+            line = br.readLine()
         }
-        return stream.toString()
+        br.close()
+        out.flush()
+        out.close()
+
+        return cantoTrasportato
     }
+
+    private const val ECONDING_UTF8 = "utf-8"
 
 }

@@ -1,6 +1,5 @@
 package it.cammino.risuscito
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
@@ -8,10 +7,8 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.Button
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -31,24 +28,25 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.CreaListaActivity.Companion.EDIT_EXISTING_LIST
 import it.cammino.risuscito.CreaListaActivity.Companion.ID_DA_MODIF
 import it.cammino.risuscito.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.databinding.TabsLayout2Binding
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.lista_pers_button.view.*
-import kotlinx.android.synthetic.main.tabs_layout2.*
 
-class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
+class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, SimpleDialogFragment.SimpleCallback {
 
     private val mCustomListsViewModel: CustomListsViewModel by viewModels()
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
@@ -71,7 +69,24 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         }
     }
 
-    @SuppressLint("InflateParams")
+    private var _binding: TabsLayout2Binding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = TabsLayout2Binding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        Log.d(TAG, "onDestroyView")
+        binding.viewPager.unregisterOnPageChangeCallback(mPageChange)
+        _binding = null
+        super.onDestroyView()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -101,9 +116,9 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         mSectionsPagerAdapter = SectionsPagerAdapter(this)
 
         tabs = mMainActivity?.getMaterialTabs()
-        view_pager.adapter = mSectionsPagerAdapter
+        binding.viewPager.adapter = mSectionsPagerAdapter
         tabs?.let {
-            TabLayoutMediator(it, view_pager) { tab, position ->
+            TabLayoutMediator(it, binding.viewPager) { tab, position ->
                 val l = getSystemLocale(resources)
                 tab.text = when (position) {
                     0 -> getString(R.string.title_activity_canti_parola).toUpperCase(l)
@@ -112,7 +127,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 }
             }.attach()
         }
-        view_pager.registerOnPageChangeCallback(mPageChange)
+        binding.viewPager.registerOnPageChangeCallback(mPageChange)
         subscribeUiListe()
     }
 
@@ -120,12 +135,6 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         Log.d(TAG, "onDestroy")
         super.onDestroy()
         destroy()
-    }
-
-    override fun onDestroyView() {
-        Log.d(TAG, "onDestroyView")
-        super.onDestroyView()
-        view_pager.unregisterOnPageChangeCallback(mPageChange)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -163,7 +172,9 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 || requestCode == ListaPersonalizzataFragment.TAG_INSERT_PERS) {
             Log.d(TAG, "onActivityResult resultCode: $resultCode")
             if (resultCode == RESULT_OK || resultCode == RESULT_KO)
-                Snackbar.make(requireActivity().main_content, if (resultCode == RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                mMainActivity?.activityMainContent?.let {
+                    Snackbar.make(it, if (resultCode == RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                }
         }
     }
 
@@ -188,39 +199,41 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
         Log.d(TAG, "onPositive: $tag")
         when (tag) {
             RESET_LIST -> {
-                view_pager.button_pulisci.performClick()
+                binding.viewPager.findViewById<Button>(R.id.button_pulisci).performClick()
             }
             DELETE_LIST -> {
-                view_pager.currentItem = view_pager.currentItem - 1
+                binding.viewPager.currentItem = binding.viewPager.currentItem - 1
                 ioThread {
                     val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
                     val listToDelete = ListaPers()
                     listToDelete.id = mCustomListsViewModel.idDaCanc
                     mDao.deleteList(listToDelete)
-                    Snackbar.make(
-                            requireActivity().main_content,
-                            getString(R.string.list_removed)
-                                    + mCustomListsViewModel.titoloDaCanc
-                                    + "'!",
-                            Snackbar.LENGTH_LONG)
-                            .setAction(
-                                    getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
-                            ) {
-                                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                                    mLastClickTime = SystemClock.elapsedRealtime()
-                                    mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
-                                    movePage = true
-                                    ioThread {
-                                        val mListePersDao = RisuscitoDatabase.getInstance(requireContext())
-                                                .listePersDao()
-                                        val listaToRestore = ListaPers()
-                                        listaToRestore.id = mCustomListsViewModel.idDaCanc
-                                        listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
-                                        listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
-                                        mListePersDao.insertLista(listaToRestore)
+                    mMainActivity?.activityMainContent?.let { mainContent ->
+                        Snackbar.make(
+                                        mainContent,
+                                        getString(R.string.list_removed)
+                                                + mCustomListsViewModel.titoloDaCanc
+                                                + "'!",
+                                        Snackbar.LENGTH_LONG)
+                                .setAction(
+                                        getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
+                                ) {
+                                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                                        mLastClickTime = SystemClock.elapsedRealtime()
+                                        mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
+                                        movePage = true
+                                        ioThread {
+                                            val mListePersDao = RisuscitoDatabase.getInstance(requireContext())
+                                                    .listePersDao()
+                                            val listaToRestore = ListaPers()
+                                            listaToRestore.id = mCustomListsViewModel.idDaCanc
+                                            listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+                                            listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
+                                            mListePersDao.insertLista(listaToRestore)
+                                        }
                                     }
-                                }
-                            }.show()
+                                }.show()
+                    }
                 }
             }
         }
@@ -232,21 +245,19 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
 
     private fun playIntro() {
         mMainActivity?.enableFab(true)
-//        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check)
-//                .sizeDp(24)
-//                .paddingDp(4)
-        val doneDrawable = requireContext().iconicsDrawable(CommunityMaterial.Icon.cmd_check) {
-            size = sizeDp(24)
-            padding = sizeDp(4)
+        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check).apply {
+            //            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 4
         }
         mMainActivity?.getFab()?.let { fab ->
             TapTargetSequence(requireActivity())
                     .continueOnCancel(true)
                     .targets(
                             TapTarget.forView(
-                                    fab,
-                                    getString(R.string.showcase_listepers_title),
-                                    getString(R.string.showcase_listepers_desc1))
+                                            fab,
+                                            getString(R.string.showcase_listepers_title),
+                                            getString(R.string.showcase_listepers_desc1))
                                     .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                     .textTypeface(mRegularFont) // Specify a typeface for the text
                                     .titleTextColor(R.color.primary_text_default_material_dark)
@@ -255,9 +266,9 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                                     .tintTarget(false) // Whether to tint the target view's color
                             ,
                             TapTarget.forView(
-                                    fab,
-                                    getString(R.string.showcase_listepers_title),
-                                    getString(R.string.showcase_listepers_desc3))
+                                            fab,
+                                            getString(R.string.showcase_listepers_title),
+                                            getString(R.string.showcase_listepers_desc3))
                                     .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                     .icon(doneDrawable)
                                     .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -282,7 +293,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     }
 
     private fun subscribeUiListe() {
-        mCustomListsViewModel.customListResult?.observe(this) { list ->
+        mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->
             Log.d(TAG, "list size ${list.size}")
             titoliListe = arrayOfNulls(list.size)
             idListe = IntArray(list.size)
@@ -295,7 +306,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
             Log.d(TAG, "movePage: $movePage")
             Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
             if (movePage) {
-                view_pager.currentItem = mCustomListsViewModel.indexToShow
+                binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
                 movePage = false
             }
         }
@@ -326,23 +337,18 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
     }
 
     fun initFabOptions(customList: Boolean) {
-//        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_plus)
-//                .colorInt(Color.RED)
-//                .sizeDp(24)
-//                .paddingDp(4)
-        val icon = requireContext().iconicsDrawable(CommunityMaterial.Icon2.cmd_plus) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(4)
+        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_plus).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 4
         }
-
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {
                 R.id.fab_pulisci -> {
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
                         SimpleDialogFragment.Builder(
-                                mActivity, this, RESET_LIST)
+                                        mActivity, this, RESET_LIST)
                                 .title(R.string.dialog_reset_list_title)
                                 .content(R.string.reset_list_question)
                                 .positiveButton(R.string.reset_confirm)
@@ -355,7 +361,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
                         InputTextDialogFragment.Builder(
-                                mActivity, this, NEW_LIST)
+                                        mActivity, this, NEW_LIST)
                                 .title(R.string.lista_add_desc)
                                 .positiveButton(R.string.create_confirm)
                                 .negativeButton(R.string.cancel)
@@ -365,14 +371,14 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 }
                 R.id.fab_condividi -> {
                     closeFabMenu()
-                    view_pager?.button_condividi?.performClick()
+                    binding.viewPager.findViewById<Button>(R.id.button_condividi).performClick()
                     true
                 }
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
-                    mCustomListsViewModel.indDaModif = view_pager.currentItem
+                    mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
                     startActivityForResult(
-                            Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(ID_DA_MODIF to idListe[view_pager.currentItem - 2], EDIT_EXISTING_LIST to true)),
+                            Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2], EDIT_EXISTING_LIST to true)),
                             TAG_MODIFICA_LISTA)
                     Animatoo.animateSlideUp(activity)
                     true
@@ -380,7 +386,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 R.id.fab_delete_lista -> {
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
-                        mCustomListsViewModel.listaDaCanc = view_pager.currentItem - 2
+                        mCustomListsViewModel.listaDaCanc = binding.viewPager.currentItem - 2
                         mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
                         ioThread {
                             val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
@@ -388,9 +394,9 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                             mCustomListsViewModel.titoloDaCanc = lista?.titolo
                             mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
                             SimpleDialogFragment.Builder(
-                                    mActivity,
-                                    this,
-                                    DELETE_LIST)
+                                            mActivity,
+                                            this,
+                                            DELETE_LIST)
                                     .title(R.string.action_remove_list)
                                     .content(R.string.delete_list_dialog)
                                     .positiveButton(R.string.delete_confirm)
@@ -402,7 +408,7 @@ class CustomLists : Fragment(R.layout.tabs_layout2), InputTextDialogFragment.Sim
                 }
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
-                    view_pager?.button_invia_file?.performClick()
+                    binding.viewPager.findViewById<Button>(R.id.button_invia_file).performClick()
                     true
                 }
                 else -> {

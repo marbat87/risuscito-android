@@ -2,18 +2,20 @@ package it.cammino.risuscito
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
+import it.cammino.risuscito.databinding.TabsLayoutBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
-import kotlinx.android.synthetic.main.tabs_layout.*
 
-class GeneralIndex : Fragment(R.layout.tabs_layout) {
+class GeneralIndex : Fragment() {
 
     private var mMainActivity: MainActivity? = null
 
@@ -34,6 +36,23 @@ class GeneralIndex : Fragment(R.layout.tabs_layout) {
         }
     }
 
+    private var _binding: TabsLayoutBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = TabsLayoutBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        binding.viewPager.removeOnPageChangeListener(mPageChange)
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -45,20 +64,14 @@ class GeneralIndex : Fragment(R.layout.tabs_layout) {
 
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            view_pager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")
+            binding.viewPager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")
                     ?: "0")
         } else
-            view_pager.currentItem = mViewModel.pageViewed
-        view_pager.offscreenPageLimit = 1
-        view_pager.adapter = SectionsPagerAdapter(childFragmentManager)
-        view_pager.addOnPageChangeListener(mPageChange)
-        mMainActivity?.getMaterialTabs()?.setupWithViewPager(view_pager)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d(TAG, "onDestroyView")
-        view_pager.removeOnPageChangeListener(mPageChange)
+            binding.viewPager.currentItem = mViewModel.pageViewed
+        binding.viewPager.offscreenPageLimit = 1
+        binding.viewPager.adapter = SectionsPagerAdapter(childFragmentManager)
+        binding.viewPager.addOnPageChangeListener(mPageChange)
+        mMainActivity?.getMaterialTabs()?.setupWithViewPager(binding.viewPager)
     }
 
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {

@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -32,6 +29,7 @@ import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.databinding.LayoutHistoryBinding
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
@@ -39,10 +37,8 @@ import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.layout_history.*
 
-class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.SimpleCallback {
+class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
     private val cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
@@ -53,6 +49,22 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
     private var mMainActivity: MainActivity? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
+
+    private var _binding: LayoutHistoryBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = LayoutHistoryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,7 +113,7 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(context), Utility.ID_CANTO to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
@@ -111,7 +123,7 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
         cantoAdapter.onPreLongClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
             if (!MaterialCab.isActive) {
                 if (mMainActivity?.isOnTablet != true)
-                    activity?.toolbar_layout?.setExpanded(true, true)
+                    mMainActivity?.expandToolbar()
                 cantoAdapter.getAdapterItem(position).isSelected = true
                 cantoAdapter.notifyAdapterItemChanged(position)
                 startCab()
@@ -127,16 +139,16 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
         selectExtension?.selectOnLongClick = true
         selectExtension?.deleteAllSelectedItems()
 
-        history_recycler?.adapter = cantoAdapter
+        binding.historyRecycler.adapter = cantoAdapter
         val llm = if (mMainActivity?.isGridLayout == true)
             GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         else
             LinearLayoutManager(context)
-        history_recycler?.layoutManager = llm
+        binding.historyRecycler.layoutManager = llm
         val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        history_recycler?.addItemDecoration(insetDivider)
-        history_recycler?.itemAnimator = SlideRightAlphaAnimator()
+        binding.historyRecycler.addItemDecoration(insetDivider)
+        binding.historyRecycler.itemAnimator = SlideRightAlphaAnimator()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -162,7 +174,7 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
             R.id.list_reset -> {
                 mMainActivity?.let {
                     SimpleDialogFragment.Builder(
-                            it, this, RESET_HISTORY)
+                                    it, this, RESET_HISTORY)
                             .title(R.string.dialog_reset_history_title)
                             .content(R.string.dialog_reset_history_desc)
                             .positiveButton(R.string.clear_confirm)
@@ -240,10 +252,10 @@ class HistoryFragment : Fragment(R.layout.layout_history), SimpleDialogFragment.
     }
 
     private fun subscribeUiHistory() {
-        mCronologiaViewModel.cronologiaCanti?.observe(this) {
+        mCronologiaViewModel.cronologiaCanti?.observe(viewLifecycleOwner) {
             cantoAdapter.set(it)
-            no_history?.isInvisible = cantoAdapter.adapterItemCount > 0
-            history_recycler.isInvisible = cantoAdapter.adapterItemCount == 0
+            binding.noHistory.isInvisible = cantoAdapter.adapterItemCount > 0
+            binding.historyRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
         }
     }

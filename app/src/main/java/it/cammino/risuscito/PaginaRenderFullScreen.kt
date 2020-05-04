@@ -11,14 +11,16 @@ import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.core.view.postDelayed
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import io.multifunctions.letCheckNull
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.databinding.ActivityPaginaRenderFullscreenBinding
 import it.cammino.risuscito.ui.ThemeableActivity
-import kotlinx.android.synthetic.main.activity_pagina_render_fullscreen.*
-import kotlinx.android.synthetic.main.common_webview.*
 import java.lang.ref.WeakReference
 
 class PaginaRenderFullScreen : ThemeableActivity() {
@@ -31,9 +33,9 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     private val mScrollDown: Runnable = object : Runnable {
         override fun run() {
             try {
-                cantoView.scrollBy(0, speedValue)
+                findViewById<WebView>(R.id.canto_view).scrollBy(0, speedValue)
             } catch (e: NumberFormatException) {
-                cantoView.scrollBy(0, 0)
+                findViewById<WebView>(R.id.canto_view).scrollBy(0, 0)
             }
 
             mHandler.postDelayed(this, 700)
@@ -41,14 +43,14 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     }
     private var mLUtils: LUtils? = null
 
-    private lateinit var cantoView: WebView
+    private lateinit var binding: ActivityPaginaRenderFullscreenBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mLUtils = LUtils.getInstance(this)
         mLUtils?.goFullscreen()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pagina_render_fullscreen)
-        cantoView = canto_view as WebView
+        binding = ActivityPaginaRenderFullscreenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
@@ -57,17 +59,13 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
 
-//        val icon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen_exit)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(2)
-        val icon = iconicsDrawable(CommunityMaterial.Icon.cmd_fullscreen_exit) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen_exit).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 2
         }
-        fab_fullscreen_off.setImageDrawable(icon)
-        fab_fullscreen_off.setOnClickListener { saveZoom() }
+        binding.fabFullscreenOff.setImageDrawable(icon)
+        binding.fabFullscreenOff.setOnClickListener { saveZoom() }
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
@@ -82,11 +80,11 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     public override fun onResume() {
         super.onResume()
 
-        cantoView.loadUrl(urlCanto)
+        findViewById<WebView>(R.id.canto_view).loadUrl(urlCanto)
         if (scrollPlaying)
             mScrollDown.run()
 
-        val webSettings = cantoView.settings
+        val webSettings = findViewById<WebView>(R.id.canto_view).settings
         webSettings.useWideViewPort = true
         webSettings.setSupportZoom(true)
         webSettings.loadWithOverviewMode = true
@@ -94,16 +92,16 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         webSettings.builtInZoomControls = true
         webSettings.displayZoomControls = false
 
-        cantoView.webViewClient = MyWebViewClient()
+        findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
     }
 
     private fun saveZoom() {
         @Suppress("DEPRECATION")
         //aggiunto per evitare che la pagina venga chiusa troppo velocemente prima del caricamento del canto
         currentCanto?.let {
-            it.zoom = (cantoView.scale * 100).toInt()
-            it.scrollX = cantoView.scrollX
-            it.scrollY = cantoView.scrollY
+            it.zoom = (findViewById<WebView>(R.id.canto_view).scale * 100).toInt()
+            it.scrollX = findViewById<WebView>(R.id.canto_view).scrollX
+            it.scrollY = findViewById<WebView>(R.id.canto_view).scrollY
             Log.d(TAG, "it.id ${it.id} / it.zoom ${it.zoom} / it.scrollX ${it.scrollX} / it.scrollY ${it.scrollY}")
             ZoomSaverTask(this, it).execute()
             return
@@ -163,9 +161,9 @@ class PaginaRenderFullScreen : ThemeableActivity() {
                 val apiResult = Pair(activityReference.get(), activityReference.get()?.currentCanto)
                 apiResult.letCheckNull { activity, canto ->
                     Log.d(TAG, "onPostExecute: ${canto.zoom} - ${canto.scrollX} - ${canto.scrollY}")
-                    if (canto.zoom > 0) activity.cantoView.setInitialScale(canto.zoom)
+                    if (canto.zoom > 0) activity.findViewById<WebView>(R.id.canto_view).setInitialScale(canto.zoom)
                     if (canto.scrollX > 0 || canto.scrollY > 0)
-                        activity.cantoView.scrollTo(canto.scrollX, canto.scrollY)
+                        activity.findViewById<WebView>(R.id.canto_view).scrollTo(canto.scrollX, canto.scrollY)
                 }
             }
         }

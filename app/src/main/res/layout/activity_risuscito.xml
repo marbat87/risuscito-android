@@ -5,7 +5,7 @@
     xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/image_view_1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/copertina"
