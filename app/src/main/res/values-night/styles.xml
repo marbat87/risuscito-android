@@ -5,8 +5,4 @@
         <item name="statusBarScrim">@android:color/black</item>
     </style>
 
-    <style name="AdaptiveScrimColorDark">
-        <item name="contentScrim">@android:color/black</item>
-    </style>
-
 </resources>

@@ -11,7 +11,9 @@
         android:layout_height="wrap_content"
         risuscito:layout_scrollFlags="scroll|enterAlways">
 
-        <include layout="@layout/common_top_toolbar" />
+        <include
+            android:id="@+id/risuscito_toolbar"
+            layout="@layout/common_top_toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -20,7 +22,9 @@
         android:layout_height="match_parent"
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/search_layout" />
+        <include
+            android:id="@+id/search_layout"
+            layout="@layout/search_layout" />
 
         <include layout="@layout/common_shadow_no_behavior" />
 

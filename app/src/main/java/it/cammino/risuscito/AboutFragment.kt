@@ -2,16 +2,34 @@ package it.cammino.risuscito
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.vansuita.materialabout.builder.AboutBuilder
-import kotlinx.android.synthetic.main.about_layout.*
+import it.cammino.risuscito.databinding.AboutLayoutBinding
 
 
-class AboutFragment : Fragment(R.layout.about_layout) {
+class AboutFragment : Fragment() {
 
     private var mMainActivity: MainActivity? = null
+
+    private var _binding: AboutLayoutBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = AboutLayoutBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,7 +45,7 @@ class AboutFragment : Fragment(R.layout.about_layout) {
             Animatoo.animateSlideUp(activity)
         }
 
-        about?.addView(
+        binding.about.addView(
                 AboutBuilder.with(mMainActivity)
                         .setAppIcon(R.drawable.ic_launcher_144dp)
                         .setAppName(R.string.app_name)

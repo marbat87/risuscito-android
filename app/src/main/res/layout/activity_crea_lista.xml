@@ -14,7 +14,7 @@
         risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
+            android:id="@+id/collapsing_toolbar_layout"
             style="@style/AdaptiveScrimColor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,7 +31,7 @@
                 risuscito:layout_collapseMode="parallax">
 
                 <TextView
-                    android:id="@+id/textTitleDescription"
+                    android:id="@+id/text_title_description"
                     style="@style/TitoloSezione"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -40,10 +40,10 @@
                     android:textColor="@android:color/white" />
 
                 <EditText
-                    android:id="@+id/textfieldTitle"
+                    android:id="@+id/text_field_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/textTitleDescription"
+                    android:layout_below="@id/text_title_description"
                     android:layout_marginLeft="@dimen/activity_min_margin"
                     android:layout_marginRight="@dimen/activity_min_margin"
                     android:layout_marginBottom="@dimen/activity_min_margin"
@@ -98,7 +98,9 @@
             android:layout_margin="@dimen/activity_min_margin"
             android:text="@string/no_elements_added" />
 
-        <include layout="@layout/hint_layout" />
+        <include
+            android:id="@+id/main_hint_layout"
+            layout="@layout/hint_layout" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"

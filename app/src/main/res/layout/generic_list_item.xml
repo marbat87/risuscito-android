@@ -21,7 +21,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/titoloPosizioneGenerica"
+            android:id="@+id/titolo_posizione_generica"
             style="@style/TitoloSezione"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -33,7 +33,7 @@
             android:orientation="vertical" />
 
         <RelativeLayout
-            android:id="@+id/addCantoGenerico"
+            android:id="@+id/add_canto_generico"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

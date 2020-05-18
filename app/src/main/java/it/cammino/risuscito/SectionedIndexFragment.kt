@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -21,6 +23,7 @@ import com.mikepenz.fastadapter.expandable.getExpandableExtension
 import com.mikepenz.itemanimators.SlideDownAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.databinding.LayoutRecyclerBinding
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
@@ -30,10 +33,9 @@ import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.layout_recycler.*
 import java.util.*
 
-class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogFragment.SimpleCallback {
+class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private val mCantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
@@ -48,6 +50,22 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
     private var glm: GridLayoutManager? = null
     private var mLastClickTime: Long = 0
     private var mActivity: MainActivity? = null
+
+    private var _binding: LayoutRecyclerBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = LayoutRecyclerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -80,7 +98,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to (item as SimpleSubItem).source?.getText(context), Utility.ID_CANTO to item.id))
+                intent.putExtras(bundleOf(Utility.PAGINA to (item as SimpleSubItem).source?.getText(requireContext()), Utility.ID_CANTO to item.id))
                 mLUtils?.startActivityWithTransition(intent)
                 consume = true
             }
@@ -124,15 +142,15 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                     }
                 }
             }
-            recycler_view?.layoutManager = glm
+            binding.recyclerView.layoutManager = glm
         } else {
             llm = LinearLayoutManager(context)
-            recycler_view?.layoutManager = llm
+            binding.recyclerView.layoutManager = llm
         }
 
-        recycler_view?.adapter = mAdapter
-        recycler_view?.setHasFixedSize(true) // Size of RV will not change
-        recycler_view?.itemAnimator = SlideDownAlphaAnimator()
+        binding.recyclerView.adapter = mAdapter
+        binding.recyclerView.setHasFixedSize(true) // Size of RV will not change
+        binding.recyclerView.itemAnimator = SlideDownAlphaAnimator()
 
         ioThread {
             if (mCantiViewModel.tipoLista == 0) {
@@ -175,7 +193,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                                     }
                                     identifier = canti[i].idArgomento.toLong()
                                     subItems = mSubItems
-                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
+                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
                                 }
                         )
                         mSubItems = LinkedList()
@@ -222,7 +240,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
                                     }
                                     identifier = canti[i].idIndice.toLong()
                                     subItems = mSubItems
-                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(context) }
+                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
                                 }
                         )
                         mSubItems = LinkedList()
@@ -232,7 +250,7 @@ class SectionedIndexFragment : Fragment(R.layout.layout_recycler), SimpleDialogF
             }
 
             var totListe = 0
-            mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(context) }
+            mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) }
             mCantiViewModel.titoliList.forEach { (it as? SimpleSubExpandableItem)?.position = totListe++ }
             mAdapter.set(mCantiViewModel.titoliList)
             mAdapter.withSavedInstanceState(savedInstanceState)

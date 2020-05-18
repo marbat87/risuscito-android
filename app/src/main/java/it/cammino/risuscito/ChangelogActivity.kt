@@ -7,16 +7,20 @@ import android.view.MenuItem
 import androidx.activity.addCallback
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.michaelflisar.changelog.ChangelogBuilder
+import it.cammino.risuscito.databinding.ChangelogLayoutBinding
 import it.cammino.risuscito.ui.ThemeableActivity
-import kotlinx.android.synthetic.main.changelog_layout.*
 
 class ChangelogActivity : ThemeableActivity() {
 
+    private lateinit var binding: ChangelogLayoutBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.changelog_layout)
+        binding = ChangelogLayoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+//        setContentView(R.layout.changelog_layout)
 
-        setSupportActionBar(risuscito_toolbar)
+        setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -24,7 +28,7 @@ class ChangelogActivity : ThemeableActivity() {
 
         ChangelogBuilder()
                 .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
-                .buildAndSetup(aboutText) // second parameter defines, if the dialog has a dark or light theme
+                .buildAndSetup(binding.aboutText) // second parameter defines, if the dialog has a dark or light theme
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()

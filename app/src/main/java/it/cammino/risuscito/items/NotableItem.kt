@@ -2,24 +2,25 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.items.AbstractItem
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.mikepenz.fastadapter.binding.AbstractBindingItem
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
+import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.databinding.RowItemNotableBinding
 import it.cammino.risuscito.utils.themeColor
-import kotlinx.android.synthetic.main.row_item_notable.view.*
 
 fun notableItem(block: NotableItem.() -> Unit): NotableItem = NotableItem().apply(block)
 
-class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
+class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
 
     var title: StringHolder? = null
         private set
@@ -56,77 +57,38 @@ class NotableItem : AbstractItem<NotableItem.ViewHolder>() {
 
     var numPassaggio: Int = -1
 
-    /**
-     * defines the type defining this item. must be unique. preferably an id
-     *
-     * @return the type
-     */
     override val type: Int
         get() = R.id.fastadapter_notable_item_id
 
-    /**
-     * defines the layout which will be used for this item in the list
-     *
-     * @return the layout for this item
-     */
-    override val layoutRes: Int
-        get() = R.layout.row_item_notable
+    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): RowItemNotableBinding {
+        return RowItemNotableBinding.inflate(inflater, parent, false)
+    }
 
-    /**
-     * binds the data of this item onto the viewHolder
-     *
-     * @param holder the viewHolder of this item
-     */
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
+    override fun bindView(binding: RowItemNotableBinding, payloads: List<Any>) {
+        val ctx = binding.root.context
 
-        // get the context
-        val ctx = holder.itemView.context
+        StringHolder.applyTo(title, binding.textTitle)
 
-        //set the text for the name
-        StringHolder.applyTo(title, holder.mTitle)
+        StringHolder.applyToOrHide(page, binding.textPage)
 
-        //set the text for the description or hide
-        StringHolder.applyToOrHide(page, holder.mPage)
-
-        val bgShape = holder.mPage?.background as? GradientDrawable
+        val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
 
-        val icon = ctx.iconicsDrawable(if (numPassaggio == -1) CommunityMaterial.Icon2.cmd_tag_plus else CommunityMaterial.Icon2.cmd_tag_text_outline) {
-            color = colorInt(if (numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary))
-            size = sizeDp(24)
-            padding = sizeDp(2)
+        val icon = IconicsDrawable(ctx, if (numPassaggio == -1)
+            CommunityMaterial.Icon2.cmd_tag_plus
+        else
+            CommunityMaterial.Icon2.cmd_tag_text_outline).apply {
+            colorInt = if (numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary)
+            sizeDp = 24
+            paddingDp = 2
         }
-        holder.mEditNoteImage?.setImageDrawable(icon)
-
+        binding.editNoteImage.setImageDrawable(icon)
     }
 
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.mTitle?.text = null
-        holder.mPage?.text = null
-        holder.mEditNoteImage?.setImageDrawable(null)
-    }
-
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
-    }
-
-    /**
-     * our ViewHolder
-     */
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var mTitle: TextView? = null
-        var mPage: TextView? = null
-        var mEditNote: View? = null
-        var mEditNoteImage: ImageView? = null
-
-        init {
-            mTitle = view.text_title
-            mPage = view.text_page
-            mEditNote = view.edit_note
-            mEditNoteImage = view.edit_note_image
-        }
+    override fun unbindView(binding: RowItemNotableBinding) {
+        binding.textTitle.text = null
+        binding.textPage.text = null
+        binding.editNoteImage.setImageDrawable(null)
     }
 
 }

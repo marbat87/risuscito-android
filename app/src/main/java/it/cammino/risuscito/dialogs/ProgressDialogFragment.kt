@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -13,8 +14,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import it.cammino.risuscito.R
-import kotlinx.android.synthetic.main.indeterminate_progressbar.view.*
-import kotlinx.android.synthetic.main.linear_progressbar.view.*
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 import java.io.Serializable
 import java.text.NumberFormat
 
@@ -69,14 +69,16 @@ class ProgressDialogFragment : DialogFragment() {
 
         if (mBuilder.mProgressIndeterminate) {
             dialog.customView(R.layout.indeterminate_progressbar)
-            dialog.getCustomView().md_content_indeterminate.isVisible = mBuilder.mContent != null
-            dialog.getCustomView().md_content_indeterminate.text = mBuilder.mContent ?: ""
+            dialog.getCustomView().findViewById<TextView>(R.id.md_content_indeterminate).isVisible = mBuilder.mContent != null
+            dialog.getCustomView().findViewById<TextView>(R.id.md_content_indeterminate).text = mBuilder.mContent
+                    ?: ""
         } else {
             dialog.customView(R.layout.linear_progressbar)
-            dialog.getCustomView().working_progress.max = mBuilder.mProgressMax
-            dialog.getCustomView().md_minMax.isVisible = mBuilder.mShowMinMax
-            dialog.getCustomView().md_content_linear.isVisible = mBuilder.mContent != null
-            dialog.getCustomView().md_content_linear.text = mBuilder.mContent ?: ""
+            dialog.getCustomView().findViewById<MaterialProgressBar>(R.id.working_progress).max = mBuilder.mProgressMax
+            dialog.getCustomView().findViewById<TextView>(R.id.md_minMax).isVisible = mBuilder.mShowMinMax
+            dialog.getCustomView().findViewById<TextView>(R.id.md_content_linear).isVisible = mBuilder.mContent != null
+            dialog.getCustomView().findViewById<TextView>(R.id.md_content_linear).text = mBuilder.mContent
+                    ?: ""
         }
 
         dialog.cancelable(mBuilder.mCanceable)
@@ -95,7 +97,7 @@ class ProgressDialogFragment : DialogFragment() {
 
     @SuppressLint("CheckResult")
     fun setContent(@StringRes res: Int) {
-        (dialog as? MaterialDialog)?.getCustomView()?.md_content_indeterminate?.setText(res)
+        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<TextView>(R.id.md_content_indeterminate)?.setText(res)
     }
 
     fun setmCallback(callback: ProgressCallback) {
@@ -103,11 +105,11 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     fun setProgress(progress: Int) {
-        (dialog as? MaterialDialog)?.getCustomView()?.working_progress?.progress = progress
-        (dialog as? MaterialDialog)?.getCustomView()?.md_label?.text =
+        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<MaterialProgressBar>(R.id.working_progress)?.progress = progress
+        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<TextView>(R.id.md_label)?.text =
                 progressPercentFormat.format(
                         progress.toFloat() / (builder?.mProgressMax?.toFloat() ?: Float.MIN_VALUE))
-        (dialog as? MaterialDialog)?.getCustomView()?.md_minMax?.text =
+        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<TextView>(R.id.md_minMax)?.text =
                 String.format(progressNumberFormat, progress, builder?.mProgressMax)
     }
 

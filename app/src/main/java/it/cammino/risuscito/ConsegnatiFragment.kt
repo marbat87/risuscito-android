@@ -28,22 +28,26 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
-import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.listeners.ClickEventHook
+import com.mikepenz.fastadapter.binding.listeners.addClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.iconics.dsl.iconicsDrawable
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.paddingDp
+import com.mikepenz.iconics.utils.sizeDp
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
+import it.cammino.risuscito.databinding.CheckableRowItemBinding
+import it.cammino.risuscito.databinding.LayoutConsegnatiBinding
+import it.cammino.risuscito.databinding.RowItemNotableBinding
 import it.cammino.risuscito.dialogs.ListChoiceDialogFragment
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
@@ -54,13 +58,9 @@ import it.cammino.risuscito.services.ConsegnatiSaverService
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.common_bottom_bar.*
-import kotlinx.android.synthetic.main.common_top_toolbar.*
-import kotlinx.android.synthetic.main.layout_consegnati.*
 import java.lang.ref.WeakReference
 
-class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFragment.SimpleCallback, ListChoiceDialogFragment.ListChoiceCallback {
+class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, ListChoiceDialogFragment.ListChoiceCallback {
 
     private var cantoAdapter: FastItemAdapter<NotableItem> = FastItemAdapter()
 
@@ -76,6 +76,22 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     private val passaggiValues: MutableMap<Int, Int> = mutableMapOf()
     private var backCallback: OnBackPressedCallback? = null
 
+    private var _binding: LayoutConsegnatiBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = LayoutConsegnatiBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -90,7 +106,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         for (i in passaggiArray.indices)
             passaggiValues[passaggiArray[i]] = i
 
-        activity?.bottom_bar?.let {
+        mMainActivity?.activityBottomBar?.let {
             it.menu?.clear()
             IconicsMenuInflaterUtil.inflate(
                     requireActivity().menuInflater, requireContext(), R.menu.consegnati, it.menu, false)
@@ -107,16 +123,16 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                     R.id.cancel_change -> {
                         mCantiViewModel.editMode = false
                         backCallback?.isEnabled = false
-                        chooseRecycler?.isVisible = false
+                        binding.chooseRecycler.isVisible = false
                         enableBottombar(false)
-                        selected_view?.isVisible = true
+                        binding.selectedView.isVisible = true
                         enableFab(true)
                         true
                     }
                     R.id.confirm_changes -> {
                         mMainActivity?.let { mainActivity ->
                             SimpleDialogFragment.Builder(
-                                    mainActivity, this, CONFIRM_SAVE)
+                                            mainActivity, this, CONFIRM_SAVE)
                                     .title(R.string.dialog_save_consegnati_title)
                                     .content(R.string.dialog_save_consegnati_desc)
                                     .positiveButton(R.string.action_salva)
@@ -138,7 +154,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(
-                        Utility.PAGINA to item.source?.getText(context),
+                        Utility.PAGINA to item.source?.getText(requireContext()),
                         Utility.ID_CANTO to item.id
                 ))
                 mLUtils?.startActivityWithTransition(intent)
@@ -147,41 +163,35 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             consume
         }
 
-        cantoAdapter.addEventHook(object : ClickEventHook<NotableItem>() {
-            override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
-                return (viewHolder as? NotableItem.ViewHolder)?.mEditNote
+        cantoAdapter.addClickListener<RowItemNotableBinding, NotableItem>({ binding -> binding.editNote }) { _, _, _, item ->
+            mMainActivity?.let { activity ->
+                mCantiViewModel.mIdConsegnatoSelected = item.idConsegnato
+                mCantiViewModel.mIdCantoSelected = item.id
+                val prefill = passaggiValues[item.numPassaggio] ?: -1
+                ListChoiceDialogFragment.Builder(
+                                activity, this@ConsegnatiFragment, ADD_PASSAGE)
+                        .title(R.string.passage_title)
+                        .listArrayId(R.array.passaggi_entries)
+                        .initialSelection(prefill)
+                        .positiveButton(R.string.action_salva)
+                        .negativeButton(R.string.cancel)
+                        .show()
             }
-
-            override fun onClick(v: View, position: Int, fastAdapter: FastAdapter<NotableItem>, item: NotableItem) {
-                mMainActivity?.let { activity ->
-                    mCantiViewModel.mIdConsegnatoSelected = item.idConsegnato
-                    mCantiViewModel.mIdCantoSelected = item.id
-                    val prefill = passaggiValues[item.numPassaggio] ?: -1
-                    ListChoiceDialogFragment.Builder(
-                            activity, this@ConsegnatiFragment, ADD_PASSAGE)
-                            .title(R.string.passage_title)
-                            .listArrayId(R.array.passaggi_entries)
-                            .initialSelection(prefill)
-                            .positiveButton(R.string.action_salva)
-                            .negativeButton(R.string.cancel)
-                            .show()
-                }
-            }
-        })
+        }
 
         cantoAdapter.set(mCantiViewModel.titoli)
         cantoAdapter.itemFilter.filterPredicate = { item: NotableItem, constraint: CharSequence? ->
             val found = constraint?.split("|")?.filter { it.toInt() == item.numPassaggio }
             !found.isNullOrEmpty()
         }
-        cantiRecycler?.adapter = cantoAdapter
+        binding.cantiRecycler.adapter = cantoAdapter
         val glm = GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         val llm = LinearLayoutManager(context)
-        cantiRecycler?.layoutManager = if (mMainActivity?.isGridLayout == true) glm else llm
+        binding.cantiRecycler.layoutManager = if (mMainActivity?.isGridLayout == true) glm else llm
         val insetDivider = DividerItemDecoration(requireContext(), if (mMainActivity?.isGridLayout == true) glm.orientation else llm.orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        cantiRecycler?.addItemDecoration(insetDivider)
-        cantiRecycler?.itemAnimator = SlideRightAlphaAnimator()
+        binding.cantiRecycler.addItemDecoration(insetDivider)
+        binding.cantiRecycler.itemAnimator = SlideRightAlphaAnimator()
 
         // Creating new adapter object
         selectExtension = SelectExtension(selectableAdapter)
@@ -196,31 +206,24 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             true
         }
 
-        selectableAdapter.addEventHook(object : ClickEventHook<CheckableItem>() {
-            override fun onBind(viewHolder: RecyclerView.ViewHolder): View? {
-                return (viewHolder as? CheckableItem.ViewHolder)?.checkBox
-            }
-
-            override fun onClick(
-                    v: View, position: Int, fastAdapter: FastAdapter<CheckableItem>, item: CheckableItem) {
-                selectExtension?.toggleSelection(position)
-            }
-        })
+        selectableAdapter.addClickListener<CheckableRowItemBinding, CheckableItem>({ binding -> binding.checkBox }) { _, position, _, _ ->
+            selectExtension?.toggleSelection(position)
+        }
 
         selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
 
-        chooseRecycler?.adapter = selectableAdapter
+        binding.chooseRecycler.adapter = selectableAdapter
         val llm2 = if (mMainActivity?.isGridLayout == true)
             GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
         else
             LinearLayoutManager(context)
-        chooseRecycler?.layoutManager = llm2
+        binding.chooseRecycler.layoutManager = llm2
         val insetDivider2 = DividerItemDecoration(requireContext(), llm2.orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider2.setDrawable(it) }
-        chooseRecycler?.addItemDecoration(insetDivider2)
-        chooseRecycler?.itemAnimator = SlideRightAlphaAnimator()
+        binding.chooseRecycler.addItemDecoration(insetDivider2)
+        binding.chooseRecycler.itemAnimator = SlideRightAlphaAnimator()
 
-        activity?.searchView?.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
+        mMainActivity?.activitySearchView?.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -231,18 +234,18 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter {
-                        Utility.removeAccents(it.title?.getText(context)
+                        Utility.removeAccents(it.title?.getText(requireContext())
                                 ?: "").toLowerCase(getSystemLocale(resources)).contains(simplifiedString)
                     }
                     mCantiViewModel.titoliChooseFiltered.forEach { it.filter = simplifiedString }
                     selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
                 } else
-                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.sortedWith(compareBy { it.title.toString() })
+                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose
                 return true
             }
 
             override fun onQueryTextCleared(): Boolean {
-                mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.sortedWith(compareBy { it.title.toString() })
+                mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose
                 selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
                 return true
             }
@@ -250,7 +253,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         })
 
         val wrapper = ContextThemeWrapper(requireContext(), R.style.Widget_MaterialComponents_PopupMenu_Risuscito)
-        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, requireActivity().risuscito_toolbar, Gravity.END) else PopupMenu(wrapper, requireActivity().risuscito_toolbar)
+        mMainActivity?.let {
+            mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, it.activityToolbar, Gravity.END) else PopupMenu(wrapper, it.activityToolbar)
+        }
         mPopupMenu.inflate(R.menu.passage_filter_menu)
         mPopupMenu.setOnMenuItemClickListener {
             it.isChecked = !it.isChecked
@@ -263,8 +268,6 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             activity?.invalidateOptionsMenu()
             false
         }
-//        if (LUtils.hasM())
-//            mPopupMenu.gravity = Gravity.END
 
         view.isFocusableInTouchMode = true
         view.requestFocus()
@@ -282,9 +285,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
         LocalBroadcastManager.getInstance(requireActivity())
                 .registerReceiver(
                         completedBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED))
-        chooseRecycler?.isVisible = mCantiViewModel.editMode
+        binding.chooseRecycler.isVisible = mCantiViewModel.editMode
         enableBottombar(mCantiViewModel.editMode)
-        selected_view?.isVisible = !mCantiViewModel.editMode
+        binding.selectedView.isVisible = !mCantiViewModel.editMode
         enableFab(!mCantiViewModel.editMode)
         backCallback = object : OnBackPressedCallback(mCantiViewModel.editMode) {
             override fun handleOnBackPressed() {
@@ -292,9 +295,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 mCantiViewModel.editMode = false
                 this.isEnabled = false
                 mMainActivity?.expandToolbar()
-                chooseRecycler?.isVisible = false
+                binding.chooseRecycler.isVisible = false
                 enableBottombar(false)
-                selected_view?.isVisible = true
+                binding.selectedView.isVisible = true
                 enableFab(true)
             }
         }
@@ -320,7 +323,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
 
     override fun onDestroy() {
         super.onDestroy()
-        activity?.searchView?.closeSearch()
+        mMainActivity?.activitySearchView?.closeSearch()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -328,7 +331,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             IconicsMenuInflaterUtil.inflate(
                     requireActivity().menuInflater, requireContext(), R.menu.consegnati_menu_edit_mode, menu)
             val item = menu.findItem(R.id.action_search)
-            requireActivity().searchView.setMenuItem(item)
+            mMainActivity?.activitySearchView?.setMenuItem(item)
         } else {
             IconicsMenuInflaterUtil.inflate(
                     requireActivity().menuInflater, requireActivity(), if (mPopupMenu.menu.children.toList().any { it.isChecked }) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu, menu)
@@ -362,7 +365,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     private fun enableBottombar(enabled: Boolean) {
         mMainActivity?.enableBottombar(enabled)
         if (!enabled)
-            activity?.searchView?.closeSearch()
+            mMainActivity?.activitySearchView?.closeSearch()
         activity?.invalidateOptionsMenu()
     }
 
@@ -371,21 +374,17 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     }
 
     private fun initFab() {
-//        val icon = IconicsDrawable(requireActivity(), CommunityMaterial.Icon2.cmd_pencil)
-//                .colorInt(Color.WHITE)
-//                .sizeDp(24)
-//                .paddingDp(4)
-        val icon = requireContext().iconicsDrawable(CommunityMaterial.Icon2.cmd_pencil) {
-            color = colorInt(Color.WHITE)
-            size = sizeDp(24)
-            padding = sizeDp(4)
+        val icon = IconicsDrawable(requireActivity(), CommunityMaterial.Icon2.cmd_pencil).apply {
+            colorInt = Color.WHITE
+            sizeDp = 24
+            paddingDp = 4
         }
         val onClick = View.OnClickListener {
             mCantiViewModel.editMode = true
             backCallback?.isEnabled = true
             UpdateChooseListTask(this).execute()
-            selected_view?.isVisible = false
-            chooseRecycler?.isVisible = true
+            binding.selectedView.isVisible = false
+            binding.chooseRecycler.isVisible = true
             enableBottombar(true)
             enableFab(false)
             val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -401,9 +400,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
             TapTargetView.showFor(
                     requireActivity(), // `this` is an Activity
                     TapTarget.forView(
-                            fab,
-                            getString(R.string.title_activity_consegnati),
-                            getString(R.string.showcase_consegnati_howto))
+                                    fab,
+                                    getString(R.string.title_activity_consegnati),
+                                    getString(R.string.showcase_consegnati_howto))
                             .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                             .textTypeface(mRegularFont) // Specify a typeface for the text
                             .titleTextColor(R.color.primary_text_default_material_dark)
@@ -424,19 +423,19 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
-                                requireActivity().bottom_bar,
-                                R.id.confirm_changes,
-                                getString(R.string.title_activity_consegnati),
-                                getString(R.string.showcase_consegnati_confirm))
+                                        mMainActivity?.activityBottomBar,
+                                        R.id.confirm_changes,
+                                        getString(R.string.title_activity_consegnati),
+                                        getString(R.string.showcase_consegnati_confirm))
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark),
                         TapTarget.forToolbarMenuItem(
-                                requireActivity().bottom_bar,
-                                R.id.cancel_change,
-                                getString(R.string.title_activity_consegnati),
-                                getString(R.string.showcase_consegnati_cancel))
+                                        mMainActivity?.activityBottomBar,
+                                        R.id.cancel_change,
+                                        getString(R.string.title_activity_consegnati),
+                                        getString(R.string.showcase_consegnati_cancel))
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -459,14 +458,14 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
     }
 
     private fun subscribeUiConsegnati() {
-        mCantiViewModel.mIndexResult?.observe(this) { cantos ->
-            mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(context) })
+        mCantiViewModel.mIndexResult?.observe(viewLifecycleOwner) { cantos ->
+            mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(requireContext()) })
             cantoAdapter.set(mCantiViewModel.titoli)
             cantoAdapter.filter(mPopupMenu.menu.children.filter { item -> item.isChecked }
                     .map { item -> item.titleCondensed }
                     .joinToString("|"))
-            no_consegnati?.isInvisible = cantoAdapter.adapterItemCount > 0
-            cantiRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
+            binding.noConsegnati.isInvisible = cantoAdapter.adapterItemCount > 0
+            binding.cantiRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
         }
     }
 
@@ -491,8 +490,8 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                             }
                     )
                 }
-                it.mCantiViewModel.titoliChoose = newList.sortedWith(compareBy { item -> item.title.toString() })
-                it.mCantiViewModel.titoliChooseFiltered = it.mCantiViewModel.titoliChoose.sortedWith(compareBy { item -> item.title.toString() })
+                it.mCantiViewModel.titoliChoose = newList.sortedBy { item -> item.title?.getText(it.requireContext()) }
+                it.mCantiViewModel.titoliChooseFiltered = it.mCantiViewModel.titoliChoose
             }
             return null
         }
@@ -531,9 +530,9 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 val fragment = ProgressDialogFragment.findVisible(
                         mMainActivity, CONSEGNATI_SAVING)
                 fragment?.dismiss()
-                chooseRecycler?.isVisible = false
+                binding.chooseRecycler.isVisible = false
                 enableBottombar(false)
-                selected_view?.isVisible = true
+                binding.selectedView.isVisible = true
                 enableFab(true)
             } catch (e: IllegalArgumentException) {
                 Log.e(javaClass.name, e.localizedMessage, e)
@@ -563,7 +562,7 @@ class ConsegnatiFragment : Fragment(R.layout.layout_consegnati), SimpleDialogFra
                 backCallback?.isEnabled = false
                 mMainActivity?.let { activity ->
                     ProgressDialogFragment.Builder(
-                            activity, null, CONSEGNATI_SAVING)
+                                    activity, null, CONSEGNATI_SAVING)
                             .content(R.string.save_consegnati_running)
                             .progressIndeterminate(false)
                             .progressMax(mCantiViewModel.titoliChoose.size)

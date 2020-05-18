@@ -101,7 +101,8 @@
 
     <style name="AppModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Risuscito.BottomSheet</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Risuscito.BottomSheet
+        </item>
     </style>
 
     <style name="ShapeAppearanceOverlay.Risuscito.BottomSheet" parent="">
@@ -137,11 +138,31 @@
     </style>
 
     <!-- per l'icona profilo del drawer -->
-    <style name="BezelImageView">
-        <item name="biv_maskDrawable">@drawable/material_drawer_circle_mask</item>
-        <item name="biv_drawCircularShadow">true</item>
-        <item name="biv_selectorOnPress">?colorPrimary</item>
-        <item name="android:scaleType">centerCrop</item>
+    <!--    <style name="BezelImageView">-->
+    <!--        <item name="biv_maskDrawable">@drawable/material_drawer_circle_mask</item>-->
+    <!--        <item name="biv_drawCircularShadow">true</item>-->
+    <!--        <item name="biv_selectorOnPress">?colorPrimary</item>-->
+    <!--        <item name="android:scaleType">centerCrop</item>-->
+    <!--    </style>-->
+
+    <style name="Widget.AppCompat.DrawerArrowToggle.Risuscito">
+        <item name="color">@android:color/white</item>
+    </style>
+
+    <style name="Widget.MaterialDrawerStyle.Risuscito">
+        <!-- MaterialDrawer specific values -->
+        <!--            <item name="materialDrawerBackground">@color/risuscito_material_drawer_background</item>-->
+        <!--            <item name="materialDrawerPrimaryText">?android:textColorPrimary</item>-->
+        <!--            <item name="materialDrawerPrimaryIcon">?android:textColorSecondary</item>-->
+        <!--            <item name="materialDrawerSecondaryText">?android:textColorSecondary</item>-->
+        <item name="materialDrawerDividerColor">@color/material_drawer_divider</item>
+        <!--        <item name="materialDrawerSelectedBackgroundColor">?colorPrimaryLight</item>-->
+    </style>
+
+    <style name="Widget.MaterialDrawerHeaderStyle.Risuscito">
+        <item name="materialDrawerCompactStyle">true</item>
+        <!--        <item name="materialDrawerHeaderSelectionText">?android:textColorPrimary</item>-->
+        <!--        <item name="materialDrawerHeaderSelectionSubtext">?android:textColorSecondary</item>-->
     </style>
 
     <style name="Risuscito_SpeedDialActionItem">

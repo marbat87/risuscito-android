@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
@@ -21,15 +23,15 @@ import com.turingtechnologies.materialscrollbar.TouchScrollBar
 import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.databinding.IndexListFragmentBinding
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.android.synthetic.main.index_list_fragment.*
 
-class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialogFragment.SimpleCallback {
+class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     private val mCantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
@@ -51,6 +53,22 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mActivity = activity as? MainActivity
+    }
+
+    private var _binding: IndexListFragmentBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = IndexListFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,7 +99,7 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
                 // lancia l'activity che visualizza il canto passando il parametro creato
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(
-                        Utility.PAGINA to item.source?.getText(context),
+                        Utility.PAGINA to item.source?.getText(requireContext()),
                         Utility.ID_CANTO to item.id
                 ))
                 mLUtils?.startActivityWithTransition(intent)
@@ -103,29 +121,27 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
         mAdapter.setHasStableIds(true)
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (mActivity?.hasThreeColumns == true) 3 else 2)
-        cantiList?.layoutManager = if (mActivity?.isGridLayout == true) glm else llm
-        cantiList?.setHasFixedSize(true)
-        cantiList?.adapter = mAdapter
+        binding.cantiList.layoutManager = if (mActivity?.isGridLayout == true) glm else llm
+        binding.cantiList.setHasFixedSize(true)
+        binding.cantiList.adapter = mAdapter
         val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        cantiList?.addItemDecoration(insetDivider)
-        dragScrollBar?.let {
-            if (ViewCompat.isAttachedToWindow(it)) {
-                it.setIndicator(CustomIndicator(context), true)
-                it.setAutoHide(false)
-            } else
-                it.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-                    override fun onViewDetachedFromWindow(p0: View?) {
-                        // no-op
-                    }
+        binding.cantiList.addItemDecoration(insetDivider)
+        if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
+            binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
+            binding.dragScrollBar.setAutoHide(false)
+        } else
+            binding.dragScrollBar.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+                override fun onViewDetachedFromWindow(p0: View?) {
+                    // no-op
+                }
 
-                    override fun onViewAttachedToWindow(p0: View?) {
-                        (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
-                        (p0 as? TouchScrollBar)?.setAutoHide(false)
-                        p0?.removeOnAttachStateChangeListener(this)
-                    }
-                })
-        }
+                override fun onViewAttachedToWindow(p0: View?) {
+                    (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
+                    (p0 as? TouchScrollBar)?.setAutoHide(false)
+                    p0?.removeOnAttachStateChangeListener(this)
+                }
+            })
     }
 
     override fun onResume() {
@@ -153,11 +169,11 @@ class SimpleIndexFragment : Fragment(R.layout.index_list_fragment), SimpleDialog
     }
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.itemsResult?.observe(this) { canti ->
+        mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mAdapter.set(
                     when (mCantiViewModel.tipoLista) {
-                        0 -> canti.sortedBy { it.title?.getText(context) }
-                        1 -> canti.sortedBy { it.page?.getText(context)?.toInt() }
+                        0 -> canti.sortedBy { it.title?.getText(requireContext()) }
+                        1 -> canti.sortedBy { it.page?.getText(requireContext())?.toInt() }
                         2 -> canti
                         else -> canti
                     }

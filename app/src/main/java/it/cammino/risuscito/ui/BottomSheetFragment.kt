@@ -17,19 +17,25 @@ import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
+import it.cammino.risuscito.databinding.BottomSheetBinding
 import it.cammino.risuscito.items.BottomSheetItem
-import kotlinx.android.synthetic.main.bottom_sheet.*
 
 class BottomSheetFragment : BottomSheetDialogFragment() {
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setStyle(DialogFragment.STYLE_NO_TITLE, 0)
-//    }
+    private var _binding: BottomSheetBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        return inflater.inflate(R.layout.bottom_sheet, container, false)
+        _binding = BottomSheetBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,10 +44,10 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val showTitle = arguments?.getBoolean("showTitle") ?: false
 
         if (showTitle)
-            sheet_title.setText(arguments?.getInt("title") ?: 0)
+            binding.sheetTitle.setText(arguments?.getInt("title") ?: 0)
         else
-            sheet_title.text = ""
-        sheet_title_area.isVisible = showTitle
+            binding.sheetTitle.text = ""
+        binding.sheetTitleArea.isVisible = showTitle
 
         val intent = arguments?.getParcelable<Intent>("intent")
         val pm = requireActivity().packageManager
@@ -61,10 +67,10 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             val mList = list.map { BottomSheetItem().withItem(it) }
 
             val mOnClickListener = { _: View?, _: IAdapter<BottomSheetItem>, item: BottomSheetItem, _: Int ->
-                PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.item?.activityInfo?.packageName) }
+                PreferenceManager.getDefaultSharedPreferences(context).edit { putString(Utility.ULTIMA_APP_USATA, item.infoItem?.activityInfo?.packageName) }
 
-                val name = ComponentName(item.item?.activityInfo?.packageName
-                        ?: "", item.item?.activityInfo?.name ?: "")
+                val name = ComponentName(item.infoItem?.activityInfo?.packageName
+                        ?: "", item.infoItem?.activityInfo?.name ?: "")
                 val newIntent = mIntent.clone() as? Intent
                 newIntent?.component = name
                 activity?.startActivity(newIntent)
@@ -75,8 +81,8 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             val adapter = FastItemAdapter<BottomSheetItem>()
             adapter.add(mList)
             adapter.onClickListener = mOnClickListener
-            shareList.adapter = adapter
-            shareList.layoutManager = GridLayoutManager(activity, 3)
+            binding.shareList.adapter = adapter
+            binding.shareList.layoutManager = GridLayoutManager(activity, 3)
         }
     }
 
@@ -92,15 +98,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-
-//        fun newInstance(intent: Intent): BottomSheetFragment {
-//            val frag = BottomSheetFragment()
-//            val args = Bundle()
-//            args.putBoolean("showTitle", false)
-//            args.putParcelable("intent", intent)
-//            frag.arguments = args
-//            return frag
-//        }
 
         fun newInstance(@StringRes title: Int, intent: Intent): BottomSheetFragment {
             val frag = BottomSheetFragment()

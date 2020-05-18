@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/common_webview" />
+    <include
+        android:id="@+id/canto_view"
+        layout="@layout/common_webview" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_fullscreen_off"
@@ -14,5 +16,5 @@
         android:layout_marginRight="@dimen/fab_margin_frame"
         android:layout_marginBottom="@dimen/fab_margin_frame" />
 
-</merge>
+</FrameLayout>
 

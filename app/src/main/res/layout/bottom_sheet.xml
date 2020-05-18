@@ -24,7 +24,7 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/shareList"
+        android:id="@+id/share_list"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:paddingBottom="24dp"

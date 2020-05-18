@@ -2,27 +2,24 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.view.View
-import android.widget.CheckBox
-import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.items.AbstractItem
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
-import com.mikepenz.materialize.holder.ColorHolder
-import com.mikepenz.materialize.holder.StringHolder
+import com.mikepenz.fastadapter.ui.utils.StringHolder
+import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.databinding.CheckableRowItemBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.themeColor
-import kotlinx.android.synthetic.main.checkable_row_item.view.*
 
 fun checkableItem(block: CheckableItem.() -> Unit): CheckableItem = CheckableItem().apply(block)
 
-class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
+class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
 
     var title: StringHolder? = null
         private set
@@ -50,40 +47,22 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
 
     var filter: String? = null
 
-    /**
-     * defines the type defining this item. must be unique. preferably an id
-     *
-     * @return the type
-     */
     override val type: Int
         get() = R.id.fastadapter_checkable_item_id
 
-    /**
-     * defines the layout which will be used for this item in the list
-     *
-     * @return the layout for this item
-     */
-    override val layoutRes: Int
-        get() = R.layout.checkable_row_item
+    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): CheckableRowItemBinding {
+        return CheckableRowItemBinding.inflate(inflater, parent, false)
+    }
 
-    /**
-     * binds the data of this item onto the viewHolder
-     *
-     * @param holder the viewHolder of this item
-     */
-    override fun bindView(holder: ViewHolder, payloads: MutableList<Any>) {
-        super.bindView(holder, payloads)
-
+    override fun bindView(binding: CheckableRowItemBinding, payloads: List<Any>) {
         // get the context
-        val ctx = holder.itemView.context
+        val ctx = binding.root.context
 
-        holder.checkBox?.isChecked = isSelected
-        ViewCompat.setBackground(
-                holder.view,
-                FastAdapterUIUtils.getSelectableBackground(
-                        ctx,
-                        ctx.themeColor(R.attr.colorSecondaryLight),
-                        true))
+        binding.checkBox.isChecked = isSelected
+        binding.root.background = FastAdapterUIUtils.getSelectableBackground(
+                ctx,
+                ctx.themeColor(R.attr.colorSecondaryLight),
+                true)
         // set the text for the name
         filter?.let {
             if (it.isNotEmpty()) {
@@ -98,42 +77,23 @@ class CheckableItem : AbstractItem<CheckableItem.ViewHolder>() {
                             .append(stringTitle?.substring(mPosition, mPosition + it.length))
                             .append("</b>")
                             .append(stringTitle?.substring(mPosition + it.length))
-                    holder.mTitle?.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                    binding.textTitle.text = LUtils.fromHtmlWrapper(highlighted.toString())
                 } else
-                    StringHolder.applyTo(title, holder.mTitle)
+                    StringHolder.applyTo(title, binding.textTitle)
             } else
-                StringHolder.applyTo(title, holder.mTitle)
-        } ?: StringHolder.applyTo(title, holder.mTitle)
+                StringHolder.applyTo(title, binding.textTitle)
+        } ?: StringHolder.applyTo(title, binding.textTitle)
 
         // set the text for the description or hide
-        StringHolder.applyToOrHide(page, holder.mPage)
+        StringHolder.applyToOrHide(page, binding.textPage)
 
-        val bgShape = holder.mPage?.background as? GradientDrawable
+        val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
     }
 
-    override fun unbindView(holder: ViewHolder) {
-        super.unbindView(holder)
-        holder.mTitle?.text = null
-        holder.mPage?.text = null
-    }
-
-    override fun getViewHolder(v: View): ViewHolder {
-        return ViewHolder(v)
-    }
-
-    /** our ViewHolder  */
-    class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-
-        var mTitle: TextView? = null
-        var mPage: TextView? = null
-        var checkBox: CheckBox? = null
-
-        init {
-            mTitle = view.text_title
-            mPage = view.text_page
-            checkBox = view.check_box
-        }
+    override fun unbindView(binding: CheckableRowItemBinding) {
+        binding.textTitle.text = null
+        binding.textPage.text = null
     }
 
 }
