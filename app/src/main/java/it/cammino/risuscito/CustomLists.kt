@@ -9,6 +9,9 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.Button
+import androidx.activity.invoke
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -89,7 +92,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setHasOptionsMenu(true)
         mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
 
         mMainActivity = activity as? MainActivity
@@ -137,12 +140,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         destroy()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        Log.d(TAG, "onActivityCreated")
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         IconicsMenuInflaterUtil.inflate(
                 requireActivity().menuInflater, requireContext(), R.menu.help_menu, menu)
@@ -159,22 +156,11 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
         return false
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.d(TAG, "onActivityResult requestCode: $requestCode")
-        super.onActivityResult(requestCode, resultCode, data)
-        if ((requestCode == TAG_CREA_LISTA || requestCode == TAG_MODIFICA_LISTA) && resultCode == Activity.RESULT_OK) {
+    private val startListEditForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
             Log.d(TAG, "mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
             mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif
             movePage = true
-        }
-        if (requestCode == ListaPredefinitaFragment.TAG_INSERT_PAROLA
-                || requestCode == ListaPredefinitaFragment.TAG_INSERT_EUCARESTIA
-                || requestCode == ListaPersonalizzataFragment.TAG_INSERT_PERS) {
-            Log.d(TAG, "onActivityResult resultCode: $resultCode")
-            if (resultCode == RESULT_OK || resultCode == RESULT_KO)
-                mMainActivity?.activityMainContent?.let {
-                    Snackbar.make(it, if (resultCode == RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
-                }
         }
     }
 
@@ -184,8 +170,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
             NEW_LIST -> {
                 val mEditText = dialog.getInputField()
                 mCustomListsViewModel.indDaModif = 2 + idListe.size
-                startActivityForResult(
-                        Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(LIST_TITLE to mEditText.text.toString(), EDIT_EXISTING_LIST to false)), TAG_CREA_LISTA)
+                startListEditForResult(Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(LIST_TITLE to mEditText.text.toString(), EDIT_EXISTING_LIST to false)))
                 Animatoo.animateSlideUp(activity)
             }
         }
@@ -210,11 +195,11 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     mDao.deleteList(listToDelete)
                     mMainActivity?.activityMainContent?.let { mainContent ->
                         Snackbar.make(
-                                        mainContent,
-                                        getString(R.string.list_removed)
-                                                + mCustomListsViewModel.titoloDaCanc
-                                                + "'!",
-                                        Snackbar.LENGTH_LONG)
+                                mainContent,
+                                getString(R.string.list_removed)
+                                        + mCustomListsViewModel.titoloDaCanc
+                                        + "'!",
+                                Snackbar.LENGTH_LONG)
                                 .setAction(
                                         getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
                                 ) {
@@ -255,9 +240,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     .continueOnCancel(true)
                     .targets(
                             TapTarget.forView(
-                                            fab,
-                                            getString(R.string.showcase_listepers_title),
-                                            getString(R.string.showcase_listepers_desc1))
+                                    fab,
+                                    getString(R.string.showcase_listepers_title),
+                                    getString(R.string.showcase_listepers_desc1))
                                     .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                     .textTypeface(mRegularFont) // Specify a typeface for the text
                                     .titleTextColor(R.color.primary_text_default_material_dark)
@@ -266,9 +251,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                                     .tintTarget(false) // Whether to tint the target view's color
                             ,
                             TapTarget.forView(
-                                            fab,
-                                            getString(R.string.showcase_listepers_title),
-                                            getString(R.string.showcase_listepers_desc3))
+                                    fab,
+                                    getString(R.string.showcase_listepers_title),
+                                    getString(R.string.showcase_listepers_desc3))
                                     .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                     .icon(doneDrawable)
                                     .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -348,7 +333,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
                         SimpleDialogFragment.Builder(
-                                        mActivity, this, RESET_LIST)
+                                mActivity, this, RESET_LIST)
                                 .title(R.string.dialog_reset_list_title)
                                 .content(R.string.reset_list_question)
                                 .positiveButton(R.string.reset_confirm)
@@ -361,7 +346,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
                         InputTextDialogFragment.Builder(
-                                        mActivity, this, NEW_LIST)
+                                mActivity, this, NEW_LIST)
                                 .title(R.string.lista_add_desc)
                                 .positiveButton(R.string.create_confirm)
                                 .negativeButton(R.string.cancel)
@@ -377,9 +362,7 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
-                    startActivityForResult(
-                            Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2], EDIT_EXISTING_LIST to true)),
-                            TAG_MODIFICA_LISTA)
+                    startListEditForResult(Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2], EDIT_EXISTING_LIST to true)))
                     Animatoo.animateSlideUp(activity)
                     true
                 }
@@ -394,9 +377,9 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
                             mCustomListsViewModel.titoloDaCanc = lista?.titolo
                             mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
                             SimpleDialogFragment.Builder(
-                                            mActivity,
-                                            this,
-                                            DELETE_LIST)
+                                    mActivity,
+                                    this,
+                                    DELETE_LIST)
                                     .title(R.string.action_remove_list)
                                     .content(R.string.delete_list_dialog)
                                     .positiveButton(R.string.delete_confirm)
@@ -427,8 +410,6 @@ class CustomLists : Fragment(), InputTextDialogFragment.SimpleInputCallback, Sim
     }
 
     companion object {
-        const val TAG_CREA_LISTA = 111
-        const val TAG_MODIFICA_LISTA = 222
         const val RESULT_OK = 0
         const val RESULT_KO = -1
         const val RESULT_CANCELED = -2

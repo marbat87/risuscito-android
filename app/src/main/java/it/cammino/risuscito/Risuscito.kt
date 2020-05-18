@@ -85,6 +85,8 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
             mMainActivity?.signIn()
         }
 
+        setHasOptionsMenu(true)
+
         Log.d(TAG, "getVersionCodeWrapper(): ${getVersionCodeWrapper()}")
 
         ChangelogBuilder()
@@ -106,10 +108,8 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(signInVisibility)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
+//    private val startListInsertForResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+//    }
 
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

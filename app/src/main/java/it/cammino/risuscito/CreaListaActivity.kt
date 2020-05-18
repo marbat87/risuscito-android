@@ -1,7 +1,6 @@
 package it.cammino.risuscito
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.AsyncTask
@@ -84,7 +83,6 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         binding = ActivityCreaListaBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-//        setContentView(R.layout.activity_crea_lista)
 
         modifica = intent.extras?.getBoolean(EDIT_EXISTING_LIST) == true
 
@@ -115,7 +113,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             Log.d(TAG, "onItemLongClick: $position")
             mViewModel.positionToRename = position
             InputTextDialogFragment.Builder(
-                            this, this, RENAME)
+                    this, this, RENAME)
                     .title(R.string.posizione_rename)
                     .prefill(item.name?.getText(this).toString())
                     .positiveButton(R.string.aggiungi_rename)
@@ -178,7 +176,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
 
         binding.fabCreaLista.setOnClickListener {
             InputTextDialogFragment.Builder(
-                            this, this, ADD_POSITION)
+                    this, this, ADD_POSITION)
                     .title(R.string.posizione_add_desc)
                     .positiveButton(R.string.aggiungi_confirm)
                     .negativeButton(R.string.cancel)
@@ -239,7 +237,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
             android.R.id.home -> {
                 if (mAdapter.adapterItems.isNotEmpty()) {
                     SimpleDialogFragment.Builder(
-                                    this, this, SAVE_LIST)
+                            this, this, SAVE_LIST)
                             .title(R.string.save_list_title)
                             .content(R.string.save_list_question)
                             .positiveButton(R.string.save_exit_confirm)
@@ -247,7 +245,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                             .show()
                     return true
                 } else {
-                    setResult(Activity.RESULT_CANCELED)
+                    setResult(RESULT_CANCELED)
                     finish()
                     Animatoo.animateSlideDown(this)
                 }
@@ -267,7 +265,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                     .negativeButton(R.string.discard_exit_confirm)
                     .show()
         } else {
-            setResult(Activity.RESULT_CANCELED)
+            setResult(RESULT_CANCELED)
             finish()
             Animatoo.animateSlideDown(this)
         }
@@ -316,7 +314,7 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
         Log.d(TAG, "onNegative: $tag")
         when (tag) {
             SAVE_LIST -> {
-                setResult(Activity.RESULT_CANCELED)
+                setResult(RESULT_CANCELED)
                 finish()
                 Animatoo.animateSlideDown(this)
             }
@@ -376,9 +374,9 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forView(
-                                        binding.fabCreaLista,
-                                        getString(R.string.add_position),
-                                        getString(R.string.showcase_add_pos_desc))
+                                binding.fabCreaLista,
+                                getString(R.string.add_position),
+                                getString(R.string.showcase_add_pos_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -387,10 +385,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 .tintTarget(false)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
-                                        binding.risuscitoToolbar,
-                                        R.id.action_save_list,
-                                        getString(R.string.list_save_exit),
-                                        getString(R.string.showcase_saveexit_desc))
+                                binding.risuscitoToolbar,
+                                R.id.action_save_list,
+                                getString(R.string.list_save_exit),
+                                getString(R.string.showcase_saveexit_desc))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -398,10 +396,10 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                                 .textColor(R.color.secondary_text_default_material_dark)
                                 .id(2),
                         TapTarget.forToolbarMenuItem(
-                                        binding.risuscitoToolbar,
-                                        R.id.action_help,
-                                        getString(R.string.showcase_end_title),
-                                        getString(R.string.showcase_help_general))
+                                binding.risuscitoToolbar,
+                                R.id.action_help,
+                                getString(R.string.showcase_end_title),
+                                getString(R.string.showcase_help_general))
                                 // All options below are optional
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
@@ -512,20 +510,20 @@ class CreaListaActivity : ThemeableActivity(), InputTextDialogFragment.SimpleInp
                 Toast.makeText(this@CreaListaActivity, getString(R.string.no_title_edited), Toast.LENGTH_SHORT).show()
             when (result) {
                 0, 100 -> {
-                    setResult(Activity.RESULT_OK)
+                    setResult(RESULT_OK)
                     finish()
                     Animatoo.animateSlideDown(this@CreaListaActivity)
                 }
                 1 ->
                     Snackbar.make(
-                                    binding.mainContent,
-                                    R.string.lista_pers_piena,
-                                    Snackbar.LENGTH_SHORT)
+                            binding.mainContent,
+                            R.string.lista_pers_piena,
+                            Snackbar.LENGTH_SHORT)
                             .show()
                 2 ->
                     Snackbar.make(
-                                    binding.mainContent, R.string.lista_pers_vuota,
-                                    Snackbar.LENGTH_SHORT)
+                            binding.mainContent, R.string.lista_pers_vuota,
+                            Snackbar.LENGTH_SHORT)
                             .show()
 
             }

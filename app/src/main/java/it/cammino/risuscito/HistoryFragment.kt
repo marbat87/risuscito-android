@@ -89,6 +89,9 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         val sFragment = SimpleDialogFragment.findVisible(mMainActivity, RESET_HISTORY)
         sFragment?.setmCallback(this)
 
+        setHasOptionsMenu(true)
+        subscribeUiHistory()
+
         cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
             var consume = false
             if (MaterialCab.isActive) {
@@ -149,12 +152,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         binding.historyRecycler.addItemDecoration(insetDivider)
         binding.historyRecycler.itemAnimator = SlideRightAlphaAnimator()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-        subscribeUiHistory()
     }
 
     override fun onDestroy() {

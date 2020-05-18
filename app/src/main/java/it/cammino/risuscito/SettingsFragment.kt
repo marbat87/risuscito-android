@@ -52,9 +52,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
-                                        it.activityMainContent,
-                                        "Module install failed with ${state.errorCode()}",
-                                        Snackbar.LENGTH_SHORT)
+                                it.activityMainContent,
+                                "Module install failed with ${state.errorCode()}",
+                                Snackbar.LENGTH_SHORT)
                                 .show()
                     }
 
@@ -89,9 +89,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         Log.e(TAG, "Module install failed: empyt language list")
                         mMainActivity?.let {
                             Snackbar.make(
-                                            it.activityMainContent,
-                                            "Module install failed: no language installed!",
-                                            Snackbar.LENGTH_SHORT)
+                                    it.activityMainContent,
+                                    "Module install failed: no language installed!",
+                                    Snackbar.LENGTH_SHORT)
                                     .show()
                         }
                     }
@@ -108,7 +108,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             if (LUtils.hasL()) {
                 mMainActivity?.let { activity ->
                     ProgressDialogFragment.Builder(
-                                    activity, null, DOWNLOAD_LANGUAGE)
+                            activity, null, DOWNLOAD_LANGUAGE)
                             .content(R.string.download_running)
                             .progressIndeterminate(false)
                             .progressMax(100)
@@ -128,9 +128,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                             ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                             mMainActivity?.let {
                                 Snackbar.make(
-                                                it.activityMainContent,
-                                                "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
-                                                Snackbar.LENGTH_SHORT)
+                                        it.activityMainContent,
+                                        "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
+                                        Snackbar.LENGTH_SHORT)
                                         .show()
                             }
                         }
@@ -233,14 +233,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                 mMainActivity?.let {
                     Snackbar.make(
-                                    it.activityMainContent,
-                                    "download cancelled by user",
-                                    Snackbar.LENGTH_SHORT)
+                            it.activityMainContent,
+                            "download cancelled by user",
+                            Snackbar.LENGTH_SHORT)
                             .show()
                 }
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

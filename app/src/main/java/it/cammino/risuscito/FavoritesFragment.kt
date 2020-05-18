@@ -86,6 +86,9 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         val sFragment = SimpleDialogFragment.findVisible(mMainActivity, FAVORITES_RESET)
         sFragment?.setmCallback(this)
 
+        setHasOptionsMenu(true)
+        subscribeUiFavorites()
+
         cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
             var consume = false
             if (MaterialCab.isActive) {
@@ -148,12 +151,6 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         binding.favouritesList.addItemDecoration(insetDivider)
         binding.favouritesList.itemAnimator = SlideRightAlphaAnimator()
 
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-        subscribeUiFavorites()
     }
 
     override fun onDestroy() {

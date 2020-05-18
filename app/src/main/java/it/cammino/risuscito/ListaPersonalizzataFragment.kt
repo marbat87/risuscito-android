@@ -12,6 +12,9 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.invoke
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -71,11 +74,6 @@ class ListaPersonalizzataFragment : Fragment() {
         _binding = null
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        subscribeUiChanges()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -91,6 +89,8 @@ class ListaPersonalizzataFragment : Fragment() {
 
         // Setting the layoutManager
         binding.recyclerList.layoutManager = LinearLayoutManager(activity)
+
+        subscribeUiChanges()
 
         binding.buttonPulisci.setOnClickListener {
             for (i in 0 until (mCantiViewModel.listaPersonalizzata?.numPosizioni ?: 0))
@@ -310,6 +310,13 @@ class ListaPersonalizzataFragment : Fragment() {
             return result.toString()
         }
 
+    private val startListInsertForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == CustomLists.RESULT_OK || result.resultCode == CustomLists.RESULT_KO)
+            mMainActivity?.activityMainContent?.let {
+                Snackbar.make(it, if (result.resultCode == CustomLists.RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+            }
+    }
+
     private val click = OnClickListener { v ->
         if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
             mLastClickTime = SystemClock.elapsedRealtime()
@@ -324,7 +331,7 @@ class ListaPersonalizzataFragment : Fragment() {
                         intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 0,
                                 InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
                                 InsertActivity.POSITION to Integer.valueOf(parent.findViewById<TextView>(R.id.text_id_posizione).text.toString())))
-                        parentFragment?.startActivityForResult(intent, TAG_INSERT_PERS)
+                        startListInsertForResult(intent)
                         Animatoo.animateShrink(activity)
                     }
                 }
@@ -352,7 +359,6 @@ class ListaPersonalizzataFragment : Fragment() {
 
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
-        const val TAG_INSERT_PERS = 555
         private const val INDICE_LISTA = "indiceLista"
 
         fun newInstance(indiceLista: Int): ListaPersonalizzataFragment {

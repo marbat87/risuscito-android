@@ -148,6 +148,9 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
 
         mLUtils = LUtils.getInstance(requireActivity())
 
+        setHasOptionsMenu(true)
+        subscribeUiConsegnati()
+
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<NotableItem>, item: NotableItem, _: Int ->
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
@@ -313,12 +316,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
         super.onPause()
         LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(positionBRec)
         LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(completedBRec)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-        subscribeUiConsegnati()
     }
 
     override fun onDestroy() {

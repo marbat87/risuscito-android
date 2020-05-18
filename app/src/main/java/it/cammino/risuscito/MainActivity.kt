@@ -14,6 +14,9 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.invoke
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
@@ -130,7 +133,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.hasNavDrawer = true
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -783,7 +785,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     // [START signIn]
     fun signIn() {
         val signInIntent = mSignInClient?.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        startSignInForResult(signInIntent)
+    }
+
+    private val startSignInForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(result.data))
     }
 
     // [START signOut]
@@ -806,15 +812,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                     .show()
         }
-    }
-
-    // [START onActivityResult]
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.d(TAG, "requestCode: $requestCode")
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN)
-            handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
     }
 
     // [START handleSignInResult]
@@ -1052,7 +1049,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     companion object {
         /* Request code used to invoke sign in user interactions. */
-        private const val RC_SIGN_IN = 9001
         private const val PROF_ID = 5428471L
         private const val BROADCAST_NEXT_STEP = "BROADCAST_NEXT_STEP"
         private const val WHICH = "WHICH"

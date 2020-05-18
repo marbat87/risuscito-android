@@ -45,11 +45,6 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     private var mLastClickTime: Long = 0
     private var mActivity: MainActivity? = null
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        subscribeUiChanges()
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mActivity = activity as? MainActivity
@@ -91,6 +86,8 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             else -> ""
         })
         fragment?.setmCallback(this)
+
+        subscribeUiChanges()
 
         mAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             var consume = false

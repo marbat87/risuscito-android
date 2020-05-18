@@ -12,6 +12,9 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.invoke
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,6 +25,7 @@ import com.afollestad.materialcab.MaterialCab
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
@@ -96,7 +100,7 @@ class ListaPredefinitaFragment : Fragment() {
         // Setting the layoutManager
         binding.recyclerList.layoutManager = LinearLayoutManager(activity)
 
-        subscribeUiFavorites()
+        subscribeUiUpdate()
 
         binding.buttonPulisci.setOnClickListener {
             ListeUtils.cleanList(requireContext(), mCantiViewModel.defaultListaId)
@@ -213,9 +217,9 @@ class ListaPredefinitaFragment : Fragment() {
                         R.id.action_switch_item -> {
                             startCab(true)
                             Toast.makeText(
-                                            activity,
-                                            resources.getString(R.string.switch_tooltip),
-                                            Toast.LENGTH_SHORT)
+                                    activity,
+                                    resources.getString(R.string.switch_tooltip),
+                                    Toast.LENGTH_SHORT)
                                     .show()
                             true
                         }
@@ -241,7 +245,7 @@ class ListaPredefinitaFragment : Fragment() {
         }
     }
 
-    private fun subscribeUiFavorites() {
+    private fun subscribeUiUpdate() {
         mCantiViewModel.cantiResult?.observe(viewLifecycleOwner) { mCanti ->
             var progressiveTag = 0
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
@@ -414,6 +418,14 @@ class ListaPredefinitaFragment : Fragment() {
             return result.toString()
         }
 
+    private val startListInsertForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        Log.i(TAG, "startListInsertForResult result.resultCode ${result.resultCode}")
+        if (result.resultCode == CustomLists.RESULT_OK || result.resultCode == CustomLists.RESULT_KO)
+            mMainActivity?.activityMainContent?.let {
+                Snackbar.make(it, if (result.resultCode == CustomLists.RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+            }
+    }
+
     private val click = OnClickListener { v ->
         if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
             mLastClickTime = SystemClock.elapsedRealtime()
@@ -429,11 +441,7 @@ class ListaPredefinitaFragment : Fragment() {
                         intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 1,
                                 InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
                                 InsertActivity.POSITION to Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())))
-                        parentFragment?.startActivityForResult(intent, when (mCantiViewModel.defaultListaId) {
-                            1 -> TAG_INSERT_PAROLA
-                            2 -> TAG_INSERT_EUCARESTIA
-                            else -> TAG_INSERT_PAROLA
-                        })
+                        startListInsertForResult(intent)
                         Animatoo.animateShrink(activity)
                     }
                 }
@@ -476,8 +484,6 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     companion object {
-        const val TAG_INSERT_PAROLA = 333
-        const val TAG_INSERT_EUCARESTIA = 444
         private const val INDICE_LISTA = "indiceLista"
         private val TAG = ListaPredefinitaFragment::class.java.canonicalName
 
