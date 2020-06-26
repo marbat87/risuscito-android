@@ -1,7 +1,6 @@
 package it.cammino.risuscito
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.*
 import android.graphics.Color
 import android.graphics.Typeface
@@ -31,6 +30,8 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -56,6 +57,7 @@ import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.databinding.ActivityPaginaRenderBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.playback.MusicService
@@ -68,6 +70,9 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
@@ -77,9 +82,9 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
-class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback, ProgressDialogFragment.ProgressCallback {
+class PaginaRenderActivity : ThemeableActivity() {
 
-    val cambioAccordi = CambioAccordi(this, null)
+    private val cambioAccordi = CambioAccordi(this, null)
     private val mExecutorService = Executors.newSingleThreadScheduledExecutor()
     private var mDownload: Boolean = false
 
@@ -93,6 +98,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         get() = RisuscitoDatabase.getInstance(this)
 
     private val mViewModel: PaginaRenderViewModel by viewModels()
+    private val progressDialogViewModel: ProgressDialogFragment.DialogViewModel by viewModels()
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
     private var url: String? = null
     private var personalUrl: String? = null
     private var localUrl: String? = null
@@ -100,14 +107,14 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private val mUpdateProgressTask = Runnable { updateProgress() }
     private var mScheduleFuture: ScheduledFuture<*>? = null
     private var mRegularFont: Typeface? = null
-    private val mHandler = Handler()
-    internal val mScrollDown: Runnable = object : Runnable {
+    private val mHandler = Handler(Looper.getMainLooper())
+    private val mScrollDown: Runnable = object : Runnable {
         override fun run() {
             mViewModel.speedValue?.let {
                 try {
-                    findViewById<WebView>(R.id.canto_view).scrollBy(0, Integer.valueOf(it))
+                    binding.cantoView.scrollBy(0, Integer.valueOf(it))
                 } catch (e: NumberFormatException) {
-                    findViewById<WebView>(R.id.canto_view).scrollBy(0, 0)
+                    binding.cantoView.scrollBy(0, 0)
                 }
 
                 mHandler.postDelayed(this, 700)
@@ -247,7 +254,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 stopMedia()
                 refreshCatalog()
                 //            checkRecordsState();
-                RecordStateCheckerTask().execute()
+//                RecordStateCheckerTask().execute()
+                lifecycleScope.launch { checkRecordState() }
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
             }
@@ -445,7 +453,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
         showScrolling(false)
 
-        DataRetrieverTask().execute(mViewModel.idCanto)
+//        DataRetrieverTask().execute(mViewModel.idCanto)
+        lifecycleScope.launch { retrieveData() }
 
         binding.playSong.setOnClickListener {
             val controller = MediaControllerCompat.getMediaController(this)
@@ -479,14 +488,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         if (savedInstanceState == null)
             mViewModel.mostraAudio = mSharedPrefs.getBoolean(Utility.SHOW_AUDIO, true)
 
-        val sFragment = ProgressDialogFragment.findVisible(this, DOWNLOAD_MP3)
-        sFragment?.setmCallback(this)
-        setDialogCallback(DELETE_LINK)
-        setDialogCallback(DOWNLINK_CHOOSE)
-        setDialogCallback(DELETE_MP3)
-        setDialogCallback(ONLY_LINK)
-        setDialogCallback(SAVE_TAB)
-
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
         mMediaBrowser = MediaBrowserCompat(
@@ -496,6 +497,128 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
         }
+
+        progressDialogViewModel.state.observe(this) {
+            Log.d(TAG, "progressDialogViewModel state $it")
+            if (!progressDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (progressDialogViewModel.mTag) {
+                            DOWNLOAD_MP3 -> {
+                                progressDialogViewModel.handled = true
+                                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        progressDialogViewModel.handled = true
+                    }
+                }
+            }
+        }
+
+        simpleDialogViewModel.state.observe(this) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            DELETE_LINK -> {
+                                simpleDialogViewModel.handled = true
+                                Snackbar.make(
+                                        findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
+                                        .show()
+                                stopMedia()
+//                                DeleteLinkTask().execute(mViewModel.idCanto)
+                                lifecycleScope.launch { deleteLink() }
+                            }
+                            DELETE_MP3 -> {
+                                simpleDialogViewModel.handled = true
+                                localUrl?.let { url ->
+                                    stopMedia()
+                                    if (isDefaultLocationPublic(this) && hasQ()) {
+                                        val toDelete = ContentUris.withAppendedId(MediaStore.Audio.Media
+                                                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), getExternalMediaIdByName(this, url))
+                                        Log.d(TAG, "DELETE_MP3 toDelete: $toDelete")
+                                        if (contentResolver.delete(toDelete, null, null) > 0) {
+                                            Snackbar.make(
+                                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                                    .show()
+                                        } else
+                                            Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
+                                                    .show()
+
+                                    } else {
+                                        val fileToDelete = File(url)
+                                        if (fileToDelete.delete()) {
+                                            if (fileToDelete.absolutePath.contains("/Risuscit")) {
+                                                // initiate media scan and put the new things into the path array to
+                                                // make the scanner aware of the location and the files you want to see
+                                                MediaScannerConnection.scanFile(
+                                                        applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
+                                            }
+                                            Snackbar.make(
+                                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
+                                                    .show()
+                                        } else
+                                            Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
+                                                    .show()
+                                    }
+                                }
+                                refreshCatalog()
+                                lifecycleScope.launch { checkRecordState() }
+//                                RecordStateCheckerTask().execute()
+                            }
+                            DOWNLINK_CHOOSE -> {
+                                simpleDialogViewModel.handled = true
+                                if (isDefaultLocationPublic(this)) {
+                                    if (EasyPermissions.hasPermissions(
+                                                    this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                                    // Have permission, do the thing!
+                                        startExternalDownload()
+                                    else {
+                                        mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
+                                        Snackbar.make(
+                                                findViewById(android.R.id.content),
+                                                R.string.forced_private,
+                                                Snackbar.LENGTH_SHORT)
+                                                .show()
+                                        startInternalDownload()
+                                    }
+                                } else
+                                    startInternalDownload()
+                            }
+                            ONLY_LINK -> {
+                                simpleDialogViewModel.handled = true
+                                createFileChooser()
+                            }
+                            SAVE_TAB -> {
+                                simpleDialogViewModel.handled = true
+                                if (mViewModel.scrollPlaying) {
+                                    showScrolling(false)
+                                    mHandler.removeCallbacks(mScrollDown)
+                                }
+                                saveZoom(andSpeedAlso = true, andSaveTabAlso = true)
+                                mLUtils?.closeActivityWithTransition()
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        when (simpleDialogViewModel.mTag) {
+                            SAVE_TAB -> {
+                                simpleDialogViewModel.handled = true
+                                if (mViewModel.scrollPlaying) {
+                                    showScrolling(false)
+                                    mHandler.removeCallbacks(mScrollDown)
+                                }
+                                saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
+                                mLUtils?.closeActivityWithTransition()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -504,7 +627,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         super.onCreateOptionsMenu(menu)
         Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: ${mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)}")
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
-            Handler().postDelayed(1500) {
+            Handler(Looper.getMainLooper()).postDelayed(1500) {
                 if (binding.musicButtons.isVisible)
                     playIntroFull()
                 else
@@ -531,21 +654,21 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mLUtils?.closeActivityWithTransition()
                     return true
                 } else {
-                    SimpleDialogFragment.Builder(
-                            this, this, SAVE_TAB)
+                    SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                            this, SAVE_TAB)
                             .title(R.string.dialog_save_tab_title)
                             .content(R.string.dialog_save_tab)
                             .positiveButton(R.string.save_exit_confirm)
-                            .negativeButton(R.string.discard_exit_confirm)
-                            .show()
+                            .negativeButton(R.string.discard_exit_confirm),
+                            supportFragmentManager)
                     return true
                 }
             R.id.action_exp_pdf -> {
-                ProgressDialogFragment.Builder(this, null, EXPORT_PDF)
+                ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, EXPORT_PDF)
                         .content(R.string.export_running)
                         .progressIndeterminate(true)
-                        .setCanceable()
-                        .show()
+                        .setCanceable(),
+                        supportFragmentManager)
                 val i = Intent(applicationContext, PdfExportService::class.java)
                 i.putExtra(PdfExportService.DATA_PRIMA_NOTA, mViewModel.primaNota)
                 i.putExtra(PdfExportService.DATA_NOTA_CAMBIO, mViewModel.notaCambio)
@@ -555,7 +678,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 i.putExtra(
                         PdfExportService.DATA_LINGUA,
                         getSystemLocale(resources).language)
-                startService(i)
+                PdfExportService.enqueueWork(applicationContext, i)
                 return true
             }
             R.id.action_help_canto -> {
@@ -568,7 +691,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             R.id.action_save_tab -> {
                 if (!mViewModel.mCurrentCanto?.savedTab.equals(mViewModel.notaCambio, ignoreCase = true)) {
                     mViewModel.mCurrentCanto?.savedTab = mViewModel.notaCambio
-                    UpdateCantoTask().execute(1)
+//                    UpdateCantoTask().execute(1)
+                    lifecycleScope.launch { updateCanto(1) }
                 } else {
                     Snackbar.make(
                             findViewById(android.R.id.content), R.string.tab_not_saved, Snackbar.LENGTH_SHORT)
@@ -585,20 +709,22 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
                     val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-                    if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
+                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+                    binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
+                            ?: NO_CANTO))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
-                        findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
+                        binding.cantoView.setInitialScale(it.zoom)
                 }
-                findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
+                binding.cantoView.webViewClient = MyWebViewClient()
                 return true
             }
             R.id.action_save_barre -> {
                 if (!mViewModel.mCurrentCanto?.savedBarre.equals(mViewModel.barreCambio, ignoreCase = true)) {
                     mViewModel.mCurrentCanto?.savedBarre = mViewModel.barreCambio
-                    UpdateCantoTask().execute(2)
+//                    UpdateCantoTask().execute(2)
+                    lifecycleScope.launch { updateCanto(2) }
                 } else {
                     Snackbar.make(
                             findViewById(android.R.id.content),
@@ -617,14 +743,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
                     val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
-                    if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
+                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                 } else
-                    findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+                    binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
+                            ?: NO_CANTO))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
-                        findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
+                        binding.cantoView.setInitialScale(it.zoom)
                 }
-                findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
+                binding.cantoView.webViewClient = MyWebViewClient()
                 return true
             }
             else -> {
@@ -637,14 +764,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
                         val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
-                        if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
+                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+                        binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
+                                ?: NO_CANTO))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
-                            findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
+                            binding.cantoView.setInitialScale(it.zoom)
                     }
-                    findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
+                    binding.cantoView.webViewClient = MyWebViewClient()
                     return true
                 }
                 if (item.groupId == R.id.menu_gruppo_barre) {
@@ -656,14 +784,15 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
                         val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
-                        if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
+                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     } else
-                        findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+                        binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
+                                ?: NO_CANTO))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
-                            findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
+                            binding.cantoView.setInitialScale(it.zoom)
                     }
-                    findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
+                    binding.cantoView.webViewClient = MyWebViewClient()
                     return true
                 }
             }
@@ -691,13 +820,13 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
             mLUtils?.closeActivityWithTransition()
         } else {
-            SimpleDialogFragment.Builder(
-                    this, this, SAVE_TAB)
+            SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                    this, SAVE_TAB)
                     .title(R.string.dialog_save_tab_title)
                     .content(R.string.dialog_save_tab)
                     .positiveButton(R.string.save_exit_confirm)
-                    .negativeButton(R.string.discard_exit_confirm)
-                    .show()
+                    .negativeButton(R.string.discard_exit_confirm),
+                    supportFragmentManager)
         }
     }
 
@@ -761,9 +890,9 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun saveZoom(andSpeedAlso: Boolean, andSaveTabAlso: Boolean) {
         mViewModel.mCurrentCanto?.let {
             @Suppress("DEPRECATION")
-            it.zoom = (findViewById<WebView>(R.id.canto_view).scale * 100).toInt()
-            it.scrollX = findViewById<WebView>(R.id.canto_view).scrollX
-            it.scrollY = findViewById<WebView>(R.id.canto_view).scrollY
+            it.zoom = (binding.cantoView.scale * 100).toInt()
+            it.scrollX = binding.cantoView.scrollX
+            it.scrollY = binding.cantoView.scrollY
 
             if (andSpeedAlso) it.savedSpeed = mViewModel.speedValue
                     ?: "2"
@@ -773,7 +902,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 it.savedTab = mViewModel.notaCambio
             }
 
-            UpdateCantoTask().execute(0)
+//            UpdateCantoTask().execute(0)
+            lifecycleScope.launch { updateCanto(0) }
         }
     }
 
@@ -918,19 +1048,19 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
     private fun startExternalDownload() {
         Log.d(TAG, " WRITE_EXTERNAL_STORAGE OK")
         if (Utility.isExternalStorageWritable) {
-            ProgressDialogFragment.Builder(this, this, DOWNLOAD_MP3)
+            ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, DOWNLOAD_MP3)
                     .content(R.string.download_running)
                     .progressIndeterminate(false)
                     .progressMax(100)
-                    .positiveButton(R.string.cancel)
-                    .show()
+                    .positiveButton(R.string.cancel),
+                    supportFragmentManager)
             val i = Intent(applicationContext, DownloadService::class.java)
             i.action = DownloadService.ACTION_DOWNLOAD
             val uri = url?.toUri()
             i.data = uri
             i.putExtra(DownloadService.DATA_DESTINATION_FILE, getExternalLink(url ?: ""))
             i.putExtra(DownloadService.DATA_EXTERNAL_DOWNLOAD, true)
-            startService(i)
+            DownloadService.enqueueWork(applicationContext, i)
         } else
             Snackbar.make(
                     findViewById(android.R.id.content),
@@ -941,18 +1071,18 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
 
     private fun startInternalDownload() {
         val localFilePath = this.filesDir.toString() + "/" + Utility.filterMediaLink(url)
-        ProgressDialogFragment.Builder(this, this, DOWNLOAD_MP3)
+        ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, DOWNLOAD_MP3)
                 .content(R.string.download_running)
                 .progressIndeterminate(false)
                 .progressMax(100)
-                .positiveButton(R.string.cancel)
-                .show()
+                .positiveButton(R.string.cancel),
+                supportFragmentManager)
         val i = Intent(applicationContext, DownloadService::class.java)
         i.action = DownloadService.ACTION_DOWNLOAD
         val uri = url?.toUri()
         i.data = uri
         i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath)
-        startService(i)
+        DownloadService.enqueueWork(applicationContext, i)
     }
 
     private fun showPlaying(started: Boolean) {
@@ -986,102 +1116,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         binding.playScroll.isSelected = scrolling
     }
 
-    override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: $tag")
-        when (tag) {
-            DOWNLOAD_MP3 -> LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
-            DELETE_LINK -> {
-                Snackbar.make(
-                        findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
-                        .show()
-                stopMedia()
-                DeleteLinkTask().execute(mViewModel.idCanto)
-            }
-            DELETE_MP3 -> {
-                localUrl?.let {
-                    stopMedia()
-//                    val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-//                            ?: "0")
-                    if (isDefaultLocationPublic(this) && hasQ()) {
-                        val toDelete = ContentUris.withAppendedId(MediaStore.Audio.Media
-                                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), getExternalMediaIdByName(this, it))
-                        Log.d(TAG, "DELETE_MP3 toDelete: $toDelete")
-                        if (contentResolver.delete(toDelete, null, null) > 0) {
-                            Snackbar.make(
-                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
-                                    .show()
-                        } else
-                            Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
-                                    .show()
-
-                    } else {
-                        val fileToDelete = File(it)
-                        if (fileToDelete.delete()) {
-                            if (fileToDelete.absolutePath.contains("/Risuscit")) {
-                                // initiate media scan and put the new things into the path array to
-                                // make the scanner aware of the location and the files you want to see
-                                MediaScannerConnection.scanFile(
-                                        applicationContext, arrayOf(fileToDelete.absolutePath), null, null)
-                            }
-                            Snackbar.make(
-                                    findViewById(android.R.id.content), R.string.file_delete, Snackbar.LENGTH_SHORT)
-                                    .show()
-                        } else
-                            Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT)
-                                    .show()
-//                        stopMedia()
-//                        refreshCatalog()
-                    }
-                }
-                refreshCatalog()
-                RecordStateCheckerTask().execute()
-            }
-            DOWNLINK_CHOOSE -> {
-//                val saveLocation = Integer.parseInt(mSharedPrefs.getString(Utility.SAVE_LOCATION, "0")
-//                        ?: "0")
-                if (isDefaultLocationPublic(this)) {
-                    if (EasyPermissions.hasPermissions(
-                                    this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                    // Have permission, do the thing!
-                        startExternalDownload()
-                    else {
-                        mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
-                        Snackbar.make(
-                                findViewById(android.R.id.content),
-                                R.string.forced_private,
-                                Snackbar.LENGTH_SHORT)
-                                .show()
-                        startInternalDownload()
-                    }
-                } else
-                    startInternalDownload()
-            }
-            ONLY_LINK -> createFileChooser()
-            SAVE_TAB -> {
-                if (mViewModel.scrollPlaying) {
-                    showScrolling(false)
-                    mHandler.removeCallbacks(mScrollDown)
-                }
-                saveZoom(andSpeedAlso = true, andSaveTabAlso = true)
-                mLUtils?.closeActivityWithTransition()
-            }
-        }
-    }
-
-    override fun onNegative(tag: String) {
-        Log.d(TAG, "onNegative: $tag")
-        when (tag) {
-            SAVE_TAB -> {
-                if (mViewModel.scrollPlaying) {
-                    showScrolling(false)
-                    mHandler.removeCallbacks(mScrollDown)
-                }
-                saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-                mLUtils?.closeActivityWithTransition()
-            }
-        }
-    }
-
     private fun createFileChooser() {
         if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             MaterialDialog(this)
@@ -1093,7 +1127,8 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                                 Snackbar.LENGTH_SHORT)
                                 .show()
                         stopMedia()
-                        InsertLinkTask().execute(mViewModel.idCanto.toString(), path)
+//                        InsertLinkTask().execute(mViewModel.idCanto.toString(), path)
+                        lifecycleScope.launch { insertLink(path) }
                     }
                     .show()
         } else AppSettingsDialog.Builder(this).build().show()
@@ -1355,7 +1390,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
             view.postDelayed(600) {
                 if ((mViewModel.mCurrentCanto?.scrollX
                                 ?: 0) > 0 || (mViewModel.mCurrentCanto?.scrollY ?: 0) > 0)
-                    findViewById<WebView>(R.id.canto_view).scrollTo(
+                    binding.cantoView.scrollTo(
                             mViewModel.mCurrentCanto?.scrollX
                                     ?: 0, mViewModel.mCurrentCanto?.scrollY ?: 0)
             }
@@ -1363,181 +1398,322 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private inner class DataRetrieverTask : AsyncTask<Int, Void, Int>() {
-        override fun doInBackground(vararg params: Int?): Int? {
-            Log.d(TAG, "doInBackground: ")
-            val mDao = mRiuscitoDb.cantoDao()
-            mViewModel.mCurrentCanto = mDao.getCantoById(params[0] ?: 0)
+    private suspend fun retrieveData() {
+        val mDao = mRiuscitoDb.cantoDao()
+        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            mViewModel.mCurrentCanto = mDao.getCantoById(mViewModel.idCanto)
             getRecordLink()
-            return 0
         }
-
-        override fun onPostExecute(integer: Int?) {
-            super.onPostExecute(integer)
-            if (mViewModel.mCurrentCanto?.savedTab == null) {
-                if (mViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL) {
-                    mViewModel.notaCambio = mViewModel.primaNota
-                    mViewModel.mCurrentCanto?.savedTab = mViewModel.notaCambio
-                } else
-                    mViewModel.mCurrentCanto?.savedTab = mViewModel.primaNota
-            } else if (mViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL)
-                mViewModel.notaCambio = mViewModel.mCurrentCanto?.savedTab
-                        ?: PaginaRenderViewModel.NOT_VAL
-
-            if (mViewModel.mCurrentCanto?.savedBarre == null) {
-                if (mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL) {
-                    mViewModel.barreCambio = mViewModel.primoBarre
-                    mViewModel.mCurrentCanto?.savedBarre = mViewModel.barreCambio
-                } else
-                    mViewModel.mCurrentCanto?.savedBarre = mViewModel.primoBarre
-            } else {
-                //	    	Log.i("BARRESALVATO", barreSalvato);
-                if (mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL)
-                    mViewModel.barreCambio = mViewModel.mCurrentCanto?.savedBarre
-                            ?: PaginaRenderViewModel.NOT_VAL
-            }
-
-            // fix per crash su android 4.1
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
-                findViewById<WebView>(R.id.canto_view).setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-
-            val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
-            var convMin: HashMap<String, String>? = null
-            if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
-                convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
-            if (convMap != null) {
-                val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-                if (nuovoFile != null) findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + nuovoFile)
+        if (mViewModel.mCurrentCanto?.savedTab == null) {
+            if (mViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL) {
+                mViewModel.notaCambio = mViewModel.primaNota
+                mViewModel.mCurrentCanto?.savedTab = mViewModel.notaCambio
             } else
-                findViewById<WebView>(R.id.canto_view).loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina ?: NO_CANTO))
+                mViewModel.mCurrentCanto?.savedTab = mViewModel.primaNota
+        } else if (mViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL)
+            mViewModel.notaCambio = mViewModel.mCurrentCanto?.savedTab
+                    ?: PaginaRenderViewModel.NOT_VAL
 
-            val webSettings = findViewById<WebView>(R.id.canto_view).settings
-            webSettings.useWideViewPort = true
-            webSettings.setSupportZoom(true)
-            webSettings.loadWithOverviewMode = true
+        if (mViewModel.mCurrentCanto?.savedBarre == null) {
+            if (mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL) {
+                mViewModel.barreCambio = mViewModel.primoBarre
+                mViewModel.mCurrentCanto?.savedBarre = mViewModel.barreCambio
+            } else
+                mViewModel.mCurrentCanto?.savedBarre = mViewModel.primoBarre
+        } else {
+            //	    	Log.i("BARRESALVATO", barreSalvato);
+            if (mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL)
+                mViewModel.barreCambio = mViewModel.mCurrentCanto?.savedBarre
+                        ?: PaginaRenderViewModel.NOT_VAL
+        }
 
-            webSettings.builtInZoomControls = true
-            webSettings.displayZoomControls = false
+        // fix per crash su android 4.1
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
+            binding.cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
 
-            mViewModel.mCurrentCanto?.let {
-                if (it.zoom > 0)
-                    findViewById<WebView>(R.id.canto_view).setInitialScale(it.zoom)
+        val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
+        var convMin: HashMap<String, String>? = null
+        if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+            convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
+        if (convMap != null) {
+            val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
+            if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+        } else
+            binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina
+                    ?: NO_CANTO))
+
+        val webSettings = binding.cantoView.settings
+        webSettings.useWideViewPort = true
+        webSettings.setSupportZoom(true)
+        webSettings.loadWithOverviewMode = true
+
+        webSettings.builtInZoomControls = true
+        webSettings.displayZoomControls = false
+
+        mViewModel.mCurrentCanto?.let {
+            if (it.zoom > 0)
+                binding.cantoView.setInitialScale(it.zoom)
+        }
+        binding.cantoView.webViewClient = MyWebViewClient()
+
+        if (mViewModel.speedValue == null)
+            try {
+                binding.speedSeekbar.progress = Integer.valueOf(mViewModel.mCurrentCanto?.savedSpeed
+                        ?: "2")
+            } catch (e: NumberFormatException) {
+                Log.e(TAG, "savedSpeed ${mViewModel.mCurrentCanto?.savedSpeed}", e)
+                binding.speedSeekbar.progress = 2
             }
-            findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
+        else
+            binding.speedSeekbar.progress = Integer.valueOf(mViewModel.speedValue ?: "0")
 
-            if (mViewModel.speedValue == null)
-                try {
-                    binding.speedSeekbar.progress = Integer.valueOf(mViewModel.mCurrentCanto?.savedSpeed
-                            ?: "2")
-                } catch (e: NumberFormatException) {
-                    Log.e(TAG, "savedSpeed ${mViewModel.mCurrentCanto?.savedSpeed}", e)
-                    binding.speedSeekbar.progress = 2
-                }
-            else
-                binding.speedSeekbar.progress = Integer.valueOf(mViewModel.speedValue ?: "0")
-
-            //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
-            if (mViewModel.scrollPlaying) {
-                showScrolling(true)
-                mScrollDown.run()
-            }
-            checkRecordsState()
+        //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
+        if (mViewModel.scrollPlaying) {
+            showScrolling(true)
+            mScrollDown.run()
         }
+        checkRecordsState()
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private inner class RecordStateCheckerTask : AsyncTask<Void, Void, Int>() {
-        override fun doInBackground(vararg params: Void): Int? {
-            getRecordLink()
-            return 0
-        }
-
-        override fun onPostExecute(integer: Int?) {
-            super.onPostExecute(integer)
-            checkRecordsState()
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private inner class DeleteLinkTask : AsyncTask<Int, Void, Int>() {
-        override fun doInBackground(vararg params: Int?): Int? {
-            val mDao = mRiuscitoDb.localLinksDao()
-            val linkToDelete = LocalLink()
-            linkToDelete.idCanto = params[0] ?: 0
-            mDao.deleteLocalLink(linkToDelete)
-            getRecordLink()
-            return 0
-        }
-
-        override fun onPostExecute(integer: Int?) {
-            super.onPostExecute(integer)
-            refreshCatalog()
-            checkRecordsState()
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private inner class InsertLinkTask : AsyncTask<String, Void, Int>() {
-        override fun doInBackground(vararg params: String): Int? {
-            val mDao = mRiuscitoDb.localLinksDao()
-            val linkToInsert = LocalLink()
-            linkToInsert.idCanto = Integer.valueOf(params[0])
-            linkToInsert.localPath = params[1]
+    private suspend fun insertLink(path: String) {
+        val mDao = mRiuscitoDb.localLinksDao()
+        val linkToInsert = LocalLink()
+        linkToInsert.idCanto = mViewModel.idCanto
+        linkToInsert.localPath = path
+        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
             mDao.insertLocalLink(linkToInsert)
             getRecordLink()
-            return 0
         }
-
-        override fun onPostExecute(integer: Int?) {
-            super.onPostExecute(integer)
-            refreshCatalog()
-            checkRecordsState()
-        }
+        refreshCatalog()
+        checkRecordsState()
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private inner class UpdateFavoriteTask : AsyncTask<Int, Void, Int>() {
-        override fun doInBackground(vararg params: Int?): Int? {
-            mViewModel.mCurrentCanto?.let {
-                val mDao = mRiuscitoDb.cantoDao()
-                it.favorite = params[0] ?: 0
+    private suspend fun checkRecordState() {
+        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            getRecordLink()
+        }
+        checkRecordsState()
+    }
+
+    private suspend fun deleteLink() {
+        val mDao = mRiuscitoDb.localLinksDao()
+        val linkToDelete = LocalLink()
+        linkToDelete.idCanto = mViewModel.idCanto
+        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            mDao.deleteLocalLink(linkToDelete)
+            getRecordLink()
+        }
+        refreshCatalog()
+        checkRecordsState()
+    }
+
+    private suspend fun updateFavorite() {
+        val mDao = mRiuscitoDb.cantoDao()
+        mViewModel.mCurrentCanto?.let {
+            it.favorite = if (mViewModel.mCurrentCanto?.favorite == 1) 0 else 1
+            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 mDao.updateCanto(it)
             }
-            return params[0]
-        }
-
-        override fun onPostExecute(integer: Int?) {
-            super.onPostExecute(integer)
             Snackbar.make(
                     findViewById(android.R.id.content),
-                    if (integer == 1) R.string.favorite_added else R.string.favorite_removed,
+                    if (it.favorite == 1) R.string.favorite_added else R.string.favorite_removed,
                     Snackbar.LENGTH_SHORT)
                     .show()
             initFabOptions()
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private inner class UpdateCantoTask : AsyncTask<Int, Void, Int>() {
-        override fun doInBackground(vararg params: Int?): Int? {
-            mViewModel.mCurrentCanto?.let {
-                val mDao = mRiuscitoDb.cantoDao()
+    private suspend fun updateCanto(option: Int) {
+        val mDao = mRiuscitoDb.cantoDao()
+        mViewModel.mCurrentCanto?.let {
+            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 mDao.updateCanto(it)
             }
-            return params[0]
-        }
-
-        override fun onPostExecute(integer: Int?) {
-            super.onPostExecute(integer)
-            if (integer != 0)
+            if (option != 0)
                 Snackbar.make(
                         findViewById(android.R.id.content),
-                        if (integer == 1) R.string.tab_saved else R.string.barre_saved,
+                        if (option == 1) R.string.tab_saved else R.string.barre_saved,
                         Snackbar.LENGTH_SHORT)
                         .show()
         }
     }
+
+//    @SuppressLint("StaticFieldLeak")
+//    private inner class DataRetrieverTask : AsyncTask<Int, Void, Int>() {
+//        override fun doInBackground(vararg params: Int?): Int? {
+//            Log.d(TAG, "doInBackground: ")
+//            val mDao = mRiuscitoDb.cantoDao()
+//            mViewModel.mCurrentCanto = mDao.getCantoById(params[0] ?: 0)
+//            getRecordLink()
+//            return 0
+//        }
+//
+//        override fun onPostExecute(integer: Int?) {
+//            super.onPostExecute(integer)
+//            if (mViewModel.mCurrentCanto?.savedTab == null) {
+//                if (mViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL) {
+//                    mViewModel.notaCambio = mViewModel.primaNota
+//                    mViewModel.mCurrentCanto?.savedTab = mViewModel.notaCambio
+//                } else
+//                    mViewModel.mCurrentCanto?.savedTab = mViewModel.primaNota
+//            } else if (mViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL)
+//                mViewModel.notaCambio = mViewModel.mCurrentCanto?.savedTab
+//                        ?: PaginaRenderViewModel.NOT_VAL
+//
+//            if (mViewModel.mCurrentCanto?.savedBarre == null) {
+//                if (mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL) {
+//                    mViewModel.barreCambio = mViewModel.primoBarre
+//                    mViewModel.mCurrentCanto?.savedBarre = mViewModel.barreCambio
+//                } else
+//                    mViewModel.mCurrentCanto?.savedBarre = mViewModel.primoBarre
+//            } else {
+//                //	    	Log.i("BARRESALVATO", barreSalvato);
+//                if (mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL)
+//                    mViewModel.barreCambio = mViewModel.mCurrentCanto?.savedBarre
+//                            ?: PaginaRenderViewModel.NOT_VAL
+//            }
+//
+//            // fix per crash su android 4.1
+//            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
+//                binding.cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+//
+//            val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
+//            var convMin: HashMap<String, String>? = null
+//            if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+//                convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
+//            if (convMap != null) {
+//                val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
+//                if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+//            } else
+//                binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina
+//                        ?: NO_CANTO))
+//
+//            val webSettings = binding.cantoView.settings
+//            webSettings.useWideViewPort = true
+//            webSettings.setSupportZoom(true)
+//            webSettings.loadWithOverviewMode = true
+//
+//            webSettings.builtInZoomControls = true
+//            webSettings.displayZoomControls = false
+//
+//            mViewModel.mCurrentCanto?.let {
+//                if (it.zoom > 0)
+//                    binding.cantoView.setInitialScale(it.zoom)
+//            }
+//            binding.cantoView.webViewClient = MyWebViewClient()
+//
+//            if (mViewModel.speedValue == null)
+//                try {
+//                    binding.speedSeekbar.progress = Integer.valueOf(mViewModel.mCurrentCanto?.savedSpeed
+//                            ?: "2")
+//                } catch (e: NumberFormatException) {
+//                    Log.e(TAG, "savedSpeed ${mViewModel.mCurrentCanto?.savedSpeed}", e)
+//                    binding.speedSeekbar.progress = 2
+//                }
+//            else
+//                binding.speedSeekbar.progress = Integer.valueOf(mViewModel.speedValue ?: "0")
+//
+//            //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
+//            if (mViewModel.scrollPlaying) {
+//                showScrolling(true)
+//                mScrollDown.run()
+//            }
+//            checkRecordsState()
+//        }
+//    }
+
+//    @SuppressLint("StaticFieldLeak")
+//    private inner class RecordStateCheckerTask : AsyncTask<Void, Void, Int>() {
+//        override fun doInBackground(vararg params: Void): Int? {
+//            getRecordLink()
+//            return 0
+//        }
+//
+//        override fun onPostExecute(integer: Int?) {
+//            super.onPostExecute(integer)
+//            checkRecordsState()
+//        }
+//    }
+
+//    @SuppressLint("StaticFieldLeak")
+//    private inner class DeleteLinkTask : AsyncTask<Int, Void, Int>() {
+//        override fun doInBackground(vararg params: Int?): Int? {
+//            val mDao = mRiuscitoDb.localLinksDao()
+//            val linkToDelete = LocalLink()
+//            linkToDelete.idCanto = params[0] ?: 0
+//            mDao.deleteLocalLink(linkToDelete)
+//            getRecordLink()
+//            return 0
+//        }
+//
+//        override fun onPostExecute(integer: Int?) {
+//            super.onPostExecute(integer)
+//            refreshCatalog()
+//            checkRecordsState()
+//        }
+//    }
+
+//    @SuppressLint("StaticFieldLeak")
+//    private inner class InsertLinkTask : AsyncTask<String, Void, Int>() {
+//        override fun doInBackground(vararg params: String): Int? {
+//            val mDao = mRiuscitoDb.localLinksDao()
+//            val linkToInsert = LocalLink()
+//            linkToInsert.idCanto = Integer.valueOf(params[0])
+//            linkToInsert.localPath = params[1]
+//            mDao.insertLocalLink(linkToInsert)
+//            getRecordLink()
+//            return 0
+//        }
+//
+//        override fun onPostExecute(integer: Int?) {
+//            super.onPostExecute(integer)
+//            refreshCatalog()
+//            checkRecordsState()
+//        }
+//    }
+
+//    @SuppressLint("StaticFieldLeak")
+//    private inner class UpdateFavoriteTask : AsyncTask<Int, Void, Int>() {
+//        override fun doInBackground(vararg params: Int?): Int? {
+//            mViewModel.mCurrentCanto?.let {
+//                val mDao = mRiuscitoDb.cantoDao()
+//                it.favorite = params[0] ?: 0
+//                mDao.updateCanto(it)
+//            }
+//            return params[0]
+//        }
+//
+//        override fun onPostExecute(integer: Int?) {
+//            super.onPostExecute(integer)
+//            Snackbar.make(
+//                    findViewById(android.R.id.content),
+//                    if (integer == 1) R.string.favorite_added else R.string.favorite_removed,
+//                    Snackbar.LENGTH_SHORT)
+//                    .show()
+//            initFabOptions()
+//        }
+//    }
+
+//    @SuppressLint("StaticFieldLeak")
+//    private inner class UpdateCantoTask : AsyncTask<Int, Void, Int>() {
+//        override fun doInBackground(vararg params: Int?): Int? {
+//            mViewModel.mCurrentCanto?.let {
+//                val mDao = mRiuscitoDb.cantoDao()
+//                mDao.updateCanto(it)
+//            }
+//            return params[0]
+//        }
+//
+//        override fun onPostExecute(integer: Int?) {
+//            super.onPostExecute(integer)
+//            if (integer != 0)
+//                Snackbar.make(
+//                        findViewById(android.R.id.content),
+//                        if (integer == 1) R.string.tab_saved else R.string.barre_saved,
+//                        Snackbar.LENGTH_SHORT)
+//                        .show()
+//        }
+//    }
 
     private fun initFabOptions() {
         val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
@@ -1657,7 +1833,7 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                     mHandler.removeCallbacks(mScrollDown)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     val bundle = Bundle()
-                    bundle.putString(Utility.URL_CANTO, findViewById<WebView>(R.id.canto_view).url)
+                    bundle.putString(Utility.URL_CANTO, binding.cantoView.url)
                     bundle.putInt(Utility.SPEED_VALUE, binding.speedSeekbar.progress)
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel.scrollPlaying)
                     bundle.putInt(Utility.ID_CANTO, mViewModel.idCanto)
@@ -1677,50 +1853,51 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 R.id.fab_delete_file -> {
                     binding.fabCanti.close()
                     if (!url.isNullOrEmpty() && personalUrl.isNullOrEmpty()) {
-                        SimpleDialogFragment.Builder(
-                                this, this, DELETE_MP3)
+                        SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                                this, DELETE_MP3)
                                 .title(R.string.dialog_delete_mp3_title)
                                 .content(R.string.dialog_delete_mp3)
                                 .positiveButton(R.string.delete_confirm)
-                                .negativeButton(R.string.cancel)
-                                .show()
+                                .negativeButton(R.string.cancel),
+                                supportFragmentManager)
                     } else {
-                        SimpleDialogFragment.Builder(
-                                this, this, DELETE_LINK)
+                        SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                                this, DELETE_LINK)
                                 .title(R.string.dialog_delete_link_title)
                                 .content(R.string.dialog_delete_link)
                                 .positiveButton(R.string.unlink_confirm)
-                                .negativeButton(R.string.cancel)
-                                .show()
+                                .negativeButton(R.string.cancel),
+                                supportFragmentManager)
                     }
                     true
                 }
                 R.id.fab_save_file -> {
                     binding.fabCanti.close()
-                    SimpleDialogFragment.Builder(
-                            this, this, DOWNLINK_CHOOSE)
+                    SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                            this, DOWNLINK_CHOOSE)
                             .title(R.string.save_file)
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+                            .negativeButton(R.string.cancel),
+                            supportFragmentManager)
                     true
                 }
                 R.id.fab_link_file -> {
                     binding.fabCanti.close()
-                    SimpleDialogFragment.Builder(
-                            this, this, ONLY_LINK)
+                    SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                            this, ONLY_LINK)
                             .title(R.string.only_link_title)
                             .content(R.string.only_link)
                             .positiveButton(R.string.associate_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+                            .negativeButton(R.string.cancel),
+                            supportFragmentManager)
                     true
                 }
                 R.id.fab_favorite -> {
                     binding.fabCanti.close()
-                    val favoriteYet = mViewModel.mCurrentCanto?.favorite == 1
-                    UpdateFavoriteTask().execute(if (favoriteYet) 0 else 1)
+                    lifecycleScope.launch { updateFavorite() }
+//                    val favoriteYet = mViewModel.mCurrentCanto?.favorite == 1
+//                    UpdateFavoriteTask().execute(if (favoriteYet) 0 else 1)
                     true
                 }
                 else -> {
@@ -1728,11 +1905,6 @@ class PaginaRenderActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCal
                 }
             }
         }
-    }
-
-    private fun setDialogCallback(tag: String) {
-        val sFragment = SimpleDialogFragment.findVisible(this, tag)
-        sFragment?.setmCallback(this)
     }
 
     private fun dismissProgressDialog(tag: String) {

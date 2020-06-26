@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("io.fabric")
+    id("com.google.firebase.crashlytics")
     id("com.google.gms.google-services")
     kotlin("android")
     kotlin("kapt")
@@ -9,12 +9,12 @@ plugins {
 
 android {
 
-    compileSdkVersion(29)
-    buildToolsVersion("30.0.0-rc1")
+    compileSdkVersion(30)
+    buildToolsVersion("30.0.0")
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdkVersion(16)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         multiDexEnabled = true
         versionCode = 4503
         versionName = "4.5.0"
@@ -26,9 +26,6 @@ android {
                         "room.incremental" to "true",
                         "room.expandProjection" to "true")
             }
-        }
-        viewBinding {
-            isEnabled = true
         }
     }
 
@@ -67,43 +64,48 @@ android {
         exclude("META-INF/library-core_release.kotlin_module")
     }
 
+    buildFeatures {
+        viewBinding = true
+    }
+
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.0.2"
-val materialDrawerVersion = "8.0.3"
+val fastAdapterVersion = "5.1.0"
+val materialDrawerVersion = "8.1.3"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.5"
 val iconicVersion = "5.0.3"
 dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.7.3")
-    implementation("androidx.activity:activity-ktx:1.2.0-alpha04")
+    implementation("androidx.activity:activity-ktx:1.2.0-alpha06")
     implementation("androidx.appcompat:appcompat:1.2.0-rc01")
-    implementation("androidx.core:core-ktx:1.3.0-rc01")
-    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha04")
-    implementation("com.google.android.material:material:1.2.0-alpha06")
-    implementation("androidx.recyclerview:recyclerview:1.2.0-alpha03")
-    implementation("androidx.slidingpanelayout:slidingpanelayout:1.0.0")
-    implementation("androidx.drawerlayout:drawerlayout:1.1.0-beta01")
+    implementation("androidx.core:core-ktx:1.3.0")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha06")
+    implementation("com.google.android.material:material:1.2.0-beta01")
+    implementation("androidx.recyclerview:recyclerview:1.2.0-alpha04")
+    implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
+    implementation("androidx.drawerlayout:drawerlayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.customview:customview:1.1.0-beta01")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01")
-    implementation("androidx.media:media:1.2.0-alpha02")
+    implementation("androidx.customview:customview:1.1.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.media:media:1.2.0-alpha04")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha02")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha05")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha05")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:18.0.0")
-    implementation("com.google.firebase:firebase-core:17.4.1")
+    implementation("com.google.firebase:firebase-core:17.4.3")
     implementation("com.google.firebase:firebase-firestore-ktx:21.4.3")
     implementation("com.google.firebase:firebase-storage-ktx:19.1.1")
     implementation("com.google.firebase:firebase-auth:19.3.1")
-    implementation("com.crashlytics.sdk.android:crashlytics:2.10.1@aar") { isTransitive = true }
+    implementation("com.google.firebase:firebase-crashlytics:17.1.0")
+    implementation("com.google.firebase:firebase-analytics:17.4.3")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")

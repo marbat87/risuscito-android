@@ -12,7 +12,6 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.invoke
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
@@ -24,8 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
@@ -236,7 +235,7 @@ class ListaPredefinitaFragment : Fragment() {
                             posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
                             cantoAdapter.notifyItemChanged(longclickedPos)
                         } catch (e: Exception) {
-                            Crashlytics.logException(e)
+                            FirebaseCrashlytics.getInstance().recordException(e)
                         }
                     }
                     true
@@ -441,7 +440,7 @@ class ListaPredefinitaFragment : Fragment() {
                         intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 1,
                                 InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
                                 InsertActivity.POSITION to Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())))
-                        startListInsertForResult(intent)
+                        startListInsertForResult.launch(intent)
                         Animatoo.animateShrink(activity)
                     }
                 }

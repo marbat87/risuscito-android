@@ -132,7 +132,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
             setTaskDescriptionL()
     }
 
-    @Throws(ExecutionException::class, InterruptedException::class, NoIdException::class)
     fun backupSharedPreferences(userId: String?, userEmail: String?) {
         Log.d(TAG, "backupSharedPreferences $userId")
 
@@ -165,7 +164,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     }
 
-    @Throws(ExecutionException::class, InterruptedException::class, NoBackupException::class)
     fun restoreSharedPreferences(userId: String?) {
         Log.d(TAG, "backupSharedPreferences $userId")
 
@@ -203,7 +201,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         prefEdit.apply()
     }
 
-    @Throws(ExecutionException::class, InterruptedException::class, NoIdException::class, NoBackupException::class)
     fun backupDatabase(userId: String?) {
         Log.d(TAG, "backupDatabase $userId")
 
@@ -284,7 +281,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "DocumentSnapshot added with path: ${saveFile.metadata?.path}")
     }
 
-    @Throws(InterruptedException::class, NoIdException::class, NoBackupException::class)
     fun restoreDatabase(userId: String?) {
         Log.d(TAG, "backupDatabase $userId")
 

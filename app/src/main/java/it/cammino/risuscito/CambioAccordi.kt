@@ -2,7 +2,7 @@ package it.cammino.risuscito
 
 import android.content.Context
 import android.util.Log
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
@@ -248,7 +248,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                 return primaNota.toString()
             } catch (ex: Exception) {
                 Log.e(TAG, "Error:", ex)
-                Crashlytics.logException(ex)
+                FirebaseCrashlytics.getInstance().recordException(ex)
                 return ""
             }
 

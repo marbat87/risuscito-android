@@ -19,7 +19,6 @@ package it.cammino.risuscito.playback
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import it.cammino.risuscito.LUtils
@@ -31,6 +30,9 @@ import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
 import it.cammino.risuscito.ui.RisuscitoApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Suppress("unused")
@@ -95,18 +97,10 @@ class MusicProvider internal constructor(private val mContext: Context) {
             callback?.onMusicCatalogReady(true)
             return
         }
-
-        // Asynchronously load the music catalog in a separate thread
-        object : AsyncTask<Void, Void, State>() {
-            override fun doInBackground(vararg params: Void): State {
-                retrieveMedia()
-                return mCurrentState
-            }
-
-            override fun onPostExecute(current: State) {
-                callback?.onMusicCatalogReady(current == State.INITIALIZED)
-            }
-        }.execute()
+        GlobalScope.launch(Dispatchers.IO) {
+            retrieveMedia()
+            callback?.onMusicCatalogReady(mCurrentState == State.INITIALIZED)
+        }
     }
 
     @Synchronized
@@ -139,7 +133,6 @@ class MusicProvider internal constructor(private val mContext: Context) {
                                 + if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link)
 
                 var url = if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link
-//                if (EasyPermissions.hasPermissions(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 if (isExternalStorageReadable && isDefaultLocationPublic(mNewBase)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
                     if (retrieveMediaFileLink(mContext, url, true).isNotEmpty())

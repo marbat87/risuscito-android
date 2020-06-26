@@ -39,7 +39,7 @@ class ImportActivity : AppCompatActivity() {
                             val i = Intent(this@ImportActivity, XmlImportService::class.java)
                             i.action = XmlImportService.ACTION_URL
                             i.data = data
-                            startService(i)
+                            XmlImportService.enqueueWork(applicationContext, i)
                         }
                         negativeButton(R.string.cancel) {
                             finish()

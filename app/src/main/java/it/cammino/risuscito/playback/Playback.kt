@@ -25,6 +25,7 @@ import android.media.MediaPlayer.*
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.support.v4.media.MediaMetadataCompat
@@ -64,8 +65,7 @@ class Playback internal constructor(private val mService: MusicService,
             .build()
     private val mFocusRequest = AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)
             .setAudioAttributes(mPlaybackAttributes)
-//            .setAcceptsDelayedFocusGain(true)
-            .setOnAudioFocusChangeListener(this@Playback, Handler())
+            .setOnAudioFocusChangeListener(this@Playback, Handler(Looper.getMainLooper()))
             .build()
 
     internal val isConnected: Boolean

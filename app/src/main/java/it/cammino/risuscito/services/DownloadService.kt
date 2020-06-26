@@ -1,12 +1,12 @@
 package it.cammino.risuscito.services
 
 import android.annotation.TargetApi
-import android.app.IntentService
 import android.content.*
 import android.os.Build
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.util.Log
+import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import java.io.File
@@ -16,7 +16,7 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-class DownloadService : IntentService("DownloadService") {
+class DownloadService : JobIntentService() {
 
     private val cancelBRec = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -26,7 +26,7 @@ class DownloadService : IntentService("DownloadService") {
 
     internal var isCancelled: Boolean = false
 
-    override fun onHandleIntent(intent: Intent?) {
+    override fun onHandleWork(intent: Intent) {
         isCancelled = false
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(cancelBRec, IntentFilter(ACTION_CANCEL))
         startSaving(intent)
@@ -97,7 +97,6 @@ class DownloadService : IntentService("DownloadService") {
         val contentValues = ContentValues().apply {
             put(MediaStore.Audio.Media.DISPLAY_NAME, mPath)
             put(MediaStore.Audio.Media.TITLE, "Risuscitò$mPath")
-//                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
             put(MediaStore.Audio.Media.RELATIVE_PATH, "Music/Risuscitò")
             put(MediaStore.Audio.Media.IS_PENDING, 1)
         }
@@ -149,7 +148,6 @@ class DownloadService : IntentService("DownloadService") {
                     val intentBroadcast = Intent(BROADCAST_DOWNLOAD_ERROR)
                     intentBroadcast.putExtra(DATA_ERROR, e.toString())
                     LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-//                    return
                 } finally {
                     try {
                         outputStream?.close()
@@ -217,6 +215,7 @@ class DownloadService : IntentService("DownloadService") {
 
     companion object {
         internal val TAG = DownloadService::class.java.name
+        private const val JOB_ID = 2000
         const val ACTION_DOWNLOAD = "it.cammino.risuscito.services.action.ACTION_DOWNLOAD"
         const val ACTION_CANCEL = "it.cammino.risuscito.services.action.ACTION_CANCEL"
         const val BROADCAST_DOWNLOAD_ERROR = "it.cammino.risuscito.services.broadcast.BROADCAST_DOWNLOAD_ERROR"
@@ -227,6 +226,13 @@ class DownloadService : IntentService("DownloadService") {
         const val DATA_PROGRESS = "it.cammino.risuscito.services.data.DATA_PROGRESS"
         const val DATA_ERROR = "it.cammino.risuscito.services.data.DATA_ERROR"
         const val DATA_EXTERNAL_DOWNLOAD = "it.cammino.risuscito.services.data.DATA_EXTERNAL_DOWNLOAD"
+
+        /**
+         * Convenience method for enqueuing work in to this service.
+         */
+        fun enqueueWork(context: Context, work: Intent) {
+            enqueueWork(context, DownloadService::class.java, JOB_ID, work)
+        }
     }
 
 }

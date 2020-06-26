@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,7 @@ import com.mikepenz.itemanimators.SlideDownAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.LayoutRecyclerBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
@@ -35,13 +37,14 @@ import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import java.util.*
 
-class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class SectionedIndexFragment : Fragment() {
 
     private val mCantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
         })
     }
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
 
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
@@ -77,19 +80,6 @@ class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
         mLUtils = LUtils.getInstance(requireActivity())
 
-        var sFragment = SimpleDialogFragment.findVisible(mActivity, when (mCantiViewModel.tipoLista) {
-            0 -> ARGUMENT_REPLACE
-            1 -> LITURGICO_REPLACE
-            else -> ""
-        })
-        sFragment?.setmCallback(this)
-        sFragment = SimpleDialogFragment.findVisible(mActivity, when (mCantiViewModel.tipoLista) {
-            0 -> ARGUMENT_REPLACE_2
-            1 -> LITURGICO_REPLACE_2
-            else -> ""
-        })
-        sFragment?.setmCallback(this)
-
         val itemExpandableExtension = mAdapter.getExpandableExtension()
         itemExpandableExtension.isOnlyOneExpandedItem = true
 
@@ -109,8 +99,8 @@ class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             if (item is SimpleSubItem) {
                 mCantiViewModel.idDaAgg = item.id
                 when (mCantiViewModel.tipoLista) {
-                    0 -> mCantiViewModel.popupMenu(this, v, ARGUMENT_REPLACE, ARGUMENT_REPLACE_2, listePersonalizzate)
-                    1 -> mCantiViewModel.popupMenu(this, v, LITURGICO_REPLACE, LITURGICO_REPLACE_2, listePersonalizzate)
+                    0 -> mCantiViewModel.popupMenu(this, v, ARGUMENT_REPLACE+mCantiViewModel.tipoLista, ARGUMENT_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
+                    1 -> mCantiViewModel.popupMenu(this, v, LITURGICO_REPLACE+mCantiViewModel.tipoLista, LITURGICO_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
                 }
             }
             true
@@ -256,6 +246,33 @@ class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             mAdapter.withSavedInstanceState(savedInstanceState)
         }
 
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            ARGUMENT_REPLACE+mCantiViewModel.tipoLista, LITURGICO_REPLACE+mCantiViewModel.tipoLista -> {
+                                simpleDialogViewModel.handled = true
+                                listePersonalizzate?.let { lista ->
+                                    lista[mCantiViewModel.idListaClick]
+                                            .lista?.addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
+                                    ListeUtils.updateListaPersonalizzata(this, lista[mCantiViewModel.idListaClick])
+                                }
+                            }
+                            ARGUMENT_REPLACE_2+mCantiViewModel.tipoLista, LITURGICO_REPLACE_2+mCantiViewModel.tipoLista -> {
+                                simpleDialogViewModel.handled = true
+                                ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        simpleDialogViewModel.handled = true
+                    }
+                }
+            }
+        }
+
     }
 
     override fun onResume() {
@@ -266,25 +283,6 @@ class SectionedIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
     override fun onSaveInstanceState(outState: Bundle) {
         val mOutState = mAdapter.saveInstanceState(outState)
         super.onSaveInstanceState(mOutState)
-    }
-
-    override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: $tag")
-        when (tag) {
-            ARGUMENT_REPLACE, LITURGICO_REPLACE -> {
-                listePersonalizzate?.let {
-                    it[mCantiViewModel.idListaClick]
-                            .lista?.addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
-                    ListeUtils.updateListaPersonalizzata(this, it[mCantiViewModel.idListaClick])
-                }
-            }
-            ARGUMENT_REPLACE_2, LITURGICO_REPLACE_2 ->
-                ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
-        }
-    }
-
-    override fun onNegative(tag: String) {
-        // no-op
     }
 
     companion object {

@@ -1,28 +1,17 @@
 package it.cammino.risuscito.services
 
-import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
 
-class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
+class ConsegnatiSaverService : JobIntentService() {
 
-    /**
-     * This method is invoked on the worker thread with a request to process.
-     * Only one Intent is processed at a time, but the processing happens on a
-     * worker thread that runs independently from other application logic.
-     * So, if this code takes a long time, it will hold up other requests to
-     * the same IntentService, but it will not hold up anything else.
-     * When all requests have been handled, the IntentService stops itself,
-     * so you should not call [.stopSelf].
-     *
-     * @param intent The value passed to [               ][Context.startService].
-     */
-    override fun onHandleIntent(intent: Intent?) {
+    override fun onHandleWork(intent: Intent) {
         startSaving(intent)
     }
 
@@ -47,7 +36,7 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
                     LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 } catch (e: Exception) {
                     Log.e(TAG, "ERRORE INSERT:", e)
-                    Crashlytics.logException(e)
+                    FirebaseCrashlytics.getInstance().recordException(e)
                 }
 
             }
@@ -60,10 +49,18 @@ class ConsegnatiSaverService : IntentService("ConsegnatiSaver") {
 
     companion object {
         internal val TAG = ConsegnatiSaverService::class.java.canonicalName
+        private const val JOB_ID = 1000
         const val BROADCAST_SAVING_COMPLETED = "it.cammino.risuscito.services.broadcast.SAVING_COMPLETED"
         const val BROADCAST_SINGLE_COMPLETED = "it.cammino.risuscito.services.broadcast.SINGLE_COMPLETED"
         const val DATA_DONE = "it.cammino.risuscito.services.data.DATA_DONE"
         const val IDS_CONSEGNATI = "it.cammino.risuscito.services.data.IDS_CONSEGNATI"
+
+        /**
+         * Convenience method for enqueuing work in to this service.
+         */
+        fun enqueueWork(context: Context, work: Intent) {
+            enqueueWork(context, ConsegnatiSaverService::class.java, JOB_ID, work)
+        }
     }
 
 }

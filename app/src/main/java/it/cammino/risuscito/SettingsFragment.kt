@@ -107,12 +107,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         if (!currentLang.equals(newValue as? String ?: currentLang, ignoreCase = true)) {
             if (LUtils.hasL()) {
                 mMainActivity?.let { activity ->
-                    ProgressDialogFragment.Builder(
-                            activity, null, DOWNLOAD_LANGUAGE)
+                    ProgressDialogFragment.show(ProgressDialogFragment.Builder(
+                            activity, DOWNLOAD_LANGUAGE)
                             .content(R.string.download_running)
                             .progressIndeterminate(false)
-                            .progressMax(100)
-                            .show()
+                            .progressMax(100),
+                            activity.supportFragmentManager)
                 }
                 // Creates a request to download and install additional language resources.
                 val request = SplitInstallRequest.newBuilder()

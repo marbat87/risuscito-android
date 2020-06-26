@@ -79,7 +79,7 @@ class ThemeUtils(context: Context) {
 
     companion object {
 
-        val TAG = ThemeUtils::class.java.canonicalName
+        private val TAG = ThemeUtils::class.java.canonicalName
         private const val LIGHT_MODE = "light"
         private const val DARK_MODE = "dark"
         private const val DEFAULT_MODE = "default"

@@ -9,7 +9,12 @@ import android.view.KeyEvent
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import java.io.Serializable
@@ -17,29 +22,15 @@ import java.io.Serializable
 @Suppress("unused")
 class SimpleDialogFragment : DialogFragment() {
 
-    private var mCallback: SimpleCallback? = null
+    private val viewModel: DialogViewModel by viewModels({ requireActivity() })
 
     private val builder: Builder?
         get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
-
-    override fun onDestroyView() {
-        if (retainInstance)
-            dialog?.setDismissMessage(null)
-        super.onDestroyView()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true
-    }
 
     @SuppressLint("CheckResult")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mBuilder = builder
                 ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
-
-        if (mCallback == null)
-            mCallback = mBuilder.mListener
 
         val dialog = MaterialDialog(requireContext())
 
@@ -55,13 +46,17 @@ class SimpleDialogFragment : DialogFragment() {
 
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) {
-                mCallback?.onPositive(mBuilder.mTag)
+                viewModel.mTag = mBuilder.mTag
+                viewModel.handled = false
+                viewModel.state.value = DialogState.Positive(this)
             }
         }
 
         mBuilder.mNegativeButton?.let {
             dialog.negativeButton(text = it) {
-                mCallback?.onNegative(mBuilder.mTag)
+                viewModel.mTag = mBuilder.mTag
+                viewModel.handled = false
+                viewModel.state.value = DialogState.Negative(this)
             }
         }
 
@@ -88,10 +83,6 @@ class SimpleDialogFragment : DialogFragment() {
         (dialog as? MaterialDialog)?.message(res)
     }
 
-    fun setmCallback(callback: SimpleCallback) {
-        mCallback = callback
-    }
-
     fun cancel() {
         dialog?.cancel()
     }
@@ -107,11 +98,14 @@ class SimpleDialogFragment : DialogFragment() {
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
         val mBuilder = builder
-        if (mBuilder?.mCanceListener == true)
-            mCallback?.onPositive(mBuilder.mTag)
+        if (mBuilder?.mCanceListener == true) {
+            viewModel.mTag = mBuilder.mTag
+            viewModel.handled = false
+            viewModel.state.value = DialogState.Positive(this)
+        }
     }
 
-    class Builder(context: AppCompatActivity, @field:Transient internal var mListener: SimpleCallback, internal val mTag: String) : Serializable {
+    class Builder(context: AppCompatActivity, internal val mTag: String) : Serializable {
 
         @Transient
         private val mContext: AppCompatActivity = context
@@ -169,47 +163,27 @@ class SimpleDialogFragment : DialogFragment() {
             return this
         }
 
-        fun build(): SimpleDialogFragment {
-            val dialog = SimpleDialogFragment()
-            val args = Bundle()
-            args.putSerializable(BUILDER_TAG, this)
-            dialog.arguments = args
-            return dialog
-        }
-
-        fun show(): SimpleDialogFragment {
-            val dialog = build()
-            if (!mContext.isFinishing)
-                dialog.show(mContext)
-            return dialog
-        }
-    }
-
-    private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
-        val frag = context.supportFragmentManager.findFragmentByTag(tag)
-        frag?.let {
-            (it as? DialogFragment)?.dismiss()
-            context.supportFragmentManager.beginTransaction()
-                    .remove(it).commit()
-        }
-    }
-
-    fun show(context: AppCompatActivity): SimpleDialogFragment {
-        val builder = builder
-        builder?.let {
-            dismissIfNecessary(context, it.mTag)
-            show(context.supportFragmentManager, it.mTag)
-        }
-        return this
-    }
-
-    interface SimpleCallback {
-        fun onPositive(tag: String)
-        fun onNegative(tag: String)
     }
 
     companion object {
-        private const val BUILDER_TAG = "builder"
+        private const val BUILDER_TAG = "bundle_builder"
+
+        private fun newInstance() = SimpleDialogFragment()
+
+        private fun newInstance(builder: Builder): SimpleDialogFragment {
+            return newInstance().apply {
+                arguments = bundleOf(
+                        Pair(BUILDER_TAG, builder)
+                )
+            }
+        }
+
+        fun show(builder: Builder, fragmentManger: FragmentManager) {
+            newInstance(builder).run {
+                show(fragmentManger, builder.mTag)
+            }
+        }
+
         fun findVisible(context: AppCompatActivity?, tag: String): SimpleDialogFragment? {
             context?.let {
                 val frag = it.supportFragmentManager.findFragmentByTag(tag)
@@ -217,6 +191,12 @@ class SimpleDialogFragment : DialogFragment() {
             }
             return null
         }
+    }
+
+    class DialogViewModel : ViewModel() {
+        var mTag: String = ""
+        var handled = true
+        val state = MutableLiveData<DialogState<SimpleDialogFragment>>()
     }
 
 }

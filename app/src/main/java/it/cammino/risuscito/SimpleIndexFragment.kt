@@ -24,6 +24,7 @@ import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.IndexListFragmentBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
@@ -31,13 +32,14 @@ import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 
-class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class SimpleIndexFragment : Fragment() {
 
     private val mCantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
         })
     }
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
 
     private lateinit var mAdapter: FastScrollIndicatorAdapter
     private var listePersonalizzate: List<ListaPers>? = null
@@ -72,21 +74,6 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mLUtils = LUtils.getInstance(requireActivity())
         mAdapter = FastScrollIndicatorAdapter(mCantiViewModel.tipoLista, requireContext())
 
-        var fragment = SimpleDialogFragment.findVisible(mActivity, when (mCantiViewModel.tipoLista) {
-            0 -> ALPHA_REPLACE
-            1 -> NUMERIC_REPLACE
-            2 -> SALMI_REPLACE
-            else -> ""
-        })
-        fragment?.setmCallback(this)
-        fragment = SimpleDialogFragment.findVisible(mActivity, when (mCantiViewModel.tipoLista) {
-            0 -> ALPHA_REPLACE_2
-            1 -> NUMERIC_REPLACE_2
-            2 -> SALMI_REPLACE_2
-            else -> ""
-        })
-        fragment?.setmCallback(this)
-
         subscribeUiChanges()
 
         mAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
@@ -108,9 +95,9 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mAdapter.onLongClickListener = { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             mCantiViewModel.idDaAgg = item.id
             when (mCantiViewModel.tipoLista) {
-                0 -> mCantiViewModel.popupMenu(this, v, ALPHA_REPLACE, ALPHA_REPLACE_2, listePersonalizzate)
-                1 -> mCantiViewModel.popupMenu(this, v, NUMERIC_REPLACE, NUMERIC_REPLACE_2, listePersonalizzate)
-                2 -> mCantiViewModel.popupMenu(this, v, SALMI_REPLACE, SALMI_REPLACE_2, listePersonalizzate)
+                0 -> mCantiViewModel.popupMenu(this, v, ALPHA_REPLACE+mCantiViewModel.tipoLista, ALPHA_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
+                1 -> mCantiViewModel.popupMenu(this, v, NUMERIC_REPLACE+mCantiViewModel.tipoLista, NUMERIC_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
+                2 -> mCantiViewModel.popupMenu(this, v, SALMI_REPLACE+mCantiViewModel.tipoLista, SALMI_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
             }
             true
         }
@@ -146,25 +133,6 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
     }
 
-    override fun onPositive(tag: String) {
-        Log.d(javaClass.name, "onPositive: $tag")
-        when (tag) {
-            ALPHA_REPLACE, NUMERIC_REPLACE, SALMI_REPLACE -> {
-                listePersonalizzate?.let {
-                    it[mCantiViewModel.idListaClick]
-                            .lista?.addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
-                    ListeUtils.updateListaPersonalizzata(this, it[mCantiViewModel.idListaClick])
-                }
-            }
-            ALPHA_REPLACE_2, NUMERIC_REPLACE_2, SALMI_REPLACE_2 ->
-                ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
-        }
-    }
-
-    override fun onNegative(tag: String) {
-        // no-op
-    }
-
     private fun subscribeUiChanges() {
         mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mAdapter.set(
@@ -176,9 +144,37 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     }
             )
         }
+
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            ALPHA_REPLACE+mCantiViewModel.tipoLista, NUMERIC_REPLACE+mCantiViewModel.tipoLista, SALMI_REPLACE+mCantiViewModel.tipoLista -> {
+                                simpleDialogViewModel.handled = true
+                                listePersonalizzate?.let { lista ->
+                                    lista[mCantiViewModel.idListaClick]
+                                            .lista?.addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
+                                    ListeUtils.updateListaPersonalizzata(this, lista[mCantiViewModel.idListaClick])
+                                }
+                            }
+                            ALPHA_REPLACE_2+mCantiViewModel.tipoLista, NUMERIC_REPLACE_2+mCantiViewModel.tipoLista, SALMI_REPLACE_2+mCantiViewModel.tipoLista -> {
+                                simpleDialogViewModel.handled = true
+                                ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        simpleDialogViewModel.handled = true
+                    }
+                }
+            }
+        }
     }
 
     companion object {
+        private val TAG = SimpleIndexFragment::class.java.canonicalName
         private const val ALPHA_REPLACE = "ALPHA_REPLACE"
         private const val ALPHA_REPLACE_2 = "ALPHA_REPLACE_2"
         private const val NUMERIC_REPLACE = "NUMERIC_REPLACE"
@@ -186,7 +182,6 @@ class SimpleIndexFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         private const val SALMI_REPLACE = "SALMI_REPLACE"
         private const val SALMI_REPLACE_2 = "SALMI_REPLACE_2"
         private const val INDICE_LISTA = "indiceLista"
-//        private val TAG = SimpleIndexFragment::class.java.canonicalName
 
         fun newInstance(tipoLista: Int): SimpleIndexFragment {
             val f = SimpleIndexFragment()

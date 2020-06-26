@@ -18,7 +18,6 @@ class ChangelogActivity : ThemeableActivity() {
         super.onCreate(savedInstanceState)
         binding = ChangelogLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        setContentView(R.layout.changelog_layout)
 
         setSupportActionBar(binding.risuscitoToolbar)
 

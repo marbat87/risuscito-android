@@ -1,16 +1,17 @@
 package it.cammino.risuscito.services
 
-import android.app.IntentService
 import android.app.Notification
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.util.Xml
+import androidx.core.app.JobIntentService
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -22,11 +23,11 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 
-class XmlImportService : IntentService("XmlImportService") {
+class XmlImportService : JobIntentService() {
 
-    override fun onHandleIntent(intent: Intent?) {
-        Log.d(TAG, "onHandleIntent: Starting")
-        val data = intent?.data
+    override fun onHandleWork(intent: Intent) {
+        Log.d(TAG, "onHandleWork: Starting")
+        val data = intent.data
         data?.let {
             intent.data = null
             importData(it)
@@ -103,7 +104,7 @@ class XmlImportService : IntentService("XmlImportService") {
                 }
             } catch (e: XmlPullParserException) {
                 Log.e(TAG, "importData: " + e.localizedMessage, e)
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification_error)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -120,7 +121,7 @@ class XmlImportService : IntentService("XmlImportService") {
                 stopSelf()
             } catch (e: SecurityException) {
                 Log.e(TAG, "importData: " + e.localizedMessage, e)
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
                 Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
@@ -129,7 +130,7 @@ class XmlImportService : IntentService("XmlImportService") {
                 stopSelf()
             } catch (e: IOException) {
                 Log.e(TAG, "importData: " + e.localizedMessage, e)
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
                 Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
@@ -164,8 +165,7 @@ class XmlImportService : IntentService("XmlImportService") {
         else {
             Log.e(TAG, "readLista: title is null")
             //      FirebaseCrash.log("importData: title is null");
-            Crashlytics.log("importData: title is null")
-            return null
+            FirebaseCrashlytics.getInstance().log("importData: title is null")
         }
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.eventType != XmlPullParser.START_TAG) {
@@ -229,11 +229,20 @@ class XmlImportService : IntentService("XmlImportService") {
     companion object {
         internal const val NOTIFICATION_ID = 2
         internal val TAG = XMLFilterImpl::class.java.canonicalName
+        private const val JOB_ID = 5000
         const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
         const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
         private const val CHANNEL_ID = "itcr_import_channel"
         private const val POSITION_TAG = "position"
+
         // We don't use namespaces
         private val ns: String? = null
+
+        /**
+         * Convenience method for enqueuing work in to this service.
+         */
+        fun enqueueWork(context: Context, work: Intent) {
+            enqueueWork(context, XMLFilterImpl::class.java, JOB_ID, work)
+        }
     }
 }

@@ -1,41 +1,40 @@
 package it.cammino.risuscito
 
-import android.app.Activity
 import android.graphics.Color
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.addCallback
-import androidx.core.view.postDelayed
+import androidx.lifecycle.lifecycleScope
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.colorInt
 import com.mikepenz.iconics.utils.paddingDp
 import com.mikepenz.iconics.utils.sizeDp
-import io.multifunctions.letCheckNull
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.databinding.ActivityPaginaRenderFullscreenBinding
 import it.cammino.risuscito.ui.ThemeableActivity
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.*
 
 class PaginaRenderFullScreen : ThemeableActivity() {
+
     private var currentCanto: Canto? = null
     var speedValue: Int = 0
     private var scrollPlaying: Boolean = false
     var idCanto: Int = 0
-    private var urlCanto: String? = null
-    private val mHandler = Handler()
+    private lateinit var urlCanto: String
+    private val mHandler = Handler(Looper.getMainLooper())
     private val mScrollDown: Runnable = object : Runnable {
         override fun run() {
             try {
-                findViewById<WebView>(R.id.canto_view).scrollBy(0, speedValue)
+                binding.cantoView.scrollBy(0, speedValue)
             } catch (e: NumberFormatException) {
-                findViewById<WebView>(R.id.canto_view).scrollBy(0, 0)
+                binding.cantoView.scrollBy(0, 0)
             }
 
             mHandler.postDelayed(this, 700)
@@ -54,7 +53,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
-        urlCanto = bundle?.getString(Utility.URL_CANTO)
+        urlCanto = bundle?.getString(Utility.URL_CANTO) ?: ""
         speedValue = bundle?.getInt(Utility.SPEED_VALUE) ?: 0
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
@@ -65,26 +64,27 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             paddingDp = 2
         }
         binding.fabFullscreenOff.setImageDrawable(icon)
-        binding.fabFullscreenOff.setOnClickListener { saveZoom() }
+        binding.fabFullscreenOff.setOnClickListener { lifecycleScope.launch { saveZoom() } }
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
         }
+
     }
 
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
-        saveZoom()
+        lifecycleScope.launch { saveZoom() }
     }
 
     public override fun onResume() {
         super.onResume()
 
-        findViewById<WebView>(R.id.canto_view).loadUrl(urlCanto)
+        binding.cantoView.loadUrl(urlCanto)
         if (scrollPlaying)
             mScrollDown.run()
 
-        val webSettings = findViewById<WebView>(R.id.canto_view).settings
+        val webSettings = binding.cantoView.settings
         webSettings.useWideViewPort = true
         webSettings.setSupportZoom(true)
         webSettings.loadWithOverviewMode = true
@@ -92,80 +92,45 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         webSettings.builtInZoomControls = true
         webSettings.displayZoomControls = false
 
-        findViewById<WebView>(R.id.canto_view).webViewClient = MyWebViewClient()
+        binding.cantoView.webViewClient = MyWebViewClient()
     }
 
-    private fun saveZoom() {
+    private suspend fun saveZoom() {
         @Suppress("DEPRECATION")
-        //aggiunto per evitare che la pagina venga chiusa troppo velocemente prima del caricamento del canto
         currentCanto?.let {
-            it.zoom = (findViewById<WebView>(R.id.canto_view).scale * 100).toInt()
-            it.scrollX = findViewById<WebView>(R.id.canto_view).scrollX
-            it.scrollY = findViewById<WebView>(R.id.canto_view).scrollY
+            it.zoom = (binding.cantoView.scale * 100).toInt()
+            it.scrollX = binding.cantoView.scrollX
+            it.scrollY = binding.cantoView.scrollY
             Log.d(TAG, "it.id ${it.id} / it.zoom ${it.zoom} / it.scrollX ${it.scrollX} / it.scrollY ${it.scrollY}")
-            ZoomSaverTask(this, it).execute()
-            return
+            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                RisuscitoDatabase.getInstance(applicationContext).cantoDao().updateCanto(it)
+            }
         }
         finish()
         Animatoo.animateZoom(this)
     }
 
+    private suspend fun loadZoom() {
+        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
+        currentCanto = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            mDao.getCantoById(idCanto)
+        }
+        delay(500)
+        currentCanto?.let {
+            if (it.zoom > 0) binding.cantoView.setInitialScale(it.zoom)
+            if (it.scrollX > 0 || it.scrollY > 0)
+                binding.cantoView.scrollTo(it.scrollX, it.scrollY)
+        }
+    }
+
     private inner class MyWebViewClient : WebViewClient() {
         override fun onPageFinished(view: WebView, url: String) {
-            view.postDelayed(500) {
-                ZoomLoaderTask(this@PaginaRenderFullScreen).execute()
-            }
+            lifecycleScope.launch { loadZoom() }
             super.onPageFinished(view, url)
         }
     }
 
     companion object {
         private val TAG = PaginaRenderFullScreen::class.java.canonicalName
-
-        private class ZoomSaverTask internal constructor(activity: Activity, private val canto: Canto) : AsyncTask<Void, Void, Int>() {
-
-            private val activityReference: WeakReference<Activity> = WeakReference(activity)
-
-            override fun doInBackground(vararg params: Void): Int? {
-                activityReference.get()?.let {
-                    val mDao = RisuscitoDatabase.getInstance(it).cantoDao()
-                    Log.d(TAG, "canto.id ${canto.id} / canto.zoom ${canto.zoom} / canto.scrollX ${canto.scrollX} / canto.scrollY ${canto.scrollY}")
-                    mDao.updateCanto(canto)
-                }
-                return 0
-            }
-
-            override fun onPostExecute(integer: Int?) {
-                super.onPostExecute(integer)
-                activityReference.get()?.let {
-                    it.finish()
-                    Animatoo.animateZoom(it)
-                }
-            }
-        }
-
-        private class ZoomLoaderTask internal constructor(activity: PaginaRenderFullScreen) : AsyncTask<Void, Void, Int>() {
-
-            private val activityReference: WeakReference<PaginaRenderFullScreen> = WeakReference(activity)
-
-            override fun doInBackground(vararg params: Void): Int? {
-                activityReference.get()?.let {
-                    val mDao = RisuscitoDatabase.getInstance(it).cantoDao()
-                    it.currentCanto = mDao.getCantoById(it.idCanto)
-                }
-                return 0
-            }
-
-            override fun onPostExecute(integer: Int?) {
-                super.onPostExecute(integer)
-                val apiResult = Pair(activityReference.get(), activityReference.get()?.currentCanto)
-                apiResult.letCheckNull { activity, canto ->
-                    Log.d(TAG, "onPostExecute: ${canto.zoom} - ${canto.scrollX} - ${canto.scrollY}")
-                    if (canto.zoom > 0) activity.findViewById<WebView>(R.id.canto_view).setInitialScale(canto.zoom)
-                    if (canto.scrollX > 0 || canto.scrollY > 0)
-                        activity.findViewById<WebView>(R.id.canto_view).scrollTo(canto.scrollX, canto.scrollY)
-                }
-            }
-        }
     }
 }

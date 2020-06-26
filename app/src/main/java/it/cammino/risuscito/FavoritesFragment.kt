@@ -3,6 +3,7 @@ package it.cammino.risuscito
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
@@ -22,7 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
@@ -30,6 +31,7 @@ import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.ActivityFavouritesBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
@@ -38,8 +40,9 @@ import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 
-class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class FavoritesFragment : Fragment() {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
@@ -77,14 +80,11 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.PREFERITI_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.PREFERITI_OPEN, true) }
-            Handler().postDelayed(250) {
+            Handler(Looper.getMainLooper()).postDelayed(250) {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()
             }
         }
-
-        val sFragment = SimpleDialogFragment.findVisible(mMainActivity, FAVORITES_RESET)
-        sFragment?.setmCallback(this)
 
         setHasOptionsMenu(true)
         subscribeUiFavorites()
@@ -169,12 +169,12 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         when (item.itemId) {
             R.id.list_reset -> {
                 mMainActivity?.let {
-                    SimpleDialogFragment.Builder(it, this, FAVORITES_RESET)
+                    SimpleDialogFragment.show(SimpleDialogFragment.Builder(it, FAVORITES_RESET)
                             .title(R.string.dialog_reset_favorites_title)
                             .content(R.string.dialog_reset_favorites_desc)
                             .positiveButton(R.string.clear_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+                            .negativeButton(R.string.cancel),
+                            it.supportFragmentManager)
                 }
                 return true
             }
@@ -185,22 +185,6 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
         return false
-    }
-
-    override fun onPositive(tag: String) {
-        Log.d(javaClass.name, "onPositive: $tag")
-        when (tag) {
-            FAVORITES_RESET ->
-                // run the sentence in a new thread
-                ioThread {
-                    val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
-                    mDao.resetFavorites()
-                }
-        }
-    }
-
-    override fun onNegative(tag: String) {
-        // no-op
     }
 
     private fun removeFavorites() {
@@ -239,7 +223,7 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     try {
                         selectExtension?.deselect()
                     } catch (e: Exception) {
-                        Crashlytics.logException(e)
+                        FirebaseCrashlytics.getInstance().recordException(e)
                     }
                 }
                 true
@@ -253,6 +237,28 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
+        }
+
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            FAVORITES_RESET -> {
+                                simpleDialogViewModel.handled = true
+                                ioThread {
+                                    val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
+                                    mDao.resetFavorites()
+                                }
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        simpleDialogViewModel.handled = true
+                    }
+                }
+            }
         }
     }
 

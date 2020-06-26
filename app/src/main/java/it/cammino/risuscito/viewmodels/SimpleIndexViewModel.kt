@@ -19,12 +19,14 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
     var itemsResult: LiveData<List<SimpleItem>>? = null
         private set
     var titoliList: ArrayList<IItem<*>> = ArrayList()
+
     //-1 come valore per indicare che non è mai stato settato ancora (fragment appena creato)
     var tipoLista: Int = -1
     var advancedSearch: Boolean = false
     var consegnatiOnly: Boolean = false
     var insertItemsResult: LiveData<List<InsertItem>>? = null
         private set
+    lateinit var aTexts: Array<Array<String?>>
 
     init {
         tipoLista = args.getInt(Utility.TIPO_LISTA)

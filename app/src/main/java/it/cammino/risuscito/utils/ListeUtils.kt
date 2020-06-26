@@ -123,10 +123,9 @@ object ListeUtils {
                     Snackbar.make(it.requireActivity().findViewById(R.id.main_content), R.string.present_yet, Snackbar.LENGTH_SHORT).show()
                 } else
                     if (titoloPresente != null && titoloPresente.isNotEmpty()) {
-                        SimpleDialogFragment.Builder(
-                                        it.requireActivity() as AppCompatActivity,
-                                        it as SimpleDialogFragment.SimpleCallback,
-                                        replaceTag)
+                        SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                                it.requireActivity() as AppCompatActivity,
+                                replaceTag)
                                 .title(R.string.dialog_replace_title)
                                 .content(
                                         (it.getString(R.string.dialog_present_yet)
@@ -134,8 +133,8 @@ object ListeUtils {
                                                 + titoloPresente
                                                 + it.getString(R.string.dialog_wonna_replace)))
                                 .positiveButton(R.string.replace_confirm)
-                                .negativeButton(R.string.cancel)
-                                .show()
+                                .negativeButton(R.string.cancel),
+                                it.requireActivity().supportFragmentManager)
                     } else
                         Snackbar.make(it.requireActivity().findViewById(R.id.main_content), R.string.list_added, Snackbar.LENGTH_SHORT).show()
             }
@@ -278,10 +277,9 @@ object ListeUtils {
         override fun onPostExecute(titoloPresente: String) {
             super.onPostExecute(titoloPresente)
             fragmentReference.get()?.let {
-                SimpleDialogFragment.Builder(
-                                it.requireActivity() as AppCompatActivity,
-                                it as SimpleDialogFragment.SimpleCallback,
-                                replaceTag)
+                SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                        it.requireActivity() as AppCompatActivity,
+                        replaceTag)
                         .title(R.string.dialog_replace_title)
                         .content(
                                 (it.getString(R.string.dialog_present_yet)
@@ -289,8 +287,8 @@ object ListeUtils {
                                         + it.resources.getString(LUtils.getResId(titoloPresente, R.string::class.java))
                                         + it.getString(R.string.dialog_wonna_replace)))
                         .positiveButton(R.string.replace_confirm)
-                        .negativeButton(R.string.cancel)
-                        .show()
+                        .negativeButton(R.string.cancel),
+                        it.requireActivity().supportFragmentManager)
             }
         }
     }
@@ -393,9 +391,9 @@ object ListeUtils {
             super.onPostExecute(result)
             fragmentReference.get()?.let { fragment ->
                 Snackbar.make(
-                                fragment.requireActivity().findViewById(R.id.main_content),
-                                R.string.song_removed,
-                                Snackbar.LENGTH_LONG)
+                        fragment.requireActivity().findViewById(R.id.main_content),
+                        R.string.song_removed,
+                        Snackbar.LENGTH_LONG)
                         .setAction(
                                 fragment.getString(R.string.cancel).toUpperCase(getSystemLocale(fragment.resources))
                         ) {

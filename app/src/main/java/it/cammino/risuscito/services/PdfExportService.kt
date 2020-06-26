@@ -1,7 +1,6 @@
 package it.cammino.risuscito.services
 
 import android.annotation.TargetApi
-import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -10,6 +9,7 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
+import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import it.cammino.risuscito.BuildConfig
 import it.cammino.risuscito.CambioAccordi
@@ -25,7 +25,7 @@ import java.io.*
 import java.util.*
 import java.util.regex.Pattern
 
-class PdfExportService : IntentService("PdfExportService") {
+class PdfExportService : JobIntentService() {
 
     internal lateinit var pagina: String
     private lateinit var primaNota: String
@@ -50,17 +50,7 @@ class PdfExportService : IntentService("PdfExportService") {
         startingY += 20f
     }
 
-    /**
-     * This method is invoked on the worker thread with a request to process. Only one Intent is
-     * processed at a time, but the processing happens on a worker thread that runs independently from
-     * other application logic. So, if this code takes a long time, it will hold up other requests to
-     * the same IntentService, but it will not hold up anything else. When all requests have been
-     * handled, the IntentService stops itself, so you should not call [.stopSelf].
-     *
-     * @param intent The value passed to [Context.startService].
-     */
-    override fun onHandleIntent(intent: Intent?) {
-        Log.d(TAG, "onHandleIntent: ")
+    override fun onHandleWork(intent: Intent) {
         exportPdf(intent)
     }
 
@@ -281,6 +271,7 @@ class PdfExportService : IntentService("PdfExportService") {
 
     companion object {
         internal val TAG = PdfExportService::class.java.canonicalName
+        private const val JOB_ID = 4000
         const val BROADCAST_EXPORT_ERROR = "it.cammino.risuscito.services.broadcast.BROADCAST_EXPORT_ERROR"
         const val BROADCAST_EXPORT_COMPLETED = "it.cammino.risuscito.services.broadcast.BROADCAST_EXPORT_COMPLETED"
         const val DATA_PRIMA_NOTA = "it.cammino.risuscito.services.data.DATA_PRIMA_NOTA"
@@ -294,6 +285,13 @@ class PdfExportService : IntentService("PdfExportService") {
         private const val mFont = "fonts/DroidSansMono.ttf.stream"
         private const val START_X = 25f
         private const val START_Y = 25f
+
+        /**
+         * Convenience method for enqueuing work in to this service.
+         */
+        fun enqueueWork(context: Context, work: Intent) {
+            enqueueWork(context, PdfExportService::class.java, JOB_ID, work)
+        }
     }
 
     @Suppress("DEPRECATION")

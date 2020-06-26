@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -22,6 +21,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
@@ -48,6 +48,7 @@ import it.cammino.risuscito.database.entities.Consegnato
 import it.cammino.risuscito.databinding.CheckableRowItemBinding
 import it.cammino.risuscito.databinding.LayoutConsegnatiBinding
 import it.cammino.risuscito.databinding.RowItemNotableBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.ListChoiceDialogFragment
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
@@ -56,15 +57,18 @@ import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.services.ConsegnatiSaverService
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, ListChoiceDialogFragment.ListChoiceCallback {
+class ConsegnatiFragment : Fragment() {
 
     private var cantoAdapter: FastItemAdapter<NotableItem> = FastItemAdapter()
 
     private val mCantiViewModel: ConsegnatiViewModel by viewModels()
+    private val dialogViewModel: ListChoiceDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private var selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
     private lateinit var mPopupMenu: PopupMenu
     private var selectExtension: SelectExtension<CheckableItem>? = null
@@ -131,13 +135,13 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
                     }
                     R.id.confirm_changes -> {
                         mMainActivity?.let { mainActivity ->
-                            SimpleDialogFragment.Builder(
-                                            mainActivity, this, CONFIRM_SAVE)
+                            SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                                    mainActivity, CONFIRM_SAVE)
                                     .title(R.string.dialog_save_consegnati_title)
                                     .content(R.string.dialog_save_consegnati_desc)
                                     .positiveButton(R.string.action_salva)
-                                    .negativeButton(R.string.cancel)
-                                    .show()
+                                    .negativeButton(R.string.cancel),
+                                    mainActivity.supportFragmentManager)
                         }
                         true
                     }
@@ -171,14 +175,13 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
                 mCantiViewModel.mIdConsegnatoSelected = item.idConsegnato
                 mCantiViewModel.mIdCantoSelected = item.id
                 val prefill = passaggiValues[item.numPassaggio] ?: -1
-                ListChoiceDialogFragment.Builder(
-                                activity, this@ConsegnatiFragment, ADD_PASSAGE)
+                ListChoiceDialogFragment.show(ListChoiceDialogFragment.Builder(
+                        activity, ADD_PASSAGE)
                         .title(R.string.passage_title)
                         .listArrayId(R.array.passaggi_entries)
                         .initialSelection(prefill)
                         .positiveButton(R.string.action_salva)
-                        .negativeButton(R.string.cancel)
-                        .show()
+                        .negativeButton(R.string.cancel), activity.supportFragmentManager)
             }
         }
 
@@ -274,9 +277,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
 
         view.isFocusableInTouchMode = true
         view.requestFocus()
-
-        ListChoiceDialogFragment.findVisible(mMainActivity, ADD_PASSAGE)?.setmCallback(this)
-        SimpleDialogFragment.findVisible(mMainActivity, CONFIRM_SAVE)?.setmCallback(this)
 
     }
 
@@ -379,7 +379,7 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
         val onClick = View.OnClickListener {
             mCantiViewModel.editMode = true
             backCallback?.isEnabled = true
-            UpdateChooseListTask(this).execute()
+            lifecycleScope.launch { updateChooseList() }
             binding.selectedView.isVisible = false
             binding.chooseRecycler.isVisible = true
             enableBottombar(true)
@@ -397,9 +397,9 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
             TapTargetView.showFor(
                     requireActivity(), // `this` is an Activity
                     TapTarget.forView(
-                                    fab,
-                                    getString(R.string.title_activity_consegnati),
-                                    getString(R.string.showcase_consegnati_howto))
+                            fab,
+                            getString(R.string.title_activity_consegnati),
+                            getString(R.string.showcase_consegnati_howto))
                             .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                             .textTypeface(mRegularFont) // Specify a typeface for the text
                             .titleTextColor(R.color.primary_text_default_material_dark)
@@ -420,19 +420,19 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
                 .continueOnCancel(true)
                 .targets(
                         TapTarget.forToolbarMenuItem(
-                                        mMainActivity?.activityBottomBar,
-                                        R.id.confirm_changes,
-                                        getString(R.string.title_activity_consegnati),
-                                        getString(R.string.showcase_consegnati_confirm))
+                                mMainActivity?.activityBottomBar,
+                                R.id.confirm_changes,
+                                getString(R.string.title_activity_consegnati),
+                                getString(R.string.showcase_consegnati_confirm))
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
                                 .textColor(R.color.secondary_text_default_material_dark),
                         TapTarget.forToolbarMenuItem(
-                                        mMainActivity?.activityBottomBar,
-                                        R.id.cancel_change,
-                                        getString(R.string.title_activity_consegnati),
-                                        getString(R.string.showcase_consegnati_cancel))
+                                mMainActivity?.activityBottomBar,
+                                R.id.cancel_change,
+                                getString(R.string.title_activity_consegnati),
+                                getString(R.string.showcase_consegnati_cancel))
                                 .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
                                 .titleTextColor(R.color.primary_text_default_material_dark)
@@ -464,41 +464,90 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
             binding.noConsegnati.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.cantiRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
         }
+
+        dialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "dialogViewModel state $it")
+            if (!dialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        dialogViewModel.handled = true
+                        val consegnato = Consegnato().apply {
+                            idConsegnato = mCantiViewModel.mIdConsegnatoSelected
+                            idCanto = mCantiViewModel.mIdCantoSelected
+                            numPassaggio = passaggiArray[dialogViewModel.index]
+                        }
+                        val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
+                        lifecycleScope.launch(Dispatchers.IO) { mDao.updateConsegnato(consegnato) }
+                    }
+                    is DialogState.Negative -> {
+                        dialogViewModel.handled = true
+                    }
+                }
+            }
+        }
+
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            CONFIRM_SAVE -> {
+                                simpleDialogViewModel.handled = true
+                                mCantiViewModel.editMode = false
+                                backCallback?.isEnabled = false
+                                mMainActivity?.let { activity ->
+                                    ProgressDialogFragment.show(ProgressDialogFragment.Builder(
+                                            activity, CONSEGNATI_SAVING)
+                                            .content(R.string.save_consegnati_running)
+                                            .progressIndeterminate(false)
+                                            .progressMax(mCantiViewModel.titoliChoose.size),
+                                            requireActivity().supportFragmentManager)
+
+                                }
+                                val mSelected = selectExtension?.selectedItems
+                                val mSelectedId = mSelected?.mapTo(ArrayList()) { item -> item.id }
+
+                                //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
+                                mCantiViewModel.titoliChoose.forEach { item ->
+                                    if (item.isSelected)
+                                        if (mSelectedId?.any { i -> i == item.id } != true)
+                                            mSelectedId?.add(item.id)
+                                }
+
+                                val intent = Intent(requireActivity().applicationContext, ConsegnatiSaverService::class.java)
+                                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
+                                ConsegnatiSaverService.enqueueWork(requireActivity().applicationContext, intent)
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        simpleDialogViewModel.handled = true
+                    }
+                }
+            }
+        }
     }
 
-    private class UpdateChooseListTask internal constructor(fragment: ConsegnatiFragment) : AsyncTask<Void, Void, Void>() {
-
-        private val fragmentReference: WeakReference<ConsegnatiFragment> = WeakReference(fragment)
-
-        override fun doInBackground(vararg sUrl: Void): Void? {
-
-            fragmentReference.get()?.let {
-                val mDao = RisuscitoDatabase.getInstance(it.requireContext()).consegnatiDao()
-                val canti = mDao.choosen
-                val newList = ArrayList<CheckableItem>()
-                for (canto in canti) {
-                    newList.add(
-                            checkableItem {
-                                isSelected = canto.consegnato > 0
-                                setTitle = LUtils.getResId(canto.titolo, R.string::class.java)
-                                setPage = LUtils.getResId(canto.pagina, R.string::class.java)
-                                setColor = canto.color
-                                id = canto.id
-                            }
-                    )
-                }
-                it.mCantiViewModel.titoliChoose = newList.sortedBy { item -> item.title?.getText(it.requireContext()) }
-                it.mCantiViewModel.titoliChooseFiltered = it.mCantiViewModel.titoliChoose
-            }
-            return null
+    private suspend fun updateChooseList() {
+        Log.i(TAG, "updateChooseList start")
+        val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
+        val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.choosen }
+        val newList = ArrayList<CheckableItem>()
+        for (canto in canti) {
+            newList.add(
+                    checkableItem {
+                        isSelected = canto.consegnato > 0
+                        setTitle = LUtils.getResId(canto.titolo, R.string::class.java)
+                        setPage = LUtils.getResId(canto.pagina, R.string::class.java)
+                        setColor = canto.color
+                        id = canto.id
+                    }
+            )
         }
-
-        override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
-            fragmentReference.get()?.let {
-                it.selectableAdapter.set(it.mCantiViewModel.titoliChooseFiltered)
-            }
-        }
+        mCantiViewModel.titoliChoose = newList.sortedBy { item -> item.title?.getText(requireContext()) }
+        mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose
+        selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
     }
 
     private val positionBRec = object : BroadcastReceiver() {
@@ -536,54 +585,6 @@ class ConsegnatiFragment : Fragment(), SimpleDialogFragment.SimpleCallback, List
             }
 
         }
-    }
-
-    override fun onPositive(tag: String, index: Int) {
-        when (tag) {
-            ADD_PASSAGE -> {
-                val consegnato = Consegnato().apply {
-                    idConsegnato = mCantiViewModel.mIdConsegnatoSelected
-                    idCanto = mCantiViewModel.mIdCantoSelected
-                    numPassaggio = passaggiArray[index]
-                }
-                val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
-                ioThread { mDao.updateConsegnato(consegnato) }
-            }
-        }
-    }
-
-    override fun onPositive(tag: String) {
-        when (tag) {
-            CONFIRM_SAVE -> {
-                mCantiViewModel.editMode = false
-                backCallback?.isEnabled = false
-                mMainActivity?.let { activity ->
-                    ProgressDialogFragment.Builder(
-                                    activity, null, CONSEGNATI_SAVING)
-                            .content(R.string.save_consegnati_running)
-                            .progressIndeterminate(false)
-                            .progressMax(mCantiViewModel.titoliChoose.size)
-                            .show()
-                }
-                val mSelected = selectExtension?.selectedItems
-                val mSelectedId = mSelected?.mapTo(ArrayList()) { item -> item.id }
-
-                //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
-                mCantiViewModel.titoliChoose.forEach { item ->
-                    if (item.isSelected)
-                        if (mSelectedId?.any { i -> i == item.id } != true)
-                            mSelectedId?.add(item.id)
-                }
-
-                val intent = Intent(requireActivity().applicationContext, ConsegnatiSaverService::class.java)
-                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
-                requireActivity().applicationContext.startService(intent)
-            }
-        }
-    }
-
-    override fun onNegative(tag: String) {
-        // no-op
     }
 
     companion object {

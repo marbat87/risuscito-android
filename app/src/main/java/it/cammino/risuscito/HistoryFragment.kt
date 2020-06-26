@@ -3,6 +3,7 @@ package it.cammino.risuscito
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
@@ -22,7 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialcab.MaterialCab
 import com.afollestad.materialcab.MaterialCab.Companion.destroy
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
@@ -30,6 +31,7 @@ import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.LayoutHistoryBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
@@ -38,9 +40,10 @@ import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 
-class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class HistoryFragment : Fragment() {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleHistoryItem>? = null
 
@@ -80,14 +83,11 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.HISTORY_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.HISTORY_OPEN, true) }
-            Handler().postDelayed(250) {
+            Handler(Looper.getMainLooper()).postDelayed(250) {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()
             }
         }
-
-        val sFragment = SimpleDialogFragment.findVisible(mMainActivity, RESET_HISTORY)
-        sFragment?.setmCallback(this)
 
         setHasOptionsMenu(true)
         subscribeUiHistory()
@@ -170,13 +170,13 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         when (item.itemId) {
             R.id.list_reset -> {
                 mMainActivity?.let {
-                    SimpleDialogFragment.Builder(
-                                    it, this, RESET_HISTORY)
+                    SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                            it, RESET_HISTORY)
                             .title(R.string.dialog_reset_history_title)
                             .content(R.string.dialog_reset_history_desc)
                             .positiveButton(R.string.clear_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+                            .negativeButton(R.string.cancel),
+                            it.supportFragmentManager)
                 }
                 return true
             }
@@ -187,21 +187,6 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             }
         }
         return false
-    }
-
-    override fun onPositive(tag: String) {
-        Log.d(javaClass.name, "onPositive: $tag")
-        when (tag) {
-            RESET_HISTORY ->
-                ioThread {
-                    val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
-                    mDao.emptyCronologia()
-                }
-        }
-    }
-
-    override fun onNegative(tag: String) {
-        // no-op
     }
 
     private fun startCab() {
@@ -236,7 +221,7 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                     try {
                         selectExtension?.deselect()
                     } catch (e: Exception) {
-                        Crashlytics.logException(e)
+                        FirebaseCrashlytics.getInstance().recordException(e)
                     }
                 }
                 true
@@ -254,6 +239,28 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             binding.noHistory.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.historyRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
+        }
+
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            RESET_HISTORY -> {
+                                simpleDialogViewModel.handled = true
+                                ioThread {
+                                    val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
+                                    mDao.emptyCronologia()
+                                }
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        simpleDialogViewModel.handled = true
+                    }
+                }
+            }
         }
     }
 
