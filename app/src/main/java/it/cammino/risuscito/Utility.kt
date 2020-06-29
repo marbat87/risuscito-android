@@ -19,8 +19,10 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.mikepenz.fastadapter.ui.utils.StringHolder
@@ -63,6 +65,7 @@ object Utility {
     internal const val SECONDARY_COLOR = "new_accent_color"
     internal const val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
     internal const val CLICK_DELAY_SELECTION: Long = 300
+
     // Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     internal const val URL_CANTO = "urlCanto"
     internal const val SPEED_VALUE = "speedValue"
@@ -250,11 +253,31 @@ object Utility {
     @SuppressLint("NewApi")
     fun setupNavBarColor(context: Activity) {
         if (LUtils.hasO()) {
-            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            if (!ThemeUtils.isDarkMode(context)) context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+//            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            if (!ThemeUtils.isDarkMode(context)) setLightNavigationBar(context)
             context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
             context.window.navigationBarColor = Color.TRANSPARENT
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun setLightNavigationBar(context: Activity) {
+        if (LUtils.hasR())
+            setLightNavigationBarR(context)
+        else
+            setLightNavigationBarLegacy(context)
+    }
+
+    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun setLightNavigationBarLegacy(context: Activity) {
+        context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun setLightNavigationBarR(context: Activity) {
+        context.window.insetsController?.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
     }
 
     internal fun random(start: Int, end: Int): Int {

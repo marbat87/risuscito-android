@@ -8,6 +8,7 @@
     <color name="theme_primary">@color/md_indigo_500</color>
     <color name="theme_accent">@color/md_deep_orange_a200</color>
     <color name="theme_primary_dark">@color/md_indigo_700</color>
+    <color name="theme_primary_dark_translucent">@color/md_indigo_700_translucent</color>
     <color name="theme_primary_light">@color/md_indigo_200</color>
     <color name="ripple_color">#4D000000</color>
     <color name="ripple_color_light">#12000000</color>
@@ -82,6 +83,27 @@
     <color name="primary_color_blue_grey">@color/md_blue_grey_500</color>
     <color name="primary_color_light_green">@color/md_light_green_500</color>
     <color name="primary_color_yellow">@color/md_yellow_500</color>
+
+    <color name="md_amber_700_translucenta">#ffa000</color>
+    <color name="md_amber_700_translucent">#bfffa000</color>
+    <color name="md_blue_700_translucent">#bf1976d2</color>
+    <color name="md_brown_700_translucent">#bf5d4037</color>
+    <color name="md_cyan_700_translucent">#bf0097a7</color>
+    <color name="md_green_700_translucent">#bf388e3c</color>
+    <color name="md_grey_700_translucent">#bf616161</color>
+    <color name="md_lime_700_translucent">#bfafb42b</color>
+    <color name="md_indigo_700_translucent">#bf303f9f</color>
+    <color name="md_orange_700_translucent">#bff57c00</color>
+    <color name="md_pink_700_translucent">#bfc2185b</color>
+    <color name="md_purple_700_translucent">#bf7b1fa2</color>
+    <color name="md_teal_700_translucent">#bf00796b</color>
+    <color name="md_red_700_translucent">#bfd32f2f</color>
+    <color name="md_deep_orange_700_translucent">#bfe64a19</color>
+    <color name="md_deep_purple_700_translucent">#bf512da8</color>
+    <color name="md_light_blue_700_translucent">#bf0288d1</color>
+    <color name="md_blue_grey_700_translucent">#bf455a64</color>
+    <color name="md_light_green_700_translucent">#bf689f38</color>
+    <color name="md_yellow_700_translucent">#bffbc02d</color>
 
 </resources>
 

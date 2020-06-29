@@ -8,6 +8,7 @@
         <item name="colorPrimary">@color/theme_primary</item>
         <item name="colorPrimaryDark">@color/theme_primary_dark</item>
         <item name="colorPrimaryVariant">@color/theme_primary_dark</item>
+        <item name="colorPrimaryVariantTranslucent">@color/theme_primary_dark_translucent</item>
         <item name="colorPrimaryLight">@color/theme_primary_light</item>
         <item name="colorAccent">@color/theme_accent</item>
         <item name="colorSecondary">@color/theme_accent</item>
@@ -58,6 +59,7 @@
     <style name="Risuscito.Theme.pAmber">
         <item name="colorPrimary">@color/primary_color_amber</item>
         <item name="colorPrimaryVariant">@color/md_amber_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_amber_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_amber_700</item>
         <item name="colorPrimaryLight">@color/md_amber_light</item>
     </style>
@@ -65,6 +67,7 @@
     <style name="Risuscito.Theme.pBlue">
         <item name="colorPrimary">@color/primary_color_blue</item>
         <item name="colorPrimaryVariant">@color/md_blue_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_blue_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_blue_700</item>
         <item name="colorPrimaryLight">@color/md_blue_light</item>
     </style>
@@ -72,6 +75,7 @@
     <style name="Risuscito.Theme.pBrown">
         <item name="colorPrimary">@color/primary_color_brown</item>
         <item name="colorPrimaryVariant">@color/md_brown_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_brown_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_brown_700</item>
         <item name="colorPrimaryLight">@color/md_brown_light</item>
     </style>
@@ -79,6 +83,7 @@
     <style name="Risuscito.Theme.pCyan">
         <item name="colorPrimary">@color/primary_color_cyan</item>
         <item name="colorPrimaryVariant">@color/md_cyan_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_cyan_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_cyan_700</item>
         <item name="colorPrimaryLight">@color/md_cyan_light</item>
     </style>
@@ -86,6 +91,7 @@
     <style name="Risuscito.Theme.pGreen">
         <item name="colorPrimary">@color/primary_color_green</item>
         <item name="colorPrimaryVariant">@color/md_green_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_green_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_green_700</item>
         <item name="colorPrimaryLight">@color/md_green_light</item>
     </style>
@@ -93,6 +99,7 @@
     <style name="Risuscito.Theme.pGrey">
         <item name="colorPrimary">@color/primary_color_grey</item>
         <item name="colorPrimaryVariant">@color/md_grey_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_grey_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_grey_700</item>
         <item name="colorPrimaryLight">@color/md_grey_light</item>
     </style>
@@ -100,6 +107,7 @@
     <style name="Risuscito.Theme.pLime">
         <item name="colorPrimary">@color/primary_color_lime</item>
         <item name="colorPrimaryVariant">@color/md_lime_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_lime_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_lime_700</item>
         <item name="colorPrimaryLight">@color/md_lime_light</item>
     </style>
@@ -107,6 +115,7 @@
     <style name="Risuscito.Theme.pIndigo">
         <item name="colorPrimary">@color/primary_color_indigo</item>
         <item name="colorPrimaryVariant">@color/md_indigo_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_indigo_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_indigo_700</item>
         <item name="colorPrimaryLight">@color/md_indigo_light</item>
     </style>
@@ -114,6 +123,7 @@
     <style name="Risuscito.Theme.pOrange">
         <item name="colorPrimary">@color/primary_color_orange</item>
         <item name="colorPrimaryVariant">@color/md_orange_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_orange_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_orange_700</item>
         <item name="colorPrimaryLight">@color/md_orange_light</item>
     </style>
@@ -121,6 +131,7 @@
     <style name="Risuscito.Theme.pPink">
         <item name="colorPrimary">@color/primary_color_pink</item>
         <item name="colorPrimaryVariant">@color/md_pink_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_pink_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_pink_700</item>
         <item name="colorPrimaryLight">@color/md_pink_light</item>
     </style>
@@ -128,6 +139,7 @@
     <style name="Risuscito.Theme.pPurple">
         <item name="colorPrimary">@color/primary_color_purple</item>
         <item name="colorPrimaryVariant">@color/md_purple_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_purple_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_purple_700</item>
         <item name="colorPrimaryLight">@color/md_purple_light</item>
     </style>
@@ -135,6 +147,7 @@
     <style name="Risuscito.Theme.pTeal">
         <item name="colorPrimary">@color/primary_color_teal</item>
         <item name="colorPrimaryVariant">@color/md_teal_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_teal_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_teal_700</item>
         <item name="colorPrimaryLight">@color/md_teal_light</item>
     </style>
@@ -142,6 +155,7 @@
     <style name="Risuscito.Theme.pRed">
         <item name="colorPrimary">@color/primary_color_red</item>
         <item name="colorPrimaryVariant">@color/md_red_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_red_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_red_700</item>
         <item name="colorPrimaryLight">@color/md_red_light</item>
     </style>
@@ -149,6 +163,7 @@
     <style name="Risuscito.Theme.pDeepOrange">
         <item name="colorPrimary">@color/primary_color_deep_orange</item>
         <item name="colorPrimaryVariant">@color/md_deep_orange_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_deep_orange_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_deep_orange_700</item>
         <item name="colorPrimaryLight">@color/md_deep_orange_light</item>
     </style>
@@ -156,6 +171,7 @@
     <style name="Risuscito.Theme.pDeepPurple">
         <item name="colorPrimary">@color/primary_color_deep_purple</item>
         <item name="colorPrimaryVariant">@color/md_deep_purple_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_deep_purple_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_deep_purple_700</item>
         <item name="colorPrimaryLight">@color/md_deep_purple_light</item>
     </style>
@@ -163,6 +179,7 @@
     <style name="Risuscito.Theme.pLightBlue">
         <item name="colorPrimary">@color/primary_color_light_blue</item>
         <item name="colorPrimaryVariant">@color/md_light_blue_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_light_blue_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_light_blue_700</item>
         <item name="colorPrimaryLight">@color/md_light_blue_light</item>
     </style>
@@ -170,6 +187,7 @@
     <style name="Risuscito.Theme.pBlueGrey">
         <item name="colorPrimary">@color/primary_color_blue_grey</item>
         <item name="colorPrimaryVariant">@color/md_blue_grey_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_blue_grey_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_blue_grey_700</item>
         <item name="colorPrimaryLight">@color/md_blue_grey_light</item>
     </style>
@@ -177,6 +195,7 @@
     <style name="Risuscito.Theme.pLightGreen">
         <item name="colorPrimary">@color/primary_color_light_green</item>
         <item name="colorPrimaryVariant">@color/md_light_green_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_light_green_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_light_green_700</item>
         <item name="colorPrimaryLight">@color/md_light_green_light</item>
     </style>
@@ -184,6 +203,7 @@
     <style name="Risuscito.Theme.pYellow">
         <item name="colorPrimary">@color/primary_color_yellow</item>
         <item name="colorPrimaryVariant">@color/md_yellow_700</item>
+        <item name="colorPrimaryVariantTranslucent">@color/md_yellow_700_translucent</item>
         <item name="colorPrimaryDark">@color/md_yellow_700</item>
         <item name="colorPrimaryLight">@color/md_yellow_light</item>
     </style>

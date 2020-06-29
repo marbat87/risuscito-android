@@ -8,6 +8,7 @@
         <attr name="customSelectorRound" format="reference" />
         <attr name="customSelectorRoundAccent" format="reference" />
         <attr name="toolbar_shadow" format="reference" />
+        <attr name="colorPrimaryVariantTranslucent" format="reference" />
     </declare-styleable>
 
 </resources>
