@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ import com.mikepenz.iconics.typeface.library.community.material.CommunityMateria
 import com.mikepenz.iconics.utils.colorInt
 import com.mikepenz.iconics.utils.paddingDp
 import com.mikepenz.iconics.utils.sizeDp
+import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.pojo.Posizione
 import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
@@ -45,6 +47,8 @@ import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
 import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ListaPredefinitaFragment : Fragment() {
 
@@ -102,7 +106,8 @@ class ListaPredefinitaFragment : Fragment() {
         subscribeUiUpdate()
 
         binding.buttonPulisci.setOnClickListener {
-            ListeUtils.cleanList(requireContext(), mCantiViewModel.defaultListaId)
+//            ListeUtils.cleanList(requireContext(), mCantiViewModel.defaultListaId)
+            lifecycleScope.launch(Dispatchers.IO) { RisuscitoDatabase.getInstance(requireContext()).customListDao().deleteListById(mCantiViewModel.defaultListaId) }
         }
 
         binding.buttonCondividi.setOnClickListener {

@@ -53,7 +53,7 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
         mPopupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.add_to_favorites -> {
-                    ListeUtils.addToFavorites(fragment, idDaAgg)
+                    ListeUtils.addToFavorites(fragment, idDaAgg, true)
                     true
                 }
                 R.id.add_to_p_iniziale -> {
