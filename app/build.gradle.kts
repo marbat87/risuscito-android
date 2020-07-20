@@ -71,7 +71,7 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.1.0"
+val fastAdapterVersion = "5.2.2"
 val materialDrawerVersion = "8.1.3"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.5"
@@ -100,12 +100,12 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:18.0.0")
-    implementation("com.google.firebase:firebase-core:17.4.3")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.4.3")
+    implementation("com.google.firebase:firebase-core:17.4.4")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.5.0")
     implementation("com.google.firebase:firebase-storage-ktx:19.1.1")
-    implementation("com.google.firebase:firebase-auth:19.3.1")
-    implementation("com.google.firebase:firebase-crashlytics:17.1.0")
-    implementation("com.google.firebase:firebase-analytics:17.4.3")
+    implementation("com.google.firebase:firebase-auth:19.3.2")
+    implementation("com.google.firebase:firebase-crashlytics:17.1.1")
+    implementation("com.google.firebase:firebase-analytics:17.4.4")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
