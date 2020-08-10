@@ -50,7 +50,6 @@ import java.io.InputStream
 class InsertActivity : ThemeableActivity() {
 
     private val cantoAdapter: FastItemAdapter<InsertItem> = FastItemAdapter()
-//    private lateinit var aTexts: Array<Array<String?>>
 
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
@@ -73,8 +72,8 @@ class InsertActivity : ThemeableActivity() {
         binding = ActivityInsertSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.risuscitoToolbar.risuscitoToolbar.title = getString(R.string.title_activity_inserisci_titolo)
-        setSupportActionBar(binding.risuscitoToolbar.risuscitoToolbar)
+//        binding.risuscitoToolbar.title = getString(R.string.title_activity_inserisci_titolo)
+        setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

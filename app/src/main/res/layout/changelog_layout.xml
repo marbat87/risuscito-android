@@ -44,11 +44,11 @@
                 android:fitsSystemWindows="true"
                 risuscito:layout_collapseMode="parallax" />
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/risuscito_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:theme="@style/ToolbarTheme"
+                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito"
                 risuscito:layout_collapseMode="pin"
                 risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 

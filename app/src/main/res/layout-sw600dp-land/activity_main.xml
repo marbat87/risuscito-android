@@ -28,11 +28,11 @@
                 android:layout_height="wrap_content"
                 risuscito:layout_scrollFlags="scroll|enterAlways">
 
-                <androidx.appcompat.widget.Toolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/risuscito_toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="?actionBarSize"
-                    android:theme="@style/ToolbarTheme"
+                    android:layout_height="?attr/actionBarSize"
+                    android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito"
                     risuscito:layout_scrollFlags="scroll|enterAlways"
                     risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 

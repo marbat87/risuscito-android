@@ -60,7 +60,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
                 }
                 REQUIRES_USER_CONFIRMATION -> {
-                    splitInstallManager.startConfirmationDialogForResult(state, activity, CONFIRMATION_REQUEST_CODE)
+                    splitInstallManager.startConfirmationDialogForResult(state, requireActivity(), CONFIRMATION_REQUEST_CODE)
                 }
                 DOWNLOADING -> {
                     val totalBytes = state.totalBytesToDownload()
@@ -164,7 +164,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         Log.d(TAG, "onCreateView")
         mMainActivity = activity as? MainActivity
 
-        splitInstallManager = SplitInstallManagerFactory.create(context)
+        splitInstallManager = SplitInstallManagerFactory.create(requireContext())
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_settings)
 

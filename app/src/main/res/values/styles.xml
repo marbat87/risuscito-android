@@ -5,6 +5,14 @@
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
+<!--    <style name="Widget.MaterialComponents.Toolbar.Primary.Risuscito">-->
+<!--        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Toolbar.Primary.Risuscito</item>-->
+<!--    </style>-->
+
+    <style name="ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito">
+        <item name="fontFamily">@font/googlesans_medium</item>
+    </style>
+
     <style name="AdaptiveScrimColor">
         <item name="statusBarScrim">?colorPrimaryVariant</item>
     </style>

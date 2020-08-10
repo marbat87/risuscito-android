@@ -379,7 +379,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
         setSupportActionBar(binding.risuscitoToolbar)
-        supportActionBar?.setTitle(R.string.canto_title_activity)
+//        supportActionBar?.setTitle(R.string.canto_title_activity)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

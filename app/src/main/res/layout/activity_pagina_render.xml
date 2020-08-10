@@ -11,11 +11,12 @@
         android:layout_height="wrap_content"
         risuscito:layout_scrollFlags="noScroll|enterAlways">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/risuscito_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:theme="@style/ToolbarTheme"
+            android:layout_height="?attr/actionBarSize"
+            risuscito:title="@string/canto_title_activity"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito"
             risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 
     </com.google.android.material.appbar.AppBarLayout>
