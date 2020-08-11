@@ -20,7 +20,6 @@ import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
@@ -66,7 +65,7 @@ class CustomLists : Fragment() {
             Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
             if (mCustomListsViewModel.indexToShow != position) {
                 mCustomListsViewModel.indexToShow = position
-                destroy()
+                mMainActivity?.actionMode?.finish()
             }
             initFabOptions(position >= 2)
         }
@@ -130,7 +129,7 @@ class CustomLists : Fragment() {
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
         super.onDestroy()
-        destroy()
+        mMainActivity?.actionMode?.finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -406,7 +405,7 @@ class CustomLists : Fragment() {
         }
 
         val click = View.OnClickListener {
-            destroy()
+            mMainActivity?.actionMode?.finish()
             toggleFabMenu()
         }
 

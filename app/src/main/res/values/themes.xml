@@ -37,6 +37,10 @@
         <item name="md_color_button_text">?colorSecondary</item>
         <item name="tabStyle">@style/Risuscito_tabstyle</item>
         <item name="android:alertDialogTheme">@style/RisuscitoAlertDialogTheme</item>
+
+        <item name="actionModeStyle">@style/Widget.AppCompat.ActionMode.Risuscito</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24dp</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito</item>
     </style>
 
     <style name="Risuscito.Theme" parent="Base.Risuscito.Theme">

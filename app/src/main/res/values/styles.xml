@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
-        <item name="fontFamily">@font/googlesans_medium</item>
-    </style>
+<!--    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">-->
+<!--        <item name="fontFamily">@font/googlesans_medium</item>-->
+<!--    </style>-->
 
 <!--    <style name="Widget.MaterialComponents.Toolbar.Primary.Risuscito">-->
 <!--        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Toolbar.Primary.Risuscito</item>-->
@@ -70,7 +70,7 @@
     <style name="BottomSheet.GridItemImage">
         <item name="android:layout_height">48dp</item>
         <item name="android:layout_width">48dp</item>
-        <item name="android:layout_margin">8dp</item>
+        <item name="android:layout_margin">8dp</item>s
         <item name="android:padding">0dp</item>
     </style>
 
@@ -145,14 +145,6 @@
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
-    <!-- per l'icona profilo del drawer -->
-    <!--    <style name="BezelImageView">-->
-    <!--        <item name="biv_maskDrawable">@drawable/material_drawer_circle_mask</item>-->
-    <!--        <item name="biv_drawCircularShadow">true</item>-->
-    <!--        <item name="biv_selectorOnPress">?colorPrimary</item>-->
-    <!--        <item name="android:scaleType">centerCrop</item>-->
-    <!--    </style>-->
-
     <style name="Widget.AppCompat.DrawerArrowToggle.Risuscito">
         <item name="color">@android:color/white</item>
     </style>
@@ -175,6 +167,12 @@
 
     <style name="Risuscito_SpeedDialActionItem">
         <item name="colorOnSecondary">@color/text_color_secondary</item>
+    </style>
+
+    <style name="Widget.AppCompat.ActionMode.Risuscito">
+        <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
+        <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
+        <item name="background">?colorPrimaryDark</item>
     </style>
 
 </resources>

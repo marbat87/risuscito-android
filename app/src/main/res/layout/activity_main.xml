@@ -30,11 +30,6 @@
                     risuscito:layout_scrollFlags="scroll|enterAlways"
                     risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 
-                <ViewStub
-                    android:id="@+id/cab_stub"
-                    android:layout_width="match_parent"
-                    android:layout_height="?actionBarSize" />
-
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"
                     android:layout_width="match_parent"

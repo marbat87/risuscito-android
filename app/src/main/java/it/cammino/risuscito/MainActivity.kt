@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
+import androidx.appcompat.view.ActionMode
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -110,6 +111,9 @@ class MainActivity : ThemeableActivity() {
     private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
 
     private lateinit var binding: ActivityMainBinding
+
+    var actionMode: ActionMode? = null
+        private set
 
     private val nextStepReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -1128,6 +1132,19 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
+    fun createActionMode(callback: ActionMode.Callback) {
+        actionMode?.finish()
+        actionMode = startSupportActionMode(callback)
+    }
+
+    fun destroyActionMode() {
+        actionMode = null
+    }
+
+    fun updateActionModeTitle(title: String) {
+        actionMode?.title = title
+    }
+
     companion object {
         /* Request code used to invoke sign in user interactions. */
         private const val PROF_ID = 5428471L
@@ -1145,117 +1162,5 @@ class MainActivity : ThemeableActivity() {
         private const val NEW_PHOTO_RES = "s400-c"
         private val TAG = MainActivity::class.java.canonicalName
 
-//        private class TranslationTask(activity: MainActivity) : AsyncTask<Void, Void, Void>() {
-//
-//            private val activityWeakReference: WeakReference<MainActivity> = WeakReference(activity)
-//
-//            override fun doInBackground(vararg sUrl: Void): Void? {
-//                activityWeakReference.get()?.let {
-//                    it.intent.removeExtra(Utility.DB_RESET)
-//                    it.convertTabs()
-//                    it.convertiBarre()
-//                }
-//                return null
-//            }
-//
-//            override fun onPreExecute() {
-//                super.onPreExecute()
-//                activityWeakReference.get()?.let {
-//                    ProgressDialogFragment.show(ProgressDialogFragment.Builder(it, "TRANSLATION")
-//                            .content(R.string.translation_running)
-//                            .progressIndeterminate(true),
-//                            it.supportFragmentManager)
-//                }
-//            }
-//
-//            override fun onPostExecute(result: Void?) {
-//                super.onPostExecute(result)
-//                activityWeakReference.get()?.let {
-//                    it.intent.removeExtra(Utility.CHANGE_LANGUAGE)
-//                    try {
-//                        it.dismissProgressDialog("TRANSLATION")
-//                    } catch (e: IllegalArgumentException) {
-//                        Log.e(javaClass.name, e.localizedMessage, e)
-//                    }
-//                }
-//            }
-//        }
-
-//        private class BackupTask(activity: MainActivity) : AsyncTask<Void, Void, String>() {
-//
-//            private val activityReference: WeakReference<MainActivity> = WeakReference(activity)
-//
-//            override fun doInBackground(vararg sUrl: Void): String {
-//                activityReference.get()?.let {
-//                    return try {
-//                        it.backupDatabase(it.acct?.id)
-//                        val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-//                        intentBroadcast.putExtra(WHICH, "BACKUP")
-//                        LocalBroadcastManager.getInstance(it).sendBroadcast(intentBroadcast)
-//                        it.backupSharedPreferences(it.acct?.id, it.acct?.email)
-//                        ""
-//                    } catch (e: Exception) {
-//                        Log.e(TAG, "Exception: " + e.localizedMessage, e)
-//                        "error: " + e.localizedMessage
-//                    }
-//                }
-//                Log.e(TAG, "activityReference.get() is null")
-//                return "error: activityReference.get() is null"
-//            }
-//
-//            override fun onPostExecute(result: String) {
-//                super.onPostExecute(result)
-//                activityReference.get()?.let {
-//                    it.dismissProgressDialog(BACKUP_RUNNING)
-//                    if (result.isEmpty())
-//                        Snackbar.make(
-//                                it.binding.mainContent,
-//                                R.string.gdrive_backup_success,
-//                                Snackbar.LENGTH_LONG)
-//                                .show()
-//                    else
-//                        Snackbar.make(it.binding.mainContent, result, Snackbar.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-
-//        private class RestoreTask(activity: MainActivity) : AsyncTask<Void, Void, String>() {
-//
-//            private val activityReference: WeakReference<MainActivity> = WeakReference(activity)
-//
-//            override fun doInBackground(vararg sUrl: Void): String {
-//                activityReference.get()?.let {
-//                    return try {
-//                        it.restoreDatabase(it.acct?.id)
-//                        val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-//                        intentBroadcast.putExtra(WHICH, RESTORE)
-//                        LocalBroadcastManager.getInstance(it).sendBroadcast(intentBroadcast)
-//                        it.restoreSharedPreferences(it.acct?.id)
-//                        ""
-//                    } catch (e: Exception) {
-//                        Log.e(TAG, "Exception: " + e.localizedMessage, e)
-//                        "error: " + e.localizedMessage
-//                    }
-//                }
-//                Log.e(TAG, "activityReference.get() is null")
-//                return "error: activityReference.get() is null"
-//            }
-//
-//            override fun onPostExecute(result: String) {
-//                super.onPostExecute(result)
-//                activityReference.get()?.let {
-//                    it.dismissProgressDialog(RESTORE_RUNNING)
-//                    if (result.isEmpty())
-//                        SimpleDialogFragment.show(SimpleDialogFragment.Builder(it, RESTART)
-//                                .title(R.string.general_message)
-//                                .content(R.string.gdrive_restore_success)
-//                                .positiveButton(R.string.ok),
-//                                it.supportFragmentManager)
-//                    else
-//                        Snackbar.make(it.binding.mainContent, result, Snackbar.LENGTH_LONG).show()
-//                }
-//            }
-//
-//        }
     }
 }
