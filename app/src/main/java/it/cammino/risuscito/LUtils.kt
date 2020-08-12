@@ -12,16 +12,19 @@ import android.text.Spanned
 import android.util.Log
 import android.view.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.animation.AnimationUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
-import it.cammino.risuscito.utils.ioThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.*
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -53,12 +56,10 @@ class LUtils private constructor(private val mActivity: Activity) {
         mActivity.startActivity(intent)
         Animatoo.animateSlideLeft(mActivity)
 
-        ioThread {
-            val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
-            val cronologia = Cronologia()
-            cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
-            mDao.insertCronologia(cronologia)
-        }
+        val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
+        val cronologia = Cronologia()
+        cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
+        (mActivity as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) { mDao.insertCronologia(cronologia) }
     }
 
     fun startActivityWithFadeIn(intent: Intent) {

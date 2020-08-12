@@ -16,6 +16,7 @@ import androidx.core.os.postDelayed
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -33,8 +34,9 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
@@ -255,10 +257,8 @@ class FavoritesFragment : Fragment() {
                         when (simpleDialogViewModel.mTag) {
                             FAVORITES_RESET -> {
                                 simpleDialogViewModel.handled = true
-                                ioThread {
-                                    val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
-                                    mDao.resetFavorites()
-                                }
+                                val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
+                                lifecycleScope.launch(Dispatchers.IO) { mDao.resetFavorites() }
                             }
                         }
                     }

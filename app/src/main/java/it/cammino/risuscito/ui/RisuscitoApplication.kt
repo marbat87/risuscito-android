@@ -11,7 +11,9 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.squareup.picasso.Picasso
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.utils.ThemeUtils
-import it.cammino.risuscito.utils.ioThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class RisuscitoApplication : MultiDexApplication() {
@@ -24,9 +26,8 @@ class RisuscitoApplication : MultiDexApplication() {
         //only required if you add a custom or generic font on your own
 //        Iconics.init(applicationContext)
 
-        ioThread {
-            RisuscitoDatabase.getInstance(this).cantoDao().getCantoById(1)
-        }
+        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
+        GlobalScope.launch(Dispatchers.IO) { mDao.getCantoById(1) }
 
         // initialize and create the image loader logic
         DrawerImageLoader.init(

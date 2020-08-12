@@ -17,6 +17,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
@@ -30,9 +31,10 @@ import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ListaPersonalizzataFragment : Fragment() {
 
@@ -256,15 +258,13 @@ class ListaPersonalizzataFragment : Fragment() {
     }
 
     private fun runUpdate() {
-        ioThread {
-            mMainActivity?.let {
-                val listaNew = ListaPers()
-                listaNew.lista = mCantiViewModel.listaPersonalizzata
-                listaNew.id = mCantiViewModel.listaPersonalizzataId
-                listaNew.titolo = mCantiViewModel.listaPersonalizzataTitle
-                val mDao = RisuscitoDatabase.getInstance(it).listePersDao()
-                mDao.updateLista(listaNew)
-            }
+        mMainActivity?.let {
+            val listaNew = ListaPers()
+            listaNew.lista = mCantiViewModel.listaPersonalizzata
+            listaNew.id = mCantiViewModel.listaPersonalizzataId
+            listaNew.titolo = mCantiViewModel.listaPersonalizzataTitle
+            val mDao = RisuscitoDatabase.getInstance(it).listePersDao()
+            lifecycleScope.launch(Dispatchers.IO) { mDao.updateLista(listaNew) }
         }
     }
 

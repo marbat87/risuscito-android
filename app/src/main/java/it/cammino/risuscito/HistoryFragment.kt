@@ -16,6 +16,7 @@ import androidx.core.os.postDelayed
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -33,8 +34,9 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HistoryFragment : Fragment() {
 
@@ -254,10 +256,8 @@ class HistoryFragment : Fragment() {
                         when (simpleDialogViewModel.mTag) {
                             RESET_HISTORY -> {
                                 simpleDialogViewModel.handled = true
-                                ioThread {
-                                    val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
-                                    mDao.emptyCronologia()
-                                }
+                                val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
+                                lifecycleScope.launch(Dispatchers.IO) { mDao.emptyCronologia() }
                             }
                         }
                     }

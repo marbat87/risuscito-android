@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,9 +33,11 @@ import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class SectionedIndexFragment : Fragment() {
@@ -99,8 +102,8 @@ class SectionedIndexFragment : Fragment() {
             if (item is SimpleSubItem) {
                 mCantiViewModel.idDaAgg = item.id
                 when (mCantiViewModel.tipoLista) {
-                    0 -> mCantiViewModel.popupMenu(this, v, ARGUMENT_REPLACE+mCantiViewModel.tipoLista, ARGUMENT_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
-                    1 -> mCantiViewModel.popupMenu(this, v, LITURGICO_REPLACE+mCantiViewModel.tipoLista, LITURGICO_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
+                    0 -> mCantiViewModel.popupMenu(this, v, ARGUMENT_REPLACE + mCantiViewModel.tipoLista, ARGUMENT_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
+                    1 -> mCantiViewModel.popupMenu(this, v, LITURGICO_REPLACE + mCantiViewModel.tipoLista, LITURGICO_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
                 }
             }
             true
@@ -142,109 +145,7 @@ class SectionedIndexFragment : Fragment() {
         binding.recyclerView.setHasFixedSize(true) // Size of RV will not change
         binding.recyclerView.itemAnimator = SlideDownAlphaAnimator()
 
-        ioThread {
-            if (mCantiViewModel.tipoLista == 0) {
-                val mDao = RisuscitoDatabase.getInstance(requireContext()).argomentiDao()
-                val canti = mDao.all
-                mCantiViewModel.titoliList.clear()
-                var mSubItems = LinkedList<ISubItem<*>>()
-                var totCanti = 0
-
-                for (i in canti.indices) {
-                    mSubItems.add(
-                            simpleSubItem {
-                                setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
-                                setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
-                                setSource = LUtils.getResId(canti[i].source, R.string::class.java)
-                                setColor = canti[i].color
-                                id = canti[i].id
-                                identifier = (i * 1000).toLong()
-                                isHasDivider = !((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento))
-                            }
-                    )
-                    totCanti++
-
-                    if ((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento)) {
-                        // serve a non mettere il divisore sull'ultimo elemento della lista
-                        mCantiViewModel.titoliList.add(
-                                simpleSubExpandableItem {
-                                    setTitle = LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)
-                                    totItems = totCanti
-                                    onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
-                                        if (!item.isExpanded) {
-                                            if (mActivity?.isGridLayout == true)
-                                                glm?.scrollToPositionWithOffset(
-                                                        item.position, 0)
-                                            else
-                                                llm?.scrollToPositionWithOffset(
-                                                        item.position, 0)
-                                        }
-                                        false
-                                    }
-                                    identifier = canti[i].idArgomento.toLong()
-                                    subItems = mSubItems
-                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
-                                }
-                        )
-                        mSubItems = LinkedList()
-                        totCanti = 0
-                    }
-                }
-            } else {
-                val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
-                val canti = mDao.all
-                mCantiViewModel.titoliList.clear()
-                var mSubItems = LinkedList<ISubItem<*>>()
-                var totCanti = 0
-
-                for (i in canti.indices) {
-                    mSubItems.add(
-                            simpleSubItem {
-                                setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
-                                setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
-                                setSource = LUtils.getResId(canti[i].source, R.string::class.java)
-                                setColor = canti[i].color
-                                id = canti[i].id
-                                identifier = (i * 1000).toLong()
-                                isHasDivider = !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
-                            }
-                    )
-                    totCanti++
-
-                    if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
-                        // serve a non mettere il divisore sull'ultimo elemento della lista
-                        mCantiViewModel.titoliList.add(
-                                simpleSubExpandableItem {
-                                    setTitle = LUtils.getResId(canti[i].nome, R.string::class.java)
-                                    totItems = totCanti
-                                    onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
-                                        if (!item.isExpanded) {
-                                            if (mActivity?.isGridLayout == true)
-                                                glm?.scrollToPositionWithOffset(
-                                                        item.position, 0)
-                                            else
-                                                llm?.scrollToPositionWithOffset(
-                                                        item.position, 0)
-                                        }
-                                        false
-                                    }
-                                    identifier = canti[i].idIndice.toLong()
-                                    subItems = mSubItems
-                                    subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
-                                }
-                        )
-                        mSubItems = LinkedList()
-                        totCanti = 0
-                    }
-                }
-            }
-
-            var totListe = 0
-            mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) }
-            mCantiViewModel.titoliList.forEach { (it as? SimpleSubExpandableItem)?.position = totListe++ }
-            mAdapter.set(mCantiViewModel.titoliList)
-            mAdapter.withSavedInstanceState(savedInstanceState)
-        }
+        lifecycleScope.launch { updateLists(savedInstanceState) }
 
         simpleDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
@@ -252,7 +153,7 @@ class SectionedIndexFragment : Fragment() {
                 when (it) {
                     is DialogState.Positive -> {
                         when (simpleDialogViewModel.mTag) {
-                            ARGUMENT_REPLACE+mCantiViewModel.tipoLista, LITURGICO_REPLACE+mCantiViewModel.tipoLista -> {
+                            ARGUMENT_REPLACE + mCantiViewModel.tipoLista, LITURGICO_REPLACE + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
                                 listePersonalizzate?.let { lista ->
                                     lista[mCantiViewModel.idListaClick]
@@ -260,7 +161,7 @@ class SectionedIndexFragment : Fragment() {
                                     ListeUtils.updateListaPersonalizzata(this, lista[mCantiViewModel.idListaClick])
                                 }
                             }
-                            ARGUMENT_REPLACE_2+mCantiViewModel.tipoLista, LITURGICO_REPLACE_2+mCantiViewModel.tipoLista -> {
+                            ARGUMENT_REPLACE_2 + mCantiViewModel.tipoLista, LITURGICO_REPLACE_2 + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
                                 ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
                             }
@@ -272,17 +173,120 @@ class SectionedIndexFragment : Fragment() {
                 }
             }
         }
-
     }
 
     override fun onResume() {
         super.onResume()
-        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
+        lifecycleScope.launch(Dispatchers.IO) { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         val mOutState = mAdapter.saveInstanceState(outState)
         super.onSaveInstanceState(mOutState)
+    }
+
+    private suspend fun updateLists(savedInstanceState: Bundle?) {
+        if (mCantiViewModel.tipoLista == 0) {
+            val mDao = RisuscitoDatabase.getInstance(requireContext()).argomentiDao()
+            val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all }
+            mCantiViewModel.titoliList.clear()
+            var mSubItems = LinkedList<ISubItem<*>>()
+            var totCanti = 0
+
+            for (i in canti.indices) {
+                mSubItems.add(
+                        simpleSubItem {
+                            setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
+                            setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
+                            setSource = LUtils.getResId(canti[i].source, R.string::class.java)
+                            setColor = canti[i].color
+                            id = canti[i].id
+                            identifier = (i * 1000).toLong()
+                            isHasDivider = !((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento))
+                        }
+                )
+                totCanti++
+
+                if ((i == (canti.size - 1) || canti[i].idArgomento != canti[i + 1].idArgomento)) {
+                    // serve a non mettere il divisore sull'ultimo elemento della lista
+                    mCantiViewModel.titoliList.add(
+                            simpleSubExpandableItem {
+                                setTitle = LUtils.getResId(canti[i].nomeArgomento, R.string::class.java)
+                                totItems = totCanti
+                                onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
+                                    if (!item.isExpanded) {
+                                        if (mActivity?.isGridLayout == true)
+                                            glm?.scrollToPositionWithOffset(
+                                                    item.position, 0)
+                                        else
+                                            llm?.scrollToPositionWithOffset(
+                                                    item.position, 0)
+                                    }
+                                    false
+                                }
+                                identifier = canti[i].idArgomento.toLong()
+                                subItems = mSubItems
+                                subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
+                            }
+                    )
+                    mSubItems = LinkedList()
+                    totCanti = 0
+                }
+            }
+        } else {
+            val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
+            val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all }
+            mCantiViewModel.titoliList.clear()
+            var mSubItems = LinkedList<ISubItem<*>>()
+            var totCanti = 0
+
+            for (i in canti.indices) {
+                mSubItems.add(
+                        simpleSubItem {
+                            setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
+                            setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
+                            setSource = LUtils.getResId(canti[i].source, R.string::class.java)
+                            setColor = canti[i].color
+                            id = canti[i].id
+                            identifier = (i * 1000).toLong()
+                            isHasDivider = !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
+                        }
+                )
+                totCanti++
+
+                if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
+                    // serve a non mettere il divisore sull'ultimo elemento della lista
+                    mCantiViewModel.titoliList.add(
+                            simpleSubExpandableItem {
+                                setTitle = LUtils.getResId(canti[i].nome, R.string::class.java)
+                                totItems = totCanti
+                                onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
+                                    if (!item.isExpanded) {
+                                        if (mActivity?.isGridLayout == true)
+                                            glm?.scrollToPositionWithOffset(
+                                                    item.position, 0)
+                                        else
+                                            llm?.scrollToPositionWithOffset(
+                                                    item.position, 0)
+                                    }
+                                    false
+                                }
+                                identifier = canti[i].idIndice.toLong()
+                                subItems = mSubItems
+                                subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
+                            }
+                    )
+                    mSubItems = LinkedList()
+                    totCanti = 0
+                }
+            }
+        }
+
+        var totListe = 0
+        mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) }
+        mCantiViewModel.titoliList.forEach { (it as? SimpleSubExpandableItem)?.position = totListe++ }
+        mAdapter.set(mCantiViewModel.titoliList)
+        mAdapter.withSavedInstanceState(savedInstanceState)
     }
 
     companion object {

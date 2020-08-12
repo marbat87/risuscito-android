@@ -29,15 +29,12 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.listeners.addClickListener
-import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityInsertSearchBinding
 import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -51,7 +48,6 @@ class InsertActivity : ThemeableActivity() {
 
     private val cantoAdapter: FastItemAdapter<InsertItem> = FastItemAdapter()
 
-    private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
     private var listaPredefinita: Int = 0
@@ -72,7 +68,6 @@ class InsertActivity : ThemeableActivity() {
         binding = ActivityInsertSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        binding.risuscitoToolbar.title = getString(R.string.title_activity_inserisci_titolo)
         setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -101,8 +96,6 @@ class InsertActivity : ThemeableActivity() {
         }
 
         mLUtils = LUtils.getInstance(this)
-
-        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(this).listePersDao().all }
 
         binding.searchLayout.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 

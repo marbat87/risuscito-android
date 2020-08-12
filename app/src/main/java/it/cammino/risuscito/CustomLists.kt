@@ -16,6 +16,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -43,8 +44,10 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CustomLists : Fragment() {
 
@@ -258,38 +261,7 @@ class CustomLists : Fragment() {
                             DELETE_LIST -> {
                                 simpleDialogViewModel.handled = true
                                 binding.viewPager.currentItem = binding.viewPager.currentItem - 1
-                                ioThread {
-                                    val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-                                    val listToDelete = ListaPers()
-                                    listToDelete.id = mCustomListsViewModel.idDaCanc
-                                    mDao.deleteList(listToDelete)
-                                    mMainActivity?.activityMainContent?.let { mainContent ->
-                                        Snackbar.make(
-                                                mainContent,
-                                                getString(R.string.list_removed)
-                                                        + mCustomListsViewModel.titoloDaCanc
-                                                        + "'!",
-                                                Snackbar.LENGTH_LONG)
-                                                .setAction(
-                                                        getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
-                                                ) {
-                                                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                                                        mLastClickTime = SystemClock.elapsedRealtime()
-                                                        mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
-                                                        movePage = true
-                                                        ioThread {
-                                                            val mListePersDao = RisuscitoDatabase.getInstance(requireContext())
-                                                                    .listePersDao()
-                                                            val listaToRestore = ListaPers()
-                                                            listaToRestore.id = mCustomListsViewModel.idDaCanc
-                                                            listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
-                                                            listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
-                                                            mListePersDao.insertLista(listaToRestore)
-                                                        }
-                                                    }
-                                                }.show()
-                                    }
-                                }
+                                lifecycleScope.launch { deleteList() }
                             }
                         }
                     }
@@ -371,25 +343,7 @@ class CustomLists : Fragment() {
                     true
                 }
                 R.id.fab_delete_lista -> {
-                    mMainActivity?.let { mActivity ->
-                        closeFabMenu()
-                        mCustomListsViewModel.listaDaCanc = binding.viewPager.currentItem - 2
-                        mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
-                        ioThread {
-                            val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-                            val lista = mDao.getListById(mCustomListsViewModel.idDaCanc)
-                            mCustomListsViewModel.titoloDaCanc = lista?.titolo
-                            mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
-                            SimpleDialogFragment.show(SimpleDialogFragment.Builder(
-                                    mActivity,
-                                    DELETE_LIST)
-                                    .title(R.string.action_remove_list)
-                                    .content(R.string.delete_list_dialog)
-                                    .positiveButton(R.string.delete_confirm)
-                                    .negativeButton(R.string.cancel),
-                                    mActivity.supportFragmentManager)
-                        }
-                    }
+                    lifecycleScope.launch { deleteListDialog() }
                     true
                 }
                 R.id.fab_condividi_file -> {
@@ -410,6 +364,56 @@ class CustomLists : Fragment() {
         }
 
         mMainActivity?.initFab(true, icon, click, actionListener, customList)
+    }
+
+    private suspend fun deleteListDialog() {
+        mMainActivity?.let { mActivity ->
+            closeFabMenu()
+            mCustomListsViewModel.listaDaCanc = binding.viewPager.currentItem - 2
+            mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
+            val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+            val lista = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.getListById(mCustomListsViewModel.idDaCanc) }
+            mCustomListsViewModel.titoloDaCanc = lista?.titolo
+            mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
+            SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                    mActivity,
+                    DELETE_LIST)
+                    .title(R.string.action_remove_list)
+                    .content(R.string.delete_list_dialog)
+                    .positiveButton(R.string.delete_confirm)
+                    .negativeButton(R.string.cancel),
+                    mActivity.supportFragmentManager)
+        }
+    }
+
+    private suspend fun deleteList() {
+        val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+        val listToDelete = ListaPers()
+        listToDelete.id = mCustomListsViewModel.idDaCanc
+        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.deleteList(listToDelete) }
+        mMainActivity?.activityMainContent?.let { mainContent ->
+            Snackbar.make(
+                    mainContent,
+                    getString(R.string.list_removed)
+                            + mCustomListsViewModel.titoloDaCanc
+                            + "'!",
+                    Snackbar.LENGTH_LONG)
+                    .setAction(
+                            getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
+                    ) {
+                        if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                            mLastClickTime = SystemClock.elapsedRealtime()
+                            mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
+                            movePage = true
+                            val mListePersDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+                            val listaToRestore = ListaPers()
+                            listaToRestore.id = mCustomListsViewModel.idDaCanc
+                            listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+                            listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
+                            lifecycleScope.launch(Dispatchers.IO) { mListePersDao.insertLista(listaToRestore) }
+                        }
+                    }.show()
+        }
     }
 
     companion object {

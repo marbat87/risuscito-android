@@ -13,6 +13,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,9 +29,10 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SimpleIndexFragment : Fragment() {
 
@@ -95,9 +97,9 @@ class SimpleIndexFragment : Fragment() {
         mAdapter.onLongClickListener = { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
             mCantiViewModel.idDaAgg = item.id
             when (mCantiViewModel.tipoLista) {
-                0 -> mCantiViewModel.popupMenu(this, v, ALPHA_REPLACE+mCantiViewModel.tipoLista, ALPHA_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
-                1 -> mCantiViewModel.popupMenu(this, v, NUMERIC_REPLACE+mCantiViewModel.tipoLista, NUMERIC_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
-                2 -> mCantiViewModel.popupMenu(this, v, SALMI_REPLACE+mCantiViewModel.tipoLista, SALMI_REPLACE_2+mCantiViewModel.tipoLista, listePersonalizzate)
+                0 -> mCantiViewModel.popupMenu(this, v, ALPHA_REPLACE + mCantiViewModel.tipoLista, ALPHA_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
+                1 -> mCantiViewModel.popupMenu(this, v, NUMERIC_REPLACE + mCantiViewModel.tipoLista, NUMERIC_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
+                2 -> mCantiViewModel.popupMenu(this, v, SALMI_REPLACE + mCantiViewModel.tipoLista, SALMI_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
             }
             true
         }
@@ -130,7 +132,7 @@ class SimpleIndexFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
+        lifecycleScope.launch(Dispatchers.IO) { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
     }
 
     private fun subscribeUiChanges() {
@@ -151,7 +153,7 @@ class SimpleIndexFragment : Fragment() {
                 when (it) {
                     is DialogState.Positive -> {
                         when (simpleDialogViewModel.mTag) {
-                            ALPHA_REPLACE+mCantiViewModel.tipoLista, NUMERIC_REPLACE+mCantiViewModel.tipoLista, SALMI_REPLACE+mCantiViewModel.tipoLista -> {
+                            ALPHA_REPLACE + mCantiViewModel.tipoLista, NUMERIC_REPLACE + mCantiViewModel.tipoLista, SALMI_REPLACE + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
                                 listePersonalizzate?.let { lista ->
                                     lista[mCantiViewModel.idListaClick]
@@ -159,7 +161,7 @@ class SimpleIndexFragment : Fragment() {
                                     ListeUtils.updateListaPersonalizzata(this, lista[mCantiViewModel.idListaClick])
                                 }
                             }
-                            ALPHA_REPLACE_2+mCantiViewModel.tipoLista, NUMERIC_REPLACE_2+mCantiViewModel.tipoLista, SALMI_REPLACE_2+mCantiViewModel.tipoLista -> {
+                            ALPHA_REPLACE_2 + mCantiViewModel.tipoLista, NUMERIC_REPLACE_2 + mCantiViewModel.tipoLista, SALMI_REPLACE_2 + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
                                 ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
                             }

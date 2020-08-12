@@ -10,7 +10,9 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import it.cammino.risuscito.database.dao.*
 import it.cammino.risuscito.database.entities.*
-import it.cammino.risuscito.utils.ioThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 7)
 @TypeConverters(Converters::class)
@@ -212,9 +214,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                                 override fun onCreate(db: SupportSQLiteDatabase) {
                                     super.onCreate(db)
                                     Log.d(TAG, "Callback onCreate")
-                                    ioThread {
-                                        insertDefaultData(sInstance as RisuscitoDatabase)
-                                    }
+                                    GlobalScope.launch(Dispatchers.IO) { insertDefaultData(sInstance as RisuscitoDatabase) }
                                 }
                             })
                             .build()

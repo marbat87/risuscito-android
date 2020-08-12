@@ -32,9 +32,9 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ioThread
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -52,12 +52,10 @@ class SearchFragment : Fragment() {
     private var job: Job = Job()
 
     private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
-//    private lateinit var aTexts: Array<Array<String?>>
 
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLUtils: LUtils? = null
 
-    //    private var searchTask: SearchTask? = null
     private var mLastClickTime: Long = 0
     private var mMainActivity: MainActivity? = null
     private lateinit var mPopupMenu: PopupMenu
@@ -107,7 +105,7 @@ class SearchFragment : Fragment() {
 
         mLUtils = LUtils.getInstance(requireActivity())
 
-        ioThread { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
+        lifecycleScope.launch(Dispatchers.IO) { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
 
         subscribeUiCanti()
 
