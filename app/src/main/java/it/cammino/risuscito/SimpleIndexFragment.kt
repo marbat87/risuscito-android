@@ -113,6 +113,7 @@ class SimpleIndexFragment : Fragment() {
         val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         binding.cantiList.addItemDecoration(insetDivider)
+        binding.dragScrollBar.setRecyclerView(binding.cantiList)
         if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
             binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
             binding.dragScrollBar.setAutoHide(false)

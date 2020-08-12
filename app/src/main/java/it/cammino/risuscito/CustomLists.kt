@@ -275,17 +275,14 @@ class CustomLists : Fragment() {
 
     private inner class SectionsPagerAdapter internal constructor(fm: Fragment) : FragmentStateAdapter(fm) {
 
-        override fun createFragment(position: Int): Fragment {
-            return when (position) {
-                0 -> ListaPredefinitaFragment.newInstance(1)
-                1 -> ListaPredefinitaFragment.newInstance(2)
-                else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
-            }
-        }
+        override fun createFragment(position: Int): Fragment =
+                when (position) {
+                    0 -> ListaPredefinitaFragment.newInstance(1)
+                    1 -> ListaPredefinitaFragment.newInstance(2)
+                    else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
+                }
 
-        override fun getItemCount(): Int {
-            return 2 + titoliListe.size
-        }
+        override fun getItemCount(): Int = 2 + titoliListe.size
 
     }
 

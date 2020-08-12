@@ -16,7 +16,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        app:msb_lightOnTouch="true"
-        app:msb_recyclerView="@id/canti_list" />
+        app:msb_lightOnTouch="true" />
 
 </RelativeLayout>
