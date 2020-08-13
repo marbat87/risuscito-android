@@ -51,6 +51,7 @@ class LocaleManager(context: Context) {
                 LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
                 LANGUAGE_ENGLISH -> LANGUAGE_ENGLISH
                 LANGUAGE_TURKISH -> LANGUAGE_TURKISH
+                LANGUAGE_POLISH -> LANGUAGE_POLISH
                 else -> LANGUAGE_ITALIAN
             }
             Log.d(TAG, "attachBaseContext - default language set: $mLanguage")
@@ -93,6 +94,7 @@ class LocaleManager(context: Context) {
         const val LANGUAGE_ENGLISH = "en"
         const val LANGUAGE_UKRAINIAN = "uk"
         const val LANGUAGE_TURKISH = "tr"
+        const val LANGUAGE_POLISH = "pl"
 
         @Suppress("DEPRECATION")
         private fun getSystemLocaleLegacy(config: Configuration): Locale {

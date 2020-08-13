@@ -74,6 +74,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.GmailDrawerItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -580,17 +581,17 @@ class MainActivity : ThemeableActivity() {
         var accordi1 = CambioAccordi.accordi_it
         Log.d(TAG, "convertTabs - from: ${conversion?.substring(0, 2)}")
         when (conversion?.substring(0, 2)) {
-            LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
+            LANGUAGE_UKRAINIAN, LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_uk
             LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
-            LANGUAGE_TURKISH -> accordi1 = CambioAccordi.accordi_tr
+//            LANGUAGE_TURKISH -> accordi1 = CambioAccordi.accordi_tr
         }
 
         var accordi2 = CambioAccordi.accordi_it
         Log.d(TAG, "convertTabs - to: ${conversion?.substring(3, 5)}")
         when (conversion?.substring(3, 5)) {
-            LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
+            LANGUAGE_UKRAINIAN, LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_uk
             LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
-            LANGUAGE_TURKISH -> accordi2 = CambioAccordi.accordi_tr
+//            LANGUAGE_TURKISH -> accordi2 = CambioAccordi.accordi_tr
         }
 
         val mappa = HashMap<String, String>()
@@ -622,17 +623,19 @@ class MainActivity : ThemeableActivity() {
         var barre1 = CambioAccordi.barre_it
         Log.d(TAG, "convertiBarre - from: ${conversion?.substring(0, 2)}")
         when (conversion?.substring(0, 2)) {
-            LANGUAGE_UKRAINIAN -> barre1 = CambioAccordi.barre_uk
+//            LANGUAGE_UKRAINIAN -> barre1 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
-            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
+//            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
+//            LANGUAGE_POLISH -> barre1 = CambioAccordi.barre_pl
         }
 
         var barre2 = CambioAccordi.barre_it
         Log.d(TAG, "convertiBarre - to: ${conversion?.substring(3, 5)}")
         when (conversion?.substring(3, 5)) {
-            LANGUAGE_UKRAINIAN -> barre2 = CambioAccordi.barre_uk
+//            LANGUAGE_UKRAINIAN -> barre2 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
-            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
+//            LANGUAGE_TURKISH -> barre2 = CambioAccordi.barre_tr
+//            LANGUAGE_POLISH -> barre2 = CambioAccordi.barre_pl
         }
 
         val mappa = HashMap<String, String>()

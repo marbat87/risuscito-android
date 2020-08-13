@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
@@ -81,8 +82,8 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
 
         val accordi: Array<String>
         when (language) {
-            LANGUAGE_ITALIAN -> accordi = accordi_it
-            LANGUAGE_UKRAINIAN -> {
+            LANGUAGE_ITALIAN, LANGUAGE_TURKISH -> accordi = accordi_it
+            LANGUAGE_UKRAINIAN, LANGUAGE_POLISH -> {
                 accordi = accordi_uk
                 primoAccordo = if (primoAccordo.length == 1)
                     primoAccordo.toUpperCase(locale)
@@ -94,7 +95,7 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
                     cambioAccordo.substring(0, 1).toUpperCase(locale) + cambioAccordo.substring(1)
             }
             LANGUAGE_ENGLISH -> accordi = accordi_en
-            LANGUAGE_TURKISH -> accordi = accordi_tr
+//            LANGUAGE_TURKISH -> accordi = accordi_tr
             else -> accordi = accordi_it
         }
 
@@ -186,11 +187,8 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
         internal val accordi_it = arrayOf("Do", "Do#", "Re", "Mib", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "Sib", "Si")
         internal val accordi_uk = arrayOf("C", "Cis", "D", "Eb", "E", "F", "Fis", "G", "Gis", "A", "B", "H")
         internal val accordi_en = arrayOf("C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B")
-        internal val accordi_tr = arrayOf("Do", "Do#", "Re", "Mib", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "Sib", "Si")
         internal val barre_it = arrayOf("0", "I", "II", "III", "IV", "V", "VI", "VII")
-        internal val barre_uk = arrayOf("0", "I", "II", "III", "IV", "V", "VI", "VII")
         internal val barre_en = arrayOf("0", "1", "2", "3", "4", "5", "6", "7")
-        internal val barre_tr = arrayOf("0", "I", "II", "III", "IV", "V", "VI", "VII")
         private val TAG = CambioAccordi::class.java.canonicalName
         private val accordi_uk_lower = arrayOf("c", "cis", "d", "eb", "e", "f", "fis", "g", "gis", "a", "b", "h")
 

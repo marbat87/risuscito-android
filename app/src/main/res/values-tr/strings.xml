@@ -213,7 +213,7 @@
     <string name="share_by">Şununla paylas&#8230;</string>
     <string name="delete_list_dialog">Silmek istediğinden emin misin?</string>
     <string name="barre_search_string">Bare</string>
-    <string name="barre_add_al">- De</string>
+    <string name="barre_add_al"></string>
     <string name="barre_al_tasto">Bare %1$s Perdede</string>
     <string name="external_storage_denied">Ortak hafıza mevcut degil.</string>
     <string name="external_storage_pref_rationale">Dirildi sana dış hafızaya erişmek için izin istiyor. Bunun için ortak hafızaya kaydetme gerekli.</string>

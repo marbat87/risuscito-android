@@ -17,6 +17,7 @@ import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.setSystemLocale
@@ -76,7 +77,7 @@ class PdfExportService : JobIntentService() {
 
         val testConv = cambioAccordi.diffSemiToni(primaNota, notaCambio)
         var testConvMin: HashMap<String, String>? = null
-        if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+        if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || mLingua.equals(LANGUAGE_POLISH, ignoreCase = true))
             testConvMin = cambioAccordi.diffSemiToniMin(primaNota, notaCambio)
 
         val urlHtml = testConv?.let { cambiaAccordi(it, barreCambio, testConvMin) ?: "" } ?: ""
@@ -194,7 +195,7 @@ class PdfExportService : JobIntentService() {
             var patternMinore: Pattern? = null
             when (mLingua) {
                 LANGUAGE_ITALIAN -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
-                LANGUAGE_UKRAINIAN -> {
+                LANGUAGE_UKRAINIAN, LANGUAGE_POLISH -> {
                     pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H")
                     // inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
                     patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h")
@@ -207,7 +208,7 @@ class PdfExportService : JobIntentService() {
             while (line != null) {
                 Log.d(javaClass.name, "RIGA DA ELAB: $line")
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-                    if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || mLingua.equals(LANGUAGE_ENGLISH, ignoreCase = true)) {
+                    if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || mLingua.equals(LANGUAGE_ENGLISH, ignoreCase = true) || mLingua.equals(LANGUAGE_POLISH, ignoreCase = true)) {
                         line = line.replace("</FONT><FONT COLOR=\"#A13F3C\">".toRegex(), "<K>")
                         line = line.replace("</FONT><FONT COLOR=\"#000000\">".toRegex(), "<K2>")
                     }
@@ -217,7 +218,7 @@ class PdfExportService : JobIntentService() {
                     while (matcher.find()) matcher.appendReplacement(sb, conversione[matcher.group(0)
                             ?: ""] ?: "")
                     matcher.appendTail(sb)
-                    if (mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) && patternMinore != null) {
+                    if ((mLingua.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || mLingua.equals(LANGUAGE_POLISH, ignoreCase = true)) && patternMinore != null) {
                         val matcherMin = patternMinore.matcher(sb.toString())
                         while (matcherMin.find())
                             matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0)

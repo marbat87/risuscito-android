@@ -65,6 +65,7 @@ import it.cammino.risuscito.services.DownloadService
 import it.cammino.risuscito.services.PdfExportService
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
@@ -704,7 +705,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 mViewModel.notaCambio = mViewModel.primaNota
                 val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                 var convMin: HashMap<String, String>? = null
-                if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+                if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || getSystemLocale(resources).language.equals(LANGUAGE_POLISH, ignoreCase = true))
                     convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
@@ -738,7 +739,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 mViewModel.barreCambio = mViewModel.primoBarre
                 val convMap1 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                 var convMin1: HashMap<String, String>? = null
-                if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+                if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || getSystemLocale(resources).language.equals(LANGUAGE_POLISH, ignoreCase = true))
                     convMin1 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
@@ -759,7 +760,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     mViewModel.notaCambio = item.titleCondensed.toString()
                     val convMap2 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                     var convMin2: HashMap<String, String>? = null
-                    if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+                    if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || getSystemLocale(resources).language.equals(LANGUAGE_POLISH, ignoreCase = true))
                         convMin2 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
@@ -779,7 +780,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     mViewModel.barreCambio = item.titleCondensed.toString()
                     val convMap3 = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
                     var convMin3: HashMap<String, String>? = null
-                    if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+                    if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || getSystemLocale(resources).language.equals(LANGUAGE_POLISH, ignoreCase = true))
                         convMin3 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
@@ -930,7 +931,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
             when (language) {
                 LANGUAGE_ITALIAN -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
-                LANGUAGE_UKRAINIAN -> {
+                LANGUAGE_UKRAINIAN, LANGUAGE_POLISH -> {
                     pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H")
                     // inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
                     patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h")
@@ -946,7 +947,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             while (line != null) {
                 Log.v(TAG, "RIGA DA ELAB: $line")
                 if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
-                    if (language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || language.equals(LANGUAGE_ENGLISH, ignoreCase = true)) {
+                    if (language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || language.equals(LANGUAGE_ENGLISH, ignoreCase = true) || language.equals(LANGUAGE_POLISH, ignoreCase = true)) {
                         line = line.replace("</FONT><FONT COLOR=\"#A13F3C\">".toRegex(), "<K>")
                         line = line.replace("</FONT><FONT COLOR=\"#000000\">".toRegex(), "<K2>")
                     }
@@ -956,7 +957,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     while (matcher.find()) matcher.appendReplacement(sb, conversione?.get(matcher.group(0)
                             ?: "") ?: "")
                     matcher.appendTail(sb)
-                    if (language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true)) {
+                    if (language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || language.equals(LANGUAGE_POLISH, ignoreCase = true)) {
                         val matcherMin = patternMinore?.matcher(sb.toString())
                         while (matcherMin?.find() == true)
                             matcherMin.appendReplacement(sb2, conversioneMin?.get(matcherMin.group(0)
@@ -1433,7 +1434,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
         var convMin: HashMap<String, String>? = null
-        if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
+        if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || getSystemLocale(resources).language.equals(LANGUAGE_POLISH, ignoreCase = true))
             convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
         if (convMap != null) {
             val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
