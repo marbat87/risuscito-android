@@ -75,7 +75,6 @@ import it.cammino.risuscito.ui.CrossfadeWrapper
 import it.cammino.risuscito.ui.GmailDrawerItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
-import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor

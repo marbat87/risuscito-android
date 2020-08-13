@@ -15,7 +15,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import it.cammino.risuscito.databinding.TabsLayoutBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
