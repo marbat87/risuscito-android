@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.MaterialColors
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.NIGHT_MODE
@@ -87,7 +88,7 @@ class ThemeUtils(context: Context) {
         fun getStatusBarDefaultColor(context: Context): Int {
             return if (isDarkMode(context))
                 Color.BLACK
-            else context.themeColor(R.attr.colorPrimaryVariant)
+            else MaterialColors.getColor(context, R.attr.colorPrimaryVariant, TAG)
         }
 
         fun isDarkMode(context: Context): Boolean {

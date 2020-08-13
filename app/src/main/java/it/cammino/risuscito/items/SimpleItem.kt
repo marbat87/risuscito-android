@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
@@ -18,7 +19,6 @@ import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.SimpleRowItemBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.themeColor
 
 fun simpleItem(block: SimpleItem.() -> Unit): SimpleItem = SimpleItem().apply(block)
 
@@ -110,7 +110,7 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
         StringHolder.applyToOrHide(page, binding.textPage)
         binding.root.background = FastAdapterUIUtils.getSelectableBackground(
                 ctx,
-                ctx.themeColor(R.attr.colorSecondaryLight),
+                MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
                 true)
 
         val bgShape = binding.textPage.background as? GradientDrawable
@@ -118,13 +118,17 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
         binding.textPage.isInvisible = isSelected
         binding.selectedMark.isVisible = isSelected
         val bgShapeSelected = binding.selectedMark.background as? GradientDrawable
-        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
+        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorSecondary, TAG))
 
     }
 
     override fun unbindView(binding: SimpleRowItemBinding) {
         binding.textTitle.text = null
         binding.textPage.text = null
+    }
+
+    companion object {
+        private val TAG = SimpleItem::class.java.canonicalName
     }
 
 }

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.color.MaterialColors
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -32,7 +33,6 @@ import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
-import it.cammino.risuscito.utils.themeColor
 import java.io.*
 import java.sql.Date
 import java.util.*
@@ -395,13 +395,13 @@ abstract class ThemeableActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setTaskDescriptionL() {
-        val taskDesc = ActivityManager.TaskDescription(null, null, themeColor(R.attr.colorPrimary))
+        val taskDesc = ActivityManager.TaskDescription(null, null, MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
         setTaskDescription(taskDesc)
     }
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun setTaskDescriptionP() {
-        val taskDesc = ActivityManager.TaskDescription(null, R.mipmap.ic_launcher, themeColor(R.attr.colorPrimary))
+        val taskDesc = ActivityManager.TaskDescription(null, R.mipmap.ic_launcher, MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
         setTaskDescription(taskDesc)
     }
 

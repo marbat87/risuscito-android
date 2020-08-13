@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
@@ -14,7 +15,6 @@ import it.cammino.risuscito.databinding.GenericCardItemBinding
 import it.cammino.risuscito.databinding.GenericListItemBinding
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
-import it.cammino.risuscito.utils.themeColor
 
 fun listaPersonalizzataItem(block: ListaPersonalizzataItem.() -> Unit): ListaPersonalizzataItem = ListaPersonalizzataItem().apply(block)
 
@@ -69,11 +69,11 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
                     itemViewBinding.itemTag.text = i.toString()
                     cantoView.background = FastAdapterUIUtils.getSelectableBackground(
                             context,
-                            context.themeColor(R.attr.colorSecondaryLight),
+                            MaterialColors.getColor(context, R.attr.colorSecondaryLight, TAG),
                             true)
                     if (canto.ismSelected()) {
                         val bgShape = itemViewBinding.sipleRowItem.selectedMark.background as? GradientDrawable
-                        bgShape?.setColor(context.themeColor(R.attr.colorSecondary))
+                        bgShape?.setColor(MaterialColors.getColor(context, R.attr.colorSecondary, TAG))
                         itemViewBinding.sipleRowItem.textPage.isVisible = false
                         itemViewBinding.sipleRowItem.selectedMark.isVisible = true
                         cantoView.isSelected = true
@@ -104,6 +104,10 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
         binding.textIdPosizione.text = null
         binding.titoloPosizioneGenerica.text = null
         binding.genericTag.text = null
+    }
+
+    companion object {
+        private val TAG = ListaPersonalizzataItem::class.java.canonicalName
     }
 
 }

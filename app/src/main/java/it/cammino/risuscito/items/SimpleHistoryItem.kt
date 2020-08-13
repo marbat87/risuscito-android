@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
@@ -15,7 +16,6 @@ import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.RowItemHistoryBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.themeColor
 import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -80,7 +80,7 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
 
         binding.root.background = FastAdapterUIUtils.getSelectableBackground(
                 ctx,
-                ctx.themeColor(R.attr.colorSecondaryLight),
+                MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
                 true)
 
         val bgShape = binding.textPage.background as? GradientDrawable
@@ -88,7 +88,7 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
         binding.textPage.isInvisible = isSelected
         binding.selectedMark.isVisible = isSelected
         val bgShapeSelected = binding.selectedMark.background as? GradientDrawable
-        bgShapeSelected?.setColor(ctx.themeColor(R.attr.colorSecondary))
+        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorSecondary, TAG))
 
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
@@ -113,6 +113,10 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
         binding.textTitle.text = null
         binding.textPage.text = null
         binding.textTimestamp.text = null
+    }
+
+    companion object {
+        private val TAG = SimpleHistoryItem::class.java.canonicalName
     }
 
 }

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
@@ -15,7 +16,6 @@ import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.CheckableRowItemBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.themeColor
 
 fun checkableItem(block: CheckableItem.() -> Unit): CheckableItem = CheckableItem().apply(block)
 
@@ -61,7 +61,7 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         binding.checkBox.isChecked = isSelected
         binding.root.background = FastAdapterUIUtils.getSelectableBackground(
                 ctx,
-                ctx.themeColor(R.attr.colorSecondaryLight),
+                MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
                 true)
         // set the text for the name
         filter?.let {
@@ -94,6 +94,10 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
     override fun unbindView(binding: CheckableRowItemBinding) {
         binding.textTitle.text = null
         binding.textPage.text = null
+    }
+
+    companion object {
+        private val TAG = CheckableItem::class.java.canonicalName
     }
 
 }

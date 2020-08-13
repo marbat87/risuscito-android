@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.iconics.IconicsDrawable
@@ -16,7 +17,6 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.RowItemNotableBinding
-import it.cammino.risuscito.utils.themeColor
 
 fun notableItem(block: NotableItem.() -> Unit): NotableItem = NotableItem().apply(block)
 
@@ -78,7 +78,7 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
             CommunityMaterial.Icon2.cmd_tag_plus
         else
             CommunityMaterial.Icon2.cmd_tag_text_outline).apply {
-            colorInt = if (numPassaggio == -1) ctx.themeColor(android.R.attr.textColorSecondary) else ctx.themeColor(R.attr.colorSecondary)
+            colorInt = MaterialColors.getColor(ctx, if (numPassaggio == -1) android.R.attr.textColorSecondary else R.attr.colorSecondary, TAG)
             sizeDp = 24
             paddingDp = 2
         }
@@ -89,6 +89,10 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
         binding.textTitle.text = null
         binding.textPage.text = null
         binding.editNoteImage.setImageDrawable(null)
+    }
+
+    companion object {
+        private val TAG = NotableItem::class.java.canonicalName
     }
 
 }

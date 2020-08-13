@@ -170,9 +170,3 @@ fun <A, B> MediatorLiveData<A>.bidiMap(apply: (currentA: A, oldB: B?) -> B?, una
         }
     }
 }
-
-fun Context.themeColor(@AttrRes attrRes: Int): Int {
-    val typedValue = TypedValue()
-    theme.resolveAttribute(attrRes, typedValue, true)
-    return typedValue.data
-}

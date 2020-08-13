@@ -40,6 +40,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -78,7 +79,6 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
-import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -161,7 +161,7 @@ class MainActivity : ThemeableActivity() {
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
         profileIcon = IconicsDrawable(this).apply {
-            colorInt = themeColor(R.attr.colorPrimary)
+            colorInt = MaterialColors.getColor(this@MainActivity, R.attr.colorPrimary, TAG)
             icon = CommunityMaterial.Icon.cmd_account_circle
             sizeDp = 56
         }
@@ -169,7 +169,6 @@ class MainActivity : ThemeableActivity() {
         setSupportActionBar(binding.risuscitoToolbar)
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
-//            TranslationTask(this).execute()
             lifecycleScope.launch { translate() }
         }
 
