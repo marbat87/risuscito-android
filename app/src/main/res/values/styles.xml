@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-<!--    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">-->
-<!--        <item name="fontFamily">@font/googlesans_medium</item>-->
-<!--    </style>-->
+    <!--    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">-->
+    <!--        <item name="fontFamily">@font/googlesans_medium</item>-->
+    <!--    </style>-->
 
-<!--    <style name="Widget.MaterialComponents.Toolbar.Primary.Risuscito">-->
-<!--        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Toolbar.Primary.Risuscito</item>-->
-<!--    </style>-->
+    <!--    <style name="Widget.MaterialComponents.Toolbar.Primary.Risuscito">-->
+    <!--        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Toolbar.Primary.Risuscito</item>-->
+    <!--    </style>-->
 
     <style name="ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito">
         <item name="fontFamily">@font/googlesans_medium</item>
@@ -173,6 +173,13 @@
         <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
         <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
         <item name="background">?colorPrimaryDark</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.BottomAppBar.Surface">
+        <item name="backgroundTint">@color/risuscito_material_background</item>
+        <item name="materialThemeOverlay">
+            @style/ThemeOverlay.MaterialComponents.BottomAppBar.Surface
+        </item>
     </style>
 
 </resources>

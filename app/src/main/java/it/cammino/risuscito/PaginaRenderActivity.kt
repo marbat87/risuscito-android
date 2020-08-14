@@ -17,7 +17,6 @@ import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.SeekBar
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -38,6 +37,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.fileChooser
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
@@ -136,7 +136,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 }
                 PlaybackStateCompat.STATE_STOPPED -> {
                     stopSeekbarUpdate()
-                    binding.musicSeekbar.progress = 0
+                    binding.musicSeekbar.value = 0F
                     binding.musicSeekbar.isEnabled = false
                     showPlaying(false)
                 }
@@ -144,7 +144,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     binding.musicSeekbar.isVisible = true
                     binding.musicLoadingbar.isVisible = false
                     stopSeekbarUpdate()
-                    binding.musicSeekbar.progress = 0
+                    binding.musicSeekbar.value = 0F
                     binding.musicSeekbar.isEnabled = false
                     showPlaying(false)
                     Log.e(TAG, "onPlaybackStateChanged: " + state.errorMessage)
@@ -167,8 +167,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
             Log.d(TAG, "onMetadataChanged")
             if (metadata != null) {
-                val duration = metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt()
-                binding.musicSeekbar.max = duration
+                binding.musicSeekbar.valueTo = metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toFloat()
                 binding.musicSeekbar.isEnabled = true
             }
         }
@@ -199,12 +198,12 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 "onConnected: duration " + mediaController
                                         .metadata
                                         .getLong(MediaMetadataCompat.METADATA_KEY_DURATION))
-                        binding.musicSeekbar.max = mediaController
+                        binding.musicSeekbar.valueTo = mediaController
                                 .metadata
-                                .getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt()
+                                .getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toFloat()
                     }
                     Log.d(TAG, "onConnected: mLastPlaybackState.getPosition() ${mLastPlaybackState?.position}")
-                    binding.musicSeekbar.progress = mLastPlaybackState?.position?.toInt() ?: 0
+                    binding.musicSeekbar.value = mLastPlaybackState?.position?.toFloat() ?: 0F
                 } ?: Log.e(TAG, "onConnected: mMediaBrowser is NULL")
             } catch (e: RemoteException) {
                 Log.e(TAG, "onConnected: could not connect media controller", e)
@@ -254,8 +253,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                         .show()
                 stopMedia()
                 refreshCatalog()
-                //            checkRecordsState();
-//                RecordStateCheckerTask().execute()
                 lifecycleScope.launch { checkRecordState() }
             } catch (e: IllegalArgumentException) {
                 Log.e(TAG, e.localizedMessage, e)
@@ -380,7 +377,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
         setSupportActionBar(binding.risuscitoToolbar)
-//        supportActionBar?.setTitle(R.string.canto_title_activity)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -412,49 +408,36 @@ class PaginaRenderActivity : ThemeableActivity() {
             Log.e(TAG, e.localizedMessage, e)
         }
 
-        binding.musicSeekbar.setOnSeekBarChangeListener(
-                object : SeekBar.OnSeekBarChangeListener {
-                    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                        val time = String.format(
-                                getSystemLocale(resources),
-                                "%02d:%02d",
-                                TimeUnit.MILLISECONDS.toMinutes(progress.toLong()),
-                                TimeUnit.MILLISECONDS.toSeconds(progress.toLong()) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(progress.toLong())))
-                        binding.timeText.text = time
-                    }
+        binding.musicSeekbar.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                stopSeekbarUpdate()
+            }
 
-                    override fun onStartTrackingTouch(seekBar: SeekBar) {
-                        stopSeekbarUpdate()
-                    }
+            override fun onStopTrackingTouch(slider: Slider) {
+                val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
+                controller?.transportControls?.seekTo(slider.value.toLong())
+                        ?: return
+                scheduleSeekbarUpdate()
+            }
+        })
 
-                    override fun onStopTrackingTouch(seekBar: SeekBar) {
-                        val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
-                        controller?.transportControls?.seekTo(seekBar.progress.toLong())
-                                ?: return
-                        scheduleSeekbarUpdate()
-                    }
-                })
+        binding.musicSeekbar.addOnChangeListener { _, value, _ ->
+            val time = String.format(
+                    getSystemLocale(resources),
+                    "%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(value.toLong()),
+                    TimeUnit.MILLISECONDS.toSeconds(value.toLong()) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(value.toLong())))
+            binding.timeText.text = time
+        }
 
-        binding.speedSeekbar.setOnSeekBarChangeListener(
-                object : SeekBar.OnSeekBarChangeListener {
-                    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                        mViewModel.speedValue = progress.toString()
-                        binding.sliderText.text = getString(R.string.percent_progress, progress)
-                        Log.d(javaClass.toString(), "speedValue cambiato! " + mViewModel.speedValue)
-                    }
-
-                    override fun onStartTrackingTouch(seekBar: SeekBar) {
-                        // no-op
-                    }
-
-                    override fun onStopTrackingTouch(seekBar: SeekBar) {
-                        // no-op
-                    }
-                })
+        binding.speedSeekbar.addOnChangeListener { _, value, _ ->
+            mViewModel.speedValue = value.toInt().toString()
+            binding.sliderText.text = getString(R.string.percent_progress, value.toInt())
+            Log.d(javaClass.toString(), "speedValue cambiato! " + mViewModel.speedValue)
+        }
 
         showScrolling(false)
 
-//        DataRetrieverTask().execute(mViewModel.idCanto)
         lifecycleScope.launch { retrieveData() }
 
         binding.playSong.setOnClickListener {
@@ -530,7 +513,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                                         findViewById(android.R.id.content), R.string.delink_delete, Snackbar.LENGTH_SHORT)
                                         .show()
                                 stopMedia()
-//                                DeleteLinkTask().execute(mViewModel.idCanto)
                                 lifecycleScope.launch { deleteLink() }
                             }
                             DELETE_MP3 -> {
@@ -568,7 +550,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 }
                                 refreshCatalog()
                                 lifecycleScope.launch { checkRecordState() }
-//                                RecordStateCheckerTask().execute()
                             }
                             DOWNLINK_CHOOSE -> {
                                 simpleDialogViewModel.handled = true
@@ -692,7 +673,6 @@ class PaginaRenderActivity : ThemeableActivity() {
             R.id.action_save_tab -> {
                 if (!mViewModel.mCurrentCanto?.savedTab.equals(mViewModel.notaCambio, ignoreCase = true)) {
                     mViewModel.mCurrentCanto?.savedTab = mViewModel.notaCambio
-//                    UpdateCantoTask().execute(1)
                     lifecycleScope.launch { updateCanto(1) }
                 } else {
                     Snackbar.make(
@@ -724,7 +704,6 @@ class PaginaRenderActivity : ThemeableActivity() {
             R.id.action_save_barre -> {
                 if (!mViewModel.mCurrentCanto?.savedBarre.equals(mViewModel.barreCambio, ignoreCase = true)) {
                     mViewModel.mCurrentCanto?.savedBarre = mViewModel.barreCambio
-//                    UpdateCantoTask().execute(2)
                     lifecycleScope.launch { updateCanto(2) }
                 } else {
                     Snackbar.make(
@@ -903,7 +882,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                 it.savedTab = mViewModel.notaCambio
             }
 
-//            UpdateCantoTask().execute(0)
             lifecycleScope.launch { updateCanto(0) }
         }
     }
@@ -1109,8 +1087,11 @@ class PaginaRenderActivity : ThemeableActivity() {
             CommunityMaterial.Icon2.cmd_pause_circle_outline
         else
             CommunityMaterial.Icon2.cmd_play_circle_outline).apply {
-            colorInt = Color.WHITE
-            sizeDp = 24
+            colorInt = ContextCompat.getColor(
+                    this@PaginaRenderActivity,
+                    R.color.text_color_secondary
+            )
+            sizeDp = 48
             paddingDp = 2
         }
         binding.playScroll.setImageDrawable(icon)
@@ -1332,7 +1313,6 @@ class PaginaRenderActivity : ThemeableActivity() {
             return
         }
         var currentPosition = mLastPlaybackState?.position ?: 0
-        //        Log.d(TAG, "updateProgress: " + currentPosition);
         if (mLastPlaybackState?.state == PlaybackStateCompat.STATE_PLAYING) {
             // Calculate the elapsed time between the last position update and now and unless
             // paused, we can assume (delta * speed) + current position is approximately the
@@ -1344,7 +1324,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     ?: 0F)).toLong()
         }
         binding.musicSeekbar.isEnabled = true
-        binding.musicSeekbar.progress = currentPosition.toInt()
+        binding.musicSeekbar.value = currentPosition.toFloat()
     }
 
     private fun checkRecordsState() {
@@ -1459,14 +1439,13 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         if (mViewModel.speedValue == null)
             try {
-                binding.speedSeekbar.progress = Integer.valueOf(mViewModel.mCurrentCanto?.savedSpeed
-                        ?: "2")
+                binding.speedSeekbar.value = (mViewModel.mCurrentCanto?.savedSpeed ?: "2").toFloat()
             } catch (e: NumberFormatException) {
                 Log.e(TAG, "savedSpeed ${mViewModel.mCurrentCanto?.savedSpeed}", e)
-                binding.speedSeekbar.progress = 2
+                binding.speedSeekbar.value = 2F
             }
         else
-            binding.speedSeekbar.progress = Integer.valueOf(mViewModel.speedValue ?: "0")
+            binding.speedSeekbar.value = (mViewModel.speedValue ?: "0").toFloat()
 
         //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
         if (mViewModel.scrollPlaying) {
@@ -1539,182 +1518,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         }
     }
 
-//    @SuppressLint("StaticFieldLeak")
-//    private inner class DataRetrieverTask : AsyncTask<Int, Void, Int>() {
-//        override fun doInBackground(vararg params: Int?): Int? {
-//            Log.d(TAG, "doInBackground: ")
-//            val mDao = mRiuscitoDb.cantoDao()
-//            mViewModel.mCurrentCanto = mDao.getCantoById(params[0] ?: 0)
-//            getRecordLink()
-//            return 0
-//        }
-//
-//        override fun onPostExecute(integer: Int?) {
-//            super.onPostExecute(integer)
-//            if (mViewModel.mCurrentCanto?.savedTab == null) {
-//                if (mViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL) {
-//                    mViewModel.notaCambio = mViewModel.primaNota
-//                    mViewModel.mCurrentCanto?.savedTab = mViewModel.notaCambio
-//                } else
-//                    mViewModel.mCurrentCanto?.savedTab = mViewModel.primaNota
-//            } else if (mViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL)
-//                mViewModel.notaCambio = mViewModel.mCurrentCanto?.savedTab
-//                        ?: PaginaRenderViewModel.NOT_VAL
-//
-//            if (mViewModel.mCurrentCanto?.savedBarre == null) {
-//                if (mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL) {
-//                    mViewModel.barreCambio = mViewModel.primoBarre
-//                    mViewModel.mCurrentCanto?.savedBarre = mViewModel.barreCambio
-//                } else
-//                    mViewModel.mCurrentCanto?.savedBarre = mViewModel.primoBarre
-//            } else {
-//                //	    	Log.i("BARRESALVATO", barreSalvato);
-//                if (mViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL)
-//                    mViewModel.barreCambio = mViewModel.mCurrentCanto?.savedBarre
-//                            ?: PaginaRenderViewModel.NOT_VAL
-//            }
-//
-//            // fix per crash su android 4.1
-//            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
-//                binding.cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-//
-//            val convMap = cambioAccordi.diffSemiToni(mViewModel.primaNota, mViewModel.notaCambio)
-//            var convMin: HashMap<String, String>? = null
-//            if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true))
-//                convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
-//            if (convMap != null) {
-//                val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-//                if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
-//            } else
-//                binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina
-//                        ?: NO_CANTO))
-//
-//            val webSettings = binding.cantoView.settings
-//            webSettings.useWideViewPort = true
-//            webSettings.setSupportZoom(true)
-//            webSettings.loadWithOverviewMode = true
-//
-//            webSettings.builtInZoomControls = true
-//            webSettings.displayZoomControls = false
-//
-//            mViewModel.mCurrentCanto?.let {
-//                if (it.zoom > 0)
-//                    binding.cantoView.setInitialScale(it.zoom)
-//            }
-//            binding.cantoView.webViewClient = MyWebViewClient()
-//
-//            if (mViewModel.speedValue == null)
-//                try {
-//                    binding.speedSeekbar.progress = Integer.valueOf(mViewModel.mCurrentCanto?.savedSpeed
-//                            ?: "2")
-//                } catch (e: NumberFormatException) {
-//                    Log.e(TAG, "savedSpeed ${mViewModel.mCurrentCanto?.savedSpeed}", e)
-//                    binding.speedSeekbar.progress = 2
-//                }
-//            else
-//                binding.speedSeekbar.progress = Integer.valueOf(mViewModel.speedValue ?: "0")
-//
-//            //	    Log.i(this.getClass().toString(), "scrollPlaying? " + scrollPlaying);
-//            if (mViewModel.scrollPlaying) {
-//                showScrolling(true)
-//                mScrollDown.run()
-//            }
-//            checkRecordsState()
-//        }
-//    }
-
-//    @SuppressLint("StaticFieldLeak")
-//    private inner class RecordStateCheckerTask : AsyncTask<Void, Void, Int>() {
-//        override fun doInBackground(vararg params: Void): Int? {
-//            getRecordLink()
-//            return 0
-//        }
-//
-//        override fun onPostExecute(integer: Int?) {
-//            super.onPostExecute(integer)
-//            checkRecordsState()
-//        }
-//    }
-
-//    @SuppressLint("StaticFieldLeak")
-//    private inner class DeleteLinkTask : AsyncTask<Int, Void, Int>() {
-//        override fun doInBackground(vararg params: Int?): Int? {
-//            val mDao = mRiuscitoDb.localLinksDao()
-//            val linkToDelete = LocalLink()
-//            linkToDelete.idCanto = params[0] ?: 0
-//            mDao.deleteLocalLink(linkToDelete)
-//            getRecordLink()
-//            return 0
-//        }
-//
-//        override fun onPostExecute(integer: Int?) {
-//            super.onPostExecute(integer)
-//            refreshCatalog()
-//            checkRecordsState()
-//        }
-//    }
-
-//    @SuppressLint("StaticFieldLeak")
-//    private inner class InsertLinkTask : AsyncTask<String, Void, Int>() {
-//        override fun doInBackground(vararg params: String): Int? {
-//            val mDao = mRiuscitoDb.localLinksDao()
-//            val linkToInsert = LocalLink()
-//            linkToInsert.idCanto = Integer.valueOf(params[0])
-//            linkToInsert.localPath = params[1]
-//            mDao.insertLocalLink(linkToInsert)
-//            getRecordLink()
-//            return 0
-//        }
-//
-//        override fun onPostExecute(integer: Int?) {
-//            super.onPostExecute(integer)
-//            refreshCatalog()
-//            checkRecordsState()
-//        }
-//    }
-
-//    @SuppressLint("StaticFieldLeak")
-//    private inner class UpdateFavoriteTask : AsyncTask<Int, Void, Int>() {
-//        override fun doInBackground(vararg params: Int?): Int? {
-//            mViewModel.mCurrentCanto?.let {
-//                val mDao = mRiuscitoDb.cantoDao()
-//                it.favorite = params[0] ?: 0
-//                mDao.updateCanto(it)
-//            }
-//            return params[0]
-//        }
-//
-//        override fun onPostExecute(integer: Int?) {
-//            super.onPostExecute(integer)
-//            Snackbar.make(
-//                    findViewById(android.R.id.content),
-//                    if (integer == 1) R.string.favorite_added else R.string.favorite_removed,
-//                    Snackbar.LENGTH_SHORT)
-//                    .show()
-//            initFabOptions()
-//        }
-//    }
-
-//    @SuppressLint("StaticFieldLeak")
-//    private inner class UpdateCantoTask : AsyncTask<Int, Void, Int>() {
-//        override fun doInBackground(vararg params: Int?): Int? {
-//            mViewModel.mCurrentCanto?.let {
-//                val mDao = mRiuscitoDb.cantoDao()
-//                mDao.updateCanto(it)
-//            }
-//            return params[0]
-//        }
-//
-//        override fun onPostExecute(integer: Int?) {
-//            super.onPostExecute(integer)
-//            if (integer != 0)
-//                Snackbar.make(
-//                        findViewById(android.R.id.content),
-//                        if (integer == 1) R.string.tab_saved else R.string.barre_saved,
-//                        Snackbar.LENGTH_SHORT)
-//                        .show()
-//        }
-//    }
 
     private fun initFabOptions() {
         val iconColor = ContextCompat.getColor(this, R.color.text_color_secondary)
@@ -1726,7 +1529,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_fullscreen_on,
                         IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen).apply {
-                            //                            colorInt = iconColor
                             sizeDp = 24
                             paddingDp = 2
                         }
@@ -1744,7 +1546,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                         IconicsDrawable(this, if (mViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset else CommunityMaterial.Icon2.cmd_headset_off).apply {
                             sizeDp = 24
                             paddingDp = 4
-//                            colorInt = iconColor
                         }
                 )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -1783,7 +1584,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 IconicsDrawable(this, CommunityMaterial.Icon.cmd_download).apply {
                                     sizeDp = 24
                                     paddingDp = 4
-//                                    colorInt = iconColor
                                 }
                         )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -1798,7 +1598,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                             IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant).apply {
                                 sizeDp = 24
                                 paddingDp = 4
-//                                colorInt = iconColor
                             }
                     )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -1816,7 +1615,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                         IconicsDrawable(this, if (mViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon2.cmd_heart_outline else CommunityMaterial.Icon2.cmd_heart).apply {
                             sizeDp = 24
                             paddingDp = 4
-//                            colorInt = iconColor
                         }
                 )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -1835,7 +1633,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     val bundle = Bundle()
                     bundle.putString(Utility.URL_CANTO, binding.cantoView.url)
-                    bundle.putInt(Utility.SPEED_VALUE, binding.speedSeekbar.progress)
+                    bundle.putInt(Utility.SPEED_VALUE, binding.speedSeekbar.value.toInt())
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel.scrollPlaying)
                     bundle.putInt(Utility.ID_CANTO, mViewModel.idCanto)
 
@@ -1897,8 +1695,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                 R.id.fab_favorite -> {
                     binding.fabCanti.close()
                     lifecycleScope.launch { updateFavorite() }
-//                    val favoriteYet = mViewModel.mCurrentCanto?.favorite == 1
-//                    UpdateFavoriteTask().execute(if (favoriteYet) 0 else 1)
                     true
                 }
                 else -> {

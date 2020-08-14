@@ -4,7 +4,7 @@
     <dimen name="activity_min_margin">10dip</dimen>
     <dimen name="activity_min_top_margin">15dip</dimen>
 
-    <dimen name="button_playbar_padding">18dp</dimen>
+    <dimen name="button_playbar_padding">20dp</dimen>
 
     <dimen name="product_logo_bottom">24dp</dimen>
     <dimen name="brand_name_bottom">56dp</dimen>

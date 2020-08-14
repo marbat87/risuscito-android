@@ -9,7 +9,7 @@
     <dimen name="myListPreferredItemHeightLarge">72dip</dimen>
     <dimen name="max_bottomsheet_width">380dp</dimen>
 
-    <dimen name="button_playbar_padding">14dp</dimen>
+    <dimen name="button_playbar_padding">16dp</dimen>
     <dimen name="fab_margin_coord">16dp</dimen>
     <dimen name="fab_margin_frame">8dp</dimen>
 
