@@ -11,6 +11,8 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Base64.DEFAULT
+import android.util.Base64.encodeToString
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -76,7 +78,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.IOException
+import java.io.InputStreamReader
+import java.nio.charset.Charset
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -160,6 +166,9 @@ class PaginaRenderActivity : ThemeableActivity() {
                     scheduleSeekbarUpdate()
                     showPlaying(true)
                     binding.musicSeekbar.isEnabled = true
+                }
+                else -> {
+                    Log.i(TAG, "Non gestito")
                 }
             }
         }
@@ -482,7 +491,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             onBackPressedAction()
         }
 
-        progressDialogViewModel.state.observe(this) {
+        progressDialogViewModel.state.observe(owner =this) {
             Log.d(TAG, "progressDialogViewModel state $it")
             if (!progressDialogViewModel.handled) {
                 when (it) {
@@ -501,7 +510,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             }
         }
 
-        simpleDialogViewModel.state.observe(this) {
+        simpleDialogViewModel.state.observe(owner = this) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {
@@ -689,11 +698,13 @@ class PaginaRenderActivity : ThemeableActivity() {
                     convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
-                    val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+//                    val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
+//                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                    loadContentIntoWebView(cambiaAccordi(convMap, mViewModel.barreCambio, convMin))
                 } else
-                    binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
-                            ?: NO_CANTO))
+                    loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+//                    binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
+//                            ?: NO_CANTO))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         binding.cantoView.setInitialScale(it.zoom)
@@ -722,11 +733,13 @@ class PaginaRenderActivity : ThemeableActivity() {
                     convMin1 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
-                    val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
-                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+//                    val nuovoFile = cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1)
+//                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                    loadContentIntoWebView(cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1))
                 } else
-                    binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
-                            ?: NO_CANTO))
+                    loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+//                    binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
+//                            ?: NO_CANTO))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         binding.cantoView.setInitialScale(it.zoom)
@@ -743,11 +756,13 @@ class PaginaRenderActivity : ThemeableActivity() {
                         convMin2 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap2 != null) {
-                        val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
-                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+//                        val nuovoFile = cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2)
+//                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                        loadContentIntoWebView(cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2))
                     } else
-                        binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
-                                ?: NO_CANTO))
+                        loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+//                        binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
+//                                ?: NO_CANTO))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             binding.cantoView.setInitialScale(it.zoom)
@@ -763,11 +778,13 @@ class PaginaRenderActivity : ThemeableActivity() {
                         convMin3 = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     if (convMap3 != null) {
-                        val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
-                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+//                        val nuovoFile = cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3)
+//                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+                        loadContentIntoWebView(cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3))
                     } else
-                        binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
-                                ?: NO_CANTO))
+                        loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+//                        binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
+//                                ?: NO_CANTO))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             binding.cantoView.setInitialScale(it.zoom)
@@ -890,7 +907,8 @@ class PaginaRenderActivity : ThemeableActivity() {
             conversione: HashMap<String, String>?,
             barre: String?,
             conversioneMin: HashMap<String, String>?): String? {
-        val cantoTrasportato = this.filesDir.toString() + "/temporaneo.htm"
+//        val cantoTrasportato = this.filesDir.toString() + "/temporaneo.htm"
+        val cantoTrasportato = StringBuffer()
 
         var barreScritto = false
 
@@ -899,8 +917,8 @@ class PaginaRenderActivity : ThemeableActivity() {
 
             var line: String? = br.readLine()
 
-            val out = BufferedWriter(
-                    OutputStreamWriter(FileOutputStream(cantoTrasportato), ECONDING_UTF8))
+//            val out = BufferedWriter(
+//                    OutputStreamWriter(FileOutputStream(cantoTrasportato), ECONDING_UTF8))
 
             val language = getSystemLocale(resources).language
 
@@ -982,8 +1000,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                             line = line.replace("<K2>".toRegex(), "</FONT><FONT COLOR='#000000'>")
                         }
                     }
-                    out.write(line)
-                    out.newLine()
+//                    out.write(line)
+//                    out.newLine()
+                    cantoTrasportato.append(line)
+                    cantoTrasportato.append("\n")
                 } else {
                     if (line.contains("<H3>")) {
                         if (barre != null && barre != "0") {
@@ -997,26 +1017,33 @@ class PaginaRenderActivity : ThemeableActivity() {
                                             + getString(R.string.barre_al_tasto, barre)
                                             + "</I></FONT></H4>")
                                 }
-                                out.write(oldLine)
-                                out.newLine()
+//                                out.write(oldLine)
+//                                out.newLine()
+                                cantoTrasportato.append(oldLine)
+                                cantoTrasportato.append("\n")
                                 barreScritto = true
                             }
                         }
-                        out.write(line)
-                        out.newLine()
+//                        out.write(line)
+//                        out.newLine()
+                        cantoTrasportato.append(line)
+                        cantoTrasportato.append("\n")
                     } else {
                         if (!line.contains(getString(R.string.barre_search_string))) {
-                            out.write(line)
-                            out.newLine()
+//                            out.write(line)
+//                            out.newLine()
+                            cantoTrasportato.append(line)
+                            cantoTrasportato.append("\n")
                         }
                     }
                 }
                 line = br.readLine()
             }
             br.close()
-            out.flush()
-            out.close()
-            return cantoTrasportato
+//            out.flush()
+//            out.close()
+            Log.i(TAG, "cambiaAccordi cantoTrasportato -> $cantoTrasportato")
+            return cantoTrasportato.toString()
         } catch (e: Exception) {
             Log.e(TAG, e.localizedMessage, e)
             return null
@@ -1379,6 +1406,12 @@ class PaginaRenderActivity : ThemeableActivity() {
         }
     }
 
+    private fun loadContentIntoWebView(content: String?) {
+        if (!content.isNullOrEmpty()) binding.cantoView.loadData(encodeToString(
+                content.toByteArray(Charset.forName(ECONDING_UTF8)),
+                DEFAULT), DEFAULT_MIME_TYPE, ECONDING_BASE64)
+    }
+
     private suspend fun retrieveData() {
         val mDao = mRiuscitoDb.cantoDao()
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
@@ -1417,11 +1450,13 @@ class PaginaRenderActivity : ThemeableActivity() {
         if (getSystemLocale(resources).language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || getSystemLocale(resources).language.equals(LANGUAGE_POLISH, ignoreCase = true))
             convMin = cambioAccordi.diffSemiToniMin(mViewModel.primaNota, mViewModel.notaCambio)
         if (convMap != null) {
-            val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
-            if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+//            val nuovoFile = cambiaAccordi(convMap, mViewModel.barreCambio, convMin)
+//            if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
+            loadContentIntoWebView(cambiaAccordi(convMap, mViewModel.barreCambio, convMin))
         } else
-            binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina
-                    ?: NO_CANTO))
+            loadContentIntoWebView(readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina ?: NO_CANTO))
+//            binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina
+//                    ?: NO_CANTO))
 
         val webSettings = binding.cantoView.settings
         webSettings.useWideViewPort = true
@@ -1720,9 +1755,11 @@ class PaginaRenderActivity : ThemeableActivity() {
         private const val DOWNLOAD_MP3 = "DOWNLOAD_MP3"
         private const val DELETE_MP3 = "DELETE_MP3"
         private const val SAVE_TAB = "SAVE_TAB"
-        private const val DEF_FILE_PATH = "file://"
+//        private const val DEF_FILE_PATH = "file://"
         private const val ECONDING_UTF8 = "utf-8"
+        private const val ECONDING_BASE64 = "base64"
         private const val NO_CANTO = "no_canto"
+        private const val DEFAULT_MIME_TYPE = "text/html; charset=utf-8"
 
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -121,9 +122,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.applyOverrideConfiguration(overrideConfiguration)
     }
 
-    inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))
+    class NoBackupException internal constructor(val resources: Resources) : Exception(resources.getString(R.string.no_restore_found))
 
-    inner class NoIdException internal constructor() : Exception("no ID linked to this Account")
+    class NoIdException internal constructor() : Exception("no ID linked to this Account")
 
     private fun setTaskDescription() {
         if (LUtils.hasP())
@@ -180,7 +181,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "querySnapshot.documents.size ${querySnapshot.documents.size}")
 
         if (querySnapshot.documents.size == 0)
-            throw NoBackupException()
+            throw NoBackupException(resources)
 
         val prefEdit = PreferenceManager.getDefaultSharedPreferences(this).edit()
         prefEdit.clear()
@@ -386,7 +387,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         } catch (e: ExecutionException) {
             Log.e(TAG, e.localizedMessage, e)
             if (e.cause is StorageException && (e.cause as? StorageException)?.errorCode == StorageException.ERROR_OBJECT_NOT_FOUND)
-                throw NoBackupException()
+                throw NoBackupException(resources)
             else
                 throw e
         }
