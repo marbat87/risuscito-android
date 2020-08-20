@@ -77,6 +77,7 @@ val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.5"
 val iconicVersion = "5.0.3"
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.8.0")
     implementation("androidx.activity:activity-ktx:1.2.0-alpha07")

@@ -89,7 +89,7 @@ import java.util.regex.Pattern
 
 class PaginaRenderActivity : ThemeableActivity() {
 
-    private val cambioAccordi = CambioAccordi(this, null)
+    private lateinit var cambioAccordi: CambioAccordi
     private val mExecutorService = Executors.newSingleThreadScheduledExecutor()
     private var mDownload: Boolean = false
 
@@ -402,6 +402,10 @@ class PaginaRenderActivity : ThemeableActivity() {
         mViewModel.pagina = mViewModel.pagina
                 ?: bundle?.getCharSequence(Utility.PAGINA, "")?.toString()
         mViewModel.idCanto = bundle?.getInt(Utility.ID_CANTO) ?: return
+
+        Log.d(TAG, "LINGUA CTX: ${getSystemLocale(resources).language}")
+        Log.d(TAG, "LINGUA BASE: ${getSystemLocale(baseContext.resources).language}")
+        cambioAccordi = CambioAccordi(this, null)
 
         try {
             mViewModel.primaNota = if (mViewModel.primaNota == PaginaRenderViewModel.NOT_VAL) CambioAccordi.recuperaPrimoAccordo(

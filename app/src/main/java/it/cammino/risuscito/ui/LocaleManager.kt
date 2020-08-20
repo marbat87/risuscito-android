@@ -1,6 +1,5 @@
 package it.cammino.risuscito.ui
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.SharedPreferences
@@ -10,44 +9,27 @@ import android.os.Build.VERSION_CODES.JELLY_BEAN_MR1
 import android.os.Build.VERSION_CODES.N
 import android.provider.Settings
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.Utility
 import java.util.*
 
+
 class LocaleManager(context: Context) {
 
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-    val language: String
-        get() = prefs.getString(Utility.SYSTEM_LANGUAGE, "") ?: ""
-
-    fun setLocale(c: Context): Context {
-        return updateResources(c, language)
-    }
-
-    @SuppressLint("ApplySharedPref")
-    fun persistLanguage(language: String) {
-        prefs.edit {
-            putString(Utility.SYSTEM_LANGUAGE, language)
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun updateResources(context: Context, language: String): Context {
-        val res = context.resources
-        val config = Configuration(res.configuration)
-        lateinit var locale: Locale
-
-        Log.d(TAG, "language: $language")
+    init {
+        Log.d(TAG, "init language: $language")
 
         if (language.isNotEmpty()) {
-            Log.d(TAG, "attachBaseContext - settings language set: $language")
-            locale = Locale(language)
-            Locale.setDefault(locale)
+            Log.d(TAG, "init - settings language set: $language")
         } else {
-            val mLanguage = when (getSystemLocale(res).language) {
+            // non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua
+            // selezionabile oppure IT se non presente
+            val mLanguage = when (getSystemLocale(context.resources).language) {
                 LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
                 LANGUAGE_ENGLISH -> LANGUAGE_ENGLISH
                 LANGUAGE_TURKISH -> LANGUAGE_TURKISH
@@ -56,10 +38,37 @@ class LocaleManager(context: Context) {
             }
             Log.d(TAG, "attachBaseContext - default language set: $mLanguage")
             persistLanguage(mLanguage)
-            locale = Locale(mLanguage)
-            Locale.setDefault(locale)
-        }// non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua
-        // selezionabile oppure IT se non presente
+        }
+    }
+
+    val language: String
+        get() = prefs.getString(Utility.SYSTEM_LANGUAGE, "") ?: ""
+
+    fun setLocale(c: Context): Context {
+        return updateResources(c)
+    }
+
+    fun persistLanguage(language: String) {
+        prefs.edit {
+            putString(Utility.SYSTEM_LANGUAGE, language)
+        }
+    }
+
+    fun updateConfigurationIfSupported(overrideConfiguration: Configuration?): Configuration? {
+        overrideConfiguration?.let { config ->
+            if (isLocaleNotEmpty(config))
+                return config
+            setSystemLocale(config, Locale(language))
+        }
+        return overrideConfiguration
+    }
+
+    private fun updateResources(context: Context): Context {
+        Log.d(TAG, "updateResources language: $language")
+        val res = context.resources
+        val config = Configuration(res.configuration)
+        val locale = Locale(language)
+        Locale.setDefault(locale)
 
         // font dimension
         try {
@@ -77,14 +86,7 @@ class LocaleManager(context: Context) {
         }
 
         setSystemLocale(config, locale)
-        return if (LUtils.hasJB()) {
-            config.setLayoutDirection(locale)
-            res.updateConfiguration(config, res.displayMetrics)
-            context.createConfigurationContext(config)
-        } else {
-            res.updateConfiguration(config, res.displayMetrics)
-            context
-        }
+        return context.updateConfiguration(config)
     }
 
     companion object {
@@ -95,6 +97,41 @@ class LocaleManager(context: Context) {
         const val LANGUAGE_UKRAINIAN = "uk"
         const val LANGUAGE_TURKISH = "tr"
         const val LANGUAGE_POLISH = "pl"
+
+        @Suppress("DEPRECATION")
+        private fun updateConfigurationLegacy(context: Context, config: Configuration): Context {
+            context.resources.updateConfiguration(config, context.resources.displayMetrics)
+            return context
+        }
+
+        @RequiresApi(JELLY_BEAN_MR1)
+        private fun updateConfigurationJB(context: Context, config: Configuration): Context {
+            return context.createConfigurationContext(config)
+        }
+
+        fun Context.updateConfiguration(config: Configuration): Context {
+            return if (LUtils.hasJB())
+                updateConfigurationJB(this, config)
+            else
+                updateConfigurationLegacy(this, config)
+        }
+
+        @Suppress("DEPRECATION")
+        private fun isLocaleNotEmptyLegacy(config: Configuration): Boolean {
+            return config.locale != null
+        }
+
+        @TargetApi(N)
+        private fun isLocaleNotEmptyN(config: Configuration): Boolean {
+            return !config.locales.isEmpty
+        }
+
+        fun isLocaleNotEmpty(config: Configuration): Boolean {
+            return if (LUtils.hasN())
+                isLocaleNotEmptyN(config)
+            else
+                isLocaleNotEmptyLegacy(config)
+        }
 
         @Suppress("DEPRECATION")
         private fun getSystemLocaleLegacy(config: Configuration): Locale {

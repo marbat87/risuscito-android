@@ -29,7 +29,9 @@ import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.utils.ThemeUtils
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 import java.text.Normalizer
 import java.util.*
 import java.util.regex.Pattern
@@ -170,16 +172,17 @@ object Utility {
     fun retrieveMediaFileLinkQ(activity: Context, link: String, cercaEsterno: Boolean): String {
 
         if (isExternalStorageReadable && cercaEsterno) {
-            Log.d(TAG, "retrieveMediaFileLinkQ: " + getExternalLink(link))
+//            Log.d(TAG, "retrieveMediaFileLinkQ: " + getExternalLink(link))
             val externalId = getExternalMediaIdByName(activity, link)
             if (externalId >= 0) {
-                Log.d(TAG, "retrieveMediaFileLinkQ: FILE ESTERNO TROVATO")
+//                Log.d(TAG, "retrieveMediaFileLinkQ: FILE ESTERNO TROVATO")
                 return getExternalLink(link)
-            } else
-                Log.d(TAG, "retrieveMediaFileLinkQ: FILE ESTERNO NON TROVATO")
-        } else {
-            Log.d(TAG, "retrieveMediaFileLinkQ isExternalStorageReadable: FALSE")
+            }
+//            else
+//                Log.d(TAG, "retrieveMediaFileLinkQ: FILE ESTERNO NON TROVATO")
         }
+//        else
+//            Log.d(TAG, "retrieveMediaFileLinkQ isExternalStorageReadable: FALSE")
 
         return retrieveInternalLink(activity, link)
     }
@@ -208,27 +211,28 @@ object Utility {
     fun retrieveMediaFileLinkLegacy(activity: Context, link: String, cercaEsterno: Boolean): String {
 
         if (isExternalStorageReadable && cercaEsterno) {
-            Log.d(TAG, "retrieveMediaFileLinkLegacy: " + filterMediaLinkNew(link))
+//            Log.d(TAG, "retrieveMediaFileLinkLegacy: " + filterMediaLinkNew(link))
             // cerca file esterno con nuovi path e nome
             var fileExt = File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
                     "/Risuscitò/" + filterMediaLinkNew(link))
             if (fileExt.exists()) {
-                Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno1: " + fileExt.absolutePath)
+//                Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno1: " + fileExt.absolutePath)
                 return fileExt.absolutePath
             } else {
                 // cerca file esterno con vecchi path e nome
                 val fileArray = ContextCompat.getExternalFilesDirs(activity, null)
                 fileExt = File(fileArray[0], filterMediaLink(link))
                 if (fileExt.exists()) {
-                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno2: " + fileExt.absolutePath)
+//                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno2: " + fileExt.absolutePath)
                     return fileExt.absolutePath
-                } else
-                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE ESTERNO NON TROVATO")
+                }
+//                else
+//                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE ESTERNO NON TROVATO")
             }
-        } else {
-            Log.d(TAG, "retrieveMediaFileLinkLegacy isExternalStorageReadable: FALSE")
         }
+//        else
+//            Log.d(TAG, "retrieveMediaFileLinkLegacy isExternalStorageReadable: FALSE")
 
         return retrieveInternalLink(activity, link)
     }
@@ -236,10 +240,11 @@ object Utility {
     private fun retrieveInternalLink(activity: Context, link: String?): String {
         val fileInt = File(activity.filesDir, filterMediaLink(link))
         if (fileInt.exists()) {
-            Log.d(TAG, "FILE interno: " + fileInt.absolutePath)
+//            Log.d(TAG, "FILE interno: " + fileInt.absolutePath)
             return fileInt.absolutePath
-        } else
-            Log.v(TAG, "FILE INTERNO NON TROVATO")
+        }
+//        else
+//            Log.v(TAG, "FILE INTERNO NON TROVATO")
         //		Log.i("FILE INTERNO:", "NON TROVATO");
         return ""
     }

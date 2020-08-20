@@ -1,7 +1,5 @@
 package it.cammino.risuscito.ui
 
-import android.content.Context
-import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.ImageView
@@ -21,6 +19,8 @@ class RisuscitoApplication : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
+        localeManager = LocaleManager(applicationContext)
+
         ThemeUtils.setDefaultNightMode(applicationContext)
 
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
@@ -39,17 +39,8 @@ class RisuscitoApplication : MultiDexApplication() {
                 })
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        localeManager.setLocale(this)
-    }
-
-    override fun attachBaseContext(base: Context) {
-        localeManager = LocaleManager(base)
-        super.attachBaseContext(localeManager.setLocale(base))
-    }
-
     companion object {
+        internal val TAG = RisuscitoApplication::class.java.canonicalName
         lateinit var localeManager: LocaleManager
     }
 }
