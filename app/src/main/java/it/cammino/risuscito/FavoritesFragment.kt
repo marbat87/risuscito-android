@@ -242,14 +242,14 @@ class FavoritesFragment : Fragment() {
 
 
     private fun subscribeUiFavorites() {
-        mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
+        mFavoritesViewModel.mFavoritesResult?.observe(owner = viewLifecycleOwner) { canti ->
             cantoAdapter.set(canti.sortedBy { it.title?.getText(requireContext()) })
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
         }
 
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

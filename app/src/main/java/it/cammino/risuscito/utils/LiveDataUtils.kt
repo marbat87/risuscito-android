@@ -2,9 +2,6 @@
 
 package it.cammino.risuscito.utils
 
-import android.content.Context
-import android.util.TypedValue
-import androidx.annotation.AttrRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations

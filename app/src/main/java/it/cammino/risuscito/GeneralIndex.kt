@@ -85,7 +85,7 @@ class GeneralIndex : Fragment() {
 
     }
 
-    private inner class IndexTabsAdapter internal constructor(fragment: Fragment) : FragmentStateAdapter(fragment) {
+    private class IndexTabsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int = 5
 
         override fun createFragment(position: Int): Fragment =

@@ -205,7 +205,7 @@ class MainActivity : ThemeableActivity() {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        simpleDialogViewModel.state.observe(this) {
+        simpleDialogViewModel.state.observe(owner = this) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

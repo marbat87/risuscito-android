@@ -209,7 +209,7 @@ class CustomLists : Fragment() {
     }
 
     private fun subscribeUiListe() {
-        mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->
+        mCustomListsViewModel.customListResult?.observe(owner = viewLifecycleOwner) { list ->
             Log.d(TAG, "list size ${list.size}")
             titoliListe = arrayOfNulls(list.size)
             idListe = IntArray(list.size)
@@ -227,7 +227,7 @@ class CustomLists : Fragment() {
             }
         }
 
-        inputdialogViewModel.state.observe(viewLifecycleOwner) {
+        inputdialogViewModel.state.observe(owner = viewLifecycleOwner) {
             Log.d(TAG, "inputdialogViewModel state $it")
             if (!inputdialogViewModel.handled) {
                 when (it) {
@@ -248,7 +248,7 @@ class CustomLists : Fragment() {
             }
         }
 
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {
@@ -273,7 +273,7 @@ class CustomLists : Fragment() {
         }
     }
 
-    private inner class SectionsPagerAdapter internal constructor(fm: Fragment) : FragmentStateAdapter(fm) {
+    private inner class SectionsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
         override fun createFragment(position: Int): Fragment =
                 when (position) {

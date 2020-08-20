@@ -23,9 +23,6 @@ class RisuscitoApplication : MultiDexApplication() {
 
         ThemeUtils.setDefaultNightMode(applicationContext)
 
-        //only required if you add a custom or generic font on your own
-//        Iconics.init(applicationContext)
-
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
         GlobalScope.launch(Dispatchers.IO) { mDao.getCantoById(1) }
 
@@ -53,7 +50,6 @@ class RisuscitoApplication : MultiDexApplication() {
     }
 
     companion object {
-        //        private val TAG = RisuscitoApplication::class.java.canonicalName
         lateinit var localeManager: LocaleManager
     }
 }

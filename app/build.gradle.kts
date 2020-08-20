@@ -10,7 +10,7 @@ plugins {
 android {
 
     compileSdkVersion(30)
-    buildToolsVersion("30.0.1")
+    buildToolsVersion("30.0.2")
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdkVersion(16)

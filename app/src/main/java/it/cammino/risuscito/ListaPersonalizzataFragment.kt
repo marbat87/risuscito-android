@@ -269,7 +269,7 @@ class ListaPersonalizzataFragment : Fragment() {
     }
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.listaPersonalizzataResult?.observe(viewLifecycleOwner) { listaPersonalizzataResult ->
+        mCantiViewModel.listaPersonalizzataResult?.observe(owner = viewLifecycleOwner) { listaPersonalizzataResult ->
             mCantiViewModel.posizioniList = listaPersonalizzataResult.map {
                 it.apply {
                     createClickListener = click

@@ -1,12 +1,13 @@
 package it.cammino.risuscito
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
 import android.util.Log
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.view.View
 import androidx.activity.addCallback
 import androidx.lifecycle.lifecycleScope
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
@@ -18,8 +19,13 @@ import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.databinding.ActivityPaginaRenderFullscreenBinding
+import it.cammino.risuscito.ui.InitialScrollWebClient
 import it.cammino.risuscito.ui.ThemeableActivity
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.nio.charset.Charset
 
 class PaginaRenderFullScreen : ThemeableActivity() {
 
@@ -27,7 +33,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
     var speedValue: Int = 0
     private var scrollPlaying: Boolean = false
     var idCanto: Int = 0
-    private lateinit var urlCanto: String
+    private lateinit var htmlContent: String
     private val mHandler = Handler(Looper.getMainLooper())
     private val mScrollDown: Runnable = object : Runnable {
         override fun run() {
@@ -53,7 +59,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
-        urlCanto = bundle?.getString(Utility.URL_CANTO) ?: ""
+        htmlContent = bundle?.getString(Utility.HTML_CONTENT) ?: ""
         speedValue = bundle?.getInt(Utility.SPEED_VALUE) ?: 0
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
@@ -70,29 +76,13 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             onBackPressedAction()
         }
 
+        lifecycleScope.launch { loadWebView() }
+
     }
 
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         lifecycleScope.launch { saveZoom() }
-    }
-
-    public override fun onResume() {
-        super.onResume()
-
-        binding.cantoView.loadUrl(urlCanto)
-        if (scrollPlaying)
-            mScrollDown.run()
-
-        val webSettings = binding.cantoView.settings
-        webSettings.useWideViewPort = true
-        webSettings.setSupportZoom(true)
-        webSettings.loadWithOverviewMode = true
-
-        webSettings.builtInZoomControls = true
-        webSettings.displayZoomControls = false
-
-        binding.cantoView.webViewClient = MyWebViewClient()
     }
 
     private suspend fun saveZoom() {
@@ -110,27 +100,60 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         Animatoo.animateZoom(this)
     }
 
-    private suspend fun loadZoom() {
+    private suspend fun loadWebView() {
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
         currentCanto = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
             mDao.getCantoById(idCanto)
         }
-        delay(500)
+
+        // fix per crash su android 4.1
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
+            binding.cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+
+        loadContentIntoWebView(htmlContent)
+
+        val webSettings = binding.cantoView.settings
+        webSettings.useWideViewPort = true
+        webSettings.setSupportZoom(true)
+        webSettings.loadWithOverviewMode = true
+
+        webSettings.builtInZoomControls = true
+        webSettings.displayZoomControls = false
+
         currentCanto?.let {
             if (it.zoom > 0) binding.cantoView.setInitialScale(it.zoom)
-            if (it.scrollX > 0 || it.scrollY > 0)
-                binding.cantoView.scrollTo(it.scrollX, it.scrollY)
         }
+
+        binding.cantoView.webViewClient = InitialScrollWebClient(currentCanto)
+
+        if (scrollPlaying)
+            mScrollDown.run()
+
     }
 
-    private inner class MyWebViewClient : WebViewClient() {
-        override fun onPageFinished(view: WebView, url: String) {
-            lifecycleScope.launch { loadZoom() }
-            super.onPageFinished(view, url)
-        }
+//    private inner class MyWebViewClient : WebViewClient() {
+//        override fun onPageFinished(view: WebView, url: String) {
+//            view.postDelayed(600) {
+//                if ((currentCanto?.scrollX
+//                                ?: 0) > 0 || (currentCanto?.scrollY ?: 0) > 0)
+//                    view.scrollTo(
+//                            currentCanto?.scrollX
+//                                    ?: 0, currentCanto?.scrollY ?: 0)
+//            }
+//            super.onPageFinished(view, url)
+//        }
+//    }
+
+    private fun loadContentIntoWebView(content: String?) {
+        if (!content.isNullOrEmpty()) binding.cantoView.loadData(Base64.encodeToString(
+                content.toByteArray(Charset.forName(ECONDING_UTF8)),
+                Base64.DEFAULT), DEFAULT_MIME_TYPE, ECONDING_BASE64)
     }
 
     companion object {
         private val TAG = PaginaRenderFullScreen::class.java.canonicalName
+        private const val DEFAULT_MIME_TYPE = "text/html; charset=utf-8"
+        private const val ECONDING_UTF8 = "utf-8"
+        private const val ECONDING_BASE64 = "base64"
     }
 }

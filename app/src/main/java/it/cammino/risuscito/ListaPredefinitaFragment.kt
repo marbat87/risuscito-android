@@ -238,7 +238,7 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun subscribeUiUpdate() {
-        mCantiViewModel.cantiResult?.observe(viewLifecycleOwner) { mCanti ->
+        mCantiViewModel.cantiResult?.observe(owner = viewLifecycleOwner) { mCanti ->
             var progressiveTag = 0
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             posizioniList.clear()

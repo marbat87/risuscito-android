@@ -67,7 +67,7 @@ object Utility {
     internal const val CLICK_DELAY_SELECTION: Long = 300
 
     // Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
-    internal const val URL_CANTO = "urlCanto"
+    internal const val HTML_CONTENT = "htmlContent"
     internal const val SPEED_VALUE = "speedValue"
     internal const val SCROLL_PLAYING = "scrollPlaying"
     internal const val ID_CANTO = "idCanto"

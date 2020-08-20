@@ -17,8 +17,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -30,7 +28,6 @@ import androidx.core.os.postDelayed
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -65,6 +62,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.DownloadService
 import it.cammino.risuscito.services.PdfExportService
+import it.cammino.risuscito.ui.InitialScrollWebClient
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
@@ -110,6 +108,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     private var url: String? = null
     private var personalUrl: String? = null
     private var localUrl: String? = null
+    private var htmlContent: String? = null
     private var mLastPlaybackState: PlaybackStateCompat? = null
     private val mUpdateProgressTask = Runnable { updateProgress() }
     private var mScheduleFuture: ScheduledFuture<*>? = null
@@ -491,7 +490,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             onBackPressedAction()
         }
 
-        progressDialogViewModel.state.observe(owner =this) {
+        progressDialogViewModel.state.observe(owner = this) {
             Log.d(TAG, "progressDialogViewModel state $it")
             if (!progressDialogViewModel.handled) {
                 when (it) {
@@ -702,14 +701,15 @@ class PaginaRenderActivity : ThemeableActivity() {
 //                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     loadContentIntoWebView(cambiaAccordi(convMap, mViewModel.barreCambio, convMin))
                 } else
-                    loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+                    loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina
+                            ?: NO_CANTO))
 //                    binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
 //                            ?: NO_CANTO))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         binding.cantoView.setInitialScale(it.zoom)
                 }
-                binding.cantoView.webViewClient = MyWebViewClient()
+//                binding.cantoView.webViewClient = MyWebViewClient()
                 return true
             }
             R.id.action_save_barre -> {
@@ -737,14 +737,15 @@ class PaginaRenderActivity : ThemeableActivity() {
 //                    if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                     loadContentIntoWebView(cambiaAccordi(convMap1, mViewModel.barreCambio, convMin1))
                 } else
-                    loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+                    loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina
+                            ?: NO_CANTO))
 //                    binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
 //                            ?: NO_CANTO))
                 mViewModel.mCurrentCanto?.let {
                     if (it.zoom > 0)
                         binding.cantoView.setInitialScale(it.zoom)
                 }
-                binding.cantoView.webViewClient = MyWebViewClient()
+//                binding.cantoView.webViewClient = MyWebViewClient()
                 return true
             }
             else -> {
@@ -760,14 +761,15 @@ class PaginaRenderActivity : ThemeableActivity() {
 //                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                         loadContentIntoWebView(cambiaAccordi(convMap2, mViewModel.barreCambio, convMin2))
                     } else
-                        loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+                        loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina
+                                ?: NO_CANTO))
 //                        binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
 //                                ?: NO_CANTO))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             binding.cantoView.setInitialScale(it.zoom)
                     }
-                    binding.cantoView.webViewClient = MyWebViewClient()
+//                    binding.cantoView.webViewClient = MyWebViewClient()
                     return true
                 }
                 if (item.groupId == R.id.menu_gruppo_barre) {
@@ -782,14 +784,15 @@ class PaginaRenderActivity : ThemeableActivity() {
 //                        if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
                         loadContentIntoWebView(cambiaAccordi(convMap3, mViewModel.barreCambio, convMin3))
                     } else
-                        loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina ?: NO_CANTO))
+                        loadContentIntoWebView(readTextFromResource(this, mViewModel.pagina
+                                ?: NO_CANTO))
 //                        binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this, mViewModel.pagina
 //                                ?: NO_CANTO))
                     mViewModel.mCurrentCanto?.let {
                         if (it.zoom > 0)
                             binding.cantoView.setInitialScale(it.zoom)
                     }
-                    binding.cantoView.webViewClient = MyWebViewClient()
+//                    binding.cantoView.webViewClient = MyWebViewClient()
                     return true
                 }
             }
@@ -1393,23 +1396,24 @@ class PaginaRenderActivity : ThemeableActivity() {
         initFabOptions()
     }
 
-    private inner class MyWebViewClient : WebViewClient() {
-        override fun onPageFinished(view: WebView, url: String) {
-            view.postDelayed(600) {
-                if ((mViewModel.mCurrentCanto?.scrollX
-                                ?: 0) > 0 || (mViewModel.mCurrentCanto?.scrollY ?: 0) > 0)
-                    binding.cantoView.scrollTo(
-                            mViewModel.mCurrentCanto?.scrollX
-                                    ?: 0, mViewModel.mCurrentCanto?.scrollY ?: 0)
-            }
-            super.onPageFinished(view, url)
-        }
-    }
+//    private inner class MyWebViewClient : WebViewClient() {
+//        override fun onPageFinished(view: WebView, url: String) {
+//            view.postDelayed(600) {
+//                if ((mViewModel.mCurrentCanto?.scrollX
+//                                ?: 0) > 0 || (mViewModel.mCurrentCanto?.scrollY ?: 0) > 0)
+//                    view.scrollTo(
+//                            mViewModel.mCurrentCanto?.scrollX
+//                                    ?: 0, mViewModel.mCurrentCanto?.scrollY ?: 0)
+//            }
+//            super.onPageFinished(view, url)
+//        }
+//    }
 
     private fun loadContentIntoWebView(content: String?) {
         if (!content.isNullOrEmpty()) binding.cantoView.loadData(encodeToString(
                 content.toByteArray(Charset.forName(ECONDING_UTF8)),
                 DEFAULT), DEFAULT_MIME_TYPE, ECONDING_BASE64)
+        htmlContent = content
     }
 
     private suspend fun retrieveData() {
@@ -1454,7 +1458,8 @@ class PaginaRenderActivity : ThemeableActivity() {
 //            if (nuovoFile != null) binding.cantoView.loadUrl(DEF_FILE_PATH + nuovoFile)
             loadContentIntoWebView(cambiaAccordi(convMap, mViewModel.barreCambio, convMin))
         } else
-            loadContentIntoWebView(readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina ?: NO_CANTO))
+            loadContentIntoWebView(readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina
+                    ?: NO_CANTO))
 //            binding.cantoView.loadUrl(DEF_FILE_PATH + readTextFromResource(this@PaginaRenderActivity, mViewModel.pagina
 //                    ?: NO_CANTO))
 
@@ -1470,7 +1475,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             if (it.zoom > 0)
                 binding.cantoView.setInitialScale(it.zoom)
         }
-        binding.cantoView.webViewClient = MyWebViewClient()
+        binding.cantoView.webViewClient = InitialScrollWebClient(mViewModel.mCurrentCanto)
 
         if (mViewModel.speedValue == null)
             try {
@@ -1667,14 +1672,14 @@ class PaginaRenderActivity : ThemeableActivity() {
                     mHandler.removeCallbacks(mScrollDown)
                     saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                     val bundle = Bundle()
-                    bundle.putString(Utility.URL_CANTO, binding.cantoView.url)
+                    bundle.putString(Utility.HTML_CONTENT, htmlContent)
                     bundle.putInt(Utility.SPEED_VALUE, binding.speedSeekbar.value.toInt())
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mViewModel.scrollPlaying)
                     bundle.putInt(Utility.ID_CANTO, mViewModel.idCanto)
 
-                    val intent2 = Intent(this, PaginaRenderFullScreen::class.java)
-                    intent2.putExtras(bundle)
-                    mLUtils?.startActivityWithFadeIn(intent2)
+                    val intent = Intent(this, PaginaRenderFullScreen::class.java)
+                    intent.putExtras(bundle)
+                    mLUtils?.startActivityWithFadeIn(intent)
                     true
                 }
                 R.id.fab_sound_off -> {
@@ -1755,7 +1760,8 @@ class PaginaRenderActivity : ThemeableActivity() {
         private const val DOWNLOAD_MP3 = "DOWNLOAD_MP3"
         private const val DELETE_MP3 = "DELETE_MP3"
         private const val SAVE_TAB = "SAVE_TAB"
-//        private const val DEF_FILE_PATH = "file://"
+
+        //        private const val DEF_FILE_PATH = "file://"
         private const val ECONDING_UTF8 = "utf-8"
         private const val ECONDING_BASE64 = "base64"
         private const val NO_CANTO = "no_canto"

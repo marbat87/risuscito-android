@@ -196,7 +196,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
             onBackPressedAction()
         }
 
-        inputdialogViewModel.state.observe(this) {
+        inputdialogViewModel.state.observe(owner = this) {
             Log.d(TAG, "inputdialogViewModel state $it")
             if (!inputdialogViewModel.handled) {
                 when (it) {
@@ -232,7 +232,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
             }
         }
 
-        simpleDialogViewModel.state.observe(this) {
+        simpleDialogViewModel.state.observe(owner = this) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {
@@ -491,7 +491,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
     }
 
     private fun subscribeUiChanges() {
-        mViewModel.listaResult?.observe(this) { listaPers ->
+        mViewModel.listaResult?.observe(owner = this) { listaPers ->
 
             val celebrazione = listaPers.lista
 

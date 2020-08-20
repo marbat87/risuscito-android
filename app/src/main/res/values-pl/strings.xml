@@ -13,7 +13,7 @@
     <string name="always_on">Wyświetlacz zawsze włączony</string>
     <string name="always_on_summary">Zapobiega wygaszaniu wyświetlacza w aplikacji.</string>
     <string name="title_activity_favourites">Ulubione</string>
-    <string name="search_hint">Wprowadź conajmniej czy znaki&#8230;</string>
+    <string name="search_hint">Wprowadź co najmniej 3 znaki&#8230;</string>
     <string name="search_no_results">Brak wyników wyszukiwania dla danych kryteriów.</string>
     <string name="title_activity_settings">Ustawienia</string>
     <string name="title_activity_general_index">Pieśni</string>

@@ -63,15 +63,17 @@ class ProgressDialogFragment : DialogFragment() {
 
         if (mBuilder.mProgressIndeterminate) {
             dialog.customView(R.layout.indeterminate_progressbar)
-            dialog.getCustomView().findViewById<TextView>(R.id.md_content_indeterminate).isVisible = mBuilder.mContent != null
-            dialog.getCustomView().findViewById<TextView>(R.id.md_content_indeterminate).text = mBuilder.mContent
+            val mdContent = dialog.getCustomView().findViewById<TextView>(R.id.md_content_indeterminate)
+            mdContent.isVisible = mBuilder.mContent != null
+            mdContent.text = mBuilder.mContent
                     ?: ""
         } else {
             dialog.customView(R.layout.linear_progressbar)
             dialog.getCustomView().findViewById<MaterialProgressBar>(R.id.working_progress).max = mBuilder.mProgressMax
             dialog.getCustomView().findViewById<TextView>(R.id.md_minMax).isVisible = mBuilder.mShowMinMax
-            dialog.getCustomView().findViewById<TextView>(R.id.md_content_linear).isVisible = mBuilder.mContent != null
-            dialog.getCustomView().findViewById<TextView>(R.id.md_content_linear).text = mBuilder.mContent
+            val mdContent = dialog.getCustomView().findViewById<TextView>(R.id.md_content_linear)
+            mdContent.isVisible = mBuilder.mContent != null
+            mdContent.text = mBuilder.mContent
                     ?: ""
         }
 

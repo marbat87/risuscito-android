@@ -147,7 +147,7 @@ class SectionedIndexFragment : Fragment() {
 
         lifecycleScope.launch { updateLists(savedInstanceState) }
 
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

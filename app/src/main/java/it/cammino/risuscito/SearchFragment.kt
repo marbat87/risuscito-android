@@ -247,11 +247,11 @@ class SearchFragment : Fragment() {
     }
 
     private fun subscribeUiCanti() {
-        mViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
+        mViewModel.itemsResult?.observe(owner = viewLifecycleOwner) { canti ->
             mViewModel.titoli = canti.sortedBy { it.title?.getText(requireContext()) }
         }
 
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

@@ -137,7 +137,7 @@ class SimpleIndexFragment : Fragment() {
     }
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
+        mCantiViewModel.itemsResult?.observe(owner = viewLifecycleOwner) { canti ->
             mAdapter.set(
                     when (mCantiViewModel.tipoLista) {
                         0 -> canti.sortedBy { it.title?.getText(requireContext()) }
@@ -148,7 +148,7 @@ class SimpleIndexFragment : Fragment() {
             )
         }
 
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

@@ -53,14 +53,14 @@ class MusicService : MediaBrowserServiceCompat() {
     private var mCurrentMedia: MediaSessionCompat.QueueItem? = null
     private var mAudioBecomingNoisyReceiver: AudioBecomingNoisyReceiver? = null
 
-    private val mDelayedStopHandler = Handler(Looper.getMainLooper(), Handler.Callback { msg ->
+    private val mDelayedStopHandler = Handler(Looper.getMainLooper()) { msg ->
         if (msg.what == STOP_CMD && mPlayback?.isPlaying != true) {
             Log.d(TAG, "Stopping service")
             stopSelf()
             mServiceStarted = false
         }
         false
-    })
+    }
 
     override fun onCreate() {
         super.onCreate()

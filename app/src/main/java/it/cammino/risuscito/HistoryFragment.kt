@@ -241,14 +241,14 @@ class HistoryFragment : Fragment() {
     }
 
     private fun subscribeUiHistory() {
-        mCronologiaViewModel.cronologiaCanti?.observe(viewLifecycleOwner) {
+        mCronologiaViewModel.cronologiaCanti?.observe(owner = viewLifecycleOwner) {
             cantoAdapter.set(it)
             binding.noHistory.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.historyRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
         }
 
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

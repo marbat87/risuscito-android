@@ -278,7 +278,7 @@ class InsertActivity : ThemeableActivity() {
     }
 
     private fun subscribeObservers() {
-        mViewModel.insertItemsResult?.observe(this) { canti ->
+        mViewModel.insertItemsResult?.observe(owner = this) { canti ->
             mViewModel.titoliInsert = canti.sortedBy { it.title?.getText(this) }
         }
 
