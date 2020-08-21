@@ -16,8 +16,8 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4503
-        versionName = "4.5.0"
+        versionCode = 4600
+        versionName = "4.6.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
             annotationProcessorOptions {
@@ -80,10 +80,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.8.0")
-    implementation("androidx.activity:activity-ktx:1.2.0-alpha07")
+    implementation("androidx.activity:activity-ktx:1.2.0-alpha08")
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.core:core-ktx:1.3.1")
-    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha07")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
     implementation("com.google.android.material:material:1.2.0")
     implementation("androidx.recyclerview:recyclerview:1.2.0-alpha05")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
@@ -91,11 +91,11 @@ dependencies {
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
     implementation("androidx.customview:customview:1.1.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.media:media:1.2.0-alpha04")
+    implementation("androidx.media:media:1.2.0-beta01")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha06")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha06")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha07")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
