@@ -28,11 +28,13 @@ import it.cammino.risuscito.databinding.IndexListFragmentBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.Collator
 
 class SimpleIndexFragment : Fragment() {
 
@@ -140,7 +142,8 @@ class SimpleIndexFragment : Fragment() {
         mCantiViewModel.itemsResult?.observe(owner = viewLifecycleOwner) { canti ->
             mAdapter.set(
                     when (mCantiViewModel.tipoLista) {
-                        0 -> canti.sortedBy { it.title?.getText(requireContext()) }
+//                        0 -> canti.sortedBy { it.title?.getText(requireContext()) }
+                        0 -> canti.sortedWith(compareBy(Collator.getInstance(LocaleManager.getSystemLocale(resources))) { it.title?.getText(requireContext()) })
                         1 -> canti.sortedBy { it.page?.getText(requireContext())?.toInt() }
                         2 -> canti
                         else -> canti

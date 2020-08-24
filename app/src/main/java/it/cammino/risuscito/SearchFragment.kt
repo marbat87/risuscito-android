@@ -30,7 +30,7 @@ import it.cammino.risuscito.databinding.SearchLayoutBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.LocaleManager
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
+import java.text.Collator
 
 class SearchFragment : Fragment() {
 
@@ -200,7 +201,7 @@ class SearchFragment : Fragment() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.toLowerCase(LocaleManager.getSystemLocale(resources))
+                                text = text.toLowerCase(getSystemLocale(resources))
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -209,7 +210,8 @@ class SearchFragment : Fragment() {
 
                         if (found) {
                             Log.d(tag, "aText[0]: ${aText[0]}")
-                            mViewModel.titoli.sortedBy { it.title?.getText(requireContext()) }
+//                            mViewModel.titoli.sortedBy { it.title?.getText(requireContext()) }
+                            mViewModel.titoli
                                     .filter { (aText[0] ?: "") == it.undecodedSource }
                                     .forEach {
                                         if (!isActive) return@launch
@@ -218,12 +220,13 @@ class SearchFragment : Fragment() {
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).toLowerCase(LocaleManager.getSystemLocale(resources))
+                    val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(resources))
                     Log.d(tag, "performSearch onTextChanged: stringa $stringa")
-                    mViewModel.titoli.sortedBy { it.title?.getText(requireContext()) }
+//                    mViewModel.titoli.sortedBy { it.title?.getText(requireContext()) }
+                    mViewModel.titoli
                             .filter {
                                 Utility.removeAccents(it.title?.getText(requireContext())
-                                        ?: "").toLowerCase(LocaleManager.getSystemLocale(resources)).contains(stringa)
+                                        ?: "").toLowerCase(getSystemLocale(resources)).contains(stringa)
                             }
                             .forEach {
                                 if (!isActive) return@launch
@@ -231,7 +234,7 @@ class SearchFragment : Fragment() {
                             }
                 }
                 if (isActive) {
-                    cantoAdapter.set(titoliResult)
+                    cantoAdapter.set(titoliResult.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) }))
                     binding.searchProgress.isVisible = false
                     binding.searchNoResults.isVisible = cantoAdapter.adapterItemCount == 0
                     binding.matchedList.isGone = cantoAdapter.adapterItemCount == 0
@@ -249,7 +252,8 @@ class SearchFragment : Fragment() {
 
     private fun subscribeUiCanti() {
         mViewModel.itemsResult?.observe(owner = viewLifecycleOwner) { canti ->
-            mViewModel.titoli = canti.sortedBy { it.title?.getText(requireContext()) }
+//            mViewModel.titoli = canti.sortedBy { it.title?.getText(requireContext()) }
+            mViewModel.titoli = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
         }
 
         simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {

@@ -32,7 +32,7 @@ import com.mikepenz.fastadapter.binding.listeners.addClickListener
 import it.cammino.risuscito.databinding.ActivityInsertSearchBinding
 import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.items.InsertItem
-import it.cammino.risuscito.ui.LocaleManager
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
+import java.text.Collator
 
 class InsertActivity : ThemeableActivity() {
 
@@ -228,7 +229,7 @@ class InsertActivity : ThemeableActivity() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.toLowerCase(LocaleManager.getSystemLocale(resources))
+                                text = text.toLowerCase(getSystemLocale(resources))
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -237,7 +238,8 @@ class InsertActivity : ThemeableActivity() {
 
                         if (found) {
                             Log.d(TAG, "aText[0]: ${aText[0]}")
-                            mViewModel.titoliInsert.sortedBy { it.title?.getText(applicationContext) }
+//                            mViewModel.titoliInsert.sortedBy { it.title?.getText(applicationContext) }
+                            mViewModel.titoliInsert
                                     .filter {
                                         (aText[0]
                                                 ?: "") == it.undecodedSource && (!mViewModel.consegnatiOnly || it.consegnato == 1)
@@ -250,12 +252,13 @@ class InsertActivity : ThemeableActivity() {
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).toLowerCase(LocaleManager.getSystemLocale(resources))
+                    val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(resources))
                     Log.d(TAG, "performInsertSearch onTextChanged: stringa $stringa")
-                    mViewModel.titoliInsert.sortedBy { it.title?.getText(applicationContext) }
+//                    mViewModel.titoliInsert.sortedBy { it.title?.getText(applicationContext) }
+                    mViewModel.titoliInsert
                             .filter {
                                 Utility.removeAccents(it.title?.getText(applicationContext)
-                                        ?: "").toLowerCase(LocaleManager.getSystemLocale(resources)).contains(stringa) && (!mViewModel.consegnatiOnly || it.consegnato == 1)
+                                        ?: "").toLowerCase(getSystemLocale(resources)).contains(stringa) && (!mViewModel.consegnatiOnly || it.consegnato == 1)
                             }
                             .forEach {
                                 if (!isActive) return@launch
@@ -263,7 +266,7 @@ class InsertActivity : ThemeableActivity() {
                             }
                 }
                 if (isActive) {
-                    cantoAdapter.set(titoliResult)
+                    cantoAdapter.set(titoliResult.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(this@InsertActivity) }))
                     binding.searchLayout.searchProgress.isVisible = false
                     binding.searchLayout.searchNoResults.isVisible = cantoAdapter.adapterItemCount == 0
                     binding.searchLayout.matchedList.isGone = cantoAdapter.adapterItemCount == 0
@@ -281,7 +284,8 @@ class InsertActivity : ThemeableActivity() {
 
     private fun subscribeObservers() {
         mViewModel.insertItemsResult?.observe(owner = this) { canti ->
-            mViewModel.titoliInsert = canti.sortedBy { it.title?.getText(this) }
+//            mViewModel.titoliInsert = canti.sortedBy { it.title?.getText(this) }
+            mViewModel.titoliInsert = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(this) })
         }
 
     }

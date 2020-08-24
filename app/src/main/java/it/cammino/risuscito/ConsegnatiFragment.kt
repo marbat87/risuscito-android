@@ -61,6 +61,7 @@ import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.Collator
 
 class ConsegnatiFragment : Fragment() {
 
@@ -456,7 +457,7 @@ class ConsegnatiFragment : Fragment() {
 
     private fun subscribeUiConsegnati() {
         mCantiViewModel.mIndexResult?.observe(owner = viewLifecycleOwner) { cantos ->
-            mCantiViewModel.titoli = cantos.sortedWith(compareBy { it.title?.getText(requireContext()) })
+            mCantiViewModel.titoli = cantos.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
             cantoAdapter.set(mCantiViewModel.titoli)
             cantoAdapter.filter(mPopupMenu.menu.children.filter { item -> item.isChecked }
                     .map { item -> item.titleCondensed }
@@ -545,7 +546,8 @@ class ConsegnatiFragment : Fragment() {
                     }
             )
         }
-        mCantiViewModel.titoliChoose = newList.sortedBy { item -> item.title?.getText(requireContext()) }
+//        mCantiViewModel.titoliChoose = newList.sortedBy { item -> item.title?.getText(requireContext()) }
+        mCantiViewModel.titoliChoose = newList.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
         mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose
         selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
     }

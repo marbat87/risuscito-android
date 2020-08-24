@@ -33,10 +33,12 @@ import it.cammino.risuscito.databinding.ActivityFavouritesBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.Collator
 
 class FavoritesFragment : Fragment() {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
@@ -243,7 +245,8 @@ class FavoritesFragment : Fragment() {
 
     private fun subscribeUiFavorites() {
         mFavoritesViewModel.mFavoritesResult?.observe(owner = viewLifecycleOwner) { canti ->
-            cantoAdapter.set(canti.sortedBy { it.title?.getText(requireContext()) })
+//            cantoAdapter.set(canti.sortedBy { it.title?.getText(requireContext()) })
+            cantoAdapter.set(canti.sortedWith(compareBy(Collator.getInstance(LocaleManager.getSystemLocale(resources))) { it.title?.getText(requireContext()) }))
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
             activity?.invalidateOptionsMenu()
