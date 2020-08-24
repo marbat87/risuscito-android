@@ -9,7 +9,7 @@
     <string name="santo_baracche_title">Święty jest nasz Pan - Święty z baraków(Okres Adwentu)</string>
     <string name="santo_palme_title">Święty, święty, święty - hosanna palm (i Okres Paschalny)</string>
     <string name="santo_1988_title">Święty, święty, święty (1988)</string>
-    <string name="santo_1983_title">Święty (1883)</string>
+    <string name="santo_1983_title">Święty (1983)</string>
     <string name="preghiera_eucarestica_II_title">Modlitwa eucharystyczna II (1a)</string>
     <string name="preghiera_eucaristica_II_parte2_title">Modlitwa eucharystyczna II (1b)</string>
     <string name="benedizione_acqua_fonte_title">Błogosławienie wody źródła chrzcielnego</string>
@@ -74,8 +74,8 @@
     <string name="pieta_di_me_o_dio_title">Ps 51: Zmiłuj się nade mną, Boże</string>
     <string name="misericordia_dio_misericordia_title">Ps 51: Miłosierdzia, Boże, miłosierdzia</string>
     <string name="inno_della_kenosis_title">Jezus Chrystus jest Panem! Hymn o kenozie (Flp 2, 1–11)</string>
-    <string name="ave_maria_title">Zdrować Maryjo</string>
-    <string name="ave_maria_1984_title">Zdrować Maryjo (1984)</string>
+    <string name="ave_maria_title">Zdrowaś Maryjo</string>
+    <string name="ave_maria_1984_title">Zdrowaś Maryjo (1984)</string>
     <string name="maria_piccola_maria_title">Maryjo, maluczka Maryjo (Hymn do Dziewicy Maryi)</string>
     <string name="alzo_gli_occhi_title">Ps 121: Wnoszę me oczy ku górom</string>
     <string name="canto_liberati_title">Śpiew wyzwolonych (Iz 12, 4–6)</string>
@@ -231,5 +231,5 @@
     <string name="messia_leone_vincere_title">Mesjasz, lew, by zwyciężać</string>
     <string name="come_pecora_che_vede_title">Jak owieczka, która widzi (Z hymnu Romana Melodosa)</string>
     <string name="e_paziente_title">Jest cierpliwy (Hymn do Ducha Świętego)</string>
-    <string name="inno_cristo_luce_title">Inno a Cristo Luce (1967)</string>
+    <string name="inno_cristo_luce_title">Hymn do Chrystusa - światłości (1967)</string>
 </resources>

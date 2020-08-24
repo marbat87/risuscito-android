@@ -579,7 +579,8 @@ class MainActivity : ThemeableActivity() {
         var accordi1 = CambioAccordi.accordi_it
         Log.d(TAG, "convertTabs - from: ${conversion?.substring(0, 2)}")
         when (conversion?.substring(0, 2)) {
-            LANGUAGE_UKRAINIAN, LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_uk
+            LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
+            LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
             LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
 //            LANGUAGE_TURKISH -> accordi1 = CambioAccordi.accordi_tr
         }
@@ -587,7 +588,8 @@ class MainActivity : ThemeableActivity() {
         var accordi2 = CambioAccordi.accordi_it
         Log.d(TAG, "convertTabs - to: ${conversion?.substring(3, 5)}")
         when (conversion?.substring(3, 5)) {
-            LANGUAGE_UKRAINIAN, LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_uk
+            LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
+            LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
             LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
 //            LANGUAGE_TURKISH -> accordi2 = CambioAccordi.accordi_tr
         }

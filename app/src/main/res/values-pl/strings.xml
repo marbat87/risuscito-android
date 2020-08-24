@@ -39,7 +39,7 @@
     <string name="save_file">Zapisz lokalnie</string>
     <string name="wait">Czekaj, buforowanie w trakcie&#8230;</string>
     <string name="no_connection">Brak połączenia z internetem</string>
-    <string name="no_record">Nagrywanie niedostępne</string>
+    <string name="no_record">Nagranie niedostępne</string>
     <string name="about_subtitle">Wersja na smartphone/tablet z Androidem</string>
     <string name="dialog_delete_mp3">Jesteś pewien, że chcesz usunąć pieśń z pamięci twojego urządzenia?</string>
     <string name="save_location_title">Domyślna pamięć</string>
@@ -73,7 +73,7 @@
     <string name="save_list_question">Opuszczasz tworzenie spersonalizowanej listy. Czy chcesz zapisać zmiany?</string>
     <string name="action_help">Pomoc</string>
     <string name="dialog_change_title">Aktualności</string>
-    <string name="action_tonalita">Klucz</string>
+    <string name="action_tonalita">Tonacja</string>
     <string name="action_trasporta">Zmiana</string>
     <string name="action_reset_tonalita">Domyślne</string>
     <string name="action_trasporta_do">С / c</string>
@@ -88,11 +88,11 @@
     <string name="action_trasporta_la">A / a</string>
     <string name="action_trasporta_sib">B / b</string>
     <string name="action_trasporta_si">H / h</string>
-    <string name="dialog_save_tab">Czy chcesz zapisać klucz i próg?</string>
+    <string name="dialog_save_tab">Czy chcesz zapisać tonację i próg?</string>
     <string name="showcase_help_general">Możesz powtórzyć ten samouczek wybierając w menu opcję \"Pomoc\".</string>
-    <string name="tab_saved">Klucz zapisany</string>
+    <string name="tab_saved">Tonacja zapisana</string>
     <string name="barre_saved">Pozycja zapisanego progu</string>
-    <string name="tab_not_saved">Nie zmieniono klucza</string>
+    <string name="tab_not_saved">Nie zmieniono tonacji</string>
     <string name="barre_not_saved">Nie zmieniono  pozycji progu gitary</string>
     <string name="showcase_end_title">Koniec</string>
     <string name="list_added">Dodano do listy</string>
@@ -154,7 +154,7 @@
     <string name="title_trasporta_do">C</string>
     <string name="title_trasporta_dod">Cis</string>
     <string name="title_trasporta_re">D</string>
-    <string name="title_trasporta_mib">Eb</string>
+    <string name="title_trasporta_mib">Dis</string>
     <string name="title_trasporta_mi">E</string>
     <string name="title_trasporta_fa">F</string>
     <string name="title_trasporta_fad">Fis</string>
