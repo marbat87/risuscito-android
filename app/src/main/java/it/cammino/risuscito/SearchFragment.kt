@@ -170,6 +170,7 @@ class SearchFragment : Fragment() {
         }
 
         binding.moreOptions.setOnClickListener {
+            mPopupMenu.menu.findItem(R.id.advanced_search).isChecked = mViewModel.advancedSearch
             mPopupMenu.show()
         }
 

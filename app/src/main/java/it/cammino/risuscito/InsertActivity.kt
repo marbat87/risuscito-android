@@ -172,6 +172,8 @@ class InsertActivity : ThemeableActivity() {
         }
 
         binding.searchLayout.moreOptions.setOnClickListener {
+            mPopupMenu.menu.findItem(R.id.advanced_search).isChecked = mViewModel.advancedSearch
+            mPopupMenu.menu.findItem(R.id.consegnaty_only).isChecked = mViewModel.consegnatiOnly
             mPopupMenu.show()
         }
 
