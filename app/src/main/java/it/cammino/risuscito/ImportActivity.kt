@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -73,7 +74,13 @@ class ImportActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
+        Log.d(TAG, "attachBaseContext")
+        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
+    }
+
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        Log.d(TAG, "applyOverrideConfiguration")
+        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(overrideConfiguration))
     }
 
     companion object {

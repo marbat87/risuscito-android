@@ -107,8 +107,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         Log.d(TAG, "attachBaseContext")
-        super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
-        RisuscitoApplication.localeManager.setLocale(this)
+        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
+//        super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
+//        RisuscitoApplication.localeManager.setLocale(this)
         SplitCompat.install(this)
     }
 

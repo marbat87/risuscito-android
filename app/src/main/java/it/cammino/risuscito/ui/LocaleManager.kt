@@ -17,9 +17,10 @@ import it.cammino.risuscito.Utility
 import java.util.*
 
 
-class LocaleManager(context: Context) {
+class LocaleManager(val context: Context) {
 
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private var customScale = 0F
 
     init {
         Log.d(TAG, "init language: $language")
@@ -39,19 +40,47 @@ class LocaleManager(context: Context) {
             Log.d(TAG, "attachBaseContext - default language set: $mLanguage")
             persistLanguage(mLanguage)
         }
+
+        var returnScale = 0F
+        try {
+            val actualScale = context.resources.configuration.fontScale
+            Log.d(TAG, "actualScale: $actualScale")
+            val systemScale = Settings.System.getFloat(context.contentResolver, Settings.System.FONT_SCALE)
+            Log.d(TAG, "systemScale: $systemScale")
+            if (actualScale != systemScale) {
+                returnScale = systemScale
+            }
+        } catch (e: Settings.SettingNotFoundException) {
+            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
+        } catch (e: NullPointerException) {
+            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
+        }
+        customScale = returnScale
+
     }
 
     val language: String
         get() = prefs.getString(Utility.SYSTEM_LANGUAGE, "") ?: ""
 
-    fun setLocale(c: Context): Context {
-        return updateResources(c)
-    }
+//    fun setLocale(c: Context): Context {
+//        return updateResources(c)
+//    }
 
     fun persistLanguage(language: String) {
         prefs.edit {
             putString(Utility.SYSTEM_LANGUAGE, language)
         }
+    }
+
+    fun useCustomConfig(context: Context): Context {
+        Log.d(TAG, "useCustomConfig language: $language")
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = if (LUtils.hasJB()) Configuration() else Configuration(context.resources.configuration)
+        if (customScale > 0F)
+            config.fontScale = customScale
+        setSystemLocale(config, locale)
+        return context.updateConfiguration(config)
     }
 
     fun updateConfigurationIfSupported(overrideConfiguration: Configuration?): Configuration? {
@@ -63,31 +92,31 @@ class LocaleManager(context: Context) {
         return overrideConfiguration
     }
 
-    private fun updateResources(context: Context): Context {
-        Log.d(TAG, "updateResources language: $language")
-        val res = context.resources
-        val config = Configuration(res.configuration)
-        val locale = Locale(language)
-        Locale.setDefault(locale)
-
-        // font dimension
-        try {
-            val actualScale = config.fontScale
-            Log.d(TAG, "actualScale: $actualScale")
-            val systemScale = Settings.System.getFloat(context.contentResolver, Settings.System.FONT_SCALE)
-            Log.d(TAG, "systemScale: $systemScale")
-            if (actualScale != systemScale) {
-                config.fontScale = systemScale
-            }
-        } catch (e: Settings.SettingNotFoundException) {
-            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
-        } catch (e: NullPointerException) {
-            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
-        }
-
-        setSystemLocale(config, locale)
-        return context.updateConfiguration(config)
-    }
+//    private fun updateResources(context: Context): Context {
+//        Log.d(TAG, "updateResources language: $language")
+//        val res = context.resources
+//        val config = Configuration(res.configuration)
+//        val locale = Locale(language)
+//        Locale.setDefault(locale)
+//
+//        // font dimension
+//        try {
+//            val actualScale = config.fontScale
+//            Log.d(TAG, "actualScale: $actualScale")
+//            val systemScale = Settings.System.getFloat(context.contentResolver, Settings.System.FONT_SCALE)
+//            Log.d(TAG, "systemScale: $systemScale")
+//            if (actualScale != systemScale) {
+//                config.fontScale = systemScale
+//            }
+//        } catch (e: Settings.SettingNotFoundException) {
+//            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
+//        } catch (e: NullPointerException) {
+//            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
+//        }
+//
+//        setSystemLocale(config, locale)
+//        return context.updateConfiguration(config)
+//    }
 
     companion object {
 

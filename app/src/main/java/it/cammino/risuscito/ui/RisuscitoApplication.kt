@@ -40,7 +40,7 @@ class RisuscitoApplication : MultiDexApplication() {
 
     override fun attachBaseContext(base: Context) {
         localeManager = LocaleManager(base)
-        super.attachBaseContext(localeManager.setLocale(base))
+        super.attachBaseContext(localeManager.useCustomConfig(base))
     }
 
     companion object {

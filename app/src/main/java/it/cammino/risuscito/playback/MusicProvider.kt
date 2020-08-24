@@ -112,7 +112,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
 //            Log.d(TAG, "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, ""))
 
             var mNewBase = mContext
-            mNewBase = RisuscitoApplication.localeManager.setLocale(mNewBase)
+            mNewBase = RisuscitoApplication.localeManager.useCustomConfig(mNewBase)
 
             val art = decodeSampledBitmapFromResource(mNewBase.resources, R.drawable.ic_launcher_144dp, 320, 320)
             val artSmall = BitmapFactory.decodeResource(mNewBase.resources, R.mipmap.ic_launcher)
