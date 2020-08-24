@@ -72,7 +72,7 @@ android {
 
 val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.2.2"
-val materialDrawerVersion = "8.1.4"
+val materialDrawerVersion = "8.1.5"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.5"
 val iconicVersion = "5.0.3"
