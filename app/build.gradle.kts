@@ -71,7 +71,7 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.2.2"
+val fastAdapterVersion = "5.2.3"
 val materialDrawerVersion = "8.1.5"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.5"
@@ -81,16 +81,11 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.8.0")
     implementation("androidx.activity:activity-ktx:1.2.0-alpha08")
-    implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.core:core-ktx:1.3.1")
     implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
-    implementation("com.google.android.material:material:1.2.0")
     implementation("androidx.recyclerview:recyclerview:1.2.0-alpha05")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
-    implementation("androidx.drawerlayout:drawerlayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.customview:customview:1.1.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.media:media:1.2.0-beta01")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
@@ -130,7 +125,7 @@ dependencies {
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation("pub.devrel:easypermissions:3.0.0")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
-    implementation("com.github.turing-tech:MaterialScrollBar:13.3.2")
+    implementation("com.github.turing-tech:MaterialScrollBar:13.3.4")
     implementation("com.leinardi.android:speed-dial:3.1.1")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation("com.github.Ferfalk:SimpleSearchView:0.1.6")
