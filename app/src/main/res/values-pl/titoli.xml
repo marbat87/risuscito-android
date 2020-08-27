@@ -42,9 +42,9 @@
     <string name="jahve_tu_sei_mio_dio_title">Panie, tyś Bogiem mym (Iz 25, 1–8)</string>
     <string name="cantiamo_cantiamo_title">Śpiewajmy, śpiewajmy (Wj 15, 1–2)</string>
     <string name="giunga_la_mia_preghiera_title">Ps 119: Niech dotrze moja modlitwa do Ciebie</string>
-    <string name="guardate_come_e_bello_title">Ps 133: O jak pięknie, ile radości</string>
-    <string name="come_bello_come_da_gioia_title">Ps 133: Zobaczcie, jak jest piękna</string>
-    <string name="guardate_come_e_bello_gustate_title">Ps 133: Zobaczcie, jak jest pięknie</string>
+    <string name="guardate_come_e_bello_title">Ps 133: Zobaczcie, jak jest pięknie</string>
+    <string name="come_bello_come_da_gioia_title">Ps 133: O jak pięknie, ile radości</string>
+    <string name="guardate_come_e_bello_gustate_title">Ps 133: Zobaczcie, jak jest piękna</string>
     <string name="grazie_a_jahve_title">Ps 136: Panie, dzięki Ci</string>
     <string name="canto_giovani_fornace_I_title">Kantyk trzech młodzieńców w piecu ognistym (Dn 3, 52–57) (I część)</string>
     <string name="canto_giovani_fornace_II_title">Kantyk trzech młodzieńców w piecu ognistym (Dn 3, 57–88) (II część)</string>
@@ -120,7 +120,7 @@
     <string name="venite_a_me_voi_tutti_title">Przyjdźie do mnie wy wszyscy (Mt 11, 28–30)</string>
     <string name="a_te_si_deve_lode_in_sion_title">Ps 65: Ciebie, Panie, należy wielbić na Syjonie</string>
     <string name="se_signore_sono_rifugiato_title">Ps 11: Jeżeli w Panu znalazłem schronienie</string>
-    <string name="signore_annuncia_una_notizia_title">Ps 68: Pan potężny ogłasza dobrą nowinę (ww. 12–16.33.34</string>
+    <string name="signore_annuncia_una_notizia_title">Ps 68: Pan potężny ogłasza dobrą nowinę (ww. 12–16.33.34)</string>
     <string name="benedite_il_signore_title">Ps 134: Błogosławcie wszyscy Pana</string>
     <string name="figlie_di_gerusalemme_title">Córki jerozolimskie (Łk 23, 28.31.34.43.46) (Marsz żałobny)</string>
     <string name="ti_ho_manifestato_mio_peccato_title">Ps 32: Grzech mój, Panie, tobie wyznałem</string>
@@ -231,5 +231,5 @@
     <string name="messia_leone_vincere_title">Mesjasz, lew, by zwyciężać</string>
     <string name="come_pecora_che_vede_title">Jak owieczka, która widzi (Z hymnu Romana Melodosa)</string>
     <string name="e_paziente_title">Jest cierpliwy (Hymn do Ducha Świętego)</string>
-    <string name="inno_cristo_luce_title">Hymn do Chrystusa - światłości (1967)</string>
+    <string name="inno_cristo_luce_title">Inno a Cristo Luce (1967)</string>
 </resources>
