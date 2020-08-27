@@ -38,11 +38,11 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
-//    lintOptions {
+    lintOptions {
 //        isAbortOnError = false
 //        disable("PrivateResource")
-//        disable("MissingTranslation")
-//    }
+        disable("MissingTranslation")
+    }
 
     buildTypes {
         getByName("release") {
