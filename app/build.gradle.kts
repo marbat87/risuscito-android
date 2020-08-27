@@ -38,11 +38,11 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
-    lintOptions {
-        isAbortOnError = false
-        disable("PrivateResource")
-        disable("MissingTranslation")
-    }
+//    lintOptions {
+//        isAbortOnError = false
+//        disable("PrivateResource")
+//        disable("MissingTranslation")
+//    }
 
     buildTypes {
         getByName("release") {
@@ -60,9 +60,9 @@ android {
         jumboMode = true
     }
 
-    packagingOptions {
-        exclude("META-INF/library-core_release.kotlin_module")
-    }
+//    packagingOptions {
+//        exclude("META-INF/library-core_release.kotlin_module")
+//    }
 
     buildFeatures {
         viewBinding = true
@@ -122,7 +122,7 @@ dependencies {
     implementation("com.mikepenz:fastadapter-extensions-ui:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-binding:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
-    implementation("com.squareup.picasso:picasso:2.71828")
+    implementation("com.squareup.picasso:picasso:2.8")
     implementation("pub.devrel:easypermissions:3.0.0")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.4")
