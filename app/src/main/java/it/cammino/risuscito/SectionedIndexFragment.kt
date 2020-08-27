@@ -32,7 +32,7 @@ import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
-import it.cammino.risuscito.ui.LocaleManager
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -229,7 +229,7 @@ class SectionedIndexFragment : Fragment() {
                                 identifier = canti[i].idArgomento.toLong()
                                 subItems = mSubItems
 //                                subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
-                                subItems.sortWith(compareBy(Collator.getInstance(LocaleManager.getSystemLocale(resources))) { (it as? SimpleSubItem)?.title?.getText(requireContext()) })
+                                subItems.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubItem)?.title?.getText(requireContext()) })
                             }
                     )
                     mSubItems = LinkedList()
@@ -277,7 +277,7 @@ class SectionedIndexFragment : Fragment() {
                                 identifier = canti[i].idIndice.toLong()
                                 subItems = mSubItems
 //                                subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
-                                subItems.sortWith(compareBy(Collator.getInstance(LocaleManager.getSystemLocale(resources))) { (it as? SimpleSubItem)?.title?.getText(requireContext()) })
+                                subItems.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubItem)?.title?.getText(requireContext()) })
                             }
                     )
                     mSubItems = LinkedList()
@@ -288,7 +288,7 @@ class SectionedIndexFragment : Fragment() {
 
         var totListe = 0
 //        mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) }
-        mCantiViewModel.titoliList.sortWith(compareBy(Collator.getInstance(LocaleManager.getSystemLocale(resources))) { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) })
+        mCantiViewModel.titoliList.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) })
         mCantiViewModel.titoliList.forEach { (it as? SimpleSubExpandableItem)?.position = totListe++ }
         mAdapter.set(mCantiViewModel.titoliList)
         mAdapter.withSavedInstanceState(savedInstanceState)
