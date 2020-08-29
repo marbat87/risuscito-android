@@ -70,6 +70,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -1111,7 +1112,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             CommunityMaterial.Icon2.cmd_play).apply {
             colorInt = ContextCompat.getColor(
                     this@PaginaRenderActivity,
-                    R.color.text_color_secondary
+                    if (ThemeUtils.isDarkMode(this@PaginaRenderActivity)) R.color.secondary_text_default_material_dark else R.color.secondary_text_default_material_light
             )
             sizeDp = 24
             paddingDp = 2

@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp"
                     android:text="@string/list_title"
-                    android:textColor="@android:color/white" />
+                    android:textColor="?colorOnPrimary" />
 
                 <EditText
                     android:id="@+id/text_field_title"
@@ -53,7 +53,7 @@
                     android:inputType="text|textCapSentences"
                     android:maxLines="1"
                     android:scrollHorizontally="true"
-                    android:textColor="@android:color/white"
+                    android:textColor="?colorOnPrimary"
                     android:textColorHighlight="@color/ripple_color_light"
                     android:textCursorDrawable="@null"
                     android:textSize="30sp"
@@ -65,7 +65,7 @@
                 android:id="@+id/risuscito_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito"
+                android:theme="@style/ToolbarTheme"
                 risuscito:layout_collapseMode="pin"
                 risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 

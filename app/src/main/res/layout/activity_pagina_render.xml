@@ -13,11 +13,13 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/risuscito_toolbar"
+            style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito"
+            android:theme="@style/ToolbarTheme"
             risuscito:popupTheme="@style/RisuscitoToolbarPopup"
-            risuscito:title="@string/canto_title_activity" />
+            risuscito:title="@string/canto_title_activity"
+            risuscito:titleTextColor="?colorOnPrimary" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -150,7 +152,7 @@
                         android:maxHeight="1000dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"
-                        risuscito:labelBehavior="gone"/>
+                        risuscito:labelBehavior="gone" />
 
                     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
                         android:id="@+id/music_loadingbar"
@@ -180,7 +182,7 @@
                     android:paddingRight="@dimen/play_pause_padding"
                     android:soundEffectsEnabled="true"
                     android:visibility="gone"
-                    risuscito:iiv_color="?android:textColorSecondary"
+                    risuscito:iiv_color="@color/text_color_secondary"
                     risuscito:iiv_icon="cmd-play"
                     risuscito:iiv_padding="2dp"
                     risuscito:iiv_size="24dp" />
@@ -257,9 +259,9 @@
                 android:maxHeight="1000dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
+                android:stepSize="1.0"
                 android:valueFrom="0.0"
                 android:valueTo="100.0"
-                android:stepSize="1.0"
                 risuscito:labelBehavior="gone" />
 
             <com.mikepenz.iconics.view.IconicsImageView
@@ -274,7 +276,7 @@
                 android:paddingLeft="@dimen/button_playbar_padding"
                 android:paddingRight="@dimen/button_playbar_padding"
                 android:soundEffectsEnabled="true"
-                risuscito:iiv_color="?android:textColorSecondary"
+                risuscito:iiv_color="@color/text_color_secondary"
                 risuscito:iiv_icon="cmd-play-circle-outline"
                 risuscito:iiv_padding="2dp"
                 risuscito:iiv_size="48dp" />

@@ -28,5 +28,7 @@
     <color name="floating_background">@color/background_floating_material_dark</color>
     <color name="material_divider">#1FFFFFFF</color>
     <color name="tablet_statusbar_color">#000000</color>
+    <color name="text_color_on_primary_dark">#ffffff</color>
+    <color name="text_color_on_primary_light">#ffffff</color>
 
 </resources>

@@ -40,7 +40,7 @@ android {
 
     lintOptions {
 //        isAbortOnError = false
-//        disable("PrivateResource")
+        disable("PrivateResource")
         disable("MissingTranslation")
     }
 

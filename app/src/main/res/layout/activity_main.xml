@@ -24,11 +24,13 @@
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/risuscito_toolbar"
+                    style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito"
+                    android:theme="@style/ToolbarTheme"
                     risuscito:layout_scrollFlags="scroll|enterAlways"
-                    risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
+                    risuscito:popupTheme="@style/RisuscitoToolbarPopup"
+                    risuscito:titleTextColor="?colorOnPrimary" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"

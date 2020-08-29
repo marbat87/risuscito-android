@@ -5,10 +5,8 @@
         <item name="statusBarScrim">@android:color/black</item>
     </style>
 
-    <style name="Widget.AppCompat.ActionMode.Risuscito">
-        <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
-        <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
-        <item name="background">?colorSurface</item>
+    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
+        <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
 </resources>

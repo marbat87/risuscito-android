@@ -48,9 +48,10 @@
                 android:id="@+id/risuscito_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar.Risuscito"
+                android:theme="@style/ToolbarTheme"
                 risuscito:layout_collapseMode="pin"
-                risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
+                risuscito:popupTheme="@style/RisuscitoToolbarPopup"
+                risuscito:titleTextColor="?colorOnPrimary" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
