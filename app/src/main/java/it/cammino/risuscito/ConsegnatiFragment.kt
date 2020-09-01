@@ -1,9 +1,6 @@
 package it.cammino.risuscito
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -23,7 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -56,7 +52,6 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
-import it.cammino.risuscito.services.ConsegnatiSaverService
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -73,9 +68,9 @@ class ConsegnatiFragment : Fragment() {
     private val dialogViewModel: ListChoiceDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
-    private var selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
+    private val selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
     private lateinit var mPopupMenu: PopupMenu
-    private var selectExtension: SelectExtension<CheckableItem>? = null
+    private val selectExtension: SelectExtension<CheckableItem> = SelectExtension(selectableAdapter)
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
     private var mRegularFont: Typeface? = null
@@ -120,11 +115,11 @@ class ConsegnatiFragment : Fragment() {
             it.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.select_none -> {
-                        selectExtension?.deselect()
+                        selectExtension.deselect()
                         true
                     }
                     R.id.select_all -> {
-                        selectExtension?.select()
+                        selectExtension.select()
                         true
                     }
                     R.id.cancel_change -> {
@@ -201,8 +196,8 @@ class ConsegnatiFragment : Fragment() {
         binding.cantiRecycler.itemAnimator = SlideRightAlphaAnimator()
 
         // Creating new adapter object
-        selectExtension = SelectExtension(selectableAdapter)
-        selectExtension?.isSelectable = true
+//        selectExtension = SelectExtension(selectableAdapter)
+        selectExtension.isSelectable = true
         selectableAdapter.setHasStableIds(true)
 
         selectableAdapter.onPreClickListener = { _: View?, _: IAdapter<CheckableItem>, _: CheckableItem, position: Int ->
@@ -214,7 +209,7 @@ class ConsegnatiFragment : Fragment() {
         }
 
         selectableAdapter.addClickListener<CheckableRowItemBinding, CheckableItem>({ binding -> binding.checkBox }) { _, position, _, _ ->
-            selectExtension?.toggleSelection(position)
+            selectExtension.toggleSelection(position)
         }
 
         selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
@@ -283,12 +278,6 @@ class ConsegnatiFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        LocalBroadcastManager.getInstance(requireActivity())
-                .registerReceiver(
-                        positionBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED))
-        LocalBroadcastManager.getInstance(requireActivity())
-                .registerReceiver(
-                        completedBRec, IntentFilter(ConsegnatiSaverService.BROADCAST_SAVING_COMPLETED))
         binding.chooseRecycler.isVisible = mCantiViewModel.editMode
         enableBottombar(mCantiViewModel.editMode)
         binding.selectedView.isVisible = !mCantiViewModel.editMode
@@ -311,12 +300,6 @@ class ConsegnatiFragment : Fragment() {
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
             fabIntro()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(positionBRec)
-        LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(completedBRec)
     }
 
     override fun onDestroy() {
@@ -499,28 +482,7 @@ class ConsegnatiFragment : Fragment() {
                                 simpleDialogViewModel.handled = true
                                 mCantiViewModel.editMode = false
                                 backCallback?.isEnabled = false
-                                mMainActivity?.let { activity ->
-                                    ProgressDialogFragment.show(ProgressDialogFragment.Builder(
-                                            activity, CONSEGNATI_SAVING)
-                                            .content(R.string.save_consegnati_running)
-                                            .progressIndeterminate(false)
-                                            .progressMax(mCantiViewModel.titoliChoose.size),
-                                            requireActivity().supportFragmentManager)
-
-                                }
-                                val mSelected = selectExtension?.selectedItems
-                                val mSelectedId = mSelected?.mapTo(ArrayList()) { item -> item.id }
-
-                                //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
-                                mCantiViewModel.titoliChoose.forEach { item ->
-                                    if (item.isSelected)
-                                        if (mSelectedId?.any { i -> i == item.id } != true)
-                                            mSelectedId?.add(item.id)
-                                }
-
-                                val intent = Intent(requireActivity().applicationContext, ConsegnatiSaverService::class.java)
-                                intent.putIntegerArrayListExtra(ConsegnatiSaverService.IDS_CONSEGNATI, mSelectedId)
-                                ConsegnatiSaverService.enqueueWork(requireActivity().applicationContext, intent)
+                                lifecycleScope.launch { saveConsegnati() }
                             }
                         }
                     }
@@ -548,47 +510,52 @@ class ConsegnatiFragment : Fragment() {
                     }
             )
         }
-//        mCantiViewModel.titoliChoose = newList.sortedBy { item -> item.title?.getText(requireContext()) }
         mCantiViewModel.titoliChoose = newList.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
         mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose
         selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
     }
 
-    private val positionBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.d(javaClass.name, ConsegnatiSaverService.BROADCAST_SINGLE_COMPLETED)
-                Log.d(
-                        javaClass.name,
-                        "$ConsegnatiSaverService.DATA_DONE: ${intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0)}")
-                val fragment = ProgressDialogFragment.findVisible(
-                        mMainActivity, CONSEGNATI_SAVING)
-                fragment?.setProgress(intent.getIntExtra(ConsegnatiSaverService.DATA_DONE, 0))
-            } catch (e: IllegalArgumentException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            }
+    private suspend fun saveConsegnati() {
+        mMainActivity?.let { activity ->
+            ProgressDialogFragment.show(ProgressDialogFragment.Builder(
+                    activity, CONSEGNATI_SAVING)
+                    .content(R.string.save_consegnati_running)
+                    .progressIndeterminate(true),
+                    requireActivity().supportFragmentManager)
 
         }
-    }
 
-    private val completedBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.d(javaClass.name, "BROADCAST_SAVING_COMPLETED")
-                val fragment = ProgressDialogFragment.findVisible(
-                        mMainActivity, CONSEGNATI_SAVING)
-                fragment?.dismiss()
-                binding.chooseRecycler.isVisible = false
-                enableBottombar(false)
-                binding.selectedView.isVisible = true
-                enableFab(true)
-            } catch (e: IllegalArgumentException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            }
+        val mSelected = selectExtension.selectedItems
+        val mSelectedId = mSelected.mapTo(ArrayList()) { item -> item.id }
 
+        //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
+        mCantiViewModel.titoliChoose.forEach { item ->
+            if (item.isSelected)
+                if (!mSelectedId.any { i -> i == item.id })
+                    mSelectedId.add(item.id)
         }
+
+        var i = 0
+        val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
+        val consegnati = ArrayList<Consegnato>()
+        for (id in mSelectedId) {
+            val tempConsegnato = Consegnato()
+            tempConsegnato.idConsegnato = ++i
+            tempConsegnato.idCanto = id
+            tempConsegnato.numPassaggio = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.getNumPassaggio(id) }
+            consegnati.add(tempConsegnato)
+        }
+        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            mDao.emptyConsegnati()
+            mDao.insertConsegnati(consegnati)
+        }
+        val fragment = ProgressDialogFragment.findVisible(
+                mMainActivity, CONSEGNATI_SAVING)
+        fragment?.dismiss()
+        binding.chooseRecycler.isVisible = false
+        enableBottombar(false)
+        binding.selectedView.isVisible = true
+        enableFab(true)
     }
 
     companion object {
