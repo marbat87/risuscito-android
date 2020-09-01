@@ -51,7 +51,7 @@
                 android:theme="@style/ToolbarTheme"
                 risuscito:layout_collapseMode="pin"
                 risuscito:popupTheme="@style/RisuscitoToolbarPopup"
-                risuscito:titleTextColor="?colorOnPrimary" />
+                risuscito:titleTextColor="?colorOnPrimarySurface" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

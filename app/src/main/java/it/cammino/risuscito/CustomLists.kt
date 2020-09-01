@@ -24,6 +24,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -167,6 +168,7 @@ class CustomLists : Fragment() {
             paddingDp = 4
         }
         mMainActivity?.getFab()?.let { fab ->
+            val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
             TapTargetSequence(requireActivity())
                     .continueOnCancel(true)
                     .targets(
@@ -174,10 +176,10 @@ class CustomLists : Fragment() {
                                     fab,
                                     getString(R.string.showcase_listepers_title),
                                     getString(R.string.showcase_listepers_desc1))
-                                    .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                     .textTypeface(mRegularFont) // Specify a typeface for the text
-                                    .titleTextColor(R.color.primary_text_default_material_dark)
-                                    .textColor(R.color.secondary_text_default_material_dark)
+                                    .titleTextColorInt(colorOnPrimary)
+                                    .textColorInt(colorOnPrimary)
                                     .descriptionTextSize(15)
                                     .tintTarget(false) // Whether to tint the target view's color
                             ,
@@ -185,11 +187,11 @@ class CustomLists : Fragment() {
                                     fab,
                                     getString(R.string.showcase_listepers_title),
                                     getString(R.string.showcase_listepers_desc3))
-                                    .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                     .icon(doneDrawable)
                                     .textTypeface(mRegularFont) // Specify a typeface for the text
-                                    .titleTextColor(R.color.primary_text_default_material_dark)
-                                    .textColor(R.color.secondary_text_default_material_dark))
+                                    .titleTextColorInt(colorOnPrimary)
+                                    .textColorInt(colorOnPrimary))
                     .listener(
                             object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                                 override fun onSequenceFinish() {

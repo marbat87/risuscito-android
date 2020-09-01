@@ -81,6 +81,7 @@ import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -419,8 +420,8 @@ class MainActivity : ThemeableActivity() {
                             typeface = mMediumFont
                         }
                 )
-                onDrawerItemClickListener = { _, drawerItem, _ ->
-                    onDrawerItemClick(drawerItem)
+                onDrawerItemClickListener = { _, drawerItem, position ->
+                    onDrawerItemClick(drawerItem, position)
                 }
                 setSavedInstance(savedInstanceState)
             }
@@ -529,8 +530,8 @@ class MainActivity : ThemeableActivity() {
                             typeface = mMediumFont
                         }
                 )
-                onDrawerItemClickListener = { _, drawerItem, _ ->
-                    onDrawerItemClick(drawerItem)
+                onDrawerItemClickListener = { _, drawerItem, position ->
+                    onDrawerItemClick(drawerItem, position)
                 }
                 tintStatusBar = true
                 setSavedInstance(savedInstanceState)
@@ -542,7 +543,7 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
-    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>): Boolean {
+    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>, position: Int): Boolean {
         val fragment = when (drawerItem.identifier) {
             R.id.navigation_home.toLong() -> Risuscito()
             R.id.navigation_search.toLong() -> SearchFragment()
@@ -568,8 +569,16 @@ class MainActivity : ThemeableActivity() {
             }
         }
 
-        if (isTabletWithNoFixedDrawer) miniSliderView.setSelection(drawerItem.identifier)
-        return isTabletWithNoFixedDrawer
+        //FIX perchè cliccando sul MiniDrawer non si deseleziona la voce del drawer
+        //precedentemente selezionata
+        if (isTabletWithNoFixedDrawer) {
+            for (i in 0 until sliderView.adapter.itemCount) {
+                if (i != position)
+                    sliderView.selectExtension.deselect(i)
+            }
+        }
+
+        return false
     }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
@@ -858,7 +867,7 @@ class MainActivity : ThemeableActivity() {
         FirebaseAuth.getInstance().signOut()
         mSignInClient?.signOut()?.addOnCompleteListener {
             updateUI(false)
-            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
+//            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
             Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                     .show()
         }
@@ -869,7 +878,7 @@ class MainActivity : ThemeableActivity() {
         FirebaseAuth.getInstance().signOut()
         mSignInClient?.revokeAccess()?.addOnCompleteListener {
             updateUI(false)
-            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
+//            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
             Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                     .show()
         }
@@ -904,7 +913,7 @@ class MainActivity : ThemeableActivity() {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "firebaseAuthWithGoogle:success")
-                        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, true) }
+//                        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, true) }
                         if (mViewModel.showSnackbar) {
                             Toast.makeText(this, getString(R.string.connected_as, acct?.displayName), Toast.LENGTH_SHORT)
                                     .show()
@@ -979,7 +988,6 @@ class MainActivity : ThemeableActivity() {
                         }
                 )
             }
-            if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         } else {
             val profile = ProfileDrawerItem().apply {
                 nameText = ""
@@ -990,7 +998,11 @@ class MainActivity : ThemeableActivity() {
             }
             mAccountHeader.clear()
             mAccountHeader.addProfiles(profile)
-            if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
+
+        }
+        if (isTabletWithNoFixedDrawer) {
+            miniSliderView.onProfileClick()
+            miniSliderView.itemAdapter.getAdapterItem(0).isEnabled = signedIn
         }
         hideProgressDialog()
     }
@@ -1028,12 +1040,14 @@ class MainActivity : ThemeableActivity() {
                 finish()
             return
         }
-        if (isTabletWithNoFixedDrawer) {
-            miniSliderView.setSelection(R.id.navigation_home.toLong())
-            sliderView.setSelection(R.id.navigation_home.toLong())
+        if (isOnTablet) {
+            if (isTabletWithNoFixedDrawer) miniSliderView.setSelection(R.id.navigation_home.toLong())
+//            sliderView.setSelection(R.id.navigation_home.toLong())
+            sliderView.setSelectionAtPosition(1, true)
         }
         binding.toolbarLayout.setExpanded(true, true)
-        binding.slider?.setSelection(R.id.navigation_home.toLong())
+//        binding.slider?.setSelection(R.id.navigation_home.toLong())
+        binding.slider?.setSelectionAtPosition(1, true)
     }
 
     private fun showAccountRelatedDialog(tag: String) {

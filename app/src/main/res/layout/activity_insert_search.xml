@@ -20,7 +20,7 @@
             risuscito:layout_scrollFlags="scroll|enterAlways"
             risuscito:popupTheme="@style/RisuscitoToolbarPopup"
             risuscito:title="@string/title_activity_inserisci_titolo"
-            risuscito:titleTextColor="?colorOnPrimary" />
+            risuscito:titleTextColor="?colorOnPrimarySurface" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

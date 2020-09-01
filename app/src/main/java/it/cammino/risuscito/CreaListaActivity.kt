@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -435,6 +436,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
 
     private fun playIntro() {
         binding.fabCreaLista.show()
+        val colorOnPrimary = MaterialColors.getColor(this, R.attr.colorOnPrimary, TAG)
         TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
@@ -443,10 +445,10 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                                 getString(R.string.add_position),
                                 getString(R.string.showcase_add_pos_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .tintTarget(false)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
@@ -455,10 +457,10 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                                 getString(R.string.list_save_exit),
                                 getString(R.string.showcase_saveexit_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(2),
                         TapTarget.forToolbarMenuItem(
                                 binding.risuscitoToolbar,
@@ -466,10 +468,10 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                                 getString(R.string.showcase_end_title),
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(3))
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels

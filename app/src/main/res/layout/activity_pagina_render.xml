@@ -19,7 +19,7 @@
             android:theme="@style/ToolbarTheme"
             risuscito:popupTheme="@style/RisuscitoToolbarPopup"
             risuscito:title="@string/canto_title_activity"
-            risuscito:titleTextColor="?colorOnPrimary" />
+            risuscito:titleTextColor="?colorOnPrimarySurface" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

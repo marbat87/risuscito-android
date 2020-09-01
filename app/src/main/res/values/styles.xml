@@ -15,7 +15,7 @@
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment" tools:targetApi="JELLY_BEAN_MR1">viewStart</item>
         <item name="fontFamily">@font/googlesans_medium</item>
-        <item name="android:textColor">?colorSecondaryDark</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:textSize">14sp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
@@ -35,7 +35,7 @@
     </style>
 
     <style name="ActionBar.TitleText.Collapsed">
-        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:textColor">?colorOnPrimarySurface</item>
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
@@ -137,7 +137,7 @@
     </style>
 
     <style name="Widget.AppCompat.DrawerArrowToggle.Risuscito">
-        <item name="color">?colorOnPrimary</item>
+        <item name="color">?colorOnPrimarySurface</item>
     </style>
 
     <style name="Widget.MaterialDrawerStyle.Risuscito">

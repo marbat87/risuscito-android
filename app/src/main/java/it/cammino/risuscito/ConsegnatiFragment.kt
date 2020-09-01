@@ -32,6 +32,7 @@ import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.listeners.addClickListener
@@ -395,16 +396,17 @@ class ConsegnatiFragment : Fragment() {
 
     private fun fabIntro() {
         mMainActivity?.getFab()?.let { fab ->
+            val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
             TapTargetView.showFor(
                     requireActivity(), // `this` is an Activity
                     TapTarget.forView(
                             fab,
                             getString(R.string.title_activity_consegnati),
                             getString(R.string.showcase_consegnati_howto))
-                            .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                            .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                             .textTypeface(mRegularFont) // Specify a typeface for the text
-                            .titleTextColor(R.color.primary_text_default_material_dark)
-                            .textColor(R.color.secondary_text_default_material_dark)
+                            .titleTextColorInt(colorOnPrimary)
+                            .textColorInt(colorOnPrimary)
                             .tintTarget(false) // Whether to tint the target view's color
                     ,
                     object : TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
@@ -417,6 +419,7 @@ class ConsegnatiFragment : Fragment() {
     }
 
     private fun managerIntro() {
+        val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
         TapTargetSequence(requireActivity())
                 .continueOnCancel(true)
                 .targets(
@@ -425,19 +428,19 @@ class ConsegnatiFragment : Fragment() {
                                 R.id.confirm_changes,
                                 getString(R.string.title_activity_consegnati),
                                 getString(R.string.showcase_consegnati_confirm))
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark),
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary),
                         TapTarget.forToolbarMenuItem(
                                 mMainActivity?.activityBottomBar,
                                 R.id.cancel_change,
                                 getString(R.string.title_activity_consegnati),
                                 getString(R.string.showcase_consegnati_cancel))
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark))
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary))
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                             override fun onSequenceFinish() {

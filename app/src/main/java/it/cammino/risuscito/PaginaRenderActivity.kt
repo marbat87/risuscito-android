@@ -36,6 +36,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.files.fileChooser
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.leinardi.android.speeddial.SpeedDialActionItem
@@ -1158,6 +1159,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun playIntroSmall() {
         binding.musicControls.isVisible = true
+        val colorOnPrimary = MaterialColors.getColor(this, R.attr.colorOnPrimary, TAG)
         TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
@@ -1167,10 +1169,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 getString(R.string.action_tonalita),
                                 getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
                                 binding.risuscitoToolbar,
@@ -1178,30 +1180,30 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 getString(R.string.action_barre),
                                 getString(R.string.sc_barre_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(2),
                         TapTarget.forView(
                                 binding.playScroll,
                                 getString(R.string.sc_scroll_title),
                                 getString(R.string.sc_scroll_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(3),
                         TapTarget.forToolbarOverflow(
                                 binding.risuscitoToolbar,
                                 getString(R.string.showcase_end_title),
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(4))
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
@@ -1224,6 +1226,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun playIntroFull() {
         binding.musicControls.isVisible = true
+        val colorOnPrimary = MaterialColors.getColor(this, R.attr.colorOnPrimary, TAG)
         TapTargetSequence(this)
                 .continueOnCancel(true)
                 .targets(
@@ -1233,10 +1236,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 getString(R.string.action_tonalita),
                                 getString(R.string.sc_tonalita_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(1),
                         TapTarget.forToolbarMenuItem(
                                 binding.risuscitoToolbar,
@@ -1244,40 +1247,40 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 getString(R.string.action_barre),
                                 getString(R.string.sc_barre_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(2),
                         TapTarget.forView(
                                 binding.playSong,
                                 getString(R.string.sc_audio_title),
                                 getString(R.string.sc_audio_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(3),
                         TapTarget.forView(
                                 binding.playScroll,
                                 getString(R.string.sc_scroll_title),
                                 getString(R.string.sc_scroll_desc))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(4),
                         TapTarget.forToolbarOverflow(
                                 binding.risuscitoToolbar,
                                 getString(R.string.showcase_end_title),
                                 getString(R.string.showcase_help_general))
                                 // All options below are optional
-                                .targetCircleColorInt(Color.WHITE) // Specify a color for the target circle
+                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
                                 .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColor(R.color.primary_text_default_material_dark)
-                                .textColor(R.color.secondary_text_default_material_dark)
+                                .titleTextColorInt(colorOnPrimary)
+                                .textColorInt(colorOnPrimary)
                                 .id(5))
                 .listener(
                         object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels

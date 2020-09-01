@@ -29,7 +29,7 @@
                     android:theme="@style/ToolbarTheme"
                     risuscito:layout_scrollFlags="scroll|enterAlways"
                     risuscito:popupTheme="@style/RisuscitoToolbarPopup"
-                    risuscito:titleTextColor="?colorOnPrimary" />
+                    risuscito:titleTextColor="?colorOnPrimarySurface" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"
