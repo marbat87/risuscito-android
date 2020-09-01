@@ -36,6 +36,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.Collator
@@ -43,11 +44,11 @@ import java.text.Collator
 class FavoritesFragment : Fragment() {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
     private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
     private var _binding: ActivityFavouritesBinding? = null
@@ -74,8 +75,6 @@ class FavoritesFragment : Fragment() {
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableBottombar(false)
         mMainActivity?.enableFab(false)
-
-        mLUtils = LUtils.getInstance(requireActivity())
 
         if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.PREFERITI_OPEN, false)) {
@@ -116,7 +115,7 @@ class FavoritesFragment : Fragment() {
                         // lancia l'activity che visualizza il canto passando il parametro creato
                         val intent = Intent(activity, PaginaRenderActivity::class.java)
                         intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                        mLUtils?.startActivityWithTransition(intent)
+                        activityViewModel.mLUtils.startActivityWithTransition(intent)
                         consume = true
                     }
                     consume
@@ -125,7 +124,7 @@ class FavoritesFragment : Fragment() {
         cantoAdapter.onPreLongClickListener =
                 { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
                     if (mMainActivity?.actionMode == null) {
-                        if (mMainActivity?.isOnTablet != true)
+                        if (!activityViewModel.isOnTablet)
                             mMainActivity?.expandToolbar()
                         cantoAdapter.getAdapterItem(position).isSelected = true
                         cantoAdapter.notifyAdapterItemChanged(position)
@@ -143,8 +142,8 @@ class FavoritesFragment : Fragment() {
         cantoAdapter.setHasStableIds(true)
 
         binding.favouritesList.adapter = cantoAdapter
-        val llm = if (mMainActivity?.isGridLayout == true)
-            GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
+        val llm = if (activityViewModel.isGridLayout)
+            GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)
         binding.favouritesList.layoutManager = llm

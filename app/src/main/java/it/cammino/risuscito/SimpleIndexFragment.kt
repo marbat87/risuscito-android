@@ -30,6 +30,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -44,10 +45,10 @@ class SimpleIndexFragment : Fragment() {
         })
     }
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
     private lateinit var mAdapter: FastScrollIndicatorAdapter
     private var listePersonalizzate: List<ListaPers>? = null
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
     private var mActivity: MainActivity? = null
 
@@ -75,7 +76,6 @@ class SimpleIndexFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mLUtils = LUtils.getInstance(requireActivity())
         mAdapter = FastScrollIndicatorAdapter(mCantiViewModel.tipoLista, requireContext())
 
         subscribeUiChanges()
@@ -90,7 +90,7 @@ class SimpleIndexFragment : Fragment() {
                         Utility.PAGINA to item.source?.getText(requireContext()),
                         Utility.ID_CANTO to item.id
                 ))
-                mLUtils?.startActivityWithTransition(intent)
+                activityViewModel.mLUtils.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -108,11 +108,11 @@ class SimpleIndexFragment : Fragment() {
 
         mAdapter.setHasStableIds(true)
         val llm = LinearLayoutManager(context)
-        val glm = GridLayoutManager(context, if (mActivity?.hasThreeColumns == true) 3 else 2)
-        binding.cantiList.layoutManager = if (mActivity?.isGridLayout == true) glm else llm
+        val glm = GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
+        binding.cantiList.layoutManager = if (activityViewModel.isGridLayout) glm else llm
         binding.cantiList.setHasFixedSize(true)
         binding.cantiList.adapter = mAdapter
-        val insetDivider = DividerItemDecoration(requireContext(), (if (mActivity?.isGridLayout == true) glm else llm).orientation)
+        val insetDivider = DividerItemDecoration(requireContext(), (if (activityViewModel.isGridLayout) glm else llm).orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         binding.cantiList.addItemDecoration(insetDivider)
         binding.dragScrollBar.setRecyclerView(binding.cantiList)

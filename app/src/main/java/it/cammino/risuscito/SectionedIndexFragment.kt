@@ -34,6 +34,7 @@ import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -50,9 +51,9 @@ class SectionedIndexFragment : Fragment() {
         })
     }
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
     private var listePersonalizzate: List<ListaPers>? = null
-    private var mLUtils: LUtils? = null
     private val mAdapter: GenericFastItemAdapter = FastItemAdapter()
     private var llm: LinearLayoutManager? = null
     private var glm: GridLayoutManager? = null
@@ -83,8 +84,6 @@ class SectionedIndexFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mLUtils = LUtils.getInstance(requireActivity())
-
         val itemExpandableExtension = mAdapter.getExpandableExtension()
         itemExpandableExtension.isOnlyOneExpandedItem = true
 
@@ -94,7 +93,7 @@ class SectionedIndexFragment : Fragment() {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(Utility.PAGINA to (item as SimpleSubItem).source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                mLUtils?.startActivityWithTransition(intent)
+                activityViewModel.mLUtils.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -115,7 +114,7 @@ class SectionedIndexFragment : Fragment() {
             if (item is SimpleSubExpandableItem) {
                 Log.i(TAG, "item.position ${item.position}")
                 if (!item.isExpanded) {
-                    if (mActivity?.isGridLayout == true)
+                    if (activityViewModel.isGridLayout)
                         glm?.scrollToPositionWithOffset(
                                 item.position, 0)
                     else
@@ -126,12 +125,12 @@ class SectionedIndexFragment : Fragment() {
             false
         }
 
-        if (mActivity?.isGridLayout == true) {
-            glm = GridLayoutManager(context, if (mActivity?.hasThreeColumns == true) 3 else 2)
+        if (activityViewModel.isGridLayout) {
+            glm = GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
             glm?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return when (mAdapter.getItemViewType(position)) {
-                        R.id.fastadapter_expandable_item_id -> if (mActivity?.hasThreeColumns == true) 3 else 2
+                        R.id.fastadapter_expandable_item_id -> if (activityViewModel.hasThreeColumns) 3 else 2
                         R.id.fastadapter_sub_item_id -> 1
                         else -> -1
                     }
@@ -217,7 +216,7 @@ class SectionedIndexFragment : Fragment() {
                                 totItems = totCanti
                                 onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                     if (!item.isExpanded) {
-                                        if (mActivity?.isGridLayout == true)
+                                        if (activityViewModel.isGridLayout)
                                             glm?.scrollToPositionWithOffset(
                                                     item.position, 0)
                                         else
@@ -265,7 +264,7 @@ class SectionedIndexFragment : Fragment() {
                                 totItems = totCanti
                                 onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                     if (!item.isExpanded) {
-                                        if (mActivity?.isGridLayout == true)
+                                        if (activityViewModel.isGridLayout)
                                             glm?.scrollToPositionWithOffset(
                                                     item.position, 0)
                                         else

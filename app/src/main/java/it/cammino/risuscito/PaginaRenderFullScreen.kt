@@ -46,13 +46,10 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             mHandler.postDelayed(this, 700)
         }
     }
-    private var mLUtils: LUtils? = null
-
     private lateinit var binding: ActivityPaginaRenderFullscreenBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mLUtils = LUtils.getInstance(this)
-        mLUtils?.goFullscreen()
+        mViewModel.mLUtils.goFullscreen()
         super.onCreate(savedInstanceState)
         binding = ActivityPaginaRenderFullscreenBinding.inflate(layoutInflater)
         setContentView(binding.root)

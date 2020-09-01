@@ -16,7 +16,8 @@
         <item name="colorSecondaryVariant">@color/theme_accent_dark</item>
         <item name="colorOnPrimary">@color/text_color_on_primary_light</item>
         <item name="colorOnPrimarySurface">@color/text_color_on_primary_surface_light</item>
-        <item name="colorOnSecondary">@android:color/black</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_background</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_light</item>
 
         <item name="customSelector">@drawable/custom_list_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
@@ -1866,6 +1867,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.DeepPurple">
@@ -1874,6 +1876,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.DeepPurple">
@@ -1882,6 +1885,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.DeepPurple">
@@ -1890,6 +1894,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.DeepPurple">
@@ -1898,6 +1903,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.DeepPurple">
@@ -1906,6 +1912,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.DeepPurple">
@@ -1914,6 +1921,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.DeepPurple">
@@ -1922,6 +1930,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.DeepPurple">
@@ -1930,6 +1939,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.DeepPurple">
@@ -1938,6 +1948,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.DeepPurple">
@@ -1946,6 +1957,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.DeepPurple">
@@ -1954,6 +1966,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.DeepPurple">
@@ -1962,6 +1975,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.DeepPurple">
@@ -1970,6 +1984,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.DeepPurple">
@@ -1978,6 +1993,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.DeepPurple">
@@ -1986,6 +2002,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.DeepPurple">
@@ -1994,6 +2011,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.DeepPurple">
@@ -2002,6 +2020,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.DeepPurple">
@@ -2010,6 +2029,7 @@
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
         <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
         <item name="colorOnSecondary">@android:color/white</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
 

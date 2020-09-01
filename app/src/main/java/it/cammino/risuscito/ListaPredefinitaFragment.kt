@@ -36,6 +36,7 @@ import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,6 +48,7 @@ class ListaPredefinitaFragment : Fragment() {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
         })
     }
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
     private var posizioneDaCanc: Int = 0
     private var idDaCanc: Int = 0
@@ -59,7 +61,6 @@ class ListaPredefinitaFragment : Fragment() {
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
-    private var mLUtils: LUtils? = null
 
     private var _binding: ActivityListaPersonalizzataBinding? = null
 
@@ -82,7 +83,6 @@ class ListaPredefinitaFragment : Fragment() {
 
         mMainActivity = activity as? MainActivity
 
-        mLUtils = LUtils.getInstance(requireActivity())
         mSwhitchMode = false
 
         // Creating new adapter object
@@ -161,7 +161,7 @@ class ListaPredefinitaFragment : Fragment() {
         val parent = view.parent.parent as? View
         longclickedPos = Integer.valueOf(parent?.findViewById<TextView>(R.id.generic_tag)?.text.toString())
         longClickedChild = Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
-        if (mMainActivity?.isOnTablet != true)
+        if (!activityViewModel.isOnTablet)
             mMainActivity?.expandToolbar()
         startCab()
     }
@@ -449,7 +449,7 @@ class ListaPredefinitaFragment : Fragment() {
                         val intent = Intent(activity, PaginaRenderActivity::class.java)
                         intent.putExtras(bundleOf(Utility.PAGINA to v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
                                 Utility.ID_CANTO to Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())))
-                        mLUtils?.startActivityWithTransition(intent)
+                        activityViewModel.mLUtils.startActivityWithTransition(intent)
                     }
                 else {
                     actionModeOk = true

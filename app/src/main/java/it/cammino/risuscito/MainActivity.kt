@@ -79,9 +79,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
-import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -89,21 +87,12 @@ import kotlin.math.max
 import kotlin.math.min
 
 class MainActivity : ThemeableActivity() {
-    private val mViewModel: MainActivityViewModel by viewModels()
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
     private lateinit var profileIcon: IconicsDrawable
-    private lateinit var mLUtils: LUtils
     private lateinit var mAccountHeader: AccountHeaderView
     private lateinit var miniSliderView: MiniDrawerSliderView
     private lateinit var sliderView: MaterialDrawerSliderView
     private lateinit var crossFader: Crossfader<*>
-    var hasThreeColumns: Boolean = false
-        private set
-    var isGridLayout: Boolean = false
-        private set
-    private var isLandscape: Boolean = false
-    private var isTabletWithFixedDrawer: Boolean = false
-    private var isTabletWithNoFixedDrawer: Boolean = false
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
     private lateinit var auth: FirebaseAuth
@@ -140,7 +129,7 @@ class MainActivity : ThemeableActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.hasNavDrawer = true
+        hasNavDrawer = true
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -150,13 +139,11 @@ class MainActivity : ThemeableActivity() {
                 binding.searchView.onBackPressed() -> {
                 }
                 binding.fabPager.isOpen -> binding.fabPager.close()
-                isTabletWithNoFixedDrawer && crossFader.isCrossFaded() -> crossFader.crossFade()
-                !isOnTablet && (binding.drawer as? DrawerLayout)?.isDrawerOpen(START) == true -> (binding.drawer as? DrawerLayout)?.closeDrawer(START)
+                mViewModel.isTabletWithNoFixedDrawer && crossFader.isCrossFaded() -> crossFader.crossFade()
+                !mViewModel.isOnTablet && (binding.drawer as? DrawerLayout)?.isDrawerOpen(START) == true -> (binding.drawer as? DrawerLayout)?.closeDrawer(START)
                 else -> backToHome(true)
             }
         }
-
-        mLUtils = LUtils.getInstance(this)
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
@@ -172,17 +159,6 @@ class MainActivity : ThemeableActivity() {
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
             lifecycleScope.launch { translate() }
         }
-
-        hasThreeColumns = mLUtils.hasThreeColumns
-        Log.d(TAG, "onCreate: hasThreeColumns = $hasThreeColumns")
-        isGridLayout = mLUtils.isGridLayout
-        Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
-        isLandscape = mLUtils.isLandscape
-        Log.d(TAG, "onCreate: isLandscape = $isLandscape")
-        isTabletWithFixedDrawer = isOnTablet && isLandscape
-        Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithFixedDrawer")
-        isTabletWithNoFixedDrawer = isOnTablet && !isLandscape
-        Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithNoFixedDrawer")
 
         setupNavDrawer(savedInstanceState)
 
@@ -320,7 +296,7 @@ class MainActivity : ThemeableActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        binding.fabPager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabPager.expansionMode = if (mViewModel.mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
@@ -359,7 +335,7 @@ class MainActivity : ThemeableActivity() {
             withSavedInstance(savedInstanceState)
         }
 
-        if (isOnTablet) {
+        if (mViewModel.isOnTablet) {
             sliderView = MaterialDrawerSliderView(this).apply {
                 accountHeader = mAccountHeader
                 customWidth = MATCH_PARENT
@@ -429,7 +405,7 @@ class MainActivity : ThemeableActivity() {
             if (savedInstanceState == null)
                 sliderView.setSelectionAtPosition(1, false)
 
-            if (isTabletWithFixedDrawer) {
+            if (mViewModel.isTabletWithFixedDrawer) {
                 binding.fixedDrawerContent?.addView(sliderView)
             } else {
                 miniSliderView = MiniDrawerSliderView(this).apply {
@@ -571,7 +547,7 @@ class MainActivity : ThemeableActivity() {
 
         //FIX perchè cliccando sul MiniDrawer non si deseleziona la voce del drawer
         //precedentemente selezionata
-        if (isTabletWithNoFixedDrawer) {
+        if (mViewModel.isTabletWithNoFixedDrawer) {
             for (i in 0 until sliderView.adapter.itemCount) {
                 if (i != position)
                     sliderView.selectExtension.deselect(i)
@@ -708,7 +684,7 @@ class MainActivity : ThemeableActivity() {
         enableFab(false)
         binding.fabPager.setMainFabClosedDrawable(icon)
         binding.fabPager.clearActionItems()
-        binding.fabPager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabPager.expansionMode = if (mViewModel.mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         enableFab(true)
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
@@ -847,9 +823,9 @@ class MainActivity : ThemeableActivity() {
     fun enableBottombar(enabled: Boolean) {
         Log.d(TAG, "enableBottombar - enabled: $enabled")
         if (enabled)
-            mLUtils.animateIn(binding.bottomBar)
+            mViewModel.mLUtils.animateIn(binding.bottomBar)
         else
-            mLUtils.animateOut(binding.bottomBar)
+            mViewModel.mLUtils.animateOut(binding.bottomBar)
     }
 
     // [START signIn]
@@ -864,10 +840,10 @@ class MainActivity : ThemeableActivity() {
 
     // [START signOut]
     private fun signOut() {
+        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
         mSignInClient?.signOut()?.addOnCompleteListener {
             updateUI(false)
-//            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
             Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                     .show()
         }
@@ -875,10 +851,10 @@ class MainActivity : ThemeableActivity() {
 
     // [START revokeAccess]
     private fun revokeAccess() {
+        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
         mSignInClient?.revokeAccess()?.addOnCompleteListener {
             updateUI(false)
-//            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
             Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                     .show()
         }
@@ -894,11 +870,13 @@ class MainActivity : ThemeableActivity() {
             firebaseAuthWithGoogle()
         } else {
             // Sign in failed, handle failure and update UI
-            Toast.makeText(this, getString(
-                    R.string.login_failed,
-                    -1,
-                    task.exception?.localizedMessage), Toast.LENGTH_SHORT)
-                    .show()
+            Log.w(TAG, "handleSignInResult:failure", task.exception)
+            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Utility.SIGN_IN_REQUESTED, false))
+                Toast.makeText(this, getString(
+                        R.string.login_failed,
+                        -1,
+                        task.exception?.localizedMessage), Toast.LENGTH_SHORT)
+                        .show()
             acct = null
             updateUI(false)
         }
@@ -923,21 +901,21 @@ class MainActivity : ThemeableActivity() {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
-                        Toast.makeText(this, getString(
-                                R.string.login_failed,
-                                -1,
-                                task.exception?.localizedMessage), Toast.LENGTH_SHORT)
-                                .show()
+                        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Utility.SIGN_IN_REQUESTED, false))
+                            Toast.makeText(this, getString(
+                                    R.string.login_failed,
+                                    -1,
+                                    task.exception?.localizedMessage), Toast.LENGTH_SHORT)
+                                    .show()
                     }
                 }
     }
 
     private fun updateUI(signedIn: Boolean) {
+        mViewModel.signedIn.value = signedIn
         PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, signedIn) }
-        val intentBroadcast = Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE)
-        Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn)
-        intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+        if (signedIn)
+            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
         if (signedIn) {
             val profile: IProfile
             val profilePhoto = acct?.photoUrl
@@ -1000,7 +978,7 @@ class MainActivity : ThemeableActivity() {
             mAccountHeader.addProfiles(profile)
 
         }
-        if (isTabletWithNoFixedDrawer) {
+        if (mViewModel.isTabletWithNoFixedDrawer) {
             miniSliderView.onProfileClick()
             miniSliderView.itemAdapter.getAdapterItem(0).isEnabled = signedIn
         }
@@ -1015,13 +993,9 @@ class MainActivity : ThemeableActivity() {
         binding.loadingBar.isVisible = false
     }
 
-    fun setShowSnackbar() {
-        this.mViewModel.showSnackbar = true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected: " + item.itemId)
-        if (isTabletWithNoFixedDrawer && item.itemId == android.R.id.home) {
+        if (mViewModel.isTabletWithNoFixedDrawer && item.itemId == android.R.id.home) {
             crossFader.crossFade()
             return true
         }
@@ -1040,13 +1014,11 @@ class MainActivity : ThemeableActivity() {
                 finish()
             return
         }
-        if (isOnTablet) {
-            if (isTabletWithNoFixedDrawer) miniSliderView.setSelection(R.id.navigation_home.toLong())
-//            sliderView.setSelection(R.id.navigation_home.toLong())
+        if (mViewModel.isOnTablet) {
+            if (mViewModel.isTabletWithNoFixedDrawer) miniSliderView.setSelection(R.id.navigation_home.toLong())
             sliderView.setSelectionAtPosition(1, true)
         }
         binding.toolbarLayout.setExpanded(true, true)
-//        binding.slider?.setSelection(R.id.navigation_home.toLong())
         binding.slider?.setSelectionAtPosition(1, true)
     }
 

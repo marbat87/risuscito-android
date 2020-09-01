@@ -32,6 +32,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -49,13 +50,13 @@ class SearchFragment : Fragment() {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
     private var job: Job = Job()
 
     private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
 
     private var listePersonalizzate: List<ListaPers>? = null
-    private var mLUtils: LUtils? = null
 
     private var mLastClickTime: Long = 0
     private var mMainActivity: MainActivity? = null
@@ -104,8 +105,6 @@ class SearchFragment : Fragment() {
             FirebaseCrashlytics.getInstance().recordException(e)
         }
 
-        mLUtils = LUtils.getInstance(requireActivity())
-
         lifecycleScope.launch(Dispatchers.IO) { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
 
         subscribeUiCanti()
@@ -118,7 +117,7 @@ class SearchFragment : Fragment() {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(requireActivity().applicationContext, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                mLUtils?.startActivityWithTransition(intent)
+                activityViewModel.mLUtils.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -133,8 +132,8 @@ class SearchFragment : Fragment() {
         cantoAdapter.setHasStableIds(true)
 
         binding.matchedList.adapter = cantoAdapter
-        val llm = if (mMainActivity?.isGridLayout == true)
-            GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
+        val llm = if (activityViewModel.isGridLayout)
+            GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)
         binding.matchedList.layoutManager = llm

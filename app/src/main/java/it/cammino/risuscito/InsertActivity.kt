@@ -49,7 +49,6 @@ class InsertActivity : ThemeableActivity() {
 
     private val cantoAdapter: FastItemAdapter<InsertItem> = FastItemAdapter()
 
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
     private var listaPredefinita: Int = 0
     private var idLista: Int = 0
@@ -58,7 +57,7 @@ class InsertActivity : ThemeableActivity() {
 
     private var job: Job = Job()
 
-    private val mViewModel: SimpleIndexViewModel by viewModels {
+    private val simpleIndexViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 3) })
     }
 
@@ -81,12 +80,12 @@ class InsertActivity : ThemeableActivity() {
         if (savedInstanceState == null) {
             val pref = PreferenceManager.getDefaultSharedPreferences(this)
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
-            mViewModel.advancedSearch = currentItem != 0
+            simpleIndexViewModel.advancedSearch = currentItem != 0
         }
 
         try {
             val inputStream: InputStream = resources.openRawResource(R.raw.fileout)
-            mViewModel.aTexts = CantiXmlParser().parse(inputStream)
+            simpleIndexViewModel.aTexts = CantiXmlParser().parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {
             Log.e(TAG, "Error:", e)
@@ -96,9 +95,7 @@ class InsertActivity : ThemeableActivity() {
             FirebaseCrashlytics.getInstance().recordException(e)
         }
 
-        mLUtils = LUtils.getInstance(this)
-
-        binding.searchLayout.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+        binding.searchLayout.textBoxRicerca.hint = if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
 
         cantoAdapter.onClickListener = { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
             var consume = false
@@ -119,17 +116,17 @@ class InsertActivity : ThemeableActivity() {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(applicationContext, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(this@InsertActivity), Utility.ID_CANTO to item.id))
-                mLUtils?.startActivityWithTransition(intent)
+                mViewModel.mLUtils.startActivityWithTransition(intent)
             }
         }
 
         cantoAdapter.setHasStableIds(true)
 
         binding.searchLayout.matchedList.adapter = cantoAdapter
-        val glm = GridLayoutManager(this, if (mLUtils?.hasThreeColumns == true) 3 else 2)
+        val glm = GridLayoutManager(this, if (mViewModel.hasThreeColumns) 3 else 2)
         val llm = LinearLayoutManager(this)
-        binding.searchLayout.matchedList.layoutManager = if (mLUtils?.isGridLayout == true) glm else llm
-        val insetDivider = DividerItemDecoration(this, if (mLUtils?.isGridLayout == true) glm.orientation else llm.orientation)
+        binding.searchLayout.matchedList.layoutManager = if (mViewModel.isGridLayout) glm else llm
+        val insetDivider = DividerItemDecoration(this, if (mViewModel.isGridLayout) glm.orientation else llm.orientation)
         ContextCompat.getDrawable(this, R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         binding.searchLayout.matchedList.addItemDecoration(insetDivider)
 
@@ -155,15 +152,15 @@ class InsertActivity : ThemeableActivity() {
             when (it.itemId) {
                 R.id.advanced_search -> {
                     it.isChecked = !it.isChecked
-                    mViewModel.advancedSearch = it.isChecked
-                    binding.searchLayout.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+                    simpleIndexViewModel.advancedSearch = it.isChecked
+                    binding.searchLayout.textBoxRicerca.hint = if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
                     job.cancel()
                     ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
                     true
                 }
                 R.id.consegnaty_only -> {
                     it.isChecked = !it.isChecked
-                    mViewModel.consegnatiOnly = it.isChecked
+                    simpleIndexViewModel.consegnatiOnly = it.isChecked
                     job.cancel()
                     ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
                     true
@@ -173,8 +170,8 @@ class InsertActivity : ThemeableActivity() {
         }
 
         binding.searchLayout.moreOptions.setOnClickListener {
-            mPopupMenu.menu.findItem(R.id.advanced_search).isChecked = mViewModel.advancedSearch
-            mPopupMenu.menu.findItem(R.id.consegnaty_only).isChecked = mViewModel.consegnatiOnly
+            mPopupMenu.menu.findItem(R.id.advanced_search).isChecked = simpleIndexViewModel.advancedSearch
+            mPopupMenu.menu.findItem(R.id.consegnaty_only).isChecked = simpleIndexViewModel.consegnatiOnly
             mPopupMenu.show()
         }
 
@@ -213,12 +210,12 @@ class InsertActivity : ThemeableActivity() {
                 val titoliResult = ArrayList<InsertItem>()
 
                 Log.d(TAG, "performInsertSearch STRINGA: $s")
-                Log.d(TAG, "performInsertSearch ADVANCED: ${mViewModel.advancedSearch}")
-                Log.d(TAG, "performInsertSearch CONSEGNATI ONLY: ${mViewModel.consegnatiOnly}")
-                if (mViewModel.advancedSearch) {
+                Log.d(TAG, "performInsertSearch ADVANCED: ${simpleIndexViewModel.advancedSearch}")
+                Log.d(TAG, "performInsertSearch CONSEGNATI ONLY: ${simpleIndexViewModel.consegnatiOnly}")
+                if (simpleIndexViewModel.advancedSearch) {
                     val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-                    for (aText in mViewModel.aTexts) {
+                    for (aText in simpleIndexViewModel.aTexts) {
                         if (!isActive) return@launch
 
                         if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
@@ -238,11 +235,10 @@ class InsertActivity : ThemeableActivity() {
 
                         if (found) {
                             Log.d(TAG, "aText[0]: ${aText[0]}")
-//                            mViewModel.titoliInsert.sortedBy { it.title?.getText(applicationContext) }
-                            mViewModel.titoliInsert
+                            simpleIndexViewModel.titoliInsert
                                     .filter {
                                         (aText[0]
-                                                ?: "") == it.undecodedSource && (!mViewModel.consegnatiOnly || it.consegnato == 1)
+                                                ?: "") == it.undecodedSource && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
                                     }
                                     .forEach {
                                         if (!isActive) return@launch
@@ -254,11 +250,10 @@ class InsertActivity : ThemeableActivity() {
                 } else {
                     val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(resources))
                     Log.d(TAG, "performInsertSearch onTextChanged: stringa $stringa")
-//                    mViewModel.titoliInsert.sortedBy { it.title?.getText(applicationContext) }
-                    mViewModel.titoliInsert
+                    simpleIndexViewModel.titoliInsert
                             .filter {
                                 Utility.removeAccents(it.title?.getText(applicationContext)
-                                        ?: "").toLowerCase(getSystemLocale(resources)).contains(stringa) && (!mViewModel.consegnatiOnly || it.consegnato == 1)
+                                        ?: "").toLowerCase(getSystemLocale(resources)).contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
                             }
                             .forEach {
                                 if (!isActive) return@launch
@@ -283,9 +278,8 @@ class InsertActivity : ThemeableActivity() {
     }
 
     private fun subscribeObservers() {
-        mViewModel.insertItemsResult?.observe(owner = this) { canti ->
-//            mViewModel.titoliInsert = canti.sortedBy { it.title?.getText(this) }
-            mViewModel.titoliInsert = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(this) })
+        simpleIndexViewModel.insertItemsResult?.observe(owner = this) { canti ->
+            simpleIndexViewModel.titoliInsert = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(this) })
         }
 
     }

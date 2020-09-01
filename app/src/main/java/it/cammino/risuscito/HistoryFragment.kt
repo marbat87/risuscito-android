@@ -35,6 +35,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -42,13 +43,13 @@ class HistoryFragment : Fragment() {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
     private val cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleHistoryItem>? = null
 
     private var actionModeOk: Boolean = false
 
     private var mMainActivity: MainActivity? = null
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
     private var _binding: LayoutHistoryBinding? = null
@@ -75,8 +76,6 @@ class HistoryFragment : Fragment() {
         mMainActivity?.enableBottombar(false)
         mMainActivity?.enableFab(false)
         mMainActivity?.setTabVisible(false)
-
-        mLUtils = LUtils.getInstance(requireActivity())
 
         if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.HISTORY_OPEN, false)) {
@@ -115,7 +114,7 @@ class HistoryFragment : Fragment() {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                mLUtils?.startActivityWithTransition(intent)
+                activityViewModel.mLUtils.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -123,7 +122,7 @@ class HistoryFragment : Fragment() {
 
         cantoAdapter.onPreLongClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
             if (mMainActivity?.actionMode == null) {
-                if (mMainActivity?.isOnTablet != true)
+                if (!activityViewModel.isOnTablet)
                     mMainActivity?.expandToolbar()
                 cantoAdapter.getAdapterItem(position).isSelected = true
                 cantoAdapter.notifyAdapterItemChanged(position)
@@ -141,8 +140,8 @@ class HistoryFragment : Fragment() {
         selectExtension?.deleteAllSelectedItems()
 
         binding.historyRecycler.adapter = cantoAdapter
-        val llm = if (mMainActivity?.isGridLayout == true)
-            GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
+        val llm = if (activityViewModel.isGridLayout)
+            GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)
         binding.historyRecycler.layoutManager = llm

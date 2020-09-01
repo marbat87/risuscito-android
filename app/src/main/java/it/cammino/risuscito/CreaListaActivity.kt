@@ -65,7 +65,7 @@ import kotlin.collections.ArrayList
 
 class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCallback.ItemSwipeCallback {
 
-    private val mViewModel: CreaListaViewModel by viewModels {
+    private val mCreaListaViewModel: CreaListaViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply {
             putInt(ID_DA_MODIF, intent.extras?.getInt(ID_DA_MODIF, 0) ?: 0)
         })
@@ -116,7 +116,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
 
         mAdapter.onLongClickListener = { _: View?, _: IAdapter<SwipeableItem>, item: SwipeableItem, position: Int ->
             Log.d(TAG, "onItemLongClick: $position")
-            mViewModel.positionToRename = position
+            mCreaListaViewModel.positionToRename = position
             InputTextDialogFragment.show(InputTextDialogFragment.Builder(
                     this, RENAME)
                     .title(R.string.posizione_rename)
@@ -169,7 +169,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
 
         binding.textFieldTitle.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
             binding.collapsingToolbarLayout.title = s
-            mViewModel.tempTitle = s.toString()
+            mCreaListaViewModel.tempTitle = s.toString()
         }
 
         binding.fabCreaLista.setOnClickListener {
@@ -184,13 +184,13 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
         if (modifica)
             subscribeUiChanges()
         else {
-            if (mViewModel.tempTitle.isEmpty())
-                mViewModel.tempTitle = intent.extras?.getString(LIST_TITLE) ?: ""
-            binding.textFieldTitle.setText(mViewModel.tempTitle)
-            binding.collapsingToolbarLayout.title = mViewModel.tempTitle
-            if (mViewModel.elementi == null)
-                mViewModel.elementi = ArrayList()
-            mViewModel.elementi?.let { mAdapter.set(it) }
+            if (mCreaListaViewModel.tempTitle.isEmpty())
+                mCreaListaViewModel.tempTitle = intent.extras?.getString(LIST_TITLE) ?: ""
+            binding.textFieldTitle.setText(mCreaListaViewModel.tempTitle)
+            binding.collapsingToolbarLayout.title = mCreaListaViewModel.tempTitle
+            if (mCreaListaViewModel.elementi == null)
+                mCreaListaViewModel.elementi = ArrayList()
+            mCreaListaViewModel.elementi?.let { mAdapter.set(it) }
         }
 
         onBackPressedDispatcher.addCallback(this) {
@@ -205,9 +205,9 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                         when (inputdialogViewModel.mTag) {
                             RENAME -> {
                                 inputdialogViewModel.handled = true
-                                val mElement = mAdapter.adapterItems[mViewModel.positionToRename]
+                                val mElement = mAdapter.adapterItems[mCreaListaViewModel.positionToRename]
                                 mElement.setName = inputdialogViewModel.outputText
-                                mAdapter.notifyAdapterItemChanged(mViewModel.positionToRename)
+                                mAdapter.notifyAdapterItemChanged(mCreaListaViewModel.positionToRename)
                             }
                             ADD_POSITION -> {
                                 inputdialogViewModel.handled = true
@@ -263,7 +263,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mViewModel.elementi = mAdapter.itemAdapter.adapterItems as? ArrayList<SwipeableItem>
+        mCreaListaViewModel.elementi = mAdapter.itemAdapter.adapterItems as? ArrayList<SwipeableItem>
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -325,7 +325,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
             celebrazione.name = binding.textFieldTitle.text.toString()
         } else {
             result += 100
-            celebrazione.name = if (modifica) withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.getListById(mViewModel.idModifica)?.titolo }
+            celebrazione.name = if (modifica) withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.getListById(mCreaListaViewModel.idModifica)?.titolo }
                     ?: DEFAULT_TITLE else intent.extras?.getString(LIST_TITLE)
                     ?: DEFAULT_TITLE
         }
@@ -359,7 +359,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
         listaToUpdate.lista = celebrazione
         listaToUpdate.titolo = celebrazione.name
         if (modifica) {
-            listaToUpdate.id = mViewModel.idModifica
+            listaToUpdate.id = mCreaListaViewModel.idModifica
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.updateLista(listaToUpdate) }
         } else
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.insertLista(listaToUpdate) }
@@ -493,19 +493,19 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
     }
 
     private fun subscribeUiChanges() {
-        mViewModel.listaResult?.observe(owner = this) { listaPers ->
+        mCreaListaViewModel.listaResult?.observe(owner = this) { listaPers ->
 
             val celebrazione = listaPers.lista
 
-            mViewModel.elementi?.let {
+            mCreaListaViewModel.elementi?.let {
                 Log.d(TAG, "Lista già valorizzata")
                 for (elemento in it) elemento.touchHelper = mTouchHelper
             } ?: run {
                 Log.d(TAG, "Lista nulla")
-                mViewModel.elementi = ArrayList()
+                mCreaListaViewModel.elementi = ArrayList()
                 celebrazione?.let {
                     for (i in 0 until it.numPosizioni) {
-                        mViewModel.elementi?.add(
+                        mCreaListaViewModel.elementi?.add(
                                 swipeableItem {
                                     identifier = Utility.random(0, 5000).toLong()
                                     touchHelper = mTouchHelper
@@ -517,11 +517,11 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                 }
             }
 
-            mViewModel.elementi?.let { mAdapter.set(it) }
-            if (mViewModel.tempTitle.isEmpty())
-                mViewModel.tempTitle = listaPers.titolo ?: DEFAULT_TITLE
-            binding.textFieldTitle.setText(mViewModel.tempTitle)
-            binding.collapsingToolbarLayout.title = mViewModel.tempTitle
+            mCreaListaViewModel.elementi?.let { mAdapter.set(it) }
+            if (mCreaListaViewModel.tempTitle.isEmpty())
+                mCreaListaViewModel.tempTitle = listaPers.titolo ?: DEFAULT_TITLE
+            binding.textFieldTitle.setText(mCreaListaViewModel.tempTitle)
+            binding.collapsingToolbarLayout.title = mCreaListaViewModel.tempTitle
             binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
         }
     }

@@ -32,6 +32,7 @@ import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,6 +44,7 @@ class ListaPersonalizzataFragment : Fragment() {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
         })
     }
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
     private lateinit var cantoDaCanc: String
     private var posizioneDaCanc: Int = 0
@@ -52,7 +54,6 @@ class ListaPersonalizzataFragment : Fragment() {
     private val cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
     private var _binding: ActivityListaPersonalizzataBinding? = null
@@ -76,7 +77,6 @@ class ListaPersonalizzataFragment : Fragment() {
 
         mMainActivity = activity as? MainActivity
 
-        mLUtils = LUtils.getInstance(requireActivity())
         mSwhitchMode = false
 
         // Creating new adapter object
@@ -101,7 +101,7 @@ class ListaPersonalizzataFragment : Fragment() {
         }
 
         binding.buttonInviaFile.setOnClickListener {
-            val exportUri = mLUtils?.listToXML(mCantiViewModel.listaPersonalizzata)
+            val exportUri = activityViewModel.mLUtils.listToXML(mCantiViewModel.listaPersonalizzata)
             Log.d(TAG, "onClick: exportUri = $exportUri")
             @Suppress("SENSELESS_COMPARISON")
             if (exportUri != null) {
@@ -127,7 +127,7 @@ class ListaPersonalizzataFragment : Fragment() {
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundleOf(Utility.PAGINA to v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
                 Utility.ID_CANTO to Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())))
-        mLUtils?.startActivityWithTransition(intent)
+        activityViewModel.mLUtils.startActivityWithTransition(intent)
     }
 
     private fun snackBarRimuoviCanto(view: View) {
@@ -135,7 +135,7 @@ class ListaPersonalizzataFragment : Fragment() {
         val parent = view.parent.parent as? View
         longclickedPos = Integer.valueOf(parent?.findViewById<TextView>(R.id.generic_tag)?.text.toString())
         longClickedChild = Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
-        if (mMainActivity?.isOnTablet != true)
+        if (!activityViewModel.isOnTablet)
             mMainActivity?.expandToolbar()
         startCab()
     }

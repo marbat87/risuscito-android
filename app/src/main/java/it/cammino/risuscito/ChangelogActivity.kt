@@ -23,7 +23,7 @@ class ChangelogActivity : ThemeableActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        Utility.setupTransparentTints(this, Color.TRANSPARENT, hasNavDrawer, isOnTablet)
+        Utility.setupTransparentTints(this, Color.TRANSPARENT, hasNavDrawer, mViewModel.isOnTablet)
 
         ChangelogBuilder()
                 .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise

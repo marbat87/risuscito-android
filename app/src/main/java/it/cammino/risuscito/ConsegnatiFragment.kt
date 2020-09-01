@@ -59,6 +59,7 @@ import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.services.ConsegnatiSaverService
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -71,11 +72,11 @@ class ConsegnatiFragment : Fragment() {
     private val mCantiViewModel: ConsegnatiViewModel by viewModels()
     private val dialogViewModel: ListChoiceDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
     private var selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
     private lateinit var mPopupMenu: PopupMenu
     private var selectExtension: SelectExtension<CheckableItem>? = null
     private var mMainActivity: MainActivity? = null
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
     private var mRegularFont: Typeface? = null
     private lateinit var passaggiArray: IntArray
@@ -152,8 +153,6 @@ class ConsegnatiFragment : Fragment() {
             }
         }
 
-        mLUtils = LUtils.getInstance(requireActivity())
-
         setHasOptionsMenu(true)
         subscribeUiConsegnati()
 
@@ -166,7 +165,7 @@ class ConsegnatiFragment : Fragment() {
                         Utility.PAGINA to item.source?.getText(requireContext()),
                         Utility.ID_CANTO to item.id
                 ))
-                mLUtils?.startActivityWithTransition(intent)
+                activityViewModel.mLUtils.startActivityWithTransition(intent)
                 consume = true
             }
             consume
@@ -193,10 +192,10 @@ class ConsegnatiFragment : Fragment() {
             !found.isNullOrEmpty()
         }
         binding.cantiRecycler.adapter = cantoAdapter
-        val glm = GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
+        val glm = GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
         val llm = LinearLayoutManager(context)
-        binding.cantiRecycler.layoutManager = if (mMainActivity?.isGridLayout == true) glm else llm
-        val insetDivider = DividerItemDecoration(requireContext(), if (mMainActivity?.isGridLayout == true) glm.orientation else llm.orientation)
+        binding.cantiRecycler.layoutManager = if (activityViewModel.isGridLayout) glm else llm
+        val insetDivider = DividerItemDecoration(requireContext(), if (activityViewModel.isGridLayout) glm.orientation else llm.orientation)
         ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
         binding.cantiRecycler.addItemDecoration(insetDivider)
         binding.cantiRecycler.itemAnimator = SlideRightAlphaAnimator()
@@ -221,8 +220,8 @@ class ConsegnatiFragment : Fragment() {
         selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
 
         binding.chooseRecycler.adapter = selectableAdapter
-        val llm2 = if (mMainActivity?.isGridLayout == true)
-            GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
+        val llm2 = if (activityViewModel.isGridLayout)
+            GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)
         binding.chooseRecycler.layoutManager = llm2
