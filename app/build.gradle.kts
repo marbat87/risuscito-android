@@ -16,7 +16,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4602
+        versionCode = 4603
         versionName = "4.6.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -97,8 +97,8 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:18.1.0")
     implementation("com.google.firebase:firebase-core:17.5.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.5.0")
-    implementation("com.google.firebase:firebase-storage-ktx:19.1.1")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.6.0")
+    implementation("com.google.firebase:firebase-storage-ktx:19.2.0")
     implementation("com.google.firebase:firebase-auth:19.3.2")
     implementation("com.google.firebase:firebase-crashlytics:17.2.1")
     implementation("com.google.firebase:firebase-analytics:17.5.0")

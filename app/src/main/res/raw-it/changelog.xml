@@ -5,6 +5,7 @@
         date="Settembre 2020"
         versionName="4.6.0">
         <new>Aggiunta traduzione in Polacco (se il tuo dispositivo è in Polacco e stai aggiornado l'applicazione, potrebbe essere necessario cancellare i dati o reinstallarla)</new>
+        <new>Aggiornato il sistema di colori</new>
         <bugfix>Varie</bugfix>
     </release>
 
