@@ -403,26 +403,19 @@ object Utility {
         }
     }
 
-    internal fun readTextFromResource(ctx: Context, resourceID: String): String? {
+    internal fun readTextFromResource(ctx: Context, resourceID: String): String {
         val inputStream = ctx.resources.openRawResource(LUtils.getResId(resourceID, R.raw::class.java))
         val br = BufferedReader(InputStreamReader(inputStream, ECONDING_UTF8))
         var line: String? = br.readLine()
-//        val cantoTrasportato = ctx.filesDir.toString() + "/temporaneo.htm"
-//        val out = BufferedWriter(
-//                OutputStreamWriter(FileOutputStream(cantoTrasportato), ECONDING_UTF8))
         val cantoTrasportato = StringBuffer()
 
         while (line != null) {
 //            Log.d(TAG, "line: $line")
-//            out.write(line)
-//            out.newLine()
             cantoTrasportato.append(line)
             cantoTrasportato.append("\n")
             line = br.readLine()
         }
         br.close()
-//        out.flush()
-//        out.close()
         Log.d(TAG, "readTextFromResource cantoTrasportato: $cantoTrasportato")
         return cantoTrasportato.toString()
     }

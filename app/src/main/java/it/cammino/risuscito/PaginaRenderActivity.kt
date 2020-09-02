@@ -62,7 +62,6 @@ import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.DownloadService
-import it.cammino.risuscito.services.PdfExportService
 import it.cammino.risuscito.ui.InitialScrollWebClient
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
@@ -71,9 +70,11 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.PdfExporter
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -280,56 +281,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                         getString(R.string.download_error)
                                 + " "
                                 + intent.getStringExtra(DownloadService.DATA_ERROR),
-                        Snackbar.LENGTH_SHORT)
-                        .show()
-            } catch (e: IllegalArgumentException) {
-                Log.e(TAG, e.localizedMessage, e)
-            }
-
-        }
-    }
-    private val exportCompleted = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            Log.d(TAG, "BROADCAST_EXPORT_COMPLETED")
-            Log.d(TAG, "DATA_PDF_PATH: " + intent.getStringExtra(PdfExportService.DATA_PDF_PATH))
-            dismissProgressDialog(EXPORT_PDF)
-            val localPDFPath = intent.getStringExtra(PdfExportService.DATA_PDF_PATH)
-            localPDFPath?.let {
-                val file = File(it)
-                val target = Intent(Intent.ACTION_VIEW)
-                val pdfUri = FileProvider.getUriForFile(
-                        this@PaginaRenderActivity, "it.cammino.risuscito.fileprovider", file)
-                Log.d(TAG, "pdfUri: $pdfUri")
-                target.setDataAndType(pdfUri, "application/pdf")
-                target.flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION
-                val intent2 = Intent.createChooser(target, getString(R.string.open_pdf))
-                try {
-                    startActivity(intent2)
-                } catch (e: ActivityNotFoundException) {
-                    Snackbar.make(
-                            findViewById(android.R.id.content),
-                            R.string.no_pdf_reader,
-                            Snackbar.LENGTH_SHORT)
-                            .show()
-                }
-            }
-                    ?: Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_SHORT).show()
-        }
-    }
-    private val exportError = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.d(TAG, PdfExportService.BROADCAST_EXPORT_ERROR)
-                Log.d(
-                        TAG,
-                        "$PdfExportService.DATA_EXPORT_ERROR: ${intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)}")
-                dismissProgressDialog(EXPORT_PDF)
-                Snackbar.make(
-                        findViewById(android.R.id.content),
-                        intent.getStringExtra(PdfExportService.DATA_EXPORT_ERROR)
-                                ?: getString(R.string.error),
                         Snackbar.LENGTH_SHORT)
                         .show()
             } catch (e: IllegalArgumentException) {
@@ -620,10 +571,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         Log.d(TAG, "onCreateOptionsMenu - INTRO_PAGINARENDER: ${mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)}")
         if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
             Handler(Looper.getMainLooper()).postDelayed(1500) {
-                if (binding.musicButtons.isVisible)
-                    playIntroFull()
-                else
-                    playIntroSmall()
+                playIntro(binding.musicButtons.isVisible)
             }
         }
 
@@ -656,28 +604,11 @@ class PaginaRenderActivity : ThemeableActivity() {
                     return true
                 }
             R.id.action_exp_pdf -> {
-                ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, EXPORT_PDF)
-                        .content(R.string.export_running)
-                        .progressIndeterminate(true)
-                        .setCanceable(),
-                        supportFragmentManager)
-                val i = Intent(applicationContext, PdfExportService::class.java)
-                i.putExtra(PdfExportService.DATA_PRIMA_NOTA, mCantiViewModel.primaNota)
-                i.putExtra(PdfExportService.DATA_NOTA_CAMBIO, mCantiViewModel.notaCambio)
-                i.putExtra(PdfExportService.DATA_PRIMO_BARRE, mCantiViewModel.primoBarre)
-                i.putExtra(PdfExportService.DATA_BARRE_CAMBIO, mCantiViewModel.barreCambio)
-                i.putExtra(PdfExportService.DATA_PAGINA, mCantiViewModel.pagina)
-                i.putExtra(
-                        PdfExportService.DATA_LINGUA,
-                        getSystemLocale(resources).language)
-                PdfExportService.enqueueWork(applicationContext, i)
+                lifecycleScope.launch { exportPdf() }
                 return true
             }
             R.id.action_help_canto -> {
-                if (binding.musicButtons.isVisible)
-                    playIntroFull()
-                else
-                    playIntroSmall()
+                playIntro(binding.musicButtons.isVisible)
                 return true
             }
             R.id.action_save_tab -> {
@@ -831,9 +762,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         mLocalBroadcastManager.registerReceiver(
                 downloadCompletedBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_COMPLETED))
         mLocalBroadcastManager.registerReceiver(downloadErrorBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_ERROR))
-        mLocalBroadcastManager.registerReceiver(
-                exportCompleted, IntentFilter(PdfExportService.BROADCAST_EXPORT_COMPLETED))
-        mLocalBroadcastManager.registerReceiver(exportError, IntentFilter(PdfExportService.BROADCAST_EXPORT_ERROR))
         mLocalBroadcastManager.registerReceiver(catalogReadyBR, IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC))
     }
 
@@ -843,8 +771,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         mLocalBroadcastManager.unregisterReceiver(downloadPosBRec)
         mLocalBroadcastManager.unregisterReceiver(downloadCompletedBRec)
         mLocalBroadcastManager.unregisterReceiver(downloadErrorBRec)
-        mLocalBroadcastManager.unregisterReceiver(exportCompleted)
-        mLocalBroadcastManager.unregisterReceiver(exportError)
         mLocalBroadcastManager.unregisterReceiver(catalogReadyBR)
     }
 
@@ -986,8 +912,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                             line = line.replace("<K2>".toRegex(), "</FONT><FONT COLOR='#000000'>")
                         }
                     }
-//                    out.write(line)
-//                    out.newLine()
                     cantoTrasportato.append(line)
                     cantoTrasportato.append("\n")
                 } else {
@@ -1003,21 +927,15 @@ class PaginaRenderActivity : ThemeableActivity() {
                                             + getString(R.string.barre_al_tasto, barre)
                                             + "</I></FONT></H4>")
                                 }
-//                                out.write(oldLine)
-//                                out.newLine()
                                 cantoTrasportato.append(oldLine)
                                 cantoTrasportato.append("\n")
                                 barreScritto = true
                             }
                         }
-//                        out.write(line)
-//                        out.newLine()
                         cantoTrasportato.append(line)
                         cantoTrasportato.append("\n")
                     } else {
                         if (!line.contains(getString(R.string.barre_search_string))) {
-//                            out.write(line)
-//                            out.newLine()
                             cantoTrasportato.append(line)
                             cantoTrasportato.append("\n")
                         }
@@ -1026,8 +944,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                 line = br.readLine()
             }
             br.close()
-//            out.flush()
-//            out.close()
             Log.i(TAG, "cambiaAccordi cantoTrasportato -> $cantoTrasportato")
             return cantoTrasportato.toString()
         } catch (e: Exception) {
@@ -1128,148 +1044,83 @@ class PaginaRenderActivity : ThemeableActivity() {
         } else AppSettingsDialog.Builder(this).build().show()
     }
 
-    private fun playIntroSmall() {
+    private fun playIntro(isFull: Boolean) {
         binding.musicControls.isVisible = true
         val colorOnPrimary = MaterialColors.getColor(this, R.attr.colorOnPrimary, TAG)
-        TapTargetSequence(this)
-                .continueOnCancel(true)
-                .targets(
-                        TapTarget.forToolbarMenuItem(
-                                binding.risuscitoToolbar,
-                                R.id.tonalita,
-                                getString(R.string.action_tonalita),
-                                getString(R.string.sc_tonalita_desc))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(1),
-                        TapTarget.forToolbarMenuItem(
-                                binding.risuscitoToolbar,
-                                R.id.barre,
-                                getString(R.string.action_barre),
-                                getString(R.string.sc_barre_desc))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(2),
-                        TapTarget.forView(
-                                binding.playScroll,
-                                getString(R.string.sc_scroll_title),
-                                getString(R.string.sc_scroll_desc))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(3),
-                        TapTarget.forToolbarOverflow(
-                                binding.risuscitoToolbar,
-                                getString(R.string.showcase_end_title),
-                                getString(R.string.showcase_help_general))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(4))
-                .listener(
-                        object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                            override fun onSequenceFinish() {
-                                mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                binding.musicControls.isVisible = mCantiViewModel.mostraAudio
-                            }
+        var id = 1
+        TapTargetSequence(this).apply {
+            continueOnCancel(true)
+            target(TapTarget.forToolbarMenuItem(
+                    binding.risuscitoToolbar,
+                    R.id.tonalita,
+                    getString(R.string.action_tonalita),
+                    getString(R.string.sc_tonalita_desc))
+                    // All options below are optional
+                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTextColorInt(colorOnPrimary)
+                    .textColorInt(colorOnPrimary)
+                    .id(id++))
+            target(TapTarget.forToolbarMenuItem(
+                    binding.risuscitoToolbar,
+                    R.id.barre,
+                    getString(R.string.action_barre),
+                    getString(R.string.sc_barre_desc))
+                    // All options below are optional
+                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTextColorInt(colorOnPrimary)
+                    .textColorInt(colorOnPrimary)
+                    .id(id++))
+            if (isFull) {
+                target(TapTarget.forView(
+                        binding.playSong,
+                        getString(R.string.sc_audio_title),
+                        getString(R.string.sc_audio_desc))
+                        // All options below are optional
+                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                        .textTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTextColorInt(colorOnPrimary)
+                        .textColorInt(colorOnPrimary)
+                        .id(id++))
+            }
+            target(TapTarget.forView(
+                    binding.playScroll,
+                    getString(R.string.sc_scroll_title),
+                    getString(R.string.sc_scroll_desc))
+                    // All options below are optional
+                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTextColorInt(colorOnPrimary)
+                    .textColorInt(colorOnPrimary)
+                    .id(id++))
+            target(TapTarget.forToolbarOverflow(
+                    binding.risuscitoToolbar,
+                    getString(R.string.showcase_end_title),
+                    getString(R.string.showcase_help_general))
+                    // All options below are optional
+                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTextColorInt(colorOnPrimary)
+                    .textColorInt(colorOnPrimary)
+                    .id(id))
+            listener(
+                    object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+                        override fun onSequenceFinish() {
+                            mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
+                            binding.musicControls.isVisible = mCantiViewModel.mostraAudio
+                        }
 
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-                                // no-op
-                            }
+                        override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                            // no-op
+                        }
 
-                            override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                binding.musicControls.isVisible = mCantiViewModel.mostraAudio
-                            }
-                        })
-                .start()
-    }
-
-    private fun playIntroFull() {
-        binding.musicControls.isVisible = true
-        val colorOnPrimary = MaterialColors.getColor(this, R.attr.colorOnPrimary, TAG)
-        TapTargetSequence(this)
-                .continueOnCancel(true)
-                .targets(
-                        TapTarget.forToolbarMenuItem(
-                                binding.risuscitoToolbar,
-                                R.id.tonalita,
-                                getString(R.string.action_tonalita),
-                                getString(R.string.sc_tonalita_desc))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(1),
-                        TapTarget.forToolbarMenuItem(
-                                binding.risuscitoToolbar,
-                                R.id.barre,
-                                getString(R.string.action_barre),
-                                getString(R.string.sc_barre_desc))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(2),
-                        TapTarget.forView(
-                                binding.playSong,
-                                getString(R.string.sc_audio_title),
-                                getString(R.string.sc_audio_desc))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(3),
-                        TapTarget.forView(
-                                binding.playScroll,
-                                getString(R.string.sc_scroll_title),
-                                getString(R.string.sc_scroll_desc))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(4),
-                        TapTarget.forToolbarOverflow(
-                                binding.risuscitoToolbar,
-                                getString(R.string.showcase_end_title),
-                                getString(R.string.showcase_help_general))
-                                // All options below are optional
-                                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                .textTypeface(mRegularFont) // Specify a typeface for the text
-                                .titleTextColorInt(colorOnPrimary)
-                                .textColorInt(colorOnPrimary)
-                                .id(5))
-                .listener(
-                        object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                            override fun onSequenceFinish() {
-                                mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                binding.musicControls.isVisible = mCantiViewModel.mostraAudio
-                            }
-
-                            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-                                // no-op
-                            }
-
-                            override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-                                binding.musicControls.isVisible = mCantiViewModel.mostraAudio
-                            }
-                        })
-                .start()
+                        override fun onSequenceCanceled(tapTarget: TapTarget) {
+                            mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
+                            binding.musicControls.isVisible = mCantiViewModel.mostraAudio
+                        }
+                    })
+        }.start()
     }
 
     private fun playMedia() {
@@ -1446,7 +1297,8 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         if (mCantiViewModel.speedValue == null)
             try {
-                binding.speedSeekbar.value = (mCantiViewModel.mCurrentCanto?.savedSpeed ?: "2").toFloat()
+                binding.speedSeekbar.value = (mCantiViewModel.mCurrentCanto?.savedSpeed
+                        ?: "2").toFloat()
             } catch (e: NumberFormatException) {
                 Log.e(TAG, "savedSpeed ${mCantiViewModel.mCurrentCanto?.savedSpeed}", e)
                 binding.speedSeekbar.value = 2F
@@ -1716,6 +1568,42 @@ class PaginaRenderActivity : ThemeableActivity() {
         sFragment?.dismiss()
     }
 
+    private suspend fun exportPdf() {
+        ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, EXPORT_PDF)
+                .content(R.string.export_running)
+                .progressIndeterminate(true)
+                .setCanceable(),
+                supportFragmentManager)
+        val pdfOutput = PdfExporter(this).exportPdf(htmlContent)
+        delay(1000)
+        dismissProgressDialog(EXPORT_PDF)
+        if (pdfOutput.isError) {
+            Snackbar.make(
+                    findViewById(android.R.id.content),
+                    "${getString(R.string.error)}: ${pdfOutput.errorMessage}",
+                    Snackbar.LENGTH_SHORT)
+                    .show()
+        } else {
+            val file = File(pdfOutput.pdfPath)
+            val target = Intent(Intent.ACTION_VIEW)
+            val pdfUri = FileProvider.getUriForFile(
+                    this@PaginaRenderActivity, "it.cammino.risuscito.fileprovider", file)
+            Log.d(TAG, "pdfUri: $pdfUri")
+            target.setDataAndType(pdfUri, "application/pdf")
+            target.flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            val intent2 = Intent.createChooser(target, getString(R.string.open_pdf))
+            try {
+                startActivity(intent2)
+            } catch (e: ActivityNotFoundException) {
+                Snackbar.make(
+                        findViewById(android.R.id.content),
+                        R.string.no_pdf_reader,
+                        Snackbar.LENGTH_SHORT)
+                        .show()
+            }
+        }
+    }
+
     companion object {
         internal val TAG = PaginaRenderActivity::class.java.canonicalName
         private const val PROGRESS_UPDATE_INTERNAL: Long = 1000
@@ -1728,7 +1616,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         private const val DELETE_MP3 = "DELETE_MP3"
         private const val SAVE_TAB = "SAVE_TAB"
 
-        //        private const val DEF_FILE_PATH = "file://"
         private const val ECONDING_UTF8 = "utf-8"
         private const val ECONDING_BASE64 = "base64"
         private const val NO_CANTO = "no_canto"
