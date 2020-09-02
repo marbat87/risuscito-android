@@ -23,7 +23,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.net.toUri
 import androidx.core.os.postDelayed
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -61,7 +60,6 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.playback.MusicService
-import it.cammino.risuscito.services.DownloadService
 import it.cammino.risuscito.ui.InitialScrollWebClient
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
@@ -70,6 +68,8 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.DownloadState
+import it.cammino.risuscito.utils.Downloader
 import it.cammino.risuscito.utils.PdfExporter
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
@@ -105,8 +105,11 @@ class PaginaRenderActivity : ThemeableActivity() {
     private val mRiuscitoDb: RisuscitoDatabase
         get() = RisuscitoDatabase.getInstance(this)
 
+    private lateinit var mDownloader: Downloader
+
     private val mCantiViewModel: PaginaRenderViewModel by viewModels()
     private val progressDialogViewModel: ProgressDialogFragment.DialogViewModel by viewModels()
+    private val downloaderViewModel: Downloader.DownloaderViewModel by viewModels()
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
     private var url: String? = null
     private var personalUrl: String? = null
@@ -231,64 +234,6 @@ class PaginaRenderActivity : ThemeableActivity() {
             MediaControllerCompat.setMediaController(this@PaginaRenderActivity, null)
         }
     }
-    private val downloadPosBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.v(TAG, "BROADCAST_DOWNLOAD_PROGRESS")
-                Log.v(TAG, "DATA_PROGRESS: " + intent.getIntExtra(DownloadService.DATA_PROGRESS, 0))
-                val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, DOWNLOAD_MP3)
-                sFragment?.setProgress(intent.getIntExtra(DownloadService.DATA_PROGRESS, 0))
-            } catch (e: IllegalArgumentException) {
-                Log.e(TAG, e.localizedMessage, e)
-            }
-
-        }
-    }
-    private val downloadCompletedBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.d(TAG, "BROADCAST_DOWNLOAD_COMPLETED")
-                dismissProgressDialog(DOWNLOAD_MP3)
-                // initiate media scan and put the new things into the path array to
-                // make the scanner aware of the location and the files you want to see
-                if (isDefaultLocationPublic(context) && !hasQ())
-                    mediaScan(context, url ?: "")
-                Snackbar.make(
-                        findViewById(android.R.id.content),
-                        R.string.download_completed,
-                        Snackbar.LENGTH_SHORT)
-                        .show()
-                stopMedia()
-                refreshCatalog()
-                lifecycleScope.launch { checkRecordState() }
-            } catch (e: IllegalArgumentException) {
-                Log.e(TAG, e.localizedMessage, e)
-            }
-
-        }
-    }
-    private val downloadErrorBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.d(TAG, "BROADCAST_DOWNLOAD_ERROR")
-                Log.d(TAG, "DATA_ERROR: " + intent.getStringExtra(DownloadService.DATA_ERROR))
-                dismissProgressDialog(DOWNLOAD_MP3)
-                Snackbar.make(
-                        findViewById(android.R.id.content),
-                        getString(R.string.download_error)
-                                + " "
-                                + intent.getStringExtra(DownloadService.DATA_ERROR),
-                        Snackbar.LENGTH_SHORT)
-                        .show()
-            } catch (e: IllegalArgumentException) {
-                Log.e(TAG, e.localizedMessage, e)
-            }
-
-        }
-    }
 
     private val catalogReadyBR = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -332,6 +277,8 @@ class PaginaRenderActivity : ThemeableActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPaginaRenderBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        mDownloader = Downloader(this)
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
 
@@ -451,7 +398,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                         when (progressDialogViewModel.mTag) {
                             DOWNLOAD_MP3 -> {
                                 progressDialogViewModel.handled = true
-                                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(DownloadService.ACTION_CANCEL))
+                                mDownloader.cancel()
                             }
                         }
                     }
@@ -518,7 +465,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                     if (EasyPermissions.hasPermissions(
                                                     this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
                                     // Have permission, do the thing!
-                                        startExternalDownload()
+                                        startDownload(true)
                                     else {
                                         mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                                         Snackbar.make(
@@ -526,10 +473,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                                                 R.string.forced_private,
                                                 Snackbar.LENGTH_SHORT)
                                                 .show()
-                                        startInternalDownload()
+                                        startDownload(false)
                                     }
                                 } else
-                                    startInternalDownload()
+                                    startDownload(false)
                             }
                             ONLY_LINK -> {
                                 simpleDialogViewModel.handled = true
@@ -558,6 +505,47 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 mViewModel.mLUtils.closeActivityWithTransition()
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        downloaderViewModel.state.observe(owner = this) {
+            Log.d(TAG, "downloaderViewModel state $it")
+            if (!downloaderViewModel.handled) {
+                when (it) {
+                    is DownloadState.Progress -> {
+                        Log.d(TAG, "DownloadListener update: ${it.progress}")
+                        downloaderViewModel.handled = true
+                        val sFragment = ProgressDialogFragment.findVisible(this@PaginaRenderActivity, DOWNLOAD_MP3)
+                        sFragment?.setProgress(it.progress)
+                    }
+                    is DownloadState.Completed -> {
+                        Log.d(TAG, "DownloadListener onComplete")
+                        downloaderViewModel.handled = true
+                        dismissProgressDialog(DOWNLOAD_MP3)
+                        // initiate media scan and put the new things into the path array to
+                        // make the scanner aware of the location and the files you want to see
+                        if (isDefaultLocationPublic(this@PaginaRenderActivity) && !hasQ())
+                            mediaScan(this@PaginaRenderActivity, url ?: "")
+                        Snackbar.make(
+                                findViewById(android.R.id.content),
+                                R.string.download_completed,
+                                Snackbar.LENGTH_SHORT)
+                                .show()
+                        stopMedia()
+                        refreshCatalog()
+                        lifecycleScope.launch { checkRecordState() }
+                    }
+                    is DownloadState.Error -> {
+                        Log.d(TAG, "DownloadListener onError: ${it.message}")
+                        downloaderViewModel.handled = true
+                        dismissProgressDialog(DOWNLOAD_MP3)
+                        Snackbar.make(
+                                findViewById(android.R.id.content),
+                                " ${getString(R.string.download_error)}: $it.message",
+                                Snackbar.LENGTH_SHORT)
+                                .show()
                     }
                 }
             }
@@ -757,20 +745,20 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
         // registra un receiver per ricevere la notifica di preparazione della registrazione
-        mLocalBroadcastManager.registerReceiver(
-                downloadPosBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_PROGRESS))
-        mLocalBroadcastManager.registerReceiver(
-                downloadCompletedBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_COMPLETED))
-        mLocalBroadcastManager.registerReceiver(downloadErrorBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_ERROR))
+//        mLocalBroadcastManager.registerReceiver(
+//                downloadPosBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_PROGRESS))
+//        mLocalBroadcastManager.registerReceiver(
+//                downloadCompletedBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_COMPLETED))
+//        mLocalBroadcastManager.registerReceiver(downloadErrorBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_ERROR))
         mLocalBroadcastManager.registerReceiver(catalogReadyBR, IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC))
     }
 
     override fun onPause() {
         super.onPause()
         val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
-        mLocalBroadcastManager.unregisterReceiver(downloadPosBRec)
-        mLocalBroadcastManager.unregisterReceiver(downloadCompletedBRec)
-        mLocalBroadcastManager.unregisterReceiver(downloadErrorBRec)
+//        mLocalBroadcastManager.unregisterReceiver(downloadPosBRec)
+//        mLocalBroadcastManager.unregisterReceiver(downloadCompletedBRec)
+//        mLocalBroadcastManager.unregisterReceiver(downloadErrorBRec)
         mLocalBroadcastManager.unregisterReceiver(catalogReadyBR)
     }
 
@@ -953,44 +941,27 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     }
 
-    private fun startExternalDownload() {
-        Log.d(TAG, " WRITE_EXTERNAL_STORAGE OK")
-        if (Utility.isExternalStorageWritable) {
+    private fun startDownload(isExternal: Boolean) {
+        Log.d(TAG, "startDownload - isExternal: $isExternal")
+        Log.d(TAG, "startDownload - isExternalStorageWritable: ${Utility.isExternalStorageWritable}")
+        if ((isExternal && Utility.isExternalStorageWritable) || !isExternal) {
+            val localFilePath = this.filesDir.toString() + "/" + Utility.filterMediaLink(url)
             ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, DOWNLOAD_MP3)
                     .content(R.string.download_running)
                     .progressIndeterminate(false)
                     .progressMax(100)
                     .positiveButton(R.string.cancel),
                     supportFragmentManager)
-            val i = Intent(applicationContext, DownloadService::class.java)
-            i.action = DownloadService.ACTION_DOWNLOAD
-            val uri = url?.toUri()
-            i.data = uri
-            i.putExtra(DownloadService.DATA_DESTINATION_FILE, getExternalLink(url ?: ""))
-            i.putExtra(DownloadService.DATA_EXTERNAL_DOWNLOAD, true)
-            DownloadService.enqueueWork(applicationContext, i)
+            lifecycleScope.launch(Dispatchers.IO) {
+                mDownloader.startSaving(url, if (isExternal) getExternalLink(url
+                        ?: "") else localFilePath, isExternal)
+            }
         } else
             Snackbar.make(
                     findViewById(android.R.id.content),
                     R.string.no_memory_writable,
                     Snackbar.LENGTH_SHORT)
                     .show()
-    }
-
-    private fun startInternalDownload() {
-        val localFilePath = this.filesDir.toString() + "/" + Utility.filterMediaLink(url)
-        ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, DOWNLOAD_MP3)
-                .content(R.string.download_running)
-                .progressIndeterminate(false)
-                .progressMax(100)
-                .positiveButton(R.string.cancel),
-                supportFragmentManager)
-        val i = Intent(applicationContext, DownloadService::class.java)
-        i.action = DownloadService.ACTION_DOWNLOAD
-        val uri = url?.toUri()
-        i.data = uri
-        i.putExtra(DownloadService.DATA_DESTINATION_FILE, localFilePath)
-        DownloadService.enqueueWork(applicationContext, i)
     }
 
     private fun showPlaying(started: Boolean) {
