@@ -821,7 +821,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             var patternMinore: Pattern? = null
 
             when (language) {
-                LANGUAGE_ITALIAN -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
+//                LANGUAGE_ITALIAN, LANGUAGE_TURKISH -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
                 LANGUAGE_UKRAINIAN -> {
                     pattern = Pattern.compile("Cis|C|D|Eb|E|Fis|F|Gis|G|A|B|H")
                     // inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
@@ -833,7 +833,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                     patternMinore = Pattern.compile("cis|c|d|dis|e|fis|f|gis|g|a| b|h")
                 }
                 LANGUAGE_ENGLISH -> pattern = Pattern.compile("C#|C|D|Eb|E|F#|F|G#|G|A|Bb|B")
-                LANGUAGE_TURKISH -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
                 else -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
             }
 

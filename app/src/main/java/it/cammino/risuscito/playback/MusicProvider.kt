@@ -47,6 +47,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
 
     // Categorized caches for music track data:
     private val mMusicListById: LinkedHashMap<String, MediaMetadataCompat> = LinkedHashMap()
+
     @Volatile
     private var mCurrentState = State.NON_INITIALIZED
     private val mDao: CantoDao = RisuscitoDatabase.getInstance(mContext).cantoDao()
@@ -118,20 +119,13 @@ class MusicProvider internal constructor(private val mContext: Context) {
             val artSmall = BitmapFactory.decodeResource(mNewBase.resources, R.mipmap.ic_launcher)
 
             val canti = mDao.allByWithLink
-            Log.d(TAG, "retrieveMedia: " + canti.size)
+            Log.d(TAG, "$RETRIEVE_MEDIA: ${canti.size}")
 
             var temp: MediaMetadataCompat
 
             for (canto in canti) {
-                Log.d(
-                        TAG,
-                        "retrieveMedia: "
-                                + canto.id
-                                + " / "
-                                + mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))
-                                + " / "
-                                + if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link)
-
+                Log.d(TAG,
+                        "$RETRIEVE_MEDIA: ${canto.id} / ${mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))} / ${if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link}")
                 var url = if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link
                 if (isExternalStorageReadable && isDefaultLocationPublic(mNewBase)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
@@ -142,7 +136,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
                         url = retrieveMediaFileLink(mContext, url, false)
                 }
 
-                Log.v(TAG, "retrieveMedia: " + canto.id + " / " + mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)) + " / " + url)
+                Log.v(TAG, "$RETRIEVE_MEDIA: ${canto.id} / ${mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))} / $url")
 
                 if (!url.isNullOrEmpty()) {
                     temp = MediaMetadataCompat.Builder()
@@ -200,6 +194,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
 
         const val MEDIA_ID_ROOT = "__ROOT__"
         const val MEDIA_ID_EMPTY_ROOT = "__EMPTY__"
+        const val RETRIEVE_MEDIA = "retrieveMedia"
         private val TAG = MusicProvider::class.java.simpleName
     }
 }

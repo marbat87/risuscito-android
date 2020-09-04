@@ -35,8 +35,8 @@ class XmlImportService : JobIntentService() {
     }
 
     private fun importData(data: Uri) {
-        Log.d(TAG, "importData: data = $data")
-        Log.d(TAG, "importData:  data.getScheme = ${data.scheme}")
+        Log.d(TAG, "$TAG_IMPORT_DATA: data = $data")
+        Log.d(TAG, "$TAG_IMPORT_DATA:  data.getScheme = ${data.scheme}")
         val scheme = data.scheme
 
         val mNotificationManager = NotificationManagerCompat.from(this)
@@ -76,7 +76,7 @@ class XmlImportService : JobIntentService() {
 
                     mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
-                    Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
+                    Log.d(TAG, ACTION_FINISH)
                     val intentBroadcast = Intent(ACTION_FINISH)
                     LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
 
@@ -96,14 +96,14 @@ class XmlImportService : JobIntentService() {
                             .build()
                     mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
-                    Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
+                    Log.d(TAG, ACTION_FINISH)
                     val intentBroadcast = Intent(ACTION_FINISH)
                     LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
 
                     stopSelf()
                 }
             } catch (e: XmlPullParserException) {
-                Log.e(TAG, "importData: " + e.localizedMessage, e)
+                Log.e(TAG, TAG_IMPORT_DATA, e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification_error)
@@ -114,26 +114,26 @@ class XmlImportService : JobIntentService() {
                         .build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
-                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
+                Log.d(TAG, ACTION_FINISH)
                 val intentBroadcast = Intent(ACTION_FINISH)
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
 
                 stopSelf()
             } catch (e: SecurityException) {
-                Log.e(TAG, "importData: " + e.localizedMessage, e)
+                Log.e(TAG, TAG_IMPORT_DATA, e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
-                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
+                Log.d(TAG, ACTION_FINISH)
                 val intentBroadcast = Intent(ACTION_FINISH)
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 stopSelf()
             } catch (e: IOException) {
-                Log.e(TAG, "importData: " + e.localizedMessage, e)
+                Log.e(TAG, TAG_IMPORT_DATA, e)
                 FirebaseCrashlytics.getInstance().recordException(e)
                 mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
-                Log.d(TAG, "Sending broadcast notification: ACTION_FINISH")
+                Log.d(TAG, ACTION_FINISH)
                 val intentBroadcast = Intent(ACTION_FINISH)
                 LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
                 stopSelf()
@@ -165,7 +165,7 @@ class XmlImportService : JobIntentService() {
         else {
             Log.e(TAG, "readLista: title is null")
             //      FirebaseCrash.log("importData: title is null");
-            FirebaseCrashlytics.getInstance().log("importData: title is null")
+            FirebaseCrashlytics.getInstance().log("$TAG_IMPORT_DATA: title is null")
         }
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.eventType != XmlPullParser.START_TAG) {
@@ -228,7 +228,8 @@ class XmlImportService : JobIntentService() {
 
     companion object {
         internal const val NOTIFICATION_ID = 2
-        internal val TAG = XMLFilterImpl::class.java.canonicalName
+        internal val TAG = XmlImportService::class.java.canonicalName
+        internal const val TAG_IMPORT_DATA = "importData"
         private const val JOB_ID = 5000
         const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
         const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4602"
+    <release versionCode="4604"
         date="Settembre 2020"
         versionName="4.6.0">
         <new>Aggiunta traduzione in Polacco (se il tuo dispositivo è in Polacco e stai aggiornado l'applicazione, potrebbe essere necessario cancellare i dati o reinstallarla)</new>

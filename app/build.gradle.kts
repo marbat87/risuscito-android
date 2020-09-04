@@ -16,7 +16,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4603
+        versionCode = 4604
         versionName = "4.6.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -86,7 +86,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.0-alpha05")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.media:media:1.2.0-beta01")
+    implementation("androidx.media:media:1.2.0-rc01")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07")

@@ -112,11 +112,11 @@ class Downloader(val activity: FragmentActivity) {
                     while (count != -1) {
                         // allow canceling with back button
                         if (isCancelled) {
-                            Log.d(TAG, "startSavingO isCancelled")
+                            Log.d(TAG, "$TAG_O isCancelled")
                             try {
                                 outputStream?.close()
                             } catch (ignored: IOException) {
-                                Log.e(TAG, "startSavingO", ignored)
+                                Log.e(TAG, TAG_O, ignored)
                             }
                             return
                         }
@@ -124,7 +124,7 @@ class Downloader(val activity: FragmentActivity) {
                         // publishing the progress....
                         if (fileLength > 0) {// only if total length is known
                             val progress = total.toInt() * 100 / fileLength
-                            Log.d(TAG, "startSavingO progress: $progress")
+                            Log.d(TAG, "$TAG_O progress: $progress")
                             viewModel.handled = false
                             viewModel.state.postValue(DownloadState.Progress(progress))
                         }
@@ -132,14 +132,14 @@ class Downloader(val activity: FragmentActivity) {
                         count = input?.read(data) ?: 0
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, "startSavingO", e)
+                    Log.e(TAG, TAG_O, e)
                     viewModel.handled = false
                     viewModel.state.postValue(DownloadState.Error(e.message ?: GENERIC_ERROR))
                 } finally {
                     try {
                         outputStream?.close()
                     } catch (ignored: IOException) {
-                        Log.e(TAG, "startSavingO", ignored)
+                        Log.e(TAG, TAG_O, ignored)
                     }
                     contentValues.clear()
                     contentValues.put(MediaStore.Audio.Media.IS_PENDING, 0)
@@ -158,12 +158,12 @@ class Downloader(val activity: FragmentActivity) {
             while (count != -1) {
                 // allow canceling with back button
                 if (isCancelled) {
-                    Log.d(TAG, "startSavingLegacy isCancelled")
+                    Log.d(TAG, "$TAG_LEGACY isCancelled")
                     try {
                         output.close()
                         mPath.let { File(it).delete() }
                     } catch (ignored: IOException) {
-                        Log.e(TAG, "startSavingLegacy", ignored)
+                        Log.e(TAG, TAG_LEGACY, ignored)
                     }
                     return
                 }
@@ -171,7 +171,7 @@ class Downloader(val activity: FragmentActivity) {
                 // publishing the progress....
                 if (fileLength > 0) {// only if total length is known
                     val progress = total.toInt() * 100 / fileLength
-                    Log.d(TAG, "startSavingLegacy progress: $progress")
+                    Log.d(TAG, "$TAG_LEGACY progress: $progress")
                     viewModel.handled = false
                     viewModel.state.postValue(DownloadState.Progress(progress))
                 }
@@ -179,14 +179,14 @@ class Downloader(val activity: FragmentActivity) {
                 count = input?.read(data) ?: 0
             }
         } catch (e: Exception) {
-            Log.e(TAG, "startSavingLegacy", e)
+            Log.e(TAG, TAG_LEGACY, e)
             viewModel.handled = false
             viewModel.state.postValue(DownloadState.Error(e.message ?: GENERIC_ERROR))
         } finally {
             try {
                 output.close()
             } catch (ignored: IOException) {
-                Log.e(TAG, "startSavingLegacy", ignored)
+                Log.e(TAG, TAG_LEGACY, ignored)
             }
         }
     }
@@ -198,6 +198,8 @@ class Downloader(val activity: FragmentActivity) {
 
     companion object {
         internal val TAG = Downloader::class.java.canonicalName
+        internal const val TAG_LEGACY = "startSavingLegacy"
+        internal const val TAG_O = "startSavingO"
         private const val GENERIC_ERROR = "Generic download Error!"
     }
 }
