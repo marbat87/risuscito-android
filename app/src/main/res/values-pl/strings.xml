@@ -58,7 +58,7 @@
     <string name="advanced_search_subtitle">SZUKAJ W TYTULE I W TEKŚCIE</string>
     <string name="fast_search_subtitle">SZUKAJ W TYTULE</string>
     <string name="show_seconda_title">Eucharystia - drugie czytanie</string>
-    <string name="show_seconda_summary">Włącz dodatkową pieśń w odpowiedzi na drugie czytanie (Eucharystia)</string>
+    <string name="show_seconda_summary">Dodaj dodatkową pieśń w odpowiedzi na drugie czytanie (Eucharystia)</string>
     <string name="action_add_list">Nowa lista</string>
     <string name="action_remove_list">Anuluj listę</string>
     <string name="action_edit_list">Edytuj listę</string>
@@ -255,7 +255,7 @@
     <string name="showcase_listepers_desc3">Aby zaimportować listę, otwórz plik w formacie \"Zmartwychwstał Pan\" bezpośrednio z aplikacji lub z menedżera plików.</string>
     <string name="show_offertorio_title">Eucharystia - Pieśń na kolektę</string>
     <string name="show_offertorio_summary">Dodaj pozycję \"Pieśń na kolektę\" dla Eucharystii</string>
-    <string name="canto_offertorio">na kolektę</string>
+    <string name="canto_offertorio">Na kolektę</string>
     <string name="generic_removed">%1$s usunięte</string>
     <string name="title_trabar_I">I</string>
     <string name="title_trabar_II">II</string>
