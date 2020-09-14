@@ -62,7 +62,7 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         binding.root.background = FastAdapterUIUtils.getSelectableBackground(
                 ctx,
                 MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
-                true)
+                false)
         // set the text for the name
         filter?.let {
             if (it.isNotEmpty()) {

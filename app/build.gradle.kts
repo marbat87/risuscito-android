@@ -80,6 +80,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.8.0")
+    implementation ("com.google.android.material:material:1.2.1")
     implementation("androidx.activity:activity-ktx:1.2.0-alpha08")
     implementation("androidx.core:core-ktx:1.3.1")
     implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
