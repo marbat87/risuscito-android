@@ -111,6 +111,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                 .withBackgroundSwipeRight(MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
                 .withLeaveBehindSwipeRight(leaveBehindDrawable)
         touchCallback.setIsDragEnabled(false)
+        touchCallback.notifyAllDrops = true
 
         mTouchHelper = ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
 
