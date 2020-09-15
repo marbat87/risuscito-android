@@ -244,6 +244,8 @@ class HistoryFragment : Fragment() {
             cantoAdapter.set(it)
             binding.noHistory.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.historyRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
+            if (cantoAdapter.adapterItemCount == 0)
+                mMainActivity?.expandToolbar()
             activity?.invalidateOptionsMenu()
         }
 

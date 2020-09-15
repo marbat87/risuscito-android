@@ -248,6 +248,8 @@ class FavoritesFragment : Fragment() {
             cantoAdapter.set(canti.sortedWith(compareBy(Collator.getInstance(LocaleManager.getSystemLocale(resources))) { it.title?.getText(requireContext()) }))
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
+            if (cantoAdapter.adapterItemCount == 0)
+                mMainActivity?.expandToolbar()
             activity?.invalidateOptionsMenu()
         }
 
