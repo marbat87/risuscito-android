@@ -68,7 +68,7 @@
             android:layout_marginRight="@dimen/myListPreferredItemMargin"
             android:contentDescription="@string/content_drag"
             risuscito:iiv_color="?android:textColorSecondary"
-            risuscito:iiv_icon="cmd-reorder-horizontal"
+            risuscito:iiv_icon="cmd-drag-horizontal-variant"
             risuscito:iiv_padding="2dp"
             risuscito:iiv_size="24dp"
             tools:ignore="MissingPrefix" />
