@@ -5,7 +5,7 @@
         date="September 2020"
         versionName="4.6.0">
         <new>Added Polish language (if Polish is your system language and you're updating this app, you may need to delete application data or uninstall and then resintall it)</new>
-        <new>Updated color system</new>
+        <new>Updated color system. Now text on light colors bars (e.g. yellow) is black</new>
         <bugfix>Various</bugfix>
     </release>
 

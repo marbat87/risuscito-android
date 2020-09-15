@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.Message
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -33,8 +32,9 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
-import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.binding.BindingViewHolder
+import com.mikepenz.fastadapter.binding.listeners.addLongClickListener
 import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe.SimpleSwipeCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDragCallback
@@ -48,11 +48,13 @@ import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityCreaListaBinding
+import it.cammino.risuscito.databinding.SwipeableItemBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.items.swipeableItem
+import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
@@ -60,8 +62,6 @@ import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.collections.ArrayList
 
 class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCallback.ItemSwipeCallback {
 
@@ -98,7 +98,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val leaveBehindDrawable = IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete_sweep).apply {
-            colorInt = Color.WHITE
+            colorInt = MaterialColors.getColor(this@CreaListaActivity, R.attr.colorOnPrimary, TAG)
             sizeDp = 24
             paddingDp = 2
         }
@@ -107,14 +107,26 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                 this,
                 leaveBehindDrawable,
                 ItemTouchHelper.LEFT,
-                ContextCompat.getColor(this, R.color.md_red_900))
-                .withBackgroundSwipeRight(ContextCompat.getColor(this, R.color.md_red_900))
+                MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
+                .withBackgroundSwipeRight(MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
                 .withLeaveBehindSwipeRight(leaveBehindDrawable)
         touchCallback.setIsDragEnabled(false)
 
         mTouchHelper = ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
 
-        mAdapter.onLongClickListener = { _: View?, _: IAdapter<SwipeableItem>, item: SwipeableItem, position: Int ->
+//        mAdapter.onLongClickListener = { _: View?, _: IAdapter<SwipeableItem>, item: SwipeableItem, position: Int ->
+//            Log.d(TAG, "onItemLongClick: $position")
+//            mCreaListaViewModel.positionToRename = position
+//            InputTextDialogFragment.show(InputTextDialogFragment.Builder(
+//                    this, RENAME)
+//                    .title(R.string.posizione_rename)
+//                    .prefill(item.name?.getText(this).toString())
+//                    .positiveButton(R.string.aggiungi_rename)
+//                    .negativeButton(R.string.cancel), supportFragmentManager)
+//            true
+//        }
+
+        mAdapter.addLongClickListener<SwipeableItemBinding, SwipeableItem>({ binding -> binding.swipeableText1 }) { _, position, _, item ->
             Log.d(TAG, "onItemLongClick: $position")
             mCreaListaViewModel.positionToRename = position
             InputTextDialogFragment.show(InputTextDialogFragment.Builder(
@@ -122,8 +134,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                     .title(R.string.posizione_rename)
                     .prefill(item.name?.getText(this).toString())
                     .positiveButton(R.string.aggiungi_rename)
-                    .negativeButton(R.string.cancel)
-                    , supportFragmentManager)
+                    .negativeButton(R.string.cancel), supportFragmentManager)
             true
         }
 
@@ -177,8 +188,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
                     this, ADD_POSITION)
                     .title(R.string.posizione_add_desc)
                     .positiveButton(R.string.aggiungi_confirm)
-                    .negativeButton(R.string.cancel)
-                    , supportFragmentManager)
+                    .negativeButton(R.string.cancel), supportFragmentManager)
         }
 
         if (modifica)
@@ -387,51 +397,38 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
         }
     }
 
+    override fun itemTouchStartDrag(viewHolder: RecyclerView.ViewHolder) {
+        @Suppress("UNCHECKED_CAST")
+        (viewHolder as? BindingViewHolder<SwipeableItemBinding>)?.binding?.cardContainer?.isDragged = true
+    }
+
+    override fun itemTouchDropped(oldPosition: Int, newPosition: Int) {
+        @Suppress("UNCHECKED_CAST")
+        val viewHolder = binding.recyclerView.findViewHolderForAdapterPosition(newPosition) as? BindingViewHolder<SwipeableItemBinding>?
+        viewHolder?.binding?.cardContainer?.isDragged = false
+    }
+
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
         DragDropUtil.onMove(mAdapter.itemAdapter, oldPosition, newPosition)
         return true
     }
 
-    override fun itemTouchDropped(oldPosition: Int, newPosition: Int) = Unit
-
     override fun itemSwiped(position: Int, direction: Int) {
-        // -- Option 1: Direct action --
-        // do something when swiped such as: select, remove, update, ...:
-        // A) fastItemAdapter.select(position);
-        // B) fastItemAdapter.remove(position);
-        // C) update item, set "read" if an email etc
-
-        // -- Option 2: Delayed action --
         val item = mAdapter.getItem(position) ?: return
-        item.swipedDirection = direction
 
-        val deleteHandler = Handler(Looper.getMainLooper()) { message ->
-            val itemOjb = message.obj as SwipeableItem
+        mAdapter.remove(position)
+        binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+        if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible = false
 
-            itemOjb.swipedAction = null
-            val position12 = mAdapter.getAdapterPosition(itemOjb)
-            if (position12 != RecyclerView.NO_POSITION) {
-                mAdapter.remove(position12)
-                binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
-                if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible = false
-            }
-            true
-        }
-
-        // This can vary depending on direction but remove & archive simulated here both results in
-        // removal from list
-        val message = Random().nextInt()
-        deleteHandler.sendMessageDelayed(Message.obtain().apply { what = message; obj = item }, 2000)
-
-        item.swipedAction = Runnable {
-            deleteHandler.removeMessages(message)
-            item.swipedDirection = 0
-            val mPosition = mAdapter.getAdapterPosition(item)
-            if (mPosition != RecyclerView.NO_POSITION)
-                mAdapter.notifyItemChanged(mPosition)
-        }
-
-        mAdapter.notifyItemChanged(position)
+        Snackbar.make(binding.mainContent, getString(R.string.generic_removed, item.name?.getText(this@CreaListaActivity)), Snackbar.LENGTH_SHORT)
+                .setAction(getString(R.string.cancel).toUpperCase(getSystemLocale(resources))) {
+                    item.swipedDirection = 0
+                    mAdapter.add(position, item)
+                    if (position != RecyclerView.NO_POSITION)
+                        mAdapter.notifyItemChanged(position)
+                    binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+                    if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible = false
+                }.show()
     }
 
     private fun playIntro() {
