@@ -58,7 +58,7 @@
                     android:maxLines="1"
                     android:scrollHorizontally="true"
                     android:textColor="?colorOnPrimarySurface"
-                    android:textColorHighlight="@color/ripple_color_light"
+                    android:textColorHighlight="@color/ripple_material_dark"
                     android:textCursorDrawable="@null"
                     android:textSize="30sp"
                     tools:ignore="UnusedAttribute" />

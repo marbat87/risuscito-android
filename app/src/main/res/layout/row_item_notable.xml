@@ -30,7 +30,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:soundEffectsEnabled="true"
-        android:background="?attr/customSelectorRoundAccent" >
+        android:background="?attr/customSelectorRound" >
 
         <ImageView
             android:id="@+id/edit_note_image"

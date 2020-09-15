@@ -7,7 +7,6 @@
         <attr name="secondaryColorOnSecondary" format="reference" />
         <attr name="customSelector" format="reference" />
         <attr name="customSelectorRound" format="reference" />
-        <attr name="customSelectorRoundAccent" format="reference" />
         <attr name="toolbar_shadow" format="reference" />
     </declare-styleable>
 

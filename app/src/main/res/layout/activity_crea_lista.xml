@@ -54,7 +54,7 @@
                     android:maxLines="1"
                     android:scrollHorizontally="true"
                     android:textColor="?colorOnPrimarySurface"
-                    android:textColorHighlight="@color/ripple_color_light"
+                    android:textColorHighlight="@color/ripple_material_dark"
                     android:textCursorDrawable="@null"
                     android:textSize="30sp"
                     tools:ignore="UnusedAttribute" />
@@ -105,7 +105,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:scrollbarStyle="outsideOverlay"

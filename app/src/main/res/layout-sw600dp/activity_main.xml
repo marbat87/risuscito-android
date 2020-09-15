@@ -28,8 +28,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:theme="@style/ToolbarTheme"
                     risuscito:layout_scrollFlags="scroll|enterAlways"
-                    risuscito:popupTheme="@style/RisuscitoToolbarPopup"
-                    risuscito:titleTextColor="?colorOnPrimarySurface" />
+                    risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"

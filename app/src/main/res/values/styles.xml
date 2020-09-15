@@ -22,7 +22,7 @@
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
-    <style name="Risuscito_tabstyle" parent="@style/Widget.MaterialComponents.TabLayout.PrimarySurface">
+    <style name="Widget.MaterialComponents.TabLayout.PrimarySurface.Risuscito">
         <item name="tabGravity">start</item>
         <item name="tabMode">scrollable</item>
         <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito
@@ -123,17 +123,6 @@
     <style name="Widget.MaterialComponents.PopupMenu.Risuscito">
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">@font/googlesans_regular</item>
-    </style>
-
-    <style name="RisuscitoAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="android:buttonBarButtonStyle">
-            @style/Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito
-        </item>
-        <item name="android:windowBackground">@drawable/dialog_material_background</item>
-    </style>
-
-    <style name="Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito">
-        <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
     <style name="Widget.AppCompat.DrawerArrowToggle.Risuscito">

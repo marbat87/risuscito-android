@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="?attr/customSelectorRoundAccent"
+        android:background="?attr/customSelectorRound"
         android:soundEffectsEnabled="true">
 
         <com.mikepenz.iconics.view.IconicsImageView

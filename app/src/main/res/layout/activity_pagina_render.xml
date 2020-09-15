@@ -18,8 +18,7 @@
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/ToolbarTheme"
             risuscito:popupTheme="@style/RisuscitoToolbarPopup"
-            risuscito:title="@string/canto_title_activity"
-            risuscito:titleTextColor="?colorOnPrimarySurface" />
+            risuscito:title="@string/canto_title_activity" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -174,7 +173,7 @@
                     android:layout_width="@dimen/abc_action_bar_default_height_material"
                     android:layout_height="@dimen/abc_action_bar_default_height_material"
                     android:layout_gravity="center_vertical"
-                    android:background="?attr/customSelectorRoundAccent"
+                    android:background="?attr/customSelectorRound"
                     android:clickable="true"
                     android:contentDescription="@null"
                     android:focusable="true"
@@ -269,7 +268,7 @@
                 android:layout_width="@dimen/abc_action_bar_default_height_material"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:layout_gravity="center_vertical"
-                android:background="?attr/customSelectorRoundAccent"
+                android:background="?attr/customSelectorRound"
                 android:clickable="true"
                 android:contentDescription="@null"
                 android:focusable="true"

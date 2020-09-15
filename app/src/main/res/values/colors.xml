@@ -11,8 +11,8 @@
     <color name="theme_accent">@color/md_deep_orange_a200</color>
     <color name="theme_accent_light">@color/md_accent_deep_orange_light</color>
     <color name="theme_accent_dark">@color/md_accent_deep_orange_dark</color>
-    <color name="ripple_color">#4D000000</color>
-    <color name="ripple_color_light">#12000000</color>
+    <color name="ripple_color">@color/ripple_material_light</color>
+<!--    <color name="ripple_color_light">#12000000</color>-->
 
     <color name="material_drawer_dark_selected_text">?colorPrimary</color>
     <color name="risuscito_material_background">@color/design_default_color_background</color>
@@ -21,11 +21,6 @@
     <color name="floating_background">@color/background_floating_material_light</color>
     <color name="material_divider">#1F000000</color>
     <color name="background_dim_overlay">#44000000</color>
-    <color name="tablet_statusbar_color">#4D000000</color>
-    <color name="text_color_on_primary_surface_dark">#000000</color>
-    <color name="text_color_on_primary_surface_light">#ffffff</color>
-    <color name="text_color_on_primary_dark">#000000</color>
-    <color name="text_color_on_primary_light">#ffffff</color>
 
     <!--  primary colors -->
     <color name="primary_color_amber">@color/md_amber_500</color>
