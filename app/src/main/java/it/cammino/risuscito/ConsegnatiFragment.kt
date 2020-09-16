@@ -535,12 +535,11 @@ class ConsegnatiFragment : Fragment() {
                     mSelectedId.add(item.id)
         }
 
-        var i = 0
         val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
         val consegnati = ArrayList<Consegnato>()
-        for (id in mSelectedId) {
+        for ((i, id) in mSelectedId.withIndex()) {
             val tempConsegnato = Consegnato()
-            tempConsegnato.idConsegnato = ++i
+            tempConsegnato.idConsegnato = i
             tempConsegnato.idCanto = id
             tempConsegnato.numPassaggio = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.getNumPassaggio(id) }
             consegnati.add(tempConsegnato)

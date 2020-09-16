@@ -37,7 +37,6 @@
     <string name="title_activity_inserisci_titolo">Szukanie dla danych wejściowych</string>
     <string name="title_activity_about">Informacje</string>
     <string name="save_file">Zapisz lokalnie</string>
-    <string name="wait">Czekaj, buforowanie w trakcie&#8230;</string>
     <string name="no_connection">Brak połączenia z internetem</string>
     <string name="no_record">Nagranie niedostępne</string>
     <string name="about_subtitle">Wersja na smartphone/tablet z Androidem</string>

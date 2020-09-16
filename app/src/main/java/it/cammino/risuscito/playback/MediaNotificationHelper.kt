@@ -35,16 +35,6 @@ internal object MediaNotificationHelper {
         }
 
         val isPlaying = mPlaybackState.state == PlaybackStateCompat.STATE_PLAYING
-//        val iconPause = IconicsDrawable(context, CommunityMaterial.Icon2.cmd_pause).apply {
-//            colorRes = R.color.ic_notification_color
-//            sizeDp = 24
-//            paddingDp = 2
-//        }
-//        val iconPlay = IconicsDrawable(context, CommunityMaterial.Icon2.cmd_play).apply {
-//            colorRes = R.color.ic_notification_color
-//            sizeDp = 24
-//            paddingDp = 2
-//        }
         val actionPlayPause = if (isPlaying)
             NotificationCompat.Action(R.drawable.ic_action_pause,
                     context.getString(R.string.label_pause),
@@ -80,11 +70,6 @@ internal object MediaNotificationHelper {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         if (mPlaybackState.state == PlaybackStateCompat.STATE_PLAYING || mPlaybackState.state == PlaybackStateCompat.STATE_PAUSED) {
-//            val iconRestart = IconicsDrawable(context, CommunityMaterial.Icon2.cmd_restart).apply {
-//                colorRes = R.color.ic_notification_color
-//                sizeDp = 24
-//                paddingDp = 2
-//            }
             val actionRestart = NotificationCompat.Action(R.drawable.ic_action_restart,
                     context.getString(R.string.label_restart),
                     MediaButtonReceiver.buildMediaButtonPendingIntent(context,

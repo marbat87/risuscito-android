@@ -53,7 +53,6 @@
     <string name="title_activity_inserisci_titolo">Ricerca per inserimento</string>
     <string name="title_activity_about">About</string>
     <string name="save_file">Salva in locale</string>
-    <string name="wait">Attendi, buffering in corso&#8230;</string>
     <string name="no_connection">Nessuna connessione ad internet attiva</string>
     <string name="no_record">Registrazione non presente</string>
     <string name="about_subtitle">Versione per smartphone/tablet Android</string>

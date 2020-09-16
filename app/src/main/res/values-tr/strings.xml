@@ -37,7 +37,6 @@
     <string name="title_activity_inserisci_titolo">Eklenene göre ara</string>
     <string name="title_activity_about">Hakkında</string>
     <string name="save_file">Yerel\'e kaydet</string>
-    <string name="wait">Bekleyin, ara belleğe alınıyor&#8230;</string>
     <string name="no_connection">Aktif İnternetle bağlantı yok</string>
     <string name="no_record">Kayıt bulunmuyor</string>
     <string name="about_subtitle">Android telefon/tablet için versiyon</string>
