@@ -42,9 +42,9 @@
     <string name="jahve_tu_sei_mio_dio_link" formatted="false">    http://www.neo.favourite.pl/Spiewnik/035b%20Jahwe,%20Tys%20Bogiem%20mym%20a.mp3</string>
     <string name="cantiamo_cantiamo_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/036a%20Spiewajmy,%20spiewajmy%20a.mp3</string>
     <string name="giunga_la_mia_preghiera_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/036b%20Niech%20dotrze%20moja%20modlitwa%20do%20Ciebie%20(Ps%20119)%20a.mp3</string>
-    <string name="guardate_come_e_bello_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/037b%20O%20jak%20pieknie,%20ile%20radosci%20(Ps%20133)%20b.mp3</string>
-    <string name="come_bello_come_da_gioia_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/038%20Zobaczcie,%20jak%20jest%20piekna%20(Ps%20133)%20a.mp3</string>
-    <string name="guardate_come_e_bello_gustate_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/037a%20Zobaczcie,%20jak%20jest%20pieknie%20(Ps%20133)%20a.mp3</string>
+    <string name="guardate_come_e_bello_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/037a%20Zobaczcie,%20jak%20jest%20pieknie%20(Ps%20133)%20a.mp3</string>
+    <string name="come_bello_come_da_gioia_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/037b%20O%20jak%20pieknie,%20ile%20radosci%20(Ps%20133)%20b.mp3</string>
+    <string name="guardate_come_e_bello_gustate_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/038%20Zobaczcie,%20jak%20jest%20piekna%20(Ps%20133)%20a.mp3</string>
     <string name="grazie_a_jahve_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/039%20Dzieki%20Ci,%20Jahwe%20(Ps%20136)%20a.mp3</string>
     <string name="canto_giovani_fornace_I_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/040%20Kantyk%20Trzech%20Mlodziencow%20w%20piecu%20ognistym%20(cz.%201)%20a.mp3</string>
     <string name="canto_giovani_fornace_II_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/041%20Kantyk%20Trzech%20Mlodziencow%20w%20piecu%20ognistym%20(cz.%202)%20+.mp3</string>
@@ -54,7 +54,7 @@
     <string name="evenu_shalom_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/044b%20Hevenu%20Szalom%20alehem%20a.mp3</string>
     <string name="gia_viene_il_regno_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/045a%20JUZ%20NADCHODZI%20KROLESTWO.mp3</string>
     <string name="abba_padre_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/045b%20Abba,%20Ojcze%20b.mp3</string>
-    <string name="chi_ci_separera_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/046%20Kto%20nas%20odlaczy%20(Rz%208,%2033–39).mp3</string>
+    <string name="chi_ci_separera_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/046%20Kto%20nas%20odlaczy%20(Rz%208,%2033%2D39).mp3</string>
     <string name="magnificat_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/047%20Magnifikat%20a.mp3</string>
     <string name="innalzero_la_coppa_di_salvezza_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/048%20Podniose%20kielich%20zbawienia%20(Ps%20116)%20a.mp3</string>
     <string name="quando_il_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/049%20Kiedy%20Pan%20sprawil,%20ze%20powrocili%20(Ps%20126)%20b.mp3</string>
@@ -64,7 +64,7 @@
     <string name="pentecoste_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/053%20Pentecoste%20b.mp3</string>
     <string name="ecco_qui_vengo_presto_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/054a%20Oto%20Ja%20niebawem%20przyjde%20a.mp3</string>
     <string name="vieni_figlio_dell_uomo_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/054b%20Przyjdz,%20Synu%20Czlowieczy%20b.mp3</string>
-    <string name="abramo_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/055%20Abraham%20(Rdz%2018,%201–5)%20b.mp3</string>
+    <string name="abramo_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/055%20Abraham%20(Rdz%2018,%201%2D5)%20b.mp3</string>
     <string name="cantico_di_mose_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/056%20Kantyk%20Mojzesza%20a.mp3</string>
     <string name="lodate_il_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/057%20Psalm%20117%20Wyslawiajcie%20Pana%20wszystkie%20ludy%20na%20ziemi%20b.mp3</string>
     <string name="quando_israele_usci_egitto_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/058%20Kiedy%20Izrael%20wyszedl%20z%20Egiptu%20b.mp3</string>
@@ -94,7 +94,7 @@
     <string name="ho_sperato_nel_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/077%20Psalm%2040%20Zaufalem,%20zaufalem%20Panu%20b.mp3</string>
     <string name="voglio_cantare_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/078%20Psalm%2057%20Tobie%20chce%20spiewac%20a.mp3</string>
     <string name="perche_genti_congiurano_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/079%20Dlaczego%20buntuja%20sie%20narody%20(Ps%202)%20a.mp3</string>
-    <string name="come_una_cerva_anela_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/080%20Tak%20jako%20lania%20(Ps%2042–43)%20a.mp3</string>
+    <string name="come_una_cerva_anela_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/080%20Tak%20jako%20lania%20(Ps%2042%2D43)%20a.mp3</string>
     <string name="acclamate_al_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/081a%20Wyslawiajcie%20Pana%20[mieszkancy%20calej%20ziemi]%20(Ps%20100)%20b.mp3</string>
     <string name="gridate_con_gioia_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/081b%20Wolajcie%20radosnie%20(Iz%2012,%201nn).mp3</string>
     <string name="al_risveglio_mi_saziero_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/082%20Gdy%20sie%20zbudze,%20nasyce%20sie%20obliczem%20Twym,%20Panie%20(Ps%2017)%20.mp3</string>
@@ -105,7 +105,7 @@
     <string name="sale_dio_tra_acclamazioni_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/087b%20Pan%20wstepuje%20wsrod%20okrzykow%20(Ps%2047)%20b.mp3</string>
     <string name="popolo_camminava_tenebre_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/088a%20Narod%20kroczacy%20w%20ciemnosciach%20b.mp3</string>
     <string name="da_lode_al_signore_link" formatted="false"></string>
-    <string name="canto_di_balaam_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/089%20Spiew%20Balaama%20(Lb%2023,%207–24)%20a.mp3</string>
+    <string name="canto_di_balaam_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/089%20Spiew%20Balaama%20(Lb%2023,%207%2D24)%20a.mp3</string>
     <string name="davanti_agli_angeli_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/090%20W%20obliczu%20aniolow%20(Ps%20138)%20a.mp3</string>
     <string name="quando_israele_era_un_bimbo_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/091a%20Kiedy%20Izrael%20byl%20dziecieciem%20a.mp3</string>
     <string name="e_la_pasqua_del_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/091b%20To%20jest%20Pascha%20Pana%20a.mp3</string>
@@ -150,7 +150,7 @@
     <string name="signore_non_punirmi_nel_tuo_sdegno_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/127%20O%20Panie,%20nie%20karc%20mnie%20w%20swoim%20gniewie.mp3</string>
     <string name="gloria_gloria_gloria_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/128%20Gloria,%20Gloria,%20Gloria.mp3</string>
     <string name="esultate_giusti_nel_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/129%20Radujcie%20sie%20sprawiedliwi%20w%20Panu.mp3</string>
-    <string name="molto_mi_hanno_perseguitato_link" formatted="false"></string>
+    <string name="molto_mi_hanno_perseguitato_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/285%20Carmen%2063%20(Tagore).mp3</string>
     <string name="ti_amo_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/131%20Kocham%20Cie,%20Panie%20b.mp3</string>
     <string name="maria_madre_cammino_ardente_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/132%20Maryjo,%20Matko%20drogi%20gorejacej.mp3</string>
     <string name="shlom_lech_mariam_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/133%20Shlom%20lech%20Mariam.mp3</string>
@@ -176,13 +176,13 @@
     <string name="seminatore_link" formatted="false"></string>
     <string name="spirito_del_signore_sopra_di_me_link" formatted="false"></string>
     <string name="ecco_lo_specchio_nostro_link" formatted="false"></string>
-    <string name="come_slancio_ira_link" formatted="false"></string>
+    <string name="come_slancio_ira_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/217b%20Pragne%20pojsc%20do%20Jeruzalem%20b.mp3</string>
     <string name="benedetto_sia_iddio_link" formatted="false"></string>
     <string name="signore_tu_scruti_conosci_link" formatted="false"></string>
     <string name="eli_eli_lamma_sabactani_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/214%20215%20ELI,%20ELI,%20LAMMA%20SABAHTANI.mp3</string>
     <string name="nessuno_puo_servire_due_padroni_link" formatted="false"></string>
     <string name="signore_mio_cuore_pretese_link" formatted="false"></string>
-    <string name="voglio_andare_a_gerusalemme_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/217b%20Pragne%20pojsc%20do%20Jeruzalem%20b.mp3</string>
+    <string name="voglio_andare_a_gerusalemme_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/217b%20Pragne%20pojsc%20do%20Jeruzalem%20a.mp3</string>
     <string name="shema_israel_link" formatted="false"></string>
     <string name="inno_croce_gloriosa_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/219%20Hymn%20o%20Krzyzu%20Chwalebnym%20a.mp3</string>
     <string name="rivestitevi_dell_armatura_link" formatted="false"></string>
@@ -212,13 +212,13 @@
     <string name="una_donna_vestita_di_sole_link" formatted="false"></string>
     <string name="ho_steso_le_mani_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/283%20Rozciagnalem%20moje%20rece.mp3</string>
     <string name="omelia_pasquale_melitone_sardi_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/284%20Homilia%20Paschalna%20Melitona%20z%20Sardes.mp3</string>
-    <string name="carmen_63_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/285%20Carmen%2063%20(Tagore).mp3</string>
+    <string name="carmen_63_link" formatted="false"></string>
     <string name="caritas_christi_link" formatted="false"></string>
     <string name="noli_me_tangere_link" formatted="false"></string>
-    <string name="signore_aiutami_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/288%20Kochajcie%20waszych%20nieprzyjaciol%20(nauka)%20a.mp3</string>
-    <string name="mi_hai_sedotto_signore_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/289%20Jestes%20piekna,%20przyjaciolko%20moja%20a.mp3</string>
-    <string name="amate_i_vostri_nemici_link" formatted="false"></string>
-    <string name="tu_sei_bella_amica_mia_link" formatted="false"></string>
+    <string name="signore_aiutami_signore_link" formatted="false"></string>
+    <string name="mi_hai_sedotto_signore_link" formatted="false"></string>
+    <string name="amate_i_vostri_nemici_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/288%20Kochajcie%20waszych%20nieprzyjaciol%20(nauka)%20a.mp3</string>
+    <string name="tu_sei_bella_amica_mia_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/289%20Jestes%20piekna,%20przyjaciolko%20moja%20a.mp3</string>
     <string name="fratelli_non_diamo_a_nessuno_link" formatted="false"></string>
     <string name="questo_e_io_mio_comandamento_link" formatted="false"></string>
     <string name="mi_rubasti_cuore_link" formatted="false"></string>
