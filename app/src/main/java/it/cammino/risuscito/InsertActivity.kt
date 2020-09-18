@@ -1,6 +1,7 @@
 package it.cammino.risuscito
 
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
+import com.google.android.material.elevation.ElevationOverlayProvider
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -35,6 +37,7 @@ import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -71,6 +74,11 @@ class InsertActivity : ThemeableActivity() {
         setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        if (!LUtils.hasL() && ThemeUtils.isDarkMode(this)) {
+            val elevatedSurfaceColor = ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
+            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
+        }
 
         val bundle = intent.extras
         listaPredefinita = bundle?.getInt(FROM_ADD) ?: 0

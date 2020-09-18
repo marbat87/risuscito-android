@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -41,6 +42,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.elevation.ElevationOverlayProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -156,6 +158,10 @@ class MainActivity : ThemeableActivity() {
         }
 
         setSupportActionBar(binding.risuscitoToolbar)
+        if (!LUtils.hasL() && ThemeUtils.isDarkMode(this)) {
+            val elevatedSurfaceColor = ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
+            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
+        }
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
             lifecycleScope.launch { translate() }
@@ -163,7 +169,7 @@ class MainActivity : ThemeableActivity() {
 
         setupNavDrawer(savedInstanceState)
 
-        binding.toolbarLayout.setExpanded(true, false)
+        binding.appBarLayout.setExpanded(true, false)
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -535,7 +541,7 @@ class MainActivity : ThemeableActivity() {
             R.id.navigation_history.toLong() -> HistoryFragment()
             else -> Risuscito()
         }
-        binding.toolbarLayout.setExpanded(true, true)
+        binding.appBarLayout.setExpanded(true, true)
 
         // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
         val myFragment = supportFragmentManager
@@ -793,7 +799,7 @@ class MainActivity : ThemeableActivity() {
     }
 
     fun expandToolbar() {
-        binding.toolbarLayout.setExpanded(true, true)
+        binding.appBarLayout.setExpanded(true, true)
     }
 
     fun getMaterialTabs(): TabLayout {
@@ -1012,7 +1018,7 @@ class MainActivity : ThemeableActivity() {
             if (mViewModel.isTabletWithNoFixedDrawer) miniSliderView.setSelection(R.id.navigation_home.toLong())
             sliderView.setSelectionAtPosition(1, true)
         }
-        binding.toolbarLayout.setExpanded(true, true)
+        binding.appBarLayout.setExpanded(true, true)
         binding.slider?.setSelectionAtPosition(1, true)
     }
 

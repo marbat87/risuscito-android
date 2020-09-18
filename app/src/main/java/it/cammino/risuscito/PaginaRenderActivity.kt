@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.*
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
 import android.os.*
 import android.provider.MediaStore
@@ -36,6 +37,7 @@ import com.afollestad.materialdialogs.files.fileChooser
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.elevation.ElevationOverlayProvider
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.leinardi.android.speeddial.SpeedDialActionItem
@@ -283,6 +285,11 @@ class PaginaRenderActivity : ThemeableActivity() {
         setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        if (!LUtils.hasL() && ThemeUtils.isDarkMode(this)) {
+            val elevatedSurfaceColor = ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
+            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
+        }
 
         val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
             colorInt = Color.WHITE

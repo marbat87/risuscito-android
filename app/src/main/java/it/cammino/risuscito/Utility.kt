@@ -258,11 +258,12 @@ object Utility {
 
     @SuppressLint("NewApi")
     fun setupNavBarColor(context: Activity) {
+        context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
         if (LUtils.hasO()) {
 //            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             if (!ThemeUtils.isDarkMode(context)) setLightNavigationBar(context)
-            context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
+//            context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
             context.window.navigationBarColor = Color.TRANSPARENT
         }
     }
