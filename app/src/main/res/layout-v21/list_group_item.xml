@@ -7,12 +7,8 @@
     android:layout_gravity="center"
     android:layout_marginStart="-3dp"
     android:layout_marginLeft="-3dp"
-    android:layout_marginTop="-5dp"
     android:layout_marginEnd="-3dp"
-    android:layout_marginRight="-3dp"
-    android:layout_marginBottom="-5dp"
-    android:clickable="true"
-    android:focusable="true">
+    android:layout_marginRight="-3dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,7 +19,6 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:layout_toStartOf="@+id/group_indicator"
-            android:layout_toLeftOf="@+id/group_indicator"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingStart="@dimen/myListPreferredItemMargin"
@@ -59,7 +54,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
             android:layout_marginStart="@dimen/myListPreferredItemMargin"
             android:layout_marginLeft="@dimen/myListPreferredItemMargin"

@@ -37,8 +37,7 @@ class ChangelogActivity : ThemeableActivity() {
         }
 
         if (ThemeUtils.isDarkMode(this)) {
-            val elevationOverlayProvider = ElevationOverlayProvider(this)
-            val elevatedSurfaceColor = elevationOverlayProvider.compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
+            val elevatedSurfaceColor = ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
             binding.collapsingToolbarLayout.setContentScrimColor(elevatedSurfaceColor)
             binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
         }

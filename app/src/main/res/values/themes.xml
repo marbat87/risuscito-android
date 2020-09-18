@@ -32,7 +32,6 @@
         <!-- fix per poter applicare correttamente il tema notturno -->
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
-<!--        <item name="colorSurface">@color/floating_background</item>-->
         <item name="android:textColorHint">@color/text_color_secondary</item>
         <item name="md_font_title">@font/googlesans_medium</item>
         <item name="md_font_body">@font/googlesans_regular</item>
