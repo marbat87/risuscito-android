@@ -27,8 +27,6 @@
         <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyle.Risuscito
         </item>
 
-        <item name="drawerArrowStyle">@style/Widget.AppCompat.DrawerArrowToggle.Risuscito</item>
-
         <!-- fix per poter applicare correttamente il tema notturno -->
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_secondary</item>

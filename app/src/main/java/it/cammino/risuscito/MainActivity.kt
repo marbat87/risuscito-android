@@ -78,6 +78,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -333,6 +334,9 @@ class MainActivity : ThemeableActivity() {
             withSavedInstance(savedInstanceState)
         }
 
+        val drawerArrowColor = if (ThemeUtils.isDarkMode(this)) MaterialColors.getColor(this, R.attr.colorControlNormal, TAG) else
+            MaterialColors.getColor(this, R.attr.colorOnPrimarySurface, TAG)
+
         if (mViewModel.isOnTablet) {
             sliderView = MaterialDrawerSliderView(this).apply {
                 accountHeader = mAccountHeader
@@ -439,11 +443,12 @@ class MainActivity : ThemeableActivity() {
                 miniSliderView.crossFader = CrossfadeWrapper(crossFader)
                 //define a shadow (this is only for normal LTR layouts if you have a RTL app you need to define the other one
                 crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-                binding.risuscitoToolbar.navigationIcon = DrawerArrowDrawable(this)
+                binding.risuscitoToolbar.navigationIcon = DrawerArrowDrawable(this).apply { color = drawerArrowColor }
                 binding.risuscitoToolbar.setNavigationOnClickListener { crossFader.crossFade() }
             }
         } else {
             mActionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawer as DrawerLayout, binding.risuscitoToolbar, R.string.material_drawer_open, R.string.material_drawer_close)
+            mActionBarDrawerToggle.drawerArrowDrawable.color = drawerArrowColor
             mActionBarDrawerToggle.syncState()
 
             binding.slider?.apply {

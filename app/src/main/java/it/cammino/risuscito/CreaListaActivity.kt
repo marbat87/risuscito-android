@@ -174,7 +174,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
             binding.collapsingToolbarLayout.title = s
             mCreaListaViewModel.tempTitle = s.toString()
         }
-        if (ThemeUtils.isDarkMode(this)) {
+
+        if (LUtils.hasL() && ThemeUtils.isDarkMode(this)) {
             val elevatedSurfaceColor = ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
             binding.collapsingToolbarLayout.setContentScrimColor(elevatedSurfaceColor)
             binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)

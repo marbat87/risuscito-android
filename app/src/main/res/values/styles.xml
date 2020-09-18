@@ -9,6 +9,10 @@
         <item name="statusBarScrim">?colorPrimaryVariant</item>
     </style>
 
+    <style name="AdaptiveBackgroundColor">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />
 
     <style name="TitoloSezione">
@@ -130,10 +134,6 @@
     <style name="Widget.MaterialComponents.PopupMenu.Risuscito">
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">@font/googlesans_regular</item>
-    </style>
-
-    <style name="Widget.AppCompat.DrawerArrowToggle.Risuscito">
-        <item name="color">?colorOnPrimarySurface</item>
     </style>
 
     <style name="Widget.MaterialDrawerStyle.Risuscito">
