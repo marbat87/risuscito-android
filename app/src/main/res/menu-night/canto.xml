@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/tonalita"
+        android:orderInCategory="88"
+        android:title="@string/action_tonalita"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd_music_note"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        risuscito:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/action_trasporta"
+                android:orderInCategory="89"
+                android:title="@string/action_trasporta"
+                risuscito:ico_color="@color/text_color_secondary"
+                risuscito:ico_icon="cmd_swap_vertical"
+                risuscito:ico_padding="2dp"
+                risuscito:ico_size="24dp">
+
+                <menu>
+                    <group android:id="@+id/menu_gruppo_note">
+                        <item
+                            android:id="@+id/notaDo"
+                            android:title="@string/action_trasporta_do"
+                            android:titleCondensed="@string/title_trasporta_do" />
+                        <item
+                            android:id="@+id/notaDod"
+                            android:title="@string/action_trasporta_dod"
+                            android:titleCondensed="@string/title_trasporta_dod" />
+                        <item
+                            android:id="@+id/notaRe"
+                            android:title="@string/action_trasporta_re"
+                            android:titleCondensed="@string/title_trasporta_re" />
+                        <item
+                            android:id="@+id/notaMib"
+                            android:title="@string/action_trasporta_mib"
+                            android:titleCondensed="@string/title_trasporta_mib" />
+                        <item
+                            android:id="@+id/notaMi"
+                            android:title="@string/action_trasporta_mi"
+                            android:titleCondensed="@string/title_trasporta_mi" />
+                        <item
+                            android:id="@+id/notaFa"
+                            android:title="@string/action_trasporta_fa"
+                            android:titleCondensed="@string/title_trasporta_fa" />
+                        <item
+                            android:id="@+id/notaFad"
+                            android:title="@string/action_trasporta_fad"
+                            android:titleCondensed="@string/title_trasporta_fad" />
+                        <item
+                            android:id="@+id/notaSol"
+                            android:title="@string/action_trasporta_sol"
+                            android:titleCondensed="@string/title_trasporta_sol" />
+                        <item
+                            android:id="@+id/notaSold"
+                            android:title="@string/action_trasporta_sold"
+                            android:titleCondensed="@string/title_trasporta_sold" />
+                        <item
+                            android:id="@+id/notaLa"
+                            android:title="@string/action_trasporta_la"
+                            android:titleCondensed="@string/title_trasporta_la" />
+                        <item
+                            android:id="@+id/notaSib"
+                            android:title="@string/action_trasporta_sib"
+                            android:titleCondensed="@string/title_trasporta_sib" />
+                        <item
+                            android:id="@+id/notaSi"
+                            android:title="@string/action_trasporta_si"
+                            android:titleCondensed="@string/title_trasporta_si" />
+                    </group>
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/action_save_tab"
+                android:orderInCategory="90"
+                android:title="@string/action_salva"
+                risuscito:ico_color="@color/text_color_secondary"
+                risuscito:ico_icon="cmd_content_save"
+                risuscito:ico_padding="2dp"
+                risuscito:ico_size="24dp" />
+
+            <item
+                android:id="@+id/action_reset_tab"
+                android:orderInCategory="91"
+                android:title="@string/action_reset_tonalita"
+                risuscito:ico_color="@color/text_color_secondary"
+                risuscito:ico_icon="cmd_refresh"
+                risuscito:ico_padding="2dp"
+                risuscito:ico_size="24dp" />
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/barre"
+        android:orderInCategory="92"
+        android:title="@string/action_barre"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd_guitar_electric"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        risuscito:showAsAction="always">
+
+        <menu>
+
+            <item
+                android:id="@+id/action_trasporta_barre"
+                android:orderInCategory="93"
+                android:title="@string/action_trasporta"
+                risuscito:ico_color="@color/text_color_secondary"
+                risuscito:ico_icon="cmd_swap_vertical"
+                risuscito:ico_padding="2dp"
+                risuscito:ico_size="24dp">
+
+                <menu>
+                    <group android:id="@+id/menu_gruppo_barre">
+                        <item
+                            android:id="@+id/nobarre"
+                            android:title="@string/action_trabar_NO"
+                            android:titleCondensed="0" />
+                        <item
+                            android:id="@+id/barre1"
+                            android:title="@string/action_trabar_I"
+                            android:titleCondensed="@string/title_trabar_I" />
+                        <item
+                            android:id="@+id/barre2"
+                            android:title="@string/action_trabar_II"
+                            android:titleCondensed="@string/title_trabar_II" />
+                        <item
+                            android:id="@+id/barre3"
+                            android:title="@string/action_trabar_III"
+                            android:titleCondensed="@string/title_trabar_III" />
+                        <item
+                            android:id="@+id/barre4"
+                            android:title="@string/action_trabar_IV"
+                            android:titleCondensed="@string/title_trabar_IV" />
+                        <item
+                            android:id="@+id/barre5"
+                            android:title="@string/action_trabar_V"
+                            android:titleCondensed="@string/title_trabar_V" />
+                        <item
+                            android:id="@+id/barre6"
+                            android:title="@string/action_trabar_VI"
+                            android:titleCondensed="@string/title_trabar_VI" />
+                        <item
+                            android:id="@+id/barre7"
+                            android:title="@string/action_trabar_VII"
+                            android:titleCondensed="@string/title_trabar_VII" />
+                    </group>
+                </menu>
+            </item>
+
+            <item
+                android:id="@+id/action_save_barre"
+                android:orderInCategory="94"
+                android:title="@string/action_salva"
+                risuscito:ico_color="@color/text_color_secondary"
+                risuscito:ico_icon="cmd_content_save"
+                risuscito:ico_padding="2dp"
+                risuscito:ico_size="24dp" />
+
+            <item
+                android:id="@+id/action_reset_barre"
+                android:orderInCategory="95"
+                android:title="@string/action_reset_barre"
+                risuscito:ico_color="@color/text_color_secondary"
+                risuscito:ico_icon="cmd_refresh"
+                risuscito:ico_padding="2dp"
+                risuscito:ico_size="24dp" />
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/action_exp_pdf"
+        android:orderInCategory="97"
+        android:title="@string/action_exp_pdf"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd_file_pdf_box"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        risuscito:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_help_canto"
+        android:orderInCategory="98"
+        android:title="@string/action_help"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd_help_circle"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        risuscito:showAsAction="never" />
+
+</menu>

@@ -9,4 +9,8 @@
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
+    <style name="Widget.AppCompat.DrawerArrowToggle.Risuscito">
+        <item name="color">?colorControlNormal</item>
+    </style>
+
 </resources>

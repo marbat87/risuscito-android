@@ -196,7 +196,6 @@ class MainActivity : ThemeableActivity() {
                                         .progressIndeterminate(true),
                                         supportFragmentManager)
                                 backToHome(false)
-//                                BackupTask(this).execute()
                                 lifecycleScope.launch { backupDbPrefs() }
                             }
                             RESTORE_ASK -> {
@@ -208,7 +207,6 @@ class MainActivity : ThemeableActivity() {
                                         supportFragmentManager)
                                 backToHome(false)
                                 lifecycleScope.launch { restoreDbPrefs() }
-//                                RestoreTask(this).execute()
                             }
                             SIGNOUT -> {
                                 simpleDialogViewModel.handled = true
@@ -567,7 +565,6 @@ class MainActivity : ThemeableActivity() {
             LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
             LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
             LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
-//            LANGUAGE_TURKISH -> accordi1 = CambioAccordi.accordi_tr
         }
 
         var accordi2 = CambioAccordi.accordi_it
@@ -576,7 +573,6 @@ class MainActivity : ThemeableActivity() {
             LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
             LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
             LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
-//            LANGUAGE_TURKISH -> accordi2 = CambioAccordi.accordi_tr
         }
 
         val mappa = HashMap<String, String>()
@@ -608,19 +604,13 @@ class MainActivity : ThemeableActivity() {
         var barre1 = CambioAccordi.barre_it
         Log.d(TAG, "convertiBarre - from: ${conversion?.substring(0, 2)}")
         when (conversion?.substring(0, 2)) {
-//            LANGUAGE_UKRAINIAN -> barre1 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
-//            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
-//            LANGUAGE_POLISH -> barre1 = CambioAccordi.barre_pl
         }
 
         var barre2 = CambioAccordi.barre_it
         Log.d(TAG, "convertiBarre - to: ${conversion?.substring(3, 5)}")
         when (conversion?.substring(3, 5)) {
-//            LANGUAGE_UKRAINIAN -> barre2 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
-//            LANGUAGE_TURKISH -> barre2 = CambioAccordi.barre_tr
-//            LANGUAGE_POLISH -> barre2 = CambioAccordi.barre_pl
         }
 
         val mappa = HashMap<String, String>()
@@ -891,7 +881,6 @@ class MainActivity : ThemeableActivity() {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "firebaseAuthWithGoogle:success")
-//                        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, true) }
                         if (mViewModel.showSnackbar) {
                             Toast.makeText(this, getString(R.string.connected_as, acct?.displayName), Toast.LENGTH_SHORT)
                                     .show()

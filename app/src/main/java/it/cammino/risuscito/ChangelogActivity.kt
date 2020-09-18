@@ -1,14 +1,17 @@
 package it.cammino.risuscito
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.activity.addCallback
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
+import com.google.android.material.elevation.ElevationOverlayProvider
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.databinding.ChangelogLayoutBinding
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ThemeUtils
 
 class ChangelogActivity : ThemeableActivity() {
 
@@ -31,6 +34,13 @@ class ChangelogActivity : ThemeableActivity() {
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
+        }
+
+        if (ThemeUtils.isDarkMode(this)) {
+            val elevationOverlayProvider = ElevationOverlayProvider(this)
+            val elevatedSurfaceColor = elevationOverlayProvider.compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
+            binding.collapsingToolbarLayout.setContentScrimColor(elevatedSurfaceColor)
+            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
         }
     }
 

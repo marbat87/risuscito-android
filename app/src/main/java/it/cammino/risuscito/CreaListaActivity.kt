@@ -3,6 +3,7 @@ package it.cammino.risuscito
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -31,6 +32,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.elevation.ElevationOverlayProvider
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.BindingViewHolder
@@ -57,6 +59,7 @@ import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -115,18 +118,6 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
 
         mTouchHelper = ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
 
-//        mAdapter.onLongClickListener = { _: View?, _: IAdapter<SwipeableItem>, item: SwipeableItem, position: Int ->
-//            Log.d(TAG, "onItemLongClick: $position")
-//            mCreaListaViewModel.positionToRename = position
-//            InputTextDialogFragment.show(InputTextDialogFragment.Builder(
-//                    this, RENAME)
-//                    .title(R.string.posizione_rename)
-//                    .prefill(item.name?.getText(this).toString())
-//                    .positiveButton(R.string.aggiungi_rename)
-//                    .negativeButton(R.string.cancel), supportFragmentManager)
-//            true
-//        }
-
         mAdapter.addLongClickListener<SwipeableItemBinding, SwipeableItem>({ binding -> binding.swipeableText1 }) { _, position, _, item ->
             Log.d(TAG, "onItemLongClick: $position")
             mCreaListaViewModel.positionToRename = position
@@ -182,6 +173,12 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
         binding.textFieldTitle.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
             binding.collapsingToolbarLayout.title = s
             mCreaListaViewModel.tempTitle = s.toString()
+        }
+        if (ThemeUtils.isDarkMode(this)) {
+            val elevationOverlayProvider = ElevationOverlayProvider(this)
+            val elevatedSurfaceColor = elevationOverlayProvider.compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
+            binding.collapsingToolbarLayout.setContentScrimColor(elevatedSurfaceColor)
+            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
         }
 
         binding.fabCreaLista.setOnClickListener {

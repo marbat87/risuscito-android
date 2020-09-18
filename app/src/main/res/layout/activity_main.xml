@@ -14,21 +14,21 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/toolbar_layout"
+            style="@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                risuscito:layout_scrollFlags="scroll|enterAlways">
+                risuscito:layout_scrollFlags="scroll|enterAlways|snap">
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/risuscito_toolbar"
-                    style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface"
+                    style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:theme="@style/ToolbarTheme"
-                    risuscito:layout_scrollFlags="scroll|enterAlways"
+                    risuscito:layout_scrollFlags="scroll|enterAlways|snap"
                     risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
