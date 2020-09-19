@@ -16,7 +16,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4604
+        versionCode = 4605
         versionName = "4.6.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -87,7 +87,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.0-alpha05")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.media:media:1.2.0-rc01")
+    implementation("androidx.media:media:1.2.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07")
@@ -100,7 +100,7 @@ dependencies {
     implementation("com.google.firebase:firebase-core:17.5.0")
     implementation("com.google.firebase:firebase-firestore-ktx:21.6.0")
     implementation("com.google.firebase:firebase-storage-ktx:19.2.0")
-    implementation("com.google.firebase:firebase-auth:19.3.2")
+    implementation("com.google.firebase:firebase-auth:19.4.0")
     implementation("com.google.firebase:firebase-crashlytics:17.2.1")
     implementation("com.google.firebase:firebase-analytics:17.5.0")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
