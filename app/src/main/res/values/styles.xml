@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
     <style name="AdaptiveScrimColor">
         <item name="statusBarScrim">?colorPrimaryVariant</item>
+    </style>
+
+    <style name="AdaptiveBackgroundColor">
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />
@@ -15,19 +19,25 @@
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment" tools:targetApi="JELLY_BEAN_MR1">viewStart</item>
         <item name="fontFamily">@font/googlesans_medium</item>
-        <item name="android:textColor">?colorSecondary</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:textSize">14sp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
-    <style name="Risuscito_tabstyle" parent="@style/Widget.MaterialComponents.TabLayout.PrimarySurface">
-        <item name="tabGravity">center</item>
+    <style name="Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:elevation" tools:ignore="NewApi">0dp</item>
+        <item name="android:theme">@style/ToolbarTheme</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.TabLayout.PrimarySurface.Risuscito">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="tabGravity">start</item>
         <item name="tabMode">scrollable</item>
         <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito
         </item>
-        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="TextAppearance.MaterialComponents.Button.Risuscito">
@@ -36,7 +46,7 @@
     </style>
 
     <style name="ActionBar.TitleText.Collapsed">
-        <item name="android:textColor">@color/primary_text_default_material_dark</item>
+        <item name="android:textColor">?colorOnPrimarySurface</item>
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
@@ -62,7 +72,7 @@
     <style name="BottomSheet.GridItemImage">
         <item name="android:layout_height">48dp</item>
         <item name="android:layout_width">48dp</item>
-        <item name="android:layout_margin">8dp</item>
+        <item name="android:layout_margin">8dp</item>s
         <item name="android:padding">0dp</item>
     </style>
 
@@ -113,7 +123,7 @@
         <item name="cornerSizeBottomLeft">@dimen/mtrl_shape_corner_size_large_component</item>
     </style>
 
-    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.AppCompat.DayNight">
+    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
         <item name="fontFamily">@font/googlesans_regular</item>
     </style>
 
@@ -126,47 +136,30 @@
         <item name="android:fontFamily">@font/googlesans_regular</item>
     </style>
 
-    <style name="RisuscitoAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="android:buttonBarButtonStyle">
-            @style/Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito
-        </item>
-        <item name="android:windowBackground">@drawable/dialog_material_background</item>
-    </style>
-
-    <style name="Widget.MaterialComponents.Button.TextButton.Dialog.Risuscito">
-        <item name="fontFamily">@font/googlesans_medium</item>
-    </style>
-
-    <!-- per l'icona profilo del drawer -->
-    <!--    <style name="BezelImageView">-->
-    <!--        <item name="biv_maskDrawable">@drawable/material_drawer_circle_mask</item>-->
-    <!--        <item name="biv_drawCircularShadow">true</item>-->
-    <!--        <item name="biv_selectorOnPress">?colorPrimary</item>-->
-    <!--        <item name="android:scaleType">centerCrop</item>-->
-    <!--    </style>-->
-
-    <style name="Widget.AppCompat.DrawerArrowToggle.Risuscito">
-        <item name="color">@android:color/white</item>
-    </style>
-
     <style name="Widget.MaterialDrawerStyle.Risuscito">
         <!-- MaterialDrawer specific values -->
-        <!--            <item name="materialDrawerBackground">@color/risuscito_material_drawer_background</item>-->
-        <!--            <item name="materialDrawerPrimaryText">?android:textColorPrimary</item>-->
-        <!--            <item name="materialDrawerPrimaryIcon">?android:textColorSecondary</item>-->
-        <!--            <item name="materialDrawerSecondaryText">?android:textColorSecondary</item>-->
         <item name="materialDrawerDividerColor">@color/material_drawer_divider</item>
-        <!--        <item name="materialDrawerSelectedBackgroundColor">?colorPrimaryLight</item>-->
     </style>
 
     <style name="Widget.MaterialDrawerHeaderStyle.Risuscito">
         <item name="materialDrawerCompactStyle">true</item>
-        <!--        <item name="materialDrawerHeaderSelectionText">?android:textColorPrimary</item>-->
-        <!--        <item name="materialDrawerHeaderSelectionSubtext">?android:textColorSecondary</item>-->
     </style>
 
     <style name="Risuscito_SpeedDialActionItem">
         <item name="colorOnSecondary">@color/text_color_secondary</item>
+    </style>
+
+    <style name="Widget.AppCompat.ActionMode.Risuscito">
+        <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
+        <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
+        <item name="background">@color/md_grey_900</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.BottomAppBar.Surface">
+        <item name="backgroundTint">@color/risuscito_material_background</item>
+        <item name="materialThemeOverlay">
+            @style/ThemeOverlay.MaterialComponents.BottomAppBar.Surface
+        </item>
     </style>
 
 </resources>

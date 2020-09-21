@@ -7,13 +7,19 @@
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        style="@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        risuscito:layout_scrollFlags="scroll|enterAlways">
+        android:layout_height="wrap_content">
 
-        <include
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/risuscito_toolbar"
-            layout="@layout/common_top_toolbar" />
+            style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            risuscito:layout_scrollFlags="scroll|enterAlways|snap"
+            risuscito:popupTheme="@style/RisuscitoToolbarPopup"
+            risuscito:title="@string/title_activity_inserisci_titolo" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

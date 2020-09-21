@@ -5,37 +5,43 @@
 
     <style name="Base.Risuscito.Theme" parent="AppBase.Risuscito.Theme">
         <item name="fontFamily">@font/googlesans_regular</item>
+
+        <!-- AppCompat colors attributes -->
         <item name="colorPrimary">@color/theme_primary</item>
         <item name="colorPrimaryDark">@color/theme_primary_dark</item>
         <item name="colorPrimaryVariant">@color/theme_primary_dark</item>
-        <item name="colorPrimaryLight">@color/theme_primary_light</item>
         <item name="colorAccent">@color/theme_accent</item>
         <item name="colorSecondary">@color/theme_accent</item>
+        <item name="colorSecondaryLight">@color/theme_accent_light</item>
+        <item name="colorSecondaryVariant">@color/theme_accent_dark</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_light</item>
 
         <item name="customSelector">@drawable/custom_list_selector</item>
         <item name="customSelectorRound">@drawable/custom_selector_round</item>
-        <item name="customSelectorRoundAccent">@drawable/custom_selector_round_accent</item>
 
         <item name="md_corner_radius">16dp</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
 
         <item name="materialDrawerStyle">@style/Widget.MaterialDrawerStyle.Risuscito</item>
-        <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyle.Risuscito</item>
-
-        <item name="drawerArrowStyle">@style/Widget.AppCompat.DrawerArrowToggle.Risuscito</item>
+        <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyle.Risuscito
+        </item>
 
         <!-- fix per poter applicare correttamente il tema notturno -->
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
-        <item name="colorSurface">@color/floating_background</item>
         <item name="android:textColorHint">@color/text_color_secondary</item>
         <item name="md_font_title">@font/googlesans_medium</item>
         <item name="md_font_body">@font/googlesans_regular</item>
         <item name="md_font_button">@font/googlesans_medium</item>
         <item name="md_color_button_text">?colorSecondary</item>
-        <item name="tabStyle">@style/Risuscito_tabstyle</item>
-        <item name="android:alertDialogTheme">@style/RisuscitoAlertDialogTheme</item>
+        <item name="tabStyle">@style/Widget.MaterialComponents.TabLayout.PrimarySurface.Risuscito</item>
+
+        <item name="actionModeStyle">@style/Widget.AppCompat.ActionMode.Risuscito</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24dp</item>
+        <item name="actionBarTheme">
+            @style/ThemeOverlay.MaterialComponents.Dark.ActionBar
+        </item>
     </style>
 
     <style name="Risuscito.Theme" parent="Base.Risuscito.Theme">
@@ -57,405 +63,464 @@
 
     <style name="Risuscito.Theme.pAmber">
         <item name="colorPrimary">@color/primary_color_amber</item>
-        <item name="colorPrimaryVariant">@color/md_amber_700</item>
-        <item name="colorPrimaryDark">@color/md_amber_700</item>
+        <item name="colorPrimaryVariant">@color/md_amber_dark</item>
+        <item name="colorPrimaryDark">@color/md_amber_dark</item>
         <item name="colorPrimaryLight">@color/md_amber_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue">
         <item name="colorPrimary">@color/primary_color_blue</item>
-        <item name="colorPrimaryVariant">@color/md_blue_700</item>
-        <item name="colorPrimaryDark">@color/md_blue_700</item>
+        <item name="colorPrimaryVariant">@color/md_blue_dark</item>
+        <item name="colorPrimaryDark">@color/md_blue_dark</item>
         <item name="colorPrimaryLight">@color/md_blue_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown">
         <item name="colorPrimary">@color/primary_color_brown</item>
-        <item name="colorPrimaryVariant">@color/md_brown_700</item>
-        <item name="colorPrimaryDark">@color/md_brown_700</item>
+        <item name="colorPrimaryVariant">@color/md_brown_dark</item>
+        <item name="colorPrimaryDark">@color/md_brown_dark</item>
         <item name="colorPrimaryLight">@color/md_brown_light</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan">
         <item name="colorPrimary">@color/primary_color_cyan</item>
-        <item name="colorPrimaryVariant">@color/md_cyan_700</item>
-        <item name="colorPrimaryDark">@color/md_cyan_700</item>
+        <item name="colorPrimaryVariant">@color/md_cyan_dark</item>
+        <item name="colorPrimaryDark">@color/md_cyan_dark</item>
         <item name="colorPrimaryLight">@color/md_cyan_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen">
         <item name="colorPrimary">@color/primary_color_green</item>
-        <item name="colorPrimaryVariant">@color/md_green_700</item>
-        <item name="colorPrimaryDark">@color/md_green_700</item>
+        <item name="colorPrimaryVariant">@color/md_green_dark</item>
+        <item name="colorPrimaryDark">@color/md_green_dark</item>
         <item name="colorPrimaryLight">@color/md_green_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey">
         <item name="colorPrimary">@color/primary_color_grey</item>
-        <item name="colorPrimaryVariant">@color/md_grey_700</item>
-        <item name="colorPrimaryDark">@color/md_grey_700</item>
+        <item name="colorPrimaryVariant">@color/md_grey_dark</item>
+        <item name="colorPrimaryDark">@color/md_grey_dark</item>
         <item name="colorPrimaryLight">@color/md_grey_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pLime">
         <item name="colorPrimary">@color/primary_color_lime</item>
-        <item name="colorPrimaryVariant">@color/md_lime_700</item>
-        <item name="colorPrimaryDark">@color/md_lime_700</item>
+        <item name="colorPrimaryVariant">@color/md_lime_dark</item>
+        <item name="colorPrimaryDark">@color/md_lime_dark</item>
         <item name="colorPrimaryLight">@color/md_lime_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo">
         <item name="colorPrimary">@color/primary_color_indigo</item>
-        <item name="colorPrimaryVariant">@color/md_indigo_700</item>
-        <item name="colorPrimaryDark">@color/md_indigo_700</item>
+        <item name="colorPrimaryVariant">@color/md_indigo_dark</item>
+        <item name="colorPrimaryDark">@color/md_indigo_dark</item>
         <item name="colorPrimaryLight">@color/md_indigo_light</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange">
         <item name="colorPrimary">@color/primary_color_orange</item>
-        <item name="colorPrimaryVariant">@color/md_orange_700</item>
-        <item name="colorPrimaryDark">@color/md_orange_700</item>
+        <item name="colorPrimaryVariant">@color/md_orange_dark</item>
+        <item name="colorPrimaryDark">@color/md_orange_dark</item>
         <item name="colorPrimaryLight">@color/md_orange_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pPink">
         <item name="colorPrimary">@color/primary_color_pink</item>
-        <item name="colorPrimaryVariant">@color/md_pink_700</item>
-        <item name="colorPrimaryDark">@color/md_pink_700</item>
+        <item name="colorPrimaryVariant">@color/md_pink_dark</item>
+        <item name="colorPrimaryDark">@color/md_pink_dark</item>
         <item name="colorPrimaryLight">@color/md_pink_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple">
         <item name="colorPrimary">@color/primary_color_purple</item>
-        <item name="colorPrimaryVariant">@color/md_purple_700</item>
-        <item name="colorPrimaryDark">@color/md_purple_700</item>
+        <item name="colorPrimaryVariant">@color/md_purple_dark</item>
+        <item name="colorPrimaryDark">@color/md_purple_dark</item>
         <item name="colorPrimaryLight">@color/md_purple_light</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal">
         <item name="colorPrimary">@color/primary_color_teal</item>
-        <item name="colorPrimaryVariant">@color/md_teal_700</item>
-        <item name="colorPrimaryDark">@color/md_teal_700</item>
+        <item name="colorPrimaryVariant">@color/md_teal_dark</item>
+        <item name="colorPrimaryDark">@color/md_teal_dark</item>
         <item name="colorPrimaryLight">@color/md_teal_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pRed">
         <item name="colorPrimary">@color/primary_color_red</item>
-        <item name="colorPrimaryVariant">@color/md_red_700</item>
-        <item name="colorPrimaryDark">@color/md_red_700</item>
+        <item name="colorPrimaryVariant">@color/md_red_dark</item>
+        <item name="colorPrimaryDark">@color/md_red_dark</item>
         <item name="colorPrimaryLight">@color/md_red_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange">
         <item name="colorPrimary">@color/primary_color_deep_orange</item>
-        <item name="colorPrimaryVariant">@color/md_deep_orange_700</item>
-        <item name="colorPrimaryDark">@color/md_deep_orange_700</item>
+        <item name="colorPrimaryVariant">@color/md_deep_orange_dark</item>
+        <item name="colorPrimaryDark">@color/md_deep_orange_dark</item>
         <item name="colorPrimaryLight">@color/md_deep_orange_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple">
         <item name="colorPrimary">@color/primary_color_deep_purple</item>
-        <item name="colorPrimaryVariant">@color/md_deep_purple_700</item>
-        <item name="colorPrimaryDark">@color/md_deep_purple_700</item>
+        <item name="colorPrimaryVariant">@color/md_deep_purple_dark</item>
+        <item name="colorPrimaryDark">@color/md_deep_purple_dark</item>
         <item name="colorPrimaryLight">@color/md_deep_purple_light</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue">
         <item name="colorPrimary">@color/primary_color_light_blue</item>
-        <item name="colorPrimaryVariant">@color/md_light_blue_700</item>
-        <item name="colorPrimaryDark">@color/md_light_blue_700</item>
+        <item name="colorPrimaryVariant">@color/md_light_blue_dark</item>
+        <item name="colorPrimaryDark">@color/md_light_blue_dark</item>
         <item name="colorPrimaryLight">@color/md_light_blue_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey">
         <item name="colorPrimary">@color/primary_color_blue_grey</item>
-        <item name="colorPrimaryVariant">@color/md_blue_grey_700</item>
-        <item name="colorPrimaryDark">@color/md_blue_grey_700</item>
+        <item name="colorPrimaryVariant">@color/md_blue_grey_dark</item>
+        <item name="colorPrimaryDark">@color/md_blue_grey_dark</item>
         <item name="colorPrimaryLight">@color/md_blue_grey_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen">
         <item name="colorPrimary">@color/primary_color_light_green</item>
-        <item name="colorPrimaryVariant">@color/md_light_green_700</item>
-        <item name="colorPrimaryDark">@color/md_light_green_700</item>
+        <item name="colorPrimaryVariant">@color/md_light_green_dark</item>
+        <item name="colorPrimaryDark">@color/md_light_green_dark</item>
         <item name="colorPrimaryLight">@color/md_light_green_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow">
         <item name="colorPrimary">@color/primary_color_yellow</item>
-        <item name="colorPrimaryVariant">@color/md_yellow_700</item>
-        <item name="colorPrimaryDark">@color/md_yellow_700</item>
+        <item name="colorPrimaryVariant">@color/md_yellow_dark</item>
+        <item name="colorPrimaryDark">@color/md_yellow_dark</item>
         <item name="colorPrimaryLight">@color/md_yellow_light</item>
+        <item name="colorOnPrimary">@color/design_dark_default_color_on_primary</item>
     </style>
 
 
     <!-- AMBER SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Amber">
-        <item name="colorSecondary">@color/md_amber_a200</item>
-        <item name="colorAccent">@color/md_amber_a200</item>
+        <item name="colorSecondary">@color/md_accent_amber</item>
+        <item name="colorAccent">@color/md_accent_amber</item>
         <item name="colorSecondaryLight">@color/md_accent_amber_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_amber_dark</item>
     </style>
 
 
     <!-- BLUE SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Blue">
-        <item name="colorSecondary">@color/md_blue_a200</item>
-        <item name="colorAccent">@color/md_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_blue</item>
+        <item name="colorAccent">@color/md_accent_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_blue_dark</item>
     </style>
 
 
     <!-- CYAN SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Cyan">
@@ -465,1583 +530,1880 @@
     </style>
 
     <style name="Risuscito.Theme.pLime.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Cyan">
-        <item name="colorSecondary">@color/md_cyan_a200</item>
-        <item name="colorAccent">@color/md_cyan_a200</item>
+        <item name="colorSecondary">@color/md_accent_cyan</item>
+        <item name="colorAccent">@color/md_accent_cyan</item>
         <item name="colorSecondaryLight">@color/md_accent_cyan_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_cyan_dark</item>
     </style>
 
 
     <!-- GREEN SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Green">
-        <item name="colorSecondary">@color/md_green_a200</item>
-        <item name="colorAccent">@color/md_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_green</item>
+        <item name="colorAccent">@color/md_accent_green</item>
         <item name="colorSecondaryLight">@color/md_accent_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_green_dark</item>
     </style>
 
 
     <!-- INDIGO SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Indigo">
-        <item name="colorSecondary">@color/md_indigo_a200</item>
-        <item name="colorAccent">@color/md_indigo_a200</item>
+        <item name="colorSecondary">@color/md_accent_indigo</item>
+        <item name="colorAccent">@color/md_accent_indigo</item>
         <item name="colorSecondaryLight">@color/md_accent_indigo_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_indigo_dark</item>
     </style>
 
 
     <!-- LIME SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Lime">
-        <item name="colorSecondary">@color/md_lime_a200</item>
-        <item name="colorAccent">@color/md_lime_a200</item>
+        <item name="colorSecondary">@color/md_accent_lime</item>
+        <item name="colorAccent">@color/md_accent_lime</item>
         <item name="colorSecondaryLight">@color/md_accent_lime_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_lime_dark</item>
     </style>
 
 
     <!-- ORANGE SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Orange">
-        <item name="colorSecondary">@color/md_orange_a200</item>
-        <item name="colorAccent">@color/md_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_orange</item>
+        <item name="colorAccent">@color/md_accent_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_orange_dark</item>
     </style>
 
 
     <!-- PINK SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Pink">
-        <item name="colorSecondary">@color/md_pink_a200</item>
-        <item name="colorAccent">@color/md_pink_a200</item>
+        <item name="colorSecondary">@color/md_accent_pink</item>
+        <item name="colorAccent">@color/md_accent_pink</item>
         <item name="colorSecondaryLight">@color/md_accent_pink_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_pink_dark</item>
     </style>
 
 
     <!-- PURPLE SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Purple">
-        <item name="colorSecondary">@color/md_purple_a200</item>
-        <item name="colorAccent">@color/md_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_purple</item>
+        <item name="colorAccent">@color/md_accent_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_purple_dark</item>
     </style>
 
 
     <!-- TEAL SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Teal">
-        <item name="colorSecondary">@color/md_teal_a200</item>
-        <item name="colorAccent">@color/md_teal_a200</item>
+        <item name="colorSecondary">@color/md_accent_teal</item>
+        <item name="colorAccent">@color/md_accent_teal</item>
         <item name="colorSecondaryLight">@color/md_accent_teal_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_teal_dark</item>
     </style>
 
 
     <!-- RED SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Red">
-        <item name="colorSecondary">@color/md_red_a200</item>
-        <item name="colorAccent">@color/md_red_a200</item>
+        <item name="colorSecondary">@color/md_accent_red</item>
+        <item name="colorAccent">@color/md_accent_red</item>
         <item name="colorSecondaryLight">@color/md_accent_red_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_red_dark</item>
     </style>
 
 
     <!-- DEEP ORANGE SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.DeepOrange">
-        <item name="colorSecondary">@color/md_deep_orange_a200</item>
-        <item name="colorAccent">@color/md_deep_orange_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_orange</item>
+        <item name="colorAccent">@color/md_accent_deep_orange</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_orange_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_orange_dark</item>
     </style>
 
 
     <!-- DEEP PURPLE SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.DeepPurple">
-        <item name="colorSecondary">@color/md_deep_purple_a200</item>
-        <item name="colorAccent">@color/md_deep_purple_a200</item>
+        <item name="colorSecondary">@color/md_accent_deep_purple</item>
+        <item name="colorAccent">@color/md_accent_deep_purple</item>
         <item name="colorSecondaryLight">@color/md_accent_deep_purple_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_deep_purple_dark</item>
+        <item name="colorOnSecondary">@color/design_default_color_on_primary</item>
+        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_dark</item>
     </style>
 
 
     <!-- LIGHT BLUE SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.LightBlue">
-        <item name="colorSecondary">@color/md_light_blue_a200</item>
-        <item name="colorAccent">@color/md_light_blue_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_blue</item>
+        <item name="colorAccent">@color/md_accent_light_blue</item>
         <item name="colorSecondaryLight">@color/md_accent_light_blue_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_blue_dark</item>
     </style>
 
 
     <!-- LIGHT GREEN SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.LightGreen">
-        <item name="colorSecondary">@color/md_light_green_a200</item>
-        <item name="colorAccent">@color/md_light_green_a200</item>
+        <item name="colorSecondary">@color/md_accent_light_green</item>
+        <item name="colorAccent">@color/md_accent_light_green</item>
         <item name="colorSecondaryLight">@color/md_accent_light_green_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_light_green_dark</item>
     </style>
 
 
     <!-- YELLOW SECONDARY THEMES -->
     <style name="Risuscito.Theme.pAmber.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlue.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBrown.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pCyan.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGreen.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pGrey.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pIndigo.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLime.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pOrange.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPink.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pPurple.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pTeal.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pRed.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepOrange.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pDeepPurple.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightBlue.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pBlueGrey.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pLightGreen.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
     <style name="Risuscito.Theme.pYellow.Yellow">
-        <item name="colorSecondary">@color/md_yellow_a200</item>
-        <item name="colorAccent">@color/md_yellow_a200</item>
+        <item name="colorSecondary">@color/md_accent_yellow</item>
+        <item name="colorAccent">@color/md_accent_yellow</item>
         <item name="colorSecondaryLight">@color/md_accent_yellow_light</item>
+        <item name="colorSecondaryVariant">@color/md_accent_yellow_dark</item>
     </style>
 
 </resources>

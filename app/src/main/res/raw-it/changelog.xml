@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <release versionCode="4605"
+        date="Settembre 2020"
+        versionName="4.6.0">
+        <new>Aggiunta traduzione in Polacco (se il tuo dispositivo è in Polacco e stai aggiornado l'applicazione, potrebbe essere necessario cancellare i dati o reinstallarla)</new>
+        <new>Aggiornato il sistema di colori. Ora le scritte sulle barre di colore chiaro (per esempio sul giallo) sono nere.</new>
+        <bugfix>Varie</bugfix>
+    </release>
+
     <release versionCode="4503"
         date="Maggio 2020"
         versionName="4.5.0">

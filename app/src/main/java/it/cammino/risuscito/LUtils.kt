@@ -10,19 +10,21 @@ import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.animation.AnimationUtils
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
-import it.cammino.risuscito.utils.ioThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.*
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -54,12 +56,10 @@ class LUtils private constructor(private val mActivity: Activity) {
         mActivity.startActivity(intent)
         Animatoo.animateSlideLeft(mActivity)
 
-        ioThread {
-            val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
-            val cronologia = Cronologia()
-            cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
-            mDao.insertCronologia(cronologia)
-        }
+        val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
+        val cronologia = Cronologia()
+        cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
+        (mActivity as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) { mDao.insertCronologia(cronologia) }
     }
 
     fun startActivityWithFadeIn(intent: Intent) {
@@ -73,22 +73,43 @@ class LUtils private constructor(private val mActivity: Activity) {
     }
 
     internal fun goFullscreen() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            mActivity.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            mActivity
-                    .window
-                    .setFlags(
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        } else
-            mActivity
-                    .window
-                    .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        when {
+            hasR() -> goFullscreenR()
+            hasK() -> goFullscreenK()
+            else -> goFullscreenJB()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    internal fun goFullscreenR() {
+        mActivity.window.insetsController?.hide(WindowInsets.Type.navigationBars())
+        mActivity.window.setDecorFitsSystemWindows(false)
+        mActivity.window.insetsController?.hide(WindowInsets.Type.statusBars())
+        mActivity.window.decorView.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
+        mActivity.window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    }
+
+    @Suppress("DEPRECATION")
+    internal fun goFullscreenJB() {
+        mActivity.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        mActivity
+                .window
+                .setFlags(
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
+    @Suppress("DEPRECATION")
+    internal fun goFullscreenK() {
+        mActivity
+                .window
+                .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
     }
 
     // controlla se l'app deve mantenere lo schermo acceso
@@ -143,23 +164,23 @@ class LUtils private constructor(private val mActivity: Activity) {
 
             } catch (e: ParserConfigurationException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 return null
             } catch (e: TransformerConfigurationException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 return null
             } catch (e: TransformerException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 return null
             } catch (e: FileNotFoundException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 return null
             } catch (e: IOException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 return null
             }
         }
@@ -242,6 +263,10 @@ class LUtils private constructor(private val mActivity: Activity) {
 
         fun hasP(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+        }
+
+        fun hasR(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
         }
 
 //        fun hasQ(): Boolean {

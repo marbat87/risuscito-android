@@ -1,0 +1,407 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 8,
+    "identityHash": "809904c9eaf138f4da514e8e1eda3f25",
+    "entities": [
+      {
+        "tableName": "Canto",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `pagina` TEXT, `titolo` TEXT, `source` TEXT, `favorite` INTEGER NOT NULL, `color` TEXT, `link` TEXT, `zoom` INTEGER NOT NULL, `scrollX` INTEGER NOT NULL, `scrollY` INTEGER NOT NULL, `savedTab` TEXT, `savedBarre` TEXT, `savedSpeed` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pagina",
+            "columnName": "pagina",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "titolo",
+            "columnName": "titolo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "favorite",
+            "columnName": "favorite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "link",
+            "columnName": "link",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "zoom",
+            "columnName": "zoom",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scrollX",
+            "columnName": "scrollX",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scrollY",
+            "columnName": "scrollY",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "savedTab",
+            "columnName": "savedTab",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "savedBarre",
+            "columnName": "savedBarre",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "savedSpeed",
+            "columnName": "savedSpeed",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ListaPers",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `titolo` TEXT, `lista` BLOB)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titolo",
+            "columnName": "titolo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lista",
+            "columnName": "lista",
+            "affinity": "BLOB",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "CustomList",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `position` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, `timestamp` INTEGER, PRIMARY KEY(`id`, `position`, `idCanto`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idCanto",
+            "columnName": "idCanto",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id",
+            "position",
+            "idCanto"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Argomento",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idArgomento` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, PRIMARY KEY(`idArgomento`, `idCanto`))",
+        "fields": [
+          {
+            "fieldPath": "idArgomento",
+            "columnName": "idArgomento",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idCanto",
+            "columnName": "idCanto",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idArgomento",
+            "idCanto"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "NomeArgomento",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idArgomento` INTEGER NOT NULL, `nomeArgomento` TEXT, PRIMARY KEY(`idArgomento`))",
+        "fields": [
+          {
+            "fieldPath": "idArgomento",
+            "columnName": "idArgomento",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nomeArgomento",
+            "columnName": "nomeArgomento",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idArgomento"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Salmo",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `numSalmo` TEXT, `titoloSalmo` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numSalmo",
+            "columnName": "numSalmo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "titoloSalmo",
+            "columnName": "titoloSalmo",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "IndiceLiturgico",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idIndice` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, PRIMARY KEY(`idIndice`, `idCanto`))",
+        "fields": [
+          {
+            "fieldPath": "idIndice",
+            "columnName": "idIndice",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idCanto",
+            "columnName": "idCanto",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idIndice",
+            "idCanto"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "NomeLiturgico",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idIndice` INTEGER NOT NULL, `nome` TEXT, PRIMARY KEY(`idIndice`))",
+        "fields": [
+          {
+            "fieldPath": "idIndice",
+            "columnName": "idIndice",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nome",
+            "columnName": "nome",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idIndice"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Cronologia",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idCanto` INTEGER NOT NULL, `ultimaVisita` INTEGER NOT NULL, PRIMARY KEY(`idCanto`))",
+        "fields": [
+          {
+            "fieldPath": "idCanto",
+            "columnName": "idCanto",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ultimaVisita",
+            "columnName": "ultimaVisita",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idCanto"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Consegnato",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idConsegnato` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, `txtNota` TEXT NOT NULL, `numPassaggio` INTEGER NOT NULL, PRIMARY KEY(`idConsegnato`, `idCanto`))",
+        "fields": [
+          {
+            "fieldPath": "idConsegnato",
+            "columnName": "idConsegnato",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idCanto",
+            "columnName": "idCanto",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "txtNota",
+            "columnName": "txtNota",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numPassaggio",
+            "columnName": "numPassaggio",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idConsegnato",
+            "idCanto"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "LocalLink",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idCanto` INTEGER NOT NULL, `localPath` TEXT, PRIMARY KEY(`idCanto`))",
+        "fields": [
+          {
+            "fieldPath": "idCanto",
+            "columnName": "idCanto",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localPath",
+            "columnName": "localPath",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idCanto"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '809904c9eaf138f4da514e8e1eda3f25')"
+    ]
+  }
+}

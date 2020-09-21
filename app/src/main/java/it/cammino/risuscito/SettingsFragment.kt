@@ -52,15 +52,15 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
-                                        it.activityMainContent,
-                                        "Module install failed with ${state.errorCode()}",
-                                        Snackbar.LENGTH_SHORT)
+                                it.activityMainContent,
+                                "Module install failed with ${state.errorCode()}",
+                                Snackbar.LENGTH_SHORT)
                                 .show()
                     }
 
                 }
                 REQUIRES_USER_CONFIRMATION -> {
-                    splitInstallManager.startConfirmationDialogForResult(state, activity, CONFIRMATION_REQUEST_CODE)
+                    splitInstallManager.startConfirmationDialogForResult(state, requireActivity(), CONFIRMATION_REQUEST_CODE)
                 }
                 DOWNLOADING -> {
                     val totalBytes = state.totalBytesToDownload()
@@ -89,9 +89,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         Log.e(TAG, "Module install failed: empyt language list")
                         mMainActivity?.let {
                             Snackbar.make(
-                                            it.activityMainContent,
-                                            "Module install failed: no language installed!",
-                                            Snackbar.LENGTH_SHORT)
+                                    it.activityMainContent,
+                                    "Module install failed: no language installed!",
+                                    Snackbar.LENGTH_SHORT)
                                     .show()
                         }
                     }
@@ -107,12 +107,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         if (!currentLang.equals(newValue as? String ?: currentLang, ignoreCase = true)) {
             if (LUtils.hasL()) {
                 mMainActivity?.let { activity ->
-                    ProgressDialogFragment.Builder(
-                                    activity, null, DOWNLOAD_LANGUAGE)
+                    ProgressDialogFragment.show(ProgressDialogFragment.Builder(
+                            activity, DOWNLOAD_LANGUAGE)
                             .content(R.string.download_running)
                             .progressIndeterminate(false)
-                            .progressMax(100)
-                            .show()
+                            .progressMax(100),
+                            activity.supportFragmentManager)
                 }
                 // Creates a request to download and install additional language resources.
                 val request = SplitInstallRequest.newBuilder()
@@ -128,9 +128,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                             ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                             mMainActivity?.let {
                                 Snackbar.make(
-                                                it.activityMainContent,
-                                                "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
-                                                Snackbar.LENGTH_SHORT)
+                                        it.activityMainContent,
+                                        "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
+                                        Snackbar.LENGTH_SHORT)
                                         .show()
                             }
                         }
@@ -164,7 +164,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         Log.d(TAG, "onCreateView")
         mMainActivity = activity as? MainActivity
 
-        splitInstallManager = SplitInstallManagerFactory.create(context)
+        splitInstallManager = SplitInstallManagerFactory.create(requireContext())
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_settings)
 
@@ -233,14 +233,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                 mMainActivity?.let {
                     Snackbar.make(
-                                    it.activityMainContent,
-                                    "download cancelled by user",
-                                    Snackbar.LENGTH_SHORT)
+                            it.activityMainContent,
+                            "download cancelled by user",
+                            Snackbar.LENGTH_SHORT)
                             .show()
                 }
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

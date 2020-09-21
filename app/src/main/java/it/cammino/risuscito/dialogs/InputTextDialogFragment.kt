@@ -3,13 +3,17 @@ package it.cammino.risuscito.dialogs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.KeyEvent
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onShow
 import com.afollestad.materialdialogs.input.getInputField
@@ -19,29 +23,15 @@ import java.io.Serializable
 @Suppress("unused")
 class InputTextDialogFragment : DialogFragment() {
 
-    private var mCallback: SimpleInputCallback? = null
+    private val viewModel: DialogViewModel by viewModels({ requireActivity() })
 
     private val builder: Builder?
         get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
-
-    override fun onDestroyView() {
-        if (retainInstance)
-            dialog?.setDismissMessage(null)
-        super.onDestroyView()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true
-    }
 
     @SuppressLint("CheckResult")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mBuilder = builder
                 ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
-
-        if (mCallback == null)
-            mCallback = mBuilder.mListener
 
         val dialog = MaterialDialog(requireContext())
                 .input(prefill = mBuilder.mPrefill
@@ -55,13 +45,18 @@ class InputTextDialogFragment : DialogFragment() {
 
         mBuilder.mPositiveButton?.let {
             dialog.positiveButton(text = it) { mDialog ->
-                mCallback?.onPositive(mBuilder.mTag, mDialog)
+                viewModel.mTag = mBuilder.mTag
+                viewModel.outputText = mDialog.getInputField().text.toString()
+                viewModel.handled = false
+                viewModel.state.value = DialogState.Positive(this)
             }
         }
 
         mBuilder.mNegativeButton?.let {
-            dialog.negativeButton(text = it) { mDialog ->
-                mCallback?.onNegative(mBuilder.mTag, mDialog)
+            dialog.negativeButton(text = it) {
+                viewModel.mTag = mBuilder.mTag
+                viewModel.handled = false
+                viewModel.state.value = DialogState.Negative(this)
             }
         }
 
@@ -83,19 +78,11 @@ class InputTextDialogFragment : DialogFragment() {
         return dialog
     }
 
-    fun setmCallback(callback: SimpleInputCallback) {
-        mCallback = callback
-    }
-
     fun cancel() {
         dialog?.cancel()
     }
 
-    fun setOnCancelListener(listener: DialogInterface.OnCancelListener) {
-        dialog?.setOnCancelListener(listener)
-    }
-
-    class Builder(context: AppCompatActivity, @field:Transient var mListener: SimpleInputCallback, val mTag: String) : Serializable {
+    class Builder(context: AppCompatActivity, val mTag: String) : Serializable {
 
         @Transient
         private val mContext: AppCompatActivity = context
@@ -142,55 +129,34 @@ class InputTextDialogFragment : DialogFragment() {
             return this
         }
 
-        fun build(): InputTextDialogFragment {
-            val dialog = InputTextDialogFragment()
-            val args = Bundle()
-            args.putSerializable(BUILDER_TAG, this)
-            dialog.arguments = args
-            return dialog
-        }
-
-        fun show(): InputTextDialogFragment {
-            val dialog = build()
-            if (!mContext.isFinishing)
-                dialog.show(mContext)
-            return dialog
-        }
-    }
-
-    private fun dismissIfNecessary(context: AppCompatActivity, tag: String) {
-        val frag = context.supportFragmentManager.findFragmentByTag(tag)
-        frag?.let {
-            (it as? DialogFragment)?.dismiss()
-            context.supportFragmentManager.beginTransaction()
-                    .remove(it).commit()
-        }
-    }
-
-    fun show(context: AppCompatActivity): InputTextDialogFragment {
-        builder?.let {
-            dismissIfNecessary(context, it.mTag)
-            show(context.supportFragmentManager, it.mTag)
-        }
-        return this
-    }
-
-    interface SimpleInputCallback {
-        fun onPositive(tag: String, dialog: MaterialDialog)
-        fun onNegative(tag: String, dialog: MaterialDialog)
     }
 
     companion object {
-        private const val BUILDER_TAG = "builder"
-        fun findVisible(context: AppCompatActivity?, tag: String): InputTextDialogFragment? {
-            context?.let {
-                val frag = it.supportFragmentManager.findFragmentByTag(tag)
-                return if (frag != null && frag is InputTextDialogFragment) frag else null
+
+        private const val BUILDER_TAG = "bundle_builder"
+
+        private fun newInstance() = InputTextDialogFragment()
+
+        private fun newInstance(builder: Builder): InputTextDialogFragment {
+            return newInstance().apply {
+                arguments = bundleOf(
+                        Pair(BUILDER_TAG, builder)
+                )
             }
-            return null
         }
 
-        private val TAG = InputTextDialogFragment::class.java.canonicalName
+        fun show(builder: Builder, fragmentManger: FragmentManager) {
+            newInstance(builder).run {
+                show(fragmentManger, builder.mTag)
+            }
+        }
+    }
+
+    class DialogViewModel : ViewModel() {
+        var mTag: String = ""
+        var outputText: String = ""
+        var handled = true
+        val state = MutableLiveData<DialogState<InputTextDialogFragment>>()
     }
 
 }

@@ -13,27 +13,23 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/toolbar_layout"
+            android:id="@+id/app_bar_layout"
+            style="@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                risuscito:layout_scrollFlags="scroll|enterAlways">
+                risuscito:layout_scrollFlags="scroll|enterAlways|snap">
 
-                <androidx.appcompat.widget.Toolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/risuscito_toolbar"
+                    style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="?actionBarSize"
-                    android:theme="@style/ToolbarTheme"
-                    risuscito:layout_scrollFlags="scroll|enterAlways"
+                    android:layout_height="?attr/actionBarSize"
+                    risuscito:layout_scrollFlags="scroll|enterAlways|snap"
                     risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
-
-                <ViewStub
-                    android:id="@+id/cab_stub"
-                    android:layout_width="match_parent"
-                    android:layout_height="?actionBarSize" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"

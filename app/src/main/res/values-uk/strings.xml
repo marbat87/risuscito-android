@@ -37,7 +37,6 @@
     <string name="title_activity_inserisci_titolo">Пошук за ключевим словом</string>
     <string name="title_activity_about">Про</string>
     <string name="save_file">зберегти як локальний файл</string>
-    <string name="wait">Почекайте, завантажується&#8230;</string>
     <string name="no_connection">Немає активного з\'єднання до інтернету</string>
     <string name="no_record">Недійсна реєсстрація</string>
     <string name="about_subtitle">Версія для смартфонів/планшетів Android</string>

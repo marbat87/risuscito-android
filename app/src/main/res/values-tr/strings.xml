@@ -37,7 +37,6 @@
     <string name="title_activity_inserisci_titolo">Eklenene göre ara</string>
     <string name="title_activity_about">Hakkında</string>
     <string name="save_file">Yerel\'e kaydet</string>
-    <string name="wait">Bekleyin, ara belleğe alınıyor&#8230;</string>
     <string name="no_connection">Aktif İnternetle bağlantı yok</string>
     <string name="no_record">Kayıt bulunmuyor</string>
     <string name="about_subtitle">Android telefon/tablet için versiyon</string>
@@ -213,7 +212,7 @@
     <string name="share_by">Şununla paylas&#8230;</string>
     <string name="delete_list_dialog">Silmek istediğinden emin misin?</string>
     <string name="barre_search_string">Bare</string>
-    <string name="barre_add_al">- De</string>
+    <string name="barre_add_al"></string>
     <string name="barre_al_tasto">Bare %1$s Perdede</string>
     <string name="external_storage_denied">Ortak hafıza mevcut degil.</string>
     <string name="external_storage_pref_rationale">Dirildi sana dış hafızaya erişmek için izin istiyor. Bunun için ortak hafızaya kaydetme gerekli.</string>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/select_none"
+        android:orderInCategory="1"
+        risuscito:showAsAction="always"
+        android:title="select none"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd-checkbox-multiple-blank-outline"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/select_all"
+        android:orderInCategory="2"
+        risuscito:showAsAction="always"
+        android:title="@android:string/selectAll"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd-checkbox-multiple-marked-outline"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/cancel_change"
+        android:orderInCategory="4"
+        risuscito:showAsAction="always"
+        android:title="@android:string/cancel"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd-undo"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/confirm_changes"
+        android:orderInCategory="4"
+        risuscito:showAsAction="always"
+        android:title="@android:string/ok"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd-content-save"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        tools:ignore="AlwaysShowAction" />
+
+</menu>

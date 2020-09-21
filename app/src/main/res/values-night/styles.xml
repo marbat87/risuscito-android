@@ -5,4 +5,12 @@
         <item name="statusBarScrim">@android:color/black</item>
     </style>
 
+    <style name="AdaptiveBackgroundColor">
+        <item name="android:background">?colorPrimarySurface</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
+        <item name="fontFamily">@font/googlesans_medium</item>
+    </style>
+
 </resources>

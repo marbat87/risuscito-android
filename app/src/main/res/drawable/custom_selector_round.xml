@@ -8,7 +8,7 @@
     </item>
     <item android:state_pressed="true">
         <shape android:shape="oval">
-            <solid android:color="@color/ripple_color_light" />
+            <solid android:color="@color/ripple_color" />
         </shape>
     </item>
 </selector>

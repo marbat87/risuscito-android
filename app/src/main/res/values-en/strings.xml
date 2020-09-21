@@ -37,7 +37,6 @@
     <string name="title_activity_inserisci_titolo">Searching for input</string>
     <string name="title_activity_about">About</string>
     <string name="save_file">Save locally</string>
-    <string name="wait">Wait, buffering in course&#8230;</string>
     <string name="no_connection">No active internet connection</string>
     <string name="no_record">No available recording</string>
     <string name="about_subtitle">Version for Android smartphone/tablet</string>

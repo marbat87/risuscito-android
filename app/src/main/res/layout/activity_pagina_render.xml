@@ -7,16 +7,18 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        style="@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        risuscito:layout_scrollFlags="noScroll|enterAlways">
+        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/risuscito_toolbar"
+            style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:theme="@style/ToolbarTheme"
-            risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
+            android:layout_height="?attr/actionBarSize"
+            risuscito:popupTheme="@style/RisuscitoToolbarPopup"
+            risuscito:title="@string/canto_title_activity" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -57,7 +59,6 @@
                     risuscito:iiv_icon="cmd-music-note-off"
                     risuscito:iiv_padding="5dp"
                     risuscito:iiv_size="24dp"
-                    tools:ignore="MissingPrefix"
                     tools:targetApi="lollipop" />
 
                 <TextView
@@ -99,7 +100,6 @@
                     risuscito:iiv_icon="cmd-cloud-off-outline"
                     risuscito:iiv_padding="5dp"
                     risuscito:iiv_size="24dp"
-                    tools:ignore="MissingPrefix"
                     tools:targetApi="lollipop" />
 
                 <TextView
@@ -130,6 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="end"
+                    android:labelFor="@+id/music_seekbar"
                     android:paddingStart="@dimen/activity_min_margin"
                     android:paddingLeft="@dimen/activity_min_margin"
                     android:text="00:00"
@@ -142,14 +143,15 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1">
 
-                    <SeekBar
+                    <com.google.android.material.slider.Slider
                         android:id="@+id/music_seekbar"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:maxHeight="1000dp"
                         android:paddingLeft="16dp"
-                        android:paddingRight="16dp" />
+                        android:paddingRight="16dp"
+                        risuscito:labelBehavior="gone" />
 
                     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
                         android:id="@+id/music_loadingbar"
@@ -161,6 +163,7 @@
                         android:layout_marginRight="16dp"
                         android:indeterminate="true"
                         android:visibility="gone"
+                        risuscito:mpb_indeterminateTint="?colorPrimary"
                         risuscito:mpb_progressStyle="horizontal" />
 
                 </FrameLayout>
@@ -170,20 +173,18 @@
                     android:layout_width="@dimen/abc_action_bar_default_height_material"
                     android:layout_height="@dimen/abc_action_bar_default_height_material"
                     android:layout_gravity="center_vertical"
-                    android:background="?attr/customSelectorRoundAccent"
+                    android:background="?attr/customSelectorRound"
                     android:clickable="true"
                     android:contentDescription="@null"
                     android:focusable="true"
                     android:paddingLeft="@dimen/play_pause_padding"
                     android:paddingRight="@dimen/play_pause_padding"
-                    android:scaleType="fitCenter"
                     android:soundEffectsEnabled="true"
                     android:visibility="gone"
-                    risuscito:iiv_color="?android:textColorSecondary"
+                    risuscito:iiv_color="@color/text_color_secondary"
                     risuscito:iiv_icon="cmd-play"
                     risuscito:iiv_padding="2dp"
-                    risuscito:iiv_size="24dp"
-                    tools:ignore="MissingPrefix" />
+                    risuscito:iiv_size="24dp" />
 
                 <me.zhanghai.android.materialprogressbar.MaterialProgressBar
                     android:id="@+id/loadingBar"
@@ -199,18 +200,18 @@
                     android:minHeight="25dp"
                     android:paddingLeft="@dimen/play_pause_padding"
                     android:paddingRight="@dimen/play_pause_padding"
+                    risuscito:mpb_indeterminateTint="?colorPrimary"
                     risuscito:mpb_progressBackgroundTint="@android:color/transparent"
                     risuscito:mpb_progressStyle="circular"
-                    risuscito:mpb_progressTint="?colorSecondary"
+                    risuscito:mpb_progressTint="?colorPrimary"
                     tools:targetApi="lollipop" />
 
             </LinearLayout>
 
         </FrameLayout>
 
-        <include
+        <WebView
             android:id="@+id/canto_view"
-            layout="@layout/common_webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignWithParentIfMissing="true"
@@ -222,7 +223,7 @@
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
-        style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
+        style="@style/Widget.MaterialComponents.BottomAppBar.Surface"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
@@ -239,37 +240,45 @@
                 android:layout_width="50dip"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:fontFamily="@font/googlesans_medium"
                 android:gravity="end"
+                android:labelFor="@+id/speed_seekbar"
                 android:paddingStart="@dimen/activity_min_margin"
                 android:paddingLeft="@dimen/activity_min_margin"
                 android:text="0 %"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Inverse"
-                android:textColor="@color/primary_text_default_material_dark"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat"
+                android:textColor="?android:textColorPrimary"
                 tools:ignore="HardcodedText,RtlSymmetry" />
 
-            <SeekBar
+            <com.google.android.material.slider.Slider
                 android:id="@+id/speed_seekbar"
                 android:layout_width="0dip"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:max="100"
                 android:maxHeight="1000dp"
                 android:paddingLeft="16dp"
-                android:paddingRight="16dp" />
+                android:paddingRight="16dp"
+                android:stepSize="1.0"
+                android:valueFrom="0.0"
+                android:valueTo="100.0"
+                risuscito:labelBehavior="gone" />
 
-            <ImageButton
+            <com.mikepenz.iconics.view.IconicsImageView
                 android:id="@+id/play_scroll"
                 android:layout_width="@dimen/abc_action_bar_default_height_material"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:layout_gravity="center_vertical"
                 android:background="?attr/customSelectorRound"
+                android:clickable="true"
                 android:contentDescription="@null"
+                android:focusable="true"
                 android:paddingLeft="@dimen/button_playbar_padding"
                 android:paddingRight="@dimen/button_playbar_padding"
-                android:scaleType="fitCenter"
-                android:soundEffectsEnabled="true" />
+                android:soundEffectsEnabled="true"
+                risuscito:iiv_color="@color/text_color_secondary"
+                risuscito:iiv_icon="cmd-play-circle-outline"
+                risuscito:iiv_padding="2dp"
+                risuscito:iiv_size="48dp" />
 
         </LinearLayout>
 

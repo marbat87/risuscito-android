@@ -10,9 +10,11 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import it.cammino.risuscito.database.dao.*
 import it.cammino.risuscito.database.entities.*
-import it.cammino.risuscito.utils.ioThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 7)
+@Database(entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Argomento::class), (NomeArgomento::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)], version = 8)
 @TypeConverters(Converters::class)
 abstract class RisuscitoDatabase : RoomDatabase() {
 
@@ -96,6 +98,15 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 6 to 7")
                 database.execSQL("ALTER TABLE Consegnato ADD COLUMN numPassaggio INTEGER NOT NULL DEFAULT -1")
+            }
+        }
+
+        private val MIGRATION_7_8 = Migration7to8()
+
+        class Migration7to8 : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 7 to 7")
+                reinsertDefaultOnlySalmi(database)
             }
         }
 
@@ -186,6 +197,11 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             }
         }
 
+        private fun reinsertDefaultOnlySalmi(database: SupportSQLiteDatabase) {
+            database.execSQL("DELETE FROM Salmo")
+            Salmo.defaultSalmiData().forEach { database.execSQL("INSERT INTO Salmo VALUES(" + it.id + ",'" + it.numSalmo + "','" + it.titoloSalmo + "')") }
+        }
+
         private var sInstance: RisuscitoDatabase? = null
 
         /**
@@ -201,7 +217,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 Log.d(TAG, "getInstance: NULL")
                 synchronized(LOCK) {
                     sInstance = Room.databaseBuilder(context.applicationContext, RisuscitoDatabase::class.java, dbName)
-                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                            .addMigrations(MIGRATION_1_3, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                             .addCallback(object : Callback() {
                                 /**
                                  * Called when the database is created for the first time. This is called after all the
@@ -212,9 +228,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                                 override fun onCreate(db: SupportSQLiteDatabase) {
                                     super.onCreate(db)
                                     Log.d(TAG, "Callback onCreate")
-                                    ioThread {
-                                        insertDefaultData(sInstance as RisuscitoDatabase)
-                                    }
+                                    GlobalScope.launch(Dispatchers.IO) { insertDefaultData(sInstance as RisuscitoDatabase) }
                                 }
                             })
                             .build()
