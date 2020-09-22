@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.google.android.material.color.MaterialColors
+import androidx.core.content.ContextCompat
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
@@ -61,7 +61,7 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         binding.checkBox.isChecked = isSelected
         binding.root.background = FastAdapterUIUtils.getSelectableBackground(
                 ctx,
-                MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
+                ContextCompat.getColor(ctx, R.color.selected_bg_color),
                 false)
         // set the text for the name
         filter?.let {

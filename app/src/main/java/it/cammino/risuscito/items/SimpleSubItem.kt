@@ -5,11 +5,9 @@ import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.isVisible
-import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
-import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
@@ -62,7 +60,7 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         return ViewHolder(v)
     }
 
-    class ViewHolder(private var view: View) : FastAdapter.ViewHolder<SimpleSubItem>(view) {
+    class ViewHolder(view: View) : FastAdapter.ViewHolder<SimpleSubItem>(view) {
 
         private var mTitle: TextView? = null
         private var mPage: TextView? = null
@@ -71,14 +69,9 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         private var mItemDivider: View? = null
 
         override fun bindView(item: SimpleSubItem, payloads: List<Any>) {
-            val ctx = itemView.context
 
             StringHolder.applyTo(item.title, mTitle)
             StringHolder.applyToOrHide(item.page, mPage)
-            view.background = FastAdapterUIUtils.getSelectableBackground(
-                    ctx,
-                    MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
-                    true)
 
             val bgShape = mPage?.background as? GradientDrawable
             bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
@@ -105,7 +98,4 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         }
     }
 
-    companion object {
-        private val TAG = SimpleSubItem::class.java.canonicalName
-    }
 }
