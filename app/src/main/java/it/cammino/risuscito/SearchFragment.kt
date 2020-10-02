@@ -209,7 +209,6 @@ class SearchFragment : Fragment() {
 
                         if (found) {
                             Log.d(tag, "aText[0]: ${aText[0]}")
-//                            mViewModel.titoli.sortedBy { it.title?.getText(requireContext()) }
                             mViewModel.titoli
                                     .filter { (aText[0] ?: "") == it.undecodedSource }
                                     .forEach {
@@ -221,7 +220,6 @@ class SearchFragment : Fragment() {
                 } else {
                     val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(resources))
                     Log.d(tag, "performSearch onTextChanged: stringa $stringa")
-//                    mViewModel.titoli.sortedBy { it.title?.getText(requireContext()) }
                     mViewModel.titoli
                             .filter {
                                 Utility.removeAccents(it.title?.getText(requireContext())
@@ -251,7 +249,6 @@ class SearchFragment : Fragment() {
 
     private fun subscribeUiCanti() {
         mViewModel.itemsResult?.observe(owner = viewLifecycleOwner) { canti ->
-//            mViewModel.titoli = canti.sortedBy { it.title?.getText(requireContext()) }
             mViewModel.titoli = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
         }
 
