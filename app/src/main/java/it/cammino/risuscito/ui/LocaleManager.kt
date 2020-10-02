@@ -32,7 +32,10 @@ class LocaleManager(val context: Context) {
             // selezionabile oppure IT se non presente
             val mLanguage = when (getSystemLocale(context.resources).language) {
                 LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
-                LANGUAGE_ENGLISH -> LANGUAGE_ENGLISH
+                LANGUAGE_ENGLISH -> if (getSystemLocale(context.resources).country.isNotEmpty() && getSystemLocale(context.resources).country == COUNTRY_PHILIPPINES)
+                    LANGUAGE_ENGLISH_PHILIPPINES
+                else
+                    LANGUAGE_ENGLISH
                 LANGUAGE_TURKISH -> LANGUAGE_TURKISH
                 LANGUAGE_POLISH -> LANGUAGE_POLISH
                 else -> LANGUAGE_ITALIAN
@@ -62,10 +65,6 @@ class LocaleManager(val context: Context) {
     val language: String
         get() = prefs.getString(Utility.SYSTEM_LANGUAGE, "") ?: ""
 
-//    fun setLocale(c: Context): Context {
-//        return updateResources(c)
-//    }
-
     fun persistLanguage(language: String) {
         prefs.edit {
             putString(Utility.SYSTEM_LANGUAGE, language)
@@ -74,7 +73,9 @@ class LocaleManager(val context: Context) {
 
     fun useCustomConfig(context: Context): Context {
         Log.d(TAG, "useCustomConfig language: $language")
-        val locale = Locale(language)
+        val locale = if (language == LANGUAGE_ENGLISH_PHILIPPINES) Locale(LANGUAGE_ENGLISH, COUNTRY_PHILIPPINES) else Locale(language)
+        Log.d(TAG, "useCustomConfig language: ${locale.language}")
+        Log.d(TAG, "useCustomConfig country: ${locale.country}")
         Locale.setDefault(locale)
         val config = if (LUtils.hasJB()) Configuration() else Configuration(context.resources.configuration)
         if (customScale > 0F)
@@ -87,36 +88,10 @@ class LocaleManager(val context: Context) {
         overrideConfiguration?.let { config ->
             if (isLocaleNotEmpty(config))
                 return config
-            setSystemLocale(config, Locale(language))
+            setSystemLocale(config, if (language == LANGUAGE_ENGLISH_PHILIPPINES) Locale(LANGUAGE_ENGLISH, COUNTRY_PHILIPPINES) else Locale(language))
         }
         return overrideConfiguration
     }
-
-//    private fun updateResources(context: Context): Context {
-//        Log.d(TAG, "updateResources language: $language")
-//        val res = context.resources
-//        val config = Configuration(res.configuration)
-//        val locale = Locale(language)
-//        Locale.setDefault(locale)
-//
-//        // font dimension
-//        try {
-//            val actualScale = config.fontScale
-//            Log.d(TAG, "actualScale: $actualScale")
-//            val systemScale = Settings.System.getFloat(context.contentResolver, Settings.System.FONT_SCALE)
-//            Log.d(TAG, "systemScale: $systemScale")
-//            if (actualScale != systemScale) {
-//                config.fontScale = systemScale
-//            }
-//        } catch (e: Settings.SettingNotFoundException) {
-//            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
-//        } catch (e: NullPointerException) {
-//            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
-//        }
-//
-//        setSystemLocale(config, locale)
-//        return context.updateConfiguration(config)
-//    }
 
     companion object {
 
@@ -126,6 +101,9 @@ class LocaleManager(val context: Context) {
         const val LANGUAGE_UKRAINIAN = "uk"
         const val LANGUAGE_TURKISH = "tr"
         const val LANGUAGE_POLISH = "pl"
+        const val LANGUAGE_ENGLISH_PHILIPPINES = "ep"
+
+        const val COUNTRY_PHILIPPINES = "PH"
 
         @Suppress("DEPRECATION")
         private fun updateConfigurationLegacy(context: Context, config: Configuration): Context {
