@@ -15,7 +15,7 @@ import java.io.InputStreamReader
 import java.util.*
 import java.util.regex.Pattern
 
-class CambioAccordi internal constructor(private val mContext: Context, private val mLanguage: String?) {
+class CambioAccordi internal constructor(private val mContext: Context) {
 
     internal fun recuperaBarre(canto: InputStream?, language: String): String {
 
@@ -73,8 +73,8 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
         if (primaNota == "" || notaCambio == "")
             return null
 
-        val language = if (mLanguage.isNullOrEmpty()) getSystemLocale(mContext.resources).language else mLanguage
-        val locale = Locale(language)
+        val language = getSystemLocale(mContext.resources).language
+        val locale = getSystemLocale(mContext.resources)
 
         Log.v(TAG, "diffSemiToni: language $language")
 
@@ -133,8 +133,8 @@ class CambioAccordi internal constructor(private val mContext: Context, private 
 
     fun diffSemiToniMin(primaNota: String?, notaCambio: String?): HashMap<String, String>? {
 
-        val language = if (mLanguage.isNullOrEmpty()) getSystemLocale(mContext.resources).language else mLanguage
-        val locale = Locale(language)
+        val language = getSystemLocale(mContext.resources).language
+        val locale = getSystemLocale(mContext.resources)
 
         Log.v(TAG, "diffSemiToniMin - language: $language")
 

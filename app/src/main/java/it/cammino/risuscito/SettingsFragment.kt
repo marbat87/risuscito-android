@@ -30,6 +30,7 @@ import it.cammino.risuscito.Utility.SCREEN_ON
 import it.cammino.risuscito.Utility.SECONDARY_COLOR
 import it.cammino.risuscito.Utility.SYSTEM_LANGUAGE
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
+import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.utils.ThemeUtils
@@ -116,7 +117,10 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 }
                 // Creates a request to download and install additional language resources.
                 val request = SplitInstallRequest.newBuilder()
-                        .addLanguage(Locale(newValue as? String ?: ""))
+                        .addLanguage(if ((newValue as? String
+                                        ?: "") == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
+                            Locale(LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES)
+                        else Locale(newValue as? String ?: ""))
                         .build()
 
                 // Submits the request to install the additional language resources.

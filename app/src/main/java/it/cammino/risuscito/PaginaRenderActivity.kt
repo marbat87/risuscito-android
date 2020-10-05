@@ -306,7 +306,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         Log.d(TAG, "LINGUA CTX: ${getSystemLocale(resources).language}")
         Log.d(TAG, "LINGUA BASE: ${getSystemLocale(baseContext.resources).language}")
-        cambioAccordi = CambioAccordi(this, null)
+        cambioAccordi = CambioAccordi(this)
 
         try {
             mCantiViewModel.primaNota = if (mCantiViewModel.primaNota == PaginaRenderViewModel.NOT_VAL) CambioAccordi.recuperaPrimoAccordo(
