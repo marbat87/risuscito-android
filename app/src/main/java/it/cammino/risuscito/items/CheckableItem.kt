@@ -96,8 +96,4 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         binding.textPage.text = null
     }
 
-    companion object {
-        private val TAG = CheckableItem::class.java.canonicalName
-    }
-
 }

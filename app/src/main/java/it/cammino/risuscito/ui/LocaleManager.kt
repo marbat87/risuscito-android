@@ -2,7 +2,6 @@ package it.cammino.risuscito.ui
 
 import android.annotation.TargetApi
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build.VERSION_CODES.JELLY_BEAN_MR1
@@ -17,16 +16,16 @@ import it.cammino.risuscito.Utility
 import java.util.*
 
 
-class LocaleManager(val context: Context) {
+class LocaleManager(context: Context) {
 
-    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    //    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private var customScale = 0F
 
     init {
-        Log.d(TAG, "init language: $language")
+        Log.d(TAG, "init language: ${getLanguage(context)}")
 
-        if (language.isNotEmpty()) {
-            Log.d(TAG, "init - settings language set: $language")
+        if (getLanguage(context).isNotEmpty()) {
+            Log.d(TAG, "init - settings language set: ${getLanguage(context)}")
         } else {
             // non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua
             // selezionabile oppure IT se non presente
@@ -41,7 +40,7 @@ class LocaleManager(val context: Context) {
                 else -> LANGUAGE_ITALIAN
             }
             Log.d(TAG, "attachBaseContext - default language set: $mLanguage")
-            persistLanguage(mLanguage)
+            persistLanguage(context, mLanguage)
         }
 
         var returnScale = 0F
@@ -62,18 +61,23 @@ class LocaleManager(val context: Context) {
 
     }
 
-    val language: String
-        get() = prefs.getString(Utility.SYSTEM_LANGUAGE, "") ?: ""
+//    val language: String
+//        get() = prefs.getString(Utility.SYSTEM_LANGUAGE, "") ?: ""
 
-    fun persistLanguage(language: String) {
-        prefs.edit {
+    fun persistLanguage(context: Context, language: String) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
             putString(Utility.SYSTEM_LANGUAGE, language)
         }
     }
 
+    fun getLanguage(context: Context): String {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(Utility.SYSTEM_LANGUAGE, "")
+                ?: ""
+    }
+
     fun useCustomConfig(context: Context): Context {
-        Log.d(TAG, "useCustomConfig language: $language")
-        val locale = if (language == LANGUAGE_ENGLISH_PHILIPPINES) Locale(LANGUAGE_ENGLISH, COUNTRY_PHILIPPINES) else Locale(language)
+        Log.d(TAG, "useCustomConfig language: ${getLanguage(context)}")
+        val locale = if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(LANGUAGE_ENGLISH, COUNTRY_PHILIPPINES) else Locale(getLanguage(context))
         Log.d(TAG, "useCustomConfig language: ${locale.language}")
         Log.d(TAG, "useCustomConfig country: ${locale.country}")
         Locale.setDefault(locale)
@@ -84,11 +88,11 @@ class LocaleManager(val context: Context) {
         return context.updateConfiguration(config)
     }
 
-    fun updateConfigurationIfSupported(overrideConfiguration: Configuration?): Configuration? {
+    fun updateConfigurationIfSupported(context: Context, overrideConfiguration: Configuration?): Configuration? {
         overrideConfiguration?.let { config ->
             if (isLocaleNotEmpty(config))
                 return config
-            setSystemLocale(config, if (language == LANGUAGE_ENGLISH_PHILIPPINES) Locale(LANGUAGE_ENGLISH, COUNTRY_PHILIPPINES) else Locale(language))
+            setSystemLocale(config, if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(LANGUAGE_ENGLISH, COUNTRY_PHILIPPINES) else Locale(getLanguage(context)))
         }
         return overrideConfiguration
     }

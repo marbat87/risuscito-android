@@ -17,7 +17,6 @@ import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -240,7 +239,7 @@ class HistoryFragment : Fragment() {
     }
 
     private fun subscribeUiHistory() {
-        mCronologiaViewModel.cronologiaCanti?.observe(owner = viewLifecycleOwner) {
+        mCronologiaViewModel.cronologiaCanti?.observe(viewLifecycleOwner) {
             cantoAdapter.set(it)
             binding.noHistory.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.historyRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
@@ -249,7 +248,7 @@ class HistoryFragment : Fragment() {
             activity?.invalidateOptionsMenu()
         }
 
-        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

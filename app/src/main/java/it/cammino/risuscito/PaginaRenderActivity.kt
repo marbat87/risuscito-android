@@ -29,7 +29,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -395,7 +394,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             onBackPressedAction()
         }
 
-        progressDialogViewModel.state.observe(owner = this) {
+        progressDialogViewModel.state.observe(this) {
             Log.d(TAG, "progressDialogViewModel state $it")
             if (!progressDialogViewModel.handled) {
                 when (it) {
@@ -414,7 +413,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             }
         }
 
-        simpleDialogViewModel.state.observe(owner = this) {
+        simpleDialogViewModel.state.observe(this) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {
@@ -515,7 +514,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             }
         }
 
-        downloaderViewModel.state.observe(owner = this) {
+        downloaderViewModel.state.observe(this) {
             Log.d(TAG, "downloaderViewModel state $it")
             if (!downloaderViewModel.handled) {
                 when (it) {

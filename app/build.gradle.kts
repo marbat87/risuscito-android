@@ -16,7 +16,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4609
+        versionCode = 4610
         versionName = "4.6.0"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -39,7 +39,6 @@ android {
     }
 
     lintOptions {
-//        isAbortOnError = false
         disable("PrivateResource")
         disable("MissingTranslation")
     }
@@ -60,10 +59,6 @@ android {
         jumboMode = true
     }
 
-//    packagingOptions {
-//        exclude("META-INF/library-core_release.kotlin_module")
-//    }
-
     buildFeatures {
         viewBinding = true
     }
@@ -79,30 +74,30 @@ val iconicVersion = "5.0.3"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.play:core:1.8.0")
+    implementation("com.google.android.play:core:1.8.2")
     implementation ("com.google.android.material:material:1.2.1")
-    implementation("androidx.activity:activity-ktx:1.2.0-alpha08")
-    implementation("androidx.core:core-ktx:1.3.1")
-    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
-    implementation("androidx.recyclerview:recyclerview:1.2.0-alpha05")
+    implementation("androidx.activity:activity-ktx:1.2.0-beta01")
+    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-beta01")
+    implementation("androidx.recyclerview:recyclerview:1.2.0-alpha06")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
     implementation("androidx.media:media:1.2.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha07")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-beta01")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:18.1.0")
-    implementation("com.google.firebase:firebase-core:17.5.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.7.0")
+    implementation("com.google.firebase:firebase-core:17.5.1")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.7.1")
     implementation("com.google.firebase:firebase-storage-ktx:19.2.0")
     implementation("com.google.firebase:firebase-auth:19.4.0")
     implementation("com.google.firebase:firebase-crashlytics:17.2.2")
-    implementation("com.google.firebase:firebase-analytics:17.5.0")
+    implementation("com.google.firebase:firebase-analytics:17.6.0")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")

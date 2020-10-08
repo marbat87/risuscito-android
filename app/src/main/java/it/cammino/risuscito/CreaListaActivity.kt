@@ -22,7 +22,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -205,7 +204,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
             onBackPressedAction()
         }
 
-        inputdialogViewModel.state.observe(owner = this) {
+        inputdialogViewModel.state.observe(this) {
             Log.d(TAG, "inputdialogViewModel state $it")
             if (!inputdialogViewModel.handled) {
                 when (it) {
@@ -241,7 +240,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
             }
         }
 
-        simpleDialogViewModel.state.observe(owner = this) {
+        simpleDialogViewModel.state.observe(this) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {
@@ -488,7 +487,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
     }
 
     private fun subscribeUiChanges() {
-        mCreaListaViewModel.listaResult?.observe(owner = this) { listaPers ->
+        mCreaListaViewModel.listaResult?.observe(this) { listaPers ->
 
             val celebrazione = listaPers.lista
 

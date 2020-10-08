@@ -18,7 +18,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.snackbar.Snackbar
@@ -269,7 +268,7 @@ class ListaPersonalizzataFragment : Fragment() {
     }
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.listaPersonalizzataResult?.observe(owner = viewLifecycleOwner) { listaPersonalizzataResult ->
+        mCantiViewModel.listaPersonalizzataResult?.observe(viewLifecycleOwner) { listaPersonalizzataResult ->
             mCantiViewModel.posizioniList = listaPersonalizzataResult.map {
                 it.apply {
                     createClickListener = click

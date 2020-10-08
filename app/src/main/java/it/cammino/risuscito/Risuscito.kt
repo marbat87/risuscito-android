@@ -13,7 +13,6 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.snackbar.Snackbar
@@ -71,7 +70,7 @@ class Risuscito : Fragment(), EasyPermissions.PermissionCallbacks {
             mMainActivity?.signIn()
         }
 
-        activityViewModel.signedIn.observe(owner = viewLifecycleOwner) {
+        activityViewModel.signedIn.observe(viewLifecycleOwner) {
             binding.signInButton.isVisible = !it
         }
 

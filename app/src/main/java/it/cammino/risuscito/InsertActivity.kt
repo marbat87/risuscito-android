@@ -20,7 +20,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -286,7 +285,7 @@ class InsertActivity : ThemeableActivity() {
     }
 
     private fun subscribeObservers() {
-        simpleIndexViewModel.insertItemsResult?.observe(owner = this) { canti ->
+        simpleIndexViewModel.insertItemsResult?.observe(this) { canti ->
             simpleIndexViewModel.titoliInsert = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(this) })
         }
 

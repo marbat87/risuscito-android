@@ -83,7 +83,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 //                        val newLanguage = state.languages().first()
                         Log.i(TAG, "Module installed: language $newLanguage")
                         Log.i(TAG, "Module installed: newLanguage $newLanguage")
-                        RisuscitoApplication.localeManager.persistLanguage(newLanguage)
+                        RisuscitoApplication.localeManager.persistLanguage(requireContext(), newLanguage)
                         val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
                         mIntent?.let {
                             it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -111,8 +111,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     private val changeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-        val currentLang = RisuscitoApplication.localeManager.language
-        Log.i(TAG, "OnPreferenceChangeListener - oldValue: ${RisuscitoApplication.localeManager.language}")
+        val currentLang = RisuscitoApplication.localeManager.getLanguage(requireContext())
+        Log.i(TAG, "OnPreferenceChangeListener - oldValue: ${RisuscitoApplication.localeManager.getLanguage(requireContext())}")
         Log.i(TAG, "OnPreferenceChangeListener - newValue: $newValue")
         if (!currentLang.equals(newValue as? String ?: currentLang, ignoreCase = true)) {
             if (LUtils.hasL()) {
@@ -153,7 +153,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         // You use this ID to track further status updates for the request.
                         ?.addOnSuccessListener { id -> sessionId = id }
             } else {
-                RisuscitoApplication.localeManager.persistLanguage(newValue as? String
+                RisuscitoApplication.localeManager.persistLanguage(requireContext(), newValue as? String
                         ?: currentLang)
                 val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
                 mIntent?.let {

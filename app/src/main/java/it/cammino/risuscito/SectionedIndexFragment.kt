@@ -12,7 +12,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -148,7 +147,7 @@ class SectionedIndexFragment : Fragment() {
 
         lifecycleScope.launch { updateLists(savedInstanceState) }
 
-        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

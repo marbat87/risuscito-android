@@ -80,7 +80,7 @@ class ImportActivity : AppCompatActivity() {
 
     override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
         Log.d(TAG, "applyOverrideConfiguration")
-        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(overrideConfiguration))
+        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(this, overrideConfiguration))
     }
 
     companion object {
