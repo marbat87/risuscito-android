@@ -81,10 +81,6 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
         override fun bindView(item: SimpleSubExpandableItem, payloads: List<Any>) {
             val ctx = itemView.context
 
-//            view.background = FastAdapterUIUtils.getRippleDrawable(
-//                    ContextCompat.getColor(ctx, R.color.floating_background),
-//                    ContextCompat.getColor(ctx, R.color.ripple_color),
-//                    10)
             // set the text for the name
             val newTitle = "${item.title?.getText(ctx)} (${item.totItems})"
             mTitle?.text = newTitle
