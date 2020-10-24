@@ -16,7 +16,6 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -209,7 +208,6 @@ class SearchFragment : Fragment() {
 
                         if (found) {
                             Log.d(tag, "aText[0]: ${aText[0]}")
-//                            mViewModel.titoli.sortedBy { it.title?.getText(requireContext()) }
                             mViewModel.titoli
                                     .filter { (aText[0] ?: "") == it.undecodedSource }
                                     .forEach {
@@ -221,7 +219,6 @@ class SearchFragment : Fragment() {
                 } else {
                     val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(resources))
                     Log.d(tag, "performSearch onTextChanged: stringa $stringa")
-//                    mViewModel.titoli.sortedBy { it.title?.getText(requireContext()) }
                     mViewModel.titoli
                             .filter {
                                 Utility.removeAccents(it.title?.getText(requireContext())
@@ -250,12 +247,11 @@ class SearchFragment : Fragment() {
     }
 
     private fun subscribeUiCanti() {
-        mViewModel.itemsResult?.observe(owner = viewLifecycleOwner) { canti ->
-//            mViewModel.titoli = canti.sortedBy { it.title?.getText(requireContext()) }
+        mViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mViewModel.titoli = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
         }
 
-        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {
@@ -282,17 +278,6 @@ class SearchFragment : Fragment() {
             }
         }
 
-//        mViewModel.liveTitoliResult.observe(viewLifecycleOwner) {
-//            Log.d(TAG, "result size ${it.size}")
-//            if (!mViewModel.eventConsumed) {
-//                mViewModel.eventConsumed = true
-//                cantoAdapter.set(it)
-//                binding.searchProgress.isVisible = false
-//                binding.searchNoResults.isVisible = cantoAdapter.adapterItemCount == 0
-//                binding.matchedList.isGone = cantoAdapter.adapterItemCount == 0
-//
-//            }
-//        }
     }
 
     companion object {

@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.color.MaterialColors
@@ -110,7 +111,7 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
         StringHolder.applyToOrHide(page, binding.textPage)
         binding.root.background = FastAdapterUIUtils.getSelectableBackground(
                 ctx,
-                MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
+                ContextCompat.getColor(ctx, R.color.selected_bg_color),
                 true)
 
         val bgShape = binding.textPage.background as? GradientDrawable

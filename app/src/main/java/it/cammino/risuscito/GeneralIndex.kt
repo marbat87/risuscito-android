@@ -74,7 +74,7 @@ class GeneralIndex : Fragment() {
         binding.viewPager.registerOnPageChangeCallback(mPageChange)
 
         lifecycleScope.launch {
-            delay(1000)
+            delay(500)
             if (savedInstanceState == null) {
                 val pref = PreferenceManager.getDefaultSharedPreferences(context)
                 binding.viewPager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")

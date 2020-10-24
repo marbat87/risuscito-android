@@ -17,7 +17,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -211,7 +210,7 @@ class CustomLists : Fragment() {
     }
 
     private fun subscribeUiListe() {
-        mCustomListsViewModel.customListResult?.observe(owner = viewLifecycleOwner) { list ->
+        mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->
             Log.d(TAG, "list size ${list.size}")
             titoliListe = arrayOfNulls(list.size)
             idListe = IntArray(list.size)
@@ -229,7 +228,7 @@ class CustomLists : Fragment() {
             }
         }
 
-        inputdialogViewModel.state.observe(owner = viewLifecycleOwner) {
+        inputdialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "inputdialogViewModel state $it")
             if (!inputdialogViewModel.handled) {
                 when (it) {
@@ -250,7 +249,7 @@ class CustomLists : Fragment() {
             }
         }
 
-        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {
@@ -324,8 +323,7 @@ class CustomLists : Fragment() {
                                 mActivity, NEW_LIST)
                                 .title(R.string.lista_add_desc)
                                 .positiveButton(R.string.create_confirm)
-                                .negativeButton(R.string.cancel)
-                                , mActivity.supportFragmentManager)
+                                .negativeButton(R.string.cancel), mActivity.supportFragmentManager)
                     }
                     true
                 }

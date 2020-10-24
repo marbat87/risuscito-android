@@ -296,7 +296,13 @@ object Utility {
     }
 
     internal fun removeAccents(value: String): String {
-        val normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
+
+        var normalized = value
+
+        for ((mapKey, mapValue) in STROKE_LETTERS)
+            normalized = normalized.replace(mapKey, mapValue)
+
+        normalized = Normalizer.normalize(normalized, Normalizer.Form.NFD)
         val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
         return pattern.matcher(normalized).replaceAll("")
     }
@@ -422,5 +428,9 @@ object Utility {
     }
 
     private const val ECONDING_UTF8 = "utf-8"
+
+    private val STROKE_LETTERS: Map<String, String> = mapOf(
+            Pair("Ł", "L"),
+            Pair("ł", "l"))
 
 }

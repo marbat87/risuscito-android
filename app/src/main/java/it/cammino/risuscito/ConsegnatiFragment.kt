@@ -19,7 +19,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -441,7 +440,7 @@ class ConsegnatiFragment : Fragment() {
     }
 
     private fun subscribeUiConsegnati() {
-        mCantiViewModel.mIndexResult?.observe(owner = viewLifecycleOwner) { cantos ->
+        mCantiViewModel.mIndexResult?.observe(viewLifecycleOwner) { cantos ->
             mCantiViewModel.titoli = cantos.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
             cantoAdapter.set(mCantiViewModel.titoli)
             cantoAdapter.filter(mPopupMenu.menu.children.filter { item -> item.isChecked }
@@ -451,7 +450,7 @@ class ConsegnatiFragment : Fragment() {
             binding.cantiRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
         }
 
-        dialogViewModel.state.observe(owner = viewLifecycleOwner) {
+        dialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "dialogViewModel state $it")
             if (!dialogViewModel.handled) {
                 when (it) {
@@ -472,7 +471,7 @@ class ConsegnatiFragment : Fragment() {
             }
         }
 
-        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

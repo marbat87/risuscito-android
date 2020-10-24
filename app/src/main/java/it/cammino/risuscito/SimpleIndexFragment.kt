@@ -14,10 +14,10 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.IAdapter
 import com.turingtechnologies.materialscrollbar.CustomIndicator
 import com.turingtechnologies.materialscrollbar.TouchScrollBar
@@ -117,6 +117,7 @@ class SimpleIndexFragment : Fragment() {
         binding.cantiList.addItemDecoration(insetDivider)
         binding.dragScrollBar.setRecyclerView(binding.cantiList)
         if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
+            binding.dragScrollBar.setTextColor(MaterialColors.getColor(requireContext(), R.attr.colorOnSecondary, TAG))
             binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
             binding.dragScrollBar.setAutoHide(false)
         } else
@@ -126,6 +127,7 @@ class SimpleIndexFragment : Fragment() {
                 }
 
                 override fun onViewAttachedToWindow(p0: View?) {
+                    (p0 as? TouchScrollBar)?.setTextColor(MaterialColors.getColor(requireContext(), R.attr.colorOnSecondary, TAG))
                     (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
                     (p0 as? TouchScrollBar)?.setAutoHide(false)
                     p0?.removeOnAttachStateChangeListener(this)
@@ -139,10 +141,9 @@ class SimpleIndexFragment : Fragment() {
     }
 
     private fun subscribeUiChanges() {
-        mCantiViewModel.itemsResult?.observe(owner = viewLifecycleOwner) { canti ->
+        mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mAdapter.set(
                     when (mCantiViewModel.tipoLista) {
-//                        0 -> canti.sortedBy { it.title?.getText(requireContext()) }
                         0 -> canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
                         1 -> canti.sortedBy { it.page?.getText(requireContext())?.toInt() }
                         2 -> canti
@@ -151,7 +152,7 @@ class SimpleIndexFragment : Fragment() {
             )
         }
 
-        simpleDialogViewModel.state.observe(owner = viewLifecycleOwner) {
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

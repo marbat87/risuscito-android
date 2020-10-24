@@ -52,16 +52,16 @@ class AboutFragment : Fragment() {
                     setAppName(R.string.app_name)
                     setPhoto(R.drawable.ic_brand_icon)
                     setCover(R.mipmap.profile_cover)
-                    setLinksColumnsCount(1)
+                    linksColumnsCount = 1
                     addEmailLink("marbat87@outlook.it", getString(R.string.app_name), null)
                     addFiveStarsAction(BuildConfig.APPLICATION_ID)
                     setVersionNameAsAppSubTitle()
                     addShareAction(R.string.app_name)
                     addUpdateAction(BuildConfig.APPLICATION_ID)
-                    setActionsColumnsCount(2)
+                    actionsColumnsCount = 2
                     addChangeLogAction(mChangeLogClickListener)
-                    addPrivacyPolicyAction("http://marbat87.altervista.org/privacy_policy.html")
-                    setShowAsCard(false)
+                    addPrivacyPolicyAction("https://marbat87.altervista.org/privacy_policy.html")
+                    isShowAsCard = false
                     backgroundColor = ElevationOverlayProvider(requireContext()).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.mtrl_card_elevation))
                 }.build())
     }

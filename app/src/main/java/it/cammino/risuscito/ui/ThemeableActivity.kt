@@ -120,14 +120,13 @@ abstract class ThemeableActivity : AppCompatActivity() {
     override fun attachBaseContext(newBase: Context) {
         Log.d(TAG, "attachBaseContext")
         super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
-//        super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
         RisuscitoApplication.localeManager.useCustomConfig(this)
         SplitCompat.install(this)
     }
 
     override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
         Log.d(TAG, "applyOverrideConfiguration")
-        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(overrideConfiguration))
+        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(this, overrideConfiguration))
     }
 
     class NoBackupException internal constructor(val resources: Resources) : Exception(resources.getString(R.string.no_restore_found))

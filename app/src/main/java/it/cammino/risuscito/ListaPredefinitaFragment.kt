@@ -16,7 +16,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
@@ -238,7 +237,7 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun subscribeUiUpdate() {
-        mCantiViewModel.cantiResult?.observe(owner = viewLifecycleOwner) { mCanti ->
+        mCantiViewModel.cantiResult?.observe(viewLifecycleOwner) { mCanti ->
             var progressiveTag = 0
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             posizioniList.clear()

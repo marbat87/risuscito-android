@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.color.MaterialColors
@@ -80,7 +81,7 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
 
         binding.root.background = FastAdapterUIUtils.getSelectableBackground(
                 ctx,
-                MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
+                ContextCompat.getColor(ctx, R.color.selected_bg_color),
                 true)
 
         val bgShape = binding.textPage.background as? GradientDrawable

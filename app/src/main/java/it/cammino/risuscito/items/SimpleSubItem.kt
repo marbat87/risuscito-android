@@ -4,8 +4,8 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
@@ -77,8 +77,8 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
             StringHolder.applyToOrHide(item.page, mPage)
             view.background = FastAdapterUIUtils.getSelectableBackground(
                     ctx,
-                    MaterialColors.getColor(ctx, R.attr.colorSecondaryLight, TAG),
-                    true)
+                    ContextCompat.getColor(ctx, R.color.selected_bg_color),
+                    false)
 
             val bgShape = mPage?.background as? GradientDrawable
             bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
@@ -105,7 +105,4 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         }
     }
 
-    companion object {
-        private val TAG = SimpleSubItem::class.java.canonicalName
-    }
 }

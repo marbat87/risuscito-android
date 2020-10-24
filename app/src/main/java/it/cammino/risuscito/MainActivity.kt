@@ -29,7 +29,6 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
@@ -189,7 +188,7 @@ class MainActivity : ThemeableActivity() {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        simpleDialogViewModel.state.observe(owner = this) {
+        simpleDialogViewModel.state.observe(this) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {

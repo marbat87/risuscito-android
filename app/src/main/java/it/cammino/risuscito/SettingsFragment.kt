@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.content.edit
+import androidx.fragment.app.viewModels
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
@@ -30,13 +31,18 @@ import it.cammino.risuscito.Utility.SCREEN_ON
 import it.cammino.risuscito.Utility.SECONDARY_COLOR
 import it.cammino.risuscito.Utility.SYSTEM_LANGUAGE
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
+import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.viewmodels.SettingsViewModel
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private val mSettingsViewModel: SettingsViewModel by viewModels()
+
     private lateinit var mEntries: Array<String>
     private lateinit var mEntryValues: Array<String>
     internal var mMainActivity: MainActivity? = null
@@ -46,6 +52,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private val listener = SplitInstallStateUpdatedListener { state ->
         if (state.sessionId() == sessionId) {
+            val newLanguage = mSettingsViewModel.persistingLanguage
+            mSettingsViewModel.persistingLanguage = ""
             when (state.status()) {
                 FAILED -> {
                     Log.e(TAG, "Module install failed with ${state.errorCode()}")
@@ -65,16 +73,17 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 DOWNLOADING -> {
                     val totalBytes = state.totalBytesToDownload()
                     val progress = state.bytesDownloaded()
-                    Log.d(TAG, "DOWNLOADING LANGUAGE - progress: $progress su $totalBytes")
+                    Log.i(TAG, "DOWNLOADING LANGUAGE - progress: $progress su $totalBytes")
                     // Update progress bar.
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.setProgress((100 * progress / totalBytes).toInt())
                 }
                 INSTALLED -> {
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     if (state.languages().isNotEmpty()) {
-                        val newLanguage = state.languages().first()
-                        Log.d(TAG, "Module installed: language $newLanguage")
-                        RisuscitoApplication.localeManager.persistLanguage(newLanguage)
+//                        val newLanguage = state.languages().first()
+                        Log.i(TAG, "Module installed: language $newLanguage")
+                        Log.i(TAG, "Module installed: newLanguage $newLanguage")
+                        RisuscitoApplication.localeManager.persistLanguage(requireContext(), newLanguage)
                         val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
                         mIntent?.let {
                             it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -96,14 +105,15 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         }
                     }
                 }
-                else -> Log.d(TAG, "Status: ${state.status()}")
+                else -> Log.i(TAG, "Status: ${state.status()}")
             }
         }
     }
 
     private val changeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-        val currentLang = getSystemLocale(resources).language
-        Log.d(TAG, "OnPreferenceChangeListener - newValue: $newValue")
+        val currentLang = RisuscitoApplication.localeManager.getLanguage(requireContext())
+        Log.i(TAG, "OnPreferenceChangeListener - oldValue: ${RisuscitoApplication.localeManager.getLanguage(requireContext())}")
+        Log.i(TAG, "OnPreferenceChangeListener - newValue: $newValue")
         if (!currentLang.equals(newValue as? String ?: currentLang, ignoreCase = true)) {
             if (LUtils.hasL()) {
                 mMainActivity?.let { activity ->
@@ -116,10 +126,14 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 }
                 // Creates a request to download and install additional language resources.
                 val request = SplitInstallRequest.newBuilder()
-                        .addLanguage(Locale(newValue as? String ?: ""))
+                        .addLanguage(if ((newValue as? String
+                                        ?: "") == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
+                            Locale(LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES)
+                        else Locale(newValue as? String ?: ""))
                         .build()
 
                 // Submits the request to install the additional language resources.
+                mSettingsViewModel.persistingLanguage = newValue as? String ?: ""
                 splitInstallManager.startInstall(request)
                         // You should also add the following listener to handle any errors
                         // processing the request.
@@ -139,7 +153,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         // You use this ID to track further status updates for the request.
                         ?.addOnSuccessListener { id -> sessionId = id }
             } else {
-                RisuscitoApplication.localeManager.persistLanguage(newValue as? String
+                RisuscitoApplication.localeManager.persistLanguage(requireContext(), newValue as? String
                         ?: currentLang)
                 val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
                 mIntent?.let {
@@ -161,7 +175,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.d(TAG, "onCreateView")
         mMainActivity = activity as? MainActivity
 
         splitInstallManager = SplitInstallManagerFactory.create(requireContext())
@@ -205,14 +218,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onStart() {
         super.onStart()
-        Log.d(TAG, "onStart")
         splitInstallManager.registerListener(listener)
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d(TAG, "onStop")
         try {
             splitInstallManager.unregisterListener(listener)
         } catch (e: IllegalArgumentException) {
