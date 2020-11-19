@@ -34,7 +34,7 @@
         <item name="md_font_title">@font/googlesans_medium</item>
         <item name="md_font_body">@font/googlesans_regular</item>
         <item name="md_font_button">@font/googlesans_medium</item>
-        <item name="md_color_button_text">?colorSecondary</item>
+        <item name="md_color_button_text">?colorPrimary</item>
         <item name="tabStyle">@style/Widget.MaterialComponents.TabLayout.PrimarySurface.Risuscito</item>
 
         <item name="actionModeStyle">@style/Widget.AppCompat.ActionMode.Risuscito</item>
