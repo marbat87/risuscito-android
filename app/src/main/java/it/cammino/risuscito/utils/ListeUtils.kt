@@ -58,15 +58,20 @@ object ListeUtils {
                     return@launch
                 } else {
                     val titoloPresente = withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { fragment.resources.getString(LUtils.getResId(cantoDao.getCantoById(it).titolo, R.string::class.java)) }
+
+                    val sb = StringBuilder()
+                    sb.append(fragment.getString(R.string.dialog_present_yet))
+                    sb.append(" ")
+                    sb.append(titoloPresente)
+                    sb.append(".")
+                    sb.append(System.getProperty("line.separator"))
+                    sb.append(fragment.getString(R.string.dialog_wonna_replace))
+
                     SimpleDialogFragment.show(SimpleDialogFragment.Builder(
                             fragment.requireActivity() as AppCompatActivity,
                             replaceTag)
                             .title(R.string.dialog_replace_title)
-                            .content(
-                                    (fragment.getString(R.string.dialog_present_yet)
-                                            + " "
-                                            + titoloPresente
-                                            + fragment.getString(R.string.dialog_wonna_replace)))
+                            .content(sb.toString())
                             .positiveButton(R.string.replace_confirm)
                             .negativeButton(R.string.cancel),
                             fragment.requireActivity().supportFragmentManager)
