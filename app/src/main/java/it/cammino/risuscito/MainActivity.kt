@@ -404,7 +404,7 @@ class MainActivity : ThemeableActivity() {
                         }
                 )
                 onDrawerItemClickListener = { _, drawerItem, position ->
-                    onDrawerItemClick(drawerItem, position)
+                    onDrawerItemClick(drawerItem)
                 }
                 setSavedInstance(savedInstanceState)
             }
@@ -515,7 +515,7 @@ class MainActivity : ThemeableActivity() {
                         }
                 )
                 onDrawerItemClickListener = { _, drawerItem, position ->
-                    onDrawerItemClick(drawerItem, position)
+                    onDrawerItemClick(drawerItem)
                 }
                 tintStatusBar = true
                 setSavedInstance(savedInstanceState)
@@ -527,7 +527,7 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
-    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>, position: Int): Boolean {
+    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>): Boolean {
         val fragment = when (drawerItem.identifier) {
             R.id.navigation_home.toLong() -> Risuscito()
             R.id.navigation_search.toLong() -> SearchFragment()
@@ -550,15 +550,6 @@ class MainActivity : ThemeableActivity() {
                 setCustomAnimations(
                         R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
                 replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
-            }
-        }
-
-        //FIX perchè cliccando sul MiniDrawer non si deseleziona la voce del drawer
-        //precedentemente selezionata
-        if (mViewModel.isTabletWithNoFixedDrawer) {
-            for (i in 0 until sliderView.adapter.itemCount) {
-                if (i != position)
-                    sliderView.selectExtension.deselect(i)
             }
         }
 
