@@ -70,7 +70,7 @@ val fastAdapterVersion = "5.3.1"
 val materialDrawerVersion = "8.2.0"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.2.5"
-val iconicVersion = "5.1.1"
+val iconicVersion = "5.2.0"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20")
     implementation("androidx.multidex:multidex:2.0.1")
