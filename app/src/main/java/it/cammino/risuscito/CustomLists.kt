@@ -296,7 +296,7 @@ class CustomLists : Fragment() {
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_plus).apply {
+        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon3.cmd_plus).apply {
             colorInt = Color.WHITE
             sizeDp = 24
             paddingDp = 4

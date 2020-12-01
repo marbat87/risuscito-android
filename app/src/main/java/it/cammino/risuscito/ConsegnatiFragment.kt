@@ -354,7 +354,7 @@ class ConsegnatiFragment : Fragment() {
     }
 
     private fun initFab() {
-        val icon = IconicsDrawable(requireActivity(), CommunityMaterial.Icon2.cmd_pencil).apply {
+        val icon = IconicsDrawable(requireActivity(), CommunityMaterial.Icon3.cmd_pencil).apply {
             colorInt = Color.WHITE
             sizeDp = 24
             paddingDp = 4

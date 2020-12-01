@@ -75,9 +75,9 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
 
         val icon = IconicsDrawable(ctx, if (numPassaggio == -1)
-            CommunityMaterial.Icon2.cmd_tag_plus
+            CommunityMaterial.Icon3.cmd_tag_plus
         else
-            CommunityMaterial.Icon2.cmd_tag_text_outline).apply {
+            CommunityMaterial.Icon3.cmd_tag_text_outline).apply {
             colorInt = MaterialColors.getColor(ctx, if (numPassaggio == -1) android.R.attr.textColorSecondary else R.attr.colorSecondary, TAG)
             sizeDp = 24
             paddingDp = 2

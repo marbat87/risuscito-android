@@ -142,7 +142,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
 
         mTouchHelper?.attachToRecyclerView(binding.recyclerView) // Attach ItemTouchHelper to RecyclerView
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
             colorInt = Color.WHITE
             sizeDp = 24
             paddingDp = 4

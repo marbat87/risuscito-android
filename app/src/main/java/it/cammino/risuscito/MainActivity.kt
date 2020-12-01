@@ -355,25 +355,25 @@ class MainActivity : ThemeableActivity() {
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.search_name_text
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_magnify
                             identifier = R.id.navigation_search.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_general_index
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_view_list
                             identifier = R.id.navigation_indexes.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_custom_lists
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_view_carousel
                             identifier = R.id.navitagion_lists.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.action_favourites
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_star
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_star
                             identifier = R.id.navigation_favorites.toLong()
                             typeface = mMediumFont
                         },
@@ -403,7 +403,7 @@ class MainActivity : ThemeableActivity() {
                             typeface = mMediumFont
                         }
                 )
-                onDrawerItemClickListener = { _, drawerItem, position ->
+                onDrawerItemClickListener = { _, drawerItem, _ ->
                     onDrawerItemClick(drawerItem)
                 }
                 setSavedInstance(savedInstanceState)
@@ -466,25 +466,25 @@ class MainActivity : ThemeableActivity() {
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.search_name_text
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_magnify
                             identifier = R.id.navigation_search.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_general_index
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_view_list
                             identifier = R.id.navigation_indexes.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_custom_lists
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_view_carousel
                             identifier = R.id.navitagion_lists.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.action_favourites
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_star
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_star
                             identifier = R.id.navigation_favorites.toLong()
                             typeface = mMediumFont
                         },
@@ -514,7 +514,7 @@ class MainActivity : ThemeableActivity() {
                             typeface = mMediumFont
                         }
                 )
-                onDrawerItemClickListener = { _, drawerItem, position ->
+                onDrawerItemClickListener = { _, drawerItem, _ ->
                     onDrawerItemClick(drawerItem)
                 }
                 tintStatusBar = true
@@ -700,7 +700,7 @@ class MainActivity : ThemeableActivity() {
 
             binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista,
-                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+                            IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
                                 sizeDp = 24
                                 paddingDp = 4
                             }
@@ -715,7 +715,7 @@ class MainActivity : ThemeableActivity() {
 
             binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi,
-                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant).apply {
+                            IconicsDrawable(this, CommunityMaterial.Icon3.cmd_share_variant).apply {
                                 sizeDp = 24
                                 paddingDp = 4
                             }
@@ -746,7 +746,7 @@ class MainActivity : ThemeableActivity() {
 
                 binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista,
-                                IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil).apply {
+                                IconicsDrawable(this, CommunityMaterial.Icon3.cmd_pencil).apply {
                                     sizeDp = 24
                                     paddingDp = 4
                                 }

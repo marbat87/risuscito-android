@@ -290,7 +290,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
         }
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
             colorInt = Color.WHITE
             sizeDp = 24
             paddingDp = 4
@@ -970,9 +970,9 @@ class PaginaRenderActivity : ThemeableActivity() {
     private fun showPlaying(started: Boolean) {
         Log.d(TAG, "showPlaying: ")
         val icon = IconicsDrawable(this, if (started)
-            CommunityMaterial.Icon2.cmd_pause
+            CommunityMaterial.Icon3.cmd_pause
         else
-            CommunityMaterial.Icon2.cmd_play).apply {
+            CommunityMaterial.Icon3.cmd_play).apply {
             colorInt = ContextCompat.getColor(
                     this@PaginaRenderActivity,
                     if (ThemeUtils.isDarkMode(this@PaginaRenderActivity)) R.color.secondary_text_default_material_dark else R.color.secondary_text_default_material_light
@@ -987,9 +987,9 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun showScrolling(scrolling: Boolean) {
         val icon = IconicsDrawable(this, if (scrolling)
-            CommunityMaterial.Icon2.cmd_pause_circle_outline
+            CommunityMaterial.Icon3.cmd_pause_circle_outline
         else
-            CommunityMaterial.Icon2.cmd_play_circle_outline).apply {
+            CommunityMaterial.Icon3.cmd_play_circle_outline).apply {
             colorInt = ContextCompat.getColor(
                     this@PaginaRenderActivity,
                     R.color.text_color_secondary
@@ -1361,7 +1361,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_fullscreen_on,
-                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen).apply {
+                        IconicsDrawable(this, CommunityMaterial.Icon2.cmd_fullscreen).apply {
                             sizeDp = 24
                             paddingDp = 2
                         }

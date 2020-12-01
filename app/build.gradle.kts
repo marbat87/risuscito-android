@@ -106,7 +106,7 @@ dependencies {
     implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:iconics-core:$iconicVersion")
     implementation("com.mikepenz:iconics-views:$iconicVersion")
-    implementation("com.mikepenz:community-material-typeface:5.8.55-kotlin@aar")
+    implementation("com.mikepenz:community-material-typeface:5.8.55.0-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.4")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.0")

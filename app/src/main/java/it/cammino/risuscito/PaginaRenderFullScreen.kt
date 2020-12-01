@@ -61,7 +61,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen_exit).apply {
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_fullscreen_exit).apply {
             colorInt = Color.WHITE
             sizeDp = 24
             paddingDp = 2
