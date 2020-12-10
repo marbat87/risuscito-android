@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <release versionCode="4611"
+        date="October 2020"
+        versionName="4.6.0">
+        <new>Added Polish language (if Polish is your system language and you're updating this app, you may need to delete application data or uninstall and then resintall it)</new>
+        <new>Added English (Philippines) language (if English (Philippines) is your system localization and you're updating this app, you may need to delete application data or uninstall and then resintall it)</new>
+        <new>Updated color system. Now text on light colors bars (e.g. yellow) is black</new>
+        <bugfix>Various</bugfix>
+    </release>
+
     <release versionCode="4503"
         date="May 2020"
         versionName="4.5.0">

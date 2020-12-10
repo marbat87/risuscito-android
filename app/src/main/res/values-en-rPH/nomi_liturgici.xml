@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tempo_avvento">ADVENT TIME</string>
+    <string name="tempo_natale">CHRISTMAS TIME</string>
+    <string name="tempo_quaresima">LENT TIME</string>
+    <string name="tempo_pasqua">EASTER TIME</string>
+    <string name="canti_pentecoste">PENTECOST</string>
+    <string name="canti_vergine">SONGS TO THE VIRGIN</string>
+    <string name="lodi_vespri">LAUDS AND VESPERS</string>
+    <string name="canti_ingresso">Entrance</string>
+    <string name="canti_pace">PEACE</string>
+    <string name="canti_pane">BREAD</string>
+    <string name="canti_vino">WINE</string>
+    <string name="canti_fine">FINAL</string>
+</resources>

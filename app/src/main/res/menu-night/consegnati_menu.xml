@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_filter"
+        android:orderInCategory="98"
+        android:title="@string/passage_filter"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd_filter"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        risuscito:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="99"
+        risuscito:showAsAction="always"
+        android:title="@string/action_help"
+        risuscito:ico_color="?colorControlNormal"
+        risuscito:ico_icon="cmd_help_circle"
+        risuscito:ico_padding="2dp"
+        risuscito:ico_size="24dp"
+        />
+
+</menu>

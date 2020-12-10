@@ -3,11 +3,12 @@ package it.cammino.risuscito
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
@@ -15,14 +16,12 @@ import androidx.core.os.postDelayed
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialcab.MaterialCab
-import com.afollestad.materialcab.MaterialCab.Companion.destroy
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
@@ -30,24 +29,26 @@ import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.LayoutHistoryBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
-import it.cammino.risuscito.utils.ioThread
-import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class HistoryFragment : Fragment() {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
     private val cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleHistoryItem>? = null
 
     private var actionModeOk: Boolean = false
 
     private var mMainActivity: MainActivity? = null
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
     private var _binding: LayoutHistoryBinding? = null
@@ -75,23 +76,21 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity?.enableFab(false)
         mMainActivity?.setTabVisible(false)
 
-        mLUtils = LUtils.getInstance(requireActivity())
-
         if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.HISTORY_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.HISTORY_OPEN, true) }
-            Handler().postDelayed(250) {
+            Handler(Looper.getMainLooper()).postDelayed(250) {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()
             }
         }
 
-        val sFragment = SimpleDialogFragment.findVisible(mMainActivity, RESET_HISTORY)
-        sFragment?.setmCallback(this)
+        setHasOptionsMenu(true)
+        subscribeUiHistory()
 
         cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
             var consume = false
-            if (MaterialCab.isActive) {
+            if (mMainActivity?.actionMode != null) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     cantoAdapter
@@ -99,9 +98,9 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
                     cantoAdapter.notifyAdapterItemChanged(position)
                     if (selectExtension?.selectedItems?.size == 0)
-                        destroy()
+                        mMainActivity?.actionMode?.finish()
                     else
-                        startCab()
+                        updateActionModeTitle()
                 }
                 consume = true
             }
@@ -114,15 +113,15 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                mLUtils?.startActivityWithTransition(intent)
+                activityViewModel.mLUtils.startActivityWithTransition(intent)
                 consume = true
             }
             consume
         }
 
         cantoAdapter.onPreLongClickListener = { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
-            if (!MaterialCab.isActive) {
-                if (mMainActivity?.isOnTablet != true)
+            if (mMainActivity?.actionMode == null) {
+                if (!activityViewModel.isOnTablet)
                     mMainActivity?.expandToolbar()
                 cantoAdapter.getAdapterItem(position).isSelected = true
                 cantoAdapter.notifyAdapterItemChanged(position)
@@ -140,8 +139,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         selectExtension?.deleteAllSelectedItems()
 
         binding.historyRecycler.adapter = cantoAdapter
-        val llm = if (mMainActivity?.isGridLayout == true)
-            GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
+        val llm = if (activityViewModel.isGridLayout)
+            GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)
         binding.historyRecycler.layoutManager = llm
@@ -151,14 +150,8 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         binding.historyRecycler.itemAnimator = SlideRightAlphaAnimator()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-        subscribeUiHistory()
-    }
-
     override fun onDestroy() {
-        destroy()
+        mMainActivity?.actionMode?.finish()
         super.onDestroy()
     }
 
@@ -173,13 +166,13 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         when (item.itemId) {
             R.id.list_reset -> {
                 mMainActivity?.let {
-                    SimpleDialogFragment.Builder(
-                                    it, this, RESET_HISTORY)
+                    SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                            it, RESET_HISTORY)
                             .title(R.string.dialog_reset_history_title)
                             .content(R.string.dialog_reset_history_desc)
                             .positiveButton(R.string.clear_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+                            .negativeButton(R.string.cancel),
+                            it.supportFragmentManager)
                 }
                 return true
             }
@@ -192,59 +185,53 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         return false
     }
 
-    override fun onPositive(tag: String) {
-        Log.d(javaClass.name, "onPositive: $tag")
-        when (tag) {
-            RESET_HISTORY ->
-                ioThread {
-                    val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
-                    mDao.emptyCronologia()
-                }
-        }
-    }
-
-    override fun onNegative(tag: String) {
-        // no-op
-    }
-
     private fun startCab() {
-        MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
-            title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
-            popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
-            contentInsetStartRes(R.dimen.mcab_default_content_inset)
-            if (isDarkMode(requireContext()))
-                backgroundColor = requireContext().themeColor(R.attr.colorSurface)
-            menuRes = R.menu.menu_delete
+        val callback = object : ActionMode.Callback {
 
-            onCreate { _, _ ->
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
+                IconicsMenuInflaterUtil.inflate(
+                        requireActivity().menuInflater, requireContext(), R.menu.menu_delete, menu)
                 Log.d(TAG, "MaterialCab onCreate")
                 actionModeOk = false
+                return true
             }
 
-            onSelection { item ->
-                Log.d(TAG, "MaterialCab onSelection: ${item.itemId}")
-                if (item.itemId == R.id.action_remove_item) {
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                return false
+            }
+
+            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+                Log.d(TAG, "MaterialCab onSelection: ${item?.itemId}")
+                return if (item?.itemId == R.id.action_remove_item) {
                     removeHistories()
                     actionModeOk = true
-                    destroy()
+                    mMainActivity?.actionMode?.finish()
                     true
                 } else
                     false
             }
 
-            onDestroy {
+            override fun onDestroyActionMode(mode: ActionMode?) {
                 Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 if (!actionModeOk) {
                     try {
                         selectExtension?.deselect()
                     } catch (e: Exception) {
-                        Crashlytics.logException(e)
+                        FirebaseCrashlytics.getInstance().recordException(e)
                     }
                 }
-                true
+                mMainActivity?.destroyActionMode()
             }
+
         }
+
+        mMainActivity?.createActionMode(callback)
+        updateActionModeTitle()
+    }
+
+    private fun updateActionModeTitle() {
+        val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
+        mMainActivity?.updateActionModeTitle(resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount))
     }
 
     private fun removeHistories() {
@@ -256,7 +243,29 @@ class HistoryFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
             cantoAdapter.set(it)
             binding.noHistory.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.historyRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
+            if (cantoAdapter.adapterItemCount == 0)
+                mMainActivity?.expandToolbar()
             activity?.invalidateOptionsMenu()
+        }
+
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            RESET_HISTORY -> {
+                                simpleDialogViewModel.handled = true
+                                val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
+                                lifecycleScope.launch(Dispatchers.IO) { mDao.emptyCronologia() }
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        simpleDialogViewModel.handled = true
+                    }
+                }
+            }
         }
     }
 

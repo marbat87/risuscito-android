@@ -1,33 +1,29 @@
 package it.cammino.risuscito
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.view.ActionMode
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialcab.MaterialCab
-import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.crashlytics.android.Crashlytics
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
+import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.pojo.Posizione
 import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
@@ -38,10 +34,11 @@ import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
-import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ListaPredefinitaFragment : Fragment() {
 
@@ -50,6 +47,7 @@ class ListaPredefinitaFragment : Fragment() {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
         })
     }
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
     private var posizioneDaCanc: Int = 0
     private var idDaCanc: Int = 0
@@ -62,7 +60,6 @@ class ListaPredefinitaFragment : Fragment() {
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
-    private var mLUtils: LUtils? = null
 
     private var _binding: ActivityListaPersonalizzataBinding? = null
 
@@ -85,7 +82,6 @@ class ListaPredefinitaFragment : Fragment() {
 
         mMainActivity = activity as? MainActivity
 
-        mLUtils = LUtils.getInstance(requireActivity())
         mSwhitchMode = false
 
         // Creating new adapter object
@@ -96,10 +92,10 @@ class ListaPredefinitaFragment : Fragment() {
         // Setting the layoutManager
         binding.recyclerList.layoutManager = LinearLayoutManager(activity)
 
-        subscribeUiFavorites()
+        subscribeUiUpdate()
 
         binding.buttonPulisci.setOnClickListener {
-            ListeUtils.cleanList(requireContext(), mCantiViewModel.defaultListaId)
+            lifecycleScope.launch(Dispatchers.IO) { RisuscitoDatabase.getInstance(requireContext()).customListDao().deleteListById(mCantiViewModel.defaultListaId) }
         }
 
         binding.buttonCondividi.setOnClickListener {
@@ -160,88 +156,87 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun snackBarRimuoviCanto(view: View) {
-        destroy()
+        mMainActivity?.actionMode?.finish()
         val parent = view.parent.parent as? View
         longclickedPos = Integer.valueOf(parent?.findViewById<TextView>(R.id.generic_tag)?.text.toString())
         longClickedChild = Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
-        if (mMainActivity?.isOnTablet != true)
+        if (!activityViewModel.isOnTablet)
             mMainActivity?.expandToolbar()
-        startCab(false)
+        startCab()
     }
 
-    private fun startCab(switchMode: Boolean) {
-        mMainActivity?.let {
-            mSwhitchMode = switchMode
-            MaterialCab.attach(it, R.id.cab_stub) {
-                if (switchMode)
-                    titleRes(R.string.switch_started)
-                else
-                    title = resources.getQuantityString(R.plurals.item_selected, 1, 1)
-                popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
-                contentInsetStartRes(R.dimen.mcab_default_content_inset)
-                if (isDarkMode(requireContext()))
-                    backgroundColor = requireContext().themeColor(R.attr.colorSurface)
-                menuRes = R.menu.menu_actionmode_lists
+    private fun startCab() {
+        mSwhitchMode = false
 
-                onCreate { _, menu ->
-                    Log.d(TAG, "MaterialCab onCreate")
-                    posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
-                    cantoAdapter.notifyItemChanged(longclickedPos)
-                    menu.findItem(R.id.action_switch_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon2.cmd_shuffle).apply {
-                        colorInt = Color.WHITE
-                        sizeDp = 24
-                        paddingDp = 2
-                    }
-                    menu.findItem(R.id.action_remove_item).icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_delete).apply {
-                        colorInt = Color.WHITE
-                        sizeDp = 24
-                        paddingDp = 2
-                    }
-                    actionModeOk = false
-                }
+        val callback = object : ActionMode.Callback {
 
-                onSelection { item ->
-                    Log.d(TAG, "MaterialCab onSelection")
-                    when (item.itemId) {
-                        R.id.action_remove_item -> {
-                            actionModeOk = true
-                            destroy()
-                            ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc
-                                    ?: "")
-                            true
-                        }
-                        R.id.action_switch_item -> {
-                            startCab(true)
-                            Toast.makeText(
-                                            activity,
-                                            resources.getString(R.string.switch_tooltip),
-                                            Toast.LENGTH_SHORT)
-                                    .show()
-                            true
-                        }
-                        else -> false
-                    }
-                }
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
+                IconicsMenuInflaterUtil.inflate(
+                        requireActivity().menuInflater, requireContext(), R.menu.menu_actionmode_lists, menu)
+                Log.d(ListaPersonalizzataFragment.TAG, "MaterialCab onCreate")
+                posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
+                cantoAdapter.notifyItemChanged(longclickedPos)
+                actionModeOk = false
+                return true
+            }
 
-                onDestroy {
-                    Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
-                    Log.d(TAG, "MaterialCab onDestroy - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId}")
-                    mSwhitchMode = false
-                    if (!actionModeOk) {
-                        try {
-                            posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
-                            cantoAdapter.notifyItemChanged(longclickedPos)
-                        } catch (e: Exception) {
-                            Crashlytics.logException(e)
-                        }
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                return false
+            }
+
+            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+                Log.d(TAG, "MaterialCab onActionItemClicked")
+                return when (item?.itemId) {
+                    R.id.action_remove_item -> {
+                        actionModeOk = true
+                        mMainActivity?.actionMode?.finish()
+                        ListeUtils.removePositionWithUndo(this@ListaPredefinitaFragment, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, timestampDaCanc
+                                ?: "")
+                        true
                     }
-                    true
+                    R.id.action_switch_item -> {
+                        mSwhitchMode = true
+                        updateActionModeTitle(true)
+                        Toast.makeText(
+                                activity,
+                                resources.getString(R.string.switch_tooltip),
+                                Toast.LENGTH_SHORT)
+                                .show()
+                        true
+                    }
+                    else -> false
                 }
             }
+
+            override fun onDestroyActionMode(mode: ActionMode?) {
+                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                Log.d(TAG, "MaterialCab onDestroy - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId}")
+                mSwhitchMode = false
+                if (!actionModeOk) {
+                    try {
+                        posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
+                        cantoAdapter.notifyItemChanged(longclickedPos)
+                    } catch (e: Exception) {
+                        FirebaseCrashlytics.getInstance().recordException(e)
+                    }
+                }
+                mMainActivity?.destroyActionMode()
+            }
+
         }
+
+        mMainActivity?.createActionMode(callback)
+        updateActionModeTitle(false)
     }
 
-    private fun subscribeUiFavorites() {
+    private fun updateActionModeTitle(switchMode: Boolean) {
+        mMainActivity?.updateActionModeTitle(if (switchMode)
+            resources.getString(R.string.switch_started)
+        else
+            resources.getQuantityString(R.plurals.item_selected, 1, 1))
+    }
+
+    private fun subscribeUiUpdate() {
         mCantiViewModel.cantiResult?.observe(viewLifecycleOwner) { mCanti ->
             var progressiveTag = 0
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
@@ -414,6 +409,14 @@ class ListaPredefinitaFragment : Fragment() {
             return result.toString()
         }
 
+    private val startListInsertForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        Log.i(TAG, "startListInsertForResult result.resultCode ${result.resultCode}")
+        if (result.resultCode == CustomLists.RESULT_OK || result.resultCode == CustomLists.RESULT_KO)
+            mMainActivity?.activityMainContent?.let {
+                Snackbar.make(it, if (result.resultCode == CustomLists.RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+            }
+    }
+
     private val click = OnClickListener { v ->
         if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
             mLastClickTime = SystemClock.elapsedRealtime()
@@ -421,25 +424,21 @@ class ListaPredefinitaFragment : Fragment() {
             if (v.id == R.id.add_canto_generico) {
                 if (mSwhitchMode) {
                     actionModeOk = true
-                    destroy()
+                    mMainActivity?.actionMode?.finish()
                     ListeUtils.scambioConVuoto(this, mCantiViewModel.defaultListaId, posizioneDaCanc, idDaCanc, Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString()))
                 } else {
-                    if (!MaterialCab.isActive) {
+                    if (mMainActivity?.actionMode == null) {
                         val intent = Intent(activity, InsertActivity::class.java)
                         intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 1,
                                 InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
                                 InsertActivity.POSITION to Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())))
-                        parentFragment?.startActivityForResult(intent, when (mCantiViewModel.defaultListaId) {
-                            1 -> TAG_INSERT_PAROLA
-                            2 -> TAG_INSERT_EUCARESTIA
-                            else -> TAG_INSERT_PAROLA
-                        })
+                        startListInsertForResult.launch(intent)
                         Animatoo.animateShrink(activity)
                     }
                 }
             } else {
                 if (!mSwhitchMode)
-                    if (MaterialCab.isActive) {
+                    if (mMainActivity?.actionMode != null) {
                         posizioneDaCanc = Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                         idDaCanc = Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
                         timestampDaCanc = v.findViewById<TextView>(R.id.text_timestamp).text.toString()
@@ -449,11 +448,11 @@ class ListaPredefinitaFragment : Fragment() {
                         val intent = Intent(activity, PaginaRenderActivity::class.java)
                         intent.putExtras(bundleOf(Utility.PAGINA to v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
                                 Utility.ID_CANTO to Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())))
-                        mLUtils?.startActivityWithTransition(intent)
+                        activityViewModel.mLUtils.startActivityWithTransition(intent)
                     }
                 else {
                     actionModeOk = true
-                    destroy()
+                    mMainActivity?.actionMode?.finish()
                     ListeUtils.scambioCanto(this,
                             mCantiViewModel.defaultListaId,
                             posizioneDaCanc,
@@ -476,8 +475,6 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     companion object {
-        const val TAG_INSERT_PAROLA = 333
-        const val TAG_INSERT_EUCARESTIA = 444
         private const val INDICE_LISTA = "indiceLista"
         private val TAG = ListaPredefinitaFragment::class.java.canonicalName
 

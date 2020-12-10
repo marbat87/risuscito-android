@@ -1,14 +1,17 @@
 package it.cammino.risuscito
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.activity.addCallback
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
+import com.google.android.material.elevation.ElevationOverlayProvider
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.databinding.ChangelogLayoutBinding
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ThemeUtils
 
 class ChangelogActivity : ThemeableActivity() {
 
@@ -18,13 +21,12 @@ class ChangelogActivity : ThemeableActivity() {
         super.onCreate(savedInstanceState)
         binding = ChangelogLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        setContentView(R.layout.changelog_layout)
 
         setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        Utility.setupTransparentTints(this, Color.TRANSPARENT, hasNavDrawer, isOnTablet)
+        Utility.setupTransparentTints(this, Color.TRANSPARENT, hasNavDrawer, mViewModel.isOnTablet)
 
         ChangelogBuilder()
                 .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
@@ -32,6 +34,12 @@ class ChangelogActivity : ThemeableActivity() {
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
+        }
+
+        if (ThemeUtils.isDarkMode(this)) {
+            val elevatedSurfaceColor = ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
+            binding.collapsingToolbarLayout.setContentScrimColor(elevatedSurfaceColor)
+            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
         }
     }
 

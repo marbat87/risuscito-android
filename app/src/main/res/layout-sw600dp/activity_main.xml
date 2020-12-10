@@ -1,100 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:risuscito="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_content"
+    android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/toolbar_layout"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            style="@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                risuscito:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/risuscito_toolbar"
+                    style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    risuscito:layout_scrollFlags="scroll|enterAlways|snap"
+                    risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
+
+                <com.ferfalk.simplesearchview.SimpleSearchView
+                    android:id="@+id/search_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/title_filter"
+                    android:visibility="gone"
+                    risuscito:type="card" />
+
+            </FrameLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/material_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/loading_bar"
+            style="@style/Widget.MaterialProgressBar.ProgressBar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            risuscito:layout_scrollFlags="scroll|enterAlways">
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="10dp"
+            android:elevation="1dp"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
+            risuscito:mpb_progressBackgroundTint="@android:color/white"
+            risuscito:mpb_progressStyle="circular"
+            risuscito:mpb_progressTint="?colorSecondary"
+            tools:targetApi="lollipop" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/risuscito_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
-                android:theme="@style/ToolbarTheme"
-                risuscito:layout_scrollFlags="scroll|enterAlways"
-                risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
-
-            <ViewStub
-                android:id="@+id/cab_stub"
-                android:layout_width="match_parent"
-                android:layout_height="?actionBarSize" />
-
-            <com.ferfalk.simplesearchview.SimpleSearchView
-                android:id="@+id/search_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?colorPrimarySurface"
-                android:hint="@string/title_filter"
-                risuscito:type="card" />
-
-        </FrameLayout>
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/material_tabs"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/content_frame"
+            android:name="it.cammino.risuscito.Risuscito"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:tag="@id/navigation_home"
+            risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
+
+        <include layout="@layout/common_shadow" />
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottom_bar"
+            style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:layout_gravity="bottom"
+            android:visibility="invisible"
+            risuscito:hideOnScroll="true"
+            risuscito:layout_scrollFlags="scroll|enterAlways" />
+
+        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_dim_overlay" />
+
+        <com.leinardi.android.speeddial.SpeedDialView
+            android:id="@+id/fab_pager"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_gravity="bottom|end"
+            risuscito:sdExpansionMode="top"
+            risuscito:sdOverlayLayout="@id/overlay" />
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/loading_bar"
-        style="@style/Widget.MaterialProgressBar.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="10dp"
-        android:elevation="1dp"
-        android:indeterminate="true"
-        android:visibility="invisible"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
-        risuscito:mpb_progressBackgroundTint="@android:color/white"
-        risuscito:mpb_progressStyle="circular"
-        risuscito:mpb_progressTint="?colorSecondary"
-        tools:targetApi="lollipop" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/content_frame"
-        android:name="it.cammino.risuscito.Risuscito"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:tag="@id/navigation_home"
-        risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
-
-    <include layout="@layout/common_shadow" />
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottom_bar"
-        style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:layout_gravity="bottom"
-        android:visibility="invisible"
-        risuscito:hideOnScroll="true"
-        risuscito:layout_scrollFlags="scroll|enterAlways" />
-
-    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background_dim_overlay" />
-
-    <com.leinardi.android.speeddial.SpeedDialView
-        android:id="@+id/fab_pager"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        risuscito:sdExpansionMode="top"
-        risuscito:sdOverlayLayout="@id/overlay" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>

@@ -5,36 +5,36 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.view.ActionMode
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialcab.MaterialCab
-import com.afollestad.materialcab.MaterialCab.Companion.destroy
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
-import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
-import it.cammino.risuscito.utils.ioThread
-import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ListaPersonalizzataFragment : Fragment() {
 
@@ -43,6 +43,7 @@ class ListaPersonalizzataFragment : Fragment() {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
         })
     }
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
     private lateinit var cantoDaCanc: String
     private var posizioneDaCanc: Int = 0
@@ -52,7 +53,6 @@ class ListaPersonalizzataFragment : Fragment() {
     private val cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
     private var _binding: ActivityListaPersonalizzataBinding? = null
@@ -71,17 +71,11 @@ class ListaPersonalizzataFragment : Fragment() {
         _binding = null
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        subscribeUiChanges()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mMainActivity = activity as? MainActivity
 
-        mLUtils = LUtils.getInstance(requireActivity())
         mSwhitchMode = false
 
         // Creating new adapter object
@@ -91,6 +85,8 @@ class ListaPersonalizzataFragment : Fragment() {
 
         // Setting the layoutManager
         binding.recyclerList.layoutManager = LinearLayoutManager(activity)
+
+        subscribeUiChanges()
 
         binding.buttonPulisci.setOnClickListener {
             for (i in 0 until (mCantiViewModel.listaPersonalizzata?.numPosizioni ?: 0))
@@ -104,7 +100,7 @@ class ListaPersonalizzataFragment : Fragment() {
         }
 
         binding.buttonInviaFile.setOnClickListener {
-            val exportUri = mLUtils?.listToXML(mCantiViewModel.listaPersonalizzata)
+            val exportUri = activityViewModel.mLUtils.listToXML(mCantiViewModel.listaPersonalizzata)
             Log.d(TAG, "onClick: exportUri = $exportUri")
             @Suppress("SENSELESS_COMPARISON")
             if (exportUri != null) {
@@ -130,17 +126,17 @@ class ListaPersonalizzataFragment : Fragment() {
         val intent = Intent(activity, PaginaRenderActivity::class.java)
         intent.putExtras(bundleOf(Utility.PAGINA to v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
                 Utility.ID_CANTO to Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())))
-        mLUtils?.startActivityWithTransition(intent)
+        activityViewModel.mLUtils.startActivityWithTransition(intent)
     }
 
     private fun snackBarRimuoviCanto(view: View) {
-        destroy()
+        mMainActivity?.actionMode?.finish()
         val parent = view.parent.parent as? View
         longclickedPos = Integer.valueOf(parent?.findViewById<TextView>(R.id.generic_tag)?.text.toString())
         longClickedChild = Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
-        if (mMainActivity?.isOnTablet != true)
+        if (!activityViewModel.isOnTablet)
             mMainActivity?.expandToolbar()
-        startCab(false)
+        startCab()
     }
 
     private fun scambioCanto(posizioneNew: Int) {
@@ -154,7 +150,7 @@ class ListaPersonalizzataFragment : Fragment() {
             runUpdate()
 
             actionModeOk = true
-            destroy()
+            mMainActivity?.actionMode?.finish()
             mMainActivity?.let {
                 Snackbar.make(it.activityMainContent, R.string.switch_done, Snackbar.LENGTH_SHORT).show()
             }
@@ -175,92 +171,99 @@ class ListaPersonalizzataFragment : Fragment() {
         runUpdate()
 
         actionModeOk = true
-        destroy()
+        mMainActivity?.actionMode?.finish()
         mMainActivity?.let {
             Snackbar.make(it.activityMainContent, R.string.switch_done, Snackbar.LENGTH_SHORT).show()
         }
     }
 
-    private fun startCab(switchMode: Boolean) {
-        mSwhitchMode = switchMode
-        mMainActivity?.let { mainActivity ->
-            MaterialCab.attach(mainActivity, R.id.cab_stub) {
-                if (switchMode)
-                    titleRes(R.string.switch_started)
-                else
-                    title = resources.getQuantityString(R.plurals.item_selected, 1, 1)
-                popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
-                contentInsetStartRes(R.dimen.mcab_default_content_inset)
-                if (isDarkMode(requireContext()))
-                    backgroundColor = requireContext().themeColor(R.attr.colorSurface)
-                menuRes = R.menu.menu_actionmode_lists
+    private fun startCab() {
+        mSwhitchMode = false
 
-                onCreate { _, _ ->
-                    Log.d(TAG, "MaterialCab onCreate")
-                    mCantiViewModel.posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
-                    cantoAdapter.notifyItemChanged(longclickedPos)
-                    actionModeOk = false
-                }
+        val callback = object : ActionMode.Callback {
 
-                onSelection { item ->
-                    Log.d(TAG, "MaterialCab onSelection")
-                    when (item.itemId) {
-                        R.id.action_remove_item -> {
-                            cantoDaCanc = mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc)
-                                    ?: ""
-                            mCantiViewModel.listaPersonalizzata?.removeCanto(posizioneDaCanc)
-                            runUpdate()
-                            actionModeOk = true
-                            destroy()
-                            mMainActivity?.let {
-                                Snackbar.make(it.activityMainContent, R.string.song_removed, Snackbar.LENGTH_LONG)
-                                        .setAction(getString(R.string.cancel).toUpperCase(getSystemLocale(resources))) {
-                                            mCantiViewModel.listaPersonalizzata?.addCanto(cantoDaCanc, posizioneDaCanc)
-                                            runUpdate()
-                                        }
-                                        .show()
-                            }
-                            true
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
+                IconicsMenuInflaterUtil.inflate(
+                        requireActivity().menuInflater, requireContext(), R.menu.menu_actionmode_lists, menu)
+                Log.d(TAG, "MaterialCab onCreate")
+                mCantiViewModel.posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
+                cantoAdapter.notifyItemChanged(longclickedPos)
+                actionModeOk = false
+                return true
+            }
+
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                return false
+            }
+
+            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+                Log.d(TAG, "MaterialCab onActionItemClicked")
+                return when (item?.itemId) {
+                    R.id.action_remove_item -> {
+                        cantoDaCanc = mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc)
+                                ?: ""
+                        mCantiViewModel.listaPersonalizzata?.removeCanto(posizioneDaCanc)
+                        runUpdate()
+                        actionModeOk = true
+                        mMainActivity?.actionMode?.finish()
+                        mMainActivity?.let {
+                            Snackbar.make(it.activityMainContent, R.string.song_removed, Snackbar.LENGTH_LONG)
+                                    .setAction(getString(R.string.cancel).toUpperCase(getSystemLocale(resources))) {
+                                        mCantiViewModel.listaPersonalizzata?.addCanto(cantoDaCanc, posizioneDaCanc)
+                                        runUpdate()
+                                    }
+                                    .show()
                         }
-                        R.id.action_switch_item -> {
-                            cantoDaCanc = mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc)
-                                    ?: ""
-                            startCab(true)
-                            Toast.makeText(activity, resources.getString(R.string.switch_tooltip), Toast.LENGTH_SHORT).show()
-                            true
-                        }
-                        else -> false
+                        true
                     }
-                }
-
-                onDestroy {
-                    Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
-                    Log.d(TAG, "MaterialCab onDestroy - longclickedPos: $longclickedPos / listaPersonalizzataId: ${mCantiViewModel.listaPersonalizzataId}")
-                    mSwhitchMode = false
-                    if (!actionModeOk) {
-                        try {
-                            mCantiViewModel.posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
-                            cantoAdapter.notifyItemChanged(longclickedPos)
-                        } catch (e: Exception) {
-                            Crashlytics.logException(e)
-                        }
+                    R.id.action_switch_item -> {
+                        cantoDaCanc = mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc)
+                                ?: ""
+                        mSwhitchMode = true
+                        updateActionModeTitle(true)
+                        Toast.makeText(activity, resources.getString(R.string.switch_tooltip), Toast.LENGTH_SHORT).show()
+                        true
                     }
-                    true
+                    else -> false
                 }
             }
+
+            override fun onDestroyActionMode(mode: ActionMode?) {
+                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
+                Log.d(TAG, "MaterialCab onDestroy - longclickedPos: $longclickedPos / listaPersonalizzataId: ${mCantiViewModel.listaPersonalizzataId}")
+                mSwhitchMode = false
+                if (!actionModeOk) {
+                    try {
+                        mCantiViewModel.posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(false)
+                        cantoAdapter.notifyItemChanged(longclickedPos)
+                    } catch (e: Exception) {
+                        FirebaseCrashlytics.getInstance().recordException(e)
+                    }
+                }
+                mMainActivity?.destroyActionMode()
+            }
+
         }
+
+        mMainActivity?.createActionMode(callback)
+        updateActionModeTitle(false)
+    }
+
+    private fun updateActionModeTitle(switchMode: Boolean) {
+        mMainActivity?.updateActionModeTitle(if (switchMode)
+            resources.getString(R.string.switch_started)
+        else
+            resources.getQuantityString(R.plurals.item_selected, 1, 1))
     }
 
     private fun runUpdate() {
-        ioThread {
-            mMainActivity?.let {
-                val listaNew = ListaPers()
-                listaNew.lista = mCantiViewModel.listaPersonalizzata
-                listaNew.id = mCantiViewModel.listaPersonalizzataId
-                listaNew.titolo = mCantiViewModel.listaPersonalizzataTitle
-                val mDao = RisuscitoDatabase.getInstance(it).listePersDao()
-                mDao.updateLista(listaNew)
-            }
+        mMainActivity?.let {
+            val listaNew = ListaPers()
+            listaNew.lista = mCantiViewModel.listaPersonalizzata
+            listaNew.id = mCantiViewModel.listaPersonalizzataId
+            listaNew.titolo = mCantiViewModel.listaPersonalizzataTitle
+            val mDao = RisuscitoDatabase.getInstance(it).listePersDao()
+            lifecycleScope.launch(Dispatchers.IO) { mDao.updateLista(listaNew) }
         }
     }
 
@@ -310,6 +313,13 @@ class ListaPersonalizzataFragment : Fragment() {
             return result.toString()
         }
 
+    private val startListInsertForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == CustomLists.RESULT_OK || result.resultCode == CustomLists.RESULT_KO)
+            mMainActivity?.activityMainContent?.let {
+                Snackbar.make(it, if (result.resultCode == CustomLists.RESULT_OK) R.string.list_added else R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+            }
+    }
+
     private val click = OnClickListener { v ->
         if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
             mLastClickTime = SystemClock.elapsedRealtime()
@@ -319,18 +329,18 @@ class ListaPersonalizzataFragment : Fragment() {
                     scambioConVuoto(
                             Integer.valueOf(parent.findViewById<TextView>(R.id.text_id_posizione).text.toString()))
                 } else {
-                    if (!MaterialCab.isActive) {
+                    if (mMainActivity?.actionMode == null) {
                         val intent = Intent(activity, InsertActivity::class.java)
                         intent.putExtras(bundleOf(InsertActivity.FROM_ADD to 0,
                                 InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
                                 InsertActivity.POSITION to Integer.valueOf(parent.findViewById<TextView>(R.id.text_id_posizione).text.toString())))
-                        parentFragment?.startActivityForResult(intent, TAG_INSERT_PERS)
+                        startListInsertForResult.launch(intent)
                         Animatoo.animateShrink(activity)
                     }
                 }
             } else {
                 if (!mSwhitchMode)
-                    if (MaterialCab.isActive) {
+                    if (mMainActivity?.actionMode != null) {
                         posizioneDaCanc = Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                         snackBarRimuoviCanto(v)
                     } else
@@ -352,7 +362,6 @@ class ListaPersonalizzataFragment : Fragment() {
 
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
-        const val TAG_INSERT_PERS = 555
         private const val INDICE_LISTA = "indiceLista"
 
         fun newInstance(indiceLista: Int): ListaPersonalizzataFragment {

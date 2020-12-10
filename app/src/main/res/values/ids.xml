@@ -35,4 +35,5 @@
     <item name="fab_condividi_file" type="id" />
     <item name="fab_edit_lista" type="id" />
     <item name="fab_delete_lista" type="id" />
+    <item name="material_drawer_item_gmail_item" type="id" />
 </resources>

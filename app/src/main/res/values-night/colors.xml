@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="ripple_color">@color/ripple_material_dark</color>
+    <color name="cover_shadow_color">@android:color/transparent</color>
+
     <color name="primary_color_amber">@color/md_amber_200</color>
     <color name="primary_color_blue">@color/md_blue_200</color>
     <color name="primary_color_brown">@color/md_brown_200</color>
@@ -22,11 +25,9 @@
     <color name="primary_color_yellow">@color/md_yellow_200</color>
 
     <color name="risuscito_material_background">@color/design_dark_default_color_background</color>
-<!--    <color name="risuscito_material_drawer_background">@color/material_drawer_dark_background</color>-->
     <color name="text_color_primary">@color/design_dark_default_color_on_background</color>
     <color name="text_color_secondary">@color/secondary_text_default_material_dark</color>
     <color name="floating_background">@color/background_floating_material_dark</color>
     <color name="material_divider">#1FFFFFFF</color>
-    <color name="tablet_statusbar_color">#000000</color>
 
 </resources>

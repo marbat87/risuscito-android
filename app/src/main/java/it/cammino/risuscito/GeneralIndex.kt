@@ -6,14 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
 import it.cammino.risuscito.databinding.TabsLayoutBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class GeneralIndex : Fragment() {
 
@@ -21,15 +24,7 @@ class GeneralIndex : Fragment() {
 
     private val mViewModel: GeneralIndexViewModel by viewModels()
 
-    private val mPageChange: ViewPager.OnPageChangeListener = object : ViewPager.OnPageChangeListener {
-        override fun onPageScrollStateChanged(state: Int) {
-            // no-op
-        }
-
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            // no-op
-        }
-
+    private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             Log.d(TAG, "onPageSelected: $position")
             mViewModel.pageViewed = position
@@ -48,9 +43,9 @@ class GeneralIndex : Fragment() {
     }
 
     override fun onDestroyView() {
-        binding.viewPager.removeOnPageChangeListener(mPageChange)
-        super.onDestroyView()
+        binding.viewPager.unregisterOnPageChangeCallback(mPageChange)
         _binding = null
+        super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,46 +57,46 @@ class GeneralIndex : Fragment() {
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
-        if (savedInstanceState == null) {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            binding.viewPager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")
-                    ?: "0")
-        } else
-            binding.viewPager.currentItem = mViewModel.pageViewed
-        binding.viewPager.offscreenPageLimit = 1
-        binding.viewPager.adapter = SectionsPagerAdapter(childFragmentManager)
-        binding.viewPager.addOnPageChangeListener(mPageChange)
-        mMainActivity?.getMaterialTabs()?.setupWithViewPager(binding.viewPager)
+        binding.viewPager.adapter = IndexTabsAdapter(this)
+        mMainActivity?.getMaterialTabs()?.let {
+            TabLayoutMediator(it, binding.viewPager) { tab, position ->
+                val l = getSystemLocale(resources)
+                tab.text = when (position) {
+                    0 -> getString(R.string.letter_order_text).toUpperCase(l)
+                    1 -> getString(R.string.page_order_text).toUpperCase(l)
+                    2 -> getString(R.string.arg_search_text).toUpperCase(l)
+                    3 -> getString(R.string.salmi_musica_index).toUpperCase(l)
+                    4 -> getString(R.string.indice_liturgico_index).toUpperCase(l)
+                    else -> getString(R.string.letter_order_text).toUpperCase(l)
+                }
+            }.attach()
+        }
+        binding.viewPager.registerOnPageChangeCallback(mPageChange)
+
+        lifecycleScope.launch {
+            delay(500)
+            if (savedInstanceState == null) {
+                val pref = PreferenceManager.getDefaultSharedPreferences(context)
+                binding.viewPager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")
+                        ?: "0")
+            } else
+                binding.viewPager.currentItem = mViewModel.pageViewed
+        }
+
     }
 
-    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private class IndexTabsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+        override fun getItemCount(): Int = 5
 
-        override fun getItem(position: Int): Fragment {
-            return when (position) {
-                0 -> SimpleIndexFragment.newInstance(0)
-                1 -> SimpleIndexFragment.newInstance(1)
-                2 -> SectionedIndexFragment.newInstance(0)
-                3 -> SimpleIndexFragment.newInstance(2)
-                4 -> SectionedIndexFragment.newInstance(1)
-                else -> SimpleIndexFragment.newInstance(1)
-            }
-        }
-
-        override fun getCount(): Int {
-            return 5
-        }
-
-        override fun getPageTitle(position: Int): CharSequence? {
-            val l = getSystemLocale(resources)
-            when (position) {
-                0 -> return getString(R.string.letter_order_text).toUpperCase(l)
-                1 -> return getString(R.string.page_order_text).toUpperCase(l)
-                2 -> return getString(R.string.arg_search_text).toUpperCase(l)
-                3 -> return getString(R.string.salmi_musica_index).toUpperCase(l)
-                4 -> return getString(R.string.indice_liturgico_index).toUpperCase(l)
-            }
-            return null
-        }
+        override fun createFragment(position: Int): Fragment =
+                when (position) {
+                    0 -> SimpleIndexFragment.newInstance(0)
+                    1 -> SimpleIndexFragment.newInstance(1)
+                    2 -> SectionedIndexFragment.newInstance(0)
+                    3 -> SimpleIndexFragment.newInstance(2)
+                    4 -> SectionedIndexFragment.newInstance(1)
+                    else -> SimpleIndexFragment.newInstance(0)
+                }
     }
 
     companion object {

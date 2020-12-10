@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/risuscito_toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="?actionBarSize"
-    android:theme="@style/ToolbarTheme"
-    risuscito:layout_scrollFlags="scroll|enterAlways"
-    risuscito:popupTheme="@style/RisuscitoToolbarPopup" />

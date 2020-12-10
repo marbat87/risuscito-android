@@ -3,11 +3,12 @@ package it.cammino.risuscito
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
@@ -15,14 +16,12 @@ import androidx.core.os.postDelayed
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialcab.MaterialCab
-import com.afollestad.materialcab.MaterialCab.Companion.destroy
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
@@ -30,21 +29,25 @@ import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.ActivityFavouritesBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ThemeUtils.Companion.isDarkMode
-import it.cammino.risuscito.utils.ioThread
-import it.cammino.risuscito.utils.themeColor
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.Collator
 
-class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
+class FavoritesFragment : Fragment() {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
     private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
-    private var mLUtils: LUtils? = null
     private var mLastClickTime: Long = 0
 
     private var _binding: ActivityFavouritesBinding? = null
@@ -72,23 +75,21 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         mMainActivity?.enableBottombar(false)
         mMainActivity?.enableFab(false)
 
-        mLUtils = LUtils.getInstance(requireActivity())
-
         if (!PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(Utility.PREFERITI_OPEN, false)) {
             PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.PREFERITI_OPEN, true) }
-            Handler().postDelayed(250) {
+            Handler(Looper.getMainLooper()).postDelayed(250) {
                 Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
                         .show()
             }
         }
 
-        val sFragment = SimpleDialogFragment.findVisible(mMainActivity, FAVORITES_RESET)
-        sFragment?.setmCallback(this)
+        setHasOptionsMenu(true)
+        subscribeUiFavorites()
 
         cantoAdapter.onPreClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
             var consume = false
-            if (MaterialCab.isActive) {
+            if (mMainActivity?.actionMode != null) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     cantoAdapter
@@ -96,38 +97,40 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
                             .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
                     cantoAdapter.notifyAdapterItemChanged(position)
                     if (selectExtension?.selectedItems?.size == 0)
-                        destroy()
+                        mMainActivity?.actionMode?.finish()
                     else
-                        startCab()
+                        updateActionModeTitle()
                 }
                 consume = true
             }
             consume
         }
 
-        cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-            var consume = false
-            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                mLastClickTime = SystemClock.elapsedRealtime()
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                mLUtils?.startActivityWithTransition(intent)
-                consume = true
-            }
-            consume
-        }
+        cantoAdapter.onClickListener =
+                { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+                    var consume = false
+                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                        mLastClickTime = SystemClock.elapsedRealtime()
+                        // lancia l'activity che visualizza il canto passando il parametro creato
+                        val intent = Intent(activity, PaginaRenderActivity::class.java)
+                        intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
+                        activityViewModel.mLUtils.startActivityWithTransition(intent)
+                        consume = true
+                    }
+                    consume
+                }
 
-        cantoAdapter.onPreLongClickListener = { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
-            if (!MaterialCab.isActive) {
-                if (mMainActivity?.isOnTablet != true)
-                    mMainActivity?.expandToolbar()
-                cantoAdapter.getAdapterItem(position).isSelected = true
-                cantoAdapter.notifyAdapterItemChanged(position)
-                startCab()
-            }
-            true
-        }
+        cantoAdapter.onPreLongClickListener =
+                { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
+                    if (mMainActivity?.actionMode == null) {
+                        if (!activityViewModel.isOnTablet)
+                            mMainActivity?.expandToolbar()
+                        cantoAdapter.getAdapterItem(position).isSelected = true
+                        cantoAdapter.notifyAdapterItemChanged(position)
+                        startCab()
+                    }
+                    true
+                }
 
         selectExtension = SelectExtension(cantoAdapter)
         selectExtension?.isSelectable = true
@@ -138,8 +141,8 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         cantoAdapter.setHasStableIds(true)
 
         binding.favouritesList.adapter = cantoAdapter
-        val llm = if (mMainActivity?.isGridLayout == true)
-            GridLayoutManager(context, if (mMainActivity?.hasThreeColumns == true) 3 else 2)
+        val llm = if (activityViewModel.isGridLayout)
+            GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
         else
             LinearLayoutManager(context)
         binding.favouritesList.layoutManager = llm
@@ -150,14 +153,8 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
 
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-        subscribeUiFavorites()
-    }
-
     override fun onDestroy() {
-        destroy()
+        mMainActivity?.actionMode?.finish()
         super.onDestroy()
     }
 
@@ -172,12 +169,12 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         when (item.itemId) {
             R.id.list_reset -> {
                 mMainActivity?.let {
-                    SimpleDialogFragment.Builder(it, this, FAVORITES_RESET)
+                    SimpleDialogFragment.show(SimpleDialogFragment.Builder(it, FAVORITES_RESET)
                             .title(R.string.dialog_reset_favorites_title)
                             .content(R.string.dialog_reset_favorites_desc)
                             .positiveButton(R.string.clear_confirm)
-                            .negativeButton(R.string.cancel)
-                            .show()
+                            .negativeButton(R.string.cancel),
+                            it.supportFragmentManager)
                 }
                 return true
             }
@@ -190,72 +187,88 @@ class FavoritesFragment : Fragment(), SimpleDialogFragment.SimpleCallback {
         return false
     }
 
-    override fun onPositive(tag: String) {
-        Log.d(javaClass.name, "onPositive: $tag")
-        when (tag) {
-            FAVORITES_RESET ->
-                // run the sentence in a new thread
-                ioThread {
-                    val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
-                    mDao.resetFavorites()
-                }
-        }
-    }
-
-    override fun onNegative(tag: String) {
-        // no-op
-    }
-
     private fun removeFavorites() {
         ListeUtils.removeFavoritesWithUndo(this, selectExtension?.selectedItems)
     }
 
     private fun startCab() {
-        MaterialCab.attach(activity as AppCompatActivity, R.id.cab_stub) {
-            val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
-            title = resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount)
-            popupTheme = R.style.ThemeOverlay_MaterialComponents_Dark_ActionBar
-            if (isDarkMode(requireContext()))
-                backgroundColor = requireContext().themeColor(R.attr.colorSurface)
-            contentInsetStartRes(R.dimen.mcab_default_content_inset)
-            menuRes = R.menu.menu_delete
+        val callback = object : ActionMode.Callback {
 
-            onCreate { _, _ ->
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
+                IconicsMenuInflaterUtil.inflate(
+                        requireActivity().menuInflater, requireContext(), R.menu.menu_delete, menu)
                 Log.d(TAG, "MaterialCab onCreate")
                 actionModeOk = false
+                return true
             }
 
-            onSelection { item ->
-                Log.d(TAG, "MaterialCab onSelection: ${item.itemId}")
-                if (item.itemId == R.id.action_remove_item) {
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                return false
+            }
+
+            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+                Log.d(TAG, "MaterialCab onSelection: ${item?.itemId}")
+                return if (item?.itemId == R.id.action_remove_item) {
                     removeFavorites()
                     actionModeOk = true
-                    destroy()
+                    mMainActivity?.actionMode?.finish()
                     true
                 } else
                     false
             }
 
-            onDestroy {
+            override fun onDestroyActionMode(mode: ActionMode?) {
                 Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
                 if (!actionModeOk) {
                     try {
                         selectExtension?.deselect()
                     } catch (e: Exception) {
-                        Crashlytics.logException(e)
+                        FirebaseCrashlytics.getInstance().recordException(e)
                     }
                 }
-                true
+                mMainActivity?.destroyActionMode()
             }
+
         }
+
+        mMainActivity?.createActionMode(callback)
+        updateActionModeTitle()
     }
+
+    private fun updateActionModeTitle() {
+        val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
+        mMainActivity?.updateActionModeTitle(resources.getQuantityString(R.plurals.item_selected, itemSelectedCount, itemSelectedCount))
+    }
+
 
     private fun subscribeUiFavorites() {
         mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
-            cantoAdapter.set(canti.sortedBy { it.title?.getText(requireContext()) })
+            cantoAdapter.set(canti.sortedWith(compareBy(Collator.getInstance(LocaleManager.getSystemLocale(resources))) { it.title?.getText(requireContext()) }))
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
+            if (cantoAdapter.adapterItemCount == 0)
+                mMainActivity?.expandToolbar()
             activity?.invalidateOptionsMenu()
+        }
+
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            FAVORITES_RESET -> {
+                                simpleDialogViewModel.handled = true
+                                val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
+                                lifecycleScope.launch(Dispatchers.IO) { mDao.resetFavorites() }
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        simpleDialogViewModel.handled = true
+                    }
+                }
+            }
         }
     }
 

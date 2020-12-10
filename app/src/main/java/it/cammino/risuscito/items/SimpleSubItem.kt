@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IExpandable
@@ -14,7 +15,6 @@ import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
-import it.cammino.risuscito.utils.themeColor
 
 fun simpleSubItem(block: SimpleSubItem.() -> Unit): SimpleSubItem = SimpleSubItem().apply(block)
 
@@ -77,8 +77,8 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
             StringHolder.applyToOrHide(item.page, mPage)
             view.background = FastAdapterUIUtils.getSelectableBackground(
                     ctx,
-                    ctx.themeColor(R.attr.colorSecondaryLight),
-                    true)
+                    ContextCompat.getColor(ctx, R.color.selected_bg_color),
+                    false)
 
             val bgShape = mPage?.background as? GradientDrawable
             bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
@@ -104,4 +104,5 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
             mItemDivider = view.findViewById(R.id.item_divider)
         }
     }
+
 }

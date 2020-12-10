@@ -27,33 +27,6 @@ class FABAwareScrollingViewBehavior : AppBarLayout.ScrollingViewBehavior {
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes, type)
     }
 
-//    override fun onNestedScroll(coordinatorLayout: CoordinatorLayout, child: View,
-//                                target: View, dxConsumed: Int, dyConsumed: Int,
-//                                dxUnconsumed: Int, dyUnconsumed: Int, type: Int) {
-//        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type)
-//        if (dyConsumed > 0) {
-//            // User scrolled down -> hide the FAB
-//            val dependencies = coordinatorLayout.getDependencies(child)
-//            for (view in dependencies) {
-//                (view as? FloatingActionButton)?.hide(object : FloatingActionButton.OnVisibilityChangedListener() {
-//                    @SuppressLint("RestrictedApi")
-//                    override fun onHidden(fab: FloatingActionButton?) {
-//                        super.onHidden(fab)
-//                        fab?.visibility = View.INVISIBLE
-//                    }
-//                })
-//            }
-//        } else if (dyConsumed < 0) {
-//            // User scrolled up -> show the FAB
-//            val dependencies = coordinatorLayout.getDependencies(child)
-//            dependencies
-//                    .filterIsInstance<//TEST per non dover togliere il behavior quando si nasconde il FAB volutamente
-//                            FloatingActionButton>()
-//                    .filter { it.visibility != View.GONE }
-//                    .forEach { it.show() }
-//        }
-//    }
-
     override fun onNestedScroll(coordinatorLayout: CoordinatorLayout, child: View, target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, type: Int, consumed: IntArray) {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed)
         if (dyConsumed > 0) {

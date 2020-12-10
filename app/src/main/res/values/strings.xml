@@ -5,11 +5,14 @@
     <string name="lang_uk" translatable="false">Українська</string>
     <string name="lang_en" translatable="false">English</string>
     <string name="lang_tr" translatable="false">Türkçe</string>
+    <string name="lang_pl" translatable="false">Polski</string>
+    <string name="lang_ep" translatable="false">English (Philippines)</string>
     <string name="lang_it_value" translatable="false">it</string>
     <string name="lang_uk_value" translatable="false">uk</string>
     <string name="lang_en_value" translatable="false">en</string>
     <string name="lang_tr_value" translatable="false">tr</string>
-    <!--<string name="lang_pt" translatable="false">Portugu&#234;s</string>-->
+    <string name="lang_pl_value" translatable="false">pl</string>
+    <string name="lang_ep_value" translatable="false">ep</string>
     <string name="percent_progress" translatable="false">%1$d%%</string>
     <string name="label_pause" translatable="false">Pause</string>
     <string name="label_play" translatable="false">Play</string>
@@ -52,7 +55,6 @@
     <string name="title_activity_inserisci_titolo">Ricerca per inserimento</string>
     <string name="title_activity_about">About</string>
     <string name="save_file">Salva in locale</string>
-    <string name="wait">Attendi, buffering in corso&#8230;</string>
     <string name="no_connection">Nessuna connessione ad internet attiva</string>
     <string name="no_record">Registrazione non presente</string>
     <string name="about_subtitle">Versione per smartphone/tablet Android</string>

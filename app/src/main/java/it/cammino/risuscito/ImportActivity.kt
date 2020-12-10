@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -39,7 +40,7 @@ class ImportActivity : AppCompatActivity() {
                             val i = Intent(this@ImportActivity, XmlImportService::class.java)
                             i.action = XmlImportService.ACTION_URL
                             i.data = data
-                            startService(i)
+                            XmlImportService.enqueueWork(applicationContext, i)
                         }
                         negativeButton(R.string.cancel) {
                             finish()
@@ -73,7 +74,13 @@ class ImportActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
+        Log.d(TAG, "attachBaseContext")
+        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
+    }
+
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        Log.d(TAG, "applyOverrideConfiguration")
+        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(this, overrideConfiguration))
     }
 
     companion object {

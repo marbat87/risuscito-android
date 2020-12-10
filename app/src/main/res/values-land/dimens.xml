@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="button_playbar_padding">10dp</dimen>
+    <dimen name="button_playbar_padding">12dp</dimen>
 
     <dimen name="product_logo_bottom">48dp</dimen>
 

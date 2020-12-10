@@ -19,15 +19,19 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.utils.ThemeUtils
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 import java.text.Normalizer
 import java.util.*
 import java.util.regex.Pattern
@@ -49,6 +53,7 @@ object Utility {
     internal const val SHOW_SANTO = "mostra_santo"
     internal const val SHOW_AUDIO = "mostra_audio"
     internal const val SIGNED_IN = "signed_id"
+    internal const val SIGN_IN_REQUESTED = "sign_id_requested"
     internal const val SHOW_OFFERTORIO = "mostra_canto_offertorio"
     internal const val PREFERITI_OPEN = "preferiti_open"
     internal const val HISTORY_OPEN = "history_open"
@@ -63,8 +68,9 @@ object Utility {
     internal const val SECONDARY_COLOR = "new_accent_color"
     internal const val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
     internal const val CLICK_DELAY_SELECTION: Long = 300
+
     // Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
-    internal const val URL_CANTO = "urlCanto"
+    internal const val HTML_CONTENT = "htmlContent"
     internal const val SPEED_VALUE = "speedValue"
     internal const val SCROLL_PLAYING = "scrollPlaying"
     internal const val ID_CANTO = "idCanto"
@@ -167,16 +173,17 @@ object Utility {
     fun retrieveMediaFileLinkQ(activity: Context, link: String, cercaEsterno: Boolean): String {
 
         if (isExternalStorageReadable && cercaEsterno) {
-            Log.d(TAG, "retrieveMediaFileLinkQ: " + getExternalLink(link))
+//            Log.d(TAG, "retrieveMediaFileLinkQ: " + getExternalLink(link))
             val externalId = getExternalMediaIdByName(activity, link)
             if (externalId >= 0) {
-                Log.d(TAG, "retrieveMediaFileLinkQ: FILE ESTERNO TROVATO")
+//                Log.d(TAG, "retrieveMediaFileLinkQ: FILE ESTERNO TROVATO")
                 return getExternalLink(link)
-            } else
-                Log.d(TAG, "retrieveMediaFileLinkQ: FILE ESTERNO NON TROVATO")
-        } else {
-            Log.d(TAG, "retrieveMediaFileLinkQ isExternalStorageReadable: FALSE")
+            }
+//            else
+//                Log.d(TAG, "retrieveMediaFileLinkQ: FILE ESTERNO NON TROVATO")
         }
+//        else
+//            Log.d(TAG, "retrieveMediaFileLinkQ isExternalStorageReadable: FALSE")
 
         return retrieveInternalLink(activity, link)
     }
@@ -205,27 +212,28 @@ object Utility {
     fun retrieveMediaFileLinkLegacy(activity: Context, link: String, cercaEsterno: Boolean): String {
 
         if (isExternalStorageReadable && cercaEsterno) {
-            Log.d(TAG, "retrieveMediaFileLinkLegacy: " + filterMediaLinkNew(link))
+//            Log.d(TAG, "retrieveMediaFileLinkLegacy: " + filterMediaLinkNew(link))
             // cerca file esterno con nuovi path e nome
             var fileExt = File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
                     "/Risuscitò/" + filterMediaLinkNew(link))
             if (fileExt.exists()) {
-                Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno1: " + fileExt.absolutePath)
+//                Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno1: " + fileExt.absolutePath)
                 return fileExt.absolutePath
             } else {
                 // cerca file esterno con vecchi path e nome
                 val fileArray = ContextCompat.getExternalFilesDirs(activity, null)
                 fileExt = File(fileArray[0], filterMediaLink(link))
                 if (fileExt.exists()) {
-                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno2: " + fileExt.absolutePath)
+//                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno2: " + fileExt.absolutePath)
                     return fileExt.absolutePath
-                } else
-                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE ESTERNO NON TROVATO")
+                }
+//                else
+//                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE ESTERNO NON TROVATO")
             }
-        } else {
-            Log.d(TAG, "retrieveMediaFileLinkLegacy isExternalStorageReadable: FALSE")
         }
+//        else
+//            Log.d(TAG, "retrieveMediaFileLinkLegacy isExternalStorageReadable: FALSE")
 
         return retrieveInternalLink(activity, link)
     }
@@ -233,10 +241,11 @@ object Utility {
     private fun retrieveInternalLink(activity: Context, link: String?): String {
         val fileInt = File(activity.filesDir, filterMediaLink(link))
         if (fileInt.exists()) {
-            Log.d(TAG, "FILE interno: " + fileInt.absolutePath)
+//            Log.d(TAG, "FILE interno: " + fileInt.absolutePath)
             return fileInt.absolutePath
-        } else
-            Log.v(TAG, "FILE INTERNO NON TROVATO")
+        }
+//        else
+//            Log.v(TAG, "FILE INTERNO NON TROVATO")
         //		Log.i("FILE INTERNO:", "NON TROVATO");
         return ""
     }
@@ -249,12 +258,33 @@ object Utility {
 
     @SuppressLint("NewApi")
     fun setupNavBarColor(context: Activity) {
+        context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
         if (LUtils.hasO()) {
-            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            if (!ThemeUtils.isDarkMode(context)) context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-            context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
+//            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            if (!ThemeUtils.isDarkMode(context)) setLightNavigationBar(context)
+//            context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
             context.window.navigationBarColor = Color.TRANSPARENT
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun setLightNavigationBar(context: Activity) {
+        if (LUtils.hasR())
+            setLightNavigationBarR(context)
+        else
+            setLightNavigationBarLegacy(context)
+    }
+
+    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun setLightNavigationBarLegacy(context: Activity) {
+        context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun setLightNavigationBarR(context: Activity) {
+        context.window.insetsController?.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
     }
 
     internal fun random(start: Int, end: Int): Int {
@@ -266,7 +296,13 @@ object Utility {
     }
 
     internal fun removeAccents(value: String): String {
-        val normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
+
+        var normalized = value
+
+        for ((mapKey, mapValue) in STROKE_LETTERS)
+            normalized = normalized.replace(mapKey, mapValue)
+
+        normalized = Normalizer.normalize(normalized, Normalizer.Form.NFD)
         val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
         return pattern.matcher(normalized).replaceAll("")
     }
@@ -374,27 +410,27 @@ object Utility {
         }
     }
 
-    internal fun readTextFromResource(ctx: Context, resourceID: String): String? {
+    internal fun readTextFromResource(ctx: Context, resourceID: String): String {
         val inputStream = ctx.resources.openRawResource(LUtils.getResId(resourceID, R.raw::class.java))
         val br = BufferedReader(InputStreamReader(inputStream, ECONDING_UTF8))
         var line: String? = br.readLine()
-        val cantoTrasportato = ctx.filesDir.toString() + "/temporaneo.htm"
-        val out = BufferedWriter(
-                OutputStreamWriter(FileOutputStream(cantoTrasportato), ECONDING_UTF8))
+        val cantoTrasportato = StringBuffer()
 
         while (line != null) {
 //            Log.d(TAG, "line: $line")
-            out.write(line)
-            out.newLine()
+            cantoTrasportato.append(line)
+            cantoTrasportato.append("\n")
             line = br.readLine()
         }
         br.close()
-        out.flush()
-        out.close()
-
-        return cantoTrasportato
+        Log.d(TAG, "readTextFromResource cantoTrasportato: $cantoTrasportato")
+        return cantoTrasportato.toString()
     }
 
     private const val ECONDING_UTF8 = "utf-8"
+
+    private val STROKE_LETTERS: Map<String, String> = mapOf(
+            Pair("Ł", "L"),
+            Pair("ł", "l"))
 
 }

@@ -151,7 +151,7 @@ class Salmo {
 
             nSalmo = Salmo()
             nSalmo.id = 83
-            nSalmo.numSalmo = "904"
+            nSalmo.numSalmo = "094"
             nSalmo.titoloSalmo = "salmo_094_venite"
             salmiList.add(nSalmo)
 

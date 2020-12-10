@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -14,10 +14,12 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.view.ActionMode
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -26,6 +28,7 @@ import androidx.core.view.GravityCompat.START
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.slidingpanelayout.widget.SlidingPaneLayout
@@ -35,7 +38,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.elevation.ElevationOverlayProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -55,7 +61,6 @@ import com.mikepenz.iconics.utils.sizeDp
 import com.mikepenz.materialdrawer.holder.ImageHolder
 import com.mikepenz.materialdrawer.iconics.iconicsIcon
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.*
@@ -65,36 +70,31 @@ import com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView
 import com.mikepenz.materialdrawer.widget.MiniDrawerSliderView
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.ActivityMainBinding
+import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.CrossfadeWrapper
+import it.cammino.risuscito.ui.GmailDrawerItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
-import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
-import it.cammino.risuscito.utils.themeColor
-import it.cammino.risuscito.viewmodels.MainActivityViewModel
-import java.lang.ref.WeakReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
-    private val mViewModel: MainActivityViewModel by viewModels()
+class MainActivity : ThemeableActivity() {
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
     private lateinit var profileIcon: IconicsDrawable
-    private lateinit var mLUtils: LUtils
     private lateinit var mAccountHeader: AccountHeaderView
     private lateinit var miniSliderView: MiniDrawerSliderView
     private lateinit var sliderView: MaterialDrawerSliderView
     private lateinit var crossFader: Crossfader<*>
-    var hasThreeColumns: Boolean = false
-        private set
-    var isGridLayout: Boolean = false
-        private set
-    private var isLandscape: Boolean = false
-    private var isTabletWithFixedDrawer: Boolean = false
-    private var isTabletWithNoFixedDrawer: Boolean = false
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
     private lateinit var auth: FirebaseAuth
@@ -103,6 +103,9 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
 
     private lateinit var binding: ActivityMainBinding
+
+    var actionMode: ActionMode? = null
+        private set
 
     private val nextStepReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -128,9 +131,8 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.hasNavDrawer = true
+        hasNavDrawer = true
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -139,43 +141,34 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 binding.searchView.onBackPressed() -> {
                 }
                 binding.fabPager.isOpen -> binding.fabPager.close()
-                isTabletWithNoFixedDrawer && crossFader.isCrossFaded() -> crossFader.crossFade()
-                !isOnTablet && binding.drawer?.isDrawerOpen(START) == true -> binding.drawer?.closeDrawer(START)
+                mViewModel.isTabletWithNoFixedDrawer && crossFader.isCrossFaded() -> crossFader.crossFade()
+                !mViewModel.isOnTablet && (binding.drawer as? DrawerLayout)?.isDrawerOpen(START) == true -> (binding.drawer as? DrawerLayout)?.closeDrawer(START)
                 else -> backToHome(true)
             }
         }
-
-        mLUtils = LUtils.getInstance(this)
 
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
         profileIcon = IconicsDrawable(this).apply {
-            colorInt = themeColor(R.attr.colorPrimary)
+            colorInt = MaterialColors.getColor(this@MainActivity, R.attr.colorPrimary, TAG)
             icon = CommunityMaterial.Icon.cmd_account_circle
             sizeDp = 56
         }
 
         setSupportActionBar(binding.risuscitoToolbar)
-
-        if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
-            TranslationTask(this).execute()
+        if (!LUtils.hasL() && ThemeUtils.isDarkMode(this)) {
+            val elevatedSurfaceColor = ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
+            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
         }
 
-        hasThreeColumns = mLUtils.hasThreeColumns
-        Log.d(TAG, "onCreate: hasThreeColumns = $hasThreeColumns")
-        isGridLayout = mLUtils.isGridLayout
-        Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
-        isLandscape = mLUtils.isLandscape
-        Log.d(TAG, "onCreate: isLandscape = $isLandscape")
-        isTabletWithFixedDrawer = isOnTablet && isLandscape
-        Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithFixedDrawer")
-        isTabletWithNoFixedDrawer = isOnTablet && !isLandscape
-        Log.d(TAG, "onCreate: hasFixedDrawer = $isTabletWithNoFixedDrawer")
+        if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
+            lifecycleScope.launch { translate() }
+        }
 
         setupNavDrawer(savedInstanceState)
 
-        binding.toolbarLayout.setExpanded(true, false)
+        binding.appBarLayout.setExpanded(true, false)
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -195,11 +188,58 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        setDialogCallback(BACKUP_ASK)
-        setDialogCallback(RESTORE_ASK)
-        setDialogCallback(SIGNOUT)
-        setDialogCallback(REVOKE)
-        setDialogCallback(RESTART)
+        simpleDialogViewModel.state.observe(this) {
+            Log.d(TAG, "simpleDialogViewModel state $it")
+            if (!simpleDialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (simpleDialogViewModel.mTag) {
+                            BACKUP_ASK -> {
+                                simpleDialogViewModel.handled = true
+                                ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, BACKUP_RUNNING)
+                                        .title(R.string.backup_running)
+                                        .content(R.string.backup_database)
+                                        .progressIndeterminate(true),
+                                        supportFragmentManager)
+                                backToHome(false)
+                                lifecycleScope.launch { backupDbPrefs() }
+                            }
+                            RESTORE_ASK -> {
+                                simpleDialogViewModel.handled = true
+                                ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, RESTORE_RUNNING)
+                                        .title(R.string.restore_running)
+                                        .content(R.string.restoring_database)
+                                        .progressIndeterminate(true),
+                                        supportFragmentManager)
+                                backToHome(false)
+                                lifecycleScope.launch { restoreDbPrefs() }
+                            }
+                            SIGNOUT -> {
+                                simpleDialogViewModel.handled = true
+                                signOut()
+                            }
+                            REVOKE -> {
+                                simpleDialogViewModel.handled = true
+                                revokeAccess()
+                            }
+                            RESTART -> {
+                                simpleDialogViewModel.handled = true
+                                val i = baseContext
+                                        .packageManager
+                                        .getLaunchIntentForPackage(baseContext.packageName)
+                                i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                i?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(i)
+                                finish()
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        simpleDialogViewModel.handled = true
+                    }
+                }
+            }
+        }
 
     }
 
@@ -260,7 +300,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        binding.fabPager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabPager.expansionMode = if (mViewModel.mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     private fun setupNavDrawer(savedInstanceState: Bundle?) {
@@ -299,69 +339,72 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             withSavedInstance(savedInstanceState)
         }
 
-        if (isOnTablet) {
+        val drawerArrowColor = if (ThemeUtils.isDarkMode(this)) MaterialColors.getColor(this, R.attr.colorControlNormal, TAG) else
+            MaterialColors.getColor(this, R.attr.colorOnPrimarySurface, TAG)
+
+        if (mViewModel.isOnTablet) {
             sliderView = MaterialDrawerSliderView(this).apply {
                 accountHeader = mAccountHeader
                 customWidth = MATCH_PARENT
                 setItems(
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.activity_homepage
                             iconicsIcon = CommunityMaterial.Icon2.cmd_home
                             identifier = R.id.navigation_home.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.search_name_text
                             iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
                             identifier = R.id.navigation_search.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_general_index
                             iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
                             identifier = R.id.navigation_indexes.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_custom_lists
                             iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
                             identifier = R.id.navitagion_lists.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.action_favourites
                             iconicsIcon = CommunityMaterial.Icon2.cmd_star
                             identifier = R.id.navigation_favorites.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_consegnati
                             iconicsIcon = CommunityMaterial.Icon.cmd_clipboard_check
                             identifier = R.id.navigation_consegnati.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_history
                             iconicsIcon = CommunityMaterial.Icon2.cmd_history
                             identifier = R.id.navigation_history.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_settings
                             iconicsIcon = CommunityMaterial.Icon.cmd_cog
                             identifier = R.id.navigation_settings.toLong()
                             typeface = mMediumFont
                         },
                         DividerDrawerItem(),
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_about
                             iconicsIcon = CommunityMaterial.Icon2.cmd_information_outline
                             identifier = R.id.navigation_changelog.toLong()
                             typeface = mMediumFont
                         }
                 )
-                onDrawerItemClickListener = { _, drawerItem, _ ->
-                    onDrawerItemClick(drawerItem)
+                onDrawerItemClickListener = { _, drawerItem, position ->
+                    onDrawerItemClick(drawerItem, position)
                 }
                 setSavedInstance(savedInstanceState)
             }
@@ -369,7 +412,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             if (savedInstanceState == null)
                 sliderView.setSelectionAtPosition(1, false)
 
-            if (isTabletWithFixedDrawer) {
+            if (mViewModel.isTabletWithFixedDrawer) {
                 binding.fixedDrawerContent?.addView(sliderView)
             } else {
                 miniSliderView = MiniDrawerSliderView(this).apply {
@@ -405,85 +448,86 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 miniSliderView.crossFader = CrossfadeWrapper(crossFader)
                 //define a shadow (this is only for normal LTR layouts if you have a RTL app you need to define the other one
                 crossFader.getCrossFadeSlidingPaneLayout().setShadowResourceLeft(R.drawable.material_drawer_shadow_left)
-                binding.risuscitoToolbar.navigationIcon = DrawerArrowDrawable(this)
+                binding.risuscitoToolbar.navigationIcon = DrawerArrowDrawable(this).apply { color = drawerArrowColor }
                 binding.risuscitoToolbar.setNavigationOnClickListener { crossFader.crossFade() }
             }
         } else {
-            mActionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawer, binding.risuscitoToolbar, R.string.material_drawer_open, R.string.material_drawer_close)
+            mActionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawer as DrawerLayout, binding.risuscitoToolbar, R.string.material_drawer_open, R.string.material_drawer_close)
+            mActionBarDrawerToggle.drawerArrowDrawable.color = drawerArrowColor
             mActionBarDrawerToggle.syncState()
 
             binding.slider?.apply {
                 setItems(
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.activity_homepage
                             iconicsIcon = CommunityMaterial.Icon2.cmd_home
                             identifier = R.id.navigation_home.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.search_name_text
                             iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
                             identifier = R.id.navigation_search.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_general_index
                             iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
                             identifier = R.id.navigation_indexes.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_custom_lists
                             iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
                             identifier = R.id.navitagion_lists.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.action_favourites
                             iconicsIcon = CommunityMaterial.Icon2.cmd_star
                             identifier = R.id.navigation_favorites.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_consegnati
                             iconicsIcon = CommunityMaterial.Icon.cmd_clipboard_check
                             identifier = R.id.navigation_consegnati.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_history
                             iconicsIcon = CommunityMaterial.Icon2.cmd_history
                             identifier = R.id.navigation_history.toLong()
                             typeface = mMediumFont
                         },
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_settings
                             iconicsIcon = CommunityMaterial.Icon.cmd_cog
                             identifier = R.id.navigation_settings.toLong()
                             typeface = mMediumFont
                         },
                         DividerDrawerItem(),
-                        PrimaryDrawerItem().apply {
+                        GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_about
                             iconicsIcon = CommunityMaterial.Icon2.cmd_information_outline
                             identifier = R.id.navigation_changelog.toLong()
                             typeface = mMediumFont
                         }
                 )
-                onDrawerItemClickListener = { _, drawerItem, _ ->
-                    onDrawerItemClick(drawerItem)
+                onDrawerItemClickListener = { _, drawerItem, position ->
+                    onDrawerItemClick(drawerItem, position)
                 }
                 tintStatusBar = true
                 setSavedInstance(savedInstanceState)
             }
             if (savedInstanceState == null)
                 binding.slider?.setSelectionAtPosition(1, false)
-            binding.drawer?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
-            binding.drawer?.addDrawerListener(mActionBarDrawerToggle)
+            (binding.drawer as? DrawerLayout)?.setStatusBarBackgroundColor(getStatusBarDefaultColor(this))
+            (binding.drawer as? DrawerLayout)?.addDrawerListener(mActionBarDrawerToggle)
         }
     }
 
-    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>): Boolean {
+    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>, position: Int): Boolean {
         val fragment = when (drawerItem.identifier) {
             R.id.navigation_home.toLong() -> Risuscito()
             R.id.navigation_search.toLong() -> SearchFragment()
@@ -496,7 +540,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             R.id.navigation_history.toLong() -> HistoryFragment()
             else -> Risuscito()
         }
-        binding.toolbarLayout.setExpanded(true, true)
+        binding.appBarLayout.setExpanded(true, true)
 
         // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
         val myFragment = supportFragmentManager
@@ -509,8 +553,16 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             }
         }
 
-        if (isTabletWithNoFixedDrawer) miniSliderView.setSelection(drawerItem.identifier)
-        return isTabletWithNoFixedDrawer
+        //FIX perchè cliccando sul MiniDrawer non si deseleziona la voce del drawer
+        //precedentemente selezionata
+        if (mViewModel.isTabletWithNoFixedDrawer) {
+            for (i in 0 until sliderView.adapter.itemCount) {
+                if (i != position)
+                    sliderView.selectExtension.deselect(i)
+            }
+        }
+
+        return false
     }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
@@ -521,16 +573,16 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         Log.d(TAG, "convertTabs - from: ${conversion?.substring(0, 2)}")
         when (conversion?.substring(0, 2)) {
             LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
+            LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
             LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
-            LANGUAGE_TURKISH -> accordi1 = CambioAccordi.accordi_tr
         }
 
         var accordi2 = CambioAccordi.accordi_it
         Log.d(TAG, "convertTabs - to: ${conversion?.substring(3, 5)}")
         when (conversion?.substring(3, 5)) {
             LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
+            LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
             LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
-            LANGUAGE_TURKISH -> accordi2 = CambioAccordi.accordi_tr
         }
 
         val mappa = HashMap<String, String>()
@@ -562,17 +614,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         var barre1 = CambioAccordi.barre_it
         Log.d(TAG, "convertiBarre - from: ${conversion?.substring(0, 2)}")
         when (conversion?.substring(0, 2)) {
-            LANGUAGE_UKRAINIAN -> barre1 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
-            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
         }
 
         var barre2 = CambioAccordi.barre_it
         Log.d(TAG, "convertiBarre - to: ${conversion?.substring(3, 5)}")
         when (conversion?.substring(3, 5)) {
-            LANGUAGE_UKRAINIAN -> barre2 = CambioAccordi.barre_uk
             LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
-            LANGUAGE_TURKISH -> barre1 = CambioAccordi.barre_tr
         }
 
         val mappa = HashMap<String, String>()
@@ -636,7 +684,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         enableFab(false)
         binding.fabPager.setMainFabClosedDrawable(icon)
         binding.fabPager.clearActionItems()
-        binding.fabPager.expansionMode = if (mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+        binding.fabPager.expansionMode = if (mViewModel.mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
         enableFab(true)
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
@@ -646,11 +694,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_pulisci,
-                                    IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant).apply {
-                                        sizeDp = 24
-                                        paddingDp = 4
-                                    }
-                            )
+                            IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant).apply {
+                                sizeDp = 24
+                                paddingDp = 4
+                            }
+                    )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.dialog_reset_list_title))
                             .setFabBackgroundColor(backgroundColor)
@@ -661,11 +709,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista,
-                                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
-                                        sizeDp = 24
-                                        paddingDp = 4
-                                    }
-                            )
+                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+                                sizeDp = 24
+                                paddingDp = 4
+                            }
+                    )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.action_add_list))
                             .setFabBackgroundColor(backgroundColor)
@@ -676,11 +724,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
             binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi,
-                                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant).apply {
-                                        sizeDp = 24
-                                        paddingDp = 4
-                                    }
-                            )
+                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant).apply {
+                                sizeDp = 24
+                                paddingDp = 4
+                            }
+                    )
                             .setTheme(R.style.Risuscito_SpeedDialActionItem)
                             .setLabel(getString(R.string.action_share))
                             .setFabBackgroundColor(backgroundColor)
@@ -692,11 +740,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             if (customList) {
                 binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_condividi_file,
-                                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment).apply {
-                                            sizeDp = 24
-                                            paddingDp = 4
-                                        }
-                                )
+                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
+                                }
+                        )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_share_file))
                                 .setFabBackgroundColor(backgroundColor)
@@ -707,11 +755,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                 binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista,
-                                        IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil).apply {
-                                            sizeDp = 24
-                                            paddingDp = 4
-                                        }
-                                )
+                                IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
+                                }
+                        )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_edit_list))
                                 .setFabBackgroundColor(backgroundColor)
@@ -722,11 +770,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
                 binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_delete_lista,
-                                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete).apply {
-                                            sizeDp = 24
-                                            paddingDp = 4
-                                        }
-                                )
+                                IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete).apply {
+                                    sizeDp = 24
+                                    paddingDp = 4
+                                }
+                        )
                                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                                 .setLabel(getString(R.string.action_remove_list))
                                 .setFabBackgroundColor(backgroundColor)
@@ -750,7 +798,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     fun expandToolbar() {
-        binding.toolbarLayout.setExpanded(true, true)
+        binding.appBarLayout.setExpanded(true, true)
     }
 
     fun getMaterialTabs(): TabLayout {
@@ -758,7 +806,7 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     }
 
     val activityDrawer: DrawerLayout?
-        get() = binding.drawer
+        get() = binding.drawer as? DrawerLayout
 
     val activityBottomBar: BottomAppBar
         get() = binding.bottomBar
@@ -769,29 +817,33 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
     val activityMainContent: View
         get() = binding.mainContent
 
-    val activityToolbar: Toolbar
+    val activityToolbar: MaterialToolbar
         get() = binding.risuscitoToolbar
 
     fun enableBottombar(enabled: Boolean) {
         Log.d(TAG, "enableBottombar - enabled: $enabled")
         if (enabled)
-            mLUtils.animateIn(binding.bottomBar)
+            mViewModel.mLUtils.animateIn(binding.bottomBar)
         else
-            mLUtils.animateOut(binding.bottomBar)
+            mViewModel.mLUtils.animateOut(binding.bottomBar)
     }
 
     // [START signIn]
     fun signIn() {
         val signInIntent = mSignInClient?.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        startSignInForResult.launch(signInIntent)
+    }
+
+    private val startSignInForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(result.data))
     }
 
     // [START signOut]
     private fun signOut() {
+        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
         mSignInClient?.signOut()?.addOnCompleteListener {
             updateUI(false)
-            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
             Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                     .show()
         }
@@ -799,22 +851,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
 
     // [START revokeAccess]
     private fun revokeAccess() {
+        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
         mSignInClient?.revokeAccess()?.addOnCompleteListener {
             updateUI(false)
-            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, false) }
             Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
                     .show()
         }
-    }
-
-    // [START onActivityResult]
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.d(TAG, "requestCode: $requestCode")
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN)
-            handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
     }
 
     // [START handleSignInResult]
@@ -827,11 +870,13 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             firebaseAuthWithGoogle()
         } else {
             // Sign in failed, handle failure and update UI
-            Toast.makeText(this, getString(
-                            R.string.login_failed,
-                            -1,
-                            task.exception?.localizedMessage), Toast.LENGTH_SHORT)
-                    .show()
+            Log.w(TAG, "handleSignInResult:failure", task.exception)
+            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Utility.SIGN_IN_REQUESTED, false))
+                Toast.makeText(this, getString(
+                        R.string.login_failed,
+                        -1,
+                        task.exception?.localizedMessage), Toast.LENGTH_SHORT)
+                        .show()
             acct = null
             updateUI(false)
         }
@@ -846,7 +891,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "firebaseAuthWithGoogle:success")
-                        PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, true) }
                         if (mViewModel.showSnackbar) {
                             Toast.makeText(this, getString(R.string.connected_as, acct?.displayName), Toast.LENGTH_SHORT)
                                     .show()
@@ -856,21 +900,21 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
-                        Toast.makeText(this, getString(
-                                        R.string.login_failed,
-                                        -1,
-                                        task.exception?.localizedMessage), Toast.LENGTH_SHORT)
-                                .show()
+                        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Utility.SIGN_IN_REQUESTED, false))
+                            Toast.makeText(this, getString(
+                                    R.string.login_failed,
+                                    -1,
+                                    task.exception?.localizedMessage), Toast.LENGTH_SHORT)
+                                    .show()
                     }
                 }
     }
 
     private fun updateUI(signedIn: Boolean) {
+        mViewModel.signedIn.value = signedIn
         PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGNED_IN, signedIn) }
-        val intentBroadcast = Intent(Risuscito.BROADCAST_SIGNIN_VISIBLE)
-        Log.d(TAG, "updateUI: DATA_VISIBLE " + !signedIn)
-        intentBroadcast.putExtra(Risuscito.DATA_VISIBLE, !signedIn)
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+        if (signedIn)
+            PreferenceManager.getDefaultSharedPreferences(this).edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
         if (signedIn) {
             val profile: IProfile
             val profilePhoto = acct?.photoUrl
@@ -921,7 +965,6 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                         }
                 )
             }
-            if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
         } else {
             val profile = ProfileDrawerItem().apply {
                 nameText = ""
@@ -932,7 +975,11 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
             }
             mAccountHeader.clear()
             mAccountHeader.addProfiles(profile)
-            if (isTabletWithNoFixedDrawer) miniSliderView.onProfileClick()
+
+        }
+        if (mViewModel.isTabletWithNoFixedDrawer) {
+            miniSliderView.onProfileClick()
+            miniSliderView.itemAdapter.getAdapterItem(0).isEnabled = signedIn
         }
         hideProgressDialog()
     }
@@ -945,66 +992,18 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         binding.loadingBar.isVisible = false
     }
 
-    fun setShowSnackbar() {
-        this.mViewModel.showSnackbar = true
-    }
-
-    override fun onPositive(tag: String) {
-        Log.d(TAG, "onPositive: TAG $tag")
-        when (tag) {
-            BACKUP_ASK -> {
-                ProgressDialogFragment.Builder(this, null, BACKUP_RUNNING)
-                        .title(R.string.backup_running)
-                        .content(R.string.backup_database)
-                        .progressIndeterminate(true)
-                        .show()
-                backToHome(false)
-                BackupTask(this).execute()
-            }
-            RESTORE_ASK -> {
-                ProgressDialogFragment.Builder(this, null, RESTORE_RUNNING)
-                        .title(R.string.restore_running)
-                        .content(R.string.restoring_database)
-                        .progressIndeterminate(true)
-                        .show()
-                backToHome(false)
-                RestoreTask(this).execute()
-            }
-            SIGNOUT -> signOut()
-            REVOKE -> revokeAccess()
-            RESTART -> {
-                val i = baseContext
-                        .packageManager
-                        .getLaunchIntentForPackage(baseContext.packageName)
-                i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                i?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(i)
-                finish()
-            }
-        }
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected: " + item.itemId)
-        if (isTabletWithNoFixedDrawer && item.itemId == android.R.id.home) {
+        if (mViewModel.isTabletWithNoFixedDrawer && item.itemId == android.R.id.home) {
             crossFader.crossFade()
             return true
         }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onNegative(tag: String) {
-        // no-op
-    }
-
     private fun dismissProgressDialog(tag: String) {
         val sFragment = ProgressDialogFragment.findVisible(this, tag)
         sFragment?.dismiss()
-    }
-
-    private fun setDialogCallback(tag: String) {
-        val sFragment = SimpleDialogFragment.findVisible(this, tag)
-        sFragment?.setmCallback(this)
     }
 
     private fun backToHome(exitAlso: Boolean) {
@@ -1014,16 +1013,16 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                 finish()
             return
         }
-        if (isTabletWithNoFixedDrawer) {
-            miniSliderView.setSelection(R.id.navigation_home.toLong())
-            sliderView.setSelection(R.id.navigation_home.toLong())
+        if (mViewModel.isOnTablet) {
+            if (mViewModel.isTabletWithNoFixedDrawer) miniSliderView.setSelection(R.id.navigation_home.toLong())
+            sliderView.setSelectionAtPosition(1, true)
         }
-        binding.toolbarLayout.setExpanded(true, true)
-        binding.slider?.setSelection(R.id.navigation_home.toLong())
+        binding.appBarLayout.setExpanded(true, true)
+        binding.slider?.setSelectionAtPosition(1, true)
     }
 
     private fun showAccountRelatedDialog(tag: String) {
-        SimpleDialogFragment.Builder(this, this, tag).apply {
+        SimpleDialogFragment.show(SimpleDialogFragment.Builder(this, tag).apply {
             when (tag) {
                 BACKUP_ASK -> {
                     title(R.string.gdrive_backup)
@@ -1046,13 +1045,96 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
                     positiveButton(R.string.disconnect_confirm)
                 }
             }
-            negativeButton(android.R.string.no)
-        }.show()
+            negativeButton(android.R.string.cancel)
+        },
+                supportFragmentManager)
+    }
+
+    private suspend fun translate() {
+        ProgressDialogFragment.show(ProgressDialogFragment.Builder(this, "TRANSLATION")
+                .content(R.string.translation_running)
+                .progressIndeterminate(true),
+                supportFragmentManager)
+        intent.removeExtra(Utility.DB_RESET)
+        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            convertTabs()
+            convertiBarre()
+        }
+        intent.removeExtra(Utility.CHANGE_LANGUAGE)
+        try {
+            dismissProgressDialog("TRANSLATION")
+        } catch (e: IllegalArgumentException) {
+            Log.e(javaClass.name, e.localizedMessage, e)
+        }
+    }
+
+    private suspend fun backupDbPrefs() {
+        try {
+            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                backupDatabase(acct?.id)
+            }
+
+            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
+            intentBroadcast.putExtra(WHICH, "BACKUP")
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
+
+            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                backupSharedPreferences(acct?.id, acct?.email)
+            }
+
+            dismissProgressDialog(BACKUP_RUNNING)
+            Snackbar.make(
+                    binding.mainContent,
+                    R.string.gdrive_backup_success,
+                    Snackbar.LENGTH_LONG)
+                    .show()
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception: " + e.localizedMessage, e)
+            Snackbar.make(binding.mainContent, "error: " + e.localizedMessage, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    private suspend fun restoreDbPrefs() {
+        try {
+            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                restoreDatabase(acct?.id)
+            }
+
+            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
+            intentBroadcast.putExtra(WHICH, RESTORE)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
+
+            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                restoreSharedPreferences(acct?.id)
+            }
+
+            dismissProgressDialog(RESTORE_RUNNING)
+            SimpleDialogFragment.show(SimpleDialogFragment.Builder(this, RESTART)
+                    .title(R.string.general_message)
+                    .content(R.string.gdrive_restore_success)
+                    .positiveButton(R.string.ok),
+                    supportFragmentManager)
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception: " + e.localizedMessage, e)
+            Snackbar.make(binding.mainContent, "error: " + e.localizedMessage, Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+    fun createActionMode(callback: ActionMode.Callback) {
+        actionMode?.finish()
+        actionMode = startSupportActionMode(callback)
+    }
+
+    fun destroyActionMode() {
+        actionMode = null
+    }
+
+    fun updateActionModeTitle(title: String) {
+        actionMode?.title = title
     }
 
     companion object {
         /* Request code used to invoke sign in user interactions. */
-        private const val RC_SIGN_IN = 9001
         private const val PROF_ID = 5428471L
         private const val BROADCAST_NEXT_STEP = "BROADCAST_NEXT_STEP"
         private const val WHICH = "WHICH"
@@ -1068,117 +1150,5 @@ class MainActivity : ThemeableActivity(), SimpleDialogFragment.SimpleCallback {
         private const val NEW_PHOTO_RES = "s400-c"
         private val TAG = MainActivity::class.java.canonicalName
 
-        private class TranslationTask(activity: MainActivity) : AsyncTask<Void, Void, Void>() {
-
-            private val activityWeakReference: WeakReference<MainActivity> = WeakReference(activity)
-
-            override fun doInBackground(vararg sUrl: Void): Void? {
-                activityWeakReference.get()?.let {
-                    it.intent.removeExtra(Utility.DB_RESET)
-                    it.convertTabs()
-                    it.convertiBarre()
-                }
-                return null
-            }
-
-            override fun onPreExecute() {
-                super.onPreExecute()
-                activityWeakReference.get()?.let {
-                    ProgressDialogFragment.Builder(it, null, "TRANSLATION")
-                            .content(R.string.translation_running)
-                            .progressIndeterminate(true)
-                            .show()
-                }
-            }
-
-            override fun onPostExecute(result: Void?) {
-                super.onPostExecute(result)
-                activityWeakReference.get()?.let {
-                    it.intent.removeExtra(Utility.CHANGE_LANGUAGE)
-                    try {
-                        it.dismissProgressDialog("TRANSLATION")
-                    } catch (e: IllegalArgumentException) {
-                        Log.e(javaClass.name, e.localizedMessage, e)
-                    }
-                }
-            }
-        }
-
-        private class BackupTask(activity: MainActivity) : AsyncTask<Void, Void, String>() {
-
-            private val activityReference: WeakReference<MainActivity> = WeakReference(activity)
-
-            override fun doInBackground(vararg sUrl: Void): String {
-                activityReference.get()?.let {
-                    return try {
-                        it.backupDatabase(it.acct?.id)
-                        val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-                        intentBroadcast.putExtra(WHICH, "BACKUP")
-                        LocalBroadcastManager.getInstance(it).sendBroadcast(intentBroadcast)
-                        it.backupSharedPreferences(it.acct?.id, it.acct?.email)
-                        ""
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Exception: " + e.localizedMessage, e)
-                        "error: " + e.localizedMessage
-                    }
-                }
-                Log.e(TAG, "activityReference.get() is null")
-                return "error: activityReference.get() is null"
-            }
-
-            override fun onPostExecute(result: String) {
-                super.onPostExecute(result)
-                activityReference.get()?.let {
-                    it.dismissProgressDialog(BACKUP_RUNNING)
-                    if (result.isEmpty())
-                        Snackbar.make(
-                                        it.binding.mainContent,
-                                        R.string.gdrive_backup_success,
-                                        Snackbar.LENGTH_LONG)
-                                .show()
-                    else
-                        Snackbar.make(it.binding.mainContent, result, Snackbar.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        private class RestoreTask(activity: MainActivity) : AsyncTask<Void, Void, String>() {
-
-            private val activityReference: WeakReference<MainActivity> = WeakReference(activity)
-
-            override fun doInBackground(vararg sUrl: Void): String {
-                activityReference.get()?.let {
-                    return try {
-                        it.restoreDatabase(it.acct?.id)
-                        val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-                        intentBroadcast.putExtra(WHICH, RESTORE)
-                        LocalBroadcastManager.getInstance(it).sendBroadcast(intentBroadcast)
-                        it.restoreSharedPreferences(it.acct?.id)
-                        ""
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Exception: " + e.localizedMessage, e)
-                        "error: " + e.localizedMessage
-                    }
-                }
-                Log.e(TAG, "activityReference.get() is null")
-                return "error: activityReference.get() is null"
-            }
-
-            override fun onPostExecute(result: String) {
-                super.onPostExecute(result)
-                activityReference.get()?.let {
-                    it.dismissProgressDialog(RESTORE_RUNNING)
-                    if (result.isEmpty())
-                        SimpleDialogFragment.Builder(it, it, RESTART)
-                                .title(R.string.general_message)
-                                .content(R.string.gdrive_restore_success)
-                                .positiveButton(R.string.ok)
-                                .show()
-                    else
-                        Snackbar.make(it.binding.mainContent, result, Snackbar.LENGTH_LONG).show()
-                }
-            }
-
-        }
     }
 }

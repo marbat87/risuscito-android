@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Canti_della_Bibbia_Antico_Testamento">Pieśni biblijne - Stary Testament</string>
+    <string name="Canti_della_Bibbia_Nuovo_Testamento">Pieśni biblijne - Nowy Testament</string>
+    <string name="Canti_dalle_Odi_di_Salomone">Pieśni Salomona</string>
+    <string name="Ispirati_a_melodie_e_rituali_ebraici">Inspirowane melodiami i rytuałami hebrajskimi</string>
+    <string name="Canti_per_bambini">Pieśni dla dzieci</string>
+    <string name="Dall_ordinario_della_Messa">Mszalne</string>
+    <string name="Canti_per_la_frazione_del_pane">Pieśni na łamanie chleba</string>
+    <string name="Dalla_liturgia_della_veglia_pasquale">Na liturgię wigilii paschalnej</string>
+    <string name="Canti_per_il_sacramento_della_riconciliazione">Pieśni na liturgię pokutną</string>
+    <string name="Inni_liturgici">Hymny liturgiczne</string>
+    <string name="Canti_a_Maria">Pieśni maryjne</string>
+    <string name="Vari">Pozostałe</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Canti_della_Bibbia_Antico_Testamento">OLD TESTAMENT</string>
+    <string name="Canti_della_Bibbia_Nuovo_Testamento">NEW TESTAMENT</string>
+    <string name="Canti_dalle_Odi_di_Salomone">SONGS FROM THE "ODES OF SOLOMON"</string>
+    <string name="Ispirati_a_melodie_e_rituali_ebraici">SONGS FROM THE HEBREW MELODIES</string>
+    <string name="Canti_per_bambini">SONGS FOR THE CHILDREN</string>
+    <string name="Dall_ordinario_della_Messa">FROM THE ORDINARY OF THE MASS</string>
+    <string name="Canti_per_la_frazione_del_pane">SONGS FOR THE BREAKING OF THE BREAD</string>
+    <string name="Dalla_liturgia_della_veglia_pasquale">FROM THE LITURGY OF THE PASCHAL VIGIL</string>
+    <string name="Canti_per_il_sacramento_della_riconciliazione">FROM THE SACRAMENT OF RECONCILIATION</string>
+    <string name="Inni_liturgici">LITURGICAL HYMNS</string>
+    <string name="Canti_a_Maria">SONGS TO THE VIRGIN MARY</string>
+    <string name="Vari">VARIOUS</string>
+</resources>

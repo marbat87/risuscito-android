@@ -4,15 +4,18 @@ import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.ViewConfiguration
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.color.MaterialColors
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -32,7 +35,7 @@ import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
-import it.cammino.risuscito.utils.themeColor
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
 import java.sql.Date
 import java.util.*
@@ -41,8 +44,8 @@ import java.util.concurrent.ExecutionException
 abstract class ThemeableActivity : AppCompatActivity() {
 
     protected var hasNavDrawer = false
-    var isOnTablet = false
-        private set
+
+    protected val mViewModel: MainActivityViewModel by viewModels()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         if (isMenuWorkaroundRequired)
@@ -54,15 +57,25 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         val themeUtils = ThemeUtils(this)
         Log.d(TAG, "ThemeUtils.isDarkMode(this): ${ThemeUtils.isDarkMode(this)}")
-        val mLUtils = LUtils.getInstance(this)
-        mLUtils.convertIntPreferences()
+        mViewModel.mLUtils = LUtils.getInstance(this)
+        mViewModel.mLUtils.convertIntPreferences()
         setTheme(themeUtils.current)
 
-        isOnTablet = mLUtils.isOnTablet
-        Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
+        mViewModel.isOnTablet = mViewModel.mLUtils.isOnTablet
+        Log.d(TAG, "onCreate: isOnTablet = ${mViewModel.isOnTablet}")
+        mViewModel.hasThreeColumns = mViewModel.mLUtils.hasThreeColumns
+        Log.d(TAG, "onCreate: hasThreeColumns = ${mViewModel.hasThreeColumns}")
+        mViewModel.isGridLayout = mViewModel.mLUtils.isGridLayout
+        Log.d(TAG, "onCreate: isGridLayout = ${mViewModel.isGridLayout}")
+        mViewModel.isLandscape = mViewModel.mLUtils.isLandscape
+        Log.d(TAG, "onCreate: isLandscape = ${mViewModel.isLandscape}")
+        mViewModel.isTabletWithFixedDrawer = mViewModel.isOnTablet && mViewModel.isLandscape
+        Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithFixedDrawer}")
+        mViewModel.isTabletWithNoFixedDrawer = mViewModel.isOnTablet && !mViewModel.isLandscape
+        Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
         // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(this, getStatusBarDefaultColor(this), hasNavDrawer, isOnTablet)
+        Utility.setupTransparentTints(this, getStatusBarDefaultColor(this), hasNavDrawer, mViewModel.isOnTablet)
         Utility.setupNavBarColor(this)
 
         setTaskDescription()
@@ -105,25 +118,20 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(RisuscitoApplication.localeManager.setLocale(newBase))
-        RisuscitoApplication.localeManager.setLocale(this)
+        Log.d(TAG, "attachBaseContext")
+        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
+        RisuscitoApplication.localeManager.useCustomConfig(this)
         SplitCompat.install(this)
     }
 
-    //FIX PER AppCompatDelegateImpl that overrides the configuration to a completely fresh configuration without a locale
-    //TO CHECK
     override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-        if (overrideConfiguration != null) {
-            val uiMode = overrideConfiguration.uiMode
-            overrideConfiguration.setTo(baseContext.resources.configuration)
-            overrideConfiguration.uiMode = uiMode
-        }
-        super.applyOverrideConfiguration(overrideConfiguration)
+        Log.d(TAG, "applyOverrideConfiguration")
+        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(this, overrideConfiguration))
     }
 
-    inner class NoBackupException internal constructor() : Exception(resources.getString(R.string.no_restore_found))
+    class NoBackupException internal constructor(val resources: Resources) : Exception(resources.getString(R.string.no_restore_found))
 
-    inner class NoIdException internal constructor() : Exception("no ID linked to this Account")
+    class NoIdException internal constructor() : Exception("no ID linked to this Account")
 
     private fun setTaskDescription() {
         if (LUtils.hasP())
@@ -132,7 +140,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
             setTaskDescriptionL()
     }
 
-    @Throws(ExecutionException::class, InterruptedException::class, NoIdException::class)
     fun backupSharedPreferences(userId: String?, userEmail: String?) {
         Log.d(TAG, "backupSharedPreferences $userId")
 
@@ -165,7 +172,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     }
 
-    @Throws(ExecutionException::class, InterruptedException::class, NoBackupException::class)
     fun restoreSharedPreferences(userId: String?) {
         Log.d(TAG, "backupSharedPreferences $userId")
 
@@ -182,7 +188,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "querySnapshot.documents.size ${querySnapshot.documents.size}")
 
         if (querySnapshot.documents.size == 0)
-            throw NoBackupException()
+            throw NoBackupException(resources)
 
         val prefEdit = PreferenceManager.getDefaultSharedPreferences(this).edit()
         prefEdit.clear()
@@ -203,7 +209,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         prefEdit.apply()
     }
 
-    @Throws(ExecutionException::class, InterruptedException::class, NoIdException::class, NoBackupException::class)
     fun backupDatabase(userId: String?) {
         Log.d(TAG, "backupDatabase $userId")
 
@@ -284,7 +289,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "DocumentSnapshot added with path: ${saveFile.metadata?.path}")
     }
 
-    @Throws(InterruptedException::class, NoIdException::class, NoBackupException::class)
     fun restoreDatabase(userId: String?) {
         Log.d(TAG, "backupDatabase $userId")
 
@@ -390,7 +394,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         } catch (e: ExecutionException) {
             Log.e(TAG, e.localizedMessage, e)
             if (e.cause is StorageException && (e.cause as? StorageException)?.errorCode == StorageException.ERROR_OBJECT_NOT_FOUND)
-                throw NoBackupException()
+                throw NoBackupException(resources)
             else
                 throw e
         }
@@ -399,13 +403,13 @@ abstract class ThemeableActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setTaskDescriptionL() {
-        val taskDesc = ActivityManager.TaskDescription(null, null, themeColor(R.attr.colorPrimary))
+        val taskDesc = ActivityManager.TaskDescription(null, null, MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
         setTaskDescription(taskDesc)
     }
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun setTaskDescriptionP() {
-        val taskDesc = ActivityManager.TaskDescription(null, R.mipmap.ic_launcher, themeColor(R.attr.colorPrimary))
+        val taskDesc = ActivityManager.TaskDescription(null, R.mipmap.ic_launcher, MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
         setTaskDescription(taskDesc)
     }
 
