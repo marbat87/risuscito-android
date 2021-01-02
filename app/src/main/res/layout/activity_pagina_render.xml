@@ -261,6 +261,7 @@
                 android:stepSize="1.0"
                 android:valueFrom="0.0"
                 android:valueTo="100.0"
+                risuscito:tickVisible="false"
                 risuscito:labelBehavior="gone" />
 
             <com.mikepenz.iconics.view.IconicsImageView
