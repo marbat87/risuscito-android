@@ -67,33 +67,33 @@ android {
 
 val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.3.2"
-val materialDrawerVersion = "8.2.0"
+val materialDrawerVersion = "8.3.1"
 val materialDialogsVersion = "3.3.0"
-val roomVersion = "2.2.5"
-val iconicVersion = "5.2.1"
+val roomVersion = "2.2.6"
+val iconicVersion = "5.2.4"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.21")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.9.0")
-    implementation("androidx.activity:activity-ktx:1.2.0-beta02")
+    implementation("androidx.activity:activity-ktx:1.2.0-rc01")
     implementation("androidx.core:core-ktx:1.3.2")
-    implementation("androidx.fragment:fragment-ktx:1.3.0-beta02")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-rc01")
     implementation("androidx.recyclerview:recyclerview:1.2.0-beta01")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
     implementation("androidx.media:media:1.2.1")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-beta01")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-rc01")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-rc01")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:19.0.0")
     implementation("com.google.firebase:firebase-core:18.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:22.0.0")
-    implementation("com.google.firebase:firebase-storage-ktx:19.2.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:22.0.1")
+    implementation("com.google.firebase:firebase-storage-ktx:19.2.1")
     implementation("com.google.firebase:firebase-auth:20.0.1")
     implementation("com.google.firebase:firebase-crashlytics:17.3.0")
     implementation("com.google.firebase:firebase-analytics:18.0.0")
@@ -120,7 +120,7 @@ dependencies {
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("pub.devrel:easypermissions:3.0.0")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
-    implementation("com.github.turing-tech:MaterialScrollBar:13.3.4")
+    implementation("com.github.turing-tech:MaterialScrollBar:13.4.1")
     implementation("com.leinardi.android:speed-dial:3.1.1")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation("com.github.Ferfalk:SimpleSearchView:0.1.6")
