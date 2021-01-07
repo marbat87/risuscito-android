@@ -1,0 +1,2 @@
+# risuscito-android
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8c61f756c1e14279afecbe265385c018)](https://app.codacy.com/manual/marbat87/risuscito-android?utm_source=github.com&utm_medium=referral&utm_content=marbat87/risuscito-android&utm_campaign=Badge_Grade_Settings)
