@@ -1,12 +1,12 @@
 # Risuscitò per Android
 
-#### [View Releases and Changelogs](https://github.com/marbat87/risuscito-android/releases)
+## [View Releases and Changelogs](https://github.com/marbat87/risuscito-android/releases)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c38f970e33d24ad1b439840a7d5a5c2e)](https://www.codacy.com/manual/marbat87/risuscito-android/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marbat87/risuscito-android&amp;utm_campaign=Badge_Grade)
 
 ---
 
-## How to add a TRANSLATION
+## TRANSLATION help
 
 If you want you can contribute by translating the necessary files you can give a look to the small guide below.
 
@@ -25,7 +25,7 @@ Here below there is a small guide with the description of the files that need to
 
 ---
 
-#### Folder RES/RAW
+### Folder RES/RAW
 
 It contains all files with the text and chords of songs. 
 Actually files are present in the following folders:
@@ -36,38 +36,42 @@ Actually files are present in the following folders:
 5. Polish --> in [res/raw-pl](app/src/main/res/raw-pl)
 6. Philippines English --> in [res/raw-en-rPH](app/src/main/res/raw-en-rPH)
 
-The operation needed is to create, for each file, a French version that will be placed into res/raw-fr with the translated song.
+The operation needed is to create, for each file, a version for the language that you're translating and that will be placed into a new raw folder.
+
+For example for adding a French translation, the songs .htm files will be place in **raw-fr** folder.
 
 The "format" of each file must remain very similar to the existing.
 
 The following files inside this folder can be ignored:
-- changelog
-- fileout
+* changelog
+* fileout
 
 ---
 
-#### Folder VALUES
+### Folder VALUES
 
-About the remaining files inside "values", values-uk, values-en, values-tr, values-pl" and "values-de-rPH" folders, you need to create a new folder for French -> values-fr.
+About the remaining files inside "values", values-uk, values-en, values-tr, values-pl" and "values-de-rPH" folders, you need to create a new folder for your language.
+
+For example for French, the new folder will be called **values-fr**.
 
 Below a little explanation of files that need to be translated.
 
-For all files ONLY TAG CONTENTS must be translated, not tag name.
+**IMPORTANT**: For all files ONLY TAG CONTENTS must be translated, not tag names.
 
-- **ARGOMENTI.XML** --> it contains the titles of the arguments of songs
+1. **ARGOMENTI.XML** --> it contains the titles of the arguments of songs
+ 
+2. **LINK.XML** --> It contains the links to the records. For each song, you must put inside each tag, the link to the ONLINE record. If it's not present you can leave the TAG empty (like the UK and EN versions)
+ 
+3. **NOMI_LITURGICI.XML** --> It contains the name of some liturgic periods
+ 
+4. **PAGINE.XML** --> It contains the pages of the songs in your version of the songbook.
 
-- **LINK.XML** --> It contains the links to the records. For each song, you must put inside each tag, the link to the ONLINE record. If it's not present you can leave the TAG empty (like the UK and EN versions)
-
-- **NOMI_LITURGICI.XML** --> It contains the name of some liturgic periods
-
-- **PAGINE.XML** --> It contains the pages of the songs in your version of the songbook.
-
-- **SALMI.XML** --> It contains the titles of all psalms with a corresponding song in the Risuscito songbook
-
-- **SORGENTI.XML** --> It contains the names of the HTM files with the song texts. They correspond  to the files inside the raw folder. If a song is not translated, you must put the value **no_canto** in the corresponding tag (see examples in [values-uk/sorgenti.xml](app/src/main/res/values-uk/sorgenti.xml) file)
-
-- **STRINGS.XML** --> It contains all the menus voices of the applications.
-
-- **TITOLI.XML** --> It contains all the titles of the songs
+5. **SALMI.XML** --> It contains the titles of all psalms with a corresponding song in the Risuscito songbook
+ 
+6. **SORGENTI.XML** --> It contains the names of the HTM files with the song texts. They correspond  to the files inside the raw folder. If a song is not translated, you must put the value **no_canto** in the corresponding tag (see examples in [values-uk/sorgenti.xml](app/src/main/res/values-uk/sorgenti.xml) file)
+ 
+7. **STRINGS.XML** --> It contains all the menus voices of the applications.
+ 
+8. **TITOLI.XML** --> It contains all the titles of the songs
 
 **IMPORTANT**: You can recognize the lines corresponding to a specific song in the various files, because in each file the "NAME" property is the same, but has a different suffix (for example "_link" or "_title").
