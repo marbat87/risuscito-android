@@ -5,6 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <FrameLayout
+        android:id="@+id/consegnati_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_dim_overlay"
+        android:elevation="10dp"
+        android:visibility="gone"
+        tools:targetApi="lollipop" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/choose_recycler"
         android:layout_width="match_parent"

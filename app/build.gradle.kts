@@ -101,7 +101,6 @@ dependencies {
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
-    implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.mikepenz:materialdrawer:$materialDrawerVersion")
     implementation("com.mikepenz:materialdrawer-iconics:$materialDrawerVersion")
     implementation("com.mikepenz:crossfader:1.6.0")

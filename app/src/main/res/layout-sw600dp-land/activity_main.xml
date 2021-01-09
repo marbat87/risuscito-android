@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
@@ -27,15 +27,15 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                risuscito:layout_scrollFlags="scroll|enterAlways|snap">
+                app:layout_scrollFlags="scroll|enterAlways|snap">
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/risuscito_toolbar"
                     style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    risuscito:layout_scrollFlags="scroll|enterAlways|snap"
-                    risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
+                    app:layout_scrollFlags="scroll|enterAlways|snap"
+                    app:popupTheme="@style/RisuscitoToolbarPopup" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"
@@ -43,7 +43,7 @@
                     android:layout_height="match_parent"
                     android:background="?colorPrimarySurface"
                     android:hint="@string/title_filter"
-                    risuscito:type="card" />
+                    app:type="card" />
 
             </FrameLayout>
 
@@ -55,20 +55,17 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/loading_bar"
-            style="@style/Widget.MaterialProgressBar.ProgressBar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|top"
-            android:layout_marginTop="10dp"
-            android:elevation="1dp"
+            android:layout_gravity="top"
+            android:elevation="11dp"
             android:indeterminate="true"
             android:visibility="invisible"
-            risuscito:layout_behavior="@string/appbar_scrolling_view_behavior"
-            risuscito:mpb_progressBackgroundTint="@android:color/white"
-            risuscito:mpb_progressStyle="circular"
-            risuscito:mpb_progressTint="?colorSecondary"
+            app:indeterminateAnimationType="contiguous"
+            app:indicatorColor="@array/cat_custom_progress_colors"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:targetApi="lollipop" />
 
         <androidx.fragment.app.FragmentContainerView
@@ -77,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:tag="@id/navigation_home"
-            risuscito:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
+            app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
         <include layout="@layout/common_shadow" />
 
@@ -88,8 +85,8 @@
             android:layout_height="?actionBarSize"
             android:layout_gravity="bottom"
             android:visibility="invisible"
-            risuscito:hideOnScroll="true"
-            risuscito:layout_scrollFlags="scroll|enterAlways" />
+            app:hideOnScroll="true"
+            app:layout_scrollFlags="scroll|enterAlways" />
 
         <com.leinardi.android.speeddial.SpeedDialOverlayLayout
             android:id="@+id/overlay"
@@ -102,8 +99,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            risuscito:sdExpansionMode="left"
-            risuscito:sdOverlayLayout="@id/overlay" />
+            app:sdExpansionMode="left"
+            app:sdOverlayLayout="@id/overlay" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

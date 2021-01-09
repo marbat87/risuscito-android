@@ -46,7 +46,6 @@ import it.cammino.risuscito.databinding.LayoutConsegnatiBinding
 import it.cammino.risuscito.databinding.RowItemNotableBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.ListChoiceDialogFragment
-import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.NotableItem
@@ -83,7 +82,7 @@ class ConsegnatiFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = LayoutConsegnatiBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -514,15 +513,24 @@ class ConsegnatiFragment : Fragment() {
         selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
     }
 
-    private suspend fun saveConsegnati() {
-        mMainActivity?.let { activity ->
-            ProgressDialogFragment.show(ProgressDialogFragment.Builder(
-                    activity, CONSEGNATI_SAVING)
-                    .content(R.string.save_consegnati_running)
-                    .progressIndeterminate(true),
-                    requireActivity().supportFragmentManager)
+    private fun showProgress(show: Boolean) {
+        binding.consegnatiOverlay.isVisible = show
+        if (show)
+            mMainActivity?.showProgressDialog()
+        else
+            mMainActivity?.hideProgressDialog()
+    }
 
-        }
+    private suspend fun saveConsegnati() {
+//        mMainActivity?.let { activity ->
+//            ProgressDialogFragment.show(ProgressDialogFragment.Builder(
+//                    activity, CONSEGNATI_SAVING)
+//                    .content(R.string.save_consegnati_running)
+//                    .progressIndeterminate(true),
+//                    requireActivity().supportFragmentManager)
+//
+        enableBottombar(false)
+        showProgress(true)
 
         val mSelected = selectExtension.selectedItems
         val mSelectedId = mSelected.mapTo(ArrayList()) { item -> item.id }
@@ -547,18 +555,19 @@ class ConsegnatiFragment : Fragment() {
             mDao.emptyConsegnati()
             mDao.insertConsegnati(consegnati)
         }
-        val fragment = ProgressDialogFragment.findVisible(
-                mMainActivity, CONSEGNATI_SAVING)
-        fragment?.dismiss()
+//        val fragment = ProgressDialogFragment.findVisible(
+//                mMainActivity, CONSEGNATI_SAVING)
+//        fragment?.dismiss()
         binding.chooseRecycler.isVisible = false
-        enableBottombar(false)
+//        enableBottombar(false)
         binding.selectedView.isVisible = true
         enableFab(true)
+        showProgress(false)
     }
 
     companion object {
         private val TAG = ConsegnatiFragment::class.java.canonicalName
-        private const val CONSEGNATI_SAVING = "CONSEGNATI_SAVING"
+//        private const val CONSEGNATI_SAVING = "CONSEGNATI_SAVING"
         private const val ADD_PASSAGE = "ADD_PASSAGE"
         private const val CONFIRM_SAVE = "CONFIRM_SAVE"
     }

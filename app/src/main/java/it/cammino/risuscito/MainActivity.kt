@@ -975,11 +975,11 @@ class MainActivity : ThemeableActivity() {
         hideProgressDialog()
     }
 
-    private fun showProgressDialog() {
+    fun showProgressDialog() {
         binding.loadingBar.isVisible = true
     }
 
-    private fun hideProgressDialog() {
+    fun hideProgressDialog() {
         binding.loadingBar.isVisible = false
     }
 

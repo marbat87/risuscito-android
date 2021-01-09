@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
@@ -17,8 +17,8 @@
             style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            risuscito:popupTheme="@style/RisuscitoToolbarPopup"
-            risuscito:title="@string/canto_title_activity" />
+            app:popupTheme="@style/RisuscitoToolbarPopup"
+            app:title="@string/canto_title_activity" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?actionBarSize"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <FrameLayout
             android:id="@+id/music_controls"
@@ -55,10 +55,10 @@
                     android:contentDescription="@null"
                     android:gravity="center"
                     android:translationZ="1dp"
-                    risuscito:iiv_color="?android:textColorSecondary"
-                    risuscito:iiv_icon="cmd-music-note-off"
-                    risuscito:iiv_padding="5dp"
-                    risuscito:iiv_size="24dp"
+                    app:iiv_color="?android:textColorSecondary"
+                    app:iiv_icon="cmd-music-note-off"
+                    app:iiv_padding="5dp"
+                    app:iiv_size="24dp"
                     tools:targetApi="lollipop" />
 
                 <TextView
@@ -96,10 +96,10 @@
                     android:contentDescription="@null"
                     android:gravity="center"
                     android:translationZ="1dp"
-                    risuscito:iiv_color="?android:textColorSecondary"
-                    risuscito:iiv_icon="cmd-cloud-off-outline"
-                    risuscito:iiv_padding="5dp"
-                    risuscito:iiv_size="24dp"
+                    app:iiv_color="?android:textColorSecondary"
+                    app:iiv_icon="cmd-cloud-off-outline"
+                    app:iiv_padding="5dp"
+                    app:iiv_size="24dp"
                     tools:targetApi="lollipop" />
 
                 <TextView
@@ -151,20 +151,18 @@
                         android:maxHeight="1000dp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"
-                        risuscito:labelBehavior="gone" />
+                        app:labelBehavior="gone" />
 
-                    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/music_loadingbar"
-                        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:indeterminate="true"
-                        android:visibility="gone"
-                        risuscito:mpb_indeterminateTint="?colorPrimary"
-                        risuscito:mpb_progressStyle="horizontal" />
+                        android:visibility="gone" />
+
 
                 </FrameLayout>
 
@@ -181,29 +179,18 @@
                     android:paddingRight="@dimen/play_pause_padding"
                     android:soundEffectsEnabled="true"
                     android:visibility="gone"
-                    risuscito:iiv_color="@color/text_color_secondary"
-                    risuscito:iiv_icon="cmd-play"
-                    risuscito:iiv_padding="2dp"
-                    risuscito:iiv_size="24dp" />
+                    app:iiv_color="@color/text_color_secondary"
+                    app:iiv_icon="cmd-play"
+                    app:iiv_padding="2dp"
+                    app:iiv_size="24dp" />
 
-                <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-                    android:id="@+id/loadingBar"
-                    style="@style/Widget.MaterialProgressBar.ProgressBar"
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/loading_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:elevation="1dp"
                     android:indeterminate="true"
-                    android:maxWidth="25dp"
-                    android:maxHeight="25dp"
-                    android:minWidth="25dp"
-                    android:minHeight="25dp"
-                    android:paddingLeft="@dimen/play_pause_padding"
-                    android:paddingRight="@dimen/play_pause_padding"
-                    risuscito:mpb_indeterminateTint="?colorPrimary"
-                    risuscito:mpb_progressBackgroundTint="@android:color/transparent"
-                    risuscito:mpb_progressStyle="circular"
-                    risuscito:mpb_progressTint="?colorPrimary"
                     tools:targetApi="lollipop" />
 
             </LinearLayout>
@@ -227,8 +214,8 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
-        risuscito:contentInsetStart="0dp"
-        risuscito:hideOnScroll="false">
+        app:contentInsetStart="0dp"
+        app:hideOnScroll="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -261,8 +248,8 @@
                 android:stepSize="1.0"
                 android:valueFrom="0.0"
                 android:valueTo="100.0"
-                risuscito:tickVisible="false"
-                risuscito:labelBehavior="gone" />
+                app:labelBehavior="gone"
+                app:tickVisible="false" />
 
             <com.mikepenz.iconics.view.IconicsImageView
                 android:id="@+id/play_scroll"
@@ -276,10 +263,10 @@
                 android:paddingLeft="@dimen/button_playbar_padding"
                 android:paddingRight="@dimen/button_playbar_padding"
                 android:soundEffectsEnabled="true"
-                risuscito:iiv_color="@color/text_color_secondary"
-                risuscito:iiv_icon="cmd-play-circle-outline"
-                risuscito:iiv_padding="2dp"
-                risuscito:iiv_size="48dp" />
+                app:iiv_color="@color/text_color_secondary"
+                app:iiv_icon="cmd-play-circle-outline"
+                app:iiv_padding="2dp"
+                app:iiv_size="48dp" />
 
         </LinearLayout>
 
@@ -297,7 +284,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="?actionBarSize"
-        risuscito:sdExpansionMode="top"
-        risuscito:sdOverlayLayout="@id/overlay" />
+        app:sdExpansionMode="top"
+        app:sdOverlayLayout="@id/overlay" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
