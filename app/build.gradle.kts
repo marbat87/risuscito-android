@@ -19,12 +19,11 @@ android {
         versionCode = 4612
         versionName = "4.6.0"
         vectorDrawables.useSupportLibrary = true
-        javaCompileOptions {
-            annotationProcessorOptions {
-                mapOf(
-                        "room.schemaLocation" to "$projectDir/schemas",
-                        "room.incremental" to "true",
-                        "room.expandProjection" to "true")
+        kapt {
+            arguments {
+                arg("room.incremental", "true")
+                arg("room.schemaLocation", "$projectDir/schemas")
+                arg("room.expandProjection", "true")
             }
         }
     }
@@ -36,6 +35,7 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+        useIR = true
     }
 
     lintOptions {
@@ -66,37 +66,39 @@ android {
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.3.4"
-val materialDrawerVersion = "8.3.3"
+val fastAdapterVersion = "5.3.5"
+val materialDrawerVersion = "8.4.0"
 val materialDialogsVersion = "3.3.0"
-val roomVersion = "2.2.6"
-val iconicVersion = "5.2.6"
+val roomVersion = "2.3.0-rc01"
+val iconicVersion = "5.2.8"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.30")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.31")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.play:core:1.9.1")
+    implementation("com.google.android.play:core:1.10.0")
     implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.activity:activity-ktx:1.2.0-rc01")
-    implementation("androidx.core:core-ktx:1.3.2")
-    implementation("androidx.fragment:fragment-ktx:1.3.0-rc02")
-    implementation("androidx.recyclerview:recyclerview:1.2.0-beta01")
+    implementation("androidx.activity:activity-ktx:1.2.2")
+    implementation("androidx.appcompat:appcompat:1.3.0-rc01")
+    implementation("androidx.appcompat:appcompat-resources:1.3.0-rc01")
+    implementation("androidx.core:core-ktx:1.5.0-rc01")
+    implementation("androidx.fragment:fragment-ktx:1.3.2")
+    implementation("androidx.recyclerview:recyclerview:1.2.0-rc01")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.media:media:1.2.1")
+    implementation("androidx.media:media:1.3.0-rc02")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-rc01")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-rc01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:19.0.0")
     implementation("com.google.firebase:firebase-core:18.0.2")
-    implementation("com.google.firebase:firebase-firestore-ktx:22.0.2")
-    implementation("com.google.firebase:firebase-storage-ktx:19.2.1")
-    implementation("com.google.firebase:firebase-auth:20.0.2")
-    implementation("com.google.firebase:firebase-crashlytics:17.3.1")
+    implementation("com.google.firebase:firebase-firestore-ktx:22.1.2")
+    implementation("com.google.firebase:firebase-storage-ktx:19.2.2")
+    implementation("com.google.firebase:firebase-auth:20.0.3")
+    implementation("com.google.firebase:firebase-crashlytics:17.4.1")
     implementation("com.google.firebase:firebase-analytics:18.0.2")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
@@ -109,7 +111,7 @@ dependencies {
     implementation("com.mikepenz:community-material-typeface:5.8.55.0-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.4")
-    implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.0")
+    implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.2")
     implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-drag:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-swipe:$fastAdapterVersion")
