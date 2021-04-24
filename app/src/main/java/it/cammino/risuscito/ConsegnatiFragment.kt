@@ -224,13 +224,12 @@ class ConsegnatiFragment : Fragment() {
         binding.chooseRecycler.itemAnimator = SlideRightAlphaAnimator()
 
         mMainActivity?.activitySearchView?.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
+            override fun onQueryTextSubmit(query: String): Boolean {
                 return false
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                val simplifiedString = Utility.removeAccents(newText
-                        ?: "").toLowerCase(getSystemLocale(resources))
+            override fun onQueryTextChange(newText: String): Boolean {
+                val simplifiedString = Utility.removeAccents(newText).toLowerCase(getSystemLocale(resources))
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter {
