@@ -151,7 +151,6 @@ class LUtils private constructor(private val mActivity: Activity) {
                 val transformer = tf.newTransformer()
                 transformer.transform(domSource, result)
                 Log.d(TAG, "listToXML: $writer")
-                //            writer.toString();
 
                 val exportFile = File(mActivity.cacheDir.absolutePath + "/" + it.name + FILE_FORMAT)
                 Log.d(TAG, "listToXML: exportFile = " + exportFile.absolutePath)
