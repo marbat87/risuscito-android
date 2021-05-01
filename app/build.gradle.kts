@@ -16,8 +16,8 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4612
-        versionName = "4.6.0"
+        versionCode = 4701
+        versionName = "4.7.0-ALPHA01"
         vectorDrawables.useSupportLibrary = true
         kapt {
             arguments {

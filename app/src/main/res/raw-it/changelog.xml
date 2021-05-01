@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <release versionCode="4701"
+        date="Maggio 2021"
+        versionName="4.7.0-ALPHA01">
+        <bugfix>Corretti alcuni canti e accordi Italiani</bugfix>
+        <bugfix>Corretti alcuni canti e accordi Ucraini</bugfix>
+        <bugfix>Corretta la condivisione delle liste su Android 11</bugfix>
+        <bugfix>Corretta la modalità schermo intero su Android 11</bugfix>
+        <info>Questa è probabilmente l'ultima versione, prima dell'aggiornamento dei testi, colori e indici, secondo quanto riportato nella recente versione cartacea ufficiale</info>
+    </release>
+
     <release versionCode="4612"
         date="Ottobre 2020"
         versionName="4.6.0">
