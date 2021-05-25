@@ -16,7 +16,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4702
+        versionCode = 4703
         versionName = "4.7.0"
         vectorDrawables.useSupportLibrary = true
         kapt {
@@ -109,7 +109,7 @@ dependencies {
     implementation("com.mikepenz:iconics-views:$iconicVersion")
     implementation("com.mikepenz:community-material-typeface:5.8.55.0-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
-    implementation("com.github.jrvansuita:MaterialAbout:0.2.5")
+    implementation("com.github.jrvansuita:MaterialAbout:0.2.5.1")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.2")
     implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-drag:$fastAdapterVersion")
