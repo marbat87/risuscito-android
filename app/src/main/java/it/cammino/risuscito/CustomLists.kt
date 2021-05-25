@@ -20,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
@@ -43,6 +42,7 @@ import it.cammino.risuscito.databinding.TabsLayout2Binding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
+import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -62,17 +62,21 @@ class CustomLists : Fragment() {
     private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
     private var mLastClickTime: Long = 0
-    private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageSelected(position: Int) {
-            Log.d(TAG, "onPageSelected: $position")
-            Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
-            if (mCustomListsViewModel.indexToShow != position) {
-                mCustomListsViewModel.indexToShow = position
-                mMainActivity?.actionMode?.finish()
+    private val mPageChange: ViewPager2.OnPageChangeCallback =
+        object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                Log.d(TAG, "onPageSelected: $position")
+                Log.d(
+                    TAG,
+                    "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                )
+                if (mCustomListsViewModel.indexToShow != position) {
+                    mCustomListsViewModel.indexToShow = position
+                    mMainActivity?.actionMode?.finish()
+                }
+                initFabOptions(position >= 2)
             }
-            initFabOptions(position >= 2)
         }
-    }
 
     private var _binding: TabsLayout2Binding? = null
 
@@ -80,7 +84,11 @@ class CustomLists : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = TabsLayout2Binding.inflate(inflater, container, false)
         return binding.root
     }
@@ -107,8 +115,12 @@ class CustomLists : Fragment() {
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
         Log.d(
-                TAG,
-                "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false))
+            TAG,
+            "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(
+                Utility.INTRO_CUSTOMLISTS,
+                false
+            )
+        )
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false)) playIntro()
 
         mSectionsPagerAdapter = SectionsPagerAdapter(this)
@@ -137,7 +149,8 @@ class CustomLists : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         IconicsMenuInflaterUtil.inflate(
-                requireActivity().menuInflater, requireContext(), R.menu.help_menu, menu)
+            requireActivity().menuInflater, requireContext(), R.menu.help_menu, menu
+        )
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -151,61 +164,72 @@ class CustomLists : Fragment() {
         return false
     }
 
-    private val startListEditForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
-            mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif
-            movePage = true
+    private val startListEditForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Log.d(TAG, "mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
+                mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif
+                movePage = true
+            }
         }
-    }
 
     private fun playIntro() {
         mMainActivity?.enableFab(true)
-        val doneDrawable = IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check).apply {
-            //            colorInt = Color.WHITE
-            sizeDp = 24
-            paddingDp = 4
-        }
+        val doneDrawable =
+            IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check).apply {
+                //            colorInt = Color.WHITE
+                sizeDp = 24
+                paddingDp = 4
+            }
         mMainActivity?.getFab()?.let { fab ->
-            val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
+            val colorOnPrimary =
+                MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
             TapTargetSequence(requireActivity())
-                    .continueOnCancel(true)
-                    .targets(
-                            TapTarget.forView(
-                                    fab,
-                                    getString(R.string.showcase_listepers_title),
-                                    getString(R.string.showcase_listepers_desc1))
-                                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                    .textTypeface(mRegularFont) // Specify a typeface for the text
-                                    .titleTextColorInt(colorOnPrimary)
-                                    .textColorInt(colorOnPrimary)
-                                    .descriptionTextSize(15)
-                                    .tintTarget(false) // Whether to tint the target view's color
-                            ,
-                            TapTarget.forView(
-                                    fab,
-                                    getString(R.string.showcase_listepers_title),
-                                    getString(R.string.showcase_listepers_desc3))
-                                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                                    .icon(doneDrawable)
-                                    .textTypeface(mRegularFont) // Specify a typeface for the text
-                                    .titleTextColorInt(colorOnPrimary)
-                                    .textColorInt(colorOnPrimary))
-                    .listener(
-                            object : TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                                override fun onSequenceFinish() {
-                                    if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                                }
+                .continueOnCancel(true)
+                .targets(
+                    TapTarget.forView(
+                        fab,
+                        getString(R.string.showcase_listepers_title),
+                        getString(R.string.showcase_listepers_desc1)
+                    )
+                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                        .textTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTextColorInt(colorOnPrimary)
+                        .textColorInt(colorOnPrimary)
+                        .descriptionTextSize(15)
+                        .tintTarget(false) // Whether to tint the target view's color
+                    ,
+                    TapTarget.forView(
+                        fab,
+                        getString(R.string.showcase_listepers_title),
+                        getString(R.string.showcase_listepers_desc3)
+                    )
+                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                        .icon(doneDrawable)
+                        .textTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTextColorInt(colorOnPrimary)
+                        .textColorInt(colorOnPrimary)
+                )
+                .listener(
+                    object :
+                        TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+                        override fun onSequenceFinish() {
+                            if (context != null) PreferenceManager.getDefaultSharedPreferences(
+                                context
+                            ).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                        }
 
-                                override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-                                    // no-op
-                                }
+                        override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                            // no-op
+                        }
 
-                                override fun onSequenceCanceled(tapTarget: TapTarget) {
-                                    if (context != null) PreferenceManager.getDefaultSharedPreferences(context).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                                }
-                            })
-                    .start()
+                        override fun onSequenceCanceled(tapTarget: TapTarget) {
+                            if (context != null) PreferenceManager.getDefaultSharedPreferences(
+                                context
+                            ).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                        }
+                    })
+                .start()
         }
     }
 
@@ -237,8 +261,18 @@ class CustomLists : Fragment() {
                             NEW_LIST -> {
                                 inputdialogViewModel.handled = true
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
-                                startListEditForResult.launch(Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(LIST_TITLE to inputdialogViewModel.outputText, EDIT_EXISTING_LIST to false)))
-                                Animatoo.animateSlideUp(activity)
+                                startListEditForResult.launch(
+                                    Intent(
+                                        activity,
+                                        CreaListaActivity::class.java
+                                    ).putExtras(
+                                        bundleOf(
+                                            LIST_TITLE to inputdialogViewModel.outputText,
+                                            EDIT_EXISTING_LIST to false
+                                        )
+                                    )
+                                )
+                                Animations.enterDown(activity)
                             }
                         }
                     }
@@ -257,7 +291,8 @@ class CustomLists : Fragment() {
                         when (simpleDialogViewModel.mTag) {
                             RESET_LIST -> {
                                 simpleDialogViewModel.handled = true
-                                binding.viewPager.findViewById<Button>(R.id.button_pulisci).performClick()
+                                binding.viewPager.findViewById<Button>(R.id.button_pulisci)
+                                    .performClick()
                             }
                             DELETE_LIST -> {
                                 simpleDialogViewModel.handled = true
@@ -277,11 +312,11 @@ class CustomLists : Fragment() {
     private inner class SectionsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
         override fun createFragment(position: Int): Fragment =
-                when (position) {
-                    0 -> ListaPredefinitaFragment.newInstance(1)
-                    1 -> ListaPredefinitaFragment.newInstance(2)
-                    else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
-                }
+            when (position) {
+                0 -> ListaPredefinitaFragment.newInstance(1)
+                1 -> ListaPredefinitaFragment.newInstance(2)
+                else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
+            }
 
         override fun getItemCount(): Int = 2 + titoliListe.size
 
@@ -306,24 +341,30 @@ class CustomLists : Fragment() {
                 R.id.fab_pulisci -> {
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
-                        SimpleDialogFragment.show(SimpleDialogFragment.Builder(
-                                mActivity, RESET_LIST)
+                        SimpleDialogFragment.show(
+                            SimpleDialogFragment.Builder(
+                                mActivity, RESET_LIST
+                            )
                                 .title(R.string.dialog_reset_list_title)
                                 .content(R.string.reset_list_question)
                                 .positiveButton(R.string.reset_confirm)
                                 .negativeButton(R.string.cancel),
-                                mActivity.supportFragmentManager)
+                            mActivity.supportFragmentManager
+                        )
                     }
                     true
                 }
                 R.id.fab_add_lista -> {
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
-                        InputTextDialogFragment.show(InputTextDialogFragment.Builder(
-                                mActivity, NEW_LIST)
+                        InputTextDialogFragment.show(
+                            InputTextDialogFragment.Builder(
+                                mActivity, NEW_LIST
+                            )
                                 .title(R.string.lista_add_desc)
                                 .positiveButton(R.string.create_confirm)
-                                .negativeButton(R.string.cancel), mActivity.supportFragmentManager)
+                                .negativeButton(R.string.cancel), mActivity.supportFragmentManager
+                        )
                     }
                     true
                 }
@@ -335,8 +376,18 @@ class CustomLists : Fragment() {
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
-                    startListEditForResult.launch(Intent(activity, CreaListaActivity::class.java).putExtras(bundleOf(ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2], EDIT_EXISTING_LIST to true)))
-                    Animatoo.animateSlideUp(activity)
+                    startListEditForResult.launch(
+                        Intent(
+                            activity,
+                            CreaListaActivity::class.java
+                        ).putExtras(
+                            bundleOf(
+                                ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                EDIT_EXISTING_LIST to true
+                            )
+                        )
+                    )
+                    Animations.enterDown(activity)
                     true
                 }
                 R.id.fab_delete_lista -> {
@@ -369,17 +420,22 @@ class CustomLists : Fragment() {
             mCustomListsViewModel.listaDaCanc = binding.viewPager.currentItem - 2
             mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
             val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-            val lista = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.getListById(mCustomListsViewModel.idDaCanc) }
+            val lista = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                mDao.getListById(mCustomListsViewModel.idDaCanc)
+            }
             mCustomListsViewModel.titoloDaCanc = lista?.titolo
             mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
-            SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+            SimpleDialogFragment.show(
+                SimpleDialogFragment.Builder(
                     mActivity,
-                    DELETE_LIST)
+                    DELETE_LIST
+                )
                     .title(R.string.action_remove_list)
                     .content(R.string.delete_list_dialog)
                     .positiveButton(R.string.delete_confirm)
                     .negativeButton(R.string.cancel),
-                    mActivity.supportFragmentManager)
+                mActivity.supportFragmentManager
+            )
         }
     }
 
@@ -390,26 +446,32 @@ class CustomLists : Fragment() {
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.deleteList(listToDelete) }
         mMainActivity?.activityMainContent?.let { mainContent ->
             Snackbar.make(
-                    mainContent,
-                    getString(R.string.list_removed)
-                            + mCustomListsViewModel.titoloDaCanc
-                            + "'!",
-                    Snackbar.LENGTH_LONG)
-                    .setAction(
-                            getString(R.string.cancel).uppercase(getSystemLocale(resources))
-                    ) {
-                        if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                            mLastClickTime = SystemClock.elapsedRealtime()
-                            mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
-                            movePage = true
-                            val mListePersDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-                            val listaToRestore = ListaPers()
-                            listaToRestore.id = mCustomListsViewModel.idDaCanc
-                            listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
-                            listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
-                            lifecycleScope.launch(Dispatchers.IO) { mListePersDao.insertLista(listaToRestore) }
+                mainContent,
+                getString(R.string.list_removed)
+                        + mCustomListsViewModel.titoloDaCanc
+                        + "'!",
+                Snackbar.LENGTH_LONG
+            )
+                .setAction(
+                    getString(R.string.cancel).uppercase(getSystemLocale(resources))
+                ) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                        mLastClickTime = SystemClock.elapsedRealtime()
+                        mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
+                        movePage = true
+                        val mListePersDao =
+                            RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+                        val listaToRestore = ListaPers()
+                        listaToRestore.id = mCustomListsViewModel.idDaCanc
+                        listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+                        listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            mListePersDao.insertLista(
+                                listaToRestore
+                            )
                         }
-                    }.show()
+                    }
+                }.show()
         }
     }
 

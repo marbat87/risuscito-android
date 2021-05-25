@@ -226,7 +226,6 @@ class SectionedIndexFragment : Fragment() {
                                 }
                                 identifier = canti[i].idArgomento.toLong()
                                 subItems = mSubItems
-//                                subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
                                 subItems.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubItem)?.title?.getText(requireContext()) })
                             }
                     )
@@ -274,7 +273,6 @@ class SectionedIndexFragment : Fragment() {
                                 }
                                 identifier = canti[i].idIndice.toLong()
                                 subItems = mSubItems
-//                                subItems.sortBy { (it as? SimpleSubItem)?.title?.getText(requireContext()) }
                                 subItems.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubItem)?.title?.getText(requireContext()) })
                             }
                     )
@@ -285,7 +283,6 @@ class SectionedIndexFragment : Fragment() {
         }
 
         var totListe = 0
-//        mCantiViewModel.titoliList.sortBy { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) }
         mCantiViewModel.titoliList.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) })
         mCantiViewModel.titoliList.forEach { (it as? SimpleSubExpandableItem)?.position = totListe++ }
         mAdapter.set(mCantiViewModel.titoliList)
