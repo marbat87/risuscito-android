@@ -229,12 +229,12 @@ class ConsegnatiFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                val simplifiedString = Utility.removeAccents(newText).toLowerCase(getSystemLocale(resources))
+                val simplifiedString = Utility.removeAccents(newText).lowercase(getSystemLocale(resources))
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter {
                         Utility.removeAccents(it.title?.getText(requireContext())
-                                ?: "").toLowerCase(getSystemLocale(resources)).contains(simplifiedString)
+                                ?: "").lowercase(getSystemLocale(resources)).contains(simplifiedString)
                     }
                     mCantiViewModel.titoliChooseFiltered.forEach { it.filter = simplifiedString }
                     selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)

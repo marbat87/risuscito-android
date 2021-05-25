@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4701"
-        date="Maggio 2021"
-        versionName="4.7.0-ALPHA01">
+    <release versionCode="4702"
+        date="Giugno 2021"
+        versionName="4.7.0">
         <bugfix>Corretti alcuni canti e accordi Italiani</bugfix>
         <bugfix>Corretti alcuni canti e accordi Ucraini</bugfix>
         <bugfix>Corretta la condivisione delle liste su Android 11</bugfix>

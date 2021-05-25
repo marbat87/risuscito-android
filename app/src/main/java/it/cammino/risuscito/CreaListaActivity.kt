@@ -418,7 +418,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
         if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible = false
 
         Snackbar.make(binding.mainContent, getString(R.string.generic_removed, item.name?.getText(this@CreaListaActivity)), Snackbar.LENGTH_SHORT)
-                .setAction(getString(R.string.cancel).toUpperCase(getSystemLocale(resources))) {
+                .setAction(getString(R.string.cancel).uppercase(getSystemLocale(resources))) {
                     item.swipedDirection = 0
                     mAdapter.add(position, item)
                     if (position != RecyclerView.NO_POSITION)

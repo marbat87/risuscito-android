@@ -16,8 +16,8 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4701
-        versionName = "4.7.0-ALPHA01"
+        versionCode = 4702
+        versionName = "4.7.0"
         vectorDrawables.useSupportLibrary = true
         kapt {
             arguments {
@@ -35,7 +35,6 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
-        useIR = true
     }
 
     lintOptions {
@@ -72,19 +71,19 @@ val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.3.0"
 val iconicVersion = "5.2.8"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.32")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.0")
     implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.activity:activity-ktx:1.2.2")
-    implementation("androidx.appcompat:appcompat:1.3.0-rc01")
-    implementation("androidx.appcompat:appcompat-resources:1.3.0-rc01")
-    implementation("androidx.core:core-ktx:1.5.0-rc01")
-    implementation("androidx.fragment:fragment-ktx:1.3.3")
+    implementation("androidx.activity:activity-ktx:1.2.3")
+    implementation("androidx.appcompat:appcompat:1.3.0")
+    implementation("androidx.appcompat:appcompat-resources:1.3.0")
+    implementation("androidx.core:core-ktx:1.5.0")
+    implementation("androidx.fragment:fragment-ktx:1.3.4")
     implementation("androidx.recyclerview:recyclerview:1.2.0")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.media:media:1.3.0")
+    implementation("androidx.media:media:1.3.1")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
@@ -94,12 +93,12 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:19.0.0")
-    implementation("com.google.firebase:firebase-core:18.0.3")
-    implementation("com.google.firebase:firebase-firestore-ktx:22.1.2")
-    implementation("com.google.firebase:firebase-storage-ktx:19.2.2")
-    implementation("com.google.firebase:firebase-auth:20.0.4")
-    implementation("com.google.firebase:firebase-crashlytics:17.4.1")
-    implementation("com.google.firebase:firebase-analytics:18.0.3")
+    implementation("com.google.firebase:firebase-core:19.0.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:23.0.0")
+    implementation("com.google.firebase:firebase-storage-ktx:20.0.0")
+    implementation("com.google.firebase:firebase-auth:21.0.1")
+    implementation("com.google.firebase:firebase-crashlytics:18.0.0")
+    implementation("com.google.firebase:firebase-analytics:19.0.0")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
@@ -123,7 +122,7 @@ dependencies {
     implementation("pub.devrel:easypermissions:3.0.0")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.4")
-    implementation("com.leinardi.android:speed-dial:3.1.1")
+    implementation("com.leinardi.android:speed-dial:3.2.0")
     implementation("com.github.mohammadatif:Animatoo:master")
     implementation("com.github.Ferfalk:SimpleSearchView:0.2.0")
     implementation("com.github.MFlisar:changelog:1.1.7")

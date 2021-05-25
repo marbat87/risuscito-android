@@ -199,7 +199,7 @@ class SearchFragment : Fragment() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.toLowerCase(getSystemLocale(resources))
+                                text = text.lowercase(getSystemLocale(resources))
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -217,12 +217,12 @@ class SearchFragment : Fragment() {
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(resources))
+                    val stringa = Utility.removeAccents(s).lowercase(getSystemLocale(resources))
                     Log.d(tag, "performSearch onTextChanged: stringa $stringa")
                     mViewModel.titoli
                             .filter {
                                 Utility.removeAccents(it.title?.getText(requireContext())
-                                        ?: "").toLowerCase(getSystemLocale(resources)).contains(stringa)
+                                        ?: "").lowercase(getSystemLocale(resources)).contains(stringa)
                             }
                             .forEach {
                                 if (!isActive) return@launch

@@ -872,9 +872,9 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 if (Utility.isLowerCase(mCantiViewModel.primaNota[0])) {
                                     var notaCambioMin = mCantiViewModel.notaCambio
                                     notaCambioMin = if (notaCambioMin.length == 1)
-                                        notaCambioMin.toLowerCase(getSystemLocale(resources))
+                                        notaCambioMin.lowercase(getSystemLocale(resources))
                                     else
-                                        notaCambioMin.substring(0, 1).toLowerCase(getSystemLocale(resources)) + notaCambioMin.substring(1)
+                                        notaCambioMin.substring(0, 1).lowercase(getSystemLocale(resources)) + notaCambioMin.substring(1)
                                     line = line.replaceFirst(notaCambioMin.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">$notaCambioMin</SPAN>")
                                 } else
                                     line = line.replaceFirst(mCantiViewModel.notaCambio.toRegex(), "<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">"
@@ -1004,7 +1004,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     private fun createFileChooser() {
         if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             MaterialDialog(this)
-                    .fileChooser(context = this, filter = { it.isDirectory || it.extension.toLowerCase(getSystemLocale(resources)) == "mp3" }) { _, file ->
+                    .fileChooser(context = this, filter = { it.isDirectory || it.extension.lowercase(getSystemLocale(resources)) == "mp3" }) { _, file ->
                         val path = file.absolutePath
                         Snackbar.make(
                                 findViewById(android.R.id.content),

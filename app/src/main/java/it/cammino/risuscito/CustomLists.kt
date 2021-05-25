@@ -119,9 +119,9 @@ class CustomLists : Fragment() {
             TabLayoutMediator(it, binding.viewPager) { tab, position ->
                 val l = getSystemLocale(resources)
                 tab.text = when (position) {
-                    0 -> getString(R.string.title_activity_canti_parola).toUpperCase(l)
-                    1 -> getString(R.string.title_activity_canti_eucarestia).toUpperCase(l)
-                    else -> titoliListe[position - 2]?.toUpperCase(l)
+                    0 -> getString(R.string.title_activity_canti_parola).uppercase(l)
+                    1 -> getString(R.string.title_activity_canti_eucarestia).uppercase(l)
+                    else -> titoliListe[position - 2]?.uppercase(l)
                 }
             }.attach()
         }
@@ -396,7 +396,7 @@ class CustomLists : Fragment() {
                             + "'!",
                     Snackbar.LENGTH_LONG)
                     .setAction(
-                            getString(R.string.cancel).toUpperCase(getSystemLocale(resources))
+                            getString(R.string.cancel).uppercase(getSystemLocale(resources))
                     ) {
                         if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                             mLastClickTime = SystemClock.elapsedRealtime()
