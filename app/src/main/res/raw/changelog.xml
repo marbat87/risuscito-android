@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4702"
+    <release versionCode="4703"
         date="June 2021"
         versionName="4.7.0">
         <bugfix>Fixed some Italian songs</bugfix>
         <bugfix>Fixed some Ukrainian songs</bugfix>
         <bugfix>Fixed lists sharing on Android 11</bugfix>
         <bugfix>Fixed songs fullscreen mode on Android 11</bugfix>
+        <new>New transitions animations</new>
         <info>This is probably the last version before the release of the updated colors and indexes from the official book</info>
     </release>
 
