@@ -142,7 +142,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
 
         mTouchHelper?.attachToRecyclerView(binding.recyclerView) // Attach ItemTouchHelper to RecyclerView
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
             colorInt = Color.WHITE
             sizeDp = 24
             paddingDp = 4
@@ -418,7 +418,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback, SimpleSwipeCal
         if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible = false
 
         Snackbar.make(binding.mainContent, getString(R.string.generic_removed, item.name?.getText(this@CreaListaActivity)), Snackbar.LENGTH_SHORT)
-                .setAction(getString(R.string.cancel).toUpperCase(getSystemLocale(resources))) {
+                .setAction(getString(R.string.cancel).uppercase(getSystemLocale(resources))) {
                     item.swipedDirection = 0
                     mAdapter.add(position, item)
                     if (position != RecyclerView.NO_POSITION)

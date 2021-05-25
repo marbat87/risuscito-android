@@ -60,48 +60,31 @@ class XmlImportService : JobIntentService() {
                 val fis = contentResolver.openInputStream(data)
                 val celebrazione = parse(fis)
 
-                if (celebrazione != null) {
-                    val mDao = RisuscitoDatabase.getInstance(this).listePersDao()
-                    val listaPers = ListaPers()
-                    listaPers.titolo = celebrazione.name
-                    listaPers.lista = celebrazione
-                    mDao.insertLista(listaPers)
+                val mDao = RisuscitoDatabase.getInstance(this).listePersDao()
+                val listaPers = ListaPers()
+                listaPers.titolo = celebrazione.name
+                listaPers.lista = celebrazione
+                mDao.insertLista(listaPers)
 
-                    mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-                            .setSmallIcon(R.drawable.ic_notification_done)
-                            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                            .setContentTitle(getString(R.string.app_name))
-                            .setContentText(getString(R.string.import_done))
-                            .build()
+                mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification_done)
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(getString(R.string.import_done))
+                        .build()
 
-                    mNotificationManager.notify(NOTIFICATION_ID, mNotification)
+                mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
-                    Log.d(TAG, ACTION_FINISH)
-                    val intentBroadcast = Intent(ACTION_FINISH)
-                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+                Log.d(TAG, ACTION_FINISH)
+                val intentBroadcast = Intent(ACTION_FINISH)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
 
-                    val i = baseContext
-                            .packageManager
-                            .getLaunchIntentForPackage(baseContext.packageName)
-                    i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(i)
-                    stopSelf()
-                } else {
-                    mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-                            .setSmallIcon(R.drawable.ic_notification_error)
-                            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                            .setContentTitle(getString(R.string.app_name))
-                            .setTicker(getString(R.string.import_error))
-                            .setContentText(getString(R.string.import_error))
-                            .build()
-                    mNotificationManager.notify(NOTIFICATION_ID, mNotification)
-
-                    Log.d(TAG, ACTION_FINISH)
-                    val intentBroadcast = Intent(ACTION_FINISH)
-                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-
-                    stopSelf()
-                }
+                val i = baseContext
+                        .packageManager
+                        .getLaunchIntentForPackage(baseContext.packageName)
+                i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(i)
+                stopSelf()
             } catch (e: XmlPullParserException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
                 FirebaseCrashlytics.getInstance().recordException(e)
@@ -143,7 +126,7 @@ class XmlImportService : JobIntentService() {
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun parse(inputStream: InputStream?): ListaPersonalizzata? {
+    private fun parse(inputStream: InputStream?): ListaPersonalizzata {
         inputStream.use {
             val parser = Xml.newPullParser()
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
@@ -154,7 +137,7 @@ class XmlImportService : JobIntentService() {
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun readLista(parser: XmlPullParser): ListaPersonalizzata? {
+    private fun readLista(parser: XmlPullParser): ListaPersonalizzata {
         val list = ListaPersonalizzata()
         var tempPos: Position
 

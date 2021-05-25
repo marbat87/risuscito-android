@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4611"
+    <release versionCode="4702"
+        date="Giugno 2021"
+        versionName="4.7.0">
+        <bugfix>Corretti alcuni canti e accordi Italiani</bugfix>
+        <bugfix>Corretti alcuni canti e accordi Ucraini</bugfix>
+        <bugfix>Corretta la condivisione delle liste su Android 11</bugfix>
+        <bugfix>Corretta la modalità schermo intero su Android 11</bugfix>
+        <info>Questa è probabilmente l'ultima versione, prima dell'aggiornamento dei testi, colori e indici, secondo quanto riportato nella recente versione cartacea ufficiale</info>
+    </release>
+
+    <release versionCode="4612"
         date="Ottobre 2020"
         versionName="4.6.0">
         <new>Aggiunta traduzione in Polacco (se il tuo dispositivo è in Polacco e stai aggiornado l'applicazione, potrebbe essere necessario cancellare i dati o reinstallarla)</new>

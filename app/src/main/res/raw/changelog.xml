@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4611"
+    <release versionCode="4702"
+        date="June 2021"
+        versionName="4.7.0">
+        <bugfix>Fixed some Italian songs</bugfix>
+        <bugfix>Fixed some Ukrainian songs</bugfix>
+        <bugfix>Fixed lists sharing on Android 11</bugfix>
+        <bugfix>Fixed songs fullscreen mode on Android 11</bugfix>
+        <info>This is probably the last version before the release of the updated colors and indexes from the official book</info>
+    </release>
+
+    <release versionCode="4612"
         date="October 2020"
         versionName="4.6.0">
-        <new>Added Polish language (if Polish is your system language and you're updating this app, you may need to delete application data or uninstall and then resintall it)</new>
-        <new>Added English (Philippines) language (if English (Philippines) is your system localization and you're updating this app, you may need to delete application data or uninstall and then resintall it)</new>
+        <new>Added Polish language (if Polish is your system language and you're updating this app, you may need to delete application data or uninstall and then reinstall it)</new>
+        <new>Added English (Philippines) language (if English (Philippines) is your system localization and you're updating this app, you may need to delete application data or uninstall and then reinstall it)</new>
         <new>Updated color system. Now text on light colors bars (e.g. yellow) is black</new>
         <bugfix>Various</bugfix>
     </release>
@@ -13,7 +23,7 @@
     <release versionCode="4503"
         date="May 2020"
         versionName="4.5.0">
-        <new>Added Turkish language (if Turkish is your systema language, you may need to delete application data or uninstall and then resintall it)</new>
+        <new>Added Turkish language (if Turkish is your system language, you may need to delete application data or uninstall and then resintall it)</new>
         <new>Changed profile layout in left menu</new>
         <bugfix>List order of checkable items in Delivered Songs section</bugfix>
         <bugfix>Solved an issue with rendering of missing songs in languages different from Italian</bugfix>

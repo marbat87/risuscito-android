@@ -355,25 +355,25 @@ class MainActivity : ThemeableActivity() {
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.search_name_text
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_magnify
                             identifier = R.id.navigation_search.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_general_index
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_view_list
                             identifier = R.id.navigation_indexes.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_custom_lists
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_view_carousel
                             identifier = R.id.navitagion_lists.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.action_favourites
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_star
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_star
                             identifier = R.id.navigation_favorites.toLong()
                             typeface = mMediumFont
                         },
@@ -403,8 +403,8 @@ class MainActivity : ThemeableActivity() {
                             typeface = mMediumFont
                         }
                 )
-                onDrawerItemClickListener = { _, drawerItem, position ->
-                    onDrawerItemClick(drawerItem, position)
+                onDrawerItemClickListener = { _, drawerItem, _ ->
+                    onDrawerItemClick(drawerItem)
                 }
                 setSavedInstance(savedInstanceState)
             }
@@ -466,25 +466,25 @@ class MainActivity : ThemeableActivity() {
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.search_name_text
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_magnify
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_magnify
                             identifier = R.id.navigation_search.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_general_index
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_list
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_view_list
                             identifier = R.id.navigation_indexes.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.title_activity_custom_lists
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_view_carousel
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_view_carousel
                             identifier = R.id.navitagion_lists.toLong()
                             typeface = mMediumFont
                         },
                         GmailDrawerItem().apply {
                             nameRes = R.string.action_favourites
-                            iconicsIcon = CommunityMaterial.Icon2.cmd_star
+                            iconicsIcon = CommunityMaterial.Icon3.cmd_star
                             identifier = R.id.navigation_favorites.toLong()
                             typeface = mMediumFont
                         },
@@ -514,8 +514,8 @@ class MainActivity : ThemeableActivity() {
                             typeface = mMediumFont
                         }
                 )
-                onDrawerItemClickListener = { _, drawerItem, position ->
-                    onDrawerItemClick(drawerItem, position)
+                onDrawerItemClickListener = { _, drawerItem, _ ->
+                    onDrawerItemClick(drawerItem)
                 }
                 tintStatusBar = true
                 setSavedInstance(savedInstanceState)
@@ -527,7 +527,7 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
-    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>, position: Int): Boolean {
+    private fun onDrawerItemClick(drawerItem: IDrawerItem<*>): Boolean {
         val fragment = when (drawerItem.identifier) {
             R.id.navigation_home.toLong() -> Risuscito()
             R.id.navigation_search.toLong() -> SearchFragment()
@@ -550,15 +550,6 @@ class MainActivity : ThemeableActivity() {
                 setCustomAnimations(
                         R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
                 replace(R.id.content_frame, fragment, drawerItem.identifier.toString())
-            }
-        }
-
-        //FIX perchè cliccando sul MiniDrawer non si deseleziona la voce del drawer
-        //precedentemente selezionata
-        if (mViewModel.isTabletWithNoFixedDrawer) {
-            for (i in 0 until sliderView.adapter.itemCount) {
-                if (i != position)
-                    sliderView.selectExtension.deselect(i)
             }
         }
 
@@ -709,7 +700,7 @@ class MainActivity : ThemeableActivity() {
 
             binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_add_lista,
-                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_plus).apply {
+                            IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
                                 sizeDp = 24
                                 paddingDp = 4
                             }
@@ -724,7 +715,7 @@ class MainActivity : ThemeableActivity() {
 
             binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(R.id.fab_condividi,
-                            IconicsDrawable(this, CommunityMaterial.Icon2.cmd_share_variant).apply {
+                            IconicsDrawable(this, CommunityMaterial.Icon3.cmd_share_variant).apply {
                                 sizeDp = 24
                                 paddingDp = 4
                             }
@@ -755,7 +746,7 @@ class MainActivity : ThemeableActivity() {
 
                 binding.fabPager.addActionItem(
                         SpeedDialActionItem.Builder(R.id.fab_edit_lista,
-                                IconicsDrawable(this, CommunityMaterial.Icon2.cmd_pencil).apply {
+                                IconicsDrawable(this, CommunityMaterial.Icon3.cmd_pencil).apply {
                                     sizeDp = 24
                                     paddingDp = 4
                                 }
@@ -984,11 +975,11 @@ class MainActivity : ThemeableActivity() {
         hideProgressDialog()
     }
 
-    private fun showProgressDialog() {
+    fun showProgressDialog() {
         binding.loadingBar.isVisible = true
     }
 
-    private fun hideProgressDialog() {
+    fun hideProgressDialog() {
         binding.loadingBar.isVisible = false
     }
 

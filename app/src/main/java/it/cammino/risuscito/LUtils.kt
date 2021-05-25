@@ -10,11 +10,16 @@ import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
-import android.view.*
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -82,11 +87,11 @@ class LUtils private constructor(private val mActivity: Activity) {
 
     @RequiresApi(Build.VERSION_CODES.R)
     internal fun goFullscreenR() {
-        mActivity.window.insetsController?.hide(WindowInsets.Type.navigationBars())
-        mActivity.window.setDecorFitsSystemWindows(false)
-        mActivity.window.insetsController?.hide(WindowInsets.Type.statusBars())
-        mActivity.window.decorView.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
-        mActivity.window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        WindowCompat.setDecorFitsSystemWindows(mActivity.window, false)
+        WindowInsetsControllerCompat(mActivity.window, mActivity.window.decorView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -151,7 +156,6 @@ class LUtils private constructor(private val mActivity: Activity) {
                 val transformer = tf.newTransformer()
                 transformer.transform(domSource, result)
                 Log.d(TAG, "listToXML: $writer")
-                //            writer.toString();
 
                 val exportFile = File(mActivity.cacheDir.absolutePath + "/" + it.name + FILE_FORMAT)
                 Log.d(TAG, "listToXML: exportFile = " + exportFile.absolutePath)

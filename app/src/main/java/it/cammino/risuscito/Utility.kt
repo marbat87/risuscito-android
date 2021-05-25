@@ -191,10 +191,9 @@ object Utility {
     @TargetApi(Build.VERSION_CODES.Q)
     internal fun getExternalMediaIdByName(context: Context, link: String): Long {
         val projection = arrayOf(MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID)
-        val resolver = context.contentResolver
         val collection = MediaStore.Audio.Media
                 .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-        resolver.query(collection, projection, "${MediaStore.Audio.Media.DISPLAY_NAME} = ?", arrayOf(getExternalLink(link)), null).use { cursor ->
+        context.contentResolver.query(collection, projection, "${MediaStore.Audio.Media.DISPLAY_NAME} = ?", arrayOf(getExternalLink(link)), null).use { cursor ->
             cursor?.let {
                 if (it.moveToFirst()) {
                     val nameColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
