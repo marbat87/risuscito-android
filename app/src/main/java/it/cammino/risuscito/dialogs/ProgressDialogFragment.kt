@@ -17,8 +17,8 @@ import androidx.lifecycle.ViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import it.cammino.risuscito.R
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 import java.io.Serializable
 import java.text.NumberFormat
 
@@ -69,7 +69,7 @@ class ProgressDialogFragment : DialogFragment() {
                     ?: ""
         } else {
             dialog.customView(R.layout.linear_progressbar)
-            dialog.getCustomView().findViewById<MaterialProgressBar>(R.id.working_progress).max = mBuilder.mProgressMax
+            dialog.getCustomView().findViewById<LinearProgressIndicator>(R.id.working_progress).max = mBuilder.mProgressMax
             dialog.getCustomView().findViewById<TextView>(R.id.md_minMax).isVisible = mBuilder.mShowMinMax
             val mdContent = dialog.getCustomView().findViewById<TextView>(R.id.md_content_linear)
             mdContent.isVisible = mBuilder.mContent != null
@@ -96,7 +96,7 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     fun setProgress(progress: Int) {
-        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<MaterialProgressBar>(R.id.working_progress)?.progress = progress
+        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<LinearProgressIndicator>(R.id.working_progress)?.progress = progress
         (dialog as? MaterialDialog)?.getCustomView()?.findViewById<TextView>(R.id.md_label)?.text =
                 progressPercentFormat.format(
                         progress.toFloat() / (builder?.mProgressMax?.toFloat() ?: Float.MIN_VALUE))

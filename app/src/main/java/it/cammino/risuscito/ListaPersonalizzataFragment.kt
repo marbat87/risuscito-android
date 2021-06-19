@@ -61,7 +61,7 @@ class ListaPersonalizzataFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = ActivityListaPersonalizzataBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -208,7 +208,7 @@ class ListaPersonalizzataFragment : Fragment() {
                         mMainActivity?.actionMode?.finish()
                         mMainActivity?.let {
                             Snackbar.make(it.activityMainContent, R.string.song_removed, Snackbar.LENGTH_LONG)
-                                    .setAction(getString(R.string.cancel).toUpperCase(getSystemLocale(resources))) {
+                                    .setAction(getString(R.string.cancel).uppercase(getSystemLocale(resources))) {
                                         mCantiViewModel.listaPersonalizzata?.addCanto(cantoDaCanc, posizioneDaCanc)
                                         runUpdate()
                                     }
@@ -288,9 +288,9 @@ class ListaPersonalizzataFragment : Fragment() {
         get() {
             val l = getSystemLocale(resources)
             val result = StringBuilder()
-            result.append("-- ").append(mCantiViewModel.listaPersonalizzata?.name?.toUpperCase(l)).append(" --\n")
+            result.append("-- ").append(mCantiViewModel.listaPersonalizzata?.name?.uppercase(l)).append(" --\n")
             for (i in 0 until (mCantiViewModel.listaPersonalizzata?.numPosizioni ?: 0)) {
-                result.append(mCantiViewModel.listaPersonalizzata?.getNomePosizione(i)?.toUpperCase(l)).append("\n")
+                result.append(mCantiViewModel.listaPersonalizzata?.getNomePosizione(i)?.uppercase(l)).append("\n")
                 if (!mCantiViewModel.listaPersonalizzata?.getCantoPosizione(i).isNullOrEmpty()) {
                     mCantiViewModel.posizioniList[i].listItem?.let {
                         for (tempItem in it) {

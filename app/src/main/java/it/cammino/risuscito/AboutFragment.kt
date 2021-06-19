@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.google.android.material.elevation.ElevationOverlayProvider
 import com.vansuita.materialabout.builder.AboutBuilder
 import it.cammino.risuscito.databinding.AboutLayoutBinding
+import it.cammino.risuscito.ui.Animations
+import it.cammino.risuscito.utils.ThemeUtils
 
 
 class AboutFragment : Fragment() {
@@ -22,7 +22,11 @@ class AboutFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = AboutLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -43,11 +47,12 @@ class AboutFragment : Fragment() {
 
         val mChangeLogClickListener = View.OnClickListener {
             startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
-            Animatoo.animateSlideUp(activity)
+            Animations.enterDown(mMainActivity)
         }
 
-        binding.about.addView(
-                AboutBuilder.with(mMainActivity).apply {
+        context?.let {
+            binding.about.addView(
+                AboutBuilder.with(it).apply {
                     setAppIcon(R.drawable.ic_launcher_144dp)
                     setAppName(R.string.app_name)
                     setPhoto(R.drawable.ic_brand_icon)
@@ -62,7 +67,10 @@ class AboutFragment : Fragment() {
                     addChangeLogAction(mChangeLogClickListener)
                     addPrivacyPolicyAction("https://marbat87.altervista.org/privacy_policy.html")
                     isShowAsCard = false
-                    backgroundColor = ElevationOverlayProvider(requireContext()).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.mtrl_card_elevation))
-                }.build())
+                    backgroundColor =
+                        if (ThemeUtils.isDarkMode(it)) R.color.design_dark_default_color_surface else R.color.design_default_color_surface
+                }.build()
+            )
+        }
     }
 }

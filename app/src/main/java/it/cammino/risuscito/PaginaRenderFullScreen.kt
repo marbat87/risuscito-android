@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.View
 import androidx.activity.addCallback
 import androidx.lifecycle.lifecycleScope
-import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.colorInt
@@ -19,6 +18,7 @@ import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.databinding.ActivityPaginaRenderFullscreenBinding
+import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.InitialScrollWebClient
 import it.cammino.risuscito.ui.ThemeableActivity
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +61,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon.cmd_fullscreen_exit).apply {
+        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_fullscreen_exit).apply {
             colorInt = Color.WHITE
             sizeDp = 24
             paddingDp = 2
@@ -88,13 +88,16 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             it.zoom = (binding.cantoView.scale * 100).toInt()
             it.scrollX = binding.cantoView.scrollX
             it.scrollY = binding.cantoView.scrollY
-            Log.d(TAG, "it.id ${it.id} / it.zoom ${it.zoom} / it.scrollX ${it.scrollX} / it.scrollY ${it.scrollY}")
+            Log.d(
+                TAG,
+                "it.id ${it.id} / it.zoom ${it.zoom} / it.scrollX ${it.scrollX} / it.scrollY ${it.scrollY}"
+            )
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 RisuscitoDatabase.getInstance(applicationContext).cantoDao().updateCanto(it)
             }
         }
         finish()
-        Animatoo.animateZoom(this)
+        Animations.exitZoom(this)
     }
 
     private suspend fun loadWebView() {
@@ -142,9 +145,12 @@ class PaginaRenderFullScreen : ThemeableActivity() {
 //    }
 
     private fun loadContentIntoWebView(content: String?) {
-        if (!content.isNullOrEmpty()) binding.cantoView.loadData(Base64.encodeToString(
+        if (!content.isNullOrEmpty()) binding.cantoView.loadData(
+            Base64.encodeToString(
                 content.toByteArray(Charset.forName(ECONDING_UTF8)),
-                Base64.DEFAULT), DEFAULT_MIME_TYPE, ECONDING_BASE64)
+                Base64.DEFAULT
+            ), DEFAULT_MIME_TYPE, ECONDING_BASE64
+        )
     }
 
     companion object {

@@ -10,19 +10,24 @@ import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
-import android.view.*
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.animation.AnimationUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.ui.Animations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.*
@@ -52,24 +57,29 @@ class LUtils private constructor(private val mActivity: Activity) {
         get() = mActivity.resources.getBoolean(R.bool.fab_orientation_left)
 
     fun startActivityWithTransition(
-            intent: Intent) {
+        intent: Intent
+    ) {
         mActivity.startActivity(intent)
-        Animatoo.animateSlideLeft(mActivity)
+        Animations.enterRight(mActivity)
 
         val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
         val cronologia = Cronologia()
         cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
-        (mActivity as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) { mDao.insertCronologia(cronologia) }
+        (mActivity as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) {
+            mDao.insertCronologia(
+                cronologia
+            )
+        }
     }
 
     fun startActivityWithFadeIn(intent: Intent) {
         mActivity.startActivity(intent)
-        Animatoo.animateZoom(mActivity)
+        Animations.enterZoom(mActivity)
     }
 
     fun closeActivityWithTransition() {
         mActivity.finish()
-        Animatoo.animateSlideRight(mActivity)
+        Animations.exitRight(mActivity)
     }
 
     internal fun goFullscreen() {
@@ -82,29 +92,34 @@ class LUtils private constructor(private val mActivity: Activity) {
 
     @RequiresApi(Build.VERSION_CODES.R)
     internal fun goFullscreenR() {
-        mActivity.window.insetsController?.hide(WindowInsets.Type.navigationBars())
-        mActivity.window.setDecorFitsSystemWindows(false)
-        mActivity.window.insetsController?.hide(WindowInsets.Type.statusBars())
-        mActivity.window.decorView.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
-        mActivity.window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        WindowCompat.setDecorFitsSystemWindows(mActivity.window, false)
+        WindowInsetsControllerCompat(
+            mActivity.window,
+            mActivity.window.decorView
+        ).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars())
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 
     @Suppress("DEPRECATION")
     internal fun goFullscreenJB() {
         mActivity.requestWindowFeature(Window.FEATURE_NO_TITLE)
         mActivity
-                .window
-                .setFlags(
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            .window
+            .setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
     }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     @Suppress("DEPRECATION")
     internal fun goFullscreenK() {
         mActivity
-                .window
-                .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            .window
+            .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -151,7 +166,6 @@ class LUtils private constructor(private val mActivity: Activity) {
                 val transformer = tf.newTransformer()
                 transformer.transform(domSource, result)
                 Log.d(TAG, "listToXML: $writer")
-                //            writer.toString();
 
                 val exportFile = File(mActivity.cacheDir.absolutePath + "/" + it.name + FILE_FORMAT)
                 Log.d(TAG, "listToXML: exportFile = " + exportFile.absolutePath)
@@ -160,7 +174,11 @@ class LUtils private constructor(private val mActivity: Activity) {
                 fos.write(dataWrite.toByteArray())
                 fos.close()
 
-                return FileProvider.getUriForFile(mActivity, "it.cammino.risuscito.fileprovider", exportFile)
+                return FileProvider.getUriForFile(
+                    mActivity,
+                    "it.cammino.risuscito.fileprovider",
+                    exportFile
+                )
 
             } catch (e: ParserConfigurationException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
@@ -201,7 +219,8 @@ class LUtils private constructor(private val mActivity: Activity) {
             Log.d(TAG, "onCreateView: $prefName STRING")
         } catch (e: ClassCastException) {
             Log.d(TAG, "onCreateView: $prefName INTEGER >> CONVERTO")
-            PreferenceManager.getDefaultSharedPreferences(mActivity).edit { putString(prefName, pref.getInt(prefName, 0).toString()) }
+            PreferenceManager.getDefaultSharedPreferences(mActivity)
+                .edit { putString(prefName, pref.getInt(prefName, 0).toString()) }
         }
 
     }
@@ -210,22 +229,25 @@ class LUtils private constructor(private val mActivity: Activity) {
     // enters
     internal fun animateIn(view: View) {
         view.isVisible = true
-        view.animate().translationY(0f).setInterpolator(AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L).setListener(null).start()
+        view.animate().translationY(0f)
+            .setInterpolator(AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L)
+            .setListener(null).start()
     }
 
     internal fun animateOut(view: View) {
-        view.animate().translationY(view.height.toFloat()).setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L).setListener(
+        view.animate().translationY(view.height.toFloat())
+            .setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L)
+            .setListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator?) {
                         view.isVisible = false
                     }
                 }
-        ).start()
+            ).start()
     }
 
     companion object {
 
-        //        private val INTERPOLATOR = FastOutSlowInInterpolator()
         private const val FILE_FORMAT = ".risuscito"
         internal val TAG = LUtils::class.java.canonicalName
 
@@ -268,10 +290,6 @@ class LUtils private constructor(private val mActivity: Activity) {
         fun hasR(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
         }
-
-//        fun hasQ(): Boolean {
-//            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-//        }
 
         @Suppress("DEPRECATION")
         private fun fromHtmlLegacy(input: String): Spanned {

@@ -129,7 +129,7 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     override fun onGetRoot(clientPackageName: String,
-                           clientUid: Int, rootHints: Bundle?): BrowserRoot? {
+                           clientUid: Int, rootHints: Bundle?): BrowserRoot {
         // Verify the client is authorized to browse media and return the root that
         // makes the most sense here. In this example we simply verify the package name
         // is the same as ours, but more complicated checks, and responses, are possible

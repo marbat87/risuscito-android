@@ -67,7 +67,7 @@ class ListaPredefinitaFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = ActivityListaPersonalizzataBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -315,25 +315,25 @@ class ListaPredefinitaFragment : Fragment() {
                 1 -> {
                     result
                             .append("-- ")
-                            .append(getString(R.string.title_activity_canti_parola).toUpperCase(l))
+                            .append(getString(R.string.title_activity_canti_parola).uppercase(l))
                             .append(" --\n")
 
-                    result.append(resources.getString(R.string.canto_iniziale).toUpperCase(l))
+                    result.append(resources.getString(R.string.canto_iniziale).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
-                    result.append(resources.getString(R.string.prima_lettura).toUpperCase(l))
+                    result.append(resources.getString(R.string.prima_lettura).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
-                    result.append(resources.getString(R.string.seconda_lettura).toUpperCase(l))
+                    result.append(resources.getString(R.string.seconda_lettura).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
-                    result.append(resources.getString(R.string.terza_lettura).toUpperCase(l))
+                    result.append(resources.getString(R.string.terza_lettura).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
@@ -341,13 +341,13 @@ class ListaPredefinitaFragment : Fragment() {
                     val pref = PreferenceManager.getDefaultSharedPreferences(context)
 
                     if (pref.getBoolean(Utility.SHOW_PACE, false)) {
-                        result.append(resources.getString(R.string.canto_pace).toUpperCase(l))
+                        result.append(resources.getString(R.string.canto_pace).uppercase(l))
                         result.append("\n")
 
                         result.append(getTitoloToSendFromPosition(progressivePos++))
                         result.append("\n")
                     }
-                    result.append(resources.getString(R.string.canto_fine).toUpperCase(l))
+                    result.append(resources.getString(R.string.canto_fine).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos))
@@ -355,52 +355,52 @@ class ListaPredefinitaFragment : Fragment() {
                 2 -> {
                     result
                             .append("-- ")
-                            .append(getString(R.string.title_activity_canti_eucarestia).toUpperCase(l))
+                            .append(getString(R.string.title_activity_canti_eucarestia).uppercase(l))
                             .append(" --")
                     result.append("\n")
-                    result.append(resources.getString(R.string.canto_iniziale).toUpperCase(l))
+                    result.append(resources.getString(R.string.canto_iniziale).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
                     val pref = PreferenceManager.getDefaultSharedPreferences(context)
                     if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
-                        result.append(resources.getString(R.string.seconda_lettura).toUpperCase(l))
+                        result.append(resources.getString(R.string.seconda_lettura).uppercase(l))
                         result.append("\n")
 
                         result.append(getTitoloToSendFromPosition(progressivePos++))
                         result.append("\n")
                     }
-                    result.append(resources.getString(R.string.canto_pace).toUpperCase(l))
+                    result.append(resources.getString(R.string.canto_pace).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
                     if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false)) {
-                        result.append(resources.getString(R.string.canto_offertorio).toUpperCase(l))
+                        result.append(resources.getString(R.string.canto_offertorio).uppercase(l))
                         result.append("\n")
 
                         result.append(getTitoloToSendFromPosition(progressivePos++))
                         result.append("\n")
                     }
                     if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
-                        result.append(resources.getString(R.string.santo).toUpperCase(l))
+                        result.append(resources.getString(R.string.santo).uppercase(l))
                         result.append("\n")
 
                         result.append(getTitoloToSendFromPosition(progressivePos++))
                         result.append("\n")
                     }
-                    result.append(resources.getString(R.string.canto_pane).toUpperCase(l))
+                    result.append(resources.getString(R.string.canto_pane).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
-                    result.append(resources.getString(R.string.canto_vino).toUpperCase(l))
+                    result.append(resources.getString(R.string.canto_vino).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
-                    result.append(resources.getString(R.string.canto_fine).toUpperCase(l))
+                    result.append(resources.getString(R.string.canto_fine).uppercase(l))
                     result.append("\n")
 
                     result.append(getTitoloToSendFromPosition(progressivePos))

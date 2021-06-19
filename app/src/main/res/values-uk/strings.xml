@@ -50,7 +50,7 @@
     <string name="download_running">Завантажується&#8230;</string>
     <string name="present_yet">Пісня вже є</string>
     <string name="dialog_present_yet">&#200; вже є пісня:</string>
-    <string name="dialog_wonna_replace">. Хочеш замінити?</string>
+    <string name="dialog_wonna_replace">Хочеш замінити?</string>
     <string name="fast_search_title">Швидкий пошук</string>
     <string name="advanced_search_title">Детальний пошук</string>
     <string name="title_activity_search">Пошук пісні</string>

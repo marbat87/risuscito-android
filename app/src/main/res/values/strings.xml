@@ -67,8 +67,8 @@
     <string name="download_completed">File salvato</string>
     <string name="download_running">Download in corso&#8230;</string>
     <string name="present_yet">Canto gi&#224; presente</string>
-    <string name="dialog_present_yet">&#200; gi&#224; presente il canto: </string>
-    <string name="dialog_wonna_replace">. Vuoi sostituirlo?</string>
+    <string name="dialog_present_yet">&#200; gi&#224; presente il canto:</string>
+    <string name="dialog_wonna_replace">Vuoi sostituirlo?</string>
     <string name="fast_search_title">Ricerca veloce</string>
     <string name="advanced_search_title">Ricerca avanzata</string>
     <string name="title_activity_search">Ricerca canto</string>

@@ -37,7 +37,7 @@ class GeneralIndex : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = TabsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -62,12 +62,12 @@ class GeneralIndex : Fragment() {
             TabLayoutMediator(it, binding.viewPager) { tab, position ->
                 val l = getSystemLocale(resources)
                 tab.text = when (position) {
-                    0 -> getString(R.string.letter_order_text).toUpperCase(l)
-                    1 -> getString(R.string.page_order_text).toUpperCase(l)
-                    2 -> getString(R.string.arg_search_text).toUpperCase(l)
-                    3 -> getString(R.string.salmi_musica_index).toUpperCase(l)
-                    4 -> getString(R.string.indice_liturgico_index).toUpperCase(l)
-                    else -> getString(R.string.letter_order_text).toUpperCase(l)
+                    0 -> getString(R.string.letter_order_text).uppercase(l)
+                    1 -> getString(R.string.page_order_text).uppercase(l)
+                    2 -> getString(R.string.arg_search_text).uppercase(l)
+                    3 -> getString(R.string.salmi_musica_index).uppercase(l)
+                    4 -> getString(R.string.indice_liturgico_index).uppercase(l)
+                    else -> getString(R.string.letter_order_text).uppercase(l)
                 }
             }.attach()
         }

@@ -93,7 +93,7 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
             if (it.isNotEmpty()) {
                 val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
                         ?: "")
-                val mPosition = normalizedTitle.toLowerCase(getSystemLocale(ctx.resources)).indexOf(it)
+                val mPosition = normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
                 if (mPosition >= 0) {
                     val stringTitle = title?.getText(ctx)
                     val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)

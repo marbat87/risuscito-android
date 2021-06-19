@@ -103,9 +103,8 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/search_progress"
-        style="@style/Widget.MaterialProgressBar.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_box_ricerca"
@@ -114,9 +113,6 @@
         android:elevation="1dp"
         android:indeterminate="true"
         android:visibility="invisible"
-        risuscito:mpb_progressBackgroundTint="@android:color/white"
-        risuscito:mpb_progressStyle="circular"
-        risuscito:mpb_progressTint="?colorSecondary"
         tools:targetApi="lollipop" />
 
 </RelativeLayout>

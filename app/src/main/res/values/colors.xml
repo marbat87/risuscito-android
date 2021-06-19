@@ -135,5 +135,11 @@
     <color name="md_accent_light_green_dark">#7ecb20</color>
     <color name="md_accent_yellow_dark">#c7cc00</color>
 
+    <integer-array name="cat_custom_progress_colors">
+        <item>@color/md_yellow_500</item>
+        <item>@color/md_blue_700</item>
+        <item>@color/md_red_500</item>
+    </integer-array>
+
 </resources>
 

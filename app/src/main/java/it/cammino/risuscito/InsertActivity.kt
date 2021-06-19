@@ -233,7 +233,7 @@ class InsertActivity : ThemeableActivity() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.toLowerCase(getSystemLocale(resources))
+                                text = text.lowercase(getSystemLocale(resources))
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -255,12 +255,12 @@ class InsertActivity : ThemeableActivity() {
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).toLowerCase(getSystemLocale(resources))
+                    val stringa = Utility.removeAccents(s).lowercase(getSystemLocale(resources))
                     Log.d(TAG, "performInsertSearch onTextChanged: stringa $stringa")
                     simpleIndexViewModel.titoliInsert
                             .filter {
                                 Utility.removeAccents(it.title?.getText(applicationContext)
-                                        ?: "").toLowerCase(getSystemLocale(resources)).contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
+                                        ?: "").lowercase(getSystemLocale(resources)).contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
                             }
                             .forEach {
                                 if (!isActive) return@launch
