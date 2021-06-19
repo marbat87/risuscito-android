@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="4703"
+    <release versionCode="4704"
         date="June 2021"
         versionName="4.7.0">
         <bugfix>Fixed some Italian songs</bugfix>
