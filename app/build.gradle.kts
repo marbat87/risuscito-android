@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
-    id("com.google.firebase.crashlytics")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     kotlin("android")
     kotlin("kapt")
 }
@@ -16,7 +16,7 @@ android {
         minSdkVersion(16)
         targetSdkVersion(30)
         multiDexEnabled = true
-        versionCode = 4703
+        versionCode = 4704
         versionName = "4.7.0"
         vectorDrawables.useSupportLibrary = true
         kapt {
@@ -74,13 +74,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.0")
-    implementation("com.google.android.material:material:1.3.0")
+    implementation("com.google.android.material:material:1.4.0-rc01")
     implementation("androidx.activity:activity-ktx:1.2.3")
     implementation("androidx.appcompat:appcompat:1.3.0")
     implementation("androidx.appcompat:appcompat-resources:1.3.0")
     implementation("androidx.core:core-ktx:1.5.0")
-    implementation("androidx.fragment:fragment-ktx:1.3.4")
-    implementation("androidx.recyclerview:recyclerview:1.2.0")
+    implementation("androidx.fragment:fragment-ktx:1.3.5")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
     implementation("androidx.media:media:1.3.1")
@@ -94,10 +94,10 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
     implementation("com.google.android.gms:play-services-auth:19.0.0")
     implementation("com.google.firebase:firebase-core:19.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:23.0.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:23.0.1")
     implementation("com.google.firebase:firebase-storage-ktx:20.0.0")
     implementation("com.google.firebase:firebase-auth:21.0.1")
-    implementation("com.google.firebase:firebase-crashlytics:18.0.0")
+    implementation("com.google.firebase:firebase-crashlytics:18.0.1")
     implementation("com.google.firebase:firebase-analytics:19.0.0")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")

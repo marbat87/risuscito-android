@@ -80,7 +80,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 INSTALLED -> {
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     if (state.languages().isNotEmpty()) {
-//                        val newLanguage = state.languages().first()
                         Log.i(TAG, "Module installed: language $newLanguage")
                         Log.i(TAG, "Module installed: newLanguage $newLanguage")
                         RisuscitoApplication.localeManager.persistLanguage(requireContext(), newLanguage)
@@ -112,9 +111,10 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private val changeListener = Preference.OnPreferenceChangeListener { _, newValue ->
         val currentLang = RisuscitoApplication.localeManager.getLanguage(requireContext())
-        Log.i(TAG, "OnPreferenceChangeListener - oldValue: ${RisuscitoApplication.localeManager.getLanguage(requireContext())}")
-        Log.i(TAG, "OnPreferenceChangeListener - newValue: $newValue")
-        if (!currentLang.equals(newValue as? String ?: currentLang, ignoreCase = true)) {
+        val newLanguage = newValue as? String ?: currentLang
+        Log.i(TAG, "OnPreferenceChangeListener - oldValue: $currentLang")
+        Log.i(TAG, "OnPreferenceChangeListener - newValue: $newLanguage")
+        if (!currentLang.equals(newLanguage, ignoreCase = true)) {
             if (LUtils.hasL()) {
                 mMainActivity?.let { activity ->
                     ProgressDialogFragment.show(ProgressDialogFragment.Builder(
@@ -126,14 +126,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 }
                 // Creates a request to download and install additional language resources.
                 val request = SplitInstallRequest.newBuilder()
-                        .addLanguage(if ((newValue as? String
-                                        ?: "") == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
+                        .addLanguage(if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
                             Locale(LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES)
-                        else Locale(newValue as? String ?: ""))
+                        else Locale(newLanguage))
                         .build()
 
                 // Submits the request to install the additional language resources.
-                mSettingsViewModel.persistingLanguage = newValue as? String ?: ""
+                mSettingsViewModel.persistingLanguage = newLanguage
                 splitInstallManager.startInstall(request)
                         // You should also add the following listener to handle any errors
                         // processing the request.
@@ -153,15 +152,14 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         // You use this ID to track further status updates for the request.
                         ?.addOnSuccessListener { id -> sessionId = id }
             } else {
-                RisuscitoApplication.localeManager.persistLanguage(requireContext(), newValue as? String
-                        ?: currentLang)
+                RisuscitoApplication.localeManager.persistLanguage(requireContext(), newLanguage)
                 val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
                 mIntent?.let {
                     it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     it.putExtra(DB_RESET, true)
                     it.putExtra(
                             CHANGE_LANGUAGE,
-                            "$currentLang-${newValue as? String ?: currentLang}")
+                            "$currentLang-$newLanguage")
                     startActivity(it)
                 }
             }
