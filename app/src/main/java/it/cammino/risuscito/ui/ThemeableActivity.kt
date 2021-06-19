@@ -207,6 +207,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
             }
         }
         prefEdit.apply()
+        if (PreferenceManager.getDefaultSharedPreferences(this).getString(Utility.SYSTEM_LANGUAGE, "").isNullOrEmpty())
+            RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
     }
 
     fun backupDatabase(userId: String?) {
@@ -311,14 +313,14 @@ abstract class ThemeableActivity : AppCompatActivity() {
         for (backup in backupCanti) {
             Log.d(TAG, "backupCanto.id + ${backup.id} / backupCanto.savedTab ${backup.savedTab} / backupCanto.savedBarre ${backup.savedBarre}")
             cantoDao.setBackup(
-                    backup.id,
-                    backup.zoom,
-                    backup.scrollX,
-                    backup.scrollY,
-                    backup.favorite,
-                    backup.savedTab,
-                    backup.savedBarre,
-                    backup.savedSpeed)
+                backup.id,
+                backup.zoom,
+                backup.scrollX,
+                backup.scrollY,
+                backup.favorite,
+                backup.savedTab,
+                backup.savedBarre,
+                backup.savedSpeed)
         }
 
 

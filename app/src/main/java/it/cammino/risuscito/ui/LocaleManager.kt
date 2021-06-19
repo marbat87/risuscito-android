@@ -18,7 +18,6 @@ import java.util.*
 
 class LocaleManager(context: Context) {
 
-    //    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private var customScale = 0F
 
     init {
@@ -29,18 +28,7 @@ class LocaleManager(context: Context) {
         } else {
             // non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua
             // selezionabile oppure IT se non presente
-            val mLanguage = when (getSystemLocale(context.resources).language) {
-                LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
-                LANGUAGE_ENGLISH -> if (getSystemLocale(context.resources).country.isNotEmpty() && getSystemLocale(context.resources).country == COUNTRY_PHILIPPINES)
-                    LANGUAGE_ENGLISH_PHILIPPINES
-                else
-                    LANGUAGE_ENGLISH
-                LANGUAGE_TURKISH -> LANGUAGE_TURKISH
-                LANGUAGE_POLISH -> LANGUAGE_POLISH
-                else -> LANGUAGE_ITALIAN
-            }
-            Log.d(TAG, "attachBaseContext - default language set: $mLanguage")
-            persistLanguage(context, mLanguage)
+            setDefaultSystemLanguage(context)
         }
 
         var returnScale = 0F
@@ -61,8 +49,20 @@ class LocaleManager(context: Context) {
 
     }
 
-//    val language: String
-//        get() = prefs.getString(Utility.SYSTEM_LANGUAGE, "") ?: ""
+    fun setDefaultSystemLanguage(context: Context) {
+        val mLanguage = when (getSystemLocale(context.resources).language) {
+            LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
+            LANGUAGE_ENGLISH -> if (getSystemLocale(context.resources).country.isNotEmpty() && getSystemLocale(context.resources).country == COUNTRY_PHILIPPINES)
+                LANGUAGE_ENGLISH_PHILIPPINES
+            else
+                LANGUAGE_ENGLISH
+            LANGUAGE_TURKISH -> LANGUAGE_TURKISH
+            LANGUAGE_POLISH -> LANGUAGE_POLISH
+            else -> LANGUAGE_ITALIAN
+        }
+        Log.d(TAG, "setDefaultSystemLanguage - default language set: $mLanguage")
+        persistLanguage(context, mLanguage)
+    }
 
     fun persistLanguage(context: Context, language: String) {
         PreferenceManager.getDefaultSharedPreferences(context).edit {
@@ -72,7 +72,7 @@ class LocaleManager(context: Context) {
 
     fun getLanguage(context: Context): String {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(Utility.SYSTEM_LANGUAGE, "")
-                ?: ""
+            ?: ""
     }
 
     fun useCustomConfig(context: Context): Context {
