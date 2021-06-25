@@ -71,7 +71,7 @@ val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.3.0"
 val iconicVersion = "5.2.8"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.20")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.0")
     implementation("com.google.android.material:material:1.4.0-rc01")
@@ -97,7 +97,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:23.0.1")
     implementation("com.google.firebase:firebase-storage-ktx:20.0.0")
     implementation("com.google.firebase:firebase-auth:21.0.1")
-    implementation("com.google.firebase:firebase-crashlytics:18.0.1")
+    implementation("com.google.firebase:firebase-crashlytics:18.1.0")
     implementation("com.google.firebase:firebase-analytics:19.0.0")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
