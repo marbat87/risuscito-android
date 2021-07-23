@@ -66,24 +66,24 @@ android {
 
 val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.4.1"
-val materialDrawerVersion = "8.4.0"
+val materialDrawerVersion = "8.4.2"
 val materialDialogsVersion = "3.3.0"
 val roomVersion = "2.3.0"
 val iconicVersion = "5.2.8"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.0")
     implementation("com.google.android.material:material:1.4.0")
-    implementation("androidx.activity:activity-ktx:1.2.3")
-    implementation("androidx.appcompat:appcompat:1.3.0")
-    implementation("androidx.appcompat:appcompat-resources:1.3.0")
+    implementation("androidx.activity:activity-ktx:1.2.4")
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.appcompat:appcompat-resources:1.3.1")
     implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.fragment:fragment-ktx:1.3.5")
+    implementation("androidx.fragment:fragment-ktx:1.3.6")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.media:media:1.3.1")
+    implementation("androidx.media:media:1.4.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
@@ -92,12 +92,12 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
-    implementation("com.google.android.gms:play-services-auth:19.0.0")
+    implementation("com.google.android.gms:play-services-auth:19.2.0")
     implementation("com.google.firebase:firebase-core:19.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:23.0.2")
+    implementation("com.google.firebase:firebase-firestore-ktx:23.0.3")
     implementation("com.google.firebase:firebase-storage-ktx:20.0.0")
     implementation("com.google.firebase:firebase-auth:21.0.1")
-    implementation("com.google.firebase:firebase-crashlytics:18.1.0")
+    implementation("com.google.firebase:firebase-crashlytics:18.2.0")
     implementation("com.google.firebase:firebase-analytics:19.0.0")
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
