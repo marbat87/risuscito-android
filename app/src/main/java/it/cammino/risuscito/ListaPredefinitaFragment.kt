@@ -239,7 +239,7 @@ class ListaPredefinitaFragment : Fragment() {
     private fun subscribeUiUpdate() {
         mCantiViewModel.cantiResult?.observe(viewLifecycleOwner) { mCanti ->
             var progressiveTag = 0
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
             posizioniList.clear()
 
             when (mCantiViewModel.defaultListaId) {
@@ -338,7 +338,7 @@ class ListaPredefinitaFragment : Fragment() {
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
-                    val pref = PreferenceManager.getDefaultSharedPreferences(context)
+                    val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
                     if (pref.getBoolean(Utility.SHOW_PACE, false)) {
                         result.append(resources.getString(R.string.canto_pace).uppercase(l))
@@ -363,7 +363,7 @@ class ListaPredefinitaFragment : Fragment() {
 
                     result.append(getTitoloToSendFromPosition(progressivePos++))
                     result.append("\n")
-                    val pref = PreferenceManager.getDefaultSharedPreferences(context)
+                    val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                     if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
                         result.append(resources.getString(R.string.seconda_lettura).uppercase(l))
                         result.append("\n")

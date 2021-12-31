@@ -4,9 +4,8 @@
     <string-array name="pref_default_index_entries">
         <item>@string/letter_order_text</item>
         <item>@string/page_order_text</item>
-        <item>@string/arg_search_text</item>
-        <item>@string/salmi_musica_index</item>
         <item>@string/indice_liturgico_index</item>
+        <item>@string/salmi_musica_index</item>
     </string-array>
 
     <string-array name="pref_default_index_values">
@@ -14,7 +13,6 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
-        <item>4</item>
     </string-array>
 
     <string-array name="pref_default_search_entries">

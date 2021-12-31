@@ -11,7 +11,7 @@
 
     <dimen name="button_playbar_padding">16dp</dimen>
     <dimen name="fab_margin_coord">16dp</dimen>
-    <dimen name="fab_margin_frame">8dp</dimen>
+    <dimen name="fab_margin_frame">16dp</dimen>
 
     <dimen name="text_min_margin">20dip</dimen>
 
@@ -36,5 +36,8 @@
     <dimen name="gmail_material_drawer_item_background_padding_start">0dp</dimen>
     <dimen name="gmail_material_drawer_item_background_padding_end">8dp</dimen>
     <dimen name="gmail_material_drawer_item_background_padding_top_bottom">4dp</dimen>
+
+    <dimen name="dialog_content_lr_padding">24dp</dimen>
+    <dimen name="dialog_content_top_padding">16dp</dimen>
 
 </resources>

@@ -40,7 +40,7 @@
     <string name="benedici_anima_mia_jahve_title">Bless the Lord, my soul - Ps 102/103</string>
     <string name="fino_a_quando_title">How much longer - Ps 12/13</string>
     <string name="jahve_tu_sei_mio_dio_title">O Lord, you are my God (Is 25:1–8; 26:6)</string>
-    <string name="cantiamo_cantiamo_title">Let us sing to the Lord (Ex 15:1–2)</string>
+<!--    <string name="cantiamo_cantiamo_title">Let us sing to the Lord (Ex 15:1–2)</string>-->
     <string name="giunga_la_mia_preghiera_title">Lord, Lord Jesus - Ps 118/119</string>
     <string name="guardate_come_e_bello_title">How good it is - Ps 132/133</string>
     <string name="come_bello_come_da_gioia_title">Look how it is good, taste how it is sweet - Ps 132/133</string>
@@ -80,7 +80,7 @@
     <string name="alzo_gli_occhi_title">I lift up my eyes to the mountains - Ps 120/121</string>
     <string name="canto_liberati_title">Song of the redeemed (Is 12:4–6)</string>
     <string name="se_oggi_ascoltate_sua_voce_title">If today you listen to his voice - Ps 94/95</string>
-    <string name="venite_applaudiamo_al_signore_title">Come, ring out our joy to the Lord - Ps 94/95</string>
+<!--    <string name="venite_applaudiamo_al_signore_title">Come, ring out our joy to the Lord - Ps 94/95</string>-->
     <string name="dajenu_title">Dayenù</string>
     <string name="alla_vittima_pasquale_title">To the Paschal victim</string>
     <string name="inno_di_pasqua_title">Easter Hymn</string>
@@ -104,11 +104,11 @@
     <string name="o_dio_tu_sei_il_mio_dio_title">O God, you are my God - Ps 62/63</string>
     <string name="sale_dio_tra_acclamazioni_title">God rises to acclamation - Ps 46/47</string>
     <string name="popolo_camminava_tenebre_title">The people that walked in darkness (Is 9:1–5)</string>
-    <string name="da_lode_al_signore_title">Give praise to the Lord - Ps 145/146</string>
+<!--    <string name="da_lode_al_signore_title">Give praise to the Lord - Ps 145/146</string>-->
     <string name="canto_di_balaam_title">Song of Balaam (Nm 23:7–24)</string>
     <string name="davanti_agli_angeli_title">Before the angels - Ps 137/138</string>
-    <string name="quando_israele_era_un_bimbo_title">When Israel was a child (Hos 11:1–11)</string>
-    <string name="e_la_pasqua_del_signore_title">It\'s the Passover of the Lord</string>
+<!--    <string name="quando_israele_era_un_bimbo_title">When Israel was a child (Hos 11:1–11)</string>-->
+<!--    <string name="e_la_pasqua_del_signore_title">It\'s the Passover of the Lord</string>-->
     <string name="tempo_ogni_cosa_title">There is a time for everything (Qo 3:1–5)</string>
     <string name="benedici_anima_mia_title">Bless the Lord, my soul (Song of Tobit) (Tob 13)</string>
     <string name="quanto_sono_amabili_dimore_title">How lovely are your dwelling places - Ps 83/84</string>
@@ -232,4 +232,11 @@
     <string name="come_pecora_che_vede_title">Like a mother ewe who sees (From a himn of Roman the Melodist)</string>
     <string name="e_paziente_title">He is patient (hymn to the holy spirit)</string>
     <string name="inno_cristo_luce_title">Hymn to Christ Light (1967)</string>
+    <string name="preghiera_eucaristica_IV_title">Preghiera Eucaristica IV - (Dossologia)</string>
+    <string name="preghiere_universali_cantate_title">Preghiere universali cantate</string>
+    <string name="salga_sposo_sul_legno_title">Salga lo sposo sul legno del suo talamo</string>
+    <string name="salmodia_salmo_responsoriale_title">Salmodia per il salmo responsoriale</string>
+    <string name="salve_regina_title">Salve Regina</string>
+    <string name="sequenza_corpus_domini_title">Sequenaza Corpus Domini</string>
+    <string name="un_angelo_venne_dal_cielo_title">Un angelo venne dal cielo - Allegria Allegria</string>
 </resources>

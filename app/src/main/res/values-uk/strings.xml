@@ -9,7 +9,6 @@
     <string name="letter_order_text">Зміст алфавітний</string>
     <string name="page_order_text">Зміст по сторінкам</string>
     <string name="search_name_text">Пошук</string>
-    <string name="arg_search_text">Літургічний зміст</string>
     <string name="always_on">Відкл. сплячий режим</string>
     <string name="always_on_summary">Не переходить на сплячий режим поки відкритий додаток.</string>
     <string name="title_activity_favourites">Закладки</string>
@@ -64,7 +63,7 @@
     <string name="list_save_exit">Зберегти і вийти</string>
     <string name="add_position">Додати елемент</string>
     <string name="content_drag">перенести елемент</string>
-    <string name="aggiungi_confirm">ДОДАТИ</string>
+    <string name="aggiungi_confirm">додати</string>
     <string name="posizione_add_desc">Назва нового елементу</string>
     <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 30</string>
     <string name="lista_pers_vuota">Список порожній</string>
@@ -127,7 +126,7 @@
     <string name="no_elements_added">Не додано ще жодного елементу.</string>
     <string name="dialog_replace_title">Замінити пісню</string>
     <string name="dialog_reset_list_title">Відновити список</string>
-    <string name="aggiungi_rename">ПЕРЕЙМЕНУВАТИ</string>
+    <string name="aggiungi_rename">перейменувати</string>
     <string name="save_list_title">Зберегти список</string>
     <string name="dialog_delete_mp3_title">Видалити завантажений файл</string>
     <string name="dialog_delete_link_title">Від\'єднати локальний файл</string>
@@ -317,4 +316,6 @@
     <string name="elezione_2">Вибрання - середня частина</string>
     <string name="elezione_3">Вибрання - кінцева</string>
     <string name="passaggio_none">Жоден</string>
+    <string name="dynamic_colors_title">Dynamic colors</string>
+    <string name="dynamic_colors_summary">Apply dynamic colors based on your wallpaper</string>
 </resources>

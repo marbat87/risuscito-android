@@ -1,19 +1,17 @@
 package it.cammino.risuscito
 
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.PopupMenu
 import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
@@ -21,11 +19,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
-import com.google.android.material.elevation.ElevationOverlayProvider
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -36,7 +32,6 @@ import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -74,11 +69,6 @@ class InsertActivity : ThemeableActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        if (!LUtils.hasL() && ThemeUtils.isDarkMode(this)) {
-            val elevatedSurfaceColor = ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(resources.getDimension(R.dimen.design_appbar_elevation))
-            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
-        }
-
         val bundle = intent.extras
         listaPredefinita = bundle?.getInt(FROM_ADD) ?: 0
         idLista = bundle?.getInt(ID_LISTA) ?: 0
@@ -102,27 +92,41 @@ class InsertActivity : ThemeableActivity() {
             FirebaseCrashlytics.getInstance().recordException(e)
         }
 
-        binding.searchLayout.textBoxRicerca.hint = if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+        binding.searchLayout.textBoxRicerca.hint =
+            if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
+                R.string.fast_search_subtitle
+            )
 
-        cantoAdapter.onClickListener = { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
-            var consume = false
-            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                mLastClickTime = SystemClock.elapsedRealtime()
-                if (listaPredefinita == 1) {
-                    ListeUtils.addToListaDupAndFinish(this, idLista, listPosition, item.id)
-                } else {
-                    ListeUtils.updateListaPersonalizzataAndFinish(this, idLista, item.id, listPosition)
+        cantoAdapter.onClickListener =
+            { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
+                var consume = false
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    if (listaPredefinita == 1) {
+                        ListeUtils.addToListaDupAndFinish(this, idLista, listPosition, item.id)
+                    } else {
+                        ListeUtils.updateListaPersonalizzataAndFinish(
+                            this,
+                            idLista,
+                            item.id,
+                            listPosition
+                        )
+                    }
+                    consume = true
                 }
-                consume = true
+                consume
             }
-            consume
-        }
 
         cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { _, _, _, item ->
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(this@InsertActivity), Utility.ID_CANTO to item.id))
+                intent.putExtras(
+                    bundleOf(
+                        Utility.PAGINA to item.source?.getText(this@InsertActivity),
+                        Utility.ID_CANTO to item.id
+                    )
+                )
                 mViewModel.mLUtils.startActivityWithTransition(intent)
             }
         }
@@ -133,15 +137,13 @@ class InsertActivity : ThemeableActivity() {
         val glm = GridLayoutManager(this, if (mViewModel.hasThreeColumns) 3 else 2)
         val llm = LinearLayoutManager(this)
         binding.searchLayout.matchedList.layoutManager = if (mViewModel.isGridLayout) glm else llm
-        val insetDivider = DividerItemDecoration(this, if (mViewModel.isGridLayout) glm.orientation else llm.orientation)
-        ContextCompat.getDrawable(this, R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        binding.searchLayout.matchedList.addItemDecoration(insetDivider)
 
         binding.searchLayout.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                ContextCompat.getSystemService(this, InputMethodManager::class.java)?.hideSoftInputFromWindow(binding.searchLayout.textFieldRicerca.windowToken, 0)
+                ContextCompat.getSystemService(this, InputMethodManager::class.java)
+                    ?.hideSoftInputFromWindow(binding.searchLayout.textFieldRicerca.windowToken, 0)
                 returnValue = true
             }
             returnValue
@@ -152,15 +154,17 @@ class InsertActivity : ThemeableActivity() {
             ricercaStringa(s.toString())
         }
 
-        val wrapper = ContextThemeWrapper(this, R.style.Widget_MaterialComponents_PopupMenu_Risuscito)
-        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, binding.searchLayout.moreOptions, Gravity.END) else PopupMenu(wrapper, binding.searchLayout.moreOptions)
+        mPopupMenu = PopupMenu(this, binding.searchLayout.moreOptions, Gravity.END)
         mPopupMenu.inflate(R.menu.search_option_menu)
         mPopupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.advanced_search -> {
                     it.isChecked = !it.isChecked
                     simpleIndexViewModel.advancedSearch = it.isChecked
-                    binding.searchLayout.textBoxRicerca.hint = if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+                    binding.searchLayout.textBoxRicerca.hint =
+                        if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
+                            R.string.fast_search_subtitle
+                        )
                     job.cancel()
                     ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
                     true
@@ -177,8 +181,10 @@ class InsertActivity : ThemeableActivity() {
         }
 
         binding.searchLayout.moreOptions.setOnClickListener {
-            mPopupMenu.menu.findItem(R.id.advanced_search).isChecked = simpleIndexViewModel.advancedSearch
-            mPopupMenu.menu.findItem(R.id.consegnaty_only).isChecked = simpleIndexViewModel.consegnatiOnly
+            mPopupMenu.menu.findItem(R.id.advanced_search).isChecked =
+                simpleIndexViewModel.advancedSearch
+            mPopupMenu.menu.findItem(R.id.consegnaty_only).isChecked =
+                simpleIndexViewModel.consegnatiOnly
             mPopupMenu.show()
         }
 
@@ -218,9 +224,13 @@ class InsertActivity : ThemeableActivity() {
 
                 Log.d(TAG, "performInsertSearch STRINGA: $s")
                 Log.d(TAG, "performInsertSearch ADVANCED: ${simpleIndexViewModel.advancedSearch}")
-                Log.d(TAG, "performInsertSearch CONSEGNATI ONLY: ${simpleIndexViewModel.consegnatiOnly}")
+                Log.d(
+                    TAG,
+                    "performInsertSearch CONSEGNATI ONLY: ${simpleIndexViewModel.consegnatiOnly}"
+                )
                 if (simpleIndexViewModel.advancedSearch) {
-                    val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val words =
+                        s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
                     for (aText in simpleIndexViewModel.aTexts) {
                         if (!isActive) return@launch
@@ -243,14 +253,14 @@ class InsertActivity : ThemeableActivity() {
                         if (found) {
                             Log.d(TAG, "aText[0]: ${aText[0]}")
                             simpleIndexViewModel.titoliInsert
-                                    .filter {
-                                        (aText[0]
-                                                ?: "") == it.undecodedSource && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
-                                    }
-                                    .forEach {
-                                        if (!isActive) return@launch
-                                        titoliResult.add(it.apply { filter = "" })
-                                    }
+                                .filter {
+                                    (aText[0]
+                                        ?: "") == it.undecodedSource && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
+                                }
+                                .forEach {
+                                    if (!isActive) return@launch
+                                    titoliResult.add(it.apply { filter = "" })
+                                }
 
                         }
                     }
@@ -258,19 +268,30 @@ class InsertActivity : ThemeableActivity() {
                     val stringa = Utility.removeAccents(s).lowercase(getSystemLocale(resources))
                     Log.d(TAG, "performInsertSearch onTextChanged: stringa $stringa")
                     simpleIndexViewModel.titoliInsert
-                            .filter {
-                                Utility.removeAccents(it.title?.getText(applicationContext)
-                                        ?: "").lowercase(getSystemLocale(resources)).contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
-                            }
-                            .forEach {
-                                if (!isActive) return@launch
-                                titoliResult.add(it.apply { filter = stringa })
-                            }
+                        .filter {
+                            Utility.removeAccents(
+                                it.title?.getText(applicationContext)
+                                    ?: ""
+                            ).lowercase(getSystemLocale(resources))
+                                .contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
+                        }
+                        .forEach {
+                            if (!isActive) return@launch
+                            titoliResult.add(it.apply { filter = stringa })
+                        }
                 }
                 if (isActive) {
-                    cantoAdapter.set(titoliResult.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(this@InsertActivity) }))
+                    cantoAdapter.set(
+                        titoliResult.sortedWith(
+                            compareBy(
+                                Collator.getInstance(
+                                    getSystemLocale(resources)
+                                )
+                            ) { it.title?.getText(this@InsertActivity) })
+                    )
                     binding.searchLayout.searchProgress.isVisible = false
-                    binding.searchLayout.searchNoResults.isVisible = cantoAdapter.adapterItemCount == 0
+                    binding.searchLayout.searchNoResults.isVisible =
+                        cantoAdapter.adapterItemCount == 0
                     binding.searchLayout.matchedList.isGone = cantoAdapter.adapterItemCount == 0
                 }
             } else {
@@ -286,7 +307,10 @@ class InsertActivity : ThemeableActivity() {
 
     private fun subscribeObservers() {
         simpleIndexViewModel.insertItemsResult?.observe(this) { canti ->
-            simpleIndexViewModel.titoliInsert = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(this) })
+            simpleIndexViewModel.titoliInsert =
+                canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) {
+                    it.title?.getText(this)
+                })
         }
 
     }

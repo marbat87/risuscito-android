@@ -11,16 +11,16 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="?colorPrimarySurface">
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
-            style="@style/AdaptiveScrimColor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
-            risuscito:contentScrim="?colorPrimarySurface"
-            risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
+            risuscito:collapsedTitleTextAppearance="@style/TextAppearance.Material3.TitleLarge.Collapsed"
+            risuscito:collapsedTitleTextColor="?colorOnSurface"
+            risuscito:expandedTitleTextAppearance="@style/TextAppearance.Material3.HeadlineSmall.Expanded"
+            risuscito:expandedTitleTextColor="@android:color/transparent"
             risuscito:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <RelativeLayout
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp"
                     android:text="@string/list_title"
-                    android:textColor="?colorOnPrimarySurface" />
+                    android:textColor="?colorOnSurface" />
 
                 <EditText
                     android:id="@+id/text_field_title"
@@ -53,8 +53,7 @@
                     android:inputType="text|textCapSentences"
                     android:maxLines="1"
                     android:scrollHorizontally="true"
-                    android:textColor="?colorOnPrimarySurface"
-                    android:textColorHighlight="@color/ripple_material_dark"
+                    android:textColor="?colorOnSurface"
                     android:textCursorDrawable="@null"
                     android:textSize="30sp"
                     tools:ignore="UnusedAttribute" />
@@ -63,7 +62,7 @@
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/risuscito_toolbar"
-                style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
+                style="@style/Widget.Material3.Toolbar.Risuscito.InAppBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 risuscito:layout_collapseMode="pin"
@@ -113,22 +112,21 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_below="@id/app_bar_layout"
-        android:background="@drawable/toolbar_shadow"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="4dp"-->
+<!--        android:layout_below="@id/app_bar_layout"-->
+<!--        android:background="@drawable/toolbar_shadow"-->
+<!--        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_crea_lista"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_marginEnd="@dimen/fab_margin_coord"
-        android:layout_marginRight="@dimen/fab_margin_coord"
         risuscito:layout_anchor="@id/app_bar_layout"
-        risuscito:layout_anchorGravity="bottom|right|end" />
+        risuscito:layout_anchorGravity="bottom|right|end"
+        tools:ignore="ContentDescription" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

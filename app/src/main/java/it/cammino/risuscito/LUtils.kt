@@ -11,9 +11,7 @@ import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
@@ -23,6 +21,8 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import com.anggrayudi.storage.SimpleStorage
+import com.anggrayudi.storage.file.StorageId
 import com.google.android.material.animation.AnimationUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -82,16 +82,21 @@ class LUtils private constructor(private val mActivity: Activity) {
         Animations.exitRight(mActivity)
     }
 
+    fun setLigthStatusBar(light: Boolean) {
+        WindowInsetsControllerCompat(
+            mActivity.window,
+            mActivity.window.decorView
+        ).isAppearanceLightStatusBars = light
+    }
+
     internal fun goFullscreen() {
         when {
             hasR() -> goFullscreenR()
-            hasK() -> goFullscreenK()
-            else -> goFullscreenJB()
+            else -> goFullscreenLegacy()
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    internal fun goFullscreenR() {
+    private fun goFullscreenR() {
         WindowCompat.setDecorFitsSystemWindows(mActivity.window, false)
         WindowInsetsControllerCompat(
             mActivity.window,
@@ -104,19 +109,7 @@ class LUtils private constructor(private val mActivity: Activity) {
     }
 
     @Suppress("DEPRECATION")
-    internal fun goFullscreenJB() {
-        mActivity.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        mActivity
-            .window
-            .setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-    }
-
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
-    @Suppress("DEPRECATION")
-    internal fun goFullscreenK() {
+    private fun goFullscreenLegacy() {
         mActivity
             .window
             .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -246,6 +239,9 @@ class LUtils private constructor(private val mActivity: Activity) {
             ).start()
     }
 
+    val hasStorageAccess: Boolean
+        get() = hasQ() || SimpleStorage.hasFullDiskAccess(context = mActivity, StorageId.PRIMARY)
+
     companion object {
 
         private const val FILE_FORMAT = ".risuscito"
@@ -255,24 +251,12 @@ class LUtils private constructor(private val mActivity: Activity) {
             return LUtils(activity)
         }
 
-        fun hasK(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-        }
-
-        fun hasL(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-        }
-
         fun hasO(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         }
 
         fun hasQ(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-        }
-
-        fun hasJB(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
         }
 
         fun hasM(): Boolean {
@@ -289,6 +273,10 @@ class LUtils private constructor(private val mActivity: Activity) {
 
         fun hasR(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+        }
+
+        fun hasS(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         }
 
         @Suppress("DEPRECATION")
@@ -314,13 +302,14 @@ class LUtils private constructor(private val mActivity: Activity) {
                     val idField = c.getDeclaredField(it)
                     idField.getInt(idField)
                 } catch (e: Exception) {
-                    Log.e(TAG, "getResId: " + e.localizedMessage, e)
+                    Log.e(TAG, "getResId: $resName" + e.localizedMessage, e)
                     -1
                 }
             }
             Log.e(TAG, "resName NULL")
             return -1
         }
+
     }
 
 }

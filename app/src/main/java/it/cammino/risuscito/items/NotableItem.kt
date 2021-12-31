@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
@@ -60,7 +62,10 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
     override val type: Int
         get() = R.id.fastadapter_notable_item_id
 
-    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): RowItemNotableBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup?
+    ): RowItemNotableBinding {
         return RowItemNotableBinding.inflate(inflater, parent, false)
     }
 
@@ -74,21 +79,26 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
         val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
 
-        val icon = IconicsDrawable(ctx, if (numPassaggio == -1)
-            CommunityMaterial.Icon3.cmd_tag_plus
-        else
-            CommunityMaterial.Icon3.cmd_tag_text_outline).apply {
-            colorInt = MaterialColors.getColor(ctx, if (numPassaggio == -1) android.R.attr.textColorSecondary else R.attr.colorSecondary, TAG)
-            sizeDp = 24
-            paddingDp = 2
-        }
-        binding.editNoteImage.setImageDrawable(icon)
+        binding.editNote.isGone = (numPassaggio != -1)
+        binding.editNoteFilled.isGone = (numPassaggio == -1)
+//        binding.editNote.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(ctx, if (numPassaggio == -1) R.drawable.baseline_sell_24 else R.drawable.baseline_sell_24), null, null, null)
+
+
+//        val icon = IconicsDrawable(ctx, if (numPassaggio == -1)
+//            CommunityMaterial.Icon3.cmd_tag_plus
+//        else
+//            CommunityMaterial.Icon3.cmd_tag_text_outline).apply {
+//            colorInt = MaterialColors.getColor(ctx, if (numPassaggio == -1) R.attr.colorOnSurface else R.attr.colorTertiary, TAG)
+//            sizeDp = 24
+//            paddingDp = 2
+//        }
+//        binding.editNoteImage.setImageDrawable(icon)
     }
 
     override fun unbindView(binding: RowItemNotableBinding) {
         binding.textTitle.text = null
         binding.textPage.text = null
-        binding.editNoteImage.setImageDrawable(null)
+//        binding.editNoteImage.setImageDrawable(null)
     }
 
     companion object {

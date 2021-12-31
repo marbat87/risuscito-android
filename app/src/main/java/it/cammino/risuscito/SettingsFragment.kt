@@ -1,6 +1,5 @@
 package it.cammino.risuscito
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,36 +11,33 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.fragment.app.viewModels
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceManager
+import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
-import com.takisoft.preferencex.PreferenceFragmentCompat
-import com.takisoft.preferencex.SimpleMenuPreference
 import it.cammino.risuscito.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.Utility.DB_RESET
 import it.cammino.risuscito.Utility.DEFAULT_INDEX
 import it.cammino.risuscito.Utility.DEFAULT_SEARCH
+import it.cammino.risuscito.Utility.DYNAMIC_COLORS
 import it.cammino.risuscito.Utility.NIGHT_MODE
-import it.cammino.risuscito.Utility.PRIMARY_COLOR
 import it.cammino.risuscito.Utility.SAVE_LOCATION
 import it.cammino.risuscito.Utility.SCREEN_ON
-import it.cammino.risuscito.Utility.SECONDARY_COLOR
 import it.cammino.risuscito.Utility.SYSTEM_LANGUAGE
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SettingsViewModel
-import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val mSettingsViewModel: SettingsViewModel by viewModels()
+    private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
     private lateinit var mEntries: Array<String>
     private lateinit var mEntryValues: Array<String>
@@ -60,47 +56,61 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
-                                it.activityMainContent,
-                                "Module install failed with ${state.errorCode()}",
-                                Snackbar.LENGTH_SHORT)
-                                .show()
+                            it.activityMainContent,
+                            "Module install failed with ${state.errorCode()}",
+                            Snackbar.LENGTH_SHORT
+                        )
+                            .show()
                     }
 
                 }
                 REQUIRES_USER_CONFIRMATION -> {
-                    splitInstallManager.startConfirmationDialogForResult(state, requireActivity(), CONFIRMATION_REQUEST_CODE)
+                    splitInstallManager.startConfirmationDialogForResult(
+                        state,
+                        requireActivity(),
+                        CONFIRMATION_REQUEST_CODE
+                    )
                 }
                 DOWNLOADING -> {
                     val totalBytes = state.totalBytesToDownload()
                     val progress = state.bytesDownloaded()
                     Log.i(TAG, "DOWNLOADING LANGUAGE - progress: $progress su $totalBytes")
                     // Update progress bar.
-                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.setProgress((100 * progress / totalBytes).toInt())
+                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)
+                        ?.setProgress((100 * progress / totalBytes).toInt())
                 }
                 INSTALLED -> {
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     if (state.languages().isNotEmpty()) {
                         Log.i(TAG, "Module installed: language $newLanguage")
                         Log.i(TAG, "Module installed: newLanguage $newLanguage")
-                        RisuscitoApplication.localeManager.persistLanguage(requireContext(), newLanguage)
-                        val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
+                        RisuscitoApplication.localeManager.persistLanguage(
+                            requireContext(),
+                            newLanguage
+                        )
+                        val mIntent =
+                            activity?.baseContext?.packageManager?.getLaunchIntentForPackage(
+                                requireActivity().baseContext.packageName
+                            )
                         mIntent?.let {
                             it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                             it.putExtra(DB_RESET, true)
                             val currentLang = getSystemLocale(resources).language
                             it.putExtra(
-                                    CHANGE_LANGUAGE,
-                                    "$currentLang-$newLanguage")
+                                CHANGE_LANGUAGE,
+                                "$currentLang-$newLanguage"
+                            )
                             startActivity(it)
                         }
                     } else {
                         Log.e(TAG, "Module install failed: empyt language list")
                         mMainActivity?.let {
                             Snackbar.make(
-                                    it.activityMainContent,
-                                    "Module install failed: no language installed!",
-                                    Snackbar.LENGTH_SHORT)
-                                    .show()
+                                it.activityMainContent,
+                                "Module install failed: no language installed!",
+                                Snackbar.LENGTH_SHORT
+                            )
+                                .show()
                         }
                     }
                 }
@@ -115,64 +125,54 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         Log.i(TAG, "OnPreferenceChangeListener - oldValue: $currentLang")
         Log.i(TAG, "OnPreferenceChangeListener - newValue: $newLanguage")
         if (!currentLang.equals(newLanguage, ignoreCase = true)) {
-            if (LUtils.hasL()) {
-                mMainActivity?.let { activity ->
-                    ProgressDialogFragment.show(ProgressDialogFragment.Builder(
-                            activity, DOWNLOAD_LANGUAGE)
-                            .content(R.string.download_running)
-                            .progressIndeterminate(false)
-                            .progressMax(100),
-                            activity.supportFragmentManager)
-                }
-                // Creates a request to download and install additional language resources.
-                val request = SplitInstallRequest.newBuilder()
-                        .addLanguage(if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
-                            Locale(LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES)
-                        else Locale(newLanguage))
-                        .build()
-
-                // Submits the request to install the additional language resources.
-                mSettingsViewModel.persistingLanguage = newLanguage
-                splitInstallManager.startInstall(request)
-                        // You should also add the following listener to handle any errors
-                        // processing the request.
-                        ?.addOnFailureListener { exception ->
-                            Log.e(TAG, "language download error", exception)
-                            ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
-                            mMainActivity?.let {
-                                Snackbar.make(
-                                        it.activityMainContent,
-                                        "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
-                                        Snackbar.LENGTH_SHORT)
-                                        .show()
-                            }
-                        }
-                        // When the platform accepts your request to download
-                        // an on demand module, it binds it to the following session ID.
-                        // You use this ID to track further status updates for the request.
-                        ?.addOnSuccessListener { id -> sessionId = id }
-            } else {
-                RisuscitoApplication.localeManager.persistLanguage(requireContext(), newLanguage)
-                val mIntent = activity?.baseContext?.packageManager?.getLaunchIntentForPackage(requireActivity().baseContext.packageName)
-                mIntent?.let {
-                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    it.putExtra(DB_RESET, true)
-                    it.putExtra(
-                            CHANGE_LANGUAGE,
-                            "$currentLang-$newLanguage")
-                    startActivity(it)
-                }
+            mMainActivity?.let { activity ->
+                ProgressDialogFragment.show(
+                    ProgressDialogFragment.Builder(
+                        activity, DOWNLOAD_LANGUAGE
+                    )
+                        .content(R.string.download_running)
+                        .progressIndeterminate(false)
+                        .progressMax(100),
+                    activity.supportFragmentManager
+                )
             }
+            // Creates a request to download and install additional language resources.
+            val request = SplitInstallRequest.newBuilder()
+                .addLanguage(
+                    if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
+                        Locale(LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES)
+                    else Locale(newLanguage)
+                )
+                .build()
+
+            // Submits the request to install the additional language resources.
+            mSettingsViewModel.persistingLanguage = newLanguage
+            splitInstallManager.startInstall(request)
+                // You should also add the following listener to handle any errors
+                // processing the request.
+                ?.addOnFailureListener { exception ->
+                    Log.e(TAG, "language download error", exception)
+                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
+                    mMainActivity?.let {
+                        Snackbar.make(
+                            it.activityMainContent,
+                            "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
+                            Snackbar.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+                // When the platform accepts your request to download
+                // an on demand module, it binds it to the following session ID.
+                // You use this ID to track further status updates for the request.
+                ?.addOnSuccessListener { id -> sessionId = id }
         }
         false
     }
 
-    override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
-    }
-
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         mMainActivity = activity as? MainActivity
 
         splitInstallManager = SplitInstallManagerFactory.create(requireContext())
@@ -183,33 +183,55 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
-        val listPreference = findPreference("memoria_salvataggio_scelta") as? ListPreference
+        val listPreference = findPreference("memoria_salvataggio_scelta") as? DropDownPreference
 
-        loadStorageList(
-                EasyPermissions.hasPermissions(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        loadStorageList(activityViewModel.mLUtils.hasStorageAccess)
+        listPreference?.entries = mEntries
+        listPreference?.entryValues = mEntryValues
 
-        listPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            val listPref = it as? ListPreference
-            listPref?.entries = mEntries
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val saveLocation = pref.getString(SAVE_LOCATION, "0")
-            listPref?.setDefaultValue(saveLocation)
-            listPref?.entryValues = mEntryValues
-            false
+//        listPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+//            val listPref = it as? DropDownPreference
+//            listPref?.entries = mEntries
+//            val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+//            val saveLocation = pref.getString(SAVE_LOCATION, "0")
+//            listPref?.setDefaultValue(saveLocation)
+//            listPref?.entryValues = mEntryValues
+//            preferenceManager.showDialog(it)
+//            false
+//        }
+
+        var pref = findPreference(SYSTEM_LANGUAGE) as? DropDownPreference
+        pref?.onPreferenceChangeListener = changeListener
+        pref?.summaryProvider = Preference.SummaryProvider<DropDownPreference> {
+            composeSummary(
+                R.string.language_summary,
+                it
+            )
         }
 
-        var pref = findPreference(SYSTEM_LANGUAGE) as? SimpleMenuPreference
-        pref?.onPreferenceChangeListener = changeListener
-        pref?.summaryProvider = Preference.SummaryProvider<ListPreference> { composeSummary(R.string.language_summary, it) }
+        pref = findPreference(DEFAULT_INDEX) as? DropDownPreference
+        pref?.summaryProvider = Preference.SummaryProvider<DropDownPreference> {
+            composeSummary(
+                R.string.default_index_summary,
+                it
+            )
+        }
 
-        pref = findPreference(DEFAULT_INDEX) as? SimpleMenuPreference
-        pref?.summaryProvider = Preference.SummaryProvider<ListPreference> { composeSummary(R.string.default_index_summary, it) }
+        pref = findPreference(DEFAULT_SEARCH) as? DropDownPreference
+        pref?.summaryProvider = Preference.SummaryProvider<DropDownPreference> {
+            composeSummary(
+                R.string.default_search_summary,
+                it
+            )
+        }
 
-        pref = findPreference(DEFAULT_SEARCH) as? SimpleMenuPreference
-        pref?.summaryProvider = Preference.SummaryProvider<ListPreference> { composeSummary(R.string.default_search_summary, it) }
-
-        pref = findPreference(SAVE_LOCATION) as? SimpleMenuPreference
-        pref?.summaryProvider = Preference.SummaryProvider<ListPreference> { composeSummary(R.string.save_location_summary, it) }
+        pref = findPreference(SAVE_LOCATION) as? DropDownPreference
+        pref?.summaryProvider = Preference.SummaryProvider<DropDownPreference> {
+            composeSummary(
+                R.string.save_location_summary,
+                it
+            )
+        }
 
         return super.onCreateView(inflater, container, savedInstanceState)
     }
@@ -217,7 +239,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onStart() {
         super.onStart()
         splitInstallManager.registerListener(listener)
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onStop() {
@@ -227,7 +249,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         } catch (e: IllegalArgumentException) {
             Log.e(TAG, "unregister error", e)
         }
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.preferences, rootKey)
     }
 
     /** This is needed to handle the result of the manager.startConfirmationDialogForResult
@@ -242,10 +268,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                 mMainActivity?.let {
                     Snackbar.make(
-                            it.activityMainContent,
-                            "download cancelled by user",
-                            Snackbar.LENGTH_SHORT)
-                            .show()
+                        it.activityMainContent,
+                        "download cancelled by user",
+                        Snackbar.LENGTH_SHORT
+                    )
+                        .show()
                 }
             }
         }
@@ -253,40 +280,35 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
         Log.d(TAG, "onSharedPreferenceChanged: $s")
-        if (s == PRIMARY_COLOR) {
-            Log.d(TAG, "onSharedPreferenceChanged: PRIMARY_COLOR" + sharedPreferences.getInt(s, 0))
-            activity?.recreate()
-        }
-        if (s == SECONDARY_COLOR) {
-            Log.d(TAG, "onSharedPreferenceChanged: SECONDARY_COLOR" + sharedPreferences.getInt(s, 0))
-            activity?.recreate()
-        }
         if (s == NIGHT_MODE) {
             Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0"))
             ThemeUtils.setDefaultNightMode(requireContext())
         }
         if (s == SCREEN_ON) LUtils.getInstance(requireActivity()).checkScreenAwake()
+        if (s == DYNAMIC_COLORS) activity?.recreate()
     }
 
-    private fun composeSummary(@StringRes id: Int, pref: ListPreference): String {
+    private fun composeSummary(@StringRes id: Int, pref: DropDownPreference): String {
         val text = pref.entry
         return "${getString(id)}${System.getProperty("line.separator")}$text"
     }
 
     private fun loadStorageList(external: Boolean) {
         Log.d(
-                TAG,
-                "loadStorageList: WRITE_EXTERNAL_STORAGE "
-                        + Utility.isExternalStorageWritable
-                        + " / "
-                        + external)
+            TAG,
+            "loadStorageList: WRITE_EXTERNAL_STORAGE "
+                    + Utility.isExternalStorageWritable
+                    + " / "
+                    + external
+        )
         if (Utility.isExternalStorageWritable && external) {
             mEntries = resources.getStringArray(R.array.save_location_sd_entries)
             mEntryValues = resources.getStringArray(R.array.save_location_sd_values)
         } else {
             mEntries = resources.getStringArray(R.array.save_location_nosd_entries)
             mEntryValues = resources.getStringArray(R.array.save_location_nosd_values)
-            PreferenceManager.getDefaultSharedPreferences(context).edit { putString(SAVE_LOCATION, "0") }
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .edit { putString(SAVE_LOCATION, "0") }
         }
     }
 

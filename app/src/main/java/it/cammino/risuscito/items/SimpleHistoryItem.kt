@@ -4,12 +4,10 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
-import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
@@ -21,7 +19,8 @@ import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-fun simpleHistoryItem(block: SimpleHistoryItem.() -> Unit): SimpleHistoryItem = SimpleHistoryItem().apply(block)
+fun simpleHistoryItem(block: SimpleHistoryItem.() -> Unit): SimpleHistoryItem =
+    SimpleHistoryItem().apply(block)
 
 class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
 
@@ -69,7 +68,10 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
     override val type: Int
         get() = R.id.fastadapter_history_item_id
 
-    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): RowItemHistoryBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup?
+    ): RowItemHistoryBinding {
         return RowItemHistoryBinding.inflate(inflater, parent, false)
     }
 
@@ -78,23 +80,20 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
 
         StringHolder.applyTo(title, binding.textTitle)
         StringHolder.applyToOrHide(page, binding.textPage)
-
-        binding.root.background = FastAdapterUIUtils.getSelectableBackground(
-                ctx,
-                ContextCompat.getColor(ctx, R.color.selected_bg_color),
-                true)
+        binding.listViewItemContainer.isChecked = isSelected
 
         val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
         binding.textPage.isInvisible = isSelected
         binding.selectedMark.isVisible = isSelected
         val bgShapeSelected = binding.selectedMark.background as? GradientDrawable
-        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorSecondary, TAG))
+        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorPrimary, TAG))
 
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
             val df = DateFormat.getDateTimeInstance(
-                    DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources))
+                DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources)
+            )
             val tempTimestamp: String
 
             val dateTimestamp = Date(java.lang.Long.parseLong(timestamp?.getText(ctx).toString()))

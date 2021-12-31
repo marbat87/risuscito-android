@@ -106,10 +106,6 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             mDao.getCantoById(idCanto)
         }
 
-        // fix per crash su android 4.1
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
-            binding.cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-
         loadContentIntoWebView(htmlContent)
 
         val webSettings = binding.cantoView.settings

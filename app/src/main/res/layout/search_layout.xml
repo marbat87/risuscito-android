@@ -13,8 +13,7 @@
         android:layout_height="@dimen/myListPreferredItemHeightMedium"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="?attr/customSelectorRound"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:soundEffectsEnabled="true">
 
         <com.mikepenz.iconics.view.IconicsImageView
@@ -47,7 +46,7 @@
             android:layout_height="120dip"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/search_no_results"
-            risuscito:srcCompat="@drawable/ic_search_question_mark" />
+            android:src="@drawable/ic_search_question_mark" />
 
         <TextView
             android:id="@+id/no_history_text"
@@ -78,17 +77,13 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_box_ricerca"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/more_options"
         android:layout_marginStart="@dimen/myListPreferredItemMargin"
-        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
         android:layout_toStartOf="@id/more_options"
-        android:layout_toLeftOf="@id/more_options"
         android:hint="@string/fast_search_subtitle"
         risuscito:endIconMode="clear_text"
-        risuscito:endIconTint="@color/text_color_secondary"
         risuscito:helperText="@string/search_hint"
         tools:ignore="RtlSymmetry">
 

@@ -1,5 +1,6 @@
 package it.cammino.risuscito.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 
 import it.cammino.risuscito.database.entities.Canto
@@ -21,6 +22,7 @@ class PaginaRenderViewModel : ViewModel() {
     var idCanto: Int = 0
     var primaNota: String = NOT_VAL
     var primoBarre: String = NOT_VAL
+    var toDelete: Uri? = null
 
     companion object {
         const val NOT_VAL = ""

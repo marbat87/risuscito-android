@@ -62,8 +62,8 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
 
                     val cantoView = itemViewBinding.cantoGenericoContainer
 
-                    StringHolder.applyTo(canto.title, itemViewBinding.sipleRowItem.textTitle)
-                    StringHolder.applyTo(canto.page, itemViewBinding.sipleRowItem.textPage)
+                    StringHolder.applyTo(canto.title, itemViewBinding.textTitle)
+                    StringHolder.applyTo(canto.page, itemViewBinding.textPage)
                     StringHolder.applyTo(canto.source, itemViewBinding.textSourceCanto)
                     StringHolder.applyTo(canto.timestamp, itemViewBinding.textTimestamp)
                     itemViewBinding.textIdCantoCard.text = canto.idCanto.toString()
@@ -73,16 +73,16 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
                             ContextCompat.getColor(context, R.color.selected_bg_color),
                             true)
                     if (canto.ismSelected()) {
-                        val bgShape = itemViewBinding.sipleRowItem.selectedMark.background as? GradientDrawable
-                        bgShape?.setColor(MaterialColors.getColor(context, R.attr.colorSecondary, TAG))
-                        itemViewBinding.sipleRowItem.textPage.isVisible = false
-                        itemViewBinding.sipleRowItem.selectedMark.isVisible = true
+                        val bgShape = itemViewBinding.selectedMark.background as? GradientDrawable
+                        bgShape?.setColor(MaterialColors.getColor(context, R.attr.colorPrimary, TAG))
+                        itemViewBinding.textPage.isVisible = false
+                        itemViewBinding.selectedMark.isVisible = true
                         cantoView.isSelected = true
                     } else {
-                        val bgShape = itemViewBinding.sipleRowItem.textPage.background as? GradientDrawable
+                        val bgShape = itemViewBinding.textPage.background as? GradientDrawable
                         bgShape?.setColor(canto.color?.colorInt ?: Color.WHITE)
-                        itemViewBinding.sipleRowItem.textPage.isVisible = true
-                        itemViewBinding.sipleRowItem.selectedMark.isVisible = false
+                        itemViewBinding.textPage.isVisible = true
+                        itemViewBinding.selectedMark.isVisible = false
                         cantoView.isSelected = false
                     }
 

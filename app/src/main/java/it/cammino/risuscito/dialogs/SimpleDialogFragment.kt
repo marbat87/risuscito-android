@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.KeyEvent
-import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -15,8 +14,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import it.cammino.risuscito.ui.LocaleManager
 import java.io.Serializable
 
 @Suppress("unused")
@@ -25,27 +24,29 @@ class SimpleDialogFragment : DialogFragment() {
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })
 
     private val builder: Builder?
-        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(
+            BUILDER_TAG
+        ) as? Builder
 
     @SuppressLint("CheckResult")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mBuilder = builder
-                ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
+            ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
 
-        val dialog = MaterialDialog(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
 
         if (mBuilder.mTitle != 0)
-            dialog.title(res = mBuilder.mTitle)
+            dialog.setTitle(mBuilder.mTitle)
 
-        if (!mBuilder.mAutoDismiss)
-            dialog.noAutoDismiss()
+//        if (!mBuilder.mAutoDismiss)
+//            dialog.noAutoDismiss()
 
         mBuilder.mContent?.let {
-            dialog.message(text = it)
+            dialog.setMessage(it)
         }
 
         mBuilder.mPositiveButton?.let {
-            dialog.positiveButton(text = it) {
+            dialog.setPositiveButton(it) { _, _ ->
                 viewModel.mTag = mBuilder.mTag
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Positive(this)
@@ -53,18 +54,18 @@ class SimpleDialogFragment : DialogFragment() {
         }
 
         mBuilder.mNegativeButton?.let {
-            dialog.negativeButton(text = it) {
+            dialog.setNegativeButton(it) { _, _ ->
                 viewModel.mTag = mBuilder.mTag
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Negative(this)
             }
         }
 
-        if (mBuilder.mCustomView != 0) {
-            dialog.customView(mBuilder.mCustomView)
-        }
+//        if (mBuilder.mCustomView != 0) {
+//            dialog.customView(mBuilder.mCustomView)
+//        }
 
-        dialog.cancelable(mBuilder.mCanceable)
+        dialog.setCancelable(mBuilder.mCanceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false
@@ -75,12 +76,7 @@ class SimpleDialogFragment : DialogFragment() {
             returnValue
         }
 
-        return dialog
-    }
-
-    @SuppressLint("CheckResult")
-    fun setContent(@StringRes res: Int) {
-        (dialog as? MaterialDialog)?.message(res)
+        return dialog.show()
     }
 
     fun cancel() {
@@ -114,9 +110,10 @@ class SimpleDialogFragment : DialogFragment() {
         internal var mPositiveButton: CharSequence? = null
         internal var mNegativeButton: CharSequence? = null
         internal var mCanceable = false
-        internal var mAutoDismiss = true
+
+        //        internal var mAutoDismiss = true
         internal var mCanceListener = false
-        internal var mCustomView = 0
+//        internal var mCustomView = 0
 
         fun title(@StringRes text: Int): Builder {
             mTitle = text
@@ -134,12 +131,20 @@ class SimpleDialogFragment : DialogFragment() {
         }
 
         fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text)
+            mPositiveButton = this.mContext.resources.getText(text).toString().replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    LocaleManager.getSystemLocale(mContext.resources)
+                ) else it.toString()
+            }
             return this
         }
 
         fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text)
+            mNegativeButton = this.mContext.resources.getText(text).toString().replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    LocaleManager.getSystemLocale(mContext.resources)
+                ) else it.toString()
+            }
             return this
         }
 
@@ -153,15 +158,15 @@ class SimpleDialogFragment : DialogFragment() {
             return this
         }
 
-        fun setAutoDismiss(autoDismiss: Boolean): Builder {
-            mAutoDismiss = autoDismiss
-            return this
-        }
+//        fun setAutoDismiss(autoDismiss: Boolean): Builder {
+//            mAutoDismiss = autoDismiss
+//            return this
+//        }
 
-        fun setCustomView(@LayoutRes customView: Int): Builder {
-            mCustomView = customView
-            return this
-        }
+//        fun setCustomView(@LayoutRes customView: Int): Builder {
+//            mCustomView = customView
+//            return this
+//        }
 
     }
 
@@ -173,7 +178,7 @@ class SimpleDialogFragment : DialogFragment() {
         private fun newInstance(builder: Builder): SimpleDialogFragment {
             return newInstance().apply {
                 arguments = bundleOf(
-                        Pair(BUILDER_TAG, builder)
+                    Pair(BUILDER_TAG, builder)
                 )
             }
         }

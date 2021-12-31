@@ -9,7 +9,6 @@
     <string name="letter_order_text">Alphabetical Index</string>
     <string name="page_order_text">Page index</string>
     <string name="search_name_text">Song searching</string>
-    <string name="arg_search_text">Analytical index</string>
     <string name="always_on">No standby</string>
     <string name="always_on_summary">It prevents the display to move to standby inside the application.</string>
     <string name="title_activity_favourites">Favorites</string>
@@ -64,7 +63,7 @@
     <string name="list_save_exit">Save and exit</string>
     <string name="add_position">Add element</string>
     <string name="content_drag">drag element</string>
-    <string name="aggiungi_confirm">ADD</string>
+    <string name="aggiungi_confirm">add</string>
     <string name="posizione_add_desc">Title of the new element</string>
     <string name="lista_pers_piena">The maximum number of allowed elements is 30</string>
     <string name="lista_pers_vuota">The list is empty</string>
@@ -127,7 +126,7 @@
     <string name="no_elements_added">You haven\'t yet added any elements.</string>
     <string name="dialog_replace_title">Substitute the song</string>
     <string name="dialog_reset_list_title">Reset the list</string>
-    <string name="aggiungi_rename">RENAME</string>
+    <string name="aggiungi_rename">rename</string>
     <string name="save_list_title">Save the list</string>
     <string name="dialog_delete_mp3_title">Delete downloaded file</string>
     <string name="dialog_delete_link_title">Disconnect local file</string>
@@ -311,4 +310,6 @@
     <string name="elezione_2">Election (Second)</string>
     <string name="elezione_3">Election - final</string>
     <string name="passaggio_none">None</string>
+    <string name="dynamic_colors_title">Dynamic colors</string>
+    <string name="dynamic_colors_summary">Apply dynamic colors based on your wallpaper</string>
 </resources>

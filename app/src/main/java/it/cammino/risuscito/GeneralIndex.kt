@@ -64,9 +64,8 @@ class GeneralIndex : Fragment() {
                 tab.text = when (position) {
                     0 -> getString(R.string.letter_order_text).uppercase(l)
                     1 -> getString(R.string.page_order_text).uppercase(l)
-                    2 -> getString(R.string.arg_search_text).uppercase(l)
+                    2 -> getString(R.string.indice_liturgico_index).uppercase(l)
                     3 -> getString(R.string.salmi_musica_index).uppercase(l)
-                    4 -> getString(R.string.indice_liturgico_index).uppercase(l)
                     else -> getString(R.string.letter_order_text).uppercase(l)
                 }
             }.attach()
@@ -76,7 +75,7 @@ class GeneralIndex : Fragment() {
         lifecycleScope.launch {
             delay(500)
             if (savedInstanceState == null) {
-                val pref = PreferenceManager.getDefaultSharedPreferences(context)
+                val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 binding.viewPager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")
                         ?: "0")
             } else
@@ -86,7 +85,7 @@ class GeneralIndex : Fragment() {
     }
 
     private class IndexTabsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-        override fun getItemCount(): Int = 5
+        override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment =
                 when (position) {
@@ -94,7 +93,7 @@ class GeneralIndex : Fragment() {
                     1 -> SimpleIndexFragment.newInstance(1)
                     2 -> SectionedIndexFragment.newInstance(0)
                     3 -> SimpleIndexFragment.newInstance(2)
-                    4 -> SectionedIndexFragment.newInstance(1)
+//                    4 -> SectionedIndexFragment.newInstance(1)
                     else -> SimpleIndexFragment.newInstance(0)
                 }
     }

@@ -1,57 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+    <style name="Widget.Risuscito.Button.TextButton.Icon" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:textAppearance">@style/TextAppearance.Risuscito.LabelLarge</item>
+    </style>
+
+    <style name="TextAppearance.Risuscito.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@font/googlesans_medium</item>
+        <item name="android:fontFamily">@font/googlesans_medium</item>
     </style>
 
-    <style name="AdaptiveScrimColor">
-        <item name="statusBarScrim">?colorPrimaryVariant</item>
+    <style name="Widget.Risuscito.Button.Dialog" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="fontFamily">@font/googlesans_medium</item>
+        <item name="android:fontFamily">@font/googlesans_medium</item>
     </style>
 
-    <style name="AdaptiveBackgroundColor">
-        <item name="android:background">@android:color/transparent</item>
+    <style name="Widget.Material3.Toolbar.Risuscito">
+        <item name="titleTextAppearance">@style/TextAppearance.Material3.TitleLarge.Risuscito</item>
+        <item name="subtitleTextAppearance">@style/TextAppearance.Material3.TitleMedium.Risuscito</item>
     </style>
+
+    <style name="TextAppearance.Material3.TitleLarge.Risuscito">
+        <item name="fontFamily">@font/googlesans_medium</item>
+        <item name="android:fontFamily">@font/googlesans_medium</item>
+    </style>
+
+    <style name="TextAppearance.Material3.TitleMedium.Risuscito">
+        <item name="fontFamily">@font/googlesans_medium</item>
+        <item name="android:fontFamily">@font/googlesans_medium</item>
+    </style>
+
+    <style name="Widget.Risuscito.Button.TextButton.IconOnly" parent="Widget.Material3.Button.TextButton">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+<!--    <style name="AdaptiveScrimColor">-->
+<!--        <item name="statusBarScrim">?colorPrimaryVariant</item>-->
+<!--    </style>-->
+
+<!--    <style name="AdaptiveBackgroundColor">-->
+<!--        <item name="android:background">@android:color/transparent</item>-->
+<!--    </style>-->
 
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />
 
-    <style name="TitoloSezione">
+    <style name="TitoloSezione" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:gravity">start|center_vertical</item>
-        <item name="android:textAlignment" tools:targetApi="JELLY_BEAN_MR1">viewStart</item>
+        <item name="android:textAlignment">viewStart</item>
         <item name="fontFamily">@font/googlesans_medium</item>
-        <item name="android:textColor">?colorSecondaryVariant</item>
-        <item name="android:textSize">14sp</item>
+<!--        <item name="android:textColor">?colorSecondaryVariant</item>-->
+<!--        <item name="android:textSize">14sp</item>-->
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
-    <style name="Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:elevation" tools:ignore="NewApi">0dp</item>
-        <item name="android:theme">@style/ToolbarTheme</item>
+    <style name="Widget.Material3.Toolbar.Risuscito.InAppBarLayout">
+        <item name="android:elevation">0dp</item>
     </style>
 
-    <style name="Widget.MaterialComponents.TabLayout.PrimarySurface.Risuscito">
-        <item name="android:background">@android:color/transparent</item>
+    <style name="Widget.Material3.TabLayout.Risuscito">
         <item name="tabGravity">start</item>
         <item name="tabMode">scrollable</item>
-        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button.Risuscito
-        </item>
+<!--        <item name="textAppearanceLabelLarge">@style/TextAppearance.Material3.LabelLarge.Risuscito-->
+<!--        </item>-->
     </style>
 
-    <style name="TextAppearance.MaterialComponents.Button.Risuscito">
+    <style name="TextAppearance.Material3.LabelLarge.Risuscito">
         <item name="fontFamily">@font/googlesans_medium</item>
-        <item name="android:textSize">12sp</item>
+        <!--        <item name="android:textSize">12sp</item>-->
     </style>
 
-    <style name="ActionBar.TitleText.Collapsed">
-        <item name="android:textColor">?colorOnPrimarySurface</item>
+    <style name="TextAppearance.Material3.TitleLarge.Collapsed">
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
-    <style name="ActionBar.TitleText.Expanded">
-        <item name="android:textColor">@android:color/transparent</item>
+    <style name="TextAppearance.Material3.HeadlineSmall.Expanded">
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
@@ -105,11 +134,11 @@
         <item name="fontFamily">@font/googlesans_regular</item>
     </style>
 
-    <style name="AppBottomSheetDialogTheme" parent="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog">
+    <style name="AppBottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
-    <style name="AppModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
+    <style name="AppModalStyle" parent="Widget.Material3.BottomSheet.Modal">
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Risuscito.BottomSheet
         </item>
@@ -123,7 +152,7 @@
         <item name="cornerSizeBottomLeft">@dimen/mtrl_shape_corner_size_large_component</item>
     </style>
 
-    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
+    <style name="RisuscitoToolbarPopup" parent="ThemeOverlay.MaterialComponents.ActionBar">
         <item name="fontFamily">@font/googlesans_regular</item>
     </style>
 
@@ -131,25 +160,27 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="Widget.MaterialComponents.PopupMenu.Risuscito">
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">@font/googlesans_regular</item>
-    </style>
+<!--    <style name="PopupMenu.Risuscito.Style" parent="Widget.Material3.PopupMenu">-->
+<!--        <item name="android:textSize">14sp</item>-->
+<!--        <item name="android:fontFamily">@font/googlesans_regular</item>-->
+<!--    </style>-->
 
-    <style name="Widget.MaterialDrawerStyle.Risuscito">
-        <!-- MaterialDrawer specific values -->
-        <item name="materialDrawerDividerColor">@color/material_drawer_divider</item>
-    </style>
+<!--    <style name="Widget.MaterialDrawerStyle.Risuscito">-->
+<!--        &lt;!&ndash; MaterialDrawer specific values &ndash;&gt;-->
+<!--        <item name="materialDrawerDividerColor">@color/material_drawer_divider</item>-->
+<!--    </style>-->
 
     <style name="Widget.MaterialDrawerHeaderStyle.Risuscito">
         <item name="materialDrawerCompactStyle">true</item>
+        <item name="materialDrawerHeaderSelectionText">?colorOnSurface</item>
+        <item name="materialDrawerHeaderSelectionSubtext">?colorOnSurfaceVariant</item>
     </style>
 
     <style name="Risuscito_SpeedDialActionItem">
-        <item name="colorOnSecondary">@color/text_color_secondary</item>
+        <item name="colorOnSecondary">?colorOnSecondaryContainer</item>
     </style>
 
-    <style name="Widget.AppCompat.ActionMode.Risuscito">
+    <style name="ActionMode.Risuscito.Style" parent="Widget.Material3.ActionMode">
         <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
         <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
         <item name="background">@color/md_grey_900</item>
@@ -160,6 +191,15 @@
         <item name="materialThemeOverlay">
             @style/ThemeOverlay.MaterialComponents.BottomAppBar.Surface
         </item>
+    </style>
+
+    <style name="MaterialAlertDialog.Risuscito.Title.Text" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="fontFamily">@font/googlesans_medium</item>
+    </style>
+
+    <style name="Widget.Risuscito.TextView" parent="Widget.AppCompat.TextView">
+        <item name="fontFamily">@font/googlesans_regular</item>
+        <item name="android:fontFamily">@font/googlesans_regular</item>
     </style>
 
 </resources>

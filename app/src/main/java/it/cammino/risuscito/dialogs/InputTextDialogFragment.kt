@@ -4,7 +4,6 @@ package it.cammino.risuscito.dialogs
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.text.InputType
 import android.view.KeyEvent
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +13,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onShow
-import com.afollestad.materialdialogs.input.getInputField
-import com.afollestad.materialdialogs.input.input
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import it.cammino.risuscito.R
+import it.cammino.risuscito.ui.LocaleManager
 import java.io.Serializable
 
 @Suppress("unused")
@@ -26,45 +25,44 @@ class InputTextDialogFragment : DialogFragment() {
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })
 
     private val builder: Builder?
-        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(
+            BUILDER_TAG
+        ) as? Builder
 
     @SuppressLint("CheckResult")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mBuilder = builder
-                ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
+            ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
 
-        val dialog = MaterialDialog(requireContext())
-                .input(prefill = mBuilder.mPrefill
-                        ?: "", inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+
+        val mView = layoutInflater.inflate(R.layout.input_search, null, false)
+        dialog.setView(mView)
+        val input = mView.findViewById<TextInputEditText>(R.id.input_text)
+        input.setText(mBuilder.mPrefill ?: "")
+        input.selectAll()
 
         if (mBuilder.mTitle != 0)
-            dialog.title(res = mBuilder.mTitle)
-
-        if (!mBuilder.mAutoDismiss)
-            dialog.noAutoDismiss()
+            dialog.setTitle(mBuilder.mTitle)
 
         mBuilder.mPositiveButton?.let {
-            dialog.positiveButton(text = it) { mDialog ->
+            dialog.setPositiveButton(it) { _, _ ->
                 viewModel.mTag = mBuilder.mTag
-                viewModel.outputText = mDialog.getInputField().text.toString()
+                viewModel.outputText = input.text.toString()
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Positive(this)
             }
         }
 
         mBuilder.mNegativeButton?.let {
-            dialog.negativeButton(text = it) {
+            dialog.setNegativeButton(it) { _, _ ->
                 viewModel.mTag = mBuilder.mTag
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Negative(this)
             }
         }
 
-        dialog.onShow {
-            it.getInputField().selectAll()
-        }
-
-        dialog.cancelable(mBuilder.mCanceable)
+        dialog.setCancelable(mBuilder.mCanceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false
@@ -75,7 +73,7 @@ class InputTextDialogFragment : DialogFragment() {
             returnValue
         }
 
-        return dialog
+        return dialog.show()
     }
 
     fun cancel() {
@@ -86,12 +84,12 @@ class InputTextDialogFragment : DialogFragment() {
 
         @Transient
         private val mContext: AppCompatActivity = context
+
         @StringRes
         var mTitle = 0
         var mPositiveButton: CharSequence? = null
         var mNegativeButton: CharSequence? = null
         var mCanceable = false
-        var mAutoDismiss = true
         var mPrefill: CharSequence? = null
 
         fun title(@StringRes text: Int): Builder {
@@ -110,22 +108,25 @@ class InputTextDialogFragment : DialogFragment() {
         }
 
         fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text)
+            mPositiveButton = this.mContext.resources.getText(text).toString().replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    LocaleManager.getSystemLocale(mContext.resources)
+                ) else it.toString()
+            }
             return this
         }
 
         fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text)
+            mNegativeButton = this.mContext.resources.getText(text).toString().replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    LocaleManager.getSystemLocale(mContext.resources)
+                ) else it.toString()
+            }
             return this
         }
 
         fun setCanceable(canceable: Boolean): Builder {
             mCanceable = canceable
-            return this
-        }
-
-        fun setAutoDismiss(autoDismiss: Boolean): Builder {
-            mAutoDismiss = autoDismiss
             return this
         }
 
@@ -140,7 +141,7 @@ class InputTextDialogFragment : DialogFragment() {
         private fun newInstance(builder: Builder): InputTextDialogFragment {
             return newInstance().apply {
                 arguments = bundleOf(
-                        Pair(BUILDER_TAG, builder)
+                    Pair(BUILDER_TAG, builder)
                 )
             }
         }

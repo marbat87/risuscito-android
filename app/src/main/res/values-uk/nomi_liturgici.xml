@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">Адвент</string>
-    <string name="tempo_natale">Різдво</string>
-    <string name="tempo_quaresima">Великий піст</string>
-    <string name="tempo_pasqua">Пасха</string>
-    <string name="canti_pentecoste">П\'ятидесятниця</string>
-    <string name="canti_vergine">Пісні до Діви Марії</string>
-    <string name="lodi_vespri">Утреня і Вечірня</string>
-    <string name="canti_ingresso">Пісні на вхід</string>
-    <string name="canti_pace">Знак миру</string>
-    <string name="canti_pane">Ламання хлібу</string>
-    <string name="canti_vino">Причастя</string>
-    <string name="canti_fine">Пісні на вихід</string>
+    <string name="tempo_avvento">АДВЕНТ</string>
+    <string name="tempo_natale">РІЗДВО</string>
+    <string name="tempo_quaresima">ВЕЛИКИЙ ПІСТ</string>
+    <string name="tempo_pasqua">ПАСХА</string>
+    <string name="canti_pentecoste">П\'ЯТИДЕСЯТНИЦЯ</string>
+    <string name="canti_vergine">ПІСНІ ДО ДІВИ МАРІЇ</string>
+    <string name="lodi_vespri">УТРЕНЯ І ВЕЧІРНЯ</string>
+    <string name="canti_ingresso">ПІСНІ НА ВХІД</string>
+    <string name="canti_pace">ЗНАК МИРУ</string>
+    <string name="canti_pane">ЛАМАННЯ ХЛІБУ</string>
+    <string name="canti_fine">ПІСНІ НА ВИХІД</string>
+    <string name="canti_comunione">COMUNIONE</string>
+    <string name="canti_bambini">CANTI PER I BAMBINI</string>
 </resources>

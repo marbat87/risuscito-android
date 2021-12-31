@@ -30,6 +30,7 @@ import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
 import it.cammino.risuscito.ui.RisuscitoApplication
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -43,7 +44,10 @@ import java.util.*
  * In a real application this class may pull data from a remote server, as we do here, or
  * potentially use [android.provider.MediaStore] to locate media files located on the device.
  */
-class MusicProvider internal constructor(private val mContext: Context) {
+class MusicProvider internal constructor(
+    private val mContext: Context,
+    private val externalScope: CoroutineScope = GlobalScope
+) {
 
     // Categorized caches for music track data:
     private val mMusicListById: LinkedHashMap<String, MediaMetadataCompat> = LinkedHashMap()
@@ -98,7 +102,7 @@ class MusicProvider internal constructor(private val mContext: Context) {
             callback?.onMusicCatalogReady(true)
             return
         }
-        GlobalScope.launch(Dispatchers.IO) {
+        externalScope.launch(Dispatchers.IO) {
             retrieveMedia()
             callback?.onMusicCatalogReady(mCurrentState == State.INITIALIZED)
         }
@@ -115,7 +119,12 @@ class MusicProvider internal constructor(private val mContext: Context) {
             var mNewBase = mContext
             mNewBase = RisuscitoApplication.localeManager.useCustomConfig(mNewBase)
 
-            val art = decodeSampledBitmapFromResource(mNewBase.resources, R.drawable.ic_launcher_144dp, 320, 320)
+            val art = decodeSampledBitmapFromResource(
+                mNewBase.resources,
+                R.drawable.ic_launcher_144dp,
+                320,
+                320
+            )
             val artSmall = BitmapFactory.decodeResource(mNewBase.resources, R.mipmap.ic_launcher)
 
             val canti = mDao.allByWithLink
@@ -124,9 +133,38 @@ class MusicProvider internal constructor(private val mContext: Context) {
             var temp: MediaMetadataCompat
 
             for (canto in canti) {
-                Log.d(TAG,
-                        "$RETRIEVE_MEDIA: ${canto.id} / ${mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))} / ${if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link}")
-                var url = if (LUtils.getResId(canto.link, R.string::class.java) != -1) mNewBase.resources.getString(LUtils.getResId(canto.link, R.string::class.java)) else canto.link
+                Log.d(
+                    TAG,
+                    "$RETRIEVE_MEDIA: ${canto.id} / ${
+                        mNewBase.resources.getString(
+                            LUtils.getResId(
+                                canto.titolo,
+                                R.string::class.java
+                            )
+                        )
+                    } / ${
+                        if (LUtils.getResId(
+                                canto.link,
+                                R.string::class.java
+                            ) != -1
+                        ) mNewBase.resources.getString(
+                            LUtils.getResId(
+                                canto.link,
+                                R.string::class.java
+                            )
+                        ) else canto.link
+                    }"
+                )
+                var url = if (LUtils.getResId(
+                        canto.link,
+                        R.string::class.java
+                    ) != -1
+                ) mNewBase.resources.getString(
+                    LUtils.getResId(
+                        canto.link,
+                        R.string::class.java
+                    )
+                ) else canto.link
                 if (isExternalStorageReadable && isDefaultLocationPublic(mNewBase)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
                     if (retrieveMediaFileLink(mContext, url, true).isNotEmpty())
@@ -136,35 +174,56 @@ class MusicProvider internal constructor(private val mContext: Context) {
                         url = retrieveMediaFileLink(mContext, url, false)
                 }
 
-                Log.v(TAG, "$RETRIEVE_MEDIA: ${canto.id} / ${mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java))} / $url")
+                Log.v(
+                    TAG,
+                    "$RETRIEVE_MEDIA: ${canto.id} / ${
+                        mNewBase.resources.getString(
+                            LUtils.getResId(
+                                canto.titolo,
+                                R.string::class.java
+                            )
+                        )
+                    } / $url"
+                )
 
                 if (!url.isNullOrEmpty()) {
                     temp = MediaMetadataCompat.Builder()
-                            .putString(
-                                    MediaMetadataCompat.METADATA_KEY_MEDIA_ID, canto.id.toString())
-                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
-                            .putString(
-                                    MediaMetadataCompat.METADATA_KEY_ALBUM, mNewBase.getString(R.string.app_name))
-                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
-                            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
-                            .putString(MediaMetadataCompat.METADATA_KEY_GENRE, "Sacred")
-                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
-                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mNewBase.resources.getString(LUtils.getResId(canto.titolo, R.string::class.java)))
-                            .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, canto.id.toLong())
-                            .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, canti.size.toLong())
-                            // Set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is
-                            //                                // used, for example, on the lockscreen
-                            // background when the media
-                            //                                // session is active.
-                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
-                            //
-                            //                                // Set small version of the album art in the
-                            // DISPLAY_ICON. This is
-                            //                                // used on the MediaDescription and thus it
-                            // should be small to be
-                            //                                // serialized if necessary.
-                            .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artSmall)
-                            .build()
+                        .putString(
+                            MediaMetadataCompat.METADATA_KEY_MEDIA_ID, canto.id.toString()
+                        )
+                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
+                        .putString(
+                            MediaMetadataCompat.METADATA_KEY_ALBUM,
+                            mNewBase.getString(R.string.app_name)
+                        )
+                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
+                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
+                        .putString(MediaMetadataCompat.METADATA_KEY_GENRE, "Sacred")
+                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
+                        .putString(
+                            MediaMetadataCompat.METADATA_KEY_TITLE,
+                            mNewBase.resources.getString(
+                                LUtils.getResId(
+                                    canto.titolo,
+                                    R.string::class.java
+                                )
+                            )
+                        )
+                        .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, canto.id.toLong())
+                        .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, canti.size.toLong())
+                        // Set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is
+                        //                                // used, for example, on the lockscreen
+                        // background when the media
+                        //                                // session is active.
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
+                        //
+                        //                                // Set small version of the album art in the
+                        // DISPLAY_ICON. This is
+                        //                                // used on the MediaDescription and thus it
+                        // should be small to be
+                        //                                // serialized if necessary.
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artSmall)
+                        .build()
 
                     mMusicListById[canto.id.toString()] = temp
                 }

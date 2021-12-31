@@ -10,7 +10,7 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.services.XmlImportService
 import it.cammino.risuscito.ui.RisuscitoApplication
 
@@ -32,40 +32,44 @@ class ImportActivity : AppCompatActivity() {
             Log.d(TAG, "onCreate: data = $data")
             Log.d(TAG, "onCreate: schema = " + data.scheme)
             intent.data = null
-            MaterialDialog(this)
-                    .show {
-                        title(R.string.app_name)
-                        message(R.string.dialog_import)
-                        positiveButton(R.string.import_confirm) {
-                            val i = Intent(this@ImportActivity, XmlImportService::class.java)
-                            i.action = XmlImportService.ACTION_URL
-                            i.data = data
-                            XmlImportService.enqueueWork(applicationContext, i)
-                        }
-                        negativeButton(R.string.cancel) {
-                            finish()
-                        }
-                        cancelable(false)
-                        cancelOnTouchOutside(false)
-                    }
-                    .setOnKeyListener { arg0, keyCode, event ->
-                        if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                            arg0.dismiss()
-                            finish()
-                            true
-                        } else
-                            false
-                    }
+            MaterialAlertDialogBuilder(this).apply {
+                setTitle(R.string.app_name)
+                setMessage(R.string.dialog_import)
+                setPositiveButton(R.string.import_confirm) { _, _ ->
+                    val i = Intent(this@ImportActivity, XmlImportService::class.java)
+                    i.action = XmlImportService.ACTION_URL
+                    i.data = data
+                    XmlImportService.enqueueWork(applicationContext, i)
+                }
+                setNegativeButton(R.string.cancel) { _, _ ->
+                    finish()
+                }
+                setCancelable(false)
+//                        cancelOnTouchOutside(false)
+
+                setOnKeyListener { arg0, keyCode, event ->
+                    if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                        arg0.dismiss()
+                        finish()
+                        true
+                    } else
+                        false
+                }
+            }.show()
             //registra un receiver per ricevere la notifica di completamento import e potersi terminare
-            LocalBroadcastManager.getInstance(applicationContext).registerReceiver(importFinishBRec, IntentFilter(
-                    XmlImportService.ACTION_FINISH))
+            LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
+                importFinishBRec, IntentFilter(
+                    XmlImportService.ACTION_FINISH
+                )
+            )
         }
 
     }
 
     public override fun onDestroy() {
         try {
-            LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(importFinishBRec)
+            LocalBroadcastManager.getInstance(applicationContext)
+                .unregisterReceiver(importFinishBRec)
         } catch (e: IllegalArgumentException) {
             Log.e(javaClass.name, e.localizedMessage, e)
         }
@@ -80,7 +84,12 @@ class ImportActivity : AppCompatActivity() {
 
     override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
         Log.d(TAG, "applyOverrideConfiguration")
-        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(this, overrideConfiguration))
+        super.applyOverrideConfiguration(
+            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
+                this,
+                overrideConfiguration
+            )
+        )
     }
 
     companion object {

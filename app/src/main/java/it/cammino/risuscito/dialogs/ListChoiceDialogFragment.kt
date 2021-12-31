@@ -13,8 +13,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import it.cammino.risuscito.ui.LocaleManager
 import java.io.Serializable
 
 @Suppress("unused")
@@ -23,41 +23,43 @@ class ListChoiceDialogFragment : DialogFragment() {
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })
 
     private val builder: Builder?
-        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(
+            BUILDER_TAG
+        ) as? Builder
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mBuilder = builder
-                ?: throw IllegalStateException("ListChoiceDialogFragment should be created using its Builder interface.")
+            ?: throw IllegalStateException("ListChoiceDialogFragment should be created using its Builder interface.")
 
-        val dialog = MaterialDialog(requireContext())
-                .listItemsSingleChoice(mBuilder.listArrayId, initialSelection = mBuilder.initialSelection) { _, index, _ ->
-                    viewModel.index = index
-                    viewModel.handled = false
-                    viewModel.state.value = DialogState.Positive(this)
-                }
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+        dialog.setSingleChoiceItems(
+            mBuilder.listArrayId,
+            mBuilder.initialSelection
+        ) { _, index ->
+            viewModel.index = index
+            viewModel.handled = false
+            viewModel.state.value = DialogState.Positive(this)
+        }
 
         if (mBuilder.mTitle != 0)
-            dialog.title(res = mBuilder.mTitle)
-
-        if (!mBuilder.mAutoDismiss)
-            dialog.noAutoDismiss()
+            dialog.setTitle(mBuilder.mTitle)
 
         mBuilder.mContent?.let {
-            dialog.message(text = it)
+            dialog.setMessage(it)
         }
 
         mBuilder.mPositiveButton?.let {
-            dialog.positiveButton(text = it)
+            dialog.setPositiveButton(it, null)
         }
 
         mBuilder.mNegativeButton?.let {
-            dialog.negativeButton(text = it) {
+            dialog.setNegativeButton(it) { _, _ ->
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Negative(this)
             }
         }
 
-        dialog.cancelable(mBuilder.mCanceable)
+        dialog.setCancelable(mBuilder.mCanceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false
@@ -68,11 +70,7 @@ class ListChoiceDialogFragment : DialogFragment() {
             returnValue
         }
 
-        return dialog
-    }
-
-    fun setContent(@StringRes res: Int) {
-        (dialog as? MaterialDialog)?.message(res)
+        return dialog.show()
     }
 
     fun cancel() {
@@ -92,7 +90,6 @@ class ListChoiceDialogFragment : DialogFragment() {
         internal var mPositiveButton: CharSequence? = null
         internal var mNegativeButton: CharSequence? = null
         internal var mCanceable = false
-        internal var mAutoDismiss = true
 
         internal var listArrayId: Int = 0
         internal var initialSelection: Int = -1
@@ -123,22 +120,25 @@ class ListChoiceDialogFragment : DialogFragment() {
         }
 
         fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text)
+            mPositiveButton = this.mContext.resources.getText(text).toString().replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    LocaleManager.getSystemLocale(mContext.resources)
+                ) else it.toString()
+            }
             return this
         }
 
         fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text)
+            mNegativeButton = this.mContext.resources.getText(text).toString().replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    LocaleManager.getSystemLocale(mContext.resources)
+                ) else it.toString()
+            }
             return this
         }
 
         fun setCanceable(): Builder {
             mCanceable = true
-            return this
-        }
-
-        fun setAutoDismiss(autoDismiss: Boolean): Builder {
-            mAutoDismiss = autoDismiss
             return this
         }
 
@@ -153,7 +153,7 @@ class ListChoiceDialogFragment : DialogFragment() {
         private fun newInstance(builder: Builder): ListChoiceDialogFragment {
             return newInstance().apply {
                 arguments = bundleOf(
-                        Pair(BUILDER_TAG, builder)
+                    Pair(BUILDER_TAG, builder)
                 )
             }
         }

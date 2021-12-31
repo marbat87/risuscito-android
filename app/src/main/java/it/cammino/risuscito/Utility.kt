@@ -21,10 +21,10 @@ import android.util.Log
 import android.view.View
 import android.view.WindowInsetsController
 import android.view.WindowManager
-import androidx.annotation.ColorInt
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
@@ -64,8 +64,9 @@ object Utility {
     internal const val INTRO_CREALISTA_2 = "intro_crealista_2_test"
     internal const val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
     internal const val NIGHT_MODE = "night_mode"
-    internal const val PRIMARY_COLOR = "new_primary_color"
-    internal const val SECONDARY_COLOR = "new_accent_color"
+    internal const val DYNAMIC_COLORS = "dynamic_colors"
+//    internal const val PRIMARY_COLOR = "new_primary_color"
+//    internal const val SECONDARY_COLOR = "new_accent_color"
     internal const val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
     internal const val CLICK_DELAY_SELECTION: Long = 300
 
@@ -76,7 +77,7 @@ object Utility {
     internal const val ID_CANTO = "idCanto"
     internal const val PAGINA = "pagina"
     internal const val TIPO_LISTA = "tipoLista"
-    internal const val WRITE_STORAGE_RC = 123
+//    internal const val WRITE_STORAGE_RC = 123
 
 
     /* Checks if external storage is available for read and write */
@@ -94,12 +95,15 @@ object Utility {
         }
 
     internal fun isDefaultLocationPublic(context: Context): Boolean {
-        return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString(SAVE_LOCATION, "0")
-                ?: "0") == 1
+        return Integer.parseInt(
+            PreferenceManager.getDefaultSharedPreferences(context).getString(SAVE_LOCATION, "0")
+                ?: "0"
+        ) == 1
     }
 
     internal fun isOnline(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         return if (LUtils.hasM())
             isOnlineM(connectivityManager)
         else isOnlineLegacy(connectivityManager)
@@ -192,8 +196,14 @@ object Utility {
     internal fun getExternalMediaIdByName(context: Context, link: String): Long {
         val projection = arrayOf(MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID)
         val collection = MediaStore.Audio.Media
-                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-        context.contentResolver.query(collection, projection, "${MediaStore.Audio.Media.DISPLAY_NAME} = ?", arrayOf(getExternalLink(link)), null).use { cursor ->
+            .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        context.contentResolver.query(
+            collection,
+            projection,
+            "${MediaStore.Audio.Media.DISPLAY_NAME} = ?",
+            arrayOf(getExternalLink(link)),
+            null
+        ).use { cursor ->
             cursor?.let {
                 if (it.moveToFirst()) {
                     val nameColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
@@ -208,14 +218,19 @@ object Utility {
     }
 
     @Suppress("DEPRECATION")
-    fun retrieveMediaFileLinkLegacy(activity: Context, link: String, cercaEsterno: Boolean): String {
+    fun retrieveMediaFileLinkLegacy(
+        activity: Context,
+        link: String,
+        cercaEsterno: Boolean
+    ): String {
 
         if (isExternalStorageReadable && cercaEsterno) {
 //            Log.d(TAG, "retrieveMediaFileLinkLegacy: " + filterMediaLinkNew(link))
             // cerca file esterno con nuovi path e nome
             var fileExt = File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
-                    "/Risuscitò/" + filterMediaLinkNew(link))
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+                "/Risuscitò/" + filterMediaLinkNew(link)
+            )
             if (fileExt.exists()) {
 //                Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno1: " + fileExt.absolutePath)
                 return fileExt.absolutePath
@@ -249,15 +264,22 @@ object Utility {
         return ""
     }
 
-    @SuppressLint("NewApi")
-    fun setupTransparentTints(context: Activity, color: Int, hasNavDrawer: Boolean, isOnTablet: Boolean) {
-        if ((!hasNavDrawer || isOnTablet) && LUtils.hasL())
-            context.window.statusBarColor = color
-    }
+//    @SuppressLint("NewApi")
+//    fun setupTransparentTints(
+//        context: Activity,
+//        color: Int,
+//        hasNavDrawer: Boolean,
+//        isOnTablet: Boolean
+//    ) {
+//        if ((!hasNavDrawer || isOnTablet))
+//            context.window.statusBarColor = color
+//    }
 
     @SuppressLint("NewApi")
     fun setupNavBarColor(context: Activity) {
-        context.window.decorView.setBackgroundColor(ContextCompat.getColor(context, if (ThemeUtils.isDarkMode(context)) R.color.design_dark_default_color_background else R.color.design_default_color_background))
+        context.window.decorView.setBackgroundColor(
+            MaterialColors.getColor(context, android.R.attr.colorBackground, TAG)
+        )
         if (LUtils.hasO()) {
 //            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS and WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -283,7 +305,10 @@ object Utility {
 
     @RequiresApi(Build.VERSION_CODES.R)
     fun setLightNavigationBarR(context: Activity) {
-        context.window.insetsController?.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
+        context.window.insetsController?.setSystemBarsAppearance(
+            WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+            WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+        )
     }
 
     internal fun random(start: Int, end: Int): Int {
@@ -306,13 +331,29 @@ object Utility {
         return pattern.matcher(normalized).replaceAll("")
     }
 
-    fun createNotificationChannelWrapper(applicationContext: Context, channelId: String, name: String, description: String) {
-        if (LUtils.hasO()) createNotificationChannel(applicationContext, channelId, name, description)
+    fun createNotificationChannelWrapper(
+        applicationContext: Context,
+        channelId: String,
+        name: String,
+        description: String
+    ) {
+        if (LUtils.hasO()) createNotificationChannel(
+            applicationContext,
+            channelId,
+            name,
+            description
+        )
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(applicationContext: Context, channelId: String, name: String, description: String) {
-        val mNotificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private fun createNotificationChannel(
+        applicationContext: Context,
+        channelId: String,
+        name: String,
+        description: String
+    ) {
+        val mNotificationManager =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val mChannel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_LOW)
         // Configure the notification channel.
         mChannel.description = description
@@ -329,7 +370,7 @@ object Utility {
 
     fun <T> helperSetColor(t: T): ColorHolder = when (t) {
         is String -> ColorHolder.fromColor(Color.parseColor(t))
-        is @ColorInt Int -> ColorHolder.fromColor(t)
+        is Int -> ColorHolder.fromColor(t)
         else -> throw IllegalArgumentException()
     }
 
@@ -346,14 +387,17 @@ object Utility {
 
     @Suppress("DEPRECATION")
     private fun getExternalLinkLegacy(link: String): String {
-        if (File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
-                        "Risuscitò")
-                        .mkdirs())
+        if (File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+                "Risuscitò"
+            )
+                .mkdirs()
+        )
             Log.d(TAG, "CARTELLA RISUSCITO CREATA")
         else
             Log.d(TAG, "CARTELLA RISUSCITO ESISTENTE")
         return (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
-                .absolutePath
+            .absolutePath
                 + "/Risuscitò/"
                 + filterMediaLinkNew(link))
     }
@@ -361,14 +405,21 @@ object Utility {
     @Suppress("DEPRECATION")
     fun mediaScan(context: Context, link: String) {
         MediaScannerConnection.scanFile(
-                context,
-                arrayOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
-                        .absolutePath
+            context,
+            arrayOf(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
+                    .absolutePath
                         + "/Risuscitò/"
-                        + filterMediaLinkNew(link)), null, null)
+                        + filterMediaLinkNew(link)
+            ), null, null
+        )
     }
 
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int
+    ): Int {
         // Raw height and width of image
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
@@ -389,10 +440,10 @@ object Utility {
     }
 
     internal fun decodeSampledBitmapFromResource(
-            res: Resources,
-            resId: Int,
-            reqWidth: Int,
-            reqHeight: Int
+        res: Resources,
+        resId: Int,
+        reqWidth: Int,
+        reqHeight: Int
     ): Bitmap {
         // First decode with inJustDecodeBounds=true to check dimensions
         return BitmapFactory.Options().run {
@@ -410,7 +461,8 @@ object Utility {
     }
 
     internal fun readTextFromResource(ctx: Context, resourceID: String): String {
-        val inputStream = ctx.resources.openRawResource(LUtils.getResId(resourceID, R.raw::class.java))
+        val inputStream =
+            ctx.resources.openRawResource(LUtils.getResId(resourceID, R.raw::class.java))
         val br = BufferedReader(InputStreamReader(inputStream, ECONDING_UTF8))
         var line: String? = br.readLine()
         val cantoTrasportato = StringBuffer()
@@ -429,7 +481,8 @@ object Utility {
     private const val ECONDING_UTF8 = "utf-8"
 
     private val STROKE_LETTERS: Map<String, String> = mapOf(
-            Pair("Ł", "L"),
-            Pair("ł", "l"))
+        Pair("Ł", "L"),
+        Pair("ł", "l")
+    )
 
 }

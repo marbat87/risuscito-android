@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.google.android.material.card.MaterialCardView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
@@ -56,7 +57,7 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         get() = R.id.fastadapter_sub_item_id
 
     override val layoutRes: Int
-        get() = R.layout.simple_sub_item
+        get() = R.layout.simple_row_item
 
     override fun getViewHolder(v: View): ViewHolder {
         return ViewHolder(v)
@@ -68,17 +69,17 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         private var mPage: TextView? = null
         private var mPageSelected: View? = null
         private var mId: TextView? = null
-        private var mItemDivider: View? = null
+//        private var mItemDivider: View? = null
 
         override fun bindView(item: SimpleSubItem, payloads: List<Any>) {
             val ctx = itemView.context
 
             StringHolder.applyTo(item.title, mTitle)
             StringHolder.applyToOrHide(item.page, mPage)
-            view.background = FastAdapterUIUtils.getSelectableBackground(
-                    ctx,
-                    ContextCompat.getColor(ctx, R.color.selected_bg_color),
-                    false)
+//            view.background = FastAdapterUIUtils.getSelectableBackground(
+//                    ctx,
+//                    ContextCompat.getColor(ctx, R.color.selected_bg_color),
+//                    false)
 
             val bgShape = mPage?.background as? GradientDrawable
             bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
@@ -87,7 +88,7 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
 
             mId?.text = item.id.toString()
 
-            mItemDivider?.isVisible = item.isHasDivider
+//            mItemDivider?.isVisible = item.isHasDivider
         }
 
         override fun unbindView(item: SimpleSubItem) {
@@ -101,7 +102,7 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
             mPage = view.findViewById(R.id.text_page)
             mPageSelected = view.findViewById(R.id.selected_mark)
             mId = view.findViewById(R.id.text_id_canto)
-            mItemDivider = view.findViewById(R.id.item_divider)
+//            mItemDivider = view.findViewById(R.id.item_divider)
         }
     }
 

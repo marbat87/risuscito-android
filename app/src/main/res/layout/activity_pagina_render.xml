@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
-        style="@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/risuscito_toolbar"
-            style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
+            style="@style/Widget.Material3.Toolbar.Risuscito"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/RisuscitoToolbarPopup"
@@ -48,10 +48,8 @@
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                    android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                     android:contentDescription="@null"
                     android:gravity="center"
                     android:translationZ="1dp"
@@ -65,12 +63,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
-                    android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
                     android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                    android:layout_marginRight="@dimen/myListPreferredItemMargin"
                     android:text="@string/no_record"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="?android:textColorPrimary" />
@@ -89,10 +84,8 @@
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                    android:layout_marginLeft="@dimen/myListPreferredItemMargin"
                     android:contentDescription="@null"
                     android:gravity="center"
                     android:translationZ="1dp"
@@ -106,12 +99,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
-                    android:layout_marginLeft="@dimen/myListPreferredTextMarginStart"
                     android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                    android:layout_marginRight="@dimen/myListPreferredItemMargin"
                     android:text="@string/no_connection"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="?android:textColorPrimary" />
@@ -132,7 +122,6 @@
                     android:gravity="end"
                     android:labelFor="@+id/music_seekbar"
                     android:paddingStart="@dimen/activity_min_margin"
-                    android:paddingLeft="@dimen/activity_min_margin"
                     android:text="00:00"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat"
                     android:textColor="?android:textColorPrimary"
@@ -171,7 +160,7 @@
                     android:layout_width="@dimen/abc_action_bar_default_height_material"
                     android:layout_height="@dimen/abc_action_bar_default_height_material"
                     android:layout_gravity="center_vertical"
-                    android:background="?attr/customSelectorRound"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="@null"
                     android:focusable="true"
@@ -206,11 +195,11 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/common_shadow" />
+    <!--    <include layout="@layout/common_shadow" />-->
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Surface"
+        style="@style/Widget.Material3.BottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
@@ -230,7 +219,6 @@
                 android:gravity="end"
                 android:labelFor="@+id/speed_seekbar"
                 android:paddingStart="@dimen/activity_min_margin"
-                android:paddingLeft="@dimen/activity_min_margin"
                 android:text="0 %"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat"
                 android:textColor="?android:textColorPrimary"
@@ -256,7 +244,7 @@
                 android:layout_width="@dimen/abc_action_bar_default_height_material"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"
                 android:layout_gravity="center_vertical"
-                android:background="?attr/customSelectorRound"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@null"
                 android:focusable="true"

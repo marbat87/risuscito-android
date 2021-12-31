@@ -14,7 +14,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
@@ -23,7 +22,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -142,14 +140,6 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         binding.recyclerView.adapter = mAdapter
 
-        val insetDivider = DividerItemDecoration(this, llm.orientation)
-        insetDivider.setDrawable(
-            ContextCompat.getDrawable(
-                this, R.drawable.preference_list_divider_material
-            )!!
-        )
-        binding.recyclerView.addItemDecoration(insetDivider)
-
         mTouchHelper?.attachToRecyclerView(binding.recyclerView) // Attach ItemTouchHelper to RecyclerView
 
         val icon = IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
@@ -186,14 +176,14 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             mCreaListaViewModel.tempTitle = s.toString()
         }
 
-        if (ThemeUtils.isDarkMode(this)) {
-            val elevatedSurfaceColor =
-                ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(
-                    resources.getDimension(R.dimen.design_appbar_elevation)
-                )
-            binding.collapsingToolbarLayout.setContentScrimColor(elevatedSurfaceColor)
-            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
-        }
+//        if (ThemeUtils.isDarkMode(this)) {
+//            val elevatedSurfaceColor =
+//                ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(
+//                    resources.getDimension(R.dimen.design_appbar_elevation)
+//                )
+//            binding.collapsingToolbarLayout.setContentScrimColor(elevatedSurfaceColor)
+//            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
+//        }
 
         binding.fabCreaLista.setOnClickListener {
             InputTextDialogFragment.show(
@@ -452,7 +442,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     override fun itemTouchStartDrag(viewHolder: RecyclerView.ViewHolder) {
         @Suppress("UNCHECKED_CAST")
-        (viewHolder as? BindingViewHolder<SwipeableItemBinding>)?.binding?.cardContainer?.isDragged =
+        (viewHolder as? BindingViewHolder<SwipeableItemBinding>)?.binding?.listViewItemContainer?.isDragged =
             true
     }
 
@@ -460,7 +450,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         @Suppress("UNCHECKED_CAST")
         val viewHolder =
             binding.recyclerView.findViewHolderForAdapterPosition(newPosition) as? BindingViewHolder<SwipeableItemBinding>?
-        viewHolder?.binding?.cardContainer?.isDragged = false
+        viewHolder?.binding?.listViewItemContainer?.isDragged = false
     }
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {

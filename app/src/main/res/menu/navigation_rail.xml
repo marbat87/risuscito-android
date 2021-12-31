@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:checkable="true"
+        android:icon="@drawable/baseline_home_24"
+        android:title="@string/activity_homepage" />
+    <item
+        android:id="@+id/navigation_search"
+        android:checkable="true"
+        android:icon="@drawable/baseline_search_24"
+        android:title="@string/search_name_text" />
+    <item
+        android:id="@+id/navigation_indexes"
+        android:checkable="true"
+        android:icon="@drawable/baseline_format_list_bulleted_24"
+        android:title="@string/title_activity_general_index" />
+    <item
+        android:id="@+id/navigation_lists"
+        android:checkable="true"
+        android:icon="@drawable/baseline_view_carousel_24"
+        android:title="@string/title_activity_custom_lists" />
+    <item
+        android:id="@+id/navigation_favorites"
+        android:checkable="true"
+        android:icon="@drawable/baseline_bookmarks_24"
+        android:title="@string/action_favourites" />
+    <item
+        android:id="@+id/navigation_consegnati"
+        android:checkable="true"
+        android:icon="@drawable/baseline_fact_check_24"
+        android:title="@string/title_activity_consegnati" />
+    <item
+        android:id="@+id/navigation_history"
+        android:checkable="true"
+        android:icon="@drawable/baseline_history_24"
+        android:title="@string/title_activity_history" />
+</menu>

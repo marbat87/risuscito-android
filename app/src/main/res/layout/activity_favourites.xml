@@ -17,7 +17,7 @@
             android:layout_height="120dip"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/no_favourites_short"
-            risuscito:srcCompat="@drawable/ic_sunglassed_star" />
+            android:src="@drawable/ic_sunglassed_star" />
 
         <TextView
             android:id="@+id/favorites_text"

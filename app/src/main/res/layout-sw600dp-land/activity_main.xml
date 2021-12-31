@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/fixed_drawer_content"
-        android:layout_width="@dimen/drawer_tablet_fixed_width"
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        tools:ignore="InconsistentLayout" />
+        android:layout_gravity="start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/navigation_drawer" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/navigation_view">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
-            style="@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -31,10 +33,9 @@
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/risuscito_toolbar"
-                    style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
+                    style="@style/Widget.Material3.Toolbar.Risuscito"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    app:layout_scrollFlags="scroll|enterAlways|snap"
                     app:popupTheme="@style/RisuscitoToolbarPopup" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
@@ -43,6 +44,7 @@
                     android:layout_height="match_parent"
                     android:background="?colorPrimarySurface"
                     android:hint="@string/title_filter"
+                    android:visibility="gone"
                     app:type="card" />
 
             </FrameLayout>
@@ -76,11 +78,11 @@
             android:tag="@id/navigation_home"
             app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
-        <include layout="@layout/common_shadow" />
+<!--        <include layout="@layout/common_shadow" />-->
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottom_bar"
-            style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
+            style="@style/Widget.Material3.BottomAppBar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             android:layout_gravity="bottom"
@@ -104,4 +106,4 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

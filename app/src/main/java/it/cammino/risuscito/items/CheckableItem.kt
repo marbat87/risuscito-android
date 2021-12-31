@@ -59,10 +59,7 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         val ctx = binding.root.context
 
         binding.checkBox.isChecked = isSelected
-        binding.root.background = FastAdapterUIUtils.getSelectableBackground(
-                ctx,
-                ContextCompat.getColor(ctx, R.color.selected_bg_color),
-                false)
+        binding.listViewItemContainer.isChecked = isSelected
         // set the text for the name
         filter?.let {
             if (it.isNotEmpty()) {

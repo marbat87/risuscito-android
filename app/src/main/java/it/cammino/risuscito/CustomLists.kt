@@ -1,8 +1,8 @@
 package it.cammino.risuscito
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
@@ -38,7 +38,7 @@ import it.cammino.risuscito.CreaListaActivity.Companion.ID_DA_MODIF
 import it.cammino.risuscito.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.databinding.TabsLayout2Binding
+import it.cammino.risuscito.databinding.TabsLayoutBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
@@ -78,7 +78,7 @@ class CustomLists : Fragment() {
             }
         }
 
-    private var _binding: TabsLayout2Binding? = null
+    private var _binding: TabsLayoutBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -89,7 +89,7 @@ class CustomLists : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = TabsLayout2Binding.inflate(inflater, container, false)
+        _binding = TabsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -113,7 +113,7 @@ class CustomLists : Fragment() {
 
         movePage = savedInstanceState != null
 
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         Log.d(
             TAG,
             "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(
@@ -214,9 +214,10 @@ class CustomLists : Fragment() {
                     object :
                         TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                         override fun onSequenceFinish() {
-                            if (context != null) PreferenceManager.getDefaultSharedPreferences(
-                                context
-                            ).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                            context?.let {
+                                PreferenceManager.getDefaultSharedPreferences(it)
+                                    .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                            }
                         }
 
                         override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
@@ -224,15 +225,17 @@ class CustomLists : Fragment() {
                         }
 
                         override fun onSequenceCanceled(tapTarget: TapTarget) {
-                            if (context != null) PreferenceManager.getDefaultSharedPreferences(
-                                context
-                            ).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                            context?.let {
+                                PreferenceManager.getDefaultSharedPreferences(it)
+                                    .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                            }
                         }
                     })
                 .start()
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun subscribeUiListe() {
         mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->
             Log.d(TAG, "list size ${list.size}")
@@ -332,7 +335,8 @@ class CustomLists : Fragment() {
 
     fun initFabOptions(customList: Boolean) {
         val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon3.cmd_plus).apply {
-            colorInt = Color.WHITE
+            colorInt =
+                MaterialColors.getColor(requireContext(), R.attr.colorOnPrimaryContainer, TAG)
             sizeDp = 24
             paddingDp = 4
         }

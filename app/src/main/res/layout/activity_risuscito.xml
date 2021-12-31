@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/copertina"
         android:layout_margin="@dimen/activity_min_margin"
-        risuscito:srcCompat="@drawable/ic_main_cover"
+        android:src="@drawable/ic_main_cover"
         android:layout_gravity="center" />
 
     <com.google.android.gms.common.SignInButton

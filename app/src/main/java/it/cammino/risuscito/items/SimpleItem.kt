@@ -109,17 +109,18 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
                 StringHolder.applyTo(title, binding.textTitle)
         } ?: StringHolder.applyTo(title, binding.textTitle)
         StringHolder.applyToOrHide(page, binding.textPage)
-        binding.root.background = FastAdapterUIUtils.getSelectableBackground(
-                ctx,
-                ContextCompat.getColor(ctx, R.color.selected_bg_color),
-                true)
+        binding.listViewItemContainer.isChecked = isSelected
+//        binding.root.background = FastAdapterUIUtils.getSelectableBackground(
+//                ctx,
+//                ContextCompat.getColor(ctx, R.color.selected_bg_color),
+//                true)
 
         val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color?.colorInt ?: Color.WHITE)
         binding.textPage.isInvisible = isSelected
         binding.selectedMark.isVisible = isSelected
         val bgShapeSelected = binding.selectedMark.background as? GradientDrawable
-        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorSecondary, TAG))
+        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorPrimary, TAG))
 
     }
 
