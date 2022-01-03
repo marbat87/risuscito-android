@@ -139,10 +139,6 @@
     <string name="show_santo_summary">Authorize the viewing of Holy for the Eucharist</string>
     <string name="fullscreen">Full display</string>
     <string name="file_selected">Selected file</string>
-    <string name="primary_color">Primary colour</string>
-    <string name="primary_color_desc">The most used colour in the interface</string>
-    <string name="accent_color">Colour of emphasis</string>
-    <string name="accent_color_desc">The colour used for the widgets and other details of the interface</string>
     <string name="theme">Theme</string>
     <string name="lists_pref">Lists</string>
     <string name="system">System</string>
@@ -172,7 +168,6 @@
     <string name="showcase_consegnati_howto">Press this button to access the list and mark the songs.</string>
     <string name="showcase_consegnati_confirm">When you have finished, press ENTER to save the modifications&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;or press CANCEL to delete them.</string>
-    <string name="save_consegnati_running">Saving in progress&#8230;</string>
     <string name="title_activity_history">Chronology</string>
     <string name="new_hint_remove">Press and hold an element to remove it.</string>
     <string name="history_empty">Chronology is empty.</string>

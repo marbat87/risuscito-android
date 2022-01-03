@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <group android:id="@+id/main_group">
+        <item
+            android:id="@+id/navigation_home"
+            android:checkable="true"
+            android:icon="@drawable/baseline_home_24"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_search"
+            android:checkable="true"
+            android:icon="@drawable/baseline_search_24"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_indexes"
+            android:checkable="true"
+            android:icon="@drawable/baseline_format_list_bulleted_24"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_lists"
+            android:checkable="true"
+            android:icon="@drawable/baseline_view_carousel_24"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_favorites"
+            android:checkable="true"
+            android:icon="@drawable/baseline_bookmarks_24"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_consegnati"
+            android:checkable="true"
+            android:icon="@drawable/baseline_fact_check_24"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_history"
+            android:checkable="true"
+            android:icon="@drawable/baseline_history_24"
+            tools:ignore="MenuTitle" />
+    </group>
+    <group android:id="@+id/others_groups">
+        <item
+            android:id="@+id/navigation_settings"
+            android:checkable="true"
+            android:icon="@drawable/baseline_settings_24"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_changelog"
+            android:checkable="true"
+            android:icon="@drawable/baseline_info_24"
+            tools:ignore="MenuTitle" />
+    </group>
+</menu>

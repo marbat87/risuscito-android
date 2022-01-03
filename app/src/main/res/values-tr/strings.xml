@@ -140,10 +140,6 @@
     <string name="show_santo_summary">Efkaristiya için Kutsalın eklenebilmesi</string>
     <string name="fullscreen"> Büyük ekran</string>
     <string name="file_selected">Dosya seçildi</string>
-    <string name="primary_color">Baş renk</string>
-    <string name="primary_color_desc">Arayüzde daha çok kullanılan renk</string>
-    <string name="accent_color">Öne çıkan renk</string>
-    <string name="accent_color_desc">Widget ve Arayüzün detayları için kullanılan renk</string>
     <string name="theme">Tema</string>
     <string name="lists_pref">Listeler</string>
     <string name="system">Sistem</string>
@@ -173,7 +169,6 @@
     <string name="showcase_consegnati_howto">Listeye girip ilahileri işaretlemek için bu düğmeye tıkla.</string>
     <string name="showcase_consegnati_confirm">Bitirdiğinde, kaydetmek için KABUL e tıkla.</string>
     <string name="showcase_consegnati_cancel">Onları silmek için &#8230; yada İPTAL e tıkla.</string>
-    <string name="save_consegnati_running">Kaydediliyor&#8230;</string>
     <string name="title_activity_history">Geçmiş</string>
     <string name="new_hint_remove">Öğeyi kaldırmak için üzerine basılı tut</string>
     <string name="history_empty">Geçmiş boş</string>

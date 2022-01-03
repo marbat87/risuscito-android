@@ -69,8 +69,6 @@
             android:tag="@id/navigation_home"
             app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
-        <!--        <include layout="@layout/common_shadow" />-->
-
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottom_bar"
             style="@style/Widget.Material3.BottomAppBar"

@@ -68,7 +68,7 @@ class AboutFragment : Fragment() {
                     addPrivacyPolicyAction("https://marbat87.altervista.org/privacy_policy.html")
                     isShowAsCard = false
                     backgroundColor =
-                        if (ThemeUtils.isDarkMode(it)) R.color.design_dark_default_color_surface else R.color.design_default_color_surface
+                        if (ThemeUtils.isDarkMode(it)) R.color.md_theme_dark_surface else R.color.md_theme_light_surface
                 }.build()
             )
         }

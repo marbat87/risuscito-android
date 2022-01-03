@@ -57,11 +57,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
             "getResources().getConfiguration().uiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}"
         )
 
-//        val themeUtils = ThemeUtils(this)
         Log.d(TAG, "ThemeUtils.isDarkMode(this): ${ThemeUtils.isDarkMode(this)}")
         mViewModel.mLUtils = LUtils.getInstance(this)
         mViewModel.mLUtils.convertIntPreferences()
-//        setTheme(themeUtils.current)
 
         mViewModel.isOnTablet = mViewModel.mLUtils.isOnTablet
         Log.d(TAG, "onCreate: isOnTablet = ${mViewModel.isOnTablet}")
@@ -76,13 +74,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         mViewModel.isTabletWithNoFixedDrawer = mViewModel.isOnTablet && !mViewModel.isLandscape
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
-        // setta il colore della barra di stato, solo su KITKAT
-//        Utility.setupTransparentTints(
-//            this,
-//            getStatusBarDefaultColor(this),
-//            hasNavDrawer,
-//            mViewModel.isOnTablet
-//        )
         Utility.setupNavBarColor(this)
         mViewModel.mLUtils.setLigthStatusBar(!ThemeUtils.isDarkMode(this))
 

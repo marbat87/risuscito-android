@@ -40,7 +40,7 @@
         <item name="android:minHeight">48dp</item>
     </style>
 
-    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />
+    <!--    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />-->
 
     <style name="TitoloSezione" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:gravity">start|center_vertical</item>
@@ -61,9 +61,9 @@
         <item name="tabMode">scrollable</item>
     </style>
 
-    <style name="TextAppearance.Material3.LabelLarge.Risuscito">
-        <item name="fontFamily">@font/googlesans_medium</item>
-    </style>
+    <!--    <style name="TextAppearance.Material3.LabelLarge.Risuscito">-->
+    <!--        <item name="fontFamily">@font/googlesans_medium</item>-->
+    <!--    </style>-->
 
     <style name="TextAppearance.Material3.TitleLarge.Collapsed">
         <item name="fontFamily">@font/googlesans_medium</item>
@@ -159,18 +159,18 @@
         <item name="colorOnSecondary">?colorOnSecondaryContainer</item>
     </style>
 
-    <style name="ActionMode.Risuscito.Style" parent="Widget.Material3.ActionMode">
-        <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
-        <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
-        <item name="background">@color/md_grey_900</item>
-    </style>
+    <!--    <style name="ActionMode.Risuscito.Style" parent="Widget.Material3.ActionMode">-->
+    <!--        <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>-->
+    <!--        <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>-->
+    <!--        <item name="background">@color/md_grey_900</item>-->
+    <!--    </style>-->
 
-    <style name="Widget.MaterialComponents.BottomAppBar.Surface">
-        <item name="backgroundTint">@color/risuscito_material_background</item>
-        <item name="materialThemeOverlay">
-            @style/ThemeOverlay.MaterialComponents.BottomAppBar.Surface
-        </item>
-    </style>
+    <!--    <style name="Widget.MaterialComponents.BottomAppBar.Surface">-->
+    <!--        <item name="backgroundTint">@color/risuscito_material_background</item>-->
+    <!--        <item name="materialThemeOverlay">-->
+    <!--            @style/ThemeOverlay.MaterialComponents.BottomAppBar.Surface-->
+    <!--        </item>-->
+    <!--    </style>-->
 
     <style name="MaterialAlertDialog.Risuscito.Title.Text" parent="MaterialAlertDialog.Material3.Title.Text">
         <item name="fontFamily">@font/googlesans_medium</item>

@@ -9,9 +9,9 @@
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="80dp"
-        app:headerLayout="@layout/simple_profile_image"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:headerLayout="@layout/simple_profile_image"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/navigation_drawer" />
 
@@ -78,8 +78,6 @@
             android:layout_height="match_parent"
             android:tag="@id/navigation_home"
             app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
-
-        <!--        <include layout="@layout/common_shadow" />-->
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottom_bar"

@@ -12,7 +12,9 @@
         <entry key="..\:/Users/marba/.gradle/caches/transforms-3/837305bf2cedbc0adbbde60f13e0d482/transformed/appcompat-1.4.0/res/drawable/abc_ic_menu_share_mtrl_alpha.xml" value="0.21875" />
         <entry key="..\:/Users/marba/.gradle/caches/transforms-3/837305bf2cedbc0adbbde60f13e0d482/transformed/appcompat-1.4.0/res/layout/abc_search_view.xml" value="0.20104166666666667" />
         <entry key="..\:/Users/marba/.gradle/caches/transforms-3/d7ffd7ef8db7c786d59b2bb7d0c7dae3/transformed/material-1.5.0-rc01/res/drawable/ic_mtrl_checked_circle.xml" value="0.37864583333333335" />
+        <entry key="..\:/Users/marba/.gradle/caches/transforms-3/d7ffd7ef8db7c786d59b2bb7d0c7dae3/transformed/material-1.5.0-rc01/res/layout/test_toolbar_surface.xml" value="0.13405797101449277" />
         <entry key="..\:/Users/marba/.gradle/caches/transforms-3/efc5746a153c851fe1bdbce91343dbf3/transformed/preference-1.1.1/res/drawable/preference_list_divider_material.xml" value="0.21875" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/drawable/account_key_24.xml" value="0.21302083333333333" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/drawable/account_key_24dp.xml" value="0.20833333333333334" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/drawable/account_remove_24.xml" value="0.20833333333333334" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/drawable/account_remove_24dp.xml" value="0.20833333333333334" />
@@ -38,13 +40,16 @@
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/drawable/mtrl_eye.xml" value="0.21875" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/drawable/outline_sell_24.xml" value="0.37864583333333335" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/drawable/page_oval_bkg_selected.xml" value="0.37864583333333335" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/drawable/toolbar_shadow.xml" value="0.21302083333333333" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/font/googlesans.xml" value="0.221875" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout-land/activity_crea_lista.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout-sw600dp-land/activity_main.xml" value="0.13018741633199465" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout-sw600dp/activity_crea_lista.xml" value="0.14765625" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout-sw600dp/activity_main.xml" value="0.151953125" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout-sw840dp/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout-v21/list_group_item.xml" value="0.196875" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout-v21/swipeable_item.xml" value="0.196875" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout/about_layout.xml" value="0.12409420289855072" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout/activity_crea_lista.xml" value="0.196875" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout/activity_favourites.xml" value="0.1721014492753623" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/layout/activity_insert_search.xml" value="0.20260416666666667" />
@@ -84,6 +89,12 @@
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-night/canto.xml" value="0.1953125" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-night/clean_list_menu.xml" value="0.1953125" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-night/consegnati.xml" value="0.1953125" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-sw600dp-port/account_options.xml" value="0.14765625" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-sw600dp-port/navigation_drawer.xml" value="0.14765625" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-sw600dp/account_options.xml" value="0.14765625" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-sw600dp/navigation_drawer.xml" value="0.14765625" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-sw840dp/account_options.xml" value="0.14765625" />
+        <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu-sw840dp/navigation_drawer.xml" value="0.14765625" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu/account_options.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu/add_to_menu.xml" value="0.20260416666666667" />
         <entry key="..\:/Users/marba/StudioProjects/risuscito-android/app/src/main/res/menu/canto.xml" value="0.1" />

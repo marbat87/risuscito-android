@@ -139,10 +139,6 @@
     <string name="show_santo_summary">Dodaje dodatkową pozycję w Eucharystii - pieśń Święty</string>
     <string name="fullscreen">Pełny ekran</string>
     <string name="file_selected">Wybrany plik</string>
-    <string name="primary_color">Kolor główny</string>
-    <string name="primary_color_desc">Najczęściej używany kolor w aplikacji</string>
-    <string name="accent_color">Kolor dodatkowy</string>
-    <string name="accent_color_desc">Kolor używany do bardziej szczegółowych elementów interfejsu</string>
     <string name="theme">Tło</string>
     <string name="lists_pref">Listy</string>
     <string name="system">System</string>
@@ -172,7 +168,6 @@
     <string name="showcase_consegnati_howto">Naciśnij na ten przycisk, aby uzyskać dostęp do listy i zaznaczyć pieśni.</string>
     <string name="showcase_consegnati_confirm">Gdy skończysz, naciśnij ENTER aby zapisać zmiany&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;lub wciśnij ANULUJ aby odrzucić je.</string>
-    <string name="save_consegnati_running">Zapisywanie w trakcie&#8230;</string>
     <string name="title_activity_history">Historia</string>
     <string name="new_hint_remove">Naciśnij i przytrzymaj na elemencie aby go usunąć.</string>
     <string name="history_empty">Historia jest pusta.</string>

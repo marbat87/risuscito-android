@@ -5,12 +5,10 @@ import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
-import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils
@@ -91,17 +89,22 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
 
         filter?.let {
             if (it.isNotEmpty()) {
-                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
-                        ?: "")
-                val mPosition = normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
+                val normalizedTitle = Utility.removeAccents(
+                    title?.getText(ctx)
+                        ?: ""
+                )
+                val mPosition =
+                    normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
                 if (mPosition >= 0) {
                     val stringTitle = title?.getText(ctx)
-                    val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
-                            ?: "") else "")
-                            .append("<b>")
-                            .append(stringTitle?.substring(mPosition, mPosition + it.length))
-                            .append("</b>")
-                            .append(stringTitle?.substring(mPosition + it.length))
+                    val highlighted = StringBuilder(
+                        if (mPosition > 0) (stringTitle?.substring(0, mPosition)
+                            ?: "") else ""
+                    )
+                        .append("<b>")
+                        .append(stringTitle?.substring(mPosition, mPosition + it.length))
+                        .append("</b>")
+                        .append(stringTitle?.substring(mPosition + it.length))
                     binding.textTitle.text = LUtils.fromHtmlWrapper(highlighted.toString())
                 } else
                     StringHolder.applyTo(title, binding.textTitle)

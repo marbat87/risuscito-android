@@ -4,16 +4,9 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
-import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
@@ -70,7 +63,6 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
     }
 
     override fun bindView(binding: RowItemNotableBinding, payloads: List<Any>) {
-        val ctx = binding.root.context
 
         StringHolder.applyTo(title, binding.textTitle)
 
@@ -81,28 +73,11 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
 
         binding.editNote.isGone = (numPassaggio != -1)
         binding.editNoteFilled.isGone = (numPassaggio == -1)
-//        binding.editNote.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(ctx, if (numPassaggio == -1) R.drawable.baseline_sell_24 else R.drawable.baseline_sell_24), null, null, null)
-
-
-//        val icon = IconicsDrawable(ctx, if (numPassaggio == -1)
-//            CommunityMaterial.Icon3.cmd_tag_plus
-//        else
-//            CommunityMaterial.Icon3.cmd_tag_text_outline).apply {
-//            colorInt = MaterialColors.getColor(ctx, if (numPassaggio == -1) R.attr.colorOnSurface else R.attr.colorTertiary, TAG)
-//            sizeDp = 24
-//            paddingDp = 2
-//        }
-//        binding.editNoteImage.setImageDrawable(icon)
     }
 
     override fun unbindView(binding: RowItemNotableBinding) {
         binding.textTitle.text = null
         binding.textPage.text = null
-//        binding.editNoteImage.setImageDrawable(null)
-    }
-
-    companion object {
-        private val TAG = NotableItem::class.java.canonicalName
     }
 
 }

@@ -4,13 +4,10 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.google.android.material.card.MaterialCardView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
-import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
@@ -19,7 +16,8 @@ import it.cammino.risuscito.Utility.helperSetString
 
 fun simpleSubItem(block: SimpleSubItem.() -> Unit): SimpleSubItem = SimpleSubItem().apply(block)
 
-class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpandable<SimpleSubItem.ViewHolder> {
+class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(),
+    IExpandable<SimpleSubItem.ViewHolder> {
 
     var title: StringHolder? = null
         private set
@@ -63,23 +61,17 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
         return ViewHolder(v)
     }
 
-    class ViewHolder(private var view: View) : FastAdapter.ViewHolder<SimpleSubItem>(view) {
+    class ViewHolder(view: View) : FastAdapter.ViewHolder<SimpleSubItem>(view) {
 
         private var mTitle: TextView? = null
         private var mPage: TextView? = null
         private var mPageSelected: View? = null
         private var mId: TextView? = null
-//        private var mItemDivider: View? = null
 
         override fun bindView(item: SimpleSubItem, payloads: List<Any>) {
-            val ctx = itemView.context
 
             StringHolder.applyTo(item.title, mTitle)
             StringHolder.applyToOrHide(item.page, mPage)
-//            view.background = FastAdapterUIUtils.getSelectableBackground(
-//                    ctx,
-//                    ContextCompat.getColor(ctx, R.color.selected_bg_color),
-//                    false)
 
             val bgShape = mPage?.background as? GradientDrawable
             bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
@@ -88,7 +80,6 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(), IExpan
 
             mId?.text = item.id.toString()
 
-//            mItemDivider?.isVisible = item.isHasDivider
         }
 
         override fun unbindView(item: SimpleSubItem) {

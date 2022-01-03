@@ -4,9 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
-import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils
@@ -50,7 +48,10 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
     override val type: Int
         get() = R.id.fastadapter_checkable_item_id
 
-    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): CheckableRowItemBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup?
+    ): CheckableRowItemBinding {
         return CheckableRowItemBinding.inflate(inflater, parent, false)
     }
 
@@ -63,17 +64,22 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         // set the text for the name
         filter?.let {
             if (it.isNotEmpty()) {
-                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
-                        ?: "")
-                val mPosition = normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
+                val normalizedTitle = Utility.removeAccents(
+                    title?.getText(ctx)
+                        ?: ""
+                )
+                val mPosition =
+                    normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
                 if (mPosition >= 0) {
                     val stringTitle = title?.getText(ctx)
-                    val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
-                            ?: "") else "")
-                            .append("<b>")
-                            .append(stringTitle?.substring(mPosition, mPosition + it.length))
-                            .append("</b>")
-                            .append(stringTitle?.substring(mPosition + it.length))
+                    val highlighted = StringBuilder(
+                        if (mPosition > 0) (stringTitle?.substring(0, mPosition)
+                            ?: "") else ""
+                    )
+                        .append("<b>")
+                        .append(stringTitle?.substring(mPosition, mPosition + it.length))
+                        .append("</b>")
+                        .append(stringTitle?.substring(mPosition + it.length))
                     binding.textTitle.text = LUtils.fromHtmlWrapper(highlighted.toString())
                 } else
                     StringHolder.applyTo(title, binding.textTitle)

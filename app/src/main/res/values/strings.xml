@@ -158,10 +158,6 @@
     <string name="show_santo_summary">Abilita la visualizzazione del Santo per l\'Eucarestia</string>
     <string name="fullscreen">Schermo intero</string>
     <string name="file_selected">File selezionato</string>
-    <string name="primary_color">Colore principale</string>
-    <string name="primary_color_desc">Il colore usato maggiormente nell\'interfaccia</string>
-    <string name="accent_color">Colore di risalto</string>
-    <string name="accent_color_desc">Il colore usato per i widget e altri dettagli dell\'interfaccia</string>
     <string name="theme">Tema</string>
     <string name="lists_pref">Liste</string>
     <string name="system">Sistema</string>
@@ -191,7 +187,6 @@
     <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
     <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;oppure premi ANNULLA per cancellarle.</string>
-    <string name="save_consegnati_running">Salvataggio in corso&#8230;</string>
     <string name="title_activity_history">Cronologia</string>
     <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
     <string name="history_empty">La cronologia è vuota.</string>
