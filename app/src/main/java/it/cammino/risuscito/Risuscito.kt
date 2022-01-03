@@ -2,12 +2,15 @@ package it.cammino.risuscito
 
 import android.Manifest
 import android.annotation.TargetApi
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat.START
 import androidx.core.view.isInvisible
@@ -15,8 +18,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
-import com.anggrayudi.storage.SimpleStorageHelper
-import com.anggrayudi.storage.permission.*
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -31,6 +32,30 @@ class Risuscito : Fragment() {
 
     private var mMainActivity: MainActivity? = null
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            mMainActivity?.let {
+                Snackbar.make(
+                    it.activityMainContent,
+                    getString(R.string.permission_ok),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        } else {
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .edit { putString(Utility.SAVE_LOCATION, "0") }
+            mMainActivity?.let {
+                Snackbar.make(
+                    it.activityMainContent,
+                    getString(R.string.external_storage_denied),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
     private var _binding: ActivityRisuscitoBinding? = null
 
     // This property is only valid between onCreateView and
@@ -43,6 +68,7 @@ class Risuscito : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = ActivityRisuscitoBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -60,17 +86,15 @@ class Risuscito : Fragment() {
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
-        if (!LUtils.hasQ())
-            permissionRequest.check()
-
         binding.imageView1.setOnClickListener {
             if (!activityViewModel.isOnTablet)
                 mMainActivity?.activityDrawer?.openDrawer(START)
         }
 
         binding.signInButton.setSize(SignInButton.SIZE_WIDE)
-        binding.signInButton.isInvisible = PreferenceManager.getDefaultSharedPreferences(requireContext())
-            .getBoolean(Utility.SIGNED_IN, false)
+        binding.signInButton.isInvisible =
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(Utility.SIGNED_IN, false)
         binding.signInButton.setOnClickListener {
             PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
@@ -102,49 +126,93 @@ class Risuscito : Fragment() {
                 ThemeUtils.isDarkMode(requireContext())
             ) // second parameter defines, if the dialog has a dark or light theme
 
+        if (!LUtils.hasQ())
+            checkPermission()
+
     }
 
-    // In Fragment, build permissionRequest before onCreate() is called
-    private val permissionRequest = FragmentPermissionRequest.Builder(this)
-        .withPermissions(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,  Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        .withCallback(object : PermissionCallback {
-            override fun onPermissionsChecked(result: PermissionResult, fromSystemDialog: Boolean) {
-                if (result.areAllPermissionsGranted) {
-                    mMainActivity?.let {
-                        Snackbar.make(
-                            it.activityMainContent,
-                            getString(R.string.permission_ok),
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-                } else {
-                    PreferenceManager.getDefaultSharedPreferences(requireContext())
-                        .edit { putString(Utility.SAVE_LOCATION, "0") }
-                    mMainActivity?.let {
-                        Snackbar.make(
-                            it.activityMainContent,
-                            getString(R.string.external_storage_denied),
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+    private fun checkPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                Log.d(TAG, "permission granted")
             }
-
-            override fun onDisplayConsentDialog(request: PermissionRequest) {
+            shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
+                // In an educational UI, explain to the user why your app requires this
+                // permission for a specific feature to behave as expected. In this UI,
+                // include a "cancel" or "no thanks" button that allows the user to
+                // continue using your app without granting the permission.
                 MaterialAlertDialogBuilder(requireContext())
                     .setMessage(R.string.external_storage_pref_rationale)
-                    .setPositiveButton(android.R.string.ok) { _, _ -> request.continueToPermissionRequest() }
+                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                        run {
+                            dialog.cancel()
+                            requestPermissionLauncher.launch(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
+                        }
+                    }
                     .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
                     .show()
             }
-
-            override fun onShouldRedirectToSystemSettings(blockedPermissions: List<PermissionReport>) {
-                SimpleStorageHelper.redirectToSystemSettings(requireContext())
+            else -> {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
             }
-        })
-        .build()
+        }
+    }
+
+//    // In Fragment, build permissionRequest before onCreate() is called
+//    private val permissionRequest = FragmentPermissionRequest.Builder(this)
+//        .withPermissions(
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//        )
+//        .withCallback(object : PermissionCallback {
+//            override fun onPermissionsChecked(result: PermissionResult, fromSystemDialog: Boolean) {
+//                if (result.areAllPermissionsGranted) {
+//                    mMainActivity?.let {
+//                        Snackbar.make(
+//                            it.activityMainContent,
+//                            getString(R.string.permission_ok),
+//                            Snackbar.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                } else {
+//                    PreferenceManager.getDefaultSharedPreferences(requireContext())
+//                        .edit { putString(Utility.SAVE_LOCATION, "0") }
+//                    mMainActivity?.let {
+//                        Snackbar.make(
+//                            it.activityMainContent,
+//                            getString(R.string.external_storage_denied),
+//                            Snackbar.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                }
+//            }
+//
+//            override fun onDisplayConsentDialog(request: PermissionRequest) {
+//                MaterialAlertDialogBuilder(requireContext())
+//                    .setMessage(R.string.external_storage_pref_rationale)
+//                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
+//                        run {
+//                            dialog.dismiss()
+//                            request.continueToPermissionRequest()
+//                        }
+//                    }
+//                    .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+//                    .show()
+//            }
+//
+//            override fun onShouldRedirectToSystemSettings(blockedPermissions: List<PermissionReport>) {
+//                SimpleStorageHelper.redirectToSystemSettings(requireContext())
+//            }
+//        })
+//        .build()
 
 //    override fun onRequestPermissionsResult(
 //        requestCode: Int, permissions: Array<String>, grantResults: IntArray

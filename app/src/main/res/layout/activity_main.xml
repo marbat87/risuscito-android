@@ -63,10 +63,8 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/content_frame"
-            android:name="it.cammino.risuscito.Risuscito"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:tag="@id/navigation_home"
             app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
         <com.google.android.material.bottomappbar.BottomAppBar
