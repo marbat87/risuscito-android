@@ -1,9 +1,9 @@
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     kotlin("android")
     kotlin("kapt")
+    id("com.google.gms.google-services")
 }
 
 
@@ -94,9 +94,9 @@ dependencies {
     implementation("com.google.firebase:firebase-core:20.0.2")
     implementation("com.google.firebase:firebase-firestore-ktx:24.0.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.0.0")
-    implementation("com.google.firebase:firebase-auth:21.0.1")
-    implementation("com.google.firebase:firebase-crashlytics:18.2.6")
-    implementation("com.google.firebase:firebase-analytics:20.0.2")
+    implementation("com.google.firebase:firebase-auth-ktx:21.0.1")
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.2.6")
+    implementation("com.google.firebase:firebase-analytics-ktx:20.0.2")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.mikepenz:materialdrawer:$materialDrawerVersion")
     implementation("com.mikepenz:materialdrawer-iconics:$materialDrawerVersion")

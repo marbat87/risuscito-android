@@ -71,6 +71,8 @@
         <!--        <item name="popupMenuStyle">@style/PopupMenu.Risuscito.Style</item>-->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Risuscito.MaterialAlertDialog
         </item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Risuscito.BodyMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.Risuscito.TitleSmall</item>
         <!--        <item name="actionBarTheme">-->
         <!--            @style/ThemeOverlay.MaterialComponents.Dark.ActionBar-->
         <!--        </item>-->
@@ -81,7 +83,7 @@
         <!--        <item name="customSelector">?android:attr/selectableItemBackground</item>-->
         <!--        <item name="customSelectorRound">?android:attr/selectableItemBackgroundBorderless</item>-->
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="toolbar_shadow">@null</item>
+<!--        <item name="toolbar_shadow">@null</item>-->
     </style>
 
     <style name="Risuscito.Theme.Launcher">

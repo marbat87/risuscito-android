@@ -93,7 +93,6 @@ class GeneralIndex : Fragment() {
                     1 -> SimpleIndexFragment.newInstance(1)
                     2 -> SectionedIndexFragment.newInstance(0)
                     3 -> SimpleIndexFragment.newInstance(2)
-//                    4 -> SectionedIndexFragment.newInstance(1)
                     else -> SimpleIndexFragment.newInstance(0)
                 }
     }

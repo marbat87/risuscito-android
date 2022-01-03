@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -25,7 +26,6 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.IndexListFragmentBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
-import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
@@ -136,47 +136,51 @@ class SimpleIndexFragment : Fragment() {
         binding.cantiList.layoutManager = if (activityViewModel.isGridLayout) glm else llm
         binding.cantiList.setHasFixedSize(true)
         binding.cantiList.adapter = mAdapter
-        binding.dragScrollBar.setRecyclerView(binding.cantiList)
-        if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
-            binding.dragScrollBar.setTextColor(
-                MaterialColors.getColor(
-                    requireContext(),
-                    R.attr.colorOnTertiary,
-                    TAG
+        if (mCantiViewModel.tipoLista != 2) {
+            binding.dragScrollBar.setRecyclerView(binding.cantiList)
+            if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
+                binding.dragScrollBar.setTextColor(
+                    MaterialColors.getColor(
+                        requireContext(),
+                        R.attr.colorOnTertiary,
+                        TAG
+                    )
                 )
-            )
-            binding.dragScrollBar.setHandleColor(
-                MaterialColors.getColor(
-                    context, R.attr.colorTertiary, TAG
+                binding.dragScrollBar.setHandleColor(
+                    MaterialColors.getColor(
+                        context, R.attr.colorTertiary, TAG
+                    )
                 )
-            )
-            binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
-            binding.dragScrollBar.setAutoHide(false)
-        } else
-            binding.dragScrollBar.addOnAttachStateChangeListener(object :
-                View.OnAttachStateChangeListener {
-                override fun onViewDetachedFromWindow(p0: View?) {
-                    // no-op
-                }
+                binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
+                binding.dragScrollBar.setAutoHide(false)
+            } else
+                binding.dragScrollBar.addOnAttachStateChangeListener(object :
+                    View.OnAttachStateChangeListener {
+                    override fun onViewDetachedFromWindow(p0: View?) {
+                        // no-op
+                    }
 
-                override fun onViewAttachedToWindow(p0: View?) {
-                    (p0 as? TouchScrollBar)?.setTextColor(
-                        MaterialColors.getColor(
-                            requireContext(),
-                            R.attr.colorOnTertiary,
-                            TAG
+                    override fun onViewAttachedToWindow(p0: View?) {
+                        (p0 as? TouchScrollBar)?.setTextColor(
+                            MaterialColors.getColor(
+                                requireContext(),
+                                R.attr.colorOnTertiary,
+                                TAG
+                            )
                         )
-                    )
-                    (p0 as? TouchScrollBar)?.setHandleColor(
-                        MaterialColors.getColor(
-                            context, R.attr.colorTertiary, TAG
+                        (p0 as? TouchScrollBar)?.setHandleColor(
+                            MaterialColors.getColor(
+                                context, R.attr.colorTertiary, TAG
+                            )
                         )
-                    )
-                    (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
-                    (p0 as? TouchScrollBar)?.setAutoHide(false)
-                    p0?.removeOnAttachStateChangeListener(this)
-                }
-            })
+                        (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
+                        (p0 as? TouchScrollBar)?.setAutoHide(false)
+                        p0?.removeOnAttachStateChangeListener(this)
+                    }
+                })
+        } else {
+            binding.dragScrollBar.isGone = true
+        }
     }
 
     override fun onResume() {

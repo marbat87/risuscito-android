@@ -97,12 +97,6 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!--    <com.mikepenz.materialdrawer.widget.MaterialDrawerSliderView-->
-    <!--        android:id="@+id/slider"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        android:layout_gravity="start" />-->
-
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
