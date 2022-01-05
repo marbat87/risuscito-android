@@ -115,7 +115,6 @@ dependencies {
     implementation("com.mikepenz:fastadapter-extensions-binding:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
     implementation("com.squareup.picasso:picasso:2.8")
-    implementation("pub.devrel:easypermissions:3.0.0")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("com.github.turing-tech:MaterialScrollBar:13.3.4")
     implementation("com.leinardi.android:speed-dial:3.2.0")

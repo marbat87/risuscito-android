@@ -21,6 +21,7 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.MediaPlayer.*
+import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Handler
 import android.os.Looper
@@ -151,25 +152,26 @@ class Playback internal constructor(
                 if (source?.startsWith("http") == true)
                     mMediaPlayer?.setDataSource(source)
                 else {
-                    if (hasQ() && isExternalStorageReadable && isDefaultLocationPublic(mService.applicationContext))
-                        source?.let { mSource ->
+                    source?.let {
+                        if (it.contains("com.android.providers.media"))
+                            mMediaPlayer?.setDataSource(mService.applicationContext, Uri.parse(it))
+                        else if (hasQ() && isExternalStorageReadable && isDefaultLocationPublic(
+                                mService.applicationContext
+                            )
+                        ) {
                             val mUri = ContentUris.withAppendedId(
                                 MediaStore.Audio.Media
                                     .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
-                                getExternalMediaIdByName(mService.applicationContext, mSource)
+                                getExternalMediaIdByName(mService.applicationContext, it)
                             )
                             mMediaPlayer?.setDataSource(mService.applicationContext, mUri)
-                        } ?: run {
-                            mCallback?.onError("NULL AUDIO LINK")
-                        }
-                    else {
-                        source?.let {
+                        } else {
                             val fileInputStream = FileInputStream(it)
                             mMediaPlayer?.setDataSource(fileInputStream.fd)
                             fileInputStream.close()
-                        } ?: run {
-                            mCallback?.onError("NULL AUDIO LINK")
                         }
+                    } ?: run {
+                        mCallback?.onError("NULL AUDIO LINK")
                     }
                 }
 
@@ -354,7 +356,10 @@ class Playback internal constructor(
             // Make sure the media player will acquire a wake-lock while
             // playing. If we don't do that, the CPU might go to sleep while the
             // song is playing, causing playback to stop.
-            mMediaPlayer?.setWakeMode(mService.applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
+            mMediaPlayer?.setWakeMode(
+                mService.applicationContext,
+                PowerManager.PARTIAL_WAKE_LOCK
+            )
 
             // we want the media player to notify us when it's ready preparing,
             // and when it's done playing:

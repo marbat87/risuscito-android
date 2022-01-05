@@ -137,6 +137,24 @@ class PaginaRenderActivity : ThemeableActivity() {
         }
     }
 
+    private val pickAudio =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            uri?.let {
+                Log.d(
+                    TAG,
+                    "${getString(R.string.file_selected)}: $it",
+                )
+                Snackbar.make(
+                    findViewById(android.R.id.content),
+                    getString(R.string.file_selected) + ": " + it,
+                    Snackbar.LENGTH_SHORT
+                )
+                    .show()
+                stopMedia()
+                lifecycleScope.launch { insertLink(it.toString()) }
+            }
+        }
+
     // Callback that ensures that we are showing the controls
     private val mMediaControllerCallback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
@@ -554,7 +572,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                             }
                             ONLY_LINK -> {
                                 simpleDialogViewModel.handled = true
-                                createFileChooser()
+                                pickAudio.launch(arrayOf(MimeType.AUDIO))
                             }
                             SAVE_TAB -> {
                                 simpleDialogViewModel.handled = true
@@ -1305,27 +1323,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         }
         binding.playScroll.setImageDrawable(icon)
         binding.playScroll.isSelected = scrolling
-    }
-
-    private fun createFileChooser() {
-        storageHelper.openFilePicker(filterMimeTypes = arrayOf(MimeType.AUDIO))
-//        if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//            MaterialDialog(this)
-//                .fileChooser(
-//                    context = this,
-//                    filter = { it.isDirectory || it.extension.lowercase(getSystemLocale(resources)) == "mp3" }) { _, file ->
-//                    val path = file.absolutePath
-//                    Snackbar.make(
-//                        findViewById(android.R.id.content),
-//                        getString(R.string.file_selected) + ": " + path,
-//                        Snackbar.LENGTH_SHORT
-//                    )
-//                        .show()
-//                    stopMedia()
-//                    lifecycleScope.launch { insertLink(path) }
-//                }
-//                .show()
-//        } else AppSettingsDialog.Builder(this).build().show()
     }
 
     private fun playIntro(isFull: Boolean) {

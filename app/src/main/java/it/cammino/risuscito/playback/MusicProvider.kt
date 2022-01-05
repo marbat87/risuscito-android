@@ -155,6 +155,8 @@ class MusicProvider internal constructor(
                         ) else canto.link
                     }"
                 )
+
+                //tento di valorizzare dapprima con l'url presente nei link predefiniti
                 var url = if (LUtils.getResId(
                         canto.link,
                         R.string::class.java
@@ -164,7 +166,10 @@ class MusicProvider internal constructor(
                         canto.link,
                         R.string::class.java
                     )
+                // altrimenti ci metto il link che sarà un URI
                 ) else canto.link
+
+                //controllo se il file è scaricato
                 if (isExternalStorageReadable && isDefaultLocationPublic(mNewBase)) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
                     if (retrieveMediaFileLink(mContext, url, true).isNotEmpty())
