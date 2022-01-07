@@ -86,13 +86,13 @@ class SectionedIndexFragment : Fragment() {
         val itemExpandableExtension = mAdapter.getExpandableExtension()
         itemExpandableExtension.isOnlyOneExpandedItem = true
 
-        mAdapter.onClickListener = { _: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+        mAdapter.onClickListener = { mView: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
             var consume = false
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(activity, PaginaRenderActivity::class.java)
                 intent.putExtras(bundleOf(Utility.PAGINA to (item as SimpleSubItem).source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                activityViewModel.mLUtils.startActivityWithTransition(intent)
+                activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
                 consume = true
             }
             consume

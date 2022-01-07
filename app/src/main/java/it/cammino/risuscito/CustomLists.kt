@@ -2,6 +2,7 @@ package it.cammino.risuscito
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.*
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -264,18 +266,38 @@ class CustomLists : Fragment() {
                             NEW_LIST -> {
                                 inputdialogViewModel.handled = true
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
-                                startListEditForResult.launch(
-                                    Intent(
-                                        activity,
-                                        CreaListaActivity::class.java
-                                    ).putExtras(
-                                        bundleOf(
-                                            LIST_TITLE to inputdialogViewModel.outputText,
-                                            EDIT_EXISTING_LIST to false
-                                        )
+                                mMainActivity?.let { act ->
+                                    act.getFab().transitionName = "shared_element_crealista"
+                                    val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                        act,
+                                        act.getFab(),
+                                        "shared_element_crealista" // The transition name to be matched in Activity B.
                                     )
-                                )
-                                Animations.enterDown(activity)
+                                    startListEditForResult.launch(
+                                        Intent(
+                                            activity,
+                                            CreaListaActivity::class.java
+                                        ).putExtras(
+                                            bundleOf(
+                                                LIST_TITLE to inputdialogViewModel.outputText,
+                                                EDIT_EXISTING_LIST to false
+                                            )
+                                        ),
+                                        options
+                                    )
+                                }
+//                                startListEditForResult.launch(
+//                                    Intent(
+//                                        activity,
+//                                        CreaListaActivity::class.java
+//                                    ).putExtras(
+//                                        bundleOf(
+//                                            LIST_TITLE to inputdialogViewModel.outputText,
+//                                            EDIT_EXISTING_LIST to false
+//                                        )
+//                                    )
+//                                )
+//                                Animations.enterDown(activity)
                             }
                         }
                     }
@@ -380,18 +402,27 @@ class CustomLists : Fragment() {
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
-                    startListEditForResult.launch(
-                        Intent(
-                            activity,
-                            CreaListaActivity::class.java
-                        ).putExtras(
-                            bundleOf(
-                                ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                EDIT_EXISTING_LIST to true
-                            )
+                    mMainActivity?.let { act ->
+                        act.getFab().transitionName = "shared_element_crealista"
+                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            act,
+                            act.getFab(),
+                            "shared_element_crealista" // The transition name to be matched in Activity B.
                         )
-                    )
-                    Animations.enterDown(activity)
+                        startListEditForResult.launch(
+                            Intent(
+                                activity,
+                                CreaListaActivity::class.java
+                            ).putExtras(
+                                bundleOf(
+                                    ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                    EDIT_EXISTING_LIST to true
+                                )
+                            ),
+                            options
+                        )
+                    }
+//                    Animations.enterDown(activity)
                     true
                 }
                 R.id.fab_delete_lista -> {

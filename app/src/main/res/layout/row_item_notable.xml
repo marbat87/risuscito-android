@@ -10,6 +10,7 @@
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp"
     android:checkable="true"
+    android:transitionName="shared_element_container"
     app:checkedIconTint="@android:color/transparent"
     app:strokeWidth="0dp">
 

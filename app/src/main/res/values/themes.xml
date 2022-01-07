@@ -27,68 +27,40 @@
         <item name="colorOutline">@color/md_theme_light_outline</item>
         <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
         <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
-<!--                <item name="colorInversePrimary">@color/md_theme_light_inversePrimary</item>-->
-<!--                <item name="colorShadow">@color/md_theme_light_shadow</item>-->
+        <!--                <item name="colorInversePrimary">@color/md_theme_light_inversePrimary</item>-->
+        <!--                <item name="colorShadow">@color/md_theme_light_shadow</item>-->
         <item name="colorPrimaryInverse">@color/md_theme_light_primaryInverse</item>
     </style>
 
     <style name="AppBase.Risuscito.Theme" parent="AppTheme" />
 
     <style name="Base.Risuscito.Theme" parent="AppBase.Risuscito.Theme">
+        <item name="android:windowActivityTransitions">true</item>
         <!--        <item name="fontFamily">@font/googlesans_italic</item>-->
         <item name="android:textViewStyle">@style/Widget.Risuscito.TextView</item>
-
-
-        <!-- AppCompat colors attributes -->
-        <!--        <item name="colorPrimary">@color/theme_primary</item>-->
-        <!--        <item name="colorPrimaryDark">@color/theme_primary_dark</item>-->
-        <!--        <item name="colorPrimaryVariant">@color/theme_primary_dark</item>-->
-        <!--        <item name="colorAccent">@color/theme_accent</item>-->
-        <!--        <item name="colorSecondary">@color/theme_accent</item>-->
-        <!--        <item name="colorSecondaryLight">@color/theme_accent_light</item>-->
-        <!--        <item name="colorSecondaryVariant">@color/theme_accent_dark</item>-->
-        <!--        <item name="secondaryColorOnSecondary">@color/secondary_text_default_material_light</item>-->
-
-        <!--        <item name="customSelector">@drawable/custom_list_selector</item>-->
-        <!--        <item name="customSelectorRound">@drawable/custom_selector_round</item>-->
 
         <item name="windowActionModeOverlay">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
 
-        <!--        <item name="materialDrawerStyle">@style/Widget.MaterialDrawerStyle</item>-->
         <item name="materialDrawerHeaderStyle">@style/Widget.MaterialDrawerHeaderStyle.Risuscito
         </item>
 
-        <!-- fix per poter applicare correttamente il tema notturno -->
-        <!--        <item name="android:textColorPrimary">@color/text_color_primary</item>-->
-        <!--        <item name="android:textColorSecondary">@color/text_color_secondary</item>-->
-        <!--        <item name="android:textColorHint">@color/text_color_secondary</item>-->
         <item name="tabStyle">@style/Widget.Material3.TabLayout.Risuscito</item>
         <item name="textAppearanceLabelLarge">@style/TextAppearance.Risuscito.LabelLarge</item>
 
-        <!--        <item name="actionModeStyle">@style/Widget.AppCompat.ActionMode.Risuscito</item>-->
         <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24dp</item>
-        <!--        <item name="popupMenuStyle">@style/PopupMenu.Risuscito.Style</item>-->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Risuscito.MaterialAlertDialog
         </item>
         <item name="textAppearanceBodyMedium">@style/TextAppearance.Risuscito.BodyMedium</item>
         <item name="textAppearanceTitleSmall">@style/TextAppearance.Risuscito.TitleSmall</item>
-        <!--        <item name="actionBarTheme">-->
-        <!--            @style/ThemeOverlay.MaterialComponents.Dark.ActionBar-->
-        <!--        </item>-->
     </style>
 
     <style name="Risuscito.Theme" parent="Base.Risuscito.Theme">
-        <!--        <item name="android:windowTranslucentStatus">true</item>-->
-        <!--        <item name="customSelector">?android:attr/selectableItemBackground</item>-->
-        <!--        <item name="customSelectorRound">?android:attr/selectableItemBackgroundBorderless</item>-->
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <!--        <item name="toolbar_shadow">@null</item>-->
     </style>
 
     <style name="Risuscito.Theme.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
-        <!--        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>-->
     </style>
 
     <style name="Risuscito.Theme.Invisibile">

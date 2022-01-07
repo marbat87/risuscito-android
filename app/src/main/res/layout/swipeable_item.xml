@@ -10,8 +10,7 @@
     android:layout_marginTop="4dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp"
-    android:clickable="true"
-    android:focusable="true">
+    app:rippleColor="@android:color/transparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,11 +20,11 @@
         android:paddingEnd="?listPreferredItemPaddingEnd"
         android:paddingBottom="12dp">
 
-        <TextView
+        <Button
             android:id="@+id/swipeable_text1"
+            style="@style/Widget.Risuscito.Button.TextButton.Left"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?textAppearanceListItem"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

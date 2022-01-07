@@ -6,11 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
+    android:layout_marginTop="4dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp"
-    android:layout_marginTop="4dp"
-    app:checkedIconTint="@android:color/transparent"
     android:checkable="true"
+    android:transitionName="shared_element_container"
+    app:checkedIconTint="@android:color/transparent"
     app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,19 +36,19 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/page_oval_bkg"
                 android:gravity="center"
-                android:textColor="@color/primary_text_default_material_light"
                 android:textAppearance="?textAppearanceListItem"
+                android:textColor="@color/primary_text_default_material_light"
                 tools:text="15" />
 
-<!--            <com.google.android.material.imageview.ShapeableImageView-->
-<!--                android:id="@+id/selected_mark"-->
-<!--                android:layout_width="48dp"-->
-<!--                android:layout_height="48dp"-->
-<!--                android:scaleType="fitXY"-->
-<!--                android:src="@drawable/ic_mtrl_checked_circle"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--                app:shapeAppearanceOverlay="?attr/shapeAppearanceMediumComponent" />-->
+            <!--            <com.google.android.material.imageview.ShapeableImageView-->
+            <!--                android:id="@+id/selected_mark"-->
+            <!--                android:layout_width="48dp"-->
+            <!--                android:layout_height="48dp"-->
+            <!--                android:scaleType="fitXY"-->
+            <!--                android:src="@drawable/ic_mtrl_checked_circle"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:shapeAppearanceOverlay="?attr/shapeAppearanceMediumComponent" />-->
 
             <com.mikepenz.iconics.view.IconicsImageView
                 android:id="@+id/selected_mark"

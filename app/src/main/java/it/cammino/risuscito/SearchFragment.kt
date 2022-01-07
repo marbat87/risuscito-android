@@ -19,6 +19,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.transition.platform.MaterialFadeThrough
+import com.google.android.material.transition.platform.SlideDistanceProvider
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -121,7 +123,7 @@ class SearchFragment : Fragment() {
             )
 
         cantoAdapter.onClickListener =
-            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
@@ -135,7 +137,7 @@ class SearchFragment : Fragment() {
                             Utility.ID_CANTO to item.id
                         )
                     )
-                    activityViewModel.mLUtils.startActivityWithTransition(intent)
+                    activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
                     consume = true
                 }
                 consume

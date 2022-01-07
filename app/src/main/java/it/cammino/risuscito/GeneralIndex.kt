@@ -24,12 +24,13 @@ class GeneralIndex : Fragment() {
 
     private val mViewModel: GeneralIndexViewModel by viewModels()
 
-    private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageSelected(position: Int) {
-            Log.d(TAG, "onPageSelected: $position")
-            mViewModel.pageViewed = position
+    private val mPageChange: ViewPager2.OnPageChangeCallback =
+        object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                Log.d(TAG, "onPageSelected: $position")
+                mViewModel.pageViewed = position
+            }
         }
-    }
 
     private var _binding: TabsLayoutBinding? = null
 
@@ -37,7 +38,11 @@ class GeneralIndex : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = TabsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -76,8 +81,10 @@ class GeneralIndex : Fragment() {
             delay(500)
             if (savedInstanceState == null) {
                 val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                binding.viewPager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")
-                        ?: "0")
+                binding.viewPager.currentItem = Integer.parseInt(
+                    pref.getString(Utility.DEFAULT_INDEX, "0")
+                        ?: "0"
+                )
             } else
                 binding.viewPager.currentItem = mViewModel.pageViewed
         }
@@ -88,13 +95,13 @@ class GeneralIndex : Fragment() {
         override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment =
-                when (position) {
-                    0 -> SimpleIndexFragment.newInstance(0)
-                    1 -> SimpleIndexFragment.newInstance(1)
-                    2 -> SectionedIndexFragment.newInstance(0)
-                    3 -> SimpleIndexFragment.newInstance(2)
-                    else -> SimpleIndexFragment.newInstance(0)
-                }
+            when (position) {
+                0 -> SimpleIndexFragment.newInstance(0)
+                1 -> SimpleIndexFragment.newInstance(1)
+                2 -> SectionedIndexFragment.newInstance(0)
+                3 -> SimpleIndexFragment.newInstance(2)
+                else -> SimpleIndexFragment.newInstance(0)
+            }
     }
 
     companion object {

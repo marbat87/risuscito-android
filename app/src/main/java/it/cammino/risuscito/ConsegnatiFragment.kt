@@ -155,7 +155,7 @@ class ConsegnatiFragment : Fragment() {
         subscribeUiConsegnati()
 
         cantoAdapter.onClickListener =
-            { _: View?, _: IAdapter<NotableItem>, item: NotableItem, _: Int ->
+            { mView: View?, _: IAdapter<NotableItem>, item: NotableItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
@@ -166,7 +166,7 @@ class ConsegnatiFragment : Fragment() {
                             Utility.ID_CANTO to item.id
                         )
                     )
-                    activityViewModel.mLUtils.startActivityWithTransition(intent)
+                    activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
                     consume = true
                 }
                 consume

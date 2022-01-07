@@ -41,6 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/select_canto"
+            android:transitionName="shared_insert_container"
             app:icon="@drawable/baseline_add_circle_outline_24"
             app:iconSize="24dp"
             app:layout_constraintStart_toStartOf="parent"

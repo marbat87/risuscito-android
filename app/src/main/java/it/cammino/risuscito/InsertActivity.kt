@@ -21,7 +21,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.blogspot.atifsoftwares.animatoolib.Animatoo
+import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -61,6 +62,19 @@ class InsertActivity : ThemeableActivity() {
     private lateinit var binding: ActivityInsertSearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set the transition name, which matches Activity A’s start view transition name, on
+        // the root view.
+        findViewById<View>(android.R.id.content).transitionName = "shared_insert_container"
+
+        // Attach a callback used to receive the shared elements from Activity A to be
+        // used by the container transform transition.
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        // Set this Activity’s enter and return transition to a MaterialContainerTransform
+        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+            addTarget(android.R.id.content)
+            duration = 700L
+        }
         super.onCreate(savedInstanceState)
         binding = ActivityInsertSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -117,7 +131,7 @@ class InsertActivity : ThemeableActivity() {
                 consume
             }
 
-        cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { _, _, _, item ->
+        cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { mView, _, _, item ->
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
                 val intent = Intent(applicationContext, PaginaRenderActivity::class.java)
@@ -127,7 +141,7 @@ class InsertActivity : ThemeableActivity() {
                         Utility.ID_CANTO to item.id
                     )
                 )
-                mViewModel.mLUtils.startActivityWithTransition(intent)
+                mViewModel.mLUtils.startActivityWithTransition(intent, mView)
             }
         }
 
@@ -199,8 +213,7 @@ class InsertActivity : ThemeableActivity() {
         when (item.itemId) {
             android.R.id.home -> {
                 setResult(CustomLists.RESULT_CANCELED)
-                finish()
-                Animatoo.animateShrink(this)
+                finishAfterTransition()
                 return true
             }
         }
@@ -210,8 +223,7 @@ class InsertActivity : ThemeableActivity() {
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         setResult(CustomLists.RESULT_CANCELED)
-        finish()
-        Animatoo.animateShrink(this)
+        finishAfterTransition()
     }
 
     private fun ricercaStringa(s: String) {

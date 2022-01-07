@@ -3,10 +3,12 @@ package it.cammino.risuscito
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.addCallback
+import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.databinding.ChangelogLayoutBinding
-import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.ThemeableActivity
 
 class ChangelogActivity : ThemeableActivity() {
@@ -14,6 +16,22 @@ class ChangelogActivity : ThemeableActivity() {
     private lateinit var binding: ChangelogLayoutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set the transition name, which matches Activity A’s start view transition name, on
+        // the root view.
+        findViewById<View>(android.R.id.content).transitionName = "shared_element_about"
+
+        // Attach a callback used to receive the shared elements from Activity A to be
+        // used by the container transform transition.
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        // Set this Activity’s enter and return transition to a MaterialContainerTransform
+        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+            addTarget(android.R.id.content)
+            duration = 700L
+        }
+        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+        window.sharedElementsUseOverlay = false
+
         super.onCreate(savedInstanceState)
         binding = ChangelogLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -34,15 +52,13 @@ class ChangelogActivity : ThemeableActivity() {
 
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
-        finish()
-        Animations.exitDown(this)
+        finishAfterTransition()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                finish()
-                Animations.exitDown(this)
+                finishAfterTransition()
                 true
             }
             else -> false

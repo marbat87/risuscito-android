@@ -112,7 +112,7 @@ class FavoritesFragment : Fragment() {
             }
 
         cantoAdapter.onClickListener =
-            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
@@ -124,7 +124,7 @@ class FavoritesFragment : Fragment() {
                             Utility.ID_CANTO to item.id
                         )
                     )
-                    activityViewModel.mLUtils.startActivityWithTransition(intent)
+                    activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
                     consume = true
                 }
                 consume

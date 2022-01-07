@@ -8,7 +8,8 @@
     android:paddingStart="?listPreferredItemPaddingStart"
     android:paddingTop="12dp"
     android:paddingEnd="?listPreferredItemPaddingEnd"
-    android:paddingBottom="12dp">
+    android:paddingBottom="12dp"
+    android:transitionName="shared_element_container">
 
     <TextView
         android:id="@+id/text_id_canto_card"
@@ -41,18 +42,6 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <!--    <include-->
-    <!--        android:id="@+id/siple_row_item"-->
-    <!--        layout="@layout/simple_row_item" />-->
-
-    <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="?attr/listPreferredItemHeight"-->
-    <!--        android:paddingStart="?listPreferredItemPaddingStart"-->
-    <!--        android:paddingTop="12dp"-->
-    <!--        android:paddingEnd="?listPreferredItemPaddingEnd"-->
-    <!--        android:paddingBottom="12dp">-->
 
     <FrameLayout
         android:id="@+id/page_icon"

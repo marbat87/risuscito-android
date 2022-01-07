@@ -1,15 +1,16 @@
 package it.cammino.risuscito
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Base64
 import android.util.Log
-import android.view.View
 import androidx.activity.addCallback
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
 import com.mikepenz.iconics.utils.colorInt
@@ -126,19 +127,6 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             mScrollDown.run()
 
     }
-
-//    private inner class MyWebViewClient : WebViewClient() {
-//        override fun onPageFinished(view: WebView, url: String) {
-//            view.postDelayed(600) {
-//                if ((currentCanto?.scrollX
-//                                ?: 0) > 0 || (currentCanto?.scrollY ?: 0) > 0)
-//                    view.scrollTo(
-//                            currentCanto?.scrollX
-//                                    ?: 0, currentCanto?.scrollY ?: 0)
-//            }
-//            super.onPageFinished(view, url)
-//        }
-//    }
 
     private fun loadContentIntoWebView(content: String?) {
         if (!content.isNullOrEmpty()) binding.cantoView.loadData(

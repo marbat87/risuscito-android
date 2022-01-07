@@ -1,6 +1,7 @@
 package it.cammino.risuscito
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.app.RecoverableSecurityException
 import android.content.*
 import android.graphics.Color
@@ -18,6 +19,7 @@ import android.util.Base64.encodeToString
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -34,14 +36,14 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
-import com.anggrayudi.storage.SimpleStorageHelper
-import com.anggrayudi.storage.file.MimeType
-import com.anggrayudi.storage.file.toMediaFile
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.mikepenz.iconics.IconicsDrawable
@@ -107,7 +109,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         get() = RisuscitoDatabase.getInstance(this)
 
     private lateinit var mDownloader: Downloader
-    private val storageHelper = SimpleStorageHelper(this)
 
     private val mCantiViewModel: PaginaRenderViewModel by viewModels()
     private val progressDialogViewModel: ProgressDialogFragment.DialogViewModel by viewModels()
@@ -251,7 +252,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                         "onConnected: mLastPlaybackState.getPosition() ${mLastPlaybackState?.position}"
                     )
                     updateSeekBarValue(mLastPlaybackState?.position?.toFloat() ?: 0F)
-//                    binding.musicSeekbar.value = mLastPlaybackState?.position?.toFloat() ?: 0F
                 } ?: Log.e(TAG, "onConnected: mMediaBrowser is NULL")
             } catch (e: RemoteException) {
                 Log.e(TAG, "onConnected: could not connect media controller", e)
@@ -311,6 +311,21 @@ class PaginaRenderActivity : ThemeableActivity() {
     private lateinit var binding: ActivityPaginaRenderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set the transition name, which matches Activity A’s start view transition name, on
+        // the root view.
+        findViewById<View>(android.R.id.content).transitionName = "shared_element_container"
+
+        // Attach a callback used to receive the shared elements from Activity A to be
+        // used by the container transform transition.
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        // Set this Activity’s enter and return transition to a MaterialContainerTransform
+        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+            addTarget(android.R.id.content)
+            duration = 700L
+        }
+
         super.onCreate(savedInstanceState)
         binding = ActivityPaginaRenderBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -572,7 +587,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                             }
                             ONLY_LINK -> {
                                 simpleDialogViewModel.handled = true
-                                pickAudio.launch(arrayOf(MimeType.AUDIO))
+                                pickAudio.launch(arrayOf(MP3_MIME_TYPE))
                             }
                             SAVE_TAB -> {
                                 simpleDialogViewModel.handled = true
@@ -581,7 +596,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                     mHandler.removeCallbacks(mScrollDown)
                                 }
                                 saveZoom(andSpeedAlso = true, andSaveTabAlso = true)
-                                mViewModel.mLUtils.closeActivityWithTransition()
+                                finishAfterTransition()
                             }
                         }
                     }
@@ -594,7 +609,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                     mHandler.removeCallbacks(mScrollDown)
                                 }
                                 saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-                                mViewModel.mLUtils.closeActivityWithTransition()
+                                finishAfterTransition()
                             }
                         }
                     }
@@ -646,25 +661,6 @@ class PaginaRenderActivity : ThemeableActivity() {
                     }
                 }
             }
-        }
-
-        storageHelper.onFileSelected = { _, files ->
-            val path = files[0].toMediaFile(this)?.absolutePath
-            path?.let {
-                Snackbar.make(
-                    findViewById(android.R.id.content),
-                    getString(R.string.file_selected) + ": " + path,
-                    Snackbar.LENGTH_SHORT
-                )
-                    .show()
-                stopMedia()
-                lifecycleScope.launch { insertLink(it) }
-            } ?: Snackbar.make(
-                findViewById(android.R.id.content),
-                "Selection error",
-                Snackbar.LENGTH_SHORT
-            ).show()
-
         }
 
         resolveDeleteAudioConsent = registerForActivityResult(
@@ -722,7 +718,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                         mHandler.removeCallbacks(mScrollDown)
                     }
                     saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-                    mViewModel.mLUtils.closeActivityWithTransition()
+                    finishAfterTransition()
                     return true
                 } else {
                     SimpleDialogFragment.show(
@@ -970,7 +966,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 mHandler.removeCallbacks(mScrollDown)
             }
             saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-            mViewModel.mLUtils.closeActivityWithTransition()
+            finishAfterTransition()
         } else {
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(
@@ -985,14 +981,8 @@ class PaginaRenderActivity : ThemeableActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        storageHelper.onSaveInstanceState(outState)
-    }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        storageHelper.onRestoreInstanceState(savedInstanceState)
         binding.fabCanti.expansionMode =
             if (mViewModel.mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
@@ -1991,6 +1981,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         private const val ECONDING_BASE64 = "base64"
         private const val NO_CANTO = "no_canto"
         private const val DEFAULT_MIME_TYPE = "text/html; charset=utf-8"
+        private const val MP3_MIME_TYPE = "audio/mpeg"
 
     }
 }

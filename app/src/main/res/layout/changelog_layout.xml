@@ -2,25 +2,26 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/about_appbarlayout_height">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
+            style="?attr/collapsingToolbarLayoutLargeStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:collapsedTitleTextAppearance="@style/TextAppearance.Material3.TitleLarge.Collapsed"
-            app:contentScrim="?attr/colorSurface"
+            app:collapsedTitleTextColor="?colorOnSurface"
             app:expandedTitleTextAppearance="@style/TextAppearance.Material3.HeadlineSmall.Expanded"
             app:expandedTitleTextColor="@android:color/transparent"
-            app:collapsedTitleTextColor="?colorOnSurface"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:title="@string/changelog">
 
             <ImageView
@@ -29,14 +30,7 @@
                 android:contentDescription="@string/app_name"
                 android:fitsSystemWindows="true"
                 android:scaleType="fitXY"
-                app:layout_collapseMode="parallax"
-                android:src="@drawable/ic_about_cover" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/cover_shadow_color"
-                android:fitsSystemWindows="true"
+                android:src="@drawable/ic_about_cover"
                 app:layout_collapseMode="parallax" />
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -54,6 +48,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?android:colorBackground"
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_min_margin"
         android:paddingRight="@dimen/activity_min_margin"
@@ -74,7 +69,5 @@
             android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
 
     </LinearLayout>
-
-<!--    <include layout="@layout/common_shadow" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

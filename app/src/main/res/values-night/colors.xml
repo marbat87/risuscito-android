@@ -2,7 +2,7 @@
 <resources>
 
     <color name="ripple_color">@color/ripple_material_dark</color>
-    <color name="cover_shadow_color">@android:color/transparent</color>
+<!--    <color name="cover_shadow_color">@android:color/transparent</color>-->
 
     <color name="primary_color_amber">@color/md_amber_200</color>
     <color name="primary_color_blue">@color/md_blue_200</color>

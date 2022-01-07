@@ -40,6 +40,7 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -69,15 +70,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.concurrent.schedule
 
 class MainActivity : ThemeableActivity() {
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
     private lateinit var profileIcon: IconicsDrawable
     private lateinit var mAccountHeader: AccountHeaderView
-//    private lateinit var miniSliderView: MiniDrawerSliderView
-
-    //    private lateinit var sliderView: MaterialDrawerSliderView
-//    private lateinit var crossFader: Crossfader<*>
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
     private lateinit var auth: FirebaseAuth
@@ -117,7 +115,14 @@ class MainActivity : ThemeableActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        hasNavDrawer = true
+        // Attach a callback used to capture the shared elements from this Activity to be used
+        // by the container transform transition
+        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+        window.sharedElementsUseOverlay = false
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -133,9 +138,7 @@ class MainActivity : ThemeableActivity() {
                 binding.searchView.onBackPressed() -> {
                 }
                 binding.fabPager.isOpen -> binding.fabPager.close()
-//                mViewModel.isTabletWithNoFixedDrawer && crossFader.isCrossFaded -> crossFader.crossFade()
                 !mViewModel.isOnTablet && (binding.drawer as? DrawerLayout)?.isOpen == true -> (binding.drawer as? DrawerLayout)?.close()
-//                !mViewModel.isTabletWithFixedDrawer && (binding.drawer as? DrawerLayout)?.isOpen == true -> (binding.drawer as? DrawerLayout)?.close()
                 else -> backToHome(true)
             }
         }
@@ -275,20 +278,10 @@ class MainActivity : ThemeableActivity() {
 
     override fun onSaveInstanceState(_outState: Bundle) {
         var outState = _outState
-        //add the values which need to be saved from the drawer to the bundle
-//        binding.slider?.let { outState = it.saveInstanceState(outState) }
-        //add the values, which need to be saved from the drawer to the bundle
-//        if (::sliderView.isInitialized) {
-//            outState = sliderView.saveInstanceState(outState)
-//        }
         //add the values, which need to be saved from the accountHeader to the bundle
         if (::mAccountHeader.isInitialized) {
             outState = mAccountHeader.saveInstanceState(outState)
         }
-        //add the values, which need to be saved from the crossFader to the bundle
-//        if (::crossFader.isInitialized) {
-//            outState = crossFader.saveInstanceState(outState)
-//        }
         super.onSaveInstanceState(outState)
     }
 
@@ -376,37 +369,27 @@ class MainActivity : ThemeableActivity() {
 
         mViewModel.selectedMenuItemId = menuItem.itemId
         menuItem.isChecked = true
-//        syncDrawerRailSelectedItem(mViewModel.selectedMenuItemId)
+
+        (binding.drawer as? DrawerLayout)?.close()
 
         // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
         val myFragment = supportFragmentManager
             .findFragmentByTag(menuItem.itemId.toString())
         if (myFragment == null || !myFragment.isVisible) {
-            supportFragmentManager.commit {
-                setCustomAnimations(
-                    R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
-                )
-                replace(R.id.content_frame, fragment, menuItem.itemId.toString())
+            Timer("SettingUp", false).schedule(if (mViewModel.isOnTablet) 0 else 300) {
+                supportFragmentManager.commit {
+                    setCustomAnimations(
+                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
+                    )
+                    replace(R.id.content_frame, fragment, menuItem.itemId.toString())
+                }
             }
         }
 
-        (binding.drawer as? DrawerLayout)?.close()
+
 
         return true
     }
-
-//    private fun syncDrawerRailSelectedItem(itemId: Int) {
-//        binding.navigationView.menu.findItem(itemId)?.isChecked = true
-//        if (itemId != R.id.navigation_settings && itemId != R.id.navigation_changelog)
-//            binding.navigationRail?.menu?.findItem(itemId)?.isChecked = true
-//        else {
-////            binding.navigationRail?.menu?.findItem(
-////                binding.navigationRail?.selectedItemId ?: 0
-////            )?.setChecked(false)
-//            binding.navigationRail?.menu?.clear()
-//            binding.navigationRail?.inflateMenu(R.menu.navigation_rail)
-//        }
-//    }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
     private fun convertTabs() {
@@ -849,10 +832,6 @@ class MainActivity : ThemeableActivity() {
             mAccountHeader.setOnClickListener(null)
             updateHeaderImage(ImageHolder(profileIcon), null)
         }
-//        if (mViewModel.isTabletWithNoFixedDrawer) {
-//            miniSliderView.onProfileClick()
-//            miniSliderView.itemAdapter.getAdapterItem(0).isEnabled = signedIn
-//        }
         hideProgressDialog()
     }
 
@@ -907,14 +886,14 @@ class MainActivity : ThemeableActivity() {
             return
         }
 
+        binding.navigationView.menu.findItem(R.id.navigation_home)?.isChecked = true
+
         supportFragmentManager.commit {
             setCustomAnimations(
                 R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
             )
             replace(R.id.content_frame, Risuscito(), R.id.navigation_home.toString())
         }
-//        syncDrawerRailSelectedItem(R.id.navigation_home)
-        binding.navigationView.menu.findItem(R.id.navigation_home)?.isChecked = true
 
         expandToolbar()
     }

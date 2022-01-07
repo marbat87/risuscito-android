@@ -28,6 +28,8 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.BindingViewHolder
 import com.mikepenz.fastadapter.binding.listeners.addLongClickListener
@@ -50,7 +52,6 @@ import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.items.swipeableItem
-import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -82,6 +83,19 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set the transition name, which matches Activity A’s start view transition name, on
+        // the root view.
+        findViewById<View>(android.R.id.content).transitionName = "shared_element_crealista"
+
+        // Attach a callback used to receive the shared elements from Activity A to be
+        // used by the container transform transition.
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        // Set this Activity’s enter and return transition to a MaterialContainerTransform
+        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+            addTarget(android.R.id.content)
+            duration = 700L
+        }
         super.onCreate(savedInstanceState)
         binding = ActivityCreaListaBinding.inflate(layoutInflater)
         val view = binding.root
@@ -272,8 +286,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             SAVE_LIST -> {
                                 simpleDialogViewModel.handled = true
                                 setResult(RESULT_CANCELED)
-                                finish()
-                                Animations.exitDown(this)
+                                finishAfterTransition()
                             }
                         }
                     }
@@ -341,8 +354,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     return true
                 } else {
                     setResult(RESULT_CANCELED)
-                    finish()
-                    Animations.exitDown(this)
+                    finishAfterTransition()
                 }
                 return true
             }
@@ -415,8 +427,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         if (result == 100)
             Toast.makeText(this, getString(R.string.no_title_edited), Toast.LENGTH_SHORT).show()
         setResult(RESULT_OK)
-        finish()
-        Animations.exitDown(this)
+        finishAfterTransition()
     }
 
     private fun onBackPressedAction() {
@@ -432,8 +443,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             )
         } else {
             setResult(RESULT_CANCELED)
-            finish()
-            Animations.exitDown(this)
+            finishAfterTransition()
         }
     }
 

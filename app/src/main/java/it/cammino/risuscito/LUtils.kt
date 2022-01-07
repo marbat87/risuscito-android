@@ -1,10 +1,13 @@
 package it.cammino.risuscito
 
+import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.text.Html
@@ -13,6 +16,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.view.WindowCompat
@@ -21,8 +25,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.anggrayudi.storage.SimpleStorage
-import com.anggrayudi.storage.file.StorageId
 import com.google.android.material.animation.AnimationUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -56,11 +58,34 @@ class LUtils private constructor(private val mActivity: Activity) {
     val isFabExpansionLeft: Boolean
         get() = mActivity.resources.getBoolean(R.bool.fab_orientation_left)
 
+//    fun startActivityWithTransition(
+//        intent: Intent
+//    ) {
+//        mActivity.startActivity(intent)
+//        Animations.enterRight(mActivity)
+//
+//        val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
+//        val cronologia = Cronologia()
+//        cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
+//        (mActivity as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) {
+//            mDao.insertCronologia(
+//                cronologia
+//            )
+//        }
+//    }
+
     fun startActivityWithTransition(
-        intent: Intent
+        intent: Intent,
+        startView: View?
     ) {
-        mActivity.startActivity(intent)
-        Animations.enterRight(mActivity)
+
+        val options = ActivityOptions.makeSceneTransitionAnimation(
+            mActivity,
+            startView,
+            "shared_element_container" // The transition name to be matched in Activity B.
+        )
+
+        mActivity.startActivity(intent, options.toBundle())
 
         val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
         val cronologia = Cronologia()
@@ -77,10 +102,10 @@ class LUtils private constructor(private val mActivity: Activity) {
         Animations.enterZoom(mActivity)
     }
 
-    fun closeActivityWithTransition() {
-        mActivity.finish()
-        Animations.exitRight(mActivity)
-    }
+//    fun closeActivityWithTransition() {
+//        mActivity.finishAfterTransition()
+////        Animations.exitRight(mActivity)
+//    }
 
     fun setLigthStatusBar(light: Boolean) {
         WindowInsetsControllerCompat(
@@ -240,7 +265,10 @@ class LUtils private constructor(private val mActivity: Activity) {
     }
 
     val hasStorageAccess: Boolean
-        get() = hasQ() || SimpleStorage.hasFullDiskAccess(context = mActivity, StorageId.PRIMARY)
+        get() = hasQ() || ContextCompat.checkSelfPermission(
+            mActivity,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
 
     companion object {
 

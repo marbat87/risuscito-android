@@ -83,23 +83,24 @@ class SimpleIndexFragment : Fragment() {
 
         subscribeUiChanges()
 
-        mAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-            var consume = false
-            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                mLastClickTime = SystemClock.elapsedRealtime()
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(
-                    bundleOf(
-                        Utility.PAGINA to item.source?.getText(requireContext()),
-                        Utility.ID_CANTO to item.id
+        mAdapter.onClickListener =
+            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+                var consume = false
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    // lancia l'activity che visualizza il canto passando il parametro creato
+                    val intent = Intent(activity, PaginaRenderActivity::class.java)
+                    intent.putExtras(
+                        bundleOf(
+                            Utility.PAGINA to item.source?.getText(requireContext()),
+                            Utility.ID_CANTO to item.id
+                        )
                     )
-                )
-                activityViewModel.mLUtils.startActivityWithTransition(intent)
-                consume = true
+                    activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
+                    consume = true
+                }
+                consume
             }
-            consume
-        }
 
         mAdapter.onLongClickListener =
             { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->

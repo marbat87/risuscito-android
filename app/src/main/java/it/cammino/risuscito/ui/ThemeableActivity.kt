@@ -9,8 +9,6 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
@@ -42,8 +40,6 @@ import java.util.*
 import java.util.concurrent.ExecutionException
 
 abstract class ThemeableActivity : AppCompatActivity() {
-
-    protected var hasNavDrawer = false
 
     protected val mViewModel: MainActivityViewModel by viewModels()
 

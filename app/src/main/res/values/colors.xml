@@ -9,7 +9,7 @@
     <color name="theme_accent_light">@color/md_accent_deep_orange_light</color>
     <color name="theme_accent_dark">@color/md_accent_deep_orange_dark</color>
     <color name="ripple_color">@color/ripple_material_light</color>
-    <color name="cover_shadow_color">@color/ripple_material_light</color>
+<!--    <color name="cover_shadow_color">@color/ripple_material_light</color>-->
 
     <color name="risuscito_material_background">@color/design_default_color_background</color>
     <color name="text_color_primary">@color/design_default_color_on_background</color>

@@ -25,13 +25,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?android:colorBackground"
         risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <include
             android:id="@+id/search_layout"
             layout="@layout/search_layout" />
-
-        <!--        <include layout="@layout/common_shadow_no_behavior" />-->
 
     </FrameLayout>
 
