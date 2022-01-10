@@ -34,6 +34,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.button.MaterialButton
@@ -1261,7 +1262,13 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun showPlaying(started: Boolean) {
         Log.d(TAG, "showPlaying: ")
-        (binding.playSong as? MaterialButton)?.setIconResource(if (started) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24)
+//        (binding.playSong as? MaterialButton)?.setIconResource(if (started) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24)
+        val anim = if (started) AnimatedVectorDrawableCompat.create(
+            this,
+            R.drawable.play_to_pause_anim
+        ) else AnimatedVectorDrawableCompat.create(this, R.drawable.pause_to_play_anim)
+        (binding.playSong as? MaterialButton)?.icon = anim
+        anim?.start()
         binding.playSong.isVisible = mCantiViewModel.retrieveDone
         binding.loadingBar.isGone = mCantiViewModel.retrieveDone
     }
@@ -1389,7 +1396,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     private fun playFromId(id: String) {
         binding.musicSeekbar.isVisible = false
         binding.musicLoadingbar.isVisible = true
-        showPlaying(true)
+//        showPlaying(true)
         val controller = MediaControllerCompat.getMediaController(this)
         controller?.transportControls?.playFromMediaId(id, null)
     }

@@ -840,7 +840,6 @@ class MainActivity : ThemeableActivity() {
         accountMenuExpanded = false
         binding.navigationView.menu.clear()
         binding.navigationView.inflateMenu(R.menu.navigation_drawer)
-//        syncDrawerRailSelectedItem(mViewModel.selectedMenuItemId)
         binding.navigationView.menu.findItem(mViewModel.selectedMenuItemId)?.isChecked = true
         mAccountHeader.accountSwitcherArrow.clearAnimation()
         ViewCompat.animate(mAccountHeader.accountSwitcherArrow).rotation(0f).start()
