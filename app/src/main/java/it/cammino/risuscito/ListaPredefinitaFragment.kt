@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.database.pojo.Posizione
@@ -182,13 +181,7 @@ class ListaPredefinitaFragment : Fragment() {
         val callback = object : ActionMode.Callback {
 
             override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
-                IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater,
-                    requireContext(),
-                    R.menu.menu_actionmode_lists,
-                    menu
-                )
-                Log.d(ListaPersonalizzataFragment.TAG, "MaterialCab onCreate")
+                activity?.menuInflater?.inflate(R.menu.menu_actionmode_lists, menu)
                 posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
                 cantoAdapter.notifyItemChanged(longclickedPos)
                 actionModeOk = false

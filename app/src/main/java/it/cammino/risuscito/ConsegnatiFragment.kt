@@ -7,6 +7,7 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.*
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
@@ -29,12 +30,6 @@ import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.listeners.addClickListener
 import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
@@ -108,10 +103,6 @@ class ConsegnatiFragment : Fragment() {
             passaggiValues[passaggiArray[i]] = i
 
         mMainActivity?.activityBottomBar?.let {
-            it.menu?.clear()
-            IconicsMenuInflaterUtil.inflate(
-                requireActivity().menuInflater, requireContext(), R.menu.consegnati, it.menu, false
-            )
             it.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.select_none -> {
@@ -305,25 +296,14 @@ class ConsegnatiFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         if (mCantiViewModel.editMode) {
-            IconicsMenuInflaterUtil.inflate(
-                requireActivity().menuInflater,
-                requireContext(),
-                R.menu.consegnati_menu_edit_mode,
-                menu
-            )
+            inflater.inflate(R.menu.consegnati_menu_edit_mode, menu)
             val item = menu.findItem(R.id.action_search)
             mMainActivity?.activitySearchView?.setMenuItem(item)
         } else {
-            IconicsMenuInflaterUtil.inflate(
-                requireActivity().menuInflater,
-                requireActivity(),
-                if (mPopupMenu.menu.children.toList()
-                        .any { it.isChecked }
-                ) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu,
-                menu
-            )
+            inflater.inflate(if (mPopupMenu.menu.children.toList()
+                    .any { it.isChecked }
+            ) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu, menu)
         }
-
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -361,12 +341,7 @@ class ConsegnatiFragment : Fragment() {
     }
 
     private fun initFab() {
-        val icon = IconicsDrawable(requireActivity(), CommunityMaterial.Icon3.cmd_pencil).apply {
-            colorInt =
-                MaterialColors.getColor(requireContext(), R.attr.colorOnPrimaryContainer, TAG)
-            sizeDp = 24
-            paddingDp = 4
-        }
+        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.baseline_edit_24)
         val onClick = View.OnClickListener {
             mCantiViewModel.editMode = true
             backCallback?.isEnabled = true
@@ -380,7 +355,9 @@ class ConsegnatiFragment : Fragment() {
                 managerIntro()
             }
         }
-        mMainActivity?.initFab(false, icon, onClick, null, false)
+        icon?.let {
+            mMainActivity?.initFab(false, it, onClick, null, false)
+        }
     }
 
     private fun fabIntro() {

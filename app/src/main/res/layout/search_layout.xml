@@ -1,90 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/search_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_min_top_margin">
-
-    <FrameLayout
-        android:id="@+id/more_options"
-        android:layout_width="@dimen/myListPreferredItemHeightMedium"
-        android:layout_height="@dimen/myListPreferredItemHeightMedium"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:soundEffectsEnabled="true">
-
-        <com.mikepenz.iconics.view.IconicsImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter"
-            risuscito:iiv_color="?android:textColorSecondary"
-            risuscito:iiv_icon="cmd-dots-vertical"
-            risuscito:iiv_padding="2dp"
-            risuscito:iiv_size="24dp"
-            tools:ignore="MissingPrefix" />
-
-    </FrameLayout>
-
-    <RelativeLayout
-        android:id="@+id/search_no_results"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_box_ricerca"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <ImageView
-            android:id="@+id/no_results_image"
-            android:layout_width="120dip"
-            android:layout_height="120dip"
-            android:layout_centerHorizontal="true"
-            android:contentDescription="@string/search_no_results"
-            android:src="@drawable/ic_search_question_mark" />
-
-        <TextView
-            android:id="@+id/no_history_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/no_results_image"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="@dimen/text_min_margin"
-            android:layout_marginRight="@dimen/text_min_margin"
-            android:gravity="center_horizontal"
-            android:text="@string/search_no_results"
-            android:textAppearance="@style/SuperStateViewSubTitle"
-            android:textColor="?android:textColorSecondary"
-            risuscito:fontFamily="@font/googlesans_italic"
-            tools:ignore="MissingPrefix" />
-
-    </RelativeLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/matched_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/text_box_ricerca"
-        android:fadeScrollbars="true"
-        android:scrollbars="vertical"
-        android:visibility="gone" />
-
+    android:layout_marginTop="@dimen/activity_min_top_margin">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_box_ricerca"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/more_options"
-        android:layout_marginStart="@dimen/myListPreferredItemMargin"
-        android:layout_toStartOf="@id/more_options"
+        android:layout_marginStart="@dimen/activity_min_margin"
         android:hint="@string/fast_search_subtitle"
-        risuscito:endIconMode="clear_text"
-        risuscito:helperText="@string/search_hint"
+        app:endIconMode="clear_text"
+        app:helperText="@string/search_hint"
+        app:layout_constraintEnd_toStartOf="@id/more_options"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlSymmetry">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -98,16 +31,76 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <Button
+        android:id="@+id/more_options"
+        style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_min_margin"
+        android:layout_marginEnd="@dimen/activity_min_margin"
+        app:icon="@drawable/baseline_more_vert_24"
+        app:iconSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/text_box_ricerca"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/matched_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fadeScrollbars="true"
+        android:scrollbars="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_box_ricerca" />
+
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/search_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_box_ricerca"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal|top"
         android:elevation="1dp"
         android:indeterminate="true"
         android:visibility="invisible"
-        tools:targetApi="lollipop" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_box_ricerca" />
 
-</RelativeLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_no_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_box_ricerca"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/no_results_image"
+            android:layout_width="120dip"
+            android:layout_height="120dip"
+            android:contentDescription="@string/search_no_results"
+            android:src="@drawable/ic_search_question_mark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/no_history_text"
+            style="@style/SuperStateViewSubTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_min_margin"
+            android:layout_marginEnd="@dimen/text_min_margin"
+            android:text="@string/search_no_results"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/no_results_image"
+            tools:ignore="MissingPrefix" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

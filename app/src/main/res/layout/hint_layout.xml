@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_hint_layout"
     android:layout_width="match_parent"
@@ -30,7 +30,7 @@
 
     </LinearLayout>
 
-    <com.mikepenz.iconics.view.IconicsImageView
+    <ImageView
         android:id="@+id/question_mark"
         android:layout_width="34dp"
         android:layout_height="34dp"
@@ -40,11 +40,9 @@
         android:background="@drawable/oval_bg_hint"
         android:contentDescription="@null"
         android:gravity="center"
+        android:src="@drawable/baseline_help_outline_24"
         android:translationZ="1dp"
-        risuscito:iiv_color="@android:color/white"
-        risuscito:iiv_icon="cmd-help"
-        risuscito:iiv_padding="5dp"
-        risuscito:iiv_size="24dp"
+        app:tint="?colorControlActivated"
         tools:ignore="MissingPrefix"
         tools:targetApi="lollipop" />
 
@@ -57,7 +55,6 @@
         android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
         android:layout_marginEnd="@dimen/myListPreferredItemMargin"
         android:textAppearance="@style/TextAppearance.Design.Hint"
-        android:textColor="?android:textColorPrimary"
         tools:text="@string/showcase_rename_desc" />
 
 </RelativeLayout>

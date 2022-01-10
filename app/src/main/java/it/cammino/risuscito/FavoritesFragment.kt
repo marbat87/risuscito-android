@@ -23,7 +23,6 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.ActivityFavouritesBinding
@@ -166,9 +165,7 @@ class FavoritesFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        IconicsMenuInflaterUtil.inflate(
-            requireActivity().menuInflater, requireContext(), R.menu.clean_list_menu, menu
-        )
+        inflater.inflate(R.menu.clean_list_menu, menu)
         menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -205,10 +202,7 @@ class FavoritesFragment : Fragment() {
         val callback = object : ActionMode.Callback {
 
             override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
-                IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater, requireContext(), R.menu.menu_delete, menu
-                )
-                Log.d(TAG, "MaterialCab onCreate")
+                requireActivity().menuInflater.inflate(R.menu.menu_delete, menu)
                 actionModeOk = false
                 return true
             }

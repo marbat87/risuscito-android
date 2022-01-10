@@ -9,9 +9,9 @@
     android:layout_marginTop="4dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp"
-    app:checkedIconTint="@android:color/transparent"
-    android:transitionName="shared_element_container"
     android:checkable="true"
+    android:transitionName="shared_element_container"
+    app:checkedIconTint="@android:color/transparent"
     app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,18 +39,17 @@
                 android:textColor="@color/primary_text_default_material_light"
                 tools:text="15" />
 
-            <com.mikepenz.iconics.view.IconicsImageView
+            <ImageView
                 android:id="@+id/selected_mark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/page_oval_bkg_selected"
                 android:contentDescription="@null"
                 android:gravity="center"
+                android:padding="10dp"
+                android:src="@drawable/baseline_check_24"
                 android:visibility="invisible"
-                app:iiv_color="?colorOnPrimary"
-                app:iiv_icon="cmd-check"
-                app:iiv_padding="5dp"
-                app:iiv_size="24dp" />
+                app:tint="?colorOnPrimary" />
 
         </FrameLayout>
 

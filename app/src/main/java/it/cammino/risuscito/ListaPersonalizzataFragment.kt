@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
@@ -204,13 +203,7 @@ class ListaPersonalizzataFragment : Fragment() {
         val callback = object : ActionMode.Callback {
 
             override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
-                IconicsMenuInflaterUtil.inflate(
-                    requireActivity().menuInflater,
-                    requireContext(),
-                    R.menu.menu_actionmode_lists,
-                    menu
-                )
-                Log.d(TAG, "MaterialCab onCreate")
+                activity?.menuInflater?.inflate(R.menu.menu_actionmode_lists, menu)
                 mCantiViewModel.posizioniList[longclickedPos].listItem?.get(longClickedChild)
                     ?.setmSelected(true)
                 cantoAdapter.notifyItemChanged(longclickedPos)

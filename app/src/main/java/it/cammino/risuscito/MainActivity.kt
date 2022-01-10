@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.ActionMode
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.edit
@@ -46,11 +47,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import com.mikepenz.materialdrawer.holder.ImageHolder
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
@@ -74,7 +70,7 @@ import kotlin.concurrent.schedule
 
 class MainActivity : ThemeableActivity() {
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
-    private lateinit var profileIcon: IconicsDrawable
+    private var profileIcon: Drawable? = null
     private lateinit var mAccountHeader: AccountHeaderView
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
@@ -146,11 +142,8 @@ class MainActivity : ThemeableActivity() {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
-        profileIcon = IconicsDrawable(this).apply {
-            colorInt = MaterialColors.getColor(this@MainActivity, R.attr.colorPrimary, TAG)
-            icon = CommunityMaterial.Icon.cmd_account_circle
-            sizeDp = 56
-        }
+        profileIcon = AppCompatResources.getDrawable(this, R.drawable.baseline_account_circle_56)
+        profileIcon?.setTint(MaterialColors.getColor(binding.root, R.attr.colorPrimary))
 
         setSupportActionBar(binding.risuscitoToolbar)
 
@@ -531,11 +524,9 @@ class MainActivity : ThemeableActivity() {
             val backgroundColor = MaterialColors.getColor(this, R.attr.colorSecondaryContainer, TAG)
 
             binding.fabPager.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_pulisci,
-                    IconicsDrawable(this, CommunityMaterial.Icon.cmd_eraser_variant).apply {
-                        sizeDp = 24
-                        paddingDp = 4
-                    }
+                SpeedDialActionItem.Builder(
+                    R.id.fab_pulisci,
+                    AppCompatResources.getDrawable(this, R.drawable.eraser_variant_24)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.dialog_reset_list_title))
@@ -546,11 +537,9 @@ class MainActivity : ThemeableActivity() {
             )
 
             binding.fabPager.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_add_lista,
-                    IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
-                        sizeDp = 24
-                        paddingDp = 4
-                    }
+                SpeedDialActionItem.Builder(
+                    R.id.fab_add_lista,
+                    AppCompatResources.getDrawable(this, R.drawable.baseline_add_24)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.action_add_list))
@@ -561,11 +550,9 @@ class MainActivity : ThemeableActivity() {
             )
 
             binding.fabPager.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_condividi,
-                    IconicsDrawable(this, CommunityMaterial.Icon3.cmd_share_variant).apply {
-                        sizeDp = 24
-                        paddingDp = 4
-                    }
+                SpeedDialActionItem.Builder(
+                    R.id.fab_condividi,
+                    AppCompatResources.getDrawable(this, R.drawable.baseline_share_24)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.action_share))
@@ -577,11 +564,9 @@ class MainActivity : ThemeableActivity() {
 
             if (customList) {
                 binding.fabPager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_condividi_file,
-                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_attachment).apply {
-                            sizeDp = 24
-                            paddingDp = 4
-                        }
+                    SpeedDialActionItem.Builder(
+                        R.id.fab_condividi_file,
+                        AppCompatResources.getDrawable(this, R.drawable.baseline_attachment_24)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_share_file))
@@ -592,11 +577,9 @@ class MainActivity : ThemeableActivity() {
                 )
 
                 binding.fabPager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_edit_lista,
-                        IconicsDrawable(this, CommunityMaterial.Icon3.cmd_pencil).apply {
-                            sizeDp = 24
-                            paddingDp = 4
-                        }
+                    SpeedDialActionItem.Builder(
+                        R.id.fab_edit_lista,
+                        AppCompatResources.getDrawable(this, R.drawable.baseline_edit_24)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_edit_list))
@@ -607,11 +590,9 @@ class MainActivity : ThemeableActivity() {
                 )
 
                 binding.fabPager.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_delete_lista,
-                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete).apply {
-                            sizeDp = 24
-                            paddingDp = 4
-                        }
+                    SpeedDialActionItem.Builder(
+                        R.id.fab_delete_lista,
+                        AppCompatResources.getDrawable(this, R.drawable.baseline_delete_24)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_remove_list))

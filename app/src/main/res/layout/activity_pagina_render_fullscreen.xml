@@ -16,6 +16,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin_frame"
         android:layout_marginBottom="@dimen/fab_margin_frame"
+        android:src="@drawable/baseline_fullscreen_exit_24"
         tools:ignore="ContentDescription" />
 
 </FrameLayout>

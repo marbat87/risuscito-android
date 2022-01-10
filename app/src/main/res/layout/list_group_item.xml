@@ -32,20 +32,18 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Header" />
 
-        <com.mikepenz.iconics.view.IconicsImageView
+        <ImageView
             android:id="@+id/group_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="?listPreferredItemPaddingStart"
-            android:layout_marginEnd="?listPreferredItemPaddingStart"
-            app:iiv_color="?android:textColorSecondary"
-            app:iiv_icon="cmd-chevron-up"
-            app:iiv_padding="5dp"
-            app:iiv_size="24dp"
+            android:contentDescription="@null"
+            android:src="@drawable/baseline_expand_less_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/group_title"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?android:textColorSecondary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

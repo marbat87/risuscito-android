@@ -70,11 +70,11 @@
     <!--        <item name="fontFamily">@font/googlesans_medium</item>-->
     <!--    </style>-->
 
-    <style name="TextAppearance.Material3.TitleLarge.Collapsed">
+    <style name="TextAppearance.Risuscito.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
-    <style name="TextAppearance.Material3.HeadlineSmall.Expanded">
+    <style name="TextAppearance.Risuscito.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="fontFamily">@font/googlesans_medium</item>
     </style>
 
@@ -150,8 +150,10 @@
         <item name="fontFamily">@font/googlesans_regular</item>
     </style>
 
-    <style name="SuperStateViewSubTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+    <style name="SuperStateViewSubTitle" parent="TextAppearance.Material3.TitleSmall">
         <item name="android:textColor">?android:textColorSecondary</item>
+        <item name="fontFamily">@font/googlesans_italic</item>
+        <item name="android:fontFamily">@font/googlesans_italic</item>
     </style>
 
     <style name="Widget.MaterialDrawerHeaderStyle.Risuscito">
@@ -195,5 +197,11 @@
         <item name="fontFamily">@font/googlesans_medium</item>
         <item name="android:fontFamily">@font/googlesans_medium</item>
     </style>
+
+    <style name="TextAppearance.Risuscito.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/googlesans_medium</item>
+        <item name="android:fontFamily">@font/googlesans_medium</item>
+    </style>
+
 
 </resources>

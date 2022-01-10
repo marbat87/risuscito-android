@@ -1,10 +1,8 @@
 package it.cammino.risuscito
 
 import android.app.Activity
-import android.app.ActivityOptions
 import android.app.RecoverableSecurityException
 import android.content.*
-import android.graphics.Color
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -25,7 +23,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
@@ -38,20 +36,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
-import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.Utility.getExternalLink
 import it.cammino.risuscito.Utility.getExternalMediaIdByName
@@ -75,7 +67,6 @@ import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.DownloadState
 import it.cammino.risuscito.utils.Downloader
 import it.cammino.risuscito.utils.PdfExporter
-import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -337,13 +328,6 @@ class PaginaRenderActivity : ThemeableActivity() {
         setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
-            colorInt = Color.WHITE
-            sizeDp = 24
-            paddingDp = 4
-        }
-        binding.fabCanti.setMainFabClosedDrawable(icon)
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
@@ -682,9 +666,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        IconicsMenuInflaterUtil.inflate(
-            menuInflater, this, R.menu.canto, menu, true
-        )
+        menuInflater.inflate(R.menu.canto, menu)
         super.onCreateOptionsMenu(menu)
         Log.d(
             TAG,
@@ -1279,39 +1261,13 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun showPlaying(started: Boolean) {
         Log.d(TAG, "showPlaying: ")
-        val icon = IconicsDrawable(
-            this, if (started)
-                CommunityMaterial.Icon3.cmd_pause
-            else
-                CommunityMaterial.Icon3.cmd_play
-        ).apply {
-            colorInt = ContextCompat.getColor(
-                this@PaginaRenderActivity,
-                if (ThemeUtils.isDarkMode(this@PaginaRenderActivity)) R.color.secondary_text_default_material_dark else R.color.secondary_text_default_material_light
-            )
-            sizeDp = 24
-            paddingDp = 2
-        }
-        binding.playSong.setImageDrawable(icon)
+        (binding.playSong as? MaterialButton)?.setIconResource(if (started) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24)
         binding.playSong.isVisible = mCantiViewModel.retrieveDone
         binding.loadingBar.isGone = mCantiViewModel.retrieveDone
     }
 
     private fun showScrolling(scrolling: Boolean) {
-        val icon = IconicsDrawable(
-            this, if (scrolling)
-                CommunityMaterial.Icon3.cmd_pause_circle_outline
-            else
-                CommunityMaterial.Icon3.cmd_play_circle_outline
-        ).apply {
-            colorInt = ContextCompat.getColor(
-                this@PaginaRenderActivity,
-                R.color.text_color_secondary
-            )
-            sizeDp = 48
-            paddingDp = 2
-        }
-        binding.playScroll.setImageDrawable(icon)
+        (binding.playScroll as? MaterialButton)?.setIconResource(if (scrolling) R.drawable.baseline_pause_circle_24 else R.drawable.baseline_play_circle_24)
         binding.playScroll.isSelected = scrolling
     }
 
@@ -1706,11 +1662,9 @@ class PaginaRenderActivity : ThemeableActivity() {
             if (mViewModel.mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
 
         binding.fabCanti.addActionItem(
-            SpeedDialActionItem.Builder(R.id.fab_fullscreen_on,
-                IconicsDrawable(this, CommunityMaterial.Icon2.cmd_fullscreen).apply {
-                    sizeDp = 24
-                    paddingDp = 2
-                }
+            SpeedDialActionItem.Builder(
+                R.id.fab_fullscreen_on,
+                AppCompatResources.getDrawable(this, R.drawable.baseline_fullscreen_24)
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                 .setLabel(getString(R.string.fullscreen))
@@ -1721,14 +1675,12 @@ class PaginaRenderActivity : ThemeableActivity() {
         )
 
         binding.fabCanti.addActionItem(
-            SpeedDialActionItem.Builder(R.id.fab_sound_off,
-                IconicsDrawable(
+            SpeedDialActionItem.Builder(
+                R.id.fab_sound_off,
+                AppCompatResources.getDrawable(
                     this,
-                    if (mCantiViewModel.mostraAudio) CommunityMaterial.Icon2.cmd_headset else CommunityMaterial.Icon2.cmd_headset_off
-                ).apply {
-                    sizeDp = 24
-                    paddingDp = 4
-                }
+                    if (mCantiViewModel.mostraAudio) R.drawable.baseline_headset_24 else R.drawable.baseline_headset_off_24
+                )
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                 .setLabel(getString(if (mCantiViewModel.mostraAudio) R.string.audio_off else R.string.audio_on))
@@ -1739,17 +1691,13 @@ class PaginaRenderActivity : ThemeableActivity() {
         )
 
         if (mDownload) {
-            val icon = IconicsDrawable(this).apply {
-                sizeDp = 24
-                paddingDp = 4
-            }
-            val text = if (!personalUrl.isNullOrEmpty()) {
-                icon.icon = CommunityMaterial.Icon2.cmd_link_variant_off
-                getString(R.string.dialog_delete_link_title)
-            } else {
-                icon.icon = CommunityMaterial.Icon.cmd_delete
+            val icon = AppCompatResources.getDrawable(
+                this,
+                if ((!personalUrl.isNullOrEmpty())) R.drawable.baseline_link_off_24 else R.drawable.baseline_delete_24
+            )
+            val text = if (!personalUrl.isNullOrEmpty())
+                getString(R.string.dialog_delete_link_title) else
                 getString(R.string.fab_delete_unlink)
-            }
             binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(R.id.fab_delete_file, icon)
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -1762,11 +1710,9 @@ class PaginaRenderActivity : ThemeableActivity() {
         } else {
             if (!url.isNullOrEmpty())
                 binding.fabCanti.addActionItem(
-                    SpeedDialActionItem.Builder(R.id.fab_save_file,
-                        IconicsDrawable(this, CommunityMaterial.Icon.cmd_download).apply {
-                            sizeDp = 24
-                            paddingDp = 4
-                        }
+                    SpeedDialActionItem.Builder(
+                        R.id.fab_save_file,
+                        AppCompatResources.getDrawable(this, R.drawable.baseline_file_download_24)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.save_file))
@@ -1776,11 +1722,9 @@ class PaginaRenderActivity : ThemeableActivity() {
                         .create()
                 )
             binding.fabCanti.addActionItem(
-                SpeedDialActionItem.Builder(R.id.fab_link_file,
-                    IconicsDrawable(this, CommunityMaterial.Icon2.cmd_link_variant).apply {
-                        sizeDp = 24
-                        paddingDp = 4
-                    }
+                SpeedDialActionItem.Builder(
+                    R.id.fab_link_file,
+                    AppCompatResources.getDrawable(this, R.drawable.baseline_add_link_24)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.only_link_title))
@@ -1793,14 +1737,12 @@ class PaginaRenderActivity : ThemeableActivity() {
         }
 
         binding.fabCanti.addActionItem(
-            SpeedDialActionItem.Builder(R.id.fab_favorite,
-                IconicsDrawable(
+            SpeedDialActionItem.Builder(
+                R.id.fab_favorite,
+                AppCompatResources.getDrawable(
                     this,
-                    if (mCantiViewModel.mCurrentCanto?.favorite == 1) CommunityMaterial.Icon.cmd_bookmark_minus else CommunityMaterial.Icon.cmd_bookmark_plus
-                ).apply {
-                    sizeDp = 24
-                    paddingDp = 4
-                }
+                    if (mCantiViewModel.mCurrentCanto?.favorite == 1) R.drawable.baseline_bookmark_remove_24 else R.drawable.baseline_bookmark_add_24
+                )
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                 .setLabel(getString(if (mCantiViewModel.mCurrentCanto?.favorite == 1) R.string.favorite_off else R.string.favorite_on))

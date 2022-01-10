@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
-    app:rippleColor="@android:color/transparent"
     android:layout_marginTop="4dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="4dp"
     android:checkable="false"
     android:clickable="false"
-    android:focusable="false">
+    android:focusable="false"
+    app:rippleColor="@android:color/transparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -40,6 +40,7 @@
             style="@style/Widget.Risuscito.Button.TextButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="?listPreferredItemPaddingStart"
             android:text="@string/select_canto"
             android:transitionName="shared_insert_container"
             app:icon="@drawable/baseline_add_circle_outline_24"

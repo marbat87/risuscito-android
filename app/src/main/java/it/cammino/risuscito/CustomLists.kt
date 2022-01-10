@@ -2,7 +2,6 @@ package it.cammino.risuscito
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -12,6 +11,7 @@ import android.view.*
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
@@ -29,12 +29,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.CreaListaActivity.Companion.EDIT_EXISTING_LIST
 import it.cammino.risuscito.CreaListaActivity.Companion.ID_DA_MODIF
 import it.cammino.risuscito.CreaListaActivity.Companion.LIST_TITLE
@@ -44,7 +38,6 @@ import it.cammino.risuscito.databinding.TabsLayoutBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
-import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -150,9 +143,7 @@ class CustomLists : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        IconicsMenuInflaterUtil.inflate(
-            requireActivity().menuInflater, requireContext(), R.menu.help_menu, menu
-        )
+        inflater.inflate(R.menu.help_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -177,12 +168,6 @@ class CustomLists : Fragment() {
 
     private fun playIntro() {
         mMainActivity?.enableFab(true)
-        val doneDrawable =
-            IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check).apply {
-                //            colorInt = Color.WHITE
-                sizeDp = 24
-                paddingDp = 4
-            }
         mMainActivity?.getFab()?.let { fab ->
             val colorOnPrimary =
                 MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
@@ -207,7 +192,12 @@ class CustomLists : Fragment() {
                         getString(R.string.showcase_listepers_desc3)
                     )
                         .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .icon(doneDrawable)
+                        .icon(
+                            AppCompatResources.getDrawable(
+                                requireContext(),
+                                R.drawable.baseline_check_24
+                            )
+                        )
                         .textTypeface(mRegularFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
@@ -268,11 +258,12 @@ class CustomLists : Fragment() {
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
                                 mMainActivity?.let { act ->
                                     act.getFab().transitionName = "shared_element_crealista"
-                                    val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                        act,
-                                        act.getFab(),
-                                        "shared_element_crealista" // The transition name to be matched in Activity B.
-                                    )
+                                    val options =
+                                        ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                            act,
+                                            act.getFab(),
+                                            "shared_element_crealista" // The transition name to be matched in Activity B.
+                                        )
                                     startListEditForResult.launch(
                                         Intent(
                                             activity,
@@ -356,12 +347,7 @@ class CustomLists : Fragment() {
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon3.cmd_plus).apply {
-            colorInt =
-                MaterialColors.getColor(requireContext(), R.attr.colorOnPrimaryContainer, TAG)
-            sizeDp = 24
-            paddingDp = 4
-        }
+        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.baseline_add_24)
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {
                 R.id.fab_pulisci -> {
@@ -422,7 +408,6 @@ class CustomLists : Fragment() {
                             options
                         )
                     }
-//                    Animations.enterDown(activity)
                     true
                 }
                 R.id.fab_delete_lista -> {
@@ -446,7 +431,9 @@ class CustomLists : Fragment() {
             toggleFabMenu()
         }
 
-        mMainActivity?.initFab(true, icon, click, actionListener, customList)
+        icon?.let {
+            mMainActivity?.initFab(true, it, click, actionListener, customList)
+        }
     }
 
     private suspend fun deleteListDialog() {

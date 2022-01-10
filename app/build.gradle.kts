@@ -68,7 +68,6 @@ val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
 val materialDrawerVersion = "9.0.0-a03"
 val roomVersion = "2.3.0"
-val iconicVersion = "5.3.3"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
     implementation("androidx.multidex:multidex:2.0.1")
@@ -100,9 +99,6 @@ dependencies {
     implementation("com.mikepenz:materialdrawer:$materialDrawerVersion")
     implementation("com.mikepenz:materialdrawer-iconics:$materialDrawerVersion")
     implementation("com.mikepenz:crossfader:1.6.0")
-    implementation("com.mikepenz:iconics-core:$iconicVersion")
-    implementation("com.mikepenz:iconics-views:$iconicVersion")
-    implementation("com.mikepenz:community-material-typeface:6.4.95.0-kotlin@aar")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.6")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")

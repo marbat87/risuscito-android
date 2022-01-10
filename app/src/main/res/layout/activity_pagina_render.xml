@@ -27,86 +27,84 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?actionBarSize"
+        android:background="?android:colorBackground"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <FrameLayout
             android:id="@+id/music_controls"
             android:layout_width="match_parent"
             android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:layout_alignParentTop="true"
-            android:background="@color/risuscito_material_background">
+            android:layout_alignParentTop="true">
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/no_record"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
                 android:minHeight="@dimen/myListPreferredItemHeightMedium"
                 android:visibility="invisible">
 
-                <com.mikepenz.iconics.view.IconicsImageView
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:contentDescription="@null"
-                    android:gravity="center"
+                    android:src="@drawable/baseline_music_off_24"
                     android:translationZ="1dp"
-                    app:iiv_color="?android:textColorSecondary"
-                    app:iiv_icon="cmd-music-note-off"
-                    app:iiv_padding="5dp"
-                    app:iiv_size="24dp"
-                    tools:targetApi="lollipop" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/material_on_background_disabled" />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:layout_marginEnd="@dimen/myListPreferredItemMargin"
                     android:text="@string/no_record"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    android:textColor="?android:textColorPrimary" />
+                    android:textAppearance="@style/TextAppearance.Risuscito.TitleMedium"
+                    android:textColor="@color/material_on_background_disabled"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/imageView"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/no_connection"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
                 android:minHeight="@dimen/myListPreferredItemHeightMedium"
                 android:visibility="invisible">
 
-                <com.mikepenz.iconics.view.IconicsImageView
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
+                <ImageView
+                    android:id="@+id/no_internet_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:contentDescription="@null"
-                    android:gravity="center"
+                    android:src="@drawable/baseline_wifi_off_24"
                     android:translationZ="1dp"
-                    app:iiv_color="?android:textColorSecondary"
-                    app:iiv_icon="cmd-cloud-off-outline"
-                    app:iiv_padding="5dp"
-                    app:iiv_size="24dp"
-                    tools:targetApi="lollipop" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/material_on_background_disabled" />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:layout_marginEnd="@dimen/myListPreferredItemMargin"
                     android:text="@string/no_connection"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    android:textColor="?android:textColorPrimary" />
+                    android:textAppearance="@style/TextAppearance.Risuscito.TitleMedium"
+                    android:textColor="@color/material_on_background_disabled"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/no_internet_image"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/music_buttons"
@@ -121,7 +119,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="end"
                     android:labelFor="@+id/music_seekbar"
-                    android:paddingStart="@dimen/activity_min_margin"
+                    android:layout_marginStart="@dimen/activity_min_margin"
                     android:text="00:00"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat"
                     android:textColor="?android:textColorPrimary"
@@ -155,32 +153,27 @@
 
                 </FrameLayout>
 
-                <com.mikepenz.iconics.view.IconicsImageView
+                <Button
                     android:id="@+id/play_song"
-                    android:layout_width="@dimen/abc_action_bar_default_height_material"
-                    android:layout_height="@dimen/abc_action_bar_default_height_material"
+                    style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:contentDescription="@null"
-                    android:focusable="true"
-                    android:paddingLeft="@dimen/play_pause_padding"
-                    android:paddingRight="@dimen/play_pause_padding"
-                    android:soundEffectsEnabled="true"
+                    android:layout_marginEnd="@dimen/activity_min_margin"
                     android:visibility="gone"
-                    app:iiv_color="@color/text_color_secondary"
-                    app:iiv_icon="cmd-play"
-                    app:iiv_padding="2dp"
-                    app:iiv_size="24dp" />
+                    app:icon="@drawable/baseline_play_arrow_24"
+                    app:iconSize="24dp"
+                    tools:ignore="SpeakableTextPresentCheck"
+                    tools:visibility="visible" />
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/loading_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/activity_min_margin"
                     android:elevation="1dp"
-                    android:indeterminate="true"
-                    tools:targetApi="lollipop" />
+                    android:indeterminate="true" />
 
             </LinearLayout>
 
@@ -214,9 +207,8 @@
                 android:layout_width="50dip"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:gravity="end"
+                android:gravity="center_horizontal"
                 android:labelFor="@+id/speed_seekbar"
-                android:paddingStart="@dimen/activity_min_margin"
                 android:text="0 %"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat"
                 android:textColor="?android:textColorPrimary"
@@ -237,22 +229,18 @@
                 app:labelBehavior="gone"
                 app:tickVisible="false" />
 
-            <com.mikepenz.iconics.view.IconicsImageView
+            <Button
                 android:id="@+id/play_scroll"
-                android:layout_width="@dimen/abc_action_bar_default_height_material"
-                android:layout_height="@dimen/abc_action_bar_default_height_material"
+                style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@null"
-                android:focusable="true"
-                android:paddingLeft="@dimen/button_playbar_padding"
-                android:paddingRight="@dimen/button_playbar_padding"
-                android:soundEffectsEnabled="true"
-                app:iiv_color="@color/text_color_secondary"
-                app:iiv_icon="cmd-play-circle-outline"
-                app:iiv_padding="2dp"
-                app:iiv_size="48dp" />
+                android:layout_marginEnd="@dimen/activity_min_margin"
+                app:icon="@drawable/baseline_play_circle_24"
+                app:iconSize="24dp"
+                app:iconTint="?colorControlNormal"
+                tools:ignore="SpeakableTextPresentCheck"
+                tools:visibility="visible" />
 
         </LinearLayout>
 
@@ -270,6 +258,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="?actionBarSize"
+        app:sdMainFabClosedSrc="@drawable/baseline_add_24"
         app:sdExpansionMode="top"
         app:sdOverlayLayout="@id/overlay" />
 

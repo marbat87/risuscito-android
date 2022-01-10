@@ -17,9 +17,9 @@
             style="?attr/collapsingToolbarLayoutLargeStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.Material3.TitleLarge.Collapsed"
+            app:collapsedTitleTextAppearance="@style/TextAppearance.Risuscito.TitleLarge"
             app:collapsedTitleTextColor="?colorOnSurface"
-            app:expandedTitleTextAppearance="@style/TextAppearance.Material3.HeadlineSmall.Expanded"
+            app:expandedTitleTextAppearance="@style/TextAppearance.Risuscito.HeadlineSmall"
             app:expandedTitleTextColor="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:title="@string/changelog">

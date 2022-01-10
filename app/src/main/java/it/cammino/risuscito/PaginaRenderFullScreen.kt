@@ -1,6 +1,5 @@
 package it.cammino.risuscito
 
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,14 +7,6 @@ import android.util.Base64
 import android.util.Log
 import androidx.activity.addCallback
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
-import com.google.android.material.transition.platform.MaterialFadeThrough
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.databinding.ActivityPaginaRenderFullscreenBinding
@@ -62,12 +53,6 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_fullscreen_exit).apply {
-            colorInt = Color.WHITE
-            sizeDp = 24
-            paddingDp = 2
-        }
-        binding.fabFullscreenOff.setImageDrawable(icon)
         binding.fabFullscreenOff.setOnClickListener { lifecycleScope.launch { saveZoom() } }
 
         onBackPressedDispatcher.addCallback(this) {
