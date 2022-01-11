@@ -32,6 +32,7 @@ import it.cammino.risuscito.database.dao.Backup
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
+import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
@@ -335,6 +336,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         )
 
         val customListDao = risuscitoDb.customListDao()
+
         customListDao.truncateTable()
         Log.d(TAG, "Custom List Truncated!")
         for (backup in backupCustomList) {
@@ -342,7 +344,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 TAG,
                 "backupCustomList.id + ${backup.id} / backupCustomList.position ${backup.position} / backupCustomList.idCanto ${backup.idCanto} / backupCustomList.timestamp ${backup.timestamp}"
             )
-            customListDao.insertPosition(backup)
+            if (cantoDao.getCantoById(backup.idCanto) != null)
+                customListDao.insertPosition(backup)
         }
 
 
@@ -365,6 +368,15 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 TAG,
                 "backupListePers.id + ${backup.id} / backupCustomList.position ${backup.titolo}"
             )
+            backup.lista?.let {
+                for (i in 0 until it.numPosizioni) {
+                    if (it.getCantoPosizione(i).isNotEmpty() && cantoDao.getCantoById(
+                            it.getCantoPosizione(i).toInt()
+                        ) == null
+                    )
+                        it.removeCanto(i)
+                }
+            }
             listePersDao.insertLista(backup)
         }
 
@@ -388,7 +400,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 TAG,
                 "backupLocalLink.idCanto + ${backup.idCanto} / backupLocalLink.localPath ${backup.localPath}"
             )
-            localLinkDao.insertLocalLink(backup)
+            if (cantoDao.getCantoById(backup.idCanto) != null)
+                localLinkDao.insertLocalLink(backup)
         }
 
 
@@ -411,7 +424,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 TAG,
                 "backupConsegnati.idConsegnato + ${backup.idConsegnato} / backupConsegnati.idCanto ${backup.idCanto}"
             )
-            consegnatiDao.insertConsegnati(backup)
+            if (cantoDao.getCantoById(backup.idCanto) != null)
+                consegnatiDao.insertConsegnati(backup)
         }
 
 
@@ -434,7 +448,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 TAG,
                 "backupCronologia.idCanto + ${backup.idCanto} / backupCronologia.ultimaVisita ${backup.ultimaVisita}"
             )
-            cronologiaDao.insertCronologia(backup)
+            if (cantoDao.getCantoById(backup.idCanto) != null)
+                cronologiaDao.insertCronologia(backup)
         }
 
         Log.d(TAG, "RESTORE DB COMPLETATO")

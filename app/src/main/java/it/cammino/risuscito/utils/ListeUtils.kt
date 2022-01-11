@@ -84,7 +84,7 @@ object ListeUtils {
                         withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
                             fragment.resources.getString(
                                 LUtils.getResId(
-                                    cantoDao.getCantoById(it).titolo,
+                                    cantoDao.getCantoById(it)?.titolo ?: "",
                                     R.string::class.java
                                 )
                             )
@@ -308,7 +308,7 @@ object ListeUtils {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cantoDao()
             val existingTitle =
                 withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                    mDao.getCantoById(idCanto).titolo ?: ""
+                    mDao.getCantoById(idCanto)?.titolo ?: ""
                 }
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(

@@ -190,6 +190,8 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             database.execSQL("DROP TABLE Cronologia")
             database.execSQL("ALTER TABLE Cronologia_new RENAME TO Cronologia")
 
+            cleanNonExistentSongs(database)
+
         }
 
         private fun reinsertDefaultOnlyCanti(database: SupportSQLiteDatabase) {
@@ -306,6 +308,147 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 // INDICE_LIT_NAMES
                 mDb.indiceLiturgicoDao().insertNomeIndice(NomeLiturgico.defaultData())
             }
+        }
+
+        private fun cleanNonExistentSongs(database: SupportSQLiteDatabase) {
+            val converter = Converters()
+
+            //CUSTOMLIST
+            val custList = ArrayList<CustomList>()
+            var sql =
+                "SELECT id, idCanto FROM customlist"
+            var cursor = database.query(sql)
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                custList.add(
+                    CustomList().apply {
+                        id = cursor.getInt(0)
+                        idCanto = cursor.getInt(1)
+                    }
+                )
+                cursor.moveToNext()
+            }
+            cursor.close()
+
+            for (lista in custList) {
+                if (!isCantoExistent(database, lista.idCanto))
+                    database.execSQL("DELETE FROM customlist WHERE id = ${lista.id}")
+            }
+
+            //LOCALLINK
+            val localinks = ArrayList<LocalLink>()
+            sql =
+                "SELECT idCanto FROM locallink"
+            cursor = database.query(sql)
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                localinks.add(
+                    LocalLink().apply {
+                        idCanto = cursor.getInt(0)
+                    }
+                )
+                cursor.moveToNext()
+            }
+            cursor.close()
+
+            for (link in localinks) {
+                if (!isCantoExistent(database, link.idCanto))
+                    database.execSQL("DELETE FROM locallink WHERE idCanto = ${link.idCanto}")
+            }
+
+            //CONSEGNATO
+            val consegnati = ArrayList<Consegnato>()
+            sql =
+                "SELECT idConsegnato, idCanto from consegnato"
+            cursor = database.query(sql)
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                consegnati.add(
+                    Consegnato().apply {
+                        idConsegnato = cursor.getInt(0)
+                        idCanto = cursor.getInt(1)
+                    }
+                )
+                cursor.moveToNext()
+            }
+            cursor.close()
+
+            for (consegnato in consegnati) {
+                if (!isCantoExistent(database, consegnato.idCanto))
+                    database.execSQL("DELETE FROM consegnato WHERE idConsegnato = ${consegnato.idConsegnato}")
+            }
+
+            //CRONOLOGIA
+            val cronologia = ArrayList<Cronologia>()
+            sql =
+                "SELECT idCanto from cronologia"
+            cursor = database.query(sql)
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                cronologia.add(
+                    Cronologia().apply {
+                        idCanto = cursor.getInt(0)
+                    }
+                )
+                cursor.moveToNext()
+            }
+            cursor.close()
+
+            for (crono in cronologia) {
+                if (!isCantoExistent(database, crono.idCanto))
+                    database.execSQL("DELETE FROM cronologia WHERE idConsegnato = ${crono.idCanto}")
+            }
+
+            //CRONOLOGIA
+            val listePers = ArrayList<ListaPers>()
+            sql =
+                "SELECT id, lista from listapers"
+            cursor = database.query(sql)
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                listePers.add(
+                    ListaPers().apply {
+                        id = cursor.getInt(0)
+                        lista = converter.fromBlob(cursor.getBlob(1))
+                    }
+                )
+                cursor.moveToNext()
+            }
+            cursor.close()
+
+            for (listapers in listePers) {
+                var update = false
+                listapers.lista?.let {
+                    for (i in 0 until it.numPosizioni) {
+                        if (it.getCantoPosizione(i).isNotEmpty() && !isCantoExistent(
+                                database,
+                                it.getCantoPosizione(i).toInt()
+                            )
+                        ) {
+                            it.removeCanto(i)
+                            update = true
+                        }
+                    }
+                    if (update)
+                        database.execSQL(
+                            "UPDATE listapers SET lista = ${
+                                converter.fromListaPersonalizzata(
+                                    it
+                                )
+                            } WHERE id = ${listapers.id}"
+                        )
+                }
+            }
+        }
+
+        private fun isCantoExistent(database: SupportSQLiteDatabase, idCanto: Int): Boolean {
+            val sql =
+                "SELECT count(*) FROM canto WHERE id = $idCanto"
+            val cursor = database.query(sql)
+            cursor.moveToFirst()
+            val ret = cursor.getInt(0) > 0
+            cursor.close()
+            return ret
         }
     }
 }
