@@ -65,14 +65,15 @@ class GeneralIndex : Fragment() {
         binding.viewPager.adapter = IndexTabsAdapter(this)
         mMainActivity?.getMaterialTabs()?.let {
             TabLayoutMediator(it, binding.viewPager) { tab, position ->
-                val l = getSystemLocale(resources)
-                tab.text = when (position) {
-                    0 -> getString(R.string.letter_order_text).uppercase(l)
-                    1 -> getString(R.string.page_order_text).uppercase(l)
-                    2 -> getString(R.string.indice_liturgico_index).uppercase(l)
-                    3 -> getString(R.string.salmi_musica_index).uppercase(l)
-                    else -> getString(R.string.letter_order_text).uppercase(l)
-                }
+                tab.setText(
+                    when (position) {
+                        0 -> R.string.letter_order_text
+                        1 -> R.string.page_order_text
+                        2 -> R.string.indice_liturgico_index
+                        3 -> R.string.salmi_musica_index
+                        else -> R.string.letter_order_text
+                    }
+                )
             }.attach()
         }
         binding.viewPager.registerOnPageChangeCallback(mPageChange)

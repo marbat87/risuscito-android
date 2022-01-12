@@ -124,11 +124,10 @@ class CustomLists : Fragment() {
         binding.viewPager.adapter = mSectionsPagerAdapter
         tabs?.let {
             TabLayoutMediator(it, binding.viewPager) { tab, position ->
-                val l = getSystemLocale(resources)
                 tab.text = when (position) {
-                    0 -> getString(R.string.title_activity_canti_parola).uppercase(l)
-                    1 -> getString(R.string.title_activity_canti_eucarestia).uppercase(l)
-                    else -> titoliListe[position - 2]?.uppercase(l)
+                    0 -> getString(R.string.title_activity_canti_parola)
+                    1 -> getString(R.string.title_activity_canti_eucarestia)
+                    else -> titoliListe[position - 2]
                 }
             }.attach()
         }
