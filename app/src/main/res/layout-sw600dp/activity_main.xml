@@ -41,12 +41,10 @@
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"
+                    style="@style/SimpleSearchViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?colorPrimarySurface"
-                    android:hint="@string/title_filter"
-                    android:visibility="gone"
-                    app:type="card" />
+                    android:visibility="gone" />
 
             </FrameLayout>
 
@@ -81,7 +79,7 @@
             android:id="@+id/bottom_bar"
             style="@style/Widget.Material3.BottomAppBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:layout_gravity="bottom"
             android:visibility="invisible"
             app:hideOnScroll="true"

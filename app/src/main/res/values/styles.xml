@@ -203,5 +203,16 @@
         <item name="android:fontFamily">@font/googlesans_medium</item>
     </style>
 
+    <style name="SimpleSearchViewStyle">
+        <item name="cursorColor">?colorPrimary</item>
+        <item name="backIconTint">?colorOnSurfaceVariant</item>
+        <item name="iconsTint">?colorOnSurfaceVariant</item>
+        <item name="hintColor">?colorOnSurfaceVariant</item>
+        <item name="android:textColor">?colorOnSurface</item>
+        <item name="searchBackground">?colorSurfaceVariant</item>
+        <item name="iconsAlpha">1.0</item>
+        <item name="type">card</item>
+        <item name="android:hint">@string/title_filter</item>
+    </style>
 
 </resources>
