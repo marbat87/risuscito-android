@@ -32,7 +32,6 @@ import it.cammino.risuscito.database.dao.Backup
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
-import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
