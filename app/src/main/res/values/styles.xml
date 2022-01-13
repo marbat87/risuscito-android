@@ -45,8 +45,6 @@
         <item name="android:minHeight">48dp</item>
     </style>
 
-    <!--    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse" />-->
-
     <style name="TitoloSezione" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment">viewStart</item>
@@ -65,10 +63,6 @@
         <item name="tabGravity">start</item>
         <item name="tabMode">scrollable</item>
     </style>
-
-    <!--    <style name="TextAppearance.Material3.LabelLarge.Risuscito">-->
-    <!--        <item name="fontFamily">@font/googlesans_medium</item>-->
-    <!--    </style>-->
 
     <style name="TextAppearance.Risuscito.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/googlesans_medium</item>
@@ -156,28 +150,9 @@
         <item name="android:fontFamily">@font/googlesans_italic</item>
     </style>
 
-    <style name="Widget.MaterialDrawerHeaderStyle.Risuscito">
-        <item name="materialDrawerCompactStyle">true</item>
-        <item name="materialDrawerHeaderSelectionText">?colorOnSurface</item>
-        <item name="materialDrawerHeaderSelectionSubtext">?colorOnSurfaceVariant</item>
-    </style>
-
     <style name="Risuscito_SpeedDialActionItem">
         <item name="colorOnSecondary">?colorOnSecondaryContainer</item>
     </style>
-
-    <!--    <style name="ActionMode.Risuscito.Style" parent="Widget.Material3.ActionMode">-->
-    <!--        <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>-->
-    <!--        <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>-->
-    <!--        <item name="background">@color/md_grey_900</item>-->
-    <!--    </style>-->
-
-    <!--    <style name="Widget.MaterialComponents.BottomAppBar.Surface">-->
-    <!--        <item name="backgroundTint">@color/risuscito_material_background</item>-->
-    <!--        <item name="materialThemeOverlay">-->
-    <!--            @style/ThemeOverlay.MaterialComponents.BottomAppBar.Surface-->
-    <!--        </item>-->
-    <!--    </style>-->
 
     <style name="MaterialAlertDialog.Risuscito.Title.Text" parent="MaterialAlertDialog.Material3.Title.Text">
         <item name="fontFamily">@font/googlesans_medium</item>
@@ -213,6 +188,10 @@
         <item name="iconsAlpha">1.0</item>
         <item name="type">card</item>
         <item name="android:hint">@string/title_filter</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Risuscito.CornerSize50Percent" parent="">
+        <item name="cornerSize">50%</item>
     </style>
 
 </resources>

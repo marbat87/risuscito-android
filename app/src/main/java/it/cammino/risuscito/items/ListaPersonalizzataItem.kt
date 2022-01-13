@@ -1,6 +1,5 @@
 package it.cammino.risuscito.items
 
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,8 @@ import it.cammino.risuscito.databinding.GenericListItemBinding
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.PosizioneTitleItem
 
-fun listaPersonalizzataItem(block: ListaPersonalizzataItem.() -> Unit): ListaPersonalizzataItem = ListaPersonalizzataItem().apply(block)
+fun listaPersonalizzataItem(block: ListaPersonalizzataItem.() -> Unit): ListaPersonalizzataItem =
+    ListaPersonalizzataItem().apply(block)
 
 fun ListaPersonalizzataItem.posizioneTitleItem(block: PosizioneTitleItem.() -> Unit) {
     titleItem = PosizioneTitleItem().apply(block)
@@ -39,7 +39,10 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
     override val type: Int
         get() = R.id.fastadapter_listapers_item_id
 
-    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): GenericListItemBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup?
+    ): GenericListItemBinding {
         return GenericListItemBinding.inflate(inflater, parent, false)
     }
 
@@ -58,7 +61,8 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
                     binding.addCantoGenerico.isVisible = false
                 for (i in itemList.indices) {
                     val canto = itemList[i]
-                    val itemViewBinding = GenericCardItemBinding.inflate(inflater, binding.genericList, false)
+                    val itemViewBinding =
+                        GenericCardItemBinding.inflate(inflater, binding.genericList, false)
 
                     val cantoView = itemViewBinding.cantoGenericoContainer
 
@@ -69,18 +73,25 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
                     itemViewBinding.textIdCantoCard.text = canto.idCanto.toString()
                     itemViewBinding.itemTag.text = i.toString()
                     cantoView.background = FastAdapterUIUtils.getSelectableBackground(
-                            context,
-                            ContextCompat.getColor(context, R.color.selected_bg_color),
-                            true)
+                        context,
+                        ContextCompat.getColor(context, R.color.selected_bg_color),
+                        true
+                    )
                     if (canto.ismSelected()) {
                         val bgShape = itemViewBinding.selectedMark.background as? GradientDrawable
-                        bgShape?.setColor(MaterialColors.getColor(context, R.attr.colorPrimary, TAG))
+                        bgShape?.setColor(
+                            MaterialColors.getColor(
+                                context,
+                                R.attr.colorPrimary,
+                                TAG
+                            )
+                        )
                         itemViewBinding.textPage.isVisible = false
                         itemViewBinding.selectedMark.isVisible = true
                         cantoView.isSelected = true
                     } else {
                         val bgShape = itemViewBinding.textPage.background as? GradientDrawable
-                        bgShape?.setColor(canto.color?.colorInt ?: Color.WHITE)
+                        bgShape?.setColor(canto.color)
                         itemViewBinding.textPage.isVisible = true
                         itemViewBinding.selectedMark.isVisible = false
                         cantoView.isSelected = false

@@ -15,7 +15,6 @@ import androidx.core.content.edit
 import androidx.core.view.GravityCompat.START
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import com.google.android.gms.common.SignInButton
@@ -23,14 +22,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.databinding.ActivityRisuscitoBinding
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 
-class Risuscito : Fragment() {
+class Risuscito : AccountMenuFragment() {
 
     private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
-
-    private var mMainActivity: MainActivity? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -79,7 +77,6 @@ class Risuscito : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mMainActivity = activity as? MainActivity
 
         mMainActivity?.setupToolbarTitle(R.string.activity_homepage)
         mMainActivity?.setTabVisible(false)
@@ -105,8 +102,6 @@ class Risuscito : Fragment() {
         activityViewModel.signedIn.observe(viewLifecycleOwner) {
             binding.signInButton.isVisible = !it
         }
-
-        setHasOptionsMenu(true)
 
         Log.d(TAG, "getVersionCodeWrapper(): ${getVersionCodeWrapper()}")
 
@@ -166,106 +161,6 @@ class Risuscito : Fragment() {
             }
         }
     }
-
-//    // In Fragment, build permissionRequest before onCreate() is called
-//    private val permissionRequest = FragmentPermissionRequest.Builder(this)
-//        .withPermissions(
-//            Manifest.permission.WRITE_EXTERNAL_STORAGE
-//        )
-//        .withCallback(object : PermissionCallback {
-//            override fun onPermissionsChecked(result: PermissionResult, fromSystemDialog: Boolean) {
-//                if (result.areAllPermissionsGranted) {
-//                    mMainActivity?.let {
-//                        Snackbar.make(
-//                            it.activityMainContent,
-//                            getString(R.string.permission_ok),
-//                            Snackbar.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                } else {
-//                    PreferenceManager.getDefaultSharedPreferences(requireContext())
-//                        .edit { putString(Utility.SAVE_LOCATION, "0") }
-//                    mMainActivity?.let {
-//                        Snackbar.make(
-//                            it.activityMainContent,
-//                            getString(R.string.external_storage_denied),
-//                            Snackbar.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                }
-//            }
-//
-//            override fun onDisplayConsentDialog(request: PermissionRequest) {
-//                MaterialAlertDialogBuilder(requireContext())
-//                    .setMessage(R.string.external_storage_pref_rationale)
-//                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
-//                        run {
-//                            dialog.dismiss()
-//                            request.continueToPermissionRequest()
-//                        }
-//                    }
-//                    .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
-//                    .show()
-//            }
-//
-//            override fun onShouldRedirectToSystemSettings(blockedPermissions: List<PermissionReport>) {
-//                SimpleStorageHelper.redirectToSystemSettings(requireContext())
-//            }
-//        })
-//        .build()
-
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int, permissions: Array<String>, grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        // Forward results to EasyPermissions
-//        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-//    }
-//
-//    @AfterPermissionGranted(Utility.WRITE_STORAGE_RC)
-//    private fun checkStoragePermissions() {
-//        Log.d(TAG, "checkStoragePermissions: ")
-//        if (!EasyPermissions.hasPermissions(
-//                requireContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            )
-//        ) {
-//            EasyPermissions.requestPermissions(
-//                PermissionRequest.Builder(
-//                    this,
-//                    Utility.WRITE_STORAGE_RC,
-//                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                )
-//                    .setRationale(R.string.external_storage_pref_rationale)
-//                    .build()
-//            )
-//        }
-//    }
-//
-//    override fun onPermissionsGranted(requestCode: Int, list: List<String>) {
-//        // Some permissions have been
-//        Log.d(TAG, "onPermissionsGranted: ")
-//        mMainActivity?.let {
-//            Snackbar.make(
-//                it.activityMainContent,
-//                getString(R.string.permission_ok),
-//                Snackbar.LENGTH_SHORT
-//            ).show()
-//        }
-//    }
-//
-//    override fun onPermissionsDenied(requestCode: Int, list: List<String>) {
-//        // Some permissions have been denied
-//        Log.d(TAG, "onPermissionsDenied: ")
-//        PreferenceManager.getDefaultSharedPreferences(context)
-//            .edit { putString(Utility.SAVE_LOCATION, "0") }
-//        mMainActivity?.let {
-//            Snackbar.make(
-//                it.activityMainContent,
-//                getString(R.string.external_storage_denied),
-//                Snackbar.LENGTH_SHORT
-//            ).show()
-//        }
-//    }
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun getVersionCodeP(): Int {

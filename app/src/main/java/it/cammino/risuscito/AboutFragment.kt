@@ -6,15 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.vansuita.materialabout.builder.AboutBuilder
 import it.cammino.risuscito.databinding.AboutLayoutBinding
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.utils.ThemeUtils
 
 
-class AboutFragment : Fragment() {
-
-    private var mMainActivity: MainActivity? = null
+class AboutFragment : AccountMenuFragment() {
 
     private var _binding: AboutLayoutBinding? = null
 
@@ -39,7 +37,6 @@ class AboutFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_about)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)

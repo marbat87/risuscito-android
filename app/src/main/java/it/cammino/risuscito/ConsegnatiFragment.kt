@@ -15,7 +15,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -42,6 +41,7 @@ import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.Collator
 
-class ConsegnatiFragment : Fragment() {
+class ConsegnatiFragment : AccountMenuFragment() {
 
     private var cantoAdapter: FastItemAdapter<NotableItem> = FastItemAdapter()
 
@@ -61,7 +61,6 @@ class ConsegnatiFragment : Fragment() {
     private val selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
     private lateinit var mPopupMenu: PopupMenu
     private val selectExtension: SelectExtension<CheckableItem> = SelectExtension(selectableAdapter)
-    private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
     private var mRegularFont: Typeface? = null
     private lateinit var passaggiArray: IntArray
@@ -93,7 +92,6 @@ class ConsegnatiFragment : Fragment() {
 
         mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_consegnati)
         mMainActivity?.setTabVisible(false)
         initFab()
@@ -142,7 +140,6 @@ class ConsegnatiFragment : Fragment() {
             }
         }
 
-        setHasOptionsMenu(true)
         subscribeUiConsegnati()
 
         cantoAdapter.onClickListener =
@@ -287,11 +284,6 @@ class ConsegnatiFragment : Fragment() {
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
             fabIntro()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mMainActivity?.activitySearchView?.closeSearch()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

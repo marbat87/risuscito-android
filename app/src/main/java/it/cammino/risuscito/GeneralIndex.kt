@@ -13,14 +13,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import it.cammino.risuscito.databinding.TabsLayoutBinding
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class GeneralIndex : Fragment() {
-
-    private var mMainActivity: MainActivity? = null
+class GeneralIndex : AccountMenuFragment() {
 
     private val mViewModel: GeneralIndexViewModel by viewModels()
 
@@ -56,7 +54,6 @@ class GeneralIndex : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
         mMainActivity?.setTabVisible(true)
         mMainActivity?.enableFab(false)

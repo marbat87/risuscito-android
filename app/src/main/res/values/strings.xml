@@ -18,6 +18,8 @@
     <string name="label_play" translatable="false">Play</string>
     <string name="label_restart" translatable="false">Restart</string>
     <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
+    <string name="material_drawer_open" translatable="false">Open</string>
+    <string name="material_drawer_close" translatable="false">Close</string>
 
     <string name="private_memory">Memoria privata</string>
     <string name="public_memory">Memoria pubblica</string>

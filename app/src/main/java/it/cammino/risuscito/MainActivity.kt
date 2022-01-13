@@ -8,9 +8,9 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResult
@@ -22,7 +22,6 @@ import androidx.appcompat.view.ActionMode
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
@@ -39,6 +38,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
@@ -47,15 +47,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.materialdrawer.holder.ImageHolder
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
-import com.mikepenz.materialdrawer.model.interfaces.*
-import com.mikepenz.materialdrawer.util.DrawerImageLoader
-import com.mikepenz.materialdrawer.widget.AccountHeaderView
+import com.squareup.picasso.Picasso
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.dialogs.DialogState
+import it.cammino.risuscito.dialogs.ProfileDialogFragment
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
@@ -70,15 +66,16 @@ import kotlin.concurrent.schedule
 
 class MainActivity : ThemeableActivity() {
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
-    private var profileIcon: Drawable? = null
-    private lateinit var mAccountHeader: AccountHeaderView
+    private val profileDialogViewModel: ProfileDialogFragment.DialogViewModel by viewModels()
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
     private lateinit var auth: FirebaseAuth
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
-    private var accountMenuExpanded: Boolean = false
-    private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
+    private var profileItem: MenuItem? = null
+    private var profilePhotoUrl: String = ""
+    private var profileName: String = ""
+    private var profileEmail: String = ""
 
     private lateinit var binding: ActivityMainBinding
 
@@ -142,16 +139,13 @@ class MainActivity : ThemeableActivity() {
         mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
         mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
-        profileIcon = AppCompatResources.getDrawable(this, R.drawable.baseline_account_circle_56)
-        profileIcon?.setTint(MaterialColors.getColor(binding.root, R.attr.colorPrimary))
-
         setSupportActionBar(binding.risuscitoToolbar)
 
         if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
             lifecycleScope.launch { translate() }
         }
 
-        setupNavDrawer(savedInstanceState)
+        setupNavDrawer()
 
         binding.appBarLayout.setExpanded(true, false)
 
@@ -230,6 +224,29 @@ class MainActivity : ThemeableActivity() {
             }
         }
 
+        profileDialogViewModel.state.observe(this) {
+            Log.d(TAG, "profileDialogViewModel state $it")
+            if (!profileDialogViewModel.handled) {
+                if (it is DialogState.Positive) {
+                    when (profileDialogViewModel.menuItemId) {
+                        R.id.gdrive_backup -> {
+                            showAccountRelatedDialog(BACKUP_ASK)
+                        }
+                        R.id.gdrive_restore -> {
+                            showAccountRelatedDialog(RESTORE_ASK)
+                        }
+                        R.id.gplus_signout -> {
+                            showAccountRelatedDialog(SIGNOUT)
+                        }
+                        R.id.gplus_revoke -> {
+                            showAccountRelatedDialog(REVOKE)
+                        }
+                    }
+                    profileDialogViewModel.handled = true
+                }
+            }
+        }
+
     }
 
     override fun onStart() {
@@ -269,54 +286,25 @@ class MainActivity : ThemeableActivity() {
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
     }
 
-    override fun onSaveInstanceState(_outState: Bundle) {
-        var outState = _outState
-        //add the values, which need to be saved from the accountHeader to the bundle
-        if (::mAccountHeader.isInitialized) {
-            outState = mAccountHeader.saveInstanceState(outState)
-        }
-        super.onSaveInstanceState(outState)
-    }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         binding.fabPager.expansionMode =
             if (mViewModel.mLUtils.isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
-    private fun setupNavDrawer(savedInstanceState: Bundle?) {
+    private fun setupNavDrawer() {
 
-        val profile = ProfileDrawerItem().apply {
-            nameText = ""
-            descriptionText = ""
-            icon = ImageHolder(profileIcon)
-            identifier = PROF_ID
-            typeface = mRegularFont
-        }
-        updateHeaderImage(ImageHolder(profileIcon), null)
-
-        mAccountHeader = AccountHeaderView(this).apply {
-            if (!mViewModel.isTabletWithNoFixedDrawer)
-                binding.navigationView.addHeaderView(this)
-            selectionListEnabledForSingleProfile = false
-            profileImagesClickable = false
-            mRegularFont?.let {
-                nameTypeface = it
-                emailTypeface = it
-            }
-            addProfiles(profile)
-            withSavedInstance(savedInstanceState)
-        }
+//        profilePhotoUrl = ""
+//        updateHeaderImage()
 
         binding.navigationView.setNavigationItemSelectedListener {
             onDrawerItemClick(it)
         }
 
-//        syncDrawerRailSelectedItem(mViewModel.selectedMenuItemId)
         binding.navigationView.menu.findItem(mViewModel.selectedMenuItemId)?.isChecked = true
 
         if (!mViewModel.isOnTablet) {
-            mActionBarDrawerToggle = ActionBarDrawerToggle(
+            val mActionBarDrawerToggle = ActionBarDrawerToggle(
                 this,
                 binding.drawer as DrawerLayout,
                 binding.risuscitoToolbar,
@@ -341,22 +329,6 @@ class MainActivity : ThemeableActivity() {
             R.id.navigation_changelog -> AboutFragment()
             R.id.navigation_consegnati -> ConsegnatiFragment()
             R.id.navigation_history -> HistoryFragment()
-            R.id.gdrive_backup -> {
-                showAccountRelatedDialog(BACKUP_ASK)
-                return false
-            }
-            R.id.gdrive_restore -> {
-                showAccountRelatedDialog(RESTORE_ASK)
-                return false
-            }
-            R.id.gplus_signout -> {
-                showAccountRelatedDialog(SIGNOUT)
-                return false
-            }
-            R.id.gplus_revoke -> {
-                showAccountRelatedDialog(REVOKE)
-                return false
-            }
             else -> Risuscito()
         }
 
@@ -670,6 +642,12 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        profileItem = menu.findItem(R.id.account_manager)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     // [START revokeAccess]
     private fun revokeAccess() {
         PreferenceManager.getDefaultSharedPreferences(this)
@@ -754,95 +732,60 @@ class MainActivity : ThemeableActivity() {
             PreferenceManager.getDefaultSharedPreferences(this)
                 .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
         if (signedIn) {
-
-            val listener = View.OnClickListener {
-                if (accountMenuExpanded)
-                    resetNavigationDrawerContent()
-                else
-                    setAccountOptionsContent()
-            }
-
-            val profile: IProfile
+            profileName = acct?.displayName ?: ""
+            profileEmail = acct?.email ?: ""
             val profilePhoto = acct?.photoUrl
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
                 Log.d(TAG, "personPhotoUrl BEFORE $personPhotoUrl")
                 personPhotoUrl = personPhotoUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
                 Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
-                profile = ProfileDrawerItem().apply {
-                    nameText = acct?.displayName as? CharSequence ?: ""
-                    descriptionText = acct?.email as? CharSequence ?: ""
-                    icon = ImageHolder(personPhotoUrl)
-                    identifier = PROF_ID
-                    typeface = mRegularFont
-                }
-                updateHeaderImage(ImageHolder(personPhotoUrl), listener)
+                profilePhotoUrl = personPhotoUrl
             } else {
-                profile = ProfileDrawerItem().apply {
-                    nameText = acct?.displayName as? CharSequence ?: ""
-                    descriptionText = acct?.email as? CharSequence ?: ""
-                    icon = ImageHolder(profileIcon)
-                    identifier = PROF_ID
-                    typeface = mRegularFont
-                }
-                updateHeaderImage(ImageHolder(profileIcon), listener)
+                profilePhotoUrl = ""
             }
-            // Create the AccountHeader
-            mAccountHeader.updateProfile(profile)
-            if (mAccountHeader.profiles?.size == 1) {
-                mAccountHeader.addProfiles(
-                    //fake item to make the arrow appear
-                    ProfileSettingDrawerItem()
-                )
-            }
-
-
-
-            mAccountHeader.setOnClickListener(listener)
-
         } else {
-            val profile = ProfileDrawerItem().apply {
-                nameText = ""
-                descriptionText = ""
-                icon = ImageHolder(profileIcon)
-                identifier = PROF_ID
-                typeface = mRegularFont
-            }
-            mAccountHeader.clear()
-            mAccountHeader.addProfiles(profile)
-            mAccountHeader.setOnClickListener(null)
-            updateHeaderImage(ImageHolder(profileIcon), null)
+            profileName = ""
+            profileEmail = ""
+            profilePhotoUrl = ""
         }
+        updateProfileImage()
         hideProgressDialog()
     }
 
-    private fun updateHeaderImage(icon: ImageHolder, listener: View.OnClickListener?) {
-        ImageHolder.applyToOrSetInvisible(
-            icon,
-            findViewById(R.id.header_profileIcon),
-            DrawerImageLoader.Tags.PROFILE_DRAWER_ITEM.name
-        )
-        findViewById<ImageView>(R.id.header_profileIcon)?.setOnClickListener(listener)
-    }
+    fun updateProfileImage() {
 
-    private fun setAccountOptionsContent() {
-        accountMenuExpanded = true
-        binding.navigationView.let {
-            it.menu.clear()
-            it.inflateMenu(R.menu.account_options)
-            it.checkedItem?.isChecked = false
+        val listener = View.OnClickListener {
+            ProfileDialogFragment.show(
+                ProfileDialogFragment.Builder(
+                    this,
+                    PROFILE_DIALOG
+                )
+                    .profileName(profileName)
+                    .profileEmail(profileEmail)
+                    .profileImageSrc(profilePhotoUrl),
+                supportFragmentManager
+            )
         }
-        mAccountHeader.accountSwitcherArrow.clearAnimation()
-        ViewCompat.animate(mAccountHeader.accountSwitcherArrow).rotation(180f).start()
-    }
 
-    private fun resetNavigationDrawerContent() {
-        accountMenuExpanded = false
-        binding.navigationView.menu.clear()
-        binding.navigationView.inflateMenu(R.menu.navigation_drawer)
-        binding.navigationView.menu.findItem(mViewModel.selectedMenuItemId)?.isChecked = true
-        mAccountHeader.accountSwitcherArrow.clearAnimation()
-        ViewCompat.animate(mAccountHeader.accountSwitcherArrow).rotation(0f).start()
+        if (profilePhotoUrl.isEmpty())
+            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profileIcon)
+                ?.setImageResource(R.drawable.baseline_account_circle_56)
+        else {
+            AppCompatResources.getDrawable(this, R.drawable.baseline_account_circle_56)?.let {
+                Picasso.get().load(profilePhotoUrl)
+                    .placeholder(it)
+                    .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profileIcon))
+            }
+        }
+
+        profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profileIcon)
+            ?.setOnClickListener(
+                if (PreferenceManager.getDefaultSharedPreferences(this)
+                        .getBoolean(Utility.SIGNED_IN, false)
+                ) listener else null
+            )
+
     }
 
     fun showProgressDialog() {
@@ -907,7 +850,6 @@ class MainActivity : ThemeableActivity() {
             },
             supportFragmentManager
         )
-        resetNavigationDrawerContent()
         (binding.drawer as? DrawerLayout)?.close()
     }
 
@@ -1006,9 +948,10 @@ class MainActivity : ThemeableActivity() {
 
     companion object {
         /* Request code used to invoke sign in user interactions. */
-        private const val PROF_ID = 5428471L
+//        private const val PROF_ID = 5428471L
         private const val BROADCAST_NEXT_STEP = "BROADCAST_NEXT_STEP"
         private const val WHICH = "WHICH"
+        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val RESTORE_RUNNING = "RESTORE_RUNNING"
         private const val BACKUP_RUNNING = "BACKUP_RUNNING"
         private const val BACKUP_ASK = "BACKUP_ASK"

@@ -38,13 +38,14 @@ import it.cammino.risuscito.databinding.TabsLayoutBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CustomLists : Fragment() {
+class CustomLists : AccountMenuFragment() {
 
     private val mCustomListsViewModel: CustomListsViewModel by viewModels()
     private val inputdialogViewModel: InputTextDialogFragment.DialogViewModel by viewModels({ requireActivity() })
@@ -53,7 +54,6 @@ class CustomLists : Fragment() {
     private var titoliListe: Array<String?> = arrayOfNulls(0)
     private var idListe: IntArray = IntArray(0)
     private var movePage: Boolean = false
-    private var mMainActivity: MainActivity? = null
     private var mRegularFont: Typeface? = null
     private var tabs: TabLayout? = null
     private var mLastClickTime: Long = 0
@@ -97,10 +97,8 @@ class CustomLists : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
         mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
         mMainActivity?.enableBottombar(false)
         mMainActivity?.setTabVisible(true)
@@ -133,12 +131,6 @@ class CustomLists : Fragment() {
         }
         binding.viewPager.registerOnPageChangeCallback(mPageChange)
         subscribeUiListe()
-    }
-
-    override fun onDestroy() {
-        Log.d(TAG, "onDestroy")
-        super.onDestroy()
-        mMainActivity?.actionMode?.finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

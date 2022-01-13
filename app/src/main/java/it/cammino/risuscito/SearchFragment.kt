@@ -13,14 +13,11 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.transition.platform.MaterialFadeThrough
-import com.google.android.material.transition.platform.SlideDistanceProvider
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -30,6 +27,7 @@ import it.cammino.risuscito.databinding.SearchLayoutBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -44,7 +42,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.text.Collator
 
-class SearchFragment : Fragment() {
+class SearchFragment : AccountMenuFragment() {
 
     private val mViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(
@@ -61,7 +59,6 @@ class SearchFragment : Fragment() {
     private var listePersonalizzate: List<ListaPers>? = null
 
     private var mLastClickTime: Long = 0
-    private var mMainActivity: MainActivity? = null
     private lateinit var mPopupMenu: PopupMenu
 
     private var _binding: SearchLayoutBinding? = null
@@ -87,7 +84,6 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_search)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)

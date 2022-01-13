@@ -1,6 +1,5 @@
 package it.cammino.risuscito
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.Notification
@@ -26,7 +25,6 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.utils.ThemeUtils
 import java.io.BufferedReader
@@ -65,7 +63,8 @@ object Utility {
     internal const val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
     internal const val NIGHT_MODE = "night_mode"
     internal const val DYNAMIC_COLORS = "dynamic_colors"
-//    internal const val PRIMARY_COLOR = "new_primary_color"
+
+    //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"
     internal const val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
     internal const val CLICK_DELAY_SELECTION: Long = 300
@@ -354,11 +353,11 @@ object Utility {
         else -> throw IllegalArgumentException()
     }
 
-    fun <T> helperSetColor(t: T): ColorHolder = when (t) {
-        is String -> ColorHolder.fromColor(Color.parseColor(t))
-        is Int -> ColorHolder.fromColor(t)
-        else -> throw IllegalArgumentException()
-    }
+    fun helperSetColor(t: String?): Int =
+        if (t.isNullOrEmpty())
+            Color.WHITE
+        else
+            Color.parseColor(t)
 
     fun getExternalLink(link: String): String {
         return if (hasQ())

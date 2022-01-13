@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
@@ -52,9 +51,9 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
             source = helperSetString(value)
         }
 
-    var color: ColorHolder? = null
+    var color: Int = Color.WHITE
         private set
-    var setColor: Any? = null
+    var setColor: String? = null
         set(value) {
             color = helperSetColor(value)
         }
@@ -83,7 +82,7 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
         binding.listViewItemContainer.isChecked = isSelected
 
         val bgShape = binding.textPage.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        bgShape?.setColor(color)
         binding.textPage.isInvisible = isSelected
         binding.selectedMark.isVisible = isSelected
         val bgShapeSelected = binding.selectedMark.background as? GradientDrawable

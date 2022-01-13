@@ -13,7 +13,6 @@ import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.core.view.isInvisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -29,6 +28,7 @@ import it.cammino.risuscito.databinding.ActivityFavouritesBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
@@ -37,14 +37,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.Collator
 
-class FavoritesFragment : Fragment() {
+class FavoritesFragment : AccountMenuFragment() {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
     private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
-    private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
 
     private var _binding: ActivityFavouritesBinding? = null
@@ -70,7 +69,6 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity = requireActivity() as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_favourites)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableBottombar(false)
@@ -87,7 +85,6 @@ class FavoritesFragment : Fragment() {
             }
         }
 
-        setHasOptionsMenu(true)
         subscribeUiFavorites()
 
         cantoAdapter.onPreClickListener =
@@ -157,11 +154,6 @@ class FavoritesFragment : Fragment() {
         binding.favouritesList.layoutManager = llm
         binding.favouritesList.itemAnimator = SlideRightAlphaAnimator()
 
-    }
-
-    override fun onDestroy() {
-        mMainActivity?.actionMode?.finish()
-        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

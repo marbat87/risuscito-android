@@ -66,7 +66,6 @@ android {
 
 val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
-val materialDrawerVersion = "9.0.0-a03"
 val roomVersion = "2.3.0"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
@@ -97,9 +96,6 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.code.gson:gson:2.8.9")
-    implementation("com.mikepenz:materialdrawer:$materialDrawerVersion")
-    implementation("com.mikepenz:materialdrawer-iconics:$materialDrawerVersion")
-    implementation("com.mikepenz:crossfader:1.6.0")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.6")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")

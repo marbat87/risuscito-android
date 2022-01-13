@@ -13,7 +13,6 @@ import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.core.view.isInvisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -29,13 +28,14 @@ import it.cammino.risuscito.databinding.LayoutHistoryBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class HistoryFragment : Fragment() {
+class HistoryFragment : AccountMenuFragment() {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
@@ -45,7 +45,6 @@ class HistoryFragment : Fragment() {
 
     private var actionModeOk: Boolean = false
 
-    private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
 
     private var _binding: LayoutHistoryBinding? = null
@@ -71,7 +70,6 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_history)
         mMainActivity?.enableBottombar(false)
         mMainActivity?.enableFab(false)
@@ -88,7 +86,6 @@ class HistoryFragment : Fragment() {
             }
         }
 
-        setHasOptionsMenu(true)
         subscribeUiHistory()
 
         cantoAdapter.onPreClickListener =
@@ -159,11 +156,6 @@ class HistoryFragment : Fragment() {
 //        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
 //        binding.historyRecycler.addItemDecoration(insetDivider)
         binding.historyRecycler.itemAnimator = SlideRightAlphaAnimator()
-    }
-
-    override fun onDestroy() {
-        mMainActivity?.actionMode?.finish()
-        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

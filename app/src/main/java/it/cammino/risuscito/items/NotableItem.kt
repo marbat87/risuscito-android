@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
@@ -35,9 +34,9 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
         set(value) {
             source = helperSetString(value)
         }
-    var color: ColorHolder? = null
+    var color: Int = Color.WHITE
         private set
-    var setColor: Any? = null
+    var setColor: String? = null
         set(value) {
             color = helperSetColor(value)
         }
@@ -69,7 +68,7 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
         StringHolder.applyToOrHide(page, binding.textPage)
 
         val bgShape = binding.textPage.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        bgShape?.setColor(color)
 
         binding.editNote.isGone = (numPassaggio != -1)
         binding.editNoteFilled.isGone = (numPassaggio == -1)

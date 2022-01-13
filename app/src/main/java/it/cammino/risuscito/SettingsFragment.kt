@@ -5,9 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.fragment.app.viewModels
@@ -176,6 +174,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        setHasOptionsMenu(true)
         mMainActivity = activity as? MainActivity
 
         splitInstallManager = SplitInstallManagerFactory.create(requireContext())
@@ -191,17 +190,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
         loadStorageList(activityViewModel.mLUtils.hasStorageAccess)
         listPreference?.entries = mEntries
         listPreference?.entryValues = mEntryValues
-
-//        listPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-//            val listPref = it as? DropDownPreference
-//            listPref?.entries = mEntries
-//            val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-//            val saveLocation = pref.getString(SAVE_LOCATION, "0")
-//            listPref?.setDefaultValue(saveLocation)
-//            listPref?.entryValues = mEntryValues
-//            preferenceManager.showDialog(it)
-//            false
-//        }
 
         var pref = findPreference(SYSTEM_LANGUAGE) as? DropDownPreference
         pref?.onPreferenceChangeListener = changeListener
@@ -237,6 +225,11 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
 
         return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        mMainActivity?.updateProfileImage()
     }
 
     override fun onStart() {

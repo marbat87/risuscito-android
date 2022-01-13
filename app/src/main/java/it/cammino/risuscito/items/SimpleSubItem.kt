@@ -9,7 +9,6 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
@@ -40,9 +39,9 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(),
             source = helperSetString(value)
         }
 
-    var color: ColorHolder? = null
+    var color: Int = Color.WHITE
         private set
-    var setColor: Any? = null
+    var setColor: String? = null
         set(value) {
             color = helperSetColor(value)
         }
@@ -74,7 +73,7 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(),
             StringHolder.applyToOrHide(item.page, mPage)
 
             val bgShape = mPage?.background as? GradientDrawable
-            bgShape?.setColor(item.color?.colorInt ?: Color.WHITE)
+            bgShape?.setColor(item.color)
             mPage?.isVisible = true
             mPageSelected?.isVisible = false
 
@@ -93,7 +92,6 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(),
             mPage = view.findViewById(R.id.text_page)
             mPageSelected = view.findViewById(R.id.selected_mark)
             mId = view.findViewById(R.id.text_id_canto)
-//            mItemDivider = view.findViewById(R.id.item_divider)
         }
     }
 

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -31,9 +30,9 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         set(value) {
             page = helperSetString(value)
         }
-    var color: ColorHolder? = null
+    var color: Int = Color.WHITE
         private set
-    var setColor: Any? = null
+    var setColor: String? = null
         set(value) {
             color = helperSetColor(value)
         }
@@ -91,7 +90,7 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         StringHolder.applyToOrHide(page, binding.textPage)
 
         val bgShape = binding.textPage.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        bgShape?.setColor(color)
     }
 
     override fun unbindView(binding: CheckableRowItemBinding) {
