@@ -16,8 +16,8 @@ android {
         minSdk = 21
         targetSdk = 31
         multiDexEnabled = true
-        versionCode = 4704
-        versionName = "4.7.0"
+        versionCode = 5000
+        versionName = "5.0.0"
         kapt {
             arguments {
                 arg("room.incremental", "true")
@@ -70,11 +70,11 @@ val roomVersion = "2.3.0"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.play:core:1.10.2")
+    implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.5.0-rc01")
     implementation("androidx.activity:activity-ktx:1.4.0")
-    implementation("androidx.appcompat:appcompat:1.4.0")
-    implementation("androidx.appcompat:appcompat-resources:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.appcompat:appcompat-resources:1.4.1")
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.fragment:fragment-ktx:1.4.0")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
@@ -83,6 +83,7 @@ dependencies {
     implementation("androidx.media:media:1.4.3")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-RC3")

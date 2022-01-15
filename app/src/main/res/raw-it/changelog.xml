@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <release versionCode="5000"
+        date="Marzo 2022"
+        versionName="5.0.0">
+        <new>Stile Material 3 (rimossa l'opzione per scegliere i colori dell'app)</new>
+        <new>Nuovi color dei canti, numeri di pagina e testi basati sull'edizione 2020 del libro "Risuscitò"</new>
+        <new>L'indice biblico sostituisce l'indice dei Salmi cantati</new>
+        <new>Il nuovo indice liturgico (tratto dal libro ufficiale) sostituisce sia il vecchio che l'indice per argomento</new>
+        <bugfix>Sistemati problemi di compatibilità con Android 11 e 12</bugfix>
+    </release>
+
     <release versionCode="4704"
         date="Giugno 2021"
         versionName="4.7.0">

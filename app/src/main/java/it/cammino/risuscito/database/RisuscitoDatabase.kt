@@ -15,7 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [(Canto::class), (ListaPers::class), (CustomList::class), (Salmo::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class)],
+    entities = [(Canto::class), (ListaPers::class), (CustomList::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class), (IndiceBiblico::class)],
     version = 9
 )
 @TypeConverters(Converters::class)
@@ -29,8 +29,6 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
     abstract fun customListDao(): CustomListDao
 
-    abstract fun salmiDao(): SalmiDao
-
     abstract fun indiceLiturgicoDao(): IndiceLiturgicoDao
 
     abstract fun cronologiaDao(): CronologiaDao
@@ -38,6 +36,8 @@ abstract class RisuscitoDatabase : RoomDatabase() {
     abstract fun consegnatiDao(): ConsegnatiDao
 
     abstract fun localLinksDao(): LocalLinksDao
+
+    abstract fun indiceBiblicoDao(): IndiceBiblicoDao
 
     companion object {
 
@@ -107,7 +107,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
         class Migration7to8 : Migration(7, 8) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 7 to 8")
-                reinsertDefaultOnlySalmi(database)
+//                reinsertDefaultOnlySalmi(database)
             }
         }
 
@@ -119,6 +119,8 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 reinsertDefault(database)
                 database.execSQL("DROP TABLE IF EXISTS NomeArgomento")
                 database.execSQL("DROP TABLE IF EXISTS Argomento")
+                database.execSQL("DROP TABLE IF EXISTS salmo")
+
             }
         }
 
@@ -170,13 +172,6 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 )
             }
 
-            // 5. Empty table SALMO
-            database.execSQL("DELETE FROM Salmo")
-
-            //6. Prepopulate new table SALMO
-            Salmo.defaultSalmiData()
-                .forEach { database.execSQL("INSERT INTO Salmo VALUES(" + it.id + ",'" + it.numSalmo + "','" + it.titoloSalmo + "')") }
-
             // 7. Empty table NomeLiturgico
             database.execSQL("DELETE FROM NomeLiturgico")
 
@@ -189,6 +184,13 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             database.execSQL("INSERT INTO Cronologia_new SELECT * from Cronologia")
             database.execSQL("DROP TABLE Cronologia")
             database.execSQL("ALTER TABLE Cronologia_new RENAME TO Cronologia")
+
+            // 7. Empty table NomeLiturgico
+            database.execSQL("DELETE FROM indicebiblico")
+
+            //8. Prepopulate new table NomeLiturgico
+            IndiceBiblico.defaultIndiceBiblicoData()
+                .forEach { database.execSQL("INSERT INTO indicebiblico VALUES(${it.ordinamento},${it.idCanto}, '${it.titoloIndice}')")}
 
             cleanNonExistentSongs(database)
 
@@ -239,11 +241,11 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             }
         }
 
-        private fun reinsertDefaultOnlySalmi(database: SupportSQLiteDatabase) {
-            database.execSQL("DELETE FROM Salmo")
-            Salmo.defaultSalmiData()
-                .forEach { database.execSQL("INSERT INTO Salmo VALUES(" + it.id + ",'" + it.numSalmo + "','" + it.titoloSalmo + "')") }
-        }
+//        private fun reinsertDefaultOnlySalmi(database: SupportSQLiteDatabase) {
+//            database.execSQL("DELETE FROM Salmo")
+//            Salmo.defaultSalmiData()
+//                .forEach { database.execSQL("INSERT INTO Salmo VALUES(" + it.id + ",'" + it.numSalmo + "','" + it.titoloSalmo + "')") }
+//        }
 
         private var sInstance: RisuscitoDatabase? = null
 
@@ -299,14 +301,13 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             if (mDb.cantoDao().count() == 0) {
                 mDb.cantoDao().insertCanto(Canto.defaultCantoData())
 
-                // SALMI_MUSICA
-                mDb.salmiDao().insertSalmo(Salmo.defaultSalmiData())
-
                 // INDICE_LIT
                 mDb.indiceLiturgicoDao().insertIndice(IndiceLiturgico.defaultData())
 
                 // INDICE_LIT_NAMES
                 mDb.indiceLiturgicoDao().insertNomeIndice(NomeLiturgico.defaultData())
+
+                mDb.indiceBiblicoDao().insertIndiceBiblico(IndiceBiblico.defaultIndiceBiblicoData())
             }
         }
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "61b0d05044e0acb07ccd64d8ff5fcc61",
+    "identityHash": "0fe6721695560efcc69c950bc1cca5d8",
     "entities": [
       {
         "tableName": "Canto",
@@ -169,38 +169,6 @@
         "foreignKeys": []
       },
       {
-        "tableName": "Salmo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `numSalmo` TEXT, `titoloSalmo` TEXT, PRIMARY KEY(`id`))",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "numSalmo",
-            "columnName": "numSalmo",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "titoloSalmo",
-            "columnName": "titoloSalmo",
-            "affinity": "TEXT",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
         "tableName": "IndiceLiturgico",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idIndice` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, PRIMARY KEY(`idIndice`, `idCanto`))",
         "fields": [
@@ -343,12 +311,44 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "IndiceBiblico",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ordinamento` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, `titoloIndice` TEXT, PRIMARY KEY(`ordinamento`))",
+        "fields": [
+          {
+            "fieldPath": "ordinamento",
+            "columnName": "ordinamento",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idCanto",
+            "columnName": "idCanto",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titoloIndice",
+            "columnName": "titoloIndice",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ordinamento"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '61b0d05044e0acb07ccd64d8ff5fcc61')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0fe6721695560efcc69c950bc1cca5d8')"
     ]
   }
 }

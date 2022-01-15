@@ -10,6 +10,9 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.services.XmlImportService
 import it.cammino.risuscito.ui.RisuscitoApplication
@@ -36,10 +39,16 @@ class ImportActivity : AppCompatActivity() {
                 setTitle(R.string.app_name)
                 setMessage(R.string.dialog_import)
                 setPositiveButton(R.string.import_confirm) { _, _ ->
-                    val i = Intent(this@ImportActivity, XmlImportService::class.java)
-                    i.action = XmlImportService.ACTION_URL
-                    i.data = data
-                    XmlImportService.enqueueWork(applicationContext, i)
+//                    val i = Intent(this@ImportActivity, XmlImportService::class.java)
+//                    i.action = XmlImportService.ACTION_URL
+//                    i.data = data
+//                    XmlImportService.enqueueWork(applicationContext, i)
+                    val builder = Data.Builder()
+                    builder.putString(XmlImportService.TAG_IMPORT_DATA, data.toString())
+                    val blurRequest = OneTimeWorkRequestBuilder<XmlImportService>()
+                        .setInputData(builder.build())
+                        .build()
+                    WorkManager.getInstance(application).enqueue(blurRequest)
                 }
                 setNegativeButton(R.string.cancel) { _, _ ->
                     finish()

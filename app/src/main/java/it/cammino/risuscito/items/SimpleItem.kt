@@ -2,7 +2,6 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
@@ -50,22 +49,6 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
     var setColor: String? = null
         set(value) {
             color = helperSetColor(value)
-        }
-
-    var numSalmo: Int = 0
-        private set
-    var setNumSalmo: String? = null
-        set(value) {
-            var numeroTemp = 0
-            try {
-                numeroTemp = Integer.valueOf(value?.substring(0, 3) ?: "")
-            } catch (e: NumberFormatException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            } catch (e: IndexOutOfBoundsException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            }
-            numSalmo = numeroTemp
-            field = value
         }
 
     var filter: String? = null
