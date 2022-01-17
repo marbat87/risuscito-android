@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 31
         multiDexEnabled = true
-        versionCode = 5000
+        versionCode = 5001
         versionName = "5.0.0"
         kapt {
             arguments {
@@ -66,7 +66,7 @@ android {
 
 val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
-val roomVersion = "2.3.0"
+val roomVersion = "2.4.1"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
     implementation("androidx.multidex:multidex:2.0.1")
@@ -75,6 +75,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.appcompat:appcompat-resources:1.4.1")
+    implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.fragment:fragment-ktx:1.4.0")
     implementation("androidx.recyclerview:recyclerview:1.2.1")

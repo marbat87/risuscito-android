@@ -116,11 +116,11 @@ abstract class RisuscitoDatabase : RoomDatabase() {
         class Migration8to9 : Migration(8, 9) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 8 to 9")
-                reinsertDefault(database)
                 database.execSQL("DROP TABLE IF EXISTS NomeArgomento")
                 database.execSQL("DROP TABLE IF EXISTS Argomento")
                 database.execSQL("DROP TABLE IF EXISTS salmo")
-
+                database.execSQL("CREATE TABLE IF NOT EXISTS `IndiceBiblico` (`ordinamento` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, `titoloIndice` TEXT, PRIMARY KEY(`ordinamento`))")
+                reinsertDefault(database)
             }
         }
 
@@ -190,7 +190,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
             //8. Prepopulate new table NomeLiturgico
             IndiceBiblico.defaultIndiceBiblicoData()
-                .forEach { database.execSQL("INSERT INTO indicebiblico VALUES(${it.ordinamento},${it.idCanto}, '${it.titoloIndice}')")}
+                .forEach { database.execSQL("INSERT INTO indicebiblico VALUES(${it.ordinamento},${it.idCanto}, '${it.titoloIndice}')") }
 
             cleanNonExistentSongs(database)
 
