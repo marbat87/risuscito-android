@@ -282,7 +282,7 @@ class InsertActivity : ThemeableActivity() {
                     simpleIndexViewModel.titoliInsert
                         .filter {
                             Utility.removeAccents(
-                                it.title?.getText(applicationContext)
+                                it.title?.getText(this@InsertActivity)
                                     ?: ""
                             ).lowercase(getSystemLocale(resources))
                                 .contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
