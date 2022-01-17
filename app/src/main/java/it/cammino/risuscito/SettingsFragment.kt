@@ -9,10 +9,7 @@ import android.view.*
 import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.fragment.app.viewModels
-import androidx.preference.DropDownPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
+import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
@@ -191,9 +188,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
         listPreference?.entries = mEntries
         listPreference?.entryValues = mEntryValues
 
-        var pref = findPreference(SYSTEM_LANGUAGE) as? DropDownPreference
+        var pref = findPreference(SYSTEM_LANGUAGE) as? ListPreference
         pref?.onPreferenceChangeListener = changeListener
-        pref?.summaryProvider = Preference.SummaryProvider<DropDownPreference> {
+        pref?.summaryProvider = Preference.SummaryProvider<ListPreference> {
             composeSummary(
                 R.string.language_summary,
                 it
@@ -285,6 +282,11 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     private fun composeSummary(@StringRes id: Int, pref: DropDownPreference): String {
+        val text = pref.entry
+        return "${getString(id)}${System.getProperty("line.separator")}$text"
+    }
+
+    private fun composeSummary(@StringRes id: Int, pref: ListPreference): String {
         val text = pref.entry
         return "${getString(id)}${System.getProperty("line.separator")}$text"
     }

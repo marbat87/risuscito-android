@@ -4,7 +4,7 @@
 
     <androidx.preference.PreferenceCategory android:title="@string/theme">
 
-        <DropDownPreference
+        <ListPreference
             android:entries="@array/themeListArray"
             android:entryValues="@array/themeEntryArray"
             android:key="night_mode"
@@ -76,7 +76,7 @@
             android:key="memoria_salvataggio_scelta"
             android:title="@string/save_location_title" />
 
-        <DropDownPreference
+        <ListPreference
             android:entries="@array/pref_languages_entries"
             android:entryValues="@array/pref_languages_values"
             android:key="lingua_sistema_new"
