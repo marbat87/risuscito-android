@@ -102,6 +102,14 @@ class LUtils private constructor(private val mActivity: Activity) {
         Animations.enterZoom(mActivity)
     }
 
+    //ISSUE in API 21
+    fun finishAfterTransitionWrapper() {
+        if (hasM())
+            mActivity.finishAfterTransition()
+        else
+            mActivity.finish()
+    }
+
 //    fun closeActivityWithTransition() {
 //        mActivity.finishAfterTransition()
 ////        Animations.exitRight(mActivity)

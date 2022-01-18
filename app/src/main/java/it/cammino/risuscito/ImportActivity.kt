@@ -1,31 +1,22 @@
 package it.cammino.risuscito
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.lifecycle.Observer
+import androidx.work.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.services.XmlImportService
 import it.cammino.risuscito.ui.RisuscitoApplication
+import it.cammino.risuscito.viewmodels.ImportActivityViewModel
 
 class ImportActivity : AppCompatActivity() {
 
-    private val importFinishBRec = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            //Implement UI change code here once notification is received
-            Log.d(javaClass.name, "ACTION_FINISH")
-            finish()
-        }
-    }
+    private val mViewModel: ImportActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +25,7 @@ class ImportActivity : AppCompatActivity() {
         if (data != null) {
             Log.d(TAG, "onCreate: data = $data")
             Log.d(TAG, "onCreate: schema = " + data.scheme)
+
             intent.data = null
             MaterialAlertDialogBuilder(this).apply {
                 setTitle(R.string.app_name)
@@ -47,14 +39,18 @@ class ImportActivity : AppCompatActivity() {
                     builder.putString(XmlImportService.TAG_IMPORT_DATA, data.toString())
                     val blurRequest = OneTimeWorkRequestBuilder<XmlImportService>()
                         .setInputData(builder.build())
+                        .addTag(ImportActivityViewModel.TAG_IMPORT_JOB)
                         .build()
-                    WorkManager.getInstance(application).enqueue(blurRequest)
+                    mViewModel.workManager.enqueueUniqueWork(
+                        ImportActivityViewModel.TAG_IMPORT_JOB,
+                        ExistingWorkPolicy.REPLACE,
+                        blurRequest
+                    )
                 }
                 setNegativeButton(R.string.cancel) { _, _ ->
                     finish()
                 }
                 setCancelable(false)
-//                        cancelOnTouchOutside(false)
 
                 setOnKeyListener { arg0, keyCode, event ->
                     if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
@@ -65,25 +61,41 @@ class ImportActivity : AppCompatActivity() {
                         false
                 }
             }.show()
-            //registra un receiver per ricevere la notifica di completamento import e potersi terminare
-            LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
-                importFinishBRec, IntentFilter(
-                    XmlImportService.ACTION_FINISH
-                )
-            )
+            mViewModel.outputWorkInfos.observe(this, workInfosObserver())
         }
 
     }
 
-    public override fun onDestroy() {
-        try {
-            LocalBroadcastManager.getInstance(applicationContext)
-                .unregisterReceiver(importFinishBRec)
-        } catch (e: IllegalArgumentException) {
-            Log.e(javaClass.name, e.localizedMessage, e)
-        }
+    // Define the observer function
+    private fun workInfosObserver(): Observer<List<WorkInfo>> {
+        return Observer { listOfWorkInfo ->
 
-        super.onDestroy()
+            // This code could be in a Transformation in the ViewModel; they are included here
+            // so that the entire process of displaying a WorkInfo is in one location.
+
+            // If there are no matching work info, do nothing
+            if (listOfWorkInfo.isNullOrEmpty()) {
+                return@Observer
+            }
+
+            // We only care about the one output status.
+            // Every continuation has only one worker tagged TAG_OUTPUT
+            val workInfo = listOfWorkInfo[0]
+
+            if (workInfo.state == WorkInfo.State.RUNNING)
+                mViewModel.running = true
+
+            if (workInfo.state.isFinished) {
+                Log.d(TAG, "workInfo.state.isFinished")
+                if (mViewModel.running) {
+                    mViewModel.running = false
+                    finish()
+                }
+            }
+//            else {
+//                showWorkInProgress()
+//            }
+        }
     }
 
     override fun attachBaseContext(newBase: Context) {

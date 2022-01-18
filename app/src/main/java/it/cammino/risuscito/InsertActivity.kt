@@ -213,7 +213,7 @@ class InsertActivity : ThemeableActivity() {
         when (item.itemId) {
             android.R.id.home -> {
                 setResult(CustomLists.RESULT_CANCELED)
-                finishAfterTransition()
+                mViewModel.mLUtils.finishAfterTransitionWrapper()
                 return true
             }
         }
@@ -223,7 +223,7 @@ class InsertActivity : ThemeableActivity() {
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         setResult(CustomLists.RESULT_CANCELED)
-        finishAfterTransition()
+        mViewModel.mLUtils.finishAfterTransitionWrapper()
     }
 
     private fun ricercaStringa(s: String) {

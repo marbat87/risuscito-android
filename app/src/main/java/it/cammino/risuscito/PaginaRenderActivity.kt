@@ -581,7 +581,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                     mHandler.removeCallbacks(mScrollDown)
                                 }
                                 saveZoom(andSpeedAlso = true, andSaveTabAlso = true)
-                                finishAfterTransition()
+                                mViewModel.mLUtils.finishAfterTransitionWrapper()
                             }
                         }
                     }
@@ -594,7 +594,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                     mHandler.removeCallbacks(mScrollDown)
                                 }
                                 saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-                                finishAfterTransition()
+                                mViewModel.mLUtils.finishAfterTransitionWrapper()
                             }
                         }
                     }
@@ -701,7 +701,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                         mHandler.removeCallbacks(mScrollDown)
                     }
                     saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-                    finishAfterTransition()
+                    mViewModel.mLUtils.finishAfterTransitionWrapper()
                     return true
                 } else {
                     SimpleDialogFragment.show(
@@ -949,7 +949,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 mHandler.removeCallbacks(mScrollDown)
             }
             saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-            finishAfterTransition()
+            mViewModel.mLUtils.finishAfterTransitionWrapper()
         } else {
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(

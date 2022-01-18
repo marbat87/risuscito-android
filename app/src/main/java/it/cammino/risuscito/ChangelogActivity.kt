@@ -52,13 +52,13 @@ class ChangelogActivity : ThemeableActivity() {
 
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
-        finishAfterTransition()
+        mViewModel.mLUtils.finishAfterTransitionWrapper()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                finishAfterTransition()
+                mViewModel.mLUtils.finishAfterTransitionWrapper()
                 true
             }
             else -> false

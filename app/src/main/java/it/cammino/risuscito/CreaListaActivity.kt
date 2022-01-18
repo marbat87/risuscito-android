@@ -269,7 +269,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             SAVE_LIST -> {
                                 simpleDialogViewModel.handled = true
                                 setResult(RESULT_CANCELED)
-                                finishAfterTransition()
+                                mViewModel.mLUtils.finishAfterTransitionWrapper()
                             }
                         }
                     }
@@ -336,7 +336,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     return true
                 } else {
                     setResult(RESULT_CANCELED)
-                    finishAfterTransition()
+                    mViewModel.mLUtils.finishAfterTransitionWrapper()
                 }
                 return true
             }
@@ -409,7 +409,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         if (result == 100)
             Toast.makeText(this, getString(R.string.no_title_edited), Toast.LENGTH_SHORT).show()
         setResult(RESULT_OK)
-        finishAfterTransition()
+        mViewModel.mLUtils.finishAfterTransitionWrapper()
     }
 
     private fun onBackPressedAction() {
@@ -425,7 +425,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             )
         } else {
             setResult(RESULT_CANCELED)
-            finishAfterTransition()
+            mViewModel.mLUtils.finishAfterTransitionWrapper()
         }
     }
 

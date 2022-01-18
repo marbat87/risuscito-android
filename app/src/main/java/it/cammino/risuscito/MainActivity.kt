@@ -111,7 +111,7 @@ class MainActivity : ThemeableActivity() {
         // Attach a callback used to capture the shared elements from this Activity to be used
         // by the container transform transition
         setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+//        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
 
         // Keep system bars (status bar, navigation bar) persistent throughout the transition.
         window.sharedElementsUseOverlay = false

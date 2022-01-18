@@ -470,10 +470,10 @@ object ListeUtils {
                 }
             } catch (e: SQLException) {
                 activity.setResult(CustomLists.RESULT_KO)
-                activity.finishAfterTransition()
+                finishAfterTransitionWrapper(activity)
             }
             activity.setResult(CustomLists.RESULT_OK)
-            activity.finishAfterTransition()
+            finishAfterTransitionWrapper(activity)
         }
     }
 
@@ -496,13 +496,21 @@ object ListeUtils {
                     )
                 }
                 activity.setResult(CustomLists.RESULT_OK)
-                activity.finishAfterTransition()
+                finishAfterTransitionWrapper(activity)
                 return@launch
             }
             activity.setResult(CustomLists.RESULT_CANCELED)
-            activity.finishAfterTransition()
+            finishAfterTransitionWrapper(activity)
             return@launch
         }
+    }
+
+    //ISSUE in API 21
+   private fun finishAfterTransitionWrapper(activity: AppCompatActivity) {
+        if (LUtils.hasM())
+            activity.finishAfterTransition()
+        else
+            activity.finish()
     }
 
 }

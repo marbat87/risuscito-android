@@ -9,7 +9,6 @@ import android.util.Log
 import android.util.Xml
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -80,10 +79,6 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
 
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
-                Log.d(TAG, ACTION_FINISH)
-                val intentBroadcast = Intent(ACTION_FINISH)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-
                 val i = appContext
                     .packageManager
                     .getLaunchIntentForPackage(appContext.packageName)
@@ -102,10 +97,6 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                     .build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
-                Log.d(TAG, ACTION_FINISH)
-                val intentBroadcast = Intent(ACTION_FINISH)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-
                 return Result.failure()
             } catch (e: SecurityException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
@@ -117,9 +108,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                     .setTicker(appContext.getString(R.string.import_error))
                     .setContentText(appContext.getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
-                Log.d(TAG, ACTION_FINISH)
-                val intentBroadcast = Intent(ACTION_FINISH)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+
                 return Result.failure()
             } catch (e: IOException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
@@ -131,9 +120,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                     .setTicker(appContext.getString(R.string.import_error))
                     .setContentText(appContext.getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
-                Log.d(TAG, ACTION_FINISH)
-                val intentBroadcast = Intent(ACTION_FINISH)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+
                 return Result.failure()
             }
 
@@ -231,8 +218,8 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
         internal const val TAG_IMPORT_DATA = "importData"
 
         //        private const val JOB_ID = 5000
-        const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
-        const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
+//        const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
+//        const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
         private const val CHANNEL_ID = "itcr_import_channel"
         private const val POSITION_TAG = "position"
 

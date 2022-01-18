@@ -95,7 +95,7 @@
 
                 <data
                     android:host="*"
-                    android:mimeType="application/octet-stream"
+                    android:mimeType="*/*"
                     android:pathPattern=".*\\.risuscito" />
             </intent-filter>
         </activity>
