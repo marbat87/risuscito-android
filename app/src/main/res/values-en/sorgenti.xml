@@ -233,10 +233,10 @@
     <string name="e_paziente_source">e_paziente</string>
     <string name="inno_cristo_luce_source">inno_cristo_luce</string>
     <string name="preghiera_eucaristica_IV_source">no_canto</string>
-    <string name="preghiere_universali_cantate_source">no_canto</string>
+    <string name="preghiere_universali_cantate_source">preghiere_universali_cantate</string>
     <string name="salga_sposo_sul_legno_source">no_canto</string>
     <string name="salmodia_salmo_responsoriale_source">no_canto</string>
-    <string name="salve_regina_source">no_canto</string>
+    <string name="salve_regina_source">salve_regina</string>
     <string name="sequenza_corpus_domini_source">no_canto</string>
     <string name="un_angelo_venne_dal_cielo_source">no_canto</string>
 </resources>

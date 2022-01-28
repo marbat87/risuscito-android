@@ -48,13 +48,13 @@
 
     <TextView
         android:id="@+id/hint_text"
+        style="@style/TextAppearance.Design.Hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
         android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
         android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-        android:textAppearance="@style/TextAppearance.Design.Hint"
         tools:text="@string/showcase_rename_desc" />
 
 </RelativeLayout>

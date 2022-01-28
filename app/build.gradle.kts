@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 31
         multiDexEnabled = true
-        versionCode = 5001
+        versionCode = 5003
         versionName = "5.0.0"
         kapt {
             arguments {
@@ -35,11 +35,6 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
         freeCompilerArgs = listOf("-Xjvm-default=all")
-    }
-
-    lint {
-        disable("PrivateResource")
-        disable("MissingTranslation")
     }
 
     buildTypes {
@@ -76,18 +71,19 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.appcompat:appcompat-resources:1.4.1")
     implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.fragment:fragment-ktx:1.4.0")
+    implementation("androidx.fragment:fragment-ktx:1.4.1")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
+    implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
-    implementation("androidx.media:media:1.4.3")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+    implementation("androidx.media:media:1.5.0-rc01")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-RC3")
-    implementation("androidx.preference:preference-ktx:1.2.0-rc01")
+    implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("com.google.android.gms:play-services-auth:20.0.1")
     implementation(platform("com.google.firebase:firebase-bom:29.0.3"))
     implementation("com.google.firebase:firebase-core")

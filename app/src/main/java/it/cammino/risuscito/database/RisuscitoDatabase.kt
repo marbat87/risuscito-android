@@ -397,7 +397,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
             for (crono in cronologia) {
                 if (!isCantoExistent(database, crono.idCanto))
-                    database.execSQL("DELETE FROM cronologia WHERE idConsegnato = ${crono.idCanto}")
+                    database.execSQL("DELETE FROM cronologia WHERE idCanto = ${crono.idCanto}")
             }
 
             //CRONOLOGIA

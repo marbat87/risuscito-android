@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="5001"
+    <release versionCode="5003"
         date="March 2022"
         versionName="5.0.0">
         <new>Material 3 style (removed app colors choosing options)</new>
-        <new>New songs colors, page numbers and text based on "He rose from Death" book 2020 edition</new>
+        <new>New songs colors, page numbers and texts (Italian only) based on "He rose from Death" book 2020 edition</new>
         <new>Biblic index replaces Plsams index</new>
         <new>New Liturical index (form the official book) replace the old one and the Arguments index</new>
         <bugfix>Fixed compatibility bug with Android 11 and 12</bugfix>

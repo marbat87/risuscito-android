@@ -11,6 +11,6 @@
     <string name="canti_pace">PEACE</string>
     <string name="canti_pane">BREAD</string>
     <string name="canti_fine">FINAL</string>
-    <string name="canti_comunione">COMUNIONE</string>
-    <string name="canti_bambini">CANTI PER I BAMBINI</string>
+    <string name="canti_comunione">COMMUNION</string>
+    <string name="canti_bambini">SONG FOR THE CHILDREN</string>
 </resources>

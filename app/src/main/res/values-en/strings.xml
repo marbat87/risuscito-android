@@ -115,7 +115,7 @@
     <string name="open_pdf">Open PDF</string>
     <string name="activity_homepage">Home page</string>
     <string name="no_memory_writable">Memory not available or in mode of read only</string>
-    <string name="salmi_musica_index">Psalms index set in music</string>
+    <string name="salmi_musica_index">Biblical index</string>
     <string name="only_link">Do you want to associate an mp3 file present in the memory of your device?</string>
     <string name="dialog_delete_link">Are you sure you want to disconnect the song present in the memory? (The file will not be deleted)</string>
     <string name="delink_delete">File is disconnected</string>
