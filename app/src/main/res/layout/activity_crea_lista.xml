@@ -5,18 +5,20 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:focusableInTouchMode="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
+            style="?collapsingToolbarLayoutLargeStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="?collapsingToolbarLayoutLargeSize"
             app:collapsedTitleTextAppearance="@style/TextAppearance.Risuscito.TitleLarge"
             app:collapsedTitleTextColor="?colorOnSurface"
             app:expandedTitleTextAppearance="@style/TextAppearance.Risuscito.HeadlineSmall"
@@ -28,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
+                android:paddingBottom="20dp"
                 app:layout_collapseMode="parallax">
 
                 <TextView
@@ -120,8 +123,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:src="@drawable/baseline_add_24"
         android:layout_margin="@dimen/fab_margin_coord"
+        android:src="@drawable/baseline_add_24"
         tools:ignore="ContentDescription" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

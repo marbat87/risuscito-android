@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,16 +9,18 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        app:statusBarForeground="?colorSurface">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/risuscito_toolbar"
             style="@style/Widget.Material3.Toolbar.Risuscito"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            risuscito:layout_scrollFlags="scroll|enterAlways|snap"
-            risuscito:popupTheme="@style/RisuscitoToolbarPopup"
-            risuscito:title="@string/title_activity_inserisci_titolo" />
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:popupTheme="@style/RisuscitoToolbarPopup"
+            app:title="@string/title_activity_inserisci_titolo" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -26,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:colorBackground"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <include
             android:id="@+id/search_layout"

@@ -936,10 +936,12 @@ class MainActivity : ThemeableActivity() {
     fun createActionMode(callback: ActionMode.Callback) {
         actionMode?.finish()
         actionMode = startSupportActionMode(callback)
+        if (!mViewModel.isOnTablet) updateStatusBarColor(false)
     }
 
     fun destroyActionMode() {
         actionMode = null
+        if (!mViewModel.isOnTablet) updateStatusBarColor(true)
     }
 
     fun updateActionModeTitle(title: String) {

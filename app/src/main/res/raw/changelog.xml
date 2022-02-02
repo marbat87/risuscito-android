@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="5003"
+    <release versionCode="5004"
         date="March 2022"
         versionName="5.0.0">
         <new>Material 3 style (removed app colors choosing options)</new>

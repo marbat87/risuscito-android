@@ -9,14 +9,14 @@ plugins {
 
 android {
 
-    compileSdk = 31
-    buildToolsVersion = "31.0.0"
+    compileSdk = 32
+    buildToolsVersion = "32.0.0"
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5003
+        versionCode = 5004
         versionName = "5.0.0"
         kapt {
             arguments {

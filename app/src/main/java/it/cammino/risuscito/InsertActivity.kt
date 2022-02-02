@@ -75,6 +75,10 @@ class InsertActivity : ThemeableActivity() {
             addTarget(android.R.id.content)
             duration = 700L
         }
+
+        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+        window.sharedElementsUseOverlay = false
+
         super.onCreate(savedInstanceState)
         binding = ActivityInsertSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)

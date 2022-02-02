@@ -36,7 +36,6 @@ import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
 import java.sql.Date
-import java.util.*
 import java.util.concurrent.ExecutionException
 
 abstract class ThemeableActivity : AppCompatActivity() {
@@ -71,7 +70,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
         Utility.setupNavBarColor(this)
-        mViewModel.mLUtils.setLigthStatusBar(!ThemeUtils.isDarkMode(this))
+        updateStatusBarColor(true)
 
         setTaskDescription()
 
@@ -80,7 +79,12 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        updateStatusBarColor(true)
         LUtils.getInstance(this).checkScreenAwake()
+    }
+
+    fun updateStatusBarColor(auto: Boolean) {
+        mViewModel.mLUtils.setLigthStatusBar(if (auto) !ThemeUtils.isDarkMode(this) else false)
     }
 
     override fun attachBaseContext(newBase: Context) {

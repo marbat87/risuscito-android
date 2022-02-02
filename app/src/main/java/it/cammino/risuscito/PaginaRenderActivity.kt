@@ -318,6 +318,9 @@ class PaginaRenderActivity : ThemeableActivity() {
             duration = 700L
         }
 
+        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+        window.sharedElementsUseOverlay = false
+
         super.onCreate(savedInstanceState)
         binding = ActivityPaginaRenderBinding.inflate(layoutInflater)
         setContentView(binding.root)

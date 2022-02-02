@@ -90,6 +90,10 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             addTarget(android.R.id.content)
             duration = 700L
         }
+
+        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+        window.sharedElementsUseOverlay = false
+
         super.onCreate(savedInstanceState)
         binding = ActivityCreaListaBinding.inflate(layoutInflater)
         val view = binding.root
