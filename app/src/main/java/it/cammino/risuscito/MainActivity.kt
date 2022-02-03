@@ -48,6 +48,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.squareup.picasso.Picasso
+import it.cammino.risuscito.Utility.CHANGE_LANGUAGE
+import it.cammino.risuscito.Utility.NEW_LANGUAGE
+import it.cammino.risuscito.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.dialogs.DialogState
@@ -55,6 +58,7 @@ import it.cammino.risuscito.dialogs.ProfileDialogFragment
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
@@ -141,7 +145,7 @@ class MainActivity : ThemeableActivity() {
 
         setSupportActionBar(binding.risuscitoToolbar)
 
-        if (intent.getBooleanExtra(Utility.DB_RESET, false)) {
+        if (intent.getBooleanExtra(CHANGE_LANGUAGE, false)) {
             lifecycleScope.launch { translate() }
         }
 
@@ -358,22 +362,25 @@ class MainActivity : ThemeableActivity() {
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
     private fun convertTabs() {
-        val conversion = intent.getStringExtra(Utility.CHANGE_LANGUAGE)
+        val oldLanguage = intent.getStringExtra(OLD_LANGUAGE)
+        val newLanguage = intent.getStringExtra(NEW_LANGUAGE)
 
         var accordi1 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - from: ${conversion?.substring(0, 2)}")
-        when (conversion?.substring(0, 2)) {
+        Log.d(TAG, "convertTabs - from: $oldLanguage")
+        when (oldLanguage) {
             LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
             LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
             LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
+            LANGUAGE_ENGLISH_PHILIPPINES -> accordi1 = CambioAccordi.accordi_en
         }
 
         var accordi2 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - to: ${conversion?.substring(3, 5)}")
-        when (conversion?.substring(3, 5)) {
+        Log.d(TAG, "convertTabs - to: $newLanguage")
+        when (newLanguage) {
             LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
             LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
             LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
+            LANGUAGE_ENGLISH_PHILIPPINES -> accordi2 = CambioAccordi.accordi_en
         }
 
         val mappa = HashMap<String, String>()
@@ -401,17 +408,18 @@ class MainActivity : ThemeableActivity() {
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
     private fun convertiBarre() {
-        val conversion = intent.getStringExtra(Utility.CHANGE_LANGUAGE)
+        val oldLanguage = intent.getStringExtra(OLD_LANGUAGE)
+        val newLanguage = intent.getStringExtra(NEW_LANGUAGE)
 
         var barre1 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - from: ${conversion?.substring(0, 2)}")
-        when (conversion?.substring(0, 2)) {
+        Log.d(TAG, "convertiBarre - from: $oldLanguage")
+        when (oldLanguage) {
             LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
         }
 
         var barre2 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - to: ${conversion?.substring(3, 5)}")
-        when (conversion?.substring(3, 5)) {
+        Log.d(TAG, "convertiBarre - to: $newLanguage")
+        when (newLanguage) {
             LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
         }
 
@@ -860,12 +868,13 @@ class MainActivity : ThemeableActivity() {
                 .progressIndeterminate(true),
             supportFragmentManager
         )
-        intent.removeExtra(Utility.DB_RESET)
+        intent.removeExtra(CHANGE_LANGUAGE)
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
             convertTabs()
             convertiBarre()
         }
-        intent.removeExtra(Utility.CHANGE_LANGUAGE)
+        intent.removeExtra(OLD_LANGUAGE)
+        intent.removeExtra(NEW_LANGUAGE)
         try {
             dismissProgressDialog("TRANSLATION")
         } catch (e: IllegalArgumentException) {

@@ -66,12 +66,6 @@
             android:name="it.cammino.risuscito.ChangelogActivity"
             android:label="" />
 
-        <service
-            android:name="it.cammino.risuscito.services.XmlImportService"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="it.cammino.risuscito.fileprovider"

@@ -14,11 +14,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
 import it.cammino.risuscito.Utility.CHANGE_LANGUAGE
-import it.cammino.risuscito.Utility.DB_RESET
 import it.cammino.risuscito.Utility.DEFAULT_INDEX
 import it.cammino.risuscito.Utility.DEFAULT_SEARCH
 import it.cammino.risuscito.Utility.DYNAMIC_COLORS
+import it.cammino.risuscito.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.Utility.NIGHT_MODE
+import it.cammino.risuscito.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.Utility.SAVE_LOCATION
 import it.cammino.risuscito.Utility.SCREEN_ON
 import it.cammino.risuscito.Utility.SYSTEM_LANGUAGE
@@ -80,6 +81,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 INSTALLED -> {
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     if (state.languages().isNotEmpty()) {
+                        val currentLang = getSystemLocale(resources).language
                         Log.i(TAG, "Module installed: language $newLanguage")
                         Log.i(TAG, "Module installed: newLanguage $newLanguage")
                         RisuscitoApplication.localeManager.persistLanguage(
@@ -92,12 +94,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
                             )
                         mIntent?.let {
                             it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            it.putExtra(DB_RESET, true)
-                            val currentLang = getSystemLocale(resources).language
-                            it.putExtra(
-                                CHANGE_LANGUAGE,
-                                "$currentLang-$newLanguage"
-                            )
+                            it.putExtra(CHANGE_LANGUAGE, true)
+                            it.putExtra(OLD_LANGUAGE, currentLang)
+                            it.putExtra(NEW_LANGUAGE, newLanguage)
                             startActivity(it)
                         }
                     } else {

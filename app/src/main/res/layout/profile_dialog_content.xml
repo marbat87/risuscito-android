@@ -59,7 +59,7 @@
         android:layout_marginStart="10dp"
         android:text="@string/app_name"
         android:textAppearance="?textAppearanceBodyMedium"
-        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textColor="?colorOnSurfaceVariant"
         app:layout_constraintStart_toEndOf="@id/profile_icon"
         app:layout_constraintTop_toBottomOf="@id/profile_name"
         tools:text="marbat.development@gmail.com" />

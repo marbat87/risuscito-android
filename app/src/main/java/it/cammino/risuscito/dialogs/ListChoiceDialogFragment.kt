@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.ui.LocaleManager
+import it.cammino.risuscito.utils.capitalize
 import java.io.Serializable
 
 @Suppress("unused")
@@ -120,20 +121,12 @@ class ListChoiceDialogFragment : DialogFragment() {
         }
 
         fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text).toString().replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(
-                    LocaleManager.getSystemLocale(mContext.resources)
-                ) else it.toString()
-            }
+            mPositiveButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
             return this
         }
 
         fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text).toString().replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(
-                    LocaleManager.getSystemLocale(mContext.resources)
-                ) else it.toString()
-            }
+            mNegativeButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
             return this
         }
 

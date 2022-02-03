@@ -12,6 +12,7 @@ import androidx.work.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.services.XmlImportService
 import it.cammino.risuscito.ui.RisuscitoApplication
+import it.cammino.risuscito.utils.capitalize
 import it.cammino.risuscito.viewmodels.ImportActivityViewModel
 
 class ImportActivity : AppCompatActivity() {
@@ -30,11 +31,7 @@ class ImportActivity : AppCompatActivity() {
             MaterialAlertDialogBuilder(this).apply {
                 setTitle(R.string.app_name)
                 setMessage(R.string.dialog_import)
-                setPositiveButton(R.string.import_confirm) { _, _ ->
-//                    val i = Intent(this@ImportActivity, XmlImportService::class.java)
-//                    i.action = XmlImportService.ACTION_URL
-//                    i.data = data
-//                    XmlImportService.enqueueWork(applicationContext, i)
+                setPositiveButton(getString(R.string.import_confirm).capitalize(context.resources)) { _, _ ->
                     val builder = Data.Builder()
                     builder.putString(XmlImportService.TAG_IMPORT_DATA, data.toString())
                     val blurRequest = OneTimeWorkRequestBuilder<XmlImportService>()
@@ -47,7 +44,7 @@ class ImportActivity : AppCompatActivity() {
                         blurRequest
                     )
                 }
-                setNegativeButton(R.string.cancel) { _, _ ->
+                setNegativeButton(getString(R.string.cancel).capitalize(context.resources)) { _, _ ->
                     finish()
                 }
                 setCancelable(false)
