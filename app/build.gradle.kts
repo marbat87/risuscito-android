@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5004
+        versionCode = 5005
         versionName = "5.0.0"
         kapt {
             arguments {
@@ -84,7 +84,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-RC3")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("com.google.android.gms:play-services-auth:20.0.1")
+    implementation("com.google.android.gms:play-services-auth:20.1.0")
     implementation(platform("com.google.firebase:firebase-bom:29.0.3"))
     implementation("com.google.firebase:firebase-core")
     implementation("com.google.firebase:firebase-firestore-ktx")

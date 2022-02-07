@@ -114,8 +114,17 @@ class MainActivity : ThemeableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Attach a callback used to capture the shared elements from this Activity to be used
         // by the container transform transition
-        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-//        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+        setExitSharedElementCallback(object : MaterialContainerTransformSharedElementCallback() {
+            override fun onSharedElementEnd(
+                sharedElementNames: MutableList<String>,
+                sharedElements: MutableList<View>,
+                sharedElementSnapshots: MutableList<View>
+            ) {
+                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots)
+                Log.d(TAG, "onTransitionEnd")
+                if (!mViewModel.isOnTablet) updateStatusBarColor(true)
+            }
+        })
 
         // Keep system bars (status bar, navigation bar) persistent throughout the transition.
         window.sharedElementsUseOverlay = false
