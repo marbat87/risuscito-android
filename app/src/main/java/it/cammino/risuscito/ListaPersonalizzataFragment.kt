@@ -145,8 +145,6 @@ class ListaPersonalizzataFragment : Fragment() {
             Integer.valueOf(parent?.findViewById<TextView>(R.id.generic_tag)?.text.toString())
         longClickedChild =
             Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
-        if (!activityViewModel.isOnTablet)
-            mMainActivity?.expandToolbar()
         startCab()
     }
 

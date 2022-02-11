@@ -129,8 +129,6 @@ class HistoryFragment : AccountMenuFragment() {
         cantoAdapter.onPreLongClickListener =
             { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
                 if (mMainActivity?.actionMode == null) {
-                    if (!activityViewModel.isOnTablet)
-                        mMainActivity?.expandToolbar()
                     cantoAdapter.getAdapterItem(position).isSelected = true
                     cantoAdapter.notifyAdapterItemChanged(position)
                     startCab()

@@ -129,8 +129,6 @@ class FavoritesFragment : AccountMenuFragment() {
         cantoAdapter.onPreLongClickListener =
             { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
                 if (mMainActivity?.actionMode == null) {
-                    if (!activityViewModel.isOnTablet)
-                        mMainActivity?.expandToolbar()
                     cantoAdapter.getAdapterItem(position).isSelected = true
                     cantoAdapter.notifyAdapterItemChanged(position)
                     startCab()
