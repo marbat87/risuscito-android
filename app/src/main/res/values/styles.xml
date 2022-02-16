@@ -3,6 +3,7 @@
 
     <style name="Widget.Risuscito.Button.TextButton.Icon" parent="Widget.Material3.Button.TextButton.Icon">
         <item name="android:textAppearance">@style/TextAppearance.Risuscito.LabelLarge</item>
+        <item name="android:textAlignment">viewStart</item>
     </style>
 
     <style name="Widget.Risuscito.Button.TextButton.Left" parent="Widget.Material3.Button.TextButton">
