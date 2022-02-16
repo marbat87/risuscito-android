@@ -3,10 +3,12 @@ package it.cammino.risuscito
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.vansuita.materialabout.builder.AboutBuilder
+import it.cammino.risuscito.Utility.CLICK_DELAY
 import it.cammino.risuscito.databinding.AboutLayoutBinding
 import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.utils.ThemeUtils
@@ -15,6 +17,8 @@ import it.cammino.risuscito.utils.ThemeUtils
 class AboutFragment : AccountMenuFragment() {
 
     private var _binding: AboutLayoutBinding? = null
+
+    private var mLastClickTime: Long = 0
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -43,13 +47,19 @@ class AboutFragment : AccountMenuFragment() {
         mMainActivity?.enableBottombar(false)
 
         val mChangeLogClickListener = View.OnClickListener {
-            it.transitionName = "shared_element_about"
-            val options = ActivityOptions.makeSceneTransitionAnimation(
-                mMainActivity,
-                it,
-                "shared_element_about" // The transition name to be matched in Activity B.
-            )
-            startActivity(Intent(mMainActivity, ChangelogActivity::class.java), options.toBundle())
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                it.transitionName = "shared_element_about"
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    mMainActivity,
+                    it,
+                    "shared_element_about" // The transition name to be matched in Activity B.
+                )
+                startActivity(
+                    Intent(mMainActivity, ChangelogActivity::class.java),
+                    options.toBundle()
+                )
+            }
         }
 
         context?.let {
@@ -75,4 +85,9 @@ class AboutFragment : AccountMenuFragment() {
             )
         }
     }
+
+    companion object {
+        private val TAG = AboutFragment::class.java.canonicalName
+    }
+
 }

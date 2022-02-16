@@ -43,7 +43,7 @@ object Utility {
     const val CHANGE_LANGUAGE = "changed_language"
     const val OLD_LANGUAGE = "old_language"
     const val NEW_LANGUAGE = "new_language"
-    const val CLICK_DELAY: Long = 500
+    const val CLICK_DELAY: Long = 2000
     internal const val SHOW_SECONDA = "mostra_seconda_lettura"
     internal const val SHOW_PACE = "mostra_canto_pace"
     internal const val SAVE_LOCATION = "memoria_salvataggio_scelta"
