@@ -954,12 +954,10 @@ class MainActivity : ThemeableActivity() {
     fun createActionMode(callback: ActionMode.Callback) {
         actionMode?.finish()
         actionMode = startSupportActionMode(callback)
-        if (!mViewModel.isOnTablet) updateStatusBarColor(false)
     }
 
     fun destroyActionMode() {
         actionMode = null
-        if (!mViewModel.isOnTablet) updateStatusBarColor(true)
     }
 
     fun updateActionModeTitle(title: String) {
@@ -967,8 +965,6 @@ class MainActivity : ThemeableActivity() {
     }
 
     companion object {
-        /* Request code used to invoke sign in user interactions. */
-//        private const val PROF_ID = 5428471L
         private const val BROADCAST_NEXT_STEP = "BROADCAST_NEXT_STEP"
         private const val WHICH = "WHICH"
         private const val PROFILE_DIALOG = "PROFILE_DIALOG"

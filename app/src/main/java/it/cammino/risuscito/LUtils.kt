@@ -14,7 +14,9 @@ import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import android.view.View
+import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -110,16 +112,26 @@ class LUtils private constructor(private val mActivity: Activity) {
             mActivity.finish()
     }
 
-//    fun closeActivityWithTransition() {
-//        mActivity.finishAfterTransition()
-////        Animations.exitRight(mActivity)
-//    }
-
     fun setLigthStatusBar(light: Boolean) {
         WindowInsetsControllerCompat(
             mActivity.window,
             mActivity.window.decorView
         ).isAppearanceLightStatusBars = light
+        setLighStatusBarFlag(light)
+    }
+
+    private fun setLighStatusBarFlag(light: Boolean) {
+        if (hasM())
+            setLighStatusBarFlagM(light)
+    }
+
+    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun setLighStatusBarFlagM(light: Boolean) {
+        if (light)
+            mActivity
+                .window
+                .decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     }
 
     internal fun goFullscreen() {
