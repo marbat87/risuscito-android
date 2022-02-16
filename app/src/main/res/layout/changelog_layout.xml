@@ -35,7 +35,7 @@
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/risuscito_toolbar"
-                style="@style/Widget.Material3.Toolbar.Risuscito.InAppBarLayout"
+                style="@style/Widget.Risuscito.Toolbar.InAppBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 app:layout_collapseMode="pin"

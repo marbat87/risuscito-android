@@ -21,7 +21,13 @@
         <item name="android:fontFamily">@font/googlesans_medium</item>
     </style>
 
-    <style name="Widget.Material3.Toolbar.Risuscito">
+    <style name="Widget.Risuscito.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.Material3.TitleLarge.Risuscito</item>
+        <item name="subtitleTextAppearance">@style/TextAppearance.Material3.TitleMedium.Risuscito
+        </item>
+    </style>
+
+    <style name="Widget.Risuscito.Toolbar.Surface" parent="Widget.Material3.Toolbar.Surface">
         <item name="titleTextAppearance">@style/TextAppearance.Material3.TitleLarge.Risuscito</item>
         <item name="subtitleTextAppearance">@style/TextAppearance.Material3.TitleMedium.Risuscito
         </item>
@@ -56,11 +62,11 @@
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
-    <style name="Widget.Material3.Toolbar.Risuscito.InAppBarLayout">
+    <style name="Widget.Risuscito.Toolbar.InAppBarLayout">
         <item name="android:elevation">0dp</item>
     </style>
 
-    <style name="Widget.Material3.TabLayout.Risuscito">
+    <style name="Widget.Risuscito.TabLayout" parent="Widget.Material3.TabLayout">
         <item name="tabGravity">start</item>
         <item name="tabMode">scrollable</item>
     </style>

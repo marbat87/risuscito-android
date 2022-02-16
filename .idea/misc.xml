@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/24e499cb02a0f300be9e56f929027a7d/transformed/material-1.5.0/res/drawable-v21/m3_tabs_background.xml" value="0.1935" />
+        <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/54632f3a92b329970b1f909474db05bc/transformed/appcompat-1.4.1/res/drawable/abc_cab_background_top_material.xml" value="0.1935" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_insert_search.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_main.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/generic_card_item.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/generic_list_item.xml" value="0.18541666666666667" />
