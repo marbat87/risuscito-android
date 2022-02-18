@@ -29,9 +29,8 @@
             android:layout_marginRight="@dimen/text_min_margin"
             android:gravity="center_horizontal"
             android:text="@string/no_favourites_short"
-            android:textAppearance="@style/SuperStateViewSubTitle"
+            android:textAppearance="?textAppearanceBodyMedium"
             android:textColor="?android:textColorSecondary"
-            risuscito:fontFamily="@font/googlesans_italic"
             tools:ignore="MissingPrefix" />
 
     </RelativeLayout>

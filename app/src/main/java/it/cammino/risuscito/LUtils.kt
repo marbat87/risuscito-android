@@ -60,22 +60,6 @@ class LUtils private constructor(private val mActivity: Activity) {
     val isFabExpansionLeft: Boolean
         get() = mActivity.resources.getBoolean(R.bool.fab_orientation_left)
 
-//    fun startActivityWithTransition(
-//        intent: Intent
-//    ) {
-//        mActivity.startActivity(intent)
-//        Animations.enterRight(mActivity)
-//
-//        val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
-//        val cronologia = Cronologia()
-//        cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
-//        (mActivity as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) {
-//            mDao.insertCronologia(
-//                cronologia
-//            )
-//        }
-//    }
-
     fun startActivityWithTransition(
         intent: Intent,
         startView: View?

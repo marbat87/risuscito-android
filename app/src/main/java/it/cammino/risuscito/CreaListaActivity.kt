@@ -49,6 +49,7 @@ import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -69,6 +70,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
     private var modifica: Boolean = false
     private var mAdapter: FastItemAdapter<SwipeableItem> = FastItemAdapter()
     private var mRegularFont: Typeface? = null
+    private var mMediumFont: Typeface? = null
 
     // drag & drop
     private var mTouchHelper: ItemTouchHelper? = null
@@ -101,7 +103,10 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         modifica = intent.extras?.getBoolean(EDIT_EXISTING_LIST) == true
 
-        mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
+        mRegularFont =
+            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_regular_font))
+        mMediumFont =
+            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_medium_font))
 
         setSupportActionBar(binding.risuscitoToolbar)
 
@@ -487,7 +492,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .tintTarget(false)
@@ -500,7 +506,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .id(2),
@@ -512,7 +519,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .id(3)

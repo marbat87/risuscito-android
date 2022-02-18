@@ -16,10 +16,9 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/risuscito_toolbar"
-            style="@style/Widget.Risuscito.Toolbar.Surface"
+            style="@style/Widget.Material3.Toolbar.Surface"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/RisuscitoToolbarPopup"
             app:title="@string/canto_title_activity" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -64,7 +63,7 @@
                     android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:layout_marginEnd="@dimen/myListPreferredItemMargin"
                     android:text="@string/no_record"
-                    android:textAppearance="@style/TextAppearance.Risuscito.TitleMedium"
+                    android:textAppearance="?textAppearanceTitleMedium"
                     android:textColor="@color/material_on_background_disabled"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +98,7 @@
                     android:layout_marginStart="@dimen/myListPreferredItemMargin"
                     android:layout_marginEnd="@dimen/myListPreferredItemMargin"
                     android:text="@string/no_connection"
-                    android:textAppearance="@style/TextAppearance.Risuscito.TitleMedium"
+                    android:textAppearance="?textAppearanceTitleMedium"
                     android:textColor="@color/material_on_background_disabled"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

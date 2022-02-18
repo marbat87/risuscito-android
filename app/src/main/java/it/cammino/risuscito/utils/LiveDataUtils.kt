@@ -2,10 +2,13 @@
 
 package it.cammino.risuscito.utils
 
+import android.content.Context
 import android.content.res.Resources
+import android.util.TypedValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
+import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.LocaleManager
 
 /**
@@ -188,4 +191,10 @@ fun CharSequence.capitalize(res: Resources): String {
             LocaleManager.getSystemLocale(res)
         ) else it.toString()
     }
+}
+
+fun Context.getTypedValueResId(resId: Int): Int {
+    val outTypedValue = TypedValue()
+    theme.resolveAttribute(resId, outTypedValue, true)
+    return outTypedValue.resourceId
 }

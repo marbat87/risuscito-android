@@ -43,6 +43,7 @@ import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +64,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
     private val selectExtension: SelectExtension<CheckableItem> = SelectExtension(selectableAdapter)
     private var mLastClickTime: Long = 0
     private var mRegularFont: Typeface? = null
+    private var mMediumFont: Typeface? = null
     private lateinit var passaggiArray: IntArray
     private val passaggiValues: MutableMap<Int, Int> = mutableMapOf()
     private var backCallback: OnBackPressedCallback? = null
@@ -90,7 +92,14 @@ class ConsegnatiFragment : AccountMenuFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
+        mRegularFont = ResourcesCompat.getFont(
+            requireContext(),
+            requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
+        )
+        mMediumFont = ResourcesCompat.getFont(
+            requireContext(),
+            requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
+        )
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_consegnati)
         mMainActivity?.setTabVisible(false)
@@ -364,7 +373,8 @@ class ConsegnatiFragment : AccountMenuFragment() {
                     getString(R.string.showcase_consegnati_howto)
                 )
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .tintTarget(false) // Whether to tint the target view's color
@@ -394,7 +404,8 @@ class ConsegnatiFragment : AccountMenuFragment() {
                     getString(R.string.showcase_consegnati_confirm)
                 )
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary),
                 TapTarget.forToolbarMenuItem(
@@ -404,7 +415,8 @@ class ConsegnatiFragment : AccountMenuFragment() {
                     getString(R.string.showcase_consegnati_cancel)
                 )
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
             )

@@ -90,7 +90,8 @@
 
         <TextView
             android:id="@+id/no_history_text"
-            style="@style/SuperStateViewSubTitle"
+            android:textAppearance="?textAppearanceBodyMedium"
+            android:textColor="?android:textColorSecondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_min_margin"

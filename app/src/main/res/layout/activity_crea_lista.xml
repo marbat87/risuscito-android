@@ -19,9 +19,7 @@
             style="?collapsingToolbarLayoutLargeStyle"
             android:layout_width="match_parent"
             android:layout_height="?collapsingToolbarLayoutLargeSize"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.Risuscito.TitleLarge"
             app:collapsedTitleTextColor="?colorOnSurface"
-            app:expandedTitleTextAppearance="@style/TextAppearance.Risuscito.HeadlineSmall"
             app:expandedTitleTextColor="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -68,8 +66,7 @@
                 style="@style/Widget.Risuscito.Toolbar.InAppBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/RisuscitoToolbarPopup" />
+                app:layout_collapseMode="pin" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

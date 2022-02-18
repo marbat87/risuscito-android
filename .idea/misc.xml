@@ -5,10 +5,22 @@
       <map>
         <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/24e499cb02a0f300be9e56f929027a7d/transformed/material-1.5.0/res/drawable-v21/m3_tabs_background.xml" value="0.1935" />
         <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/54632f3a92b329970b1f909474db05bc/transformed/appcompat-1.4.1/res/drawable/abc_cab_background_top_material.xml" value="0.1935" />
+        <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/7111da994320654b425b65cf3567f724/transformed/preference-1.2.0/res/layout/preference.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout-land/activity_crea_lista.xml" value="0.15260416666666668" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_crea_lista.xml" value="0.13269927536231885" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_favourites.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_insert_search.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_main.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_pagina_render.xml" value="0.1" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/bottom_sheet.xml" value="0.3625" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/changelog_layout.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/generic_card_item.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/generic_list_item.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/indeterminate_progressbar.xml" value="0.3625" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/layout_consegnati.xml" value="0.13269927536231885" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/layout_history.xml" value="0.13269927536231885" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/linear_progressbar.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/profile.xml" value="0.3625" />
       </map>
     </option>
   </component>

@@ -33,10 +33,9 @@
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/risuscito_toolbar"
-                    style="@style/Widget.Risuscito.Toolbar.Surface"
+                    style="@style/Widget.Material3.Toolbar.Surface"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:popupTheme="@style/RisuscitoToolbarPopup" />
+                    android:layout_height="?attr/actionBarSize" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
                     android:id="@+id/search_view"

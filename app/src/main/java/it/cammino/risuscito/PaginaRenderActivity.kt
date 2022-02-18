@@ -68,6 +68,7 @@ import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.DownloadState
 import it.cammino.risuscito.utils.Downloader
 import it.cammino.risuscito.utils.PdfExporter
+import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -78,7 +79,6 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.Charset
-import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -114,6 +114,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     private val mUpdateProgressTask = Runnable { updateProgress() }
     private var mScheduleFuture: ScheduledFuture<*>? = null
     private var mRegularFont: Typeface? = null
+    private var mMediumFont: Typeface? = null
     private val mHandler = Handler(Looper.getMainLooper())
     private var resolveDeleteAudioConsent: ActivityResultLauncher<IntentSenderRequest>? = null
     private val mScrollDown: Runnable = object : Runnable {
@@ -327,7 +328,10 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         mDownloader = Downloader(this)
 
-        mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
+        mRegularFont =
+            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_regular_font))
+        mMediumFont =
+            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_medium_font))
 
         setSupportActionBar(binding.risuscitoToolbar)
 
@@ -1296,7 +1300,9 @@ class PaginaRenderActivity : ThemeableActivity() {
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .id(id++)
@@ -1310,7 +1316,8 @@ class PaginaRenderActivity : ThemeableActivity() {
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .id(id++)
@@ -1324,7 +1331,8 @@ class PaginaRenderActivity : ThemeableActivity() {
                     )
                         // All options below are optional
                         .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .textTypeface(mRegularFont) // Specify a typeface for the text
+                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
                         .id(id++)
@@ -1338,7 +1346,8 @@ class PaginaRenderActivity : ThemeableActivity() {
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .id(id++)
@@ -1351,7 +1360,8 @@ class PaginaRenderActivity : ThemeableActivity() {
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .id(id)

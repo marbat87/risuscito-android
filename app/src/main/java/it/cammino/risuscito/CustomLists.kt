@@ -40,6 +40,7 @@ import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,6 +56,7 @@ class CustomLists : AccountMenuFragment() {
     private var idListe: IntArray = IntArray(0)
     private var movePage: Boolean = false
     private var mRegularFont: Typeface? = null
+    private var mMediumFont: Typeface? = null
     private var tabs: TabLayout? = null
     private var mLastClickTime: Long = 0
     private val mPageChange: ViewPager2.OnPageChangeCallback =
@@ -97,7 +99,15 @@ class CustomLists : AccountMenuFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
+
+        mRegularFont = ResourcesCompat.getFont(
+            requireContext(),
+            requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
+        )
+        mMediumFont = ResourcesCompat.getFont(
+            requireContext(),
+            requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
+        )
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
         mMainActivity?.enableBottombar(false)
@@ -171,7 +181,8 @@ class CustomLists : AccountMenuFragment() {
                         getString(R.string.showcase_listepers_desc1)
                     )
                         .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .textTypeface(mRegularFont) // Specify a typeface for the text
+                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
                         .descriptionTextSize(15)
@@ -189,7 +200,8 @@ class CustomLists : AccountMenuFragment() {
                                 R.drawable.baseline_check_24
                             )
                         )
-                        .textTypeface(mRegularFont) // Specify a typeface for the text
+                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
                 )

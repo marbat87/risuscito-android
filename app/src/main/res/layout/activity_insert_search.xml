@@ -15,11 +15,10 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/risuscito_toolbar"
-            style="@style/Widget.Risuscito.Toolbar.Surface"
+            style="@style/Widget.Material3.Toolbar.Surface"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:popupTheme="@style/RisuscitoToolbarPopup"
             app:title="@string/title_activity_inserisci_titolo" />
 
     </com.google.android.material.appbar.AppBarLayout>

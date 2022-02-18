@@ -74,8 +74,6 @@ class MainActivity : ThemeableActivity() {
     private var acct: GoogleSignInAccount? = null
     private var mSignInClient: GoogleSignInClient? = null
     private lateinit var auth: FirebaseAuth
-    private var mRegularFont: Typeface? = null
-    private var mMediumFont: Typeface? = null
     private var profileItem: MenuItem? = null
     private var profilePhotoUrl: String = ""
     private var profileName: String = ""
@@ -148,9 +146,6 @@ class MainActivity : ThemeableActivity() {
                 else -> backToHome(true)
             }
         }
-
-        mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
-        mMediumFont = ResourcesCompat.getFont(this, R.font.googlesans_medium)
 
         setSupportActionBar(binding.risuscitoToolbar)
 

@@ -18,13 +18,12 @@
 
     <TextView
         android:id="@+id/md_content_indeterminate"
+        android:textAppearance="?textAppearanceBodyLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/googlesans_regular"
         android:gravity="start"
         android:paddingStart="16dp"
         android:textAlignment="viewStart"
-        android:textSize="16sp"
         tools:ignore="NewApi,RtlSymmetry,UnusedAttribute"
         tools:text="Message" />
 
