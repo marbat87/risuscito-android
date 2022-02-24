@@ -6,12 +6,12 @@
     android:clickable="true"
     android:clipToPadding="false"
     android:focusable="true"
-    android:padding="7dp">
+    android:padding="@dimen/myListPreferredItemMargin">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profileIcon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@drawable/baseline_account_circle_56"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
