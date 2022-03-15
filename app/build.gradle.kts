@@ -109,6 +109,5 @@ dependencies {
     implementation("com.leinardi.android:speed-dial:3.2.0")
     implementation("com.github.Ferfalk:SimpleSearchView:0.2.0")
     implementation("com.github.MFlisar:changelog:1.1.7")
-    implementation("com.wada811:android-material-design-colors:3.0.0")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
 }

@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -21,7 +20,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.ActionMode
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.edit
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
@@ -62,6 +60,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPI
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.getTypedValueResId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -780,18 +779,27 @@ class MainActivity : ThemeableActivity() {
             )
         }
 
-        if (profilePhotoUrl.isEmpty())
-            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profileIcon)
+        if (profilePhotoUrl.isEmpty()) {
+            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
                 ?.setImageResource(R.drawable.baseline_account_circle_56)
-        else {
+            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)?.background =
+                null
+        } else {
             AppCompatResources.getDrawable(this, R.drawable.baseline_account_circle_56)?.let {
                 Picasso.get().load(profilePhotoUrl)
                     .placeholder(it)
-                    .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profileIcon))
+                    .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon))
+            }
+            AppCompatResources.getDrawable(
+                this,
+                getTypedValueResId(R.attr.selectableItemBackgroundBorderless)
+            )?.let {
+                profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)?.background =
+                    it
             }
         }
 
-        profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profileIcon)
+        profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
             ?.setOnClickListener(
                 if (PreferenceManager.getDefaultSharedPreferences(this)
                         .getBoolean(Utility.SIGNED_IN, false)

@@ -7,9 +7,9 @@
     <color name="background_dim_overlay">#44000000</color>
 
     <integer-array name="cat_custom_progress_colors">
-        <item>@color/md_yellow_500</item>
-        <item>@color/md_blue_700</item>
-        <item>@color/md_red_500</item>
+        <item>@color/md_theme_light_tertiary</item>
+        <item>@color/md_theme_light_primary</item>
+        <item>@color/md_theme_light_error</item>
     </integer-array>
 
     <color name="md_theme_light_primary">#335BB1</color>

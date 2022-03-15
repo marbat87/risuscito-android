@@ -6,12 +6,16 @@
     android:clickable="true"
     android:clipToPadding="false"
     android:focusable="true"
-    android:padding="@dimen/myListPreferredItemMargin">
+    android:paddingStart="@dimen/activity_min_margin"
+    android:paddingEnd="@dimen/myListPreferredItemMargin">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profileIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:id="@+id/profile_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:soundEffectsEnabled="true"
         android:src="@drawable/baseline_account_circle_56"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
