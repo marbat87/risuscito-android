@@ -1,9 +1,7 @@
 package it.cammino.risuscito
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,7 +12,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
@@ -23,15 +21,15 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.elevation.ElevationOverlayProvider
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.BindingViewHolder
 import com.mikepenz.fastadapter.binding.listeners.addLongClickListener
@@ -39,12 +37,6 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe.SimpleSwipeCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityCreaListaBinding
@@ -54,11 +46,10 @@ import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.items.swipeableItem
-import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -79,6 +70,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
     private var modifica: Boolean = false
     private var mAdapter: FastItemAdapter<SwipeableItem> = FastItemAdapter()
     private var mRegularFont: Typeface? = null
+    private var mMediumFont: Typeface? = null
 
     // drag & drop
     private var mTouchHelper: ItemTouchHelper? = null
@@ -87,6 +79,23 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set the transition name, which matches Activity A’s start view transition name, on
+        // the root view.
+        findViewById<View>(android.R.id.content).transitionName = "shared_element_crealista"
+
+        // Attach a callback used to receive the shared elements from Activity A to be
+        // used by the container transform transition.
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        // Set this Activity’s enter and return transition to a MaterialContainerTransform
+        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+            addTarget(android.R.id.content)
+            duration = 700L
+        }
+
+        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+        window.sharedElementsUseOverlay = false
+
         super.onCreate(savedInstanceState)
         binding = ActivityCreaListaBinding.inflate(layoutInflater)
         val view = binding.root
@@ -94,33 +103,41 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         modifica = intent.extras?.getBoolean(EDIT_EXISTING_LIST) == true
 
-        mRegularFont = ResourcesCompat.getFont(this, R.font.googlesans_regular)
+        mRegularFont =
+            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_regular_font))
+        mMediumFont =
+            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_medium_font))
 
         setSupportActionBar(binding.risuscitoToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val leaveBehindDrawable =
-            IconicsDrawable(this, CommunityMaterial.Icon.cmd_delete_sweep).apply {
-                colorInt =
-                    MaterialColors.getColor(this@CreaListaActivity, R.attr.colorOnPrimary, TAG)
-                sizeDp = 24
-                paddingDp = 2
-            }
-        val touchCallback = SimpleSwipeDragCallback(
-            this,
-            this,
-            leaveBehindDrawable,
-            ItemTouchHelper.LEFT,
-            MaterialColors.getColor(this, R.attr.colorPrimary, TAG)
-        )
-            .withBackgroundSwipeRight(MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
-            .withLeaveBehindSwipeRight(leaveBehindDrawable)
-        touchCallback.setIsDragEnabled(false)
-        touchCallback.notifyAllDrops = true
+        AppCompatResources.getDrawable(this@CreaListaActivity, R.drawable.baseline_delete_sweep_24)
+            ?.let {
+                it.setTint(MaterialColors.getColor(view, R.attr.colorOnPrimary))
+                val touchCallback = SimpleSwipeDragCallback(
+                    this,
+                    this,
+                    it,
+                    ItemTouchHelper.LEFT,
+                    MaterialColors.getColor(this, R.attr.colorPrimary, TAG)
+                )
+                    .withBackgroundSwipeRight(
+                        MaterialColors.getColor(
+                            this,
+                            R.attr.colorPrimary,
+                            TAG
+                        )
+                    )
+                    .withLeaveBehindSwipeRight(it)
 
-        mTouchHelper =
-            ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
+                touchCallback.setIsDragEnabled(false)
+                touchCallback.notifyAllDrops = true
+
+                mTouchHelper =
+                    ItemTouchHelper(touchCallback) // Create ItemTouchHelper and pass with parameter the SimpleDragCallback
+
+            }
 
         mAdapter.addLongClickListener<SwipeableItemBinding, SwipeableItem>({ binding -> binding.swipeableText1 }) { _, position, _, item ->
             Log.d(TAG, "onItemLongClick: $position")
@@ -142,22 +159,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         binding.recyclerView.adapter = mAdapter
 
-        val insetDivider = DividerItemDecoration(this, llm.orientation)
-        insetDivider.setDrawable(
-            ContextCompat.getDrawable(
-                this, R.drawable.preference_list_divider_material
-            )!!
-        )
-        binding.recyclerView.addItemDecoration(insetDivider)
-
         mTouchHelper?.attachToRecyclerView(binding.recyclerView) // Attach ItemTouchHelper to RecyclerView
-
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon3.cmd_plus).apply {
-            colorInt = Color.WHITE
-            sizeDp = 24
-            paddingDp = 4
-        }
-        binding.fabCreaLista.setImageDrawable(icon)
 
         binding.textTitleDescription.requestFocus()
 
@@ -184,15 +186,6 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         binding.textFieldTitle.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
             binding.collapsingToolbarLayout.title = s
             mCreaListaViewModel.tempTitle = s.toString()
-        }
-
-        if (ThemeUtils.isDarkMode(this)) {
-            val elevatedSurfaceColor =
-                ElevationOverlayProvider(this).compositeOverlayWithThemeSurfaceColorIfNeeded(
-                    resources.getDimension(R.dimen.design_appbar_elevation)
-                )
-            binding.collapsingToolbarLayout.setContentScrimColor(elevatedSurfaceColor)
-            binding.appBarLayout.background = ColorDrawable(elevatedSurfaceColor)
         }
 
         binding.fabCreaLista.setOnClickListener {
@@ -285,8 +278,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             SAVE_LIST -> {
                                 simpleDialogViewModel.handled = true
                                 setResult(RESULT_CANCELED)
-                                finish()
-                                Animations.exitDown(this)
+                                mViewModel.mLUtils.finishAfterTransitionWrapper()
                             }
                         }
                     }
@@ -302,10 +294,9 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             mAdapter.itemAdapter.adapterItems as? ArrayList<SwipeableItem>
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        IconicsMenuInflaterUtil.inflate(
-            menuInflater, this, R.menu.crea_lista_menu, menu
-        )
+        menuInflater.inflate(R.menu.crea_lista_menu, menu)
         super.onCreateOptionsMenu(menu)
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         Log.d(
@@ -354,8 +345,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     return true
                 } else {
                     setResult(RESULT_CANCELED)
-                    finish()
-                    Animations.exitDown(this)
+                    mViewModel.mLUtils.finishAfterTransitionWrapper()
                 }
                 return true
             }
@@ -428,8 +418,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         if (result == 100)
             Toast.makeText(this, getString(R.string.no_title_edited), Toast.LENGTH_SHORT).show()
         setResult(RESULT_OK)
-        finish()
-        Animations.exitDown(this)
+        mViewModel.mLUtils.finishAfterTransitionWrapper()
     }
 
     private fun onBackPressedAction() {
@@ -445,14 +434,13 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             )
         } else {
             setResult(RESULT_CANCELED)
-            finish()
-            Animations.exitDown(this)
+            mViewModel.mLUtils.finishAfterTransitionWrapper()
         }
     }
 
     override fun itemTouchStartDrag(viewHolder: RecyclerView.ViewHolder) {
         @Suppress("UNCHECKED_CAST")
-        (viewHolder as? BindingViewHolder<SwipeableItemBinding>)?.binding?.cardContainer?.isDragged =
+        (viewHolder as? BindingViewHolder<SwipeableItemBinding>)?.binding?.listViewItemContainer?.isDragged =
             true
     }
 
@@ -460,7 +448,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         @Suppress("UNCHECKED_CAST")
         val viewHolder =
             binding.recyclerView.findViewHolderForAdapterPosition(newPosition) as? BindingViewHolder<SwipeableItemBinding>?
-        viewHolder?.binding?.cardContainer?.isDragged = false
+        viewHolder?.binding?.listViewItemContainer?.isDragged = false
     }
 
     override fun itemTouchOnMove(oldPosition: Int, newPosition: Int): Boolean {
@@ -504,7 +492,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .tintTarget(false)
@@ -517,7 +506,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .id(2),
@@ -529,7 +519,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 )
                     // All options below are optional
                     .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .textTypeface(mRegularFont) // Specify a typeface for the text
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .id(3)

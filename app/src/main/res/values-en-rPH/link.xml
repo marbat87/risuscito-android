@@ -1,241 +1,237 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="litanie_penitenziali_brevi_link" formatted="false"></string>
-    <string name="preghiera_litanica_penitenziale_link" formatted="false"></string>
-    <string name="celebrazione_penitenziale_link" formatted="false"></string>
-    <string name="gloria_a_dio_cieli_link" formatted="false"></string>
-    <string name="santo_e_santo_quaresima_link" formatted="false"></string>
-    <string name="santo_ordinario_link" formatted="false"></string>
-    <string name="santo_baracche_link" formatted="false"></string>
-    <string name="santo_palme_link" formatted="false"></string>
-    <string name="santo_1988_link" formatted="false"></string>
-    <string name="santo_1983_link" formatted="false"></string>
-    <string name="preghiera_eucarestica_II_link" formatted="false">
-</string>
-    <string name="preghiera_eucaristica_II_parte2_link" formatted="false">
-</string>
-    <string name="benedizione_acqua_fonte_link" formatted="false"></string>
-    <string name="preconio_pasquale_link" formatted="false"></string>
-    <string name="prefazio_eucarestia_veglia_pasquale_link" formatted="false"></string>
-    <string name="inno_lodi_avvento_fino16_link" formatted="false"></string>
-    <string name="inno_lodi_avvento_dopo16_link" formatted="false">
-</string>
-    <string name="inno_lodi_pasqua_fino_ascensione_link" formatted="false"></string>
-    <string name="inno_vespri_pasqua_fino_ascensione_link" formatted="false">
-</string>
-    <string name="inno_lodi_pasqua_ascensione_pentecoste_link" formatted="false"></string>
-    <string name="inno_vespri_pasqua_ascensione_pentecoste_link" formatted="false"></string>
-    <string name="inno_lodi_pentecoste_link" formatted="false">
-</string>
-    <string name="sequenza_di_pentecoste_link" formatted="false"></string>
-    <string name="preghiera_eucaristia_II_2_prefazio_link" formatted="false"></string>
-    <string name="preghiera_eucaristica_II_2_consacrazione_link" formatted="false"></string>
-    <string name="preghiera_eucaristica_II_2_offerta_link" formatted="false"></string>
-    <string name="alleluja_pasquale_link" formatted="false"></string>
-    <string name="acclamazioni_al_vangelo_link" formatted="false"></string>
-    <string name="acclamazioni_al_vangelo_quaresima_link" formatted="false">
-</string>
-    <string name="te_deum_link" formatted="false"></string>
-    <string name="padre_nostro_link" formatted="false"></string>
-    <string name="credo_apostolico_link" formatted="false"></string>
-    <string name="risuscito_link" formatted="false"></string>
-    <string name="verso_te_o_citta_santa_link" formatted="false"></string>
-    <string name="marcia_e_dura_link" formatted="false"></string>
-    <string name="dal_profondo_a_te_grido_link" formatted="false"></string>
-    <string name="canto_di_giosue_link" formatted="false"></string>
-    <string name="benedici_anima_mia_jahve_link" formatted="false"></string>
-    <string name="fino_a_quando_link" formatted="false"></string>
-    <string name="jahve_tu_sei_mio_dio_link" formatted="false"></string>
-    <string name="cantiamo_cantiamo_link" formatted="false"></string>
-    <string name="giunga_la_mia_preghiera_link" formatted="false"></string>
-    <string name="guardate_come_e_bello_link" formatted="false"></string>
-    <string name="come_bello_come_da_gioia_link" formatted="false"></string>
-    <string name="guardate_come_e_bello_gustate_link" formatted="false"></string>
-    <string name="grazie_a_jahve_link" formatted="false"></string>
-    <string name="canto_giovani_fornace_I_link" formatted="false"></string>
-    <string name="canto_giovani_fornace_II_link" formatted="false"></string>
-    <string name="lodate_il_signore_dai_cieli_link" formatted="false"></string>
-    <string name="lodate_iddio_link" formatted="false"></string>
-    <string name="signore_e_mia_luce_link" formatted="false"></string>
-    <string name="evenu_shalom_link" formatted="false"></string>
-    <string name="gia_viene_il_regno_link" formatted="false"></string>
-    <string name="abba_padre_link" formatted="false"></string>
-    <string name="chi_ci_separera_link" formatted="false"></string>
-    <string name="magnificat_link" formatted="false"></string>
-    <string name="innalzero_la_coppa_di_salvezza_link" formatted="false"></string>
-    <string name="quando_il_signore_link" formatted="false"></string>
-    <string name="cantico_di_zaccaria_link" formatted="false"></string>
-    <string name="o_morte_dove_la_tua_vittoria_link" formatted="false"></string>
-    <string name="o_cieli_piovete_dall_alto_link" formatted="false"></string>
-    <string name="pentecoste_link" formatted="false"></string>
-    <string name="ecco_qui_vengo_presto_link" formatted="false"></string>
-    <string name="vieni_figlio_dell_uomo_link" formatted="false"></string>
-    <string name="abramo_link" formatted="false"></string>
-    <string name="cantico_di_mose_link" formatted="false"></string>
-    <string name="lodate_il_signore_link" formatted="false"></string>
-    <string name="quando_israele_usci_egitto_link" formatted="false"></string>
-    <string name="alzate_o_porte_link" formatted="false"></string>
-    <string name="signore_mio_pastore_link" formatted="false"></string>
-    <string name="giunti_fiumi_babilonia_link" formatted="false"></string>
-    <string name="pieta_di_me_o_dio_link" formatted="false"></string>
-    <string name="misericordia_dio_misericordia_link" formatted="false"></string>
-    <string name="inno_della_kenosis_link" formatted="false"></string>
-    <string name="ave_maria_link" formatted="false"></string>
-    <string name="ave_maria_1984_link" formatted="false"></string>
-    <string name="maria_piccola_maria_link" formatted="false"></string>
-    <string name="alzo_gli_occhi_link" formatted="false"></string>
-    <string name="canto_liberati_link" formatted="false"></string>
-    <string name="se_oggi_ascoltate_sua_voce_link" formatted="false"></string>
-    <string name="venite_applaudiamo_al_signore_link" formatted="false"></string>
-    <string name="dajenu_link" formatted="false"></string>
-    <string name="alla_vittima_pasquale_link" formatted="false"></string>
-    <string name="inno_di_pasqua_link" formatted="false"></string>
-    <string name="inno_avvento_link" formatted="false"></string>
-    <string name="uri_uri_ura_link" formatted="false"></string>
-    <string name="gia_viene_il_mio_dio_link" formatted="false"></string>
-    <string name="amen_amen_amen_link" formatted="false"></string>
-    <string name="se_signore_non_costruisce_link" formatted="false"></string>
-    <string name="gustate_e_vedete_link" formatted="false"></string>
-    <string name="per_amore_dei_miei_fratelli_link" formatted="false"></string>
-    <string name="ho_sperato_nel_signore_link" formatted="false"></string>
-    <string name="voglio_cantare_link" formatted="false"></string>
-    <string name="perche_genti_congiurano_link" formatted="false"></string>
-    <string name="come_una_cerva_anela_link" formatted="false"></string>
-    <string name="acclamate_al_signore_link" formatted="false"></string>
-    <string name="gridate_con_gioia_link" formatted="false"></string>
-    <string name="al_risveglio_mi_saziero_link" formatted="false"></string>
-    <string name="canto_bambini_veglia_link" formatted="false"></string>
-    <string name="non_moriro_link" formatted="false"></string>
-    <string name="dite_agli_smarriti_link" formatted="false"></string>
-    <string name="o_dio_tu_sei_il_mio_dio_link" formatted="false"></string>
-    <string name="sale_dio_tra_acclamazioni_link" formatted="false"></string>
-    <string name="popolo_camminava_tenebre_link" formatted="false"></string>
-    <string name="da_lode_al_signore_link" formatted="false"></string>
-    <string name="canto_di_balaam_link" formatted="false"></string>
-    <string name="davanti_agli_angeli_link" formatted="false"></string>
-    <string name="quando_israele_era_un_bimbo_link" formatted="false"></string>
-    <string name="e_la_pasqua_del_signore_link" formatted="false"></string>
-    <string name="tempo_ogni_cosa_link" formatted="false"></string>
-    <string name="benedici_anima_mia_link" formatted="false"></string>
-    <string name="quanto_sono_amabili_dimore_link" formatted="false"></string>
-    <string name="viene_il_signore_vestito_di_maesta_link" formatted="false"></string>
-    <string name="giorno_di_riposo_link" formatted="false"></string>
-    <string name="consolate_il_mio_popolo_link" formatted="false"></string>
-    <string name="cerano_due_angeli_link" formatted="false"></string>
-    <string name="amo_il_signore_link" formatted="false"></string>
-    <string name="venite_a_me_voi_tutti_link" formatted="false"></string>
-    <string name="a_te_si_deve_lode_in_sion_link" formatted="false"></string>
-    <string name="se_signore_sono_rifugiato_link" formatted="false"></string>
-    <string name="signore_annuncia_una_notizia_link" formatted="false"></string>
-    <string name="benedite_il_signore_link" formatted="false"></string>
-    <string name="figlie_di_gerusalemme_link" formatted="false"></string>
-    <string name="ti_ho_manifestato_mio_peccato_link" formatted="false"></string>
-    <string name="maria_madre_della_chiesa_link" formatted="false"></string>
-    <string name="stabat_mater_link" formatted="false"></string>
-    <string name="lamenti_del_signore_link" formatted="false"></string>
-    <string name="o_signore_nostro_dio_link" formatted="false"></string>
-    <string name="benedetta_sei_tu_maria_link" formatted="false"></string>
-    <string name="salve_regina_dei_cieli_link" formatted="false"></string>
-    <string name="vergine_della_meraviglia_link" formatted="false"></string>
-    <string name="maria_casa_di_benedizione_link" formatted="false"></string>
-    <string name="benediro_il_signore_in_ogni_tempo_link" formatted="false"></string>
-    <string name="mietitura_delle_nazioni_link" formatted="false"></string>
-    <string name="dice_il_signore_al_mio_signore_link" formatted="false"></string>
-    <string name="felice_uomo_link" formatted="false"></string>
-    <string name="agnello_di_dio_link" formatted="false"></string>
-    <string name="tu_sei_il_piu_bello_link" formatted="false"></string>
-    <string name="felicita_per_l_uomo_link" formatted="false"></string>
-    <string name="sorga_dio_link" formatted="false"></string>
-    <string name="andiamo_gia_pastori_link" formatted="false"></string>
-    <string name="maria_di_jasna_gora_link" formatted="false"></string>
-    <string name="a_te_signore_con_la_mia_voce_link" formatted="false"></string>
-    <string name="un_germoglio_spunta_tronco_link" formatted="false"></string>
-    <string name="a_te_signore_innalzo_la_mia_anima_link" formatted="false"></string>
-    <string name="ti_sto_chiamando_link" formatted="false"></string>
-    <string name="a_te_levo_i_miei_occhi_link" formatted="false"></string>
-    <string name="signore_non_punirmi_nel_tuo_sdegno_link" formatted="false"></string>
-    <string name="gloria_gloria_gloria_link" formatted="false"></string>
-    <string name="esultate_giusti_nel_signore_link" formatted="false"></string>
-    <string name="molto_mi_hanno_perseguitato_link" formatted="false"></string>
-    <string name="ti_amo_signore_link" formatted="false"></string>
-    <string name="maria_madre_cammino_ardente_link" formatted="false"></string>
-    <string name="shlom_lech_mariam_link" formatted="false"></string>
-    <string name="andate_ed_annunziate_link" formatted="false"></string>
-    <string name="mi_indicherai_sentiero_vita_link" formatted="false"></string>
-    <string name="o_dio_per_il_tuo_nome_link" formatted="false"></string>
-    <string name="stolto_pensa_che_non_ce_dio_link" formatted="false"></string>
-    <string name="signore_ascolta_mia_preghiera_link" formatted="false"></string>
-    <string name="non_e_qui_e_risorto_link" formatted="false"></string>
-    <string name="vi_prendero_dalle_genti_link" formatted="false"></string>
-    <string name="voi_siete_la_luce_del_mondo_link" formatted="false"></string>
-    <string name="sola_a_solo_link" formatted="false"></string>
-    <string name="in_mezzo_grande_folla_link" formatted="false"></string>
-    <string name="zaccheo_link" formatted="false"></string>
-    <string name="siedi_solitario_silenzioso_link" formatted="false"></string>
-    <string name="cosi_parla_amen_link" formatted="false"></string>
-    <string name="ti_vedranno_i_re_link" formatted="false"></string>
-    <string name="giacobbe_link" formatted="false"></string>
-    <string name="debora_link" formatted="false"></string>
-    <string name="vedo_cieli_aperti_link" formatted="false"></string>
-    <string name="il_signore_mi_ha_dato_link" formatted="false"></string>
-    <string name="pigiatore_link" formatted="false"></string>
-    <string name="seminatore_link" formatted="false"></string>
-    <string name="spirito_del_signore_sopra_di_me_link" formatted="false"></string>
-    <string name="ecco_lo_specchio_nostro_link" formatted="false"></string>
-    <string name="come_slancio_ira_link" formatted="false"></string>
-    <string name="benedetto_sia_iddio_link" formatted="false"></string>
-    <string name="signore_tu_scruti_conosci_link" formatted="false"></string>
-    <string name="eli_eli_lamma_sabactani_link" formatted="false"></string>
-    <string name="nessuno_puo_servire_due_padroni_link" formatted="false"></string>
-    <string name="signore_mio_cuore_pretese_link" formatted="false"></string>
-    <string name="voglio_andare_a_gerusalemme_link" formatted="false"></string>
-    <string name="shema_israel_link" formatted="false"></string>
-    <string name="inno_croce_gloriosa_link" formatted="false"></string>
-    <string name="rivestitevi_dell_armatura_link" formatted="false"></string>
-    <string name="sue_fondamenta_link" formatted="false"></string>
-    <string name="akeda_link" formatted="false"></string>
-    <string name="non_ti_adirare_link" formatted="false"></string>
-    <string name="inno_alla_carita_link" formatted="false"></string>
-    <string name="stesso_iddio_link" formatted="false"></string>
-    <string name="come_condannati_a_morte_link" formatted="false"></string>
-    <string name="gesu_percorreva_link" formatted="false"></string>
-    <string name="non_resistete_al_male_link" formatted="false"></string>
-    <string name="che_mi_baci_link" formatted="false"></string>
-    <string name="mia_diletta_e_per_me_link" formatted="false"></string>
-    <string name="vieni_dal_libano_link" formatted="false"></string>
-    <string name="quando_dormivo_link" formatted="false"></string>
-    <string name="tu_che_abiti_nei_giardini_link" formatted="false"></string>
-    <string name="agnella_di_dio_link" formatted="false"></string>
-    <string name="non_ce_in_lui_bellezza_link" formatted="false"></string>
-    <string name="canto_dell_agnello_link" formatted="false"></string>
-    <string name="chi_e_colei_link" formatted="false"></string>
-    <string name="voce_del_mio_amato_link" formatted="false"></string>
-    <string name="colomba_volo_link" formatted="false"></string>
-    <string name="come_stilla_il_miele_link" formatted="false"></string>
-    <string name="o_gesu_amore_mio_link" formatted="false"></string>
-    <string name="portami_in_cielo_link" formatted="false"></string>
-    <string name="tu_sei_mia_speranza_signore_link" formatted="false"></string>
-    <string name="una_donna_vestita_di_sole_link" formatted="false"></string>
-    <string name="ho_steso_le_mani_link" formatted="false"></string>
-    <string name="omelia_pasquale_melitone_sardi_link" formatted="false"></string>
-    <string name="carmen_63_link" formatted="false"></string>
-    <string name="caritas_christi_link" formatted="false"></string>
-    <string name="noli_me_tangere_link" formatted="false"></string>
-    <string name="signore_aiutami_signore_link" formatted="false"></string>
-    <string name="mi_hai_sedotto_signore_link" formatted="false"></string>
-    <string name="amate_i_vostri_nemici_link" formatted="false"></string>
-    <string name="tu_sei_bella_amica_mia_link" formatted="false"></string>
-    <string name="fratelli_non_diamo_a_nessuno_link" formatted="false"></string>
-    <string name="questo_e_io_mio_comandamento_link" formatted="false"></string>
-    <string name="mi_rubasti_cuore_link" formatted="false"></string>
-    <string name="in_una_notte_oscura_link" formatted="false"></string>
-    <string name="se_siete_risorti_link" formatted="false"></string>
-    <string name="una_gran_senal_link" formatted="false"></string>
-    <string name="resurrexit_link" formatted="false"></string>
-    <string name="ecco_il_mio_servo_link" formatted="false"></string>
-    <string name="ave_maria_colomba_link" formatted="false"></string>
-    <string name="messia_leone_vincere_link" formatted="false"></string>
-    <string name="come_pecora_che_vede_link" formatted="false"></string>
-    <string name="e_paziente_link" formatted="false"></string>
-    <string name="inno_cristo_luce_link" formatted="false"></string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="litanie_penitenziali_brevi_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/iaayHxf2JrO34WqdvjedVXPSItd9L6Lu</string>
+    <string name="preghiera_litanica_penitenziale_link" formatted="false" />
+    <string name="celebrazione_penitenziale_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/gQ4s5iR15b2zSH2zEtF5kfzemr28DP8n</string>
+    <string name="gloria_a_dio_cieli_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/HVY24OYRX5in8vmc6rpvS23ulC9MQEtG</string>
+    <string name="santo_e_santo_quaresima_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/zJ5s2Goez3xaSIOAAPlWaavocBs9dhqp</string>
+    <string name="santo_ordinario_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/dhiq6jH4sltXDmYtf2LUmSVSbYkqs1JH</string>
+    <string name="santo_baracche_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/CRIftcQS3Qb0iMGYZmDoA9ieKrgVfXHl</string>
+    <string name="santo_palme_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/96s1cADfaiPcK1yb30AHe5QADeKcD7x0</string>
+    <string name="santo_1988_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Er3Suq15AZWjiW9m78eEDENqfNUjQJQP</string>
+    <string name="santo_1983_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/TX3ls6LHicnI3SggVeoSFX7oBbE496C9</string>
+    <string name="preghiera_eucarestica_II_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/l8kdNkWDlgBCH61mAEmLgOPRkOkQFRZA</string>
+    <string name="preghiera_eucaristica_II_parte2_link" formatted="false" />
+    <string name="benedizione_acqua_fonte_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/BOsgRBKO25hELvH3QEcBSVW2jKeHfj0E</string>
+    <string name="preconio_pasquale_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/zJOxNDm3PdaIQfM40dHrdF3vywDOCSTS</string>
+    <string name="prefazio_eucarestia_veglia_pasquale_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/G1fRYXJ6cidvECZVYbaRtGPq00xFeYg3</string>
+    <string name="inno_lodi_avvento_fino16_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/cf1EqfWArvZOhyV2scdtGqSY6TTrubhL</string>
+    <string name="inno_lodi_avvento_dopo16_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ztzCfONZWOKqVZbmMhxRPpUnoqDPbXRX</string>
+    <string name="inno_lodi_pasqua_fino_ascensione_link" formatted="false" />
+    <string name="inno_vespri_pasqua_fino_ascensione_link" formatted="false" />
+    <string name="inno_lodi_pasqua_ascensione_pentecoste_link" formatted="false" />
+    <string name="inno_vespri_pasqua_ascensione_pentecoste_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ByZNi2FlTawwvfzINnmL3qUJhRTOQJjy</string>
+    <string name="inno_lodi_pentecoste_link" formatted="false" />
+    <string name="sequenza_di_pentecoste_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ARB6sDsiQBe2NNjuPvIRW5CPzvIXxJ5X</string>
+    <string name="preghiera_eucaristia_II_2_prefazio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/TucxyWTgnobAgIbubPJIOvVnz2FWT2td</string>
+    <string name="preghiera_eucaristica_II_2_consacrazione_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/OB5nGmOeKO2HhfARhwjG4ZoTiV8Ldasc</string>
+    <string name="preghiera_eucaristica_II_2_offerta_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/4NJL4HKX45PzK5rWZsCLSwsotP3ymJ2I</string>
+    <string name="alleluja_pasquale_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/xPKoIwznUixyYoc0nuLmry9e96rhmdjq</string>
+    <string name="acclamazioni_al_vangelo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/MCNQtdWisAzPjeAUVdwVYUQDLgr4o0AB</string>
+    <string name="acclamazioni_al_vangelo_quaresima_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Gospel%20Acclamation%20for%20Lent.mp3</string>
+    <string name="te_deum_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ZvvYhb1GdjpzI0EUWUXKrsRQZ3J6nS4p</string>
+    <string name="padre_nostro_link" formatted="false" />
+    <string name="credo_apostolico_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/41HQYowcPQg2aI6fyIiEWgOIN3E8bhEq</string>
+    <string name="risuscito_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/NO7jLdhNDH9p3JEjOv6GoOoSCDkcXSZL</string>
+    <string name="verso_te_o_citta_santa_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/vZyTKZxORrAMmyr0QlWhAtY3pp28RUHW</string>
+    <string name="marcia_e_dura_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20march%20is%20hard.mp3</string>
+    <string name="dal_profondo_a_te_grido_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/O5XmJsm2J2h2mbEAshyxWECkfQARRqPu</string>
+    <string name="canto_di_giosue_link" formatted="false" />
+    <string name="benedici_anima_mia_jahve_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/IXBf5vGt6qDmQWspDXPI9A8H4piM4vCP</string>
+    <string name="fino_a_quando_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/sarCZA8oaCkpkkEed55bAHcOcxTW8aKe</string>
+    <string name="jahve_tu_sei_mio_dio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/uGDj0ehPSXHDG2vqVvDsSKJSelTEFe5z</string>
+    <string name="giunga_la_mia_preghiera_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/bvxhGWYZCVCzaMIHhCaKWxhvT3w9rlXN</string>
+    <string name="guardate_come_e_bello_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/JutrkijLwOVCE2a7rVO3knQI60MmHo1v</string>
+    <string name="come_bello_come_da_gioia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/FKBHK3zkV2NDqzeRmGuRkgDQtiGYIaCI</string>
+    <string name="guardate_come_e_bello_gustate_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/d5PXvmjSedQYqGqxCG3p00d43AxmVwDn</string>
+    <string name="grazie_a_jahve_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/l4CDzN1mLAVRilQzlm2oE4jRsxp502bV</string>
+    <string name="canto_giovani_fornace_I_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/j0DytOBfORAF0y8Xs9yry2igl1mKvHzO</string>
+    <string name="canto_giovani_fornace_II_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/jAqW5JrencbN5d2POwf1eTjM56hChx6t</string>
+    <string name="lodate_il_signore_dai_cieli_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/5etRJccS8cyp8N8q7KvL2U3Yg23ezwpj</string>
+    <string name="lodate_iddio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/iQvHpd8J4uJ9w5xzFjlSo9MZFundU5EQ </string>
+    <string name="signore_e_mia_luce_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20Lord%20is%20my%20light%20and%20my%20salvation.mp3</string>
+    <string name="evenu_shalom_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/1rCq2Lb2rKJ0JNUY5zjZpIAb6evPwyLj</string>
+    <string name="gia_viene_il_regno_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Alleluia,%20Here%20Comes%20The%20Kingdom%20(%20Apoc.%2019,6-9%20).mp3</string>
+    <string name="abba_padre_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/johIehyZvOAs6EejdxzCyjTZo7K2oM3F</string>
+    <string name="chi_ci_separera_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/AGrjaYrDAT7sL1jf73m9KnSRc2SFh7Cz</string>
+    <string name="magnificat_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/azzK5RbSPxGf7q1Z9VTMQR86HParQz7b</string>
+    <string name="innalzero_la_coppa_di_salvezza_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/uyNhWA6x8WVG1PSUPp9vkj4kPCA2f8zg</string>
+    <string name="quando_il_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/bfkHpfIw53tncdTzm9PirbNpWJ6IZoFD</string>
+    <string name="cantico_di_zaccaria_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/HITUHyVspV2j1c7jXMKUIum73thAicQt</string>
+    <string name="o_morte_dove_la_tua_vittoria_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/bHZAPwIDxww2dof9qf3BywOttQHMmNor</string>
+    <string name="o_cieli_piovete_dall_alto_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/VxI6TWYV8gVa0IeFmI9e2hiQZ8lhQ6JN</string>
+    <string name="pentecoste_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/vjeVz0ILwpRxF90isi3MsZML8dVoL5Z2</string>
+    <string name="ecco_qui_vengo_presto_link" formatted="false" />
+    <string name="vieni_figlio_dell_uomo_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Come,%20Son%20of%20Man.mp3</string>
+    <string name="abramo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/zKTPcL5tAZzLO4oYz1PSu2j5nf7NQKvG</string>
+    <string name="cantico_di_mose_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/aQNKZ7fiY8reI4aBxmhIds9vkuxlUySO</string>
+    <string name="lodate_il_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/rBVTBYr6NgUx4LlcvJ3xkuWtGOT0tJ16</string>
+    <string name="quando_israele_usci_egitto_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/When%20Israel%20Came%20Out%20Of%20Egypt.mp3</string>
+    <string name="alzate_o_porte_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/jABNnhifJOMR1csOwmsGYgqhD780MXvN</string>
+    <string name="signore_mio_pastore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/DX7cTeUE6dahDtho9cfcWF7qYsM8EqZ4</string>
+    <string name="giunti_fiumi_babilonia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/jo8REAdQSZHtHiBNOrCxXXA3enNHuGK1</string>
+    <string name="pieta_di_me_o_dio_link" formatted="false" />
+    <string name="misericordia_dio_misericordia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/jo8REAdQSZHtHiBNOrCxXXA3enNHuGK1</string>
+    <string name="inno_della_kenosis_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/FVCZiMTKE3ZqMUc4hyjitvcMQsZWNETd</string>
+    <string name="ave_maria_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Hail%20Mary.mp3</string>
+    <string name="ave_maria_1984_link" formatted="false" />
+    <string name="maria_piccola_maria_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Mary%20Little%20Mary.mp3</string>
+    <string name="alzo_gli_occhi_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/DmCIkkBB8kqCn8AnTBO5zVmstv9Kzmem</string>
+    <string name="canto_liberati_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/50f9Ifl9Cfxb7PfPCgOVi2ilSRudE7cI</string>
+    <string name="se_oggi_ascoltate_sua_voce_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/lI7RHl93ZhH3MExWQ9VsdUjWKs2TRHdx</string>
+    <string name="dajenu_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/M1liwyewxBdtkvaR4SrbD7xAPrYFg19W</string>
+    <string name="alla_vittima_pasquale_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/mLVxnp9K5NEShmVXgn5UuFNsekydqyLR</string>
+    <string name="inno_di_pasqua_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Hymn%20of%20Passover.mp3</string>
+    <string name="inno_avvento_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ww2hmvUyTLrrAnqaKCR0SQGRqmPdqETd</string>
+    <string name="uri_uri_ura_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Uri%20Uri%20Ura.mp3</string>
+    <string name="gia_viene_il_mio_dio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/gVZNsiS8XIAwSd7q6pnTG5Y0PPeq4OSj</string>
+    <string name="amen_amen_amen_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/8JcNQpHWyVF0wFnJRZA8uzbRoWwHAKT7</string>
+    <string name="se_signore_non_costruisce_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/If%20The%20Lord%20Does%20Not%20Build%20the%20House.mp3</string>
+    <string name="gustate_e_vedete_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Taste%20and%20see%20(Ps%2034).mp3</string>
+    <string name="per_amore_dei_miei_fratelli_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ENPjI4fvkbMFamYGpe9cHjttL3pvB51x</string>
+    <string name="ho_sperato_nel_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/qp3xnxxrNzOrBgQqgHYdGMdLNR0Eiv6t</string>
+    <string name="voglio_cantare_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/wzScNMr5YYQLKf8rEGy4uyLOO69clOiX</string>
+    <string name="perche_genti_congiurano_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Why%20Do%20the%20Nations%20Conspire.mp3</string>
+    <string name="come_una_cerva_anela_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/MSQiO7hV4zJELxIQEf9b9klgEhAf9LlG</string>
+    <string name="acclamate_al_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/lgYG0xIYsBTyNfHKlAItYUzlMA8vSAjo</string>
+    <string name="gridate_con_gioia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Ey1CqD521bsT0xzxJusP0XgnZ5z1M7Eo</string>
+    <string name="al_risveglio_mi_saziero_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/OsRmYjEUTmzikSzMtdRQc3OBnsoHndep</string>
+    <string name="canto_bambini_veglia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Wz9JIiI40eIyoWRYDTCftRUxuFfTfl85</string>
+    <string name="non_moriro_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/2o4OOCDv4hKisliwmVWaeVRNvxg30FUR</string>
+    <string name="dite_agli_smarriti_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ADDatOwbhUx2YS9dFx9awR5fSiqAwOmJ</string>
+    <string name="o_dio_tu_sei_il_mio_dio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/9LCcKx8aYDeMwxiSvRbisdPLKIph5hSP</string>
+    <string name="sale_dio_tra_acclamazioni_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/n2tygTScgxHL5WtT7Krd4fZNiMPwZsg2</string>
+    <string name="popolo_camminava_tenebre_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20people%20who%20walked%20in%20darkness%20I.mp3</string>
+    <string name="canto_di_balaam_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/WQRvTd3skn8Nf0rGWrEET1VpITZs5iaE</string>
+    <string name="davanti_agli_angeli_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/nILZ5Q7PcykagRPdXjNlsJS2pqdSZiGy </string>
+    <string name="tempo_ogni_cosa_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/97M7h4BU9gRanFsKUMfa1oF7bHO33KA7</string>
+    <string name="benedici_anima_mia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/K8Dxfa7jXQDaNaMqSBMyPxVwy5xaf1tw</string>
+    <string name="quanto_sono_amabili_dimore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/3cCyWzX5cK1PJVm7zPrEvQlBT739eJCm</string>
+    <string name="viene_il_signore_vestito_di_maesta_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Veotr6sXDvj5dZzHae0DMAITcAiXzJVv</string>
+    <string name="giorno_di_riposo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/cPzeUMAumSOijyWQy7T9k1YBpIUB6F3g</string>
+    <string name="consolate_il_mio_popolo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/pNuFP25dAUl6j9bO2NfqgXvQ1RcjNlMJ</string>
+    <string name="cerano_due_angeli_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/There%20were%20two%20angels.mp3</string>
+    <string name="amo_il_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/dL4xJ87XCoPjxZTALkK4Tjfq4HyYKBiS</string>
+    <string name="venite_a_me_voi_tutti_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Come%20to%20me.mp3</string>
+    <string name="a_te_si_deve_lode_in_sion_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/I686jEqJUx8kv02fHeURuGuPkgVWzHGr</string>
+    <string name="se_signore_sono_rifugiato_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/byM6E0UO7TN5daVRv7Z6ALh4fYz5MFV2</string>
+    <string name="signore_annuncia_una_notizia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Vhs3w8Zl2Xo6DsDR3jZ6uN7FV1R8Fhwv</string>
+    <string name="benedite_il_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/KQu6Gr1auVFERctf96WOn8g3Y9kfTYoo</string>
+    <string name="figlie_di_gerusalemme_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ElSHHYLQZqSnvMnOLTPSpUKegq4LsIwY</string>
+    <string name="ti_ho_manifestato_mio_peccato_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/I%20manifested%20to%20you%20my%20sin%20(Ps%2032).mp3</string>
+    <string name="maria_madre_della_chiesa_link" formatted="false" />
+    <string name="stabat_mater_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/dSi1qGHsfLJ4D7kKOSF95Yo5Y6KafrGv</string>
+    <string name="lamenti_del_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/R6GptGZKGFaKw8a1qC8bMGX6LclPNf56</string>
+    <string name="o_signore_nostro_dio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/E4ZI6LPiiWHkdadhVkioS7phrYuaAg8Q</string>
+    <string name="benedetta_sei_tu_maria_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/gJDYejcv4J3GtwnE3KGVk8VaXaTHF0bB</string>
+    <string name="salve_regina_dei_cieli_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Hail%20Queen%20of%20Heavens.mp3</string>
+    <string name="vergine_della_meraviglia_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Virgin%20of%20Wonders.mp3</string>
+    <string name="maria_casa_di_benedizione_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Mary,%20House%20of%20benediction.mp3</string>
+    <string name="benediro_il_signore_in_ogni_tempo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/8zc9JZ5YqK8PYT1Zha69CeDXqrcDJF4M</string>
+    <string name="mietitura_delle_nazioni_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/TlhqAlNJtWjME6g1xXneA3Mf6dM460GS</string>
+    <string name="dice_il_signore_al_mio_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Says%20The%20Lord%20To%20My%20Lord.mp3</string>
+    <string name="felice_uomo_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Happy%20the%20man%20(Ps%201).mp3</string>
+    <string name="agnello_di_dio_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Lamb%20of%20God.mp3</string>
+    <string name="tu_sei_il_piu_bello_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/You%20are%20beautiful%201.mp3</string>
+    <string name="felicita_per_l_uomo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/6hFEO44ADaIAQmMDXHN7EmlPcQbus1cB</string>
+    <string name="sorga_dio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/0k6OnPTR1Pwz1pklJ25Wrxwx9eCZjyb1</string>
+    <string name="andiamo_gia_pastori_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Shepherds,%20Let%20us%20Go.mp3</string>
+    <string name="maria_di_jasna_gora_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Maria%20Di%20Jasna%20Gura.mp3</string>
+    <string name="a_te_signore_con_la_mia_voce_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/fc3IBJXjSsyAcJix0wewq2bNUnwn8IcH</string>
+    <string name="un_germoglio_spunta_tronco_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/A%20Shoot%20Springs%20Up%20From%20the%20Stock%20of%20Jesse%20(%20Is.%2011,1-11%20).mp3</string>
+    <string name="a_te_signore_innalzo_la_mia_anima_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/To%20You%20O%20Lord%20I%20Lift%20Up%20My%20Soul.mp3</string>
+    <string name="ti_sto_chiamando_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/I%20Call%20Upon%20You.mp3</string>
+    <string name="a_te_levo_i_miei_occhi_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/1OTs2ISW7apPoiY6QIjAXIuoeBFH3BnE</string>
+    <string name="signore_non_punirmi_nel_tuo_sdegno_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/6XJ2RTcAeWzdU50A8gEq2u8EBZvMvCxo</string>
+    <string name="gloria_gloria_gloria_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Glory,%20Glory,%20Glory.mp3</string>
+    <string name="esultate_giusti_nel_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Exult%20You%20Just%20In%20The%20Lord.mp3</string>
+    <string name="molto_mi_hanno_perseguitato_link" formatted="false" />
+    <string name="ti_amo_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/I%20love%20you%20Lord%20(Ps%2018).mp3</string>
+    <string name="maria_madre_cammino_ardente_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Mary,%20Mother%20of%20the%20Burning%20Way.mp3</string>
+    <string name="shlom_lech_mariam_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/A4YLmPqAyTkw3EwFQwrevdqZdnrUEbeA</string>
+    <string name="andate_ed_annunziate_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Go%20and%20Announce%20to%20my%20Brothers.mp3</string>
+    <string name="mi_indicherai_sentiero_vita_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/You%20will%20show%20me%20the%20path%20of%20life.mp3</string>
+    <string name="o_dio_per_il_tuo_nome_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/oFF3otSI7pqq5jdPUOJiKFd4tBwMhjOd</string>
+    <string name="stolto_pensa_che_non_ce_dio_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20Foolish%20One%20thinks.mp3</string>
+    <string name="signore_ascolta_mia_preghiera_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Lord,%20Listen%20to%20my%20Prayer.mp3</string>
+    <string name="non_e_qui_e_risorto_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/gijFlXfI4LC1SnPR1RtekoXoTXEN0VyK</string>
+    <string name="vi_prendero_dalle_genti_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/EjFd1wtg08kbY2kV95pO3JWHB0DPd4ON</string>
+    <string name="voi_siete_la_luce_del_mondo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/chi3at3M0iUZOy3ttazM39bFzcTsyc7u</string>
+    <string name="sola_a_solo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/VmKRjrXWDgh2g1da4NGEthZoc73HgG3l</string>
+    <string name="in_mezzo_grande_folla_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/a4ItdMIcALG5kh3zZy8W86OSwqdx3Cos</string>
+    <string name="zaccheo_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Zaccheus.mp3</string>
+    <string name="siedi_solitario_silenzioso_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/fLXKnaytCAw2FCy6LzoKlRZLBa2ZPOeB</string>
+    <string name="cosi_parla_amen_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/iwVpA20xDTcoIpQXxfA7nIYwj8S5KkjS</string>
+    <string name="ti_vedranno_i_re_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/bI9tHb9967dyjXdXbCRg2rUO1nQRZN65</string>
+    <string name="giacobbe_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/wIxd4Es8lwe10vB9v0SCsQkYFupnHGsz</string>
+    <string name="debora_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/yunPqTKSFKiLKcbCzra6ASkCUMqQlcl0</string>
+    <string name="vedo_cieli_aperti_link" formatted="false" />
+    <string name="il_signore_mi_ha_dato_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/TXWbjI2OCTKbUVwtFAPaHfWCBfNw96Fw</string>
+    <string name="pigiatore_link" formatted="false" />
+    <string name="seminatore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/YgVMAOrsgZoZvI5Ml67YfpI6Hd6hd6x3</string>
+    <string name="spirito_del_signore_sopra_di_me_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/I7bhhRcnmwCDrUOHSZ67p96UxzH9MBEv</string>
+    <string name="ecco_lo_specchio_nostro_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/2KQTDQXXlm0c1Fm3DjzotiPQFBAnrpbn</string>
+    <string name="come_slancio_ira_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Yrp3pAjuKTwEnnr2dvrAk2n6gOsB2Jeb</string>
+    <string name="benedetto_sia_iddio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Q9aOGkQbXZpZONv3ImZ4l81xqyQwB4sO</string>
+    <string name="signore_tu_scruti_conosci_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/U1sQzNXBdGgba3UXkCF891VpyG9wXqLv</string>
+    <string name="eli_eli_lamma_sabactani_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/7ycc64t2JGUlmYZFI2OqoWEYZNK1ZQVi</string>
+    <string name="nessuno_puo_servire_due_padroni_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/t3spfJ1eP5wtxabNhfSbcr7n6HMpwXaZ</string>
+    <string name="signore_mio_cuore_pretese_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/pzMWws3VepCq5e42aoZNN4w1tZKMGNrW</string>
+    <string name="voglio_andare_a_gerusalemme_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/I%20want%20to%20go%20to%20Jerusalem.mp3</string>
+    <string name="shema_israel_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/cT8yTCIs6i5Htds1tvnfgH756qt2WzgV</string>
+    <string name="inno_croce_gloriosa_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/AtXPDKwIwyLtvjw5O4WWktsVGVuck0uz</string>
+    <string name="rivestitevi_dell_armatura_link" formatted="false" />
+    <string name="sue_fondamenta_link" formatted="false" />
+    <string name="akeda_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/PfPSuCw2AHLbIQ98IcrGGAog2lvOEmAW</string>
+    <string name="non_ti_adirare_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/IUCrpa4dw5SoPtD3qrCNEigYESEpspLj</string>
+    <string name="inno_alla_carita_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Hymn%20To%20Charity.mp3</string>
+    <string name="stesso_iddio_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20Same%20God.mp3</string>
+    <string name="come_condannati_a_morte_link" formatted="false" />
+    <string name="gesu_percorreva_link" formatted="false" />
+    <string name="non_resistete_al_male_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/jTAscuFLlZcp1LETiDDAxRzeINONMoQh</string>
+    <string name="che_mi_baci_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/2ECu3i9aclPvhnqELnSPmgicue0t3VXj</string>
+    <string name="mia_diletta_e_per_me_link" formatted="false" />
+    <string name="vieni_dal_libano_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/bSVYsuRPXrLUoIwhFrE2gd1C5c2FdlWW</string>
+    <string name="quando_dormivo_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Snp8yjodrE9fz0Zc9XB80aalflvS7o1a</string>
+    <string name="tu_che_abiti_nei_giardini_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Flee%20my%20beloved.mp3</string>
+    <string name="agnella_di_dio_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/vHhsJrwJyfeYrEqsAr7iC36L9zLyBbVS</string>
+    <string name="non_ce_in_lui_bellezza_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/vSwL1Nk8IZTYWSiar0HIIDKL9hsWzhDO</string>
+    <string name="canto_dell_agnello_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/vHhsJrwJyfeYrEqsAr7iC36L9zLyBbVS</string>
+    <string name="chi_e_colei_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Who%20is%20She.mp3</string>
+    <string name="voce_del_mio_amato_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20Voice%20Of%20My%20Beloved.mp3</string>
+    <string name="colomba_volo_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20dove%20hovered%20over%20II.mp3</string>
+    <string name="come_stilla_il_miele_link" formatted="false" />
+    <string name="o_gesu_amore_mio_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/O%20Jesus%20my%20love.mp3</string>
+    <string name="portami_in_cielo_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Take%20Me%20To%20Heaven.mp3</string>
+    <string name="tu_sei_mia_speranza_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Ew5h6WoogLMMhtuEvbrwaKX9Z7ZQSpqz</string>
+    <string name="una_donna_vestita_di_sole_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/sNpQAyQfihd42wMHL1aWYqhbvepgnmzg</string>
+    <string name="ho_steso_le_mani_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/pCjC2lcYXjppYqCHhg3xIFptoWQCbxVx</string>
+    <string name="omelia_pasquale_melitone_sardi_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/3qaiFSmn6MfJ4LmkNpL9yyujKSRqACdo</string>
+    <string name="carmen_63_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/6Gi0mrqRdj4TQtYZy2buuE2Usgxp1izI</string>
+    <string name="caritas_christi_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/jlmFaXqNGufyslZSmZTyoBHBnUwtbPIM</string>
+    <string name="noli_me_tangere_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/6ON52i8rQJ4f6sdkKseuvVmvLCKMNnz3</string>
+    <string name="signore_aiutami_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Tb68paLZCiUI28kqZFSr4w1VyOELa0dw</string>
+    <string name="mi_hai_sedotto_signore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/pdeEVO685wd7WLZb43Y8siznsxGmeJ0x</string>
+    <string name="amate_i_vostri_nemici_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20Sermon%20on%20the%20Mountain.mp3</string>
+    <string name="tu_sei_bella_amica_mia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/8YuNTY5aVjBnBXn1jPq6xaw7zj1bdHUL</string>
+    <string name="fratelli_non_diamo_a_nessuno_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Brothers.mp3</string>
+    <string name="questo_e_io_mio_comandamento_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/This%20is%20my%20commandment.mp3</string>
+    <string name="mi_rubasti_cuore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/b9LkzF77G07VcPv2CglCtWbVJ3qXXHMk</string>
+    <string name="in_una_notte_oscura_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/The%20Dark%20Night.mp3</string>
+    <string name="se_siete_risorti_link" formatted="false" />
+    <string name="una_gran_senal_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/iSAxvt0g5jZtKLJlvXf12Vcl0PpB1tcq</string>
+    <string name="resurrexit_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/i1wXs0sCJcFp0a17MvCoY91qSjEK2Vx5</string>
+    <string name="ecco_il_mio_servo_link" formatted="false" />
+    <string name="ave_maria_colomba_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/1o1zbToG18UhJ9kYHttj0x5Ozy3H7ntq</string>
+    <string name="messia_leone_vincere_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/WJOlAsa1J86Aj8uRsw9Vo8TTi98LH0oJ</string>
+    <string name="come_pecora_che_vede_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/ulXQPzHKmhgVDwXzhV4e15Cf2MzPgOfM</string>
+    <string name="e_paziente_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/Q7XtzjBxkbL1k5sFuvGo6UgghN8JLlKX</string>
+    <string name="inno_cristo_luce_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/CDZPfl3VgYXinpH0RZeSjO4CzYk2VRhU</string>
+    <string name="preghiera_eucaristica_IV_link" formatted="false" />
+    <string name="preghiere_universali_cantate_link" formatted="false" />
+    <string name="salga_sposo_sul_legno_link" formatted="false" />
+    <string name="salmodia_salmo_responsoriale_link" formatted="false" />
+    <string name="salve_regina_link" formatted="false" />
+    <string name="sequenza_corpus_domini_link" formatted="false" />
+    <string name="un_angelo_venne_dal_cielo_link" formatted="false" />
 </resources>

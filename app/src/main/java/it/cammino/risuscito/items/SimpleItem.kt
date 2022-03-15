@@ -2,17 +2,13 @@ package it.cammino.risuscito.items
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
-import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -48,27 +44,11 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
 
     var undecodedSource: String? = null
 
-    var color: ColorHolder? = null
+    var color: Int = Color.WHITE
         private set
-    var setColor: Any? = null
+    var setColor: String? = null
         set(value) {
             color = helperSetColor(value)
-        }
-
-    var numSalmo: Int = 0
-        private set
-    var setNumSalmo: String? = null
-        set(value) {
-            var numeroTemp = 0
-            try {
-                numeroTemp = Integer.valueOf(value?.substring(0, 3) ?: "")
-            } catch (e: NumberFormatException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            } catch (e: IndexOutOfBoundsException) {
-                Log.e(javaClass.name, e.localizedMessage, e)
-            }
-            numSalmo = numeroTemp
-            field = value
         }
 
     var filter: String? = null
@@ -91,17 +71,22 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
 
         filter?.let {
             if (it.isNotEmpty()) {
-                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
-                        ?: "")
-                val mPosition = normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
+                val normalizedTitle = Utility.removeAccents(
+                    title?.getText(ctx)
+                        ?: ""
+                )
+                val mPosition =
+                    normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
                 if (mPosition >= 0) {
                     val stringTitle = title?.getText(ctx)
-                    val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
-                            ?: "") else "")
-                            .append("<b>")
-                            .append(stringTitle?.substring(mPosition, mPosition + it.length))
-                            .append("</b>")
-                            .append(stringTitle?.substring(mPosition + it.length))
+                    val highlighted = StringBuilder(
+                        if (mPosition > 0) (stringTitle?.substring(0, mPosition)
+                            ?: "") else ""
+                    )
+                        .append("<b>")
+                        .append(stringTitle?.substring(mPosition, mPosition + it.length))
+                        .append("</b>")
+                        .append(stringTitle?.substring(mPosition + it.length))
                     binding.textTitle.text = LUtils.fromHtmlWrapper(highlighted.toString())
                 } else
                     StringHolder.applyTo(title, binding.textTitle)
@@ -109,17 +94,14 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
                 StringHolder.applyTo(title, binding.textTitle)
         } ?: StringHolder.applyTo(title, binding.textTitle)
         StringHolder.applyToOrHide(page, binding.textPage)
-        binding.root.background = FastAdapterUIUtils.getSelectableBackground(
-                ctx,
-                ContextCompat.getColor(ctx, R.color.selected_bg_color),
-                true)
+        binding.listViewItemContainer.isChecked = isSelected
 
         val bgShape = binding.textPage.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        bgShape?.setColor(color)
         binding.textPage.isInvisible = isSelected
         binding.selectedMark.isVisible = isSelected
         val bgShapeSelected = binding.selectedMark.background as? GradientDrawable
-        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorSecondary, TAG))
+        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorPrimary, TAG))
 
     }
 

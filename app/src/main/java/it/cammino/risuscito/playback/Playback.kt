@@ -15,15 +15,14 @@
  */
 package it.cammino.risuscito.playback
 
-import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.MediaPlayer.*
+import android.net.Uri
 import android.net.wifi.WifiManager
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
@@ -36,7 +35,6 @@ import android.util.Log
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.Utility.isDefaultLocationPublic
@@ -44,15 +42,20 @@ import it.cammino.risuscito.Utility.isExternalStorageReadable
 import java.io.FileInputStream
 import java.io.IOException
 
-class Playback internal constructor(private val mService: MusicService,
-                                    private var mMusicProvider: MusicProvider?) : AudioManager.OnAudioFocusChangeListener, OnCompletionListener, OnErrorListener, OnPreparedListener, OnSeekCompleteListener {
+class Playback internal constructor(
+    private val mService: MusicService,
+    private var mMusicProvider: MusicProvider?
+) : AudioManager.OnAudioFocusChangeListener, OnCompletionListener, OnErrorListener,
+    OnPreparedListener, OnSeekCompleteListener {
     private val mWifiLock: WifiManager.WifiLock
     var state = PlaybackStateCompat.STATE_NONE
         private set
     private var mPlayOnFocusGain: Boolean = false
     private var mCallback: Callback? = null
+
     @Volatile
     private var mCurrentPosition: Int = 0
+
     @Volatile
     private var mCurrentMediaId: String? = null
     private var mAudioFocus = AUDIO_NO_FOCUS_NO_DUCK
@@ -60,13 +63,13 @@ class Playback internal constructor(private val mService: MusicService,
     private var mMediaPlayer: MediaPlayer? = null
 
     private val mPlaybackAttributes = AudioAttributesCompat.Builder()
-            .setUsage(AudioAttributesCompat.USAGE_MEDIA)
-            .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
-            .build()
+        .setUsage(AudioAttributesCompat.USAGE_MEDIA)
+        .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
+        .build()
     private val mFocusRequest = AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)
-            .setAudioAttributes(mPlaybackAttributes)
-            .setOnAudioFocusChangeListener(this@Playback, Handler(Looper.getMainLooper()))
-            .build()
+        .setAudioAttributes(mPlaybackAttributes)
+        .setOnAudioFocusChangeListener(this@Playback, Handler(Looper.getMainLooper()))
+        .build()
 
     internal val isConnected: Boolean
         get() = true
@@ -89,7 +92,8 @@ class Playback internal constructor(private val mService: MusicService,
 
         // Create the Wifi lock (this does not acquire the lock, this just creates it).
 
-        this.mWifiLock = (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
+        this.mWifiLock =
+            (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "sample_lock")
     }
 
@@ -137,29 +141,37 @@ class Playback internal constructor(private val mService: MusicService,
                 // then the content type should be set to CONTENT_TYPE_SPEECH for those
                 // tracks.
                 //                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                setStreamType()
+                (mPlaybackAttributes.unwrap() as? AudioAttributes)?.let {
+                    mMediaPlayer?.setAudioAttributes(
+                        it
+                    )
+                }
 
                 Log.d(TAG, "play: $source")
 
                 if (source?.startsWith("http") == true)
                     mMediaPlayer?.setDataSource(source)
                 else {
-                    if (hasQ() && isExternalStorageReadable && isDefaultLocationPublic(mService.applicationContext))
-                        source?.let { mSource ->
-                            val mUri = ContentUris.withAppendedId(MediaStore.Audio.Media
-                                    .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), getExternalMediaIdByName(mService.applicationContext, mSource))
+                    source?.let {
+                        if (it.contains("com.android.providers.media"))
+                            mMediaPlayer?.setDataSource(mService.applicationContext, Uri.parse(it))
+                        else if (hasQ() && isExternalStorageReadable && isDefaultLocationPublic(
+                                mService.applicationContext
+                            )
+                        ) {
+                            val mUri = ContentUris.withAppendedId(
+                                MediaStore.Audio.Media
+                                    .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                                getExternalMediaIdByName(mService.applicationContext, it)
+                            )
                             mMediaPlayer?.setDataSource(mService.applicationContext, mUri)
-                        } ?: run {
-                            mCallback?.onError("NULL AUDIO LINK")
-                        }
-                    else {
-                        source?.let {
+                        } else {
                             val fileInputStream = FileInputStream(it)
                             mMediaPlayer?.setDataSource(fileInputStream.fd)
                             fileInputStream.close()
-                        } ?: run {
-                            mCallback?.onError("NULL AUDIO LINK")
                         }
+                    } ?: run {
+                        mCallback?.onError("NULL AUDIO LINK")
                     }
                 }
 
@@ -236,7 +248,11 @@ class Playback internal constructor(private val mService: MusicService,
     private fun giveUpAudioFocus() {
         Log.d(TAG, "giveUpAudioFocus")
         mAudioManager?.let {
-            if (AudioManagerCompat.abandonAudioFocusRequest(it, mFocusRequest) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+            if (AudioManagerCompat.abandonAudioFocusRequest(
+                    it,
+                    mFocusRequest
+                ) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+            )
                 mAudioFocus = AUDIO_NO_FOCUS_NO_DUCK
         }
     }
@@ -256,7 +272,10 @@ class Playback internal constructor(private val mService: MusicService,
             // If we were playing when we lost focus, we need to resume playing.
             if (mPlayOnFocusGain) {
                 if (mMediaPlayer != null && mMediaPlayer?.isPlaying != true) {
-                    Log.d(TAG, "configMediaPlayerState startMediaPlayer. seeking to $mCurrentPosition")
+                    Log.d(
+                        TAG,
+                        "configMediaPlayerState startMediaPlayer. seeking to $mCurrentPosition"
+                    )
                     state = if (mCurrentPosition == mMediaPlayer?.currentPosition) {
                         mMediaPlayer?.start()
                         PlaybackStateCompat.STATE_PLAYING
@@ -278,8 +297,9 @@ class Playback internal constructor(private val mService: MusicService,
             mAudioFocus = AUDIO_FOCUSED
 
         } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS
-                || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
-                || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+            || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+            || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
+        ) {
             // We have lost focus. If we can duck (low playback volume), we can keep playing.
             // Otherwise, we need to pause the playback.
             val canDuck = focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
@@ -336,7 +356,10 @@ class Playback internal constructor(private val mService: MusicService,
             // Make sure the media player will acquire a wake-lock while
             // playing. If we don't do that, the CPU might go to sleep while the
             // song is playing, causing playback to stop.
-            mMediaPlayer?.setWakeMode(mService.applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
+            mMediaPlayer?.setWakeMode(
+                mService.applicationContext,
+                PowerManager.PARTIAL_WAKE_LOCK
+            )
 
             // we want the media player to notify us when it's ready preparing,
             // and when it's done playing:
@@ -365,23 +388,6 @@ class Playback internal constructor(private val mService: MusicService,
         if (mWifiLock.isHeld) mWifiLock.release()
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun setStreamTypeLollipop() {
-        (mPlaybackAttributes.unwrap() as? AudioAttributes)?.let { mMediaPlayer?.setAudioAttributes(it) }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun setStreamTypeLegacy() {
-        mMediaPlayer?.setAudioStreamType(mPlaybackAttributes.legacyStreamType)
-    }
-
-    private fun setStreamType() {
-        if (LUtils.hasL())
-            setStreamTypeLollipop()
-        else
-            setStreamTypeLegacy()
-    }
-
     interface Callback {
         fun onCompletion()
         fun onPlaybackStatusChanged(state: Int)
@@ -391,15 +397,20 @@ class Playback internal constructor(private val mService: MusicService,
     companion object {
 
         private val TAG = Playback::class.java.simpleName
+
         // The volume we set the media player to when we lose audio focus, but are
         // allowed to reduce the volume instead of stopping playback.
         private const val VOLUME_DUCK = 0.2f
+
         // The volume we set the media player when we have audio focus.
         private const val VOLUME_NORMAL = 1.0f
+
         // we don't have audio focus, and can't duck (play at a low volume)
         private const val AUDIO_NO_FOCUS_NO_DUCK = 0
+
         // we don't have focus, but can duck (play at a low volume)
         private const val AUDIO_NO_FOCUS_CAN_DUCK = 1
+
         // we have full audio focus
         private const val AUDIO_FOCUSED = 2
     }

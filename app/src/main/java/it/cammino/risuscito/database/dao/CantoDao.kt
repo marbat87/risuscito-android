@@ -31,7 +31,7 @@ interface CantoDao {
     fun truncateTable()
 
     @Query("SELECT id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedBarre, savedTab, coalesce(savedSpeed,\"2\") as savedSpeed FROM canto WHERE id = :id")
-    fun getCantoById(id: Int): Canto
+    fun getCantoById(id: Int): Canto?
 
     @Query("SELECT id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedBarre, savedTab, coalesce(savedSpeed,\"2\") as savedSpeed from canto WHERE source = :src")
     fun getCantiWithSource(src: String): List<Canto>?

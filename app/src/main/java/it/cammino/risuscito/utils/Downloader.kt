@@ -22,7 +22,7 @@ import java.net.URL
 
 class Downloader(val activity: FragmentActivity) {
 
-    private val viewModel: DownloaderViewModel = ViewModelProvider(activity).get(DownloaderViewModel::class.java)
+    private val viewModel: DownloaderViewModel = ViewModelProvider(activity)[DownloaderViewModel::class.java]
 
     private var isCancelled = false
 

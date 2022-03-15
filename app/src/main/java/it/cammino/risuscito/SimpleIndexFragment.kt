@@ -8,13 +8,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.color.MaterialColors
@@ -63,7 +62,11 @@ class SimpleIndexFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = IndexListFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -80,31 +83,53 @@ class SimpleIndexFragment : Fragment() {
 
         subscribeUiChanges()
 
-        mAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-            var consume = false
-            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                mLastClickTime = SystemClock.elapsedRealtime()
-                // lancia l'activity che visualizza il canto passando il parametro creato
-                val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(
-                        Utility.PAGINA to item.source?.getText(requireContext()),
-                        Utility.ID_CANTO to item.id
-                ))
-                activityViewModel.mLUtils.startActivityWithTransition(intent)
-                consume = true
+        mAdapter.onClickListener =
+            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+                var consume = false
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    // lancia l'activity che visualizza il canto passando il parametro creato
+                    val intent = Intent(activity, PaginaRenderActivity::class.java)
+                    intent.putExtras(
+                        bundleOf(
+                            Utility.PAGINA to item.source?.getText(requireContext()),
+                            Utility.ID_CANTO to item.id
+                        )
+                    )
+                    activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
+                    consume = true
+                }
+                consume
             }
-            consume
-        }
 
-        mAdapter.onLongClickListener = { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-            mCantiViewModel.idDaAgg = item.id
-            when (mCantiViewModel.tipoLista) {
-                0 -> mCantiViewModel.popupMenu(this, v, ALPHA_REPLACE + mCantiViewModel.tipoLista, ALPHA_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
-                1 -> mCantiViewModel.popupMenu(this, v, NUMERIC_REPLACE + mCantiViewModel.tipoLista, NUMERIC_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
-                2 -> mCantiViewModel.popupMenu(this, v, SALMI_REPLACE + mCantiViewModel.tipoLista, SALMI_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
+        mAdapter.onLongClickListener =
+            { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+                mCantiViewModel.idDaAgg = item.id
+                when (mCantiViewModel.tipoLista) {
+                    0 -> mCantiViewModel.popupMenu(
+                        this,
+                        v,
+                        ALPHA_REPLACE + mCantiViewModel.tipoLista,
+                        ALPHA_REPLACE_2 + mCantiViewModel.tipoLista,
+                        listePersonalizzate
+                    )
+                    1 -> mCantiViewModel.popupMenu(
+                        this,
+                        v,
+                        NUMERIC_REPLACE + mCantiViewModel.tipoLista,
+                        NUMERIC_REPLACE_2 + mCantiViewModel.tipoLista,
+                        listePersonalizzate
+                    )
+                    2 -> mCantiViewModel.popupMenu(
+                        this,
+                        v,
+                        SALMI_REPLACE + mCantiViewModel.tipoLista,
+                        SALMI_REPLACE_2 + mCantiViewModel.tipoLista,
+                        listePersonalizzate
+                    )
+                }
+                true
             }
-            true
-        }
 
         mAdapter.setHasStableIds(true)
         val llm = LinearLayoutManager(context)
@@ -112,43 +137,73 @@ class SimpleIndexFragment : Fragment() {
         binding.cantiList.layoutManager = if (activityViewModel.isGridLayout) glm else llm
         binding.cantiList.setHasFixedSize(true)
         binding.cantiList.adapter = mAdapter
-        val insetDivider = DividerItemDecoration(requireContext(), (if (activityViewModel.isGridLayout) glm else llm).orientation)
-        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        binding.cantiList.addItemDecoration(insetDivider)
-        binding.dragScrollBar.setRecyclerView(binding.cantiList)
-        if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
-            binding.dragScrollBar.setTextColor(MaterialColors.getColor(requireContext(), R.attr.colorOnSecondary, TAG))
-            binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
-            binding.dragScrollBar.setAutoHide(false)
-        } else
-            binding.dragScrollBar.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-                override fun onViewDetachedFromWindow(p0: View?) {
-                    // no-op
-                }
+        if (mCantiViewModel.tipoLista != 2) {
+            binding.dragScrollBar.setRecyclerView(binding.cantiList)
+            if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
+                binding.dragScrollBar.setTextColor(
+                    MaterialColors.getColor(
+                        requireContext(),
+                        R.attr.colorOnTertiary,
+                        TAG
+                    )
+                )
+                binding.dragScrollBar.setHandleColor(
+                    MaterialColors.getColor(
+                        context, R.attr.colorTertiary, TAG
+                    )
+                )
+                binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
+                binding.dragScrollBar.setAutoHide(false)
+            } else
+                binding.dragScrollBar.addOnAttachStateChangeListener(object :
+                    View.OnAttachStateChangeListener {
+                    override fun onViewDetachedFromWindow(p0: View?) {
+                        // no-op
+                    }
 
-                override fun onViewAttachedToWindow(p0: View?) {
-                    (p0 as? TouchScrollBar)?.setTextColor(MaterialColors.getColor(requireContext(), R.attr.colorOnSecondary, TAG))
-                    (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
-                    (p0 as? TouchScrollBar)?.setAutoHide(false)
-                    p0?.removeOnAttachStateChangeListener(this)
-                }
-            })
+                    override fun onViewAttachedToWindow(p0: View?) {
+                        (p0 as? TouchScrollBar)?.setTextColor(
+                            MaterialColors.getColor(
+                                requireContext(),
+                                R.attr.colorOnTertiary,
+                                TAG
+                            )
+                        )
+                        (p0 as? TouchScrollBar)?.setHandleColor(
+                            MaterialColors.getColor(
+                                context, R.attr.colorTertiary, TAG
+                            )
+                        )
+                        (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
+                        (p0 as? TouchScrollBar)?.setAutoHide(false)
+                        p0?.removeOnAttachStateChangeListener(this)
+                    }
+                })
+        } else {
+            binding.dragScrollBar.isGone = true
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch(Dispatchers.IO) { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
+        lifecycleScope.launch(Dispatchers.IO) {
+            listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all
+        }
     }
 
     private fun subscribeUiChanges() {
         mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mAdapter.set(
-                    when (mCantiViewModel.tipoLista) {
-                        0 -> canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
-                        1 -> canti.sortedBy { it.page?.getText(requireContext())?.toInt() }
-                        2 -> canti
-                        else -> canti
-                    }
+                when (mCantiViewModel.tipoLista) {
+                    0 -> canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) {
+                        it.title?.getText(
+                            requireContext()
+                        )
+                    })
+                    1 -> canti.sortedBy { it.page?.getText(requireContext())?.toInt() }
+                    2 -> canti
+                    else -> canti
+                }
             )
         }
 
@@ -162,13 +217,24 @@ class SimpleIndexFragment : Fragment() {
                                 simpleDialogViewModel.handled = true
                                 listePersonalizzate?.let { lista ->
                                     lista[mCantiViewModel.idListaClick]
-                                            .lista?.addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
-                                    ListeUtils.updateListaPersonalizzata(this, lista[mCantiViewModel.idListaClick])
+                                        .lista?.addCanto(
+                                            (mCantiViewModel.idDaAgg).toString(),
+                                            mCantiViewModel.idPosizioneClick
+                                        )
+                                    ListeUtils.updateListaPersonalizzata(
+                                        this,
+                                        lista[mCantiViewModel.idListaClick]
+                                    )
                                 }
                             }
                             ALPHA_REPLACE_2 + mCantiViewModel.tipoLista, NUMERIC_REPLACE_2 + mCantiViewModel.tipoLista, SALMI_REPLACE_2 + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
-                                ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
+                                ListeUtils.updatePosizione(
+                                    this,
+                                    mCantiViewModel.idDaAgg,
+                                    mCantiViewModel.idListaDaAgg,
+                                    mCantiViewModel.posizioneDaAgg
+                                )
                             }
                         }
                     }

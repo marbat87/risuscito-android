@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,22 +8,19 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
-        style="@style/AdaptiveBackgroundColor"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/about_appbarlayout_height"
+        android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
-            style="@style/AdaptiveScrimColor"
+            style="?attr/collapsingToolbarLayoutLargeStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            risuscito:collapsedTitleTextAppearance="@style/ActionBar.TitleText.Collapsed"
-            risuscito:contentScrim="?colorPrimarySurface"
-            risuscito:expandedTitleTextAppearance="@style/ActionBar.TitleText.Expanded"
-            risuscito:layout_scrollFlags="scroll|exitUntilCollapsed"
-            risuscito:title="@string/changelog">
+            app:collapsedTitleTextColor="?colorOnSurface"
+            app:expandedTitleTextColor="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:title="@string/changelog">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -31,23 +28,15 @@
                 android:contentDescription="@string/app_name"
                 android:fitsSystemWindows="true"
                 android:scaleType="fitXY"
-                risuscito:layout_collapseMode="parallax"
-                risuscito:srcCompat="@drawable/ic_about_cover" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/cover_shadow_color"
-                android:fitsSystemWindows="true"
-                risuscito:layout_collapseMode="parallax" />
+                android:src="@drawable/ic_about_cover"
+                app:layout_collapseMode="parallax" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/risuscito_toolbar"
-                style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface.InAppBarLayout"
+                style="@style/Widget.Risuscito.Toolbar.InAppBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                risuscito:layout_collapseMode="pin"
-                risuscito:popupTheme="@style/RisuscitoToolbarPopup" />
+                app:layout_collapseMode="pin" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -56,10 +45,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?android:colorBackground"
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_min_margin"
         android:paddingRight="@dimen/activity_min_margin"
-        risuscito:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
             android:layout_width="match_parent"
@@ -76,7 +66,5 @@
             android:layout_marginEnd="@dimen/myListPreferredItemMargin" />
 
     </LinearLayout>
-
-    <include layout="@layout/common_shadow" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,9 +4,8 @@
     <string-array name="pref_default_index_entries">
         <item>@string/letter_order_text</item>
         <item>@string/page_order_text</item>
-        <item>@string/arg_search_text</item>
-        <item>@string/salmi_musica_index</item>
         <item>@string/indice_liturgico_index</item>
+        <item>@string/salmi_musica_index</item>
     </string-array>
 
     <string-array name="pref_default_index_values">
@@ -14,7 +13,6 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
-        <item>4</item>
     </string-array>
 
     <string-array name="pref_default_search_entries">
@@ -62,46 +60,46 @@
         <item>@string/lang_uk_value</item>
     </string-array>
 
-    <integer-array name="primary_colors_list">
-        <item>@color/md_amber_500</item>
-        <item>@color/md_blue_500</item>
-        <item>@color/md_brown_500</item>
-        <item>@color/md_cyan_500</item>
-        <item>@color/md_green_500</item>
-        <item>@color/md_grey_500</item>
-        <item>@color/md_indigo_500</item>
-        <item>@color/md_lime_500</item>
-        <item>@color/md_orange_500</item>
-        <item>@color/md_pink_500</item>
-        <item>@color/md_purple_500</item>
-        <item>@color/md_teal_500</item>
-        <item>@color/md_red_500</item>
-        <item>@color/md_deep_orange_500</item>
-        <item>@color/md_deep_purple_500</item>
-        <item>@color/md_light_blue_500</item>
-        <item>@color/md_blue_grey_500</item>
-        <item>@color/md_light_green_500</item>
-        <item>@color/md_yellow_500</item>
-    </integer-array>
+<!--    <integer-array name="primary_colors_list">-->
+<!--        <item>@color/md_amber_500</item>-->
+<!--        <item>@color/md_blue_500</item>-->
+<!--        <item>@color/md_brown_500</item>-->
+<!--        <item>@color/md_cyan_500</item>-->
+<!--        <item>@color/md_green_500</item>-->
+<!--        <item>@color/md_grey_500</item>-->
+<!--        <item>@color/md_indigo_500</item>-->
+<!--        <item>@color/md_lime_500</item>-->
+<!--        <item>@color/md_orange_500</item>-->
+<!--        <item>@color/md_pink_500</item>-->
+<!--        <item>@color/md_purple_500</item>-->
+<!--        <item>@color/md_teal_500</item>-->
+<!--        <item>@color/md_red_500</item>-->
+<!--        <item>@color/md_deep_orange_500</item>-->
+<!--        <item>@color/md_deep_purple_500</item>-->
+<!--        <item>@color/md_light_blue_500</item>-->
+<!--        <item>@color/md_blue_grey_500</item>-->
+<!--        <item>@color/md_light_green_500</item>-->
+<!--        <item>@color/md_yellow_500</item>-->
+<!--    </integer-array>-->
 
-    <integer-array name="accent_colors_list">
-        <item>@color/md_amber_a200</item>
-        <item>@color/md_blue_a200</item>
-        <item>@color/md_cyan_a200</item>
-        <item>@color/md_green_a200</item>
-        <item>@color/md_indigo_a200</item>
-        <item>@color/md_lime_a200</item>
-        <item>@color/md_orange_a200</item>
-        <item>@color/md_pink_a200</item>
-        <item>@color/md_purple_a200</item>
-        <item>@color/md_teal_a200</item>
-        <item>@color/md_red_a200</item>
-        <item>@color/md_deep_orange_a200</item>
-        <item>@color/md_deep_purple_a200</item>
-        <item>@color/md_light_blue_a200</item>
-        <item>@color/md_light_green_a200</item>
-        <item>@color/md_yellow_a200</item>
-    </integer-array>
+<!--    <integer-array name="accent_colors_list">-->
+<!--        <item>@color/md_amber_a200</item>-->
+<!--        <item>@color/md_blue_a200</item>-->
+<!--        <item>@color/md_cyan_a200</item>-->
+<!--        <item>@color/md_green_a200</item>-->
+<!--        <item>@color/md_indigo_a200</item>-->
+<!--        <item>@color/md_lime_a200</item>-->
+<!--        <item>@color/md_orange_a200</item>-->
+<!--        <item>@color/md_pink_a200</item>-->
+<!--        <item>@color/md_purple_a200</item>-->
+<!--        <item>@color/md_teal_a200</item>-->
+<!--        <item>@color/md_red_a200</item>-->
+<!--        <item>@color/md_deep_orange_a200</item>-->
+<!--        <item>@color/md_deep_purple_a200</item>-->
+<!--        <item>@color/md_light_blue_a200</item>-->
+<!--        <item>@color/md_light_green_a200</item>-->
+<!--        <item>@color/md_yellow_a200</item>-->
+<!--    </integer-array>-->
 
     <string-array name="themeListArray">
         <item>@string/night_mode_light</item>

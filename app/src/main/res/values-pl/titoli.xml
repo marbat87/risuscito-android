@@ -40,7 +40,7 @@
     <string name="benedici_anima_mia_jahve_title">Ps 103: Błogosław duszo moja, Pana</string>
     <string name="fino_a_quando_title">Ps 13: Jak długo jeszcze</string>
     <string name="jahve_tu_sei_mio_dio_title">Panie, tyś Bogiem mym (Iz 25, 1–8)</string>
-    <string name="cantiamo_cantiamo_title">Śpiewajmy, śpiewajmy (Wj 15, 1–2)</string>
+<!--    <string name="cantiamo_cantiamo_title">Śpiewajmy, śpiewajmy (Wj 15, 1–2)</string>-->
     <string name="giunga_la_mia_preghiera_title">Ps 119: Niech dotrze moja modlitwa do Ciebie</string>
     <string name="guardate_come_e_bello_title">Ps 133: Zobaczcie, jak jest pięknie</string>
     <string name="come_bello_come_da_gioia_title">Ps 133: O jak pięknie, ile radości</string>
@@ -80,7 +80,7 @@
     <string name="alzo_gli_occhi_title">Ps 121: Wnoszę me oczy ku górom</string>
     <string name="canto_liberati_title">Śpiew wyzwolonych (Iz 12, 4–6)</string>
     <string name="se_oggi_ascoltate_sua_voce_title">Ps 95: Jeśli dziś usłyszycie jego głos</string>
-    <string name="venite_applaudiamo_al_signore_title">Ps 95: Śpiewajmy radośnie Panu</string>
+<!--    <string name="venite_applaudiamo_al_signore_title">Ps 95: Śpiewajmy radośnie Panu</string>-->
     <string name="dajenu_title">Dajenu</string>
     <string name="alla_vittima_pasquale_title">Barankowi paschalnemu</string>
     <string name="inno_di_pasqua_title">Hymn na paschę</string>
@@ -104,11 +104,11 @@
     <string name="o_dio_tu_sei_il_mio_dio_title">Ps 63: O boże, tyś jest mym Bogiem</string>
     <string name="sale_dio_tra_acclamazioni_title">Ps 47: Pan wstępuje wśród okrzyków</string>
     <string name="popolo_camminava_tenebre_title">Naród kroczący w ciemnościach (Iz 9, 1–5)</string>
-    <string name="da_lode_al_signore_title">Ps 146: Daj chwałę Panu</string>
+<!--    <string name="da_lode_al_signore_title">Ps 146: Daj chwałę Panu</string>-->
     <string name="canto_di_balaam_title">Śpiew Balaama (Lb 23, 7–24)</string>
     <string name="davanti_agli_angeli_title">Ps 138: W obliczu aniołów</string>
-    <string name="quando_israele_era_un_bimbo_title">Kiedy Izrael był dziecięciem (Oz 11, 1–11)</string>
-    <string name="e_la_pasqua_del_signore_title">To jest Pascha Pana</string>
+<!--    <string name="quando_israele_era_un_bimbo_title">Kiedy Izrael był dziecięciem (Oz 11, 1–11)</string>-->
+<!--    <string name="e_la_pasqua_del_signore_title">To jest Pascha Pana</string>-->
     <string name="tempo_ogni_cosa_title">Każda rzecz ma swój czas (Koh 3, 1–15)</string>
     <string name="benedici_anima_mia_title">Błogosław duszo moja Pana (Kantyk Tobiasza) (Tb 13)</string>
     <string name="quanto_sono_amabili_dimore_title">Ps 84: Jakże są miłe twe przybytki</string>
@@ -232,4 +232,11 @@
     <string name="come_pecora_che_vede_title">Jak owieczka, która widzi (Z hymnu Romana Melodosa)</string>
     <string name="e_paziente_title">Jest cierpliwy (Hymn do Ducha Świętego)</string>
     <string name="inno_cristo_luce_title">Hymn do Chrystusa - światłości (1967)</string>
+    <string name="preghiera_eucaristica_IV_title">Preghiera Eucaristica IV - (Dossologia)</string>
+    <string name="preghiere_universali_cantate_title">Preghiere universali cantate</string>
+    <string name="salga_sposo_sul_legno_title">Salga lo sposo sul legno del suo talamo</string>
+    <string name="salmodia_salmo_responsoriale_title">Salmodia per il salmo responsoriale</string>
+    <string name="salve_regina_title">Salve Regina</string>
+    <string name="sequenza_corpus_domini_title">Sequenza Corpus Domini</string>
+    <string name="un_angelo_venne_dal_cielo_title">Un angelo venne dal cielo - Allegria Allegria</string>
 </resources>

@@ -4,20 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingLeft="24dp"
-    android:paddingTop="8dp"
-    android:paddingRight="24dp"
-    android:paddingBottom="8dp">
+    android:paddingStart="?dialogPreferredPadding"
+    android:paddingTop="?dialogPreferredPadding"
+    android:paddingEnd="?dialogPreferredPadding"
+    android:paddingBottom="?dialogPreferredPadding">
 
     <TextView
         android:id="@+id/md_content_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="4dp"
         android:layout_marginBottom="20dp"
-        android:fontFamily="@font/googlesans_regular"
-        android:textSize="16sp"
+        android:textAppearance="?textAppearanceBodyLarge"
         tools:text="Message" />
 
     <RelativeLayout
@@ -36,12 +34,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/working_progress"
             android:layout_alignStart="@id/working_progress"
-            android:layout_alignLeft="@id/working_progress"
             android:gravity="start"
             android:minWidth="36dp"
             android:textAlignment="viewStart"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="?textAppearanceTitleMedium"
             tools:text="100%" />
 
         <TextView
@@ -50,11 +46,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/working_progress"
             android:layout_alignEnd="@id/working_progress"
-            android:layout_alignRight="@id/working_progress"
             android:gravity="end"
             android:minWidth="48dp"
             android:textAlignment="viewEnd"
-            android:textSize="16sp"
+            android:textAppearance="?textAppearanceBodyLarge"
             tools:text="100%" />
 
     </RelativeLayout>

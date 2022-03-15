@@ -1,13 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="customAttrs">
-        <attr name="colorPrimaryLight" format="reference" />
-        <attr name="colorSecondaryLight" format="reference" />
-        <attr name="secondaryColorOnSecondary" format="reference" />
-        <attr name="customSelector" format="reference" />
-        <attr name="customSelectorRound" format="reference" />
-        <attr name="toolbar_shadow" format="reference" />
+    <declare-styleable name="RisuscitoTextAppearance">
+        <attr name="risuscito_regular_font" format="reference" />
+        <attr name="risuscito_medium_font" format="reference" />
     </declare-styleable>
 
 </resources>

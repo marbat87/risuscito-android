@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">Advent Dönemi</string>
-    <string name="tempo_natale">Noel Devresi</string>
-    <string name="tempo_quaresima">Karem Dönemi</string>
-    <string name="tempo_pasqua">Paskalya Devresi</string>
-    <string name="canti_pentecoste">Pentekost</string>
-    <string name="canti_vergine">Meryem\'e ilahiler</string>
-    <string name="lodi_vespri">Sabah ve Akşam Övgüsü</string>
-    <string name="canti_ingresso">Giriş</string>
-    <string name="canti_pace">Selamet</string>
-    <string name="canti_pane">Ekmek</string>
-    <string name="canti_vino">Şarap</string>
-    <string name="canti_fine">Kapanış</string>
+    <string name="tempo_avvento">ADVENT DÖNEMI</string>
+    <string name="tempo_natale">NOEL DEVRESI</string>
+    <string name="tempo_quaresima">KAREM DÖNEMI</string>
+    <string name="tempo_pasqua">PASKALYA DEVRESI</string>
+    <string name="canti_pentecoste">PENTEKOST</string>
+    <string name="canti_vergine">MERYEM\'E ILAHILER</string>
+    <string name="lodi_vespri">SABAH VE AKŞAM ÖVGÜSÜ</string>
+    <string name="canti_ingresso">GIRIŞ</string>
+    <string name="canti_pace">SELAMET</string>
+    <string name="canti_pane">EKMEK</string>
+    <string name="canti_fine">KAPANIŞ</string>
+    <string name="canti_comunione">COMUNIONE</string>
+    <string name="canti_bambini">CANTI PER I BAMBINI</string>
 </resources>

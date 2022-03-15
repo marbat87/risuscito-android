@@ -1,8 +1,8 @@
 package it.cammino.risuscito
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
@@ -11,6 +11,8 @@ import android.view.*
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -27,29 +29,24 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.leinardi.android.speeddial.SpeedDialView
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.CreaListaActivity.Companion.EDIT_EXISTING_LIST
 import it.cammino.risuscito.CreaListaActivity.Companion.ID_DA_MODIF
 import it.cammino.risuscito.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.databinding.TabsLayout2Binding
+import it.cammino.risuscito.databinding.TabsLayoutBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
-import it.cammino.risuscito.ui.Animations
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CustomLists : Fragment() {
+class CustomLists : AccountMenuFragment() {
 
     private val mCustomListsViewModel: CustomListsViewModel by viewModels()
     private val inputdialogViewModel: InputTextDialogFragment.DialogViewModel by viewModels({ requireActivity() })
@@ -58,8 +55,8 @@ class CustomLists : Fragment() {
     private var titoliListe: Array<String?> = arrayOfNulls(0)
     private var idListe: IntArray = IntArray(0)
     private var movePage: Boolean = false
-    private var mMainActivity: MainActivity? = null
     private var mRegularFont: Typeface? = null
+    private var mMediumFont: Typeface? = null
     private var tabs: TabLayout? = null
     private var mLastClickTime: Long = 0
     private val mPageChange: ViewPager2.OnPageChangeCallback =
@@ -78,7 +75,7 @@ class CustomLists : Fragment() {
             }
         }
 
-    private var _binding: TabsLayout2Binding? = null
+    private var _binding: TabsLayoutBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -89,7 +86,7 @@ class CustomLists : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = TabsLayout2Binding.inflate(inflater, container, false)
+        _binding = TabsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -102,10 +99,16 @@ class CustomLists : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
-        mRegularFont = ResourcesCompat.getFont(requireContext(), R.font.googlesans_regular)
 
-        mMainActivity = activity as? MainActivity
+        mRegularFont = ResourcesCompat.getFont(
+            requireContext(),
+            requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
+        )
+        mMediumFont = ResourcesCompat.getFont(
+            requireContext(),
+            requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
+        )
+
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
         mMainActivity?.enableBottombar(false)
         mMainActivity?.setTabVisible(true)
@@ -113,7 +116,7 @@ class CustomLists : Fragment() {
 
         movePage = savedInstanceState != null
 
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         Log.d(
             TAG,
             "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(
@@ -129,11 +132,10 @@ class CustomLists : Fragment() {
         binding.viewPager.adapter = mSectionsPagerAdapter
         tabs?.let {
             TabLayoutMediator(it, binding.viewPager) { tab, position ->
-                val l = getSystemLocale(resources)
                 tab.text = when (position) {
-                    0 -> getString(R.string.title_activity_canti_parola).uppercase(l)
-                    1 -> getString(R.string.title_activity_canti_eucarestia).uppercase(l)
-                    else -> titoliListe[position - 2]?.uppercase(l)
+                    0 -> getString(R.string.title_activity_canti_parola)
+                    1 -> getString(R.string.title_activity_canti_eucarestia)
+                    else -> titoliListe[position - 2]
                 }
             }.attach()
         }
@@ -141,16 +143,8 @@ class CustomLists : Fragment() {
         subscribeUiListe()
     }
 
-    override fun onDestroy() {
-        Log.d(TAG, "onDestroy")
-        super.onDestroy()
-        mMainActivity?.actionMode?.finish()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        IconicsMenuInflaterUtil.inflate(
-            requireActivity().menuInflater, requireContext(), R.menu.help_menu, menu
-        )
+        inflater.inflate(R.menu.help_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -175,12 +169,6 @@ class CustomLists : Fragment() {
 
     private fun playIntro() {
         mMainActivity?.enableFab(true)
-        val doneDrawable =
-            IconicsDrawable(requireContext(), CommunityMaterial.Icon.cmd_check).apply {
-                //            colorInt = Color.WHITE
-                sizeDp = 24
-                paddingDp = 4
-            }
         mMainActivity?.getFab()?.let { fab ->
             val colorOnPrimary =
                 MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
@@ -193,7 +181,8 @@ class CustomLists : Fragment() {
                         getString(R.string.showcase_listepers_desc1)
                     )
                         .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .textTypeface(mRegularFont) // Specify a typeface for the text
+                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
                         .descriptionTextSize(15)
@@ -205,8 +194,14 @@ class CustomLists : Fragment() {
                         getString(R.string.showcase_listepers_desc3)
                     )
                         .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .icon(doneDrawable)
-                        .textTypeface(mRegularFont) // Specify a typeface for the text
+                        .icon(
+                            AppCompatResources.getDrawable(
+                                requireContext(),
+                                R.drawable.baseline_check_24
+                            )
+                        )
+                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
                 )
@@ -214,9 +209,10 @@ class CustomLists : Fragment() {
                     object :
                         TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
                         override fun onSequenceFinish() {
-                            if (context != null) PreferenceManager.getDefaultSharedPreferences(
-                                context
-                            ).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                            context?.let {
+                                PreferenceManager.getDefaultSharedPreferences(it)
+                                    .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                            }
                         }
 
                         override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
@@ -224,15 +220,17 @@ class CustomLists : Fragment() {
                         }
 
                         override fun onSequenceCanceled(tapTarget: TapTarget) {
-                            if (context != null) PreferenceManager.getDefaultSharedPreferences(
-                                context
-                            ).edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                            context?.let {
+                                PreferenceManager.getDefaultSharedPreferences(it)
+                                    .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                            }
                         }
                     })
                 .start()
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun subscribeUiListe() {
         mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->
             Log.d(TAG, "list size ${list.size}")
@@ -261,18 +259,39 @@ class CustomLists : Fragment() {
                             NEW_LIST -> {
                                 inputdialogViewModel.handled = true
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
-                                startListEditForResult.launch(
-                                    Intent(
-                                        activity,
-                                        CreaListaActivity::class.java
-                                    ).putExtras(
-                                        bundleOf(
-                                            LIST_TITLE to inputdialogViewModel.outputText,
-                                            EDIT_EXISTING_LIST to false
+                                mMainActivity?.let { act ->
+                                    act.getFab().transitionName = "shared_element_crealista"
+                                    val options =
+                                        ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                            act,
+                                            act.getFab(),
+                                            "shared_element_crealista" // The transition name to be matched in Activity B.
                                         )
+                                    startListEditForResult.launch(
+                                        Intent(
+                                            activity,
+                                            CreaListaActivity::class.java
+                                        ).putExtras(
+                                            bundleOf(
+                                                LIST_TITLE to inputdialogViewModel.outputText,
+                                                EDIT_EXISTING_LIST to false
+                                            )
+                                        ),
+                                        options
                                     )
-                                )
-                                Animations.enterDown(activity)
+                                }
+//                                startListEditForResult.launch(
+//                                    Intent(
+//                                        activity,
+//                                        CreaListaActivity::class.java
+//                                    ).putExtras(
+//                                        bundleOf(
+//                                            LIST_TITLE to inputdialogViewModel.outputText,
+//                                            EDIT_EXISTING_LIST to false
+//                                        )
+//                                    )
+//                                )
+//                                Animations.enterDown(activity)
                             }
                         }
                     }
@@ -331,11 +350,7 @@ class CustomLists : Fragment() {
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = IconicsDrawable(requireContext(), CommunityMaterial.Icon3.cmd_plus).apply {
-            colorInt = Color.WHITE
-            sizeDp = 24
-            paddingDp = 4
-        }
+        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.baseline_add_24)
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {
                 R.id.fab_pulisci -> {
@@ -376,18 +391,26 @@ class CustomLists : Fragment() {
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
-                    startListEditForResult.launch(
-                        Intent(
-                            activity,
-                            CreaListaActivity::class.java
-                        ).putExtras(
-                            bundleOf(
-                                ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                EDIT_EXISTING_LIST to true
-                            )
+                    mMainActivity?.let { act ->
+                        act.getFab().transitionName = "shared_element_crealista"
+                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            act,
+                            act.getFab(),
+                            "shared_element_crealista" // The transition name to be matched in Activity B.
                         )
-                    )
-                    Animations.enterDown(activity)
+                        startListEditForResult.launch(
+                            Intent(
+                                activity,
+                                CreaListaActivity::class.java
+                            ).putExtras(
+                                bundleOf(
+                                    ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                    EDIT_EXISTING_LIST to true
+                                )
+                            ),
+                            options
+                        )
+                    }
                     true
                 }
                 R.id.fab_delete_lista -> {
@@ -411,7 +434,9 @@ class CustomLists : Fragment() {
             toggleFabMenu()
         }
 
-        mMainActivity?.initFab(true, icon, click, actionListener, customList)
+        icon?.let {
+            mMainActivity?.initFab(true, it, click, actionListener, customList)
+        }
     }
 
     private suspend fun deleteListDialog() {

@@ -7,17 +7,15 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.PopupMenu
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -29,6 +27,7 @@ import it.cammino.risuscito.databinding.SearchLayoutBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -43,10 +42,12 @@ import java.io.IOException
 import java.io.InputStream
 import java.text.Collator
 
-class SearchFragment : Fragment() {
+class SearchFragment : AccountMenuFragment() {
 
     private val mViewModel: SimpleIndexViewModel by viewModels {
-        ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
+        ViewModelWithArgumentsFactory(
+            requireActivity().application,
+            Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
@@ -58,7 +59,6 @@ class SearchFragment : Fragment() {
     private var listePersonalizzate: List<ListaPers>? = null
 
     private var mLastClickTime: Long = 0
-    private var mMainActivity: MainActivity? = null
     private lateinit var mPopupMenu: PopupMenu
 
     private var _binding: SearchLayoutBinding? = null
@@ -67,7 +67,11 @@ class SearchFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = SearchLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -80,14 +84,13 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_search)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
         if (savedInstanceState == null) {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
             val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
             mViewModel.advancedSearch = currentItem != 0
         }
@@ -104,29 +107,44 @@ class SearchFragment : Fragment() {
             FirebaseCrashlytics.getInstance().recordException(e)
         }
 
-        lifecycleScope.launch(Dispatchers.IO) { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
+        lifecycleScope.launch(Dispatchers.IO) {
+            listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all
+        }
 
         subscribeUiCanti()
 
-        binding.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+        binding.textBoxRicerca.hint =
+            if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
+                R.string.fast_search_subtitle
+            )
 
-        cantoAdapter.onClickListener = { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-            var consume = false
-            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                mLastClickTime = SystemClock.elapsedRealtime()
-                val intent = Intent(requireActivity().applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to item.source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                activityViewModel.mLUtils.startActivityWithTransition(intent)
-                consume = true
+        cantoAdapter.onClickListener =
+            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+                var consume = false
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    val intent = Intent(
+                        requireActivity().applicationContext,
+                        PaginaRenderActivity::class.java
+                    )
+                    intent.putExtras(
+                        bundleOf(
+                            Utility.PAGINA to item.source?.getText(requireContext()),
+                            Utility.ID_CANTO to item.id
+                        )
+                    )
+                    activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
+                    consume = true
+                }
+                consume
             }
-            consume
-        }
 
-        cantoAdapter.onLongClickListener = { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-            mViewModel.idDaAgg = item.id
-            mViewModel.popupMenu(this, v, SEARCH_REPLACE, SEARCH_REPLACE_2, listePersonalizzate)
-            true
-        }
+        cantoAdapter.onLongClickListener =
+            { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+                mViewModel.idDaAgg = item.id
+                mViewModel.popupMenu(this, v, SEARCH_REPLACE, SEARCH_REPLACE_2, listePersonalizzate)
+                true
+            }
 
         cantoAdapter.setHasStableIds(true)
 
@@ -136,15 +154,13 @@ class SearchFragment : Fragment() {
         else
             LinearLayoutManager(context)
         binding.matchedList.layoutManager = llm
-        val insetDivider = DividerItemDecoration(requireContext(), llm.orientation)
-        ContextCompat.getDrawable(requireContext(), R.drawable.material_inset_divider)?.let { insetDivider.setDrawable(it) }
-        binding.matchedList.addItemDecoration(insetDivider)
 
         binding.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
-                ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)?.hideSoftInputFromWindow(binding.textFieldRicerca.windowToken, 0)
+                ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)
+                    ?.hideSoftInputFromWindow(binding.textFieldRicerca.windowToken, 0)
                 returnValue = true
             }
             returnValue
@@ -155,14 +171,16 @@ class SearchFragment : Fragment() {
             ricercaStringa(s.toString())
         }
 
-        val wrapper = ContextThemeWrapper(requireContext(), R.style.Widget_MaterialComponents_PopupMenu_Risuscito)
-        mPopupMenu = if (LUtils.hasK()) PopupMenu(wrapper, binding.moreOptions, Gravity.END) else PopupMenu(wrapper, binding.moreOptions)
+        mPopupMenu = PopupMenu(requireContext(), binding.moreOptions, Gravity.END)
         mPopupMenu.inflate(R.menu.search_option_menu)
         mPopupMenu.menu.findItem(R.id.consegnaty_only).isVisible = false
         mPopupMenu.setOnMenuItemClickListener {
             it.isChecked = !it.isChecked
             mViewModel.advancedSearch = it.isChecked
-            binding.textBoxRicerca.hint = if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(R.string.fast_search_subtitle)
+            binding.textBoxRicerca.hint =
+                if (mViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
+                    R.string.fast_search_subtitle
+                )
             job.cancel()
             ricercaStringa(binding.textFieldRicerca.text.toString())
             true
@@ -186,7 +204,8 @@ class SearchFragment : Fragment() {
                 Log.d(TAG, "performSearch STRINGA: $s")
                 Log.d(TAG, "performSearch ADVANCED: ${mViewModel.advancedSearch}")
                 if (mViewModel.advancedSearch) {
-                    val words = s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val words =
+                        s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
                     for (aText in mViewModel.aTexts) {
                         if (!isActive) return@launch
@@ -209,28 +228,37 @@ class SearchFragment : Fragment() {
                         if (found) {
                             Log.d(tag, "aText[0]: ${aText[0]}")
                             mViewModel.titoli
-                                    .filter { (aText[0] ?: "") == it.undecodedSource }
-                                    .forEach {
-                                        if (!isActive) return@launch
-                                        titoliResult.add(it.apply { filter = "" })
-                                    }
+                                .filter { (aText[0] ?: "") == it.undecodedSource }
+                                .forEach {
+                                    if (!isActive) return@launch
+                                    titoliResult.add(it.apply { filter = "" })
+                                }
                         }
                     }
                 } else {
                     val stringa = Utility.removeAccents(s).lowercase(getSystemLocale(resources))
                     Log.d(tag, "performSearch onTextChanged: stringa $stringa")
                     mViewModel.titoli
-                            .filter {
-                                Utility.removeAccents(it.title?.getText(requireContext())
-                                        ?: "").lowercase(getSystemLocale(resources)).contains(stringa)
-                            }
-                            .forEach {
-                                if (!isActive) return@launch
-                                titoliResult.add(it.apply { filter = stringa })
-                            }
+                        .filter {
+                            Utility.removeAccents(
+                                it.title?.getText(requireContext())
+                                    ?: ""
+                            ).lowercase(getSystemLocale(resources)).contains(stringa)
+                        }
+                        .forEach {
+                            if (!isActive) return@launch
+                            titoliResult.add(it.apply { filter = stringa })
+                        }
                 }
                 if (isActive) {
-                    cantoAdapter.set(titoliResult.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) }))
+                    cantoAdapter.set(
+                        titoliResult.sortedWith(
+                            compareBy(
+                                Collator.getInstance(
+                                    getSystemLocale(resources)
+                                )
+                            ) { it.title?.getText(requireContext()) })
+                    )
                     binding.searchProgress.isVisible = false
                     binding.searchNoResults.isVisible = cantoAdapter.adapterItemCount == 0
                     binding.matchedList.isGone = cantoAdapter.adapterItemCount == 0
@@ -248,7 +276,10 @@ class SearchFragment : Fragment() {
 
     private fun subscribeUiCanti() {
         mViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
-            mViewModel.titoli = canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { it.title?.getText(requireContext()) })
+            mViewModel.titoli =
+                canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) {
+                    it.title?.getText(requireContext())
+                })
         }
 
         simpleDialogViewModel.state.observe(viewLifecycleOwner) {
@@ -261,13 +292,24 @@ class SearchFragment : Fragment() {
                                 simpleDialogViewModel.handled = true
                                 listePersonalizzate?.let { lista ->
                                     lista[mViewModel.idListaClick]
-                                            .lista?.addCanto(mViewModel.idDaAgg.toString(), mViewModel.idPosizioneClick)
-                                    ListeUtils.updateListaPersonalizzata(this, lista[mViewModel.idListaClick])
+                                        .lista?.addCanto(
+                                            mViewModel.idDaAgg.toString(),
+                                            mViewModel.idPosizioneClick
+                                        )
+                                    ListeUtils.updateListaPersonalizzata(
+                                        this,
+                                        lista[mViewModel.idListaClick]
+                                    )
                                 }
                             }
                             SEARCH_REPLACE_2 -> {
                                 simpleDialogViewModel.handled = true
-                                ListeUtils.updatePosizione(this, mViewModel.idDaAgg, mViewModel.idListaDaAgg, mViewModel.posizioneDaAgg)
+                                ListeUtils.updatePosizione(
+                                    this,
+                                    mViewModel.idDaAgg,
+                                    mViewModel.idListaDaAgg,
+                                    mViewModel.posizioneDaAgg
+                                )
                             }
                         }
                     }

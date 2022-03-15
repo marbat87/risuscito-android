@@ -4,15 +4,9 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.google.android.material.color.MaterialColors
+import androidx.core.view.isGone
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
-import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
@@ -40,9 +34,9 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
         set(value) {
             source = helperSetString(value)
         }
-    var color: ColorHolder? = null
+    var color: Int = Color.WHITE
         private set
-    var setColor: Any? = null
+    var setColor: String? = null
         set(value) {
             color = helperSetColor(value)
         }
@@ -60,39 +54,29 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
     override val type: Int
         get() = R.id.fastadapter_notable_item_id
 
-    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): RowItemNotableBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup?
+    ): RowItemNotableBinding {
         return RowItemNotableBinding.inflate(inflater, parent, false)
     }
 
     override fun bindView(binding: RowItemNotableBinding, payloads: List<Any>) {
-        val ctx = binding.root.context
 
         StringHolder.applyTo(title, binding.textTitle)
 
         StringHolder.applyToOrHide(page, binding.textPage)
 
         val bgShape = binding.textPage.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        bgShape?.setColor(color)
 
-        val icon = IconicsDrawable(ctx, if (numPassaggio == -1)
-            CommunityMaterial.Icon3.cmd_tag_plus
-        else
-            CommunityMaterial.Icon3.cmd_tag_text_outline).apply {
-            colorInt = MaterialColors.getColor(ctx, if (numPassaggio == -1) android.R.attr.textColorSecondary else R.attr.colorSecondary, TAG)
-            sizeDp = 24
-            paddingDp = 2
-        }
-        binding.editNoteImage.setImageDrawable(icon)
+        binding.editNote.isGone = (numPassaggio != -1)
+        binding.editNoteFilled.isGone = (numPassaggio == -1)
     }
 
     override fun unbindView(binding: RowItemNotableBinding) {
         binding.textTitle.text = null
         binding.textPage.text = null
-        binding.editNoteImage.setImageDrawable(null)
-    }
-
-    companion object {
-        private val TAG = NotableItem::class.java.canonicalName
     }
 
 }

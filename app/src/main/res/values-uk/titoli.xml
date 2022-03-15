@@ -40,7 +40,7 @@
     <string name="benedici_anima_mia_jahve_title">Благослови, душе моя, Ягве - Псалом 102(103)</string>
     <string name="fino_a_quando_title">Доки ти, Ягве - Псалом 12(13)</string>
     <string name="jahve_tu_sei_mio_dio_title">Ягве, ти ж є Бог мій (Іс. 25,1–8)</string>
-    <string name="cantiamo_cantiamo_title">Співаймо співаймо (Вих. 15,1–2)</string>
+<!--    <string name="cantiamo_cantiamo_title">Співаймо співаймо (Вих. 15,1–2)</string>-->
     <string name="giunga_la_mia_preghiera_title">Нехай моя молитва дійде до тебе - Псалом 118(119)</string>
     <string name="guardate_come_e_bello_title">Погляньте як є гарно - Псалом 132(133)</string>
     <string name="come_bello_come_da_gioia_title">Як є гарно, як дає радість - Псалом 132(133)</string>
@@ -80,7 +80,7 @@
     <string name="alzo_gli_occhi_title">Підводжу я очі на гори - Псалом 120(121)</string>
     <string name="canto_liberati_title">Пісня визволених (Іс. 12,4–6)</string>
     <string name="se_oggi_ascoltate_sua_voce_title">Якщо сьогодні почуєте його голос - Псалом 94(95)</string>
-    <string name="venite_applaudiamo_al_signore_title">Ходімте, заплещемо Господу - Псалом 94(95)</string>
+<!--    <string name="venite_applaudiamo_al_signore_title">Ходімте, заплещемо Господу - Псалом 94(95)</string>-->
     <string name="dajenu_title">Даєну</string>
     <string name="alla_vittima_pasquale_title">Для жертви пасхальної</string>
     <string name="inno_di_pasqua_title">Пасхальний гімн</string>
@@ -104,11 +104,11 @@
     <string name="o_dio_tu_sei_il_mio_dio_title">О Боже, ти є Бог мій - Псалом 62(63)</string>
     <string name="sale_dio_tra_acclamazioni_title">Бог підводиться серед окликів - Псалом 46(47)</string>
     <string name="popolo_camminava_tenebre_title">Народ що у темряві ходив (Іс. 9,1–5)</string>
-    <string name="da_lode_al_signore_title">Дайте Богу славу</string>
+<!--    <string name="da_lode_al_signore_title">Дайте Богу славу</string>-->
     <string name="canto_di_balaam_title">Пісня Валаама (Чис. 23,7–24)</string>
     <string name="davanti_agli_angeli_title">Перед ангелами - Псалом 137(138)</string>
-    <string name="quando_israele_era_un_bimbo_title">Колои Ізраїль був дитям (Ос. 11,1–11)</string>
-    <string name="e_la_pasqua_del_signore_title">Це є Пасха Господня</string>
+<!--    <string name="quando_israele_era_un_bimbo_title">Колои Ізраїль був дитям (Ос. 11,1–11)</string>-->
+<!--    <string name="e_la_pasqua_del_signore_title">Це є Пасха Господня</string>-->
     <string name="tempo_ogni_cosa_title">Для всього свій час і пора (Проп. 3,1–5)</string>
     <string name="benedici_anima_mia_title">Благослови, душе моя, Господа (Кантик Товита) (Тов. 13)</string>
     <string name="quanto_sono_amabili_dimore_title">Які ж любі твої оселі - Псалом 83(84)</string>
@@ -232,4 +232,11 @@
     <string name="come_pecora_che_vede_title">Як вівця, що бачить</string>
     <string name="e_paziente_title">Він - терпеливий (гімн святому духу)</string>
     <string name="inno_cristo_luce_title">Гімн до Христа Світла (1967)</string>
+    <string name="preghiera_eucaristica_IV_title">Preghiera Eucaristica IV - (Dossologia)</string>
+    <string name="preghiere_universali_cantate_title">Preghiere universali cantate</string>
+    <string name="salga_sposo_sul_legno_title">Salga lo sposo sul legno del suo talamo</string>
+    <string name="salmodia_salmo_responsoriale_title">Salmodia per il salmo responsoriale</string>
+    <string name="salve_regina_title">Salve Regina</string>
+    <string name="sequenza_corpus_domini_title">Sequenza Corpus Domini</string>
+    <string name="un_angelo_venne_dal_cielo_title">Un angelo venne dal cielo - Allegria Allegria</string>
 </resources>

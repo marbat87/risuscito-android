@@ -1,0 +1,15 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:drawable="@drawable/baseline_play_arrow_24">
+    <target android:name="play">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="300"
+                android:interpolator="@android:anim/decelerate_interpolator"
+                android:propertyName="pathData"
+                android:valueFrom="M 13.5 15.5 L 19 12 L 8 12.031 L 8 15.516 L 8 19 L 13.5 15.5 M 8 5 L 8 8.516 L 8 12.031 L 13.5 12.016 L 19 12 L 8 5"
+                android:valueTo="M 10 19 L 10 5 L 6 5 L 6 19 L 6 19 L 10 19 M 14 5 L 14 5 L 14 19 L 18 19 L 18 5 L 14 5"
+                android:valueType="pathType" />
+        </aapt:attr>
+    </target>
+</animated-vector>

@@ -1,13 +1,10 @@
 package it.cammino.risuscito.ui
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.widget.ImageView
 import androidx.multidex.MultiDexApplication
-import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
-import com.mikepenz.materialdrawer.util.DrawerImageLoader
-import com.squareup.picasso.Picasso
+import androidx.preference.PreferenceManager
+import com.google.android.material.color.DynamicColors
+import it.cammino.risuscito.Utility.DYNAMIC_COLORS
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.utils.ThemeUtils
 import kotlinx.coroutines.Dispatchers
@@ -22,20 +19,16 @@ class RisuscitoApplication : MultiDexApplication() {
 
         ThemeUtils.setDefaultNightMode(applicationContext)
 
+        DynamicColors.applyToActivitiesIfAvailable(
+            this
+        ) { _, _ ->
+            PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(DYNAMIC_COLORS, false)
+        }
+
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
         GlobalScope.launch(Dispatchers.IO) { mDao.getCantoById(1) }
 
-        // initialize and create the image loader logic
-        DrawerImageLoader.init(
-                object : AbstractDrawerImageLoader() {
-                    override fun set(imageView: ImageView, uri: Uri, placeholder: Drawable, tag: String?) {
-                        Picasso.get().load(uri).placeholder(placeholder).into(imageView)
-                    }
-
-                    override fun cancel(imageView: ImageView) {
-                        Picasso.get().cancelRequest(imageView)
-                    }
-                })
     }
 
     override fun attachBaseContext(base: Context) {

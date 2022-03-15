@@ -17,7 +17,7 @@
             android:layout_height="120dip"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/history_empty"
-            risuscito:srcCompat="@drawable/ic_history_clock" />
+            android:src="@drawable/ic_history_clock" />
 
         <TextView
             android:id="@+id/no_history_text"
@@ -29,9 +29,8 @@
             android:layout_marginRight="@dimen/text_min_margin"
             android:gravity="center_horizontal"
             android:text="@string/history_empty"
-            android:textAppearance="@style/SuperStateViewSubTitle"
+            android:textAppearance="?textAppearanceBodyMedium"
             android:textColor="?android:textColorSecondary"
-            risuscito:fontFamily="@font/googlesans_italic"
             tools:ignore="MissingPrefix" />
 
     </RelativeLayout>

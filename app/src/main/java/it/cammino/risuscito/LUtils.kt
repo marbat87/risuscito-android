@@ -1,20 +1,24 @@
 package it.cammino.risuscito
 
+import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import android.view.View
-import android.view.Window
+import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.view.WindowCompat
@@ -57,10 +61,17 @@ class LUtils private constructor(private val mActivity: Activity) {
         get() = mActivity.resources.getBoolean(R.bool.fab_orientation_left)
 
     fun startActivityWithTransition(
-        intent: Intent
+        intent: Intent,
+        startView: View?
     ) {
-        mActivity.startActivity(intent)
-        Animations.enterRight(mActivity)
+
+        val options = ActivityOptions.makeSceneTransitionAnimation(
+            mActivity,
+            startView,
+            "shared_element_container" // The transition name to be matched in Activity B.
+        )
+
+        mActivity.startActivity(intent, options.toBundle())
 
         val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
         val cronologia = Cronologia()
@@ -77,21 +88,44 @@ class LUtils private constructor(private val mActivity: Activity) {
         Animations.enterZoom(mActivity)
     }
 
-    fun closeActivityWithTransition() {
-        mActivity.finish()
-        Animations.exitRight(mActivity)
+    //ISSUE in API 21
+    fun finishAfterTransitionWrapper() {
+        if (hasM())
+            mActivity.finishAfterTransition()
+        else
+            mActivity.finish()
+    }
+
+    fun setLigthStatusBar(light: Boolean) {
+        WindowInsetsControllerCompat(
+            mActivity.window,
+            mActivity.window.decorView
+        ).isAppearanceLightStatusBars = light
+        setLighStatusBarFlag(light)
+    }
+
+    private fun setLighStatusBarFlag(light: Boolean) {
+        if (hasM())
+            setLighStatusBarFlagM(light)
+    }
+
+    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun setLighStatusBarFlagM(light: Boolean) {
+        if (light)
+            mActivity
+                .window
+                .decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     }
 
     internal fun goFullscreen() {
         when {
             hasR() -> goFullscreenR()
-            hasK() -> goFullscreenK()
-            else -> goFullscreenJB()
+            else -> goFullscreenLegacy()
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    internal fun goFullscreenR() {
+    private fun goFullscreenR() {
         WindowCompat.setDecorFitsSystemWindows(mActivity.window, false)
         WindowInsetsControllerCompat(
             mActivity.window,
@@ -104,19 +138,7 @@ class LUtils private constructor(private val mActivity: Activity) {
     }
 
     @Suppress("DEPRECATION")
-    internal fun goFullscreenJB() {
-        mActivity.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        mActivity
-            .window
-            .setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-    }
-
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
-    @Suppress("DEPRECATION")
-    internal fun goFullscreenK() {
+    private fun goFullscreenLegacy() {
         mActivity
             .window
             .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -246,6 +268,12 @@ class LUtils private constructor(private val mActivity: Activity) {
             ).start()
     }
 
+    val hasStorageAccess: Boolean
+        get() = hasQ() || ContextCompat.checkSelfPermission(
+            mActivity,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
     companion object {
 
         private const val FILE_FORMAT = ".risuscito"
@@ -255,24 +283,12 @@ class LUtils private constructor(private val mActivity: Activity) {
             return LUtils(activity)
         }
 
-        fun hasK(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-        }
-
-        fun hasL(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-        }
-
         fun hasO(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         }
 
         fun hasQ(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-        }
-
-        fun hasJB(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
         }
 
         fun hasM(): Boolean {
@@ -289,6 +305,10 @@ class LUtils private constructor(private val mActivity: Activity) {
 
         fun hasR(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+        }
+
+        fun hasS(): Boolean {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         }
 
         @Suppress("DEPRECATION")
@@ -314,13 +334,14 @@ class LUtils private constructor(private val mActivity: Activity) {
                     val idField = c.getDeclaredField(it)
                     idField.getInt(idField)
                 } catch (e: Exception) {
-                    Log.e(TAG, "getResId: " + e.localizedMessage, e)
+                    Log.e(TAG, "getResId: $resName" + e.localizedMessage, e)
                     -1
                 }
             }
             Log.e(TAG, "resName NULL")
             return -1
         }
+
     }
 
 }

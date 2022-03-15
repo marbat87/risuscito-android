@@ -14,7 +14,6 @@ class FastScrollIndicatorAdapter(private val mIndicator: Int, private val mConte
             0 -> item?.title?.getText(mContext)?.substring(0, 1)?.uppercase(getSystemLocale(mContext.resources))
                     ?: ""
             1 -> item?.page?.getText(mContext) ?: ""
-            2 -> item?.numSalmo.toString()
             else -> item?.title?.getText(mContext)?.substring(0, 1)?.uppercase(getSystemLocale(mContext.resources))
                     ?: ""
         }

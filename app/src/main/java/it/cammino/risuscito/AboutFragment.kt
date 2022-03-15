@@ -1,22 +1,24 @@
 package it.cammino.risuscito
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.vansuita.materialabout.builder.AboutBuilder
+import it.cammino.risuscito.Utility.CLICK_DELAY
 import it.cammino.risuscito.databinding.AboutLayoutBinding
-import it.cammino.risuscito.ui.Animations
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.utils.ThemeUtils
 
 
-class AboutFragment : Fragment() {
-
-    private var mMainActivity: MainActivity? = null
+class AboutFragment : AccountMenuFragment() {
 
     private var _binding: AboutLayoutBinding? = null
+
+    private var mLastClickTime: Long = 0
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -39,15 +41,25 @@ class AboutFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_about)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
         val mChangeLogClickListener = View.OnClickListener {
-            startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
-            Animations.enterDown(mMainActivity)
+            if (SystemClock.elapsedRealtime() - mLastClickTime >= CLICK_DELAY) {
+                mLastClickTime = SystemClock.elapsedRealtime()
+                it.transitionName = "shared_element_about"
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    mMainActivity,
+                    it,
+                    "shared_element_about" // The transition name to be matched in Activity B.
+                )
+                startActivity(
+                    Intent(mMainActivity, ChangelogActivity::class.java),
+                    options.toBundle()
+                )
+            }
         }
 
         context?.let {
@@ -68,9 +80,14 @@ class AboutFragment : Fragment() {
                     addPrivacyPolicyAction("https://marbat87.altervista.org/privacy_policy.html")
                     isShowAsCard = false
                     backgroundColor =
-                        if (ThemeUtils.isDarkMode(it)) R.color.design_dark_default_color_surface else R.color.design_default_color_surface
+                        if (ThemeUtils.isDarkMode(it)) R.color.md_theme_dark_surface else R.color.md_theme_light_surface
                 }.build()
             )
         }
     }
+
+    companion object {
+        private val TAG = AboutFragment::class.java.canonicalName
+    }
+
 }

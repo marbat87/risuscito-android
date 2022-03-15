@@ -45,7 +45,7 @@
                 android:layout_height="120dip"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="@string/no_consegnati"
-                risuscito:srcCompat="@drawable/ic_sleeping_checklist" />
+                android:src="@drawable/ic_sleeping_checklist" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -56,9 +56,8 @@
                 android:layout_marginRight="@dimen/text_min_margin"
                 android:gravity="center_horizontal"
                 android:text="@string/no_consegnati"
-                android:textAppearance="@style/SuperStateViewSubTitle"
+                android:textAppearance="?textAppearanceBodyMedium"
                 android:textColor="?android:textColorSecondary"
-                risuscito:fontFamily="@font/googlesans_italic"
                 tools:ignore="MissingPrefix" />
 
         </RelativeLayout>

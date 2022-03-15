@@ -50,17 +50,16 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     newList
                 }
             2 ->
-                itemsResult = mDb.salmiDao().liveAll.map { canti ->
+                itemsResult = mDb.indiceBiblicoDao().liveAll.map { canti ->
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
                                 simpleItem {
-                                    setTitle = LUtils.getResId(it.titoloSalmo, R.string::class.java)
+                                    setTitle = LUtils.getResId(it.titoloIndice, R.string::class.java)
                                     setPage = LUtils.getResId(it.pagina, R.string::class.java)
                                     setSource = LUtils.getResId(it.source, R.string::class.java)
                                     setColor = it.color
                                     id = it.id
-                                    setNumSalmo = it.numSalmo
                                 }
                         )
                     }

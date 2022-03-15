@@ -9,3 +9,4 @@ app/src/release/
 build
 /.idea/compiler.xml
 /.idea/encodings.xml
+/.idea/deploymentTargetDropDown.xml
