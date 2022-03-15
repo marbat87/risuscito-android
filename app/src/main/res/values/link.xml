@@ -18,7 +18,7 @@
     <string name="inno_lodi_avvento_fino16_link" formatted="false">http://www.resuscicanti.com/31%20inno%20di%20avvento%20alle%20lodi.mp3</string>
     <string name="inno_lodi_avvento_dopo16_link" formatted="false" />
     <string name="inno_lodi_pasqua_fino_ascensione_link" formatted="false">http://www.resuscicanti.com/Inno%20delle%20lodi%20da%20pasqua%20all%C2%B4ascensione.mp3</string>
-    <string name="inno_vespri_pasqua_fino_ascensione_link" formatted="false">http://marbat87.altervista.org/audio/alla_cena_agnello.mp3</string>
+    <string name="inno_vespri_pasqua_fino_ascensione_link" formatted="false">http://www.resuscicanti.com/Alla%20cena%20dellAgnello%20-%20Kiko%20Arguello.mp3</string>
     <string name="inno_lodi_pasqua_ascensione_pentecoste_link" formatted="false">http://www.resuscicanti.com/Inno%20dei%20vespri%20del%20giorno%20dell\'Ascensione.mp3</string>
     <string name="inno_vespri_pasqua_ascensione_pentecoste_link" formatted="false">http://www.resuscicanti.com/inno%20dei%20vespri%20dall\'ascensione%20a%20pentecoste.mp3</string>
     <string name="inno_lodi_pentecoste_link" formatted="false" />
@@ -82,7 +82,7 @@
     <string name="dajenu_link" formatted="false">http://www.resuscicanti.com/Dajen%C3%B9.mp3</string>
     <string name="alla_vittima_pasquale_link" formatted="false">http://marbat87.altervista.org/audio/alla_vittima_pasquale.mp3</string>
     <string name="inno_di_pasqua_link" formatted="false">http://www.resuscicanti.com/innodipasqua.mp3</string>
-    <string name="inno_avvento_link" formatted="false">http://www.resuscicanti.com/innodiavvento.mp3</string>
+    <string name="inno_avvento_link" formatted="false">http://www.resuscicanti.com/inno%20di%20Avvento%20chiara%20una%20voce%202019.mp3</string>
     <string name="uri_uri_ura_link" formatted="false">http://www.resuscicanti.com/uriuriura.mp3</string>
     <string name="gia_viene_il_mio_dio_link" formatted="false">http://www.resuscicanti.com/giavieneilmiodio.mp3</string>
     <string name="amen_amen_amen_link" formatted="false">http://www.resuscicanti.com/04AMENAMENAMEN%204,46.mp3</string>
@@ -230,8 +230,8 @@
     <string name="preghiera_eucaristica_IV_link" formatted="false" />
     <string name="preghiere_universali_cantate_link" formatted="false" />
     <string name="salga_sposo_sul_legno_link" formatted="false" />
-    <string name="salmodia_salmo_responsoriale_link" formatted="false" />
-    <string name="salve_regina_link" formatted="false" />
+    <string name="salmodia_salmo_responsoriale_link" formatted="false">http://www.resuscicanti.com/20salmo_responsoriale%202.mp3</string>
+    <string name="salve_regina_link" formatted="false">http://www.resuscicanti.com/salveregina.mp3</string>
     <string name="sequenza_corpus_domini_link" formatted="false" />
-    <string name="un_angelo_venne_dal_cielo_link" formatted="false" />
+    <string name="un_angelo_venne_dal_cielo_link" formatted="false">http://www.resuscicanti.com/b%20un%20angelo%20venne%20dal%20cielo.mp3</string>
 </resources>
