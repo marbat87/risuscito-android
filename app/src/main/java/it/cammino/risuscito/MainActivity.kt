@@ -119,7 +119,7 @@ class MainActivity : ThemeableActivity() {
             ) {
                 super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots)
                 Log.d(TAG, "onTransitionEnd")
-                if (!mViewModel.isOnTablet) updateStatusBarColor(true)
+                if (!mViewModel.isOnTablet) updateStatusBarLightMode(true)
             }
         })
 
@@ -957,10 +957,12 @@ class MainActivity : ThemeableActivity() {
     fun createActionMode(callback: ActionMode.Callback) {
         actionMode?.finish()
         actionMode = startSupportActionMode(callback)
+        setTransparentStatusBar(false)
     }
 
     fun destroyActionMode() {
         actionMode = null
+        setTransparentStatusBar(true)
     }
 
     fun updateActionModeTitle(title: String) {

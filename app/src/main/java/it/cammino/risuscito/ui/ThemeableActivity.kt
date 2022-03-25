@@ -11,10 +11,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.elevation.SurfaceColors
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -70,7 +72,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
         Utility.setupNavBarColor(this)
-        updateStatusBarColor(true)
+        updateStatusBarLightMode(true)
 
         setTaskDescription()
 
@@ -79,12 +81,19 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        updateStatusBarColor(true)
+        updateStatusBarLightMode(true)
         LUtils.getInstance(this).checkScreenAwake()
     }
 
-    fun updateStatusBarColor(auto: Boolean) {
+    fun updateStatusBarLightMode(auto: Boolean) {
         mViewModel.mLUtils.setLigthStatusBar(if (auto) !ThemeUtils.isDarkMode(this) else false)
+    }
+
+    fun setTransparentStatusBar(trasparent: Boolean) {
+        window.statusBarColor = if (trasparent) ContextCompat.getColor(
+            this,
+            android.R.color.transparent
+        ) else SurfaceColors.SURFACE_2.getColor(this)
     }
 
     override fun attachBaseContext(newBase: Context) {
