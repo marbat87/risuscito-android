@@ -63,7 +63,7 @@ val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
 val roomVersion = "2.4.1"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.20")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.5.0")
