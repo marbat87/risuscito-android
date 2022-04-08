@@ -48,11 +48,6 @@ android {
         }
     }
 
-//    dexOptions {
-//        javaMaxHeapSize = "2g"
-//        jumboMode = true
-//    }
-
     buildFeatures {
         viewBinding = true
     }
@@ -85,14 +80,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-RC3")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("com.google.android.gms:play-services-auth:20.1.0")
-    implementation(platform("com.google.firebase:firebase-bom:29.2.0"))
+    implementation(platform("com.google.firebase:firebase-bom:29.3.0"))
     implementation("com.google.firebase:firebase-core")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.6")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")

@@ -1,6 +1,8 @@
 package it.cammino.risuscito.utils
 
 import android.database.SQLException
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -506,11 +508,34 @@ object ListeUtils {
     }
 
     //ISSUE in API 21
-   private fun finishAfterTransitionWrapper(activity: AppCompatActivity) {
+    private fun finishAfterTransitionWrapper(activity: AppCompatActivity) {
+        closeKeyboard(activity)
         if (LUtils.hasM())
             activity.finishAfterTransition()
         else
             activity.finish()
+    }
+
+    private fun closeKeyboard(activity: AppCompatActivity) {
+        // this will give us the view
+        // which is currently focus
+        // in this layout
+        val view: View? = activity.currentFocus
+
+        // if nothing is currently
+        // focus then this will protect
+        // the app from crash
+        if (view != null) {
+            // now assign the system
+            // service to InputMethodManager
+            val manager: InputMethodManager = activity.getSystemService(
+                AppCompatActivity.INPUT_METHOD_SERVICE
+            ) as InputMethodManager
+            manager
+                .hideSoftInputFromWindow(
+                    view.windowToken, 0
+                )
+        }
     }
 
 }

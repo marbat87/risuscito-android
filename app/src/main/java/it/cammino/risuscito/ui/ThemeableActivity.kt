@@ -77,6 +77,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         setTaskDescription()
 
         super.onCreate(savedInstanceState)
+        window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
     }
 
     override fun onResume() {
@@ -524,4 +525,5 @@ abstract class ThemeableActivity : AppCompatActivity() {
         internal const val CRONOLOGIA_FILE_NAME = "Cronologia"
 
     }
+
 }
