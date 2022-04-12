@@ -3,6 +3,7 @@ package it.cammino.risuscito
 import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.animation.TimeInterpolator
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.ActivityOptions
@@ -25,9 +26,10 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.google.android.material.animation.AnimationUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
@@ -252,13 +254,13 @@ class LUtils private constructor(private val mActivity: Activity) {
     internal fun animateIn(view: View) {
         view.isVisible = true
         view.animate().translationY(0f)
-            .setInterpolator(AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L)
+            .setInterpolator(LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L)
             .setListener(null).start()
     }
 
     internal fun animateOut(view: View) {
         view.animate().translationY(view.height.toFloat())
-            .setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L)
+            .setInterpolator(FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L)
             .setListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator?) {
@@ -278,6 +280,10 @@ class LUtils private constructor(private val mActivity: Activity) {
 
         private const val FILE_FORMAT = ".risuscito"
         internal val TAG = LUtils::class.java.canonicalName
+        internal val FAST_OUT_LINEAR_IN_INTERPOLATOR: TimeInterpolator =
+            FastOutLinearInInterpolator()
+        internal val LINEAR_OUT_SLOW_IN_INTERPOLATOR: TimeInterpolator =
+            LinearOutSlowInInterpolator()
 
         fun getInstance(activity: Activity): LUtils {
             return LUtils(activity)

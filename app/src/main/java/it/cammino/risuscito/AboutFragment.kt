@@ -86,8 +86,4 @@ class AboutFragment : AccountMenuFragment() {
         }
     }
 
-    companion object {
-        private val TAG = AboutFragment::class.java.canonicalName
-    }
-
 }

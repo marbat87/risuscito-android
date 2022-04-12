@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.capitalize
 import java.io.Serializable
 

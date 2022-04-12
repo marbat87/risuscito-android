@@ -14,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.capitalize
 import java.io.Serializable
 

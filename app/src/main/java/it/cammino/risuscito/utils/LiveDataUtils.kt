@@ -8,7 +8,6 @@ import android.util.TypedValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
-import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.LocaleManager
 
 /**
