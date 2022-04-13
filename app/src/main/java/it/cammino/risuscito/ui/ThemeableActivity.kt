@@ -77,7 +77,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         setTaskDescription()
 
         super.onCreate(savedInstanceState)
-        window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
     }
 
     override fun onResume() {

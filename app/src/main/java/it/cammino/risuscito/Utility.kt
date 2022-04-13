@@ -24,6 +24,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.elevation.SurfaceColors
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.utils.ThemeUtils
@@ -271,7 +272,7 @@ object Utility {
         if (LUtils.hasO()) {
             context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             if (!ThemeUtils.isDarkMode(context)) setLightNavigationBar(context)
-            context.window.navigationBarColor = Color.TRANSPARENT
+            context.window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(context)
         }
     }
 
