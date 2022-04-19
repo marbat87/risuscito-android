@@ -266,9 +266,6 @@ object Utility {
     }
 
     fun setupNavBarColor(context: Activity) {
-        context.window.decorView.setBackgroundColor(
-            MaterialColors.getColor(context, android.R.attr.colorBackground, TAG)
-        )
         if (LUtils.hasO()) {
             context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             if (!ThemeUtils.isDarkMode(context)) setLightNavigationBar(context)

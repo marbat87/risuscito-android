@@ -20,6 +20,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.ActionMode
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.edit
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
@@ -34,6 +35,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
@@ -109,6 +111,14 @@ class MainActivity : ThemeableActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Handle the splash screen transition.
+        installSplashScreen()
+        DynamicColors.applyIfAvailable(
+            this
+        ) { _, _ ->
+            PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Utility.DYNAMIC_COLORS, false)
+        }
         // Attach a callback used to capture the shared elements from this Activity to be used
         // by the container transform transition
         setExitSharedElementCallback(object : MaterialContainerTransformSharedElementCallback() {

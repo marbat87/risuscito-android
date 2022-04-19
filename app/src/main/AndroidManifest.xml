@@ -42,7 +42,7 @@
         <activity
             android:name="it.cammino.risuscito.MainActivity"
             android:exported="true"
-            android:theme="@style/Risuscito.Theme.Launcher">
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

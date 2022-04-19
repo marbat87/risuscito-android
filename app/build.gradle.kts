@@ -62,6 +62,7 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.5.0")
+    implementation("androidx.core:core-splashscreen:1.0.0-beta02")
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.appcompat:appcompat-resources:1.4.1")
