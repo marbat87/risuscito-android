@@ -3,10 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/baseline_search_24.xml" value="0.1735" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1935" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/ic_main_cover.xml" value="0.1735" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/launch_screen.xml" value="0.2015" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_main.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_risuscito.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/row_item_to_insert.xml" value="0.18541666666666667" />
-        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/search_layout.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/search_layout.xml" value="0.25" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/menu-sw600dp-port/navigation_drawer.xml" value="0.33203125" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/menu-sw840dp/navigation_drawer.xml" value="0.1328125" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/menu/navigation_drawer.xml" value="0.1" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2015" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2015" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/xml/data_extraction_rules.xml" value="0.17552083333333332" />

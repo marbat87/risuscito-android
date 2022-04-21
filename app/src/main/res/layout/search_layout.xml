@@ -12,8 +12,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:paddingStart="?listPreferredItemPaddingStart"
         android:hint="@string/fast_search_subtitle"
+        android:paddingStart="?listPreferredItemPaddingStart"
         app:endIconMode="clear_text"
         app:helperText="@string/search_hint"
         app:layout_constraintEnd_toStartOf="@id/more_options"
@@ -104,5 +104,33 @@
             tools:ignore="MissingPrefix" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/image_view_1"
+        android:layout_width="@dimen/cover_image_dimen"
+        android:layout_height="@dimen/cover_image_dimen"
+        android:layout_marginStart="@dimen/text_min_margin"
+        android:layout_marginEnd="@dimen/text_min_margin"
+        android:contentDescription="@string/copertina"
+        android:paddingBottom="?actionBarSize"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        android:src="@drawable/ic_main_cover"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/text_box_ricerca" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="?actionBarSize"
+        android:paddingBottom="@dimen/activity_min_top_margin"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

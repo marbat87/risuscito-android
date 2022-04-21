@@ -316,6 +316,7 @@ class InsertActivity : ThemeableActivity() {
                     binding.searchLayout.matchedList.isVisible = false
                     cantoAdapter.clear()
                     binding.searchLayout.searchProgress.isVisible = false
+                    binding.appBarLayout.setExpanded(true, true)
                 }
             }
         }

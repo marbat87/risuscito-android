@@ -62,6 +62,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPI
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.getTypedValueResId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -113,12 +114,7 @@ class MainActivity : ThemeableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
         installSplashScreen()
-        DynamicColors.applyIfAvailable(
-            this
-        ) { _, _ ->
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.DYNAMIC_COLORS, false)
-        }
+        DynamicColors.applyToActivityIfAvailable(this, ThemeUtils.getDynamicColorOptions(this))
         // Attach a callback used to capture the shared elements from this Activity to be used
         // by the container transform transition
         setExitSharedElementCallback(object : MaterialContainerTransformSharedElementCallback() {
@@ -338,7 +334,6 @@ class MainActivity : ThemeableActivity() {
 
         val fragment = when (menuItem.itemId) {
             R.id.navigation_home -> Risuscito()
-            R.id.navigation_search -> SearchFragment()
             R.id.navigation_indexes -> GeneralIndex()
             R.id.navigation_lists -> CustomLists()
             R.id.navigation_favorites -> FavoritesFragment()

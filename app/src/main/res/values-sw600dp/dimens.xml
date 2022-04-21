@@ -4,4 +4,6 @@
     <dimen name="activity_min_margin">10dip</dimen>
     <dimen name="activity_min_top_margin">15dip</dimen>
 
+    <dimen name="cover_image_dimen">450dp</dimen>
+
 </resources>

@@ -52,7 +52,6 @@
     <string name="dialog_wonna_replace">Хочеш замінити?</string>
     <string name="fast_search_title">Швидкий пошук</string>
     <string name="advanced_search_title">Детальний пошук</string>
-    <string name="title_activity_search">Пошук пісні</string>
     <string name="advanced_search_subtitle">ПОШУК У ЗАГОЛОВКУ ТА В ТЕКСТІ</string>
     <string name="fast_search_subtitle">ПОШУК ЗА НАЗВОЮ</string>
     <string name="show_seconda_title">Євхаристія - 2^ читання</string>

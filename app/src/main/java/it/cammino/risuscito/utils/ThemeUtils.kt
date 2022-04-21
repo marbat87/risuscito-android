@@ -5,7 +5,9 @@ import android.content.res.Configuration
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.DynamicColorsOptions
 import it.cammino.risuscito.LUtils
+import it.cammino.risuscito.Utility.DYNAMIC_COLORS
 import it.cammino.risuscito.Utility.NIGHT_MODE
 
 class ThemeUtils {
@@ -37,6 +39,15 @@ class ThemeUtils {
             return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(NIGHT_MODE, DEFAULT_MODE)
                 ?: "default"
+        }
+
+        fun getDynamicColorOptions(ctx: Context): DynamicColorsOptions {
+            return DynamicColorsOptions.Builder()
+                .setPrecondition { _, _ ->
+                    PreferenceManager.getDefaultSharedPreferences(ctx)
+                        .getBoolean(DYNAMIC_COLORS, false)
+                }
+                .build()
         }
 
     }

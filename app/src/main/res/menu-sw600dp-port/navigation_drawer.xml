@@ -8,11 +8,6 @@
             android:icon="@drawable/baseline_home_24"
             tools:ignore="MenuTitle" />
         <item
-            android:id="@+id/navigation_search"
-            android:checkable="true"
-            android:icon="@drawable/baseline_search_24"
-            tools:ignore="MenuTitle" />
-        <item
             android:id="@+id/navigation_indexes"
             android:checkable="true"
             android:icon="@drawable/baseline_format_list_bulleted_24"
