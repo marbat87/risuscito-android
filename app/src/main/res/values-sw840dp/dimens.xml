@@ -3,6 +3,4 @@
 
     <dimen name="fab_margin_coord">48dp</dimen>
 
-    <dimen name="cover_image_dimen">500dp</dimen>
-
 </resources>

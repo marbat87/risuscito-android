@@ -9,21 +9,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
-import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.IAdapter
-import com.turingtechnologies.materialscrollbar.CustomIndicator
-import com.turingtechnologies.materialscrollbar.TouchScrollBar
-import it.cammino.risuscito.adapters.FastScrollIndicatorAdapter
+import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.databinding.IndexListFragmentBinding
+import it.cammino.risuscito.databinding.LayoutRecyclerBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
@@ -46,7 +41,7 @@ class SimpleIndexFragment : Fragment() {
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val activityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
 
-    private lateinit var mAdapter: FastScrollIndicatorAdapter
+    private val mAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
     private var listePersonalizzate: List<ListaPers>? = null
     private var mLastClickTime: Long = 0
     private var mActivity: MainActivity? = null
@@ -56,7 +51,7 @@ class SimpleIndexFragment : Fragment() {
         mActivity = activity as? MainActivity
     }
 
-    private var _binding: IndexListFragmentBinding? = null
+    private var _binding: LayoutRecyclerBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -67,7 +62,7 @@ class SimpleIndexFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = IndexListFragmentBinding.inflate(inflater, container, false)
+        _binding = LayoutRecyclerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -79,7 +74,7 @@ class SimpleIndexFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = FastScrollIndicatorAdapter(mCantiViewModel.tipoLista, requireContext())
+//        mAdapter = FastScrollIndicatorAdapter(mCantiViewModel.tipoLista, requireContext())
 
         subscribeUiChanges()
 
@@ -134,54 +129,54 @@ class SimpleIndexFragment : Fragment() {
         mAdapter.setHasStableIds(true)
         val llm = LinearLayoutManager(context)
         val glm = GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
-        binding.cantiList.layoutManager = if (activityViewModel.isGridLayout) glm else llm
-        binding.cantiList.setHasFixedSize(true)
-        binding.cantiList.adapter = mAdapter
-        if (mCantiViewModel.tipoLista != 2) {
-            binding.dragScrollBar.setRecyclerView(binding.cantiList)
-            if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
-                binding.dragScrollBar.setTextColor(
-                    MaterialColors.getColor(
-                        requireContext(),
-                        R.attr.colorOnTertiary,
-                        TAG
-                    )
-                )
-                binding.dragScrollBar.setHandleColor(
-                    MaterialColors.getColor(
-                        context, R.attr.colorTertiary, TAG
-                    )
-                )
-                binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
-                binding.dragScrollBar.setAutoHide(false)
-            } else
-                binding.dragScrollBar.addOnAttachStateChangeListener(object :
-                    View.OnAttachStateChangeListener {
-                    override fun onViewDetachedFromWindow(p0: View?) {
-                        // no-op
-                    }
-
-                    override fun onViewAttachedToWindow(p0: View?) {
-                        (p0 as? TouchScrollBar)?.setTextColor(
-                            MaterialColors.getColor(
-                                requireContext(),
-                                R.attr.colorOnTertiary,
-                                TAG
-                            )
-                        )
-                        (p0 as? TouchScrollBar)?.setHandleColor(
-                            MaterialColors.getColor(
-                                context, R.attr.colorTertiary, TAG
-                            )
-                        )
-                        (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
-                        (p0 as? TouchScrollBar)?.setAutoHide(false)
-                        p0?.removeOnAttachStateChangeListener(this)
-                    }
-                })
-        } else {
-            binding.dragScrollBar.isGone = true
-        }
+        binding.recyclerView.layoutManager = if (activityViewModel.isGridLayout) glm else llm
+        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.adapter = mAdapter
+//        if (mCantiViewModel.tipoLista != 2) {
+//            binding.dragScrollBar.setRecyclerView(binding.cantiList)
+//            if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
+//                binding.dragScrollBar.setTextColor(
+//                    MaterialColors.getColor(
+//                        requireContext(),
+//                        R.attr.colorOnTertiary,
+//                        TAG
+//                    )
+//                )
+//                binding.dragScrollBar.setHandleColor(
+//                    MaterialColors.getColor(
+//                        context, R.attr.colorTertiary, TAG
+//                    )
+//                )
+//                binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
+//                binding.dragScrollBar.setAutoHide(false)
+//            } else
+//                binding.dragScrollBar.addOnAttachStateChangeListener(object :
+//                    View.OnAttachStateChangeListener {
+//                    override fun onViewDetachedFromWindow(p0: View?) {
+//                        // no-op
+//                    }
+//
+//                    override fun onViewAttachedToWindow(p0: View?) {
+//                        (p0 as? TouchScrollBar)?.setTextColor(
+//                            MaterialColors.getColor(
+//                                requireContext(),
+//                                R.attr.colorOnTertiary,
+//                                TAG
+//                            )
+//                        )
+//                        (p0 as? TouchScrollBar)?.setHandleColor(
+//                            MaterialColors.getColor(
+//                                context, R.attr.colorTertiary, TAG
+//                            )
+//                        )
+//                        (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
+//                        (p0 as? TouchScrollBar)?.setAutoHide(false)
+//                        p0?.removeOnAttachStateChangeListener(this)
+//                    }
+//                })
+//        } else {
+//            binding.dragScrollBar.isGone = true
+//        }
     }
 
     override fun onResume() {
