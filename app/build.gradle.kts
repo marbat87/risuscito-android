@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5007
+        versionCode = 5010
         versionName = "5.0.0"
         kapt {
             arguments {
@@ -48,11 +48,6 @@ android {
         }
     }
 
-//    dexOptions {
-//        javaMaxHeapSize = "2g"
-//        jumboMode = true
-//    }
-
     buildFeatures {
         viewBinding = true
     }
@@ -63,10 +58,11 @@ val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
 val roomVersion = "2.4.1"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.material:material:1.5.0")
+    implementation("com.google.android.material:material:1.6.0-rc01")
+    implementation("androidx.core:core-splashscreen:1.0.0-beta02")
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.appcompat:appcompat-resources:1.4.1")
@@ -85,14 +81,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-RC3")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("com.google.android.gms:play-services-auth:20.1.0")
-    implementation(platform("com.google.firebase:firebase-bom:29.2.0"))
+    implementation(platform("com.google.firebase:firebase-bom:29.3.1"))
     implementation("com.google.firebase:firebase-core")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.github.jrvansuita:MaterialAbout:0.2.6")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
@@ -105,7 +101,6 @@ dependencies {
     implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
-    implementation("com.github.turing-tech:MaterialScrollBar:13.3.4")
     implementation("com.leinardi.android:speed-dial:3.2.0")
     implementation("com.github.Ferfalk:SimpleSearchView:0.2.0")
     implementation("com.github.MFlisar:changelog:1.1.7")

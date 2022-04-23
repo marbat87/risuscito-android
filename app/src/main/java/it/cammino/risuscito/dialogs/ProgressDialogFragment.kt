@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.capitalize
 import java.io.Serializable
 import java.text.NumberFormat

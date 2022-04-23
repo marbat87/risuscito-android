@@ -11,8 +11,9 @@
         android:id="@+id/text_box_ricerca"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_min_margin"
+        android:layout_marginStart="8dp"
         android:hint="@string/fast_search_subtitle"
+        android:paddingStart="?listPreferredItemPaddingStart"
         app:endIconMode="clear_text"
         app:helperText="@string/search_hint"
         app:layout_constraintEnd_toStartOf="@id/more_options"
@@ -66,42 +67,68 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_box_ricerca" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/search_no_results"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
         android:visibility="gone"
+        app:constraint_referenced_ids="no_results_image,no_history_text"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/no_results_image"
+        android:layout_width="120dip"
+        android:layout_height="120dip"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/search_no_results"
+        android:src="@drawable/ic_search_question_mark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_box_ricerca"
-        tools:visibility="visible">
+        app:layout_constraintTop_toBottomOf="@id/text_box_ricerca" />
 
-        <ImageView
-            android:id="@+id/no_results_image"
-            android:layout_width="120dip"
-            android:layout_height="120dip"
-            android:contentDescription="@string/search_no_results"
-            android:src="@drawable/ic_search_question_mark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/no_history_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_min_margin"
+        android:layout_marginEnd="@dimen/text_min_margin"
+        android:gravity="center"
+        android:text="@string/search_no_results"
+        android:textAppearance="?textAppearanceBodyMedium"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/no_results_image"
+        tools:ignore="MissingPrefix" />
 
-        <TextView
-            android:id="@+id/no_history_text"
-            android:textAppearance="?textAppearanceBodyMedium"
-            android:textColor="?android:textColorSecondary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_min_margin"
-            android:layout_marginEnd="@dimen/text_min_margin"
-            android:text="@string/search_no_results"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/no_results_image"
-            tools:ignore="MissingPrefix" />
+    <ImageView
+        android:id="@+id/image_view_1"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/text_min_margin"
+        android:layout_marginEnd="@dimen/text_min_margin"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/copertina"
+        android:paddingBottom="?actionBarSize"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_main_cover"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.55"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_box_ricerca"
+        tools:visibility="visible" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="?actionBarSize"
+        android:paddingBottom="@dimen/activity_min_top_margin"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -72,7 +72,6 @@
     <string name="dialog_wonna_replace">Vuoi sostituirlo?</string>
     <string name="fast_search_title">Ricerca veloce</string>
     <string name="advanced_search_title">Ricerca avanzata</string>
-    <string name="title_activity_search">Ricerca canto</string>
     <string name="advanced_search_subtitle">CERCA NEL TITOLO E NEL TESTO</string>
     <string name="fast_search_subtitle">CERCA PER TITOLO</string>
     <string name="show_seconda_title">Eucarestia - 2^ lettura</string>

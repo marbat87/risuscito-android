@@ -5,7 +5,9 @@ import android.content.res.Configuration
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.DynamicColorsOptions
 import it.cammino.risuscito.LUtils
+import it.cammino.risuscito.Utility.DYNAMIC_COLORS
 import it.cammino.risuscito.Utility.NIGHT_MODE
 
 class ThemeUtils {
@@ -16,12 +18,6 @@ class ThemeUtils {
         private const val LIGHT_MODE = "light"
         private const val DARK_MODE = "dark"
         private const val DEFAULT_MODE = "default"
-
-//        fun getStatusBarDefaultColor(context: Context): Int {
-//            return if (isDarkMode(context))
-//                Color.BLACK
-//            else MaterialColors.getColor(context, R.attr.colorPrimaryVariant, TAG)
-//        }
 
         fun isDarkMode(context: Context): Boolean {
             Log.d(
@@ -39,18 +35,19 @@ class ThemeUtils {
             }
         }
 
-//        fun getNightModeText(context: Context): String {
-//            return when (getPrefNightMode(context)) {
-//                LIGHT_MODE -> context.getString(R.string.night_mode_light)
-//                DARK_MODE -> context.getString(R.string.night_mode_dark)
-//                else -> context.getString(if (LUtils.hasP()) R.string.night_mode_auto_system else R.string.night_mode_auto_battery)
-//            }
-//        }
-
         private fun getPrefNightMode(context: Context): String {
             return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(NIGHT_MODE, DEFAULT_MODE)
                 ?: "default"
+        }
+
+        fun getDynamicColorOptions(ctx: Context): DynamicColorsOptions {
+            return DynamicColorsOptions.Builder()
+                .setPrecondition { _, _ ->
+                    PreferenceManager.getDefaultSharedPreferences(ctx)
+                        .getBoolean(DYNAMIC_COLORS, false)
+                }
+                .build()
         }
 
     }

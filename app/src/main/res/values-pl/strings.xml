@@ -52,7 +52,6 @@
     <string name="dialog_wonna_replace">Czy chcesz to zastąpić?</string>
     <string name="fast_search_title">Szybkie szukanie</string>
     <string name="advanced_search_title">Zaawansowane szukanie</string>
-    <string name="title_activity_search">Wyszukaj pieśń</string>
     <string name="advanced_search_subtitle">SZUKAJ W TYTULE I W TEKŚCIE</string>
     <string name="fast_search_subtitle">SZUKAJ W TYTULE</string>
     <string name="show_seconda_title">Eucharystia - drugie czytanie</string>
