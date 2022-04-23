@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:transitionName="shared_element_container"
-            app:icon="@drawable/baseline_visibility_24"
+            app:icon="@drawable/visibility_24px"
             app:iconSize="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -7,20 +7,20 @@
         android:id="@+id/action_filter_remove"
         android:orderInCategory="98"
         android:title="@string/filters_remove"
-        android:icon="@drawable/baseline_filter_alt_off_24"
+        android:icon="@drawable/filter_list_off_24"
         risuscito:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
 
     <item
         android:id="@+id/action_filter"
-        android:icon="@drawable/baseline_filter_alt_24"
+        android:icon="@drawable/filter_list_24px"
         android:orderInCategory="98"
         android:title="@string/passage_filter"
         risuscito:showAsAction="always" />
 
     <item
         android:id="@+id/action_help"
-        android:icon="@drawable/baseline_help_24"
+        android:icon="@drawable/help_24px"
         android:orderInCategory="99"
         android:title="@string/action_help"
         risuscito:showAsAction="always" />

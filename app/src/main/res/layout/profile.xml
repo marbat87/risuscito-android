@@ -16,7 +16,7 @@
         android:clickable="true"
         android:focusable="true"
         android:soundEffectsEnabled="true"
-        android:src="@drawable/baseline_account_circle_56"
+        android:src="@drawable/account_circle_56px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

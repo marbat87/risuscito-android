@@ -47,7 +47,7 @@
                 android:contentDescription="@null"
                 android:gravity="center"
                 android:padding="10dp"
-                android:src="@drawable/baseline_check_24"
+                android:src="@drawable/check_24px"
                 android:visibility="invisible"
                 app:tint="?colorOnPrimary" />
 

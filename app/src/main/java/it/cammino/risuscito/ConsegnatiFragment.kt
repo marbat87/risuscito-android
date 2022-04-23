@@ -342,7 +342,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
     }
 
     private fun initFab() {
-        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.baseline_edit_24)
+        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_24px)
         val onClick = View.OnClickListener {
             mCantiViewModel.editMode = true
             backCallback?.isEnabled = true

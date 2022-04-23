@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/tonalita"
-        android:icon="@drawable/baseline_music_note_24"
+        android:icon="@drawable/music_note_24px"
         android:orderInCategory="88"
         android:title="@string/action_tonalita"
         risuscito:showAsAction="always">
@@ -12,7 +12,7 @@
         <menu>
             <item
                 android:id="@+id/action_trasporta"
-                android:icon="@drawable/baseline_swap_vert_24"
+                android:icon="@drawable/swap_vert_24px"
                 android:orderInCategory="89"
                 android:title="@string/action_trasporta">
 
@@ -72,13 +72,13 @@
 
             <item
                 android:id="@+id/action_save_tab"
-                android:icon="@drawable/baseline_save_24"
+                android:icon="@drawable/save_24px"
                 android:orderInCategory="90"
                 android:title="@string/action_salva" />
 
             <item
                 android:id="@+id/action_reset_tab"
-                android:icon="@drawable/baseline_refresh_24"
+                android:icon="@drawable/refresh_24px"
                 android:orderInCategory="91"
                 android:title="@string/action_reset_tonalita" />
 
@@ -97,7 +97,7 @@
 
             <item
                 android:id="@+id/action_trasporta_barre"
-                android:icon="@drawable/baseline_swap_vert_24"
+                android:icon="@drawable/swap_vert_24px"
                 android:orderInCategory="93"
                 android:title="@string/action_trasporta">
 
@@ -141,13 +141,13 @@
 
             <item
                 android:id="@+id/action_save_barre"
-                android:icon="@drawable/baseline_save_24"
+                android:icon="@drawable/save_24px"
                 android:orderInCategory="94"
                 android:title="@string/action_salva" />
 
             <item
                 android:id="@+id/action_reset_barre"
-                android:icon="@drawable/baseline_refresh_24"
+                android:icon="@drawable/refresh_24px"
                 android:orderInCategory="95"
                 android:title="@string/action_reset_barre" />
 
@@ -157,14 +157,14 @@
 
     <item
         android:id="@+id/action_exp_pdf"
-        android:icon="@drawable/baseline_picture_as_pdf_24"
+        android:icon="@drawable/picture_as_pdf_24px"
         android:orderInCategory="97"
         android:title="@string/action_exp_pdf"
         risuscito:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_help_canto"
-        android:icon="@drawable/baseline_help_24"
+        android:icon="@drawable/help_24px"
         android:orderInCategory="98"
         android:title="@string/action_help"
         risuscito:showAsAction="never" />

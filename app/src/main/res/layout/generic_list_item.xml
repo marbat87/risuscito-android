@@ -44,7 +44,7 @@
             android:layout_marginEnd="?listPreferredItemPaddingEnd"
             android:text="@string/select_canto"
             android:transitionName="shared_insert_container"
-            app:icon="@drawable/baseline_add_circle_outline_24"
+            app:icon="@drawable/add_circle_24px"
             app:iconSize="24dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/generic_list" />

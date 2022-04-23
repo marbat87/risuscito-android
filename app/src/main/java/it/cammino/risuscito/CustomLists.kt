@@ -197,7 +197,7 @@ class CustomLists : AccountMenuFragment() {
                         .icon(
                             AppCompatResources.getDrawable(
                                 requireContext(),
-                                R.drawable.baseline_check_24
+                                R.drawable.check_24px
                             )
                         )
                         .descriptionTypeface(mRegularFont) // Specify a typeface for the text
@@ -350,7 +350,7 @@ class CustomLists : AccountMenuFragment() {
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.baseline_add_24)
+        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.add_24px)
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {
                 R.id.fab_pulisci -> {

@@ -40,7 +40,7 @@
         android:background="@drawable/oval_bg_hint"
         android:contentDescription="@null"
         android:gravity="center"
-        android:src="@drawable/baseline_help_outline_24"
+        android:src="@drawable/info_24px"
         android:translationZ="1dp"
         app:tint="?colorControlActivated"
         tools:ignore="MissingPrefix"

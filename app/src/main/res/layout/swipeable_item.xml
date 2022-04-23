@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="?listPreferredItemPaddingStart"
             android:contentDescription="@string/content_drag"
-            android:src="@drawable/baseline_drag_handle_24"
+            android:src="@drawable/drag_handle_24px"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

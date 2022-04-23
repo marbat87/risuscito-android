@@ -50,9 +50,9 @@ class ProfileDialogFragment : DialogFragment() {
 
         if (mBuilder.mProfileImageSrc.isEmpty())
             mView.findViewById<ShapeableImageView>(R.id.profile_icon)
-                ?.setImageResource(R.drawable.baseline_account_circle_56)
+                ?.setImageResource(R.drawable.account_circle_56px)
         else {
-            AppCompatResources.getDrawable(mView.context, R.drawable.baseline_account_circle_56)
+            AppCompatResources.getDrawable(mView.context, R.drawable.account_circle_56px)
                 ?.let {
                     Picasso.get().load(mBuilder.mProfileImageSrc)
                         .placeholder(it)

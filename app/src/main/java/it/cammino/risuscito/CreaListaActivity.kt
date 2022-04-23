@@ -112,7 +112,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        AppCompatResources.getDrawable(this@CreaListaActivity, R.drawable.baseline_delete_sweep_24)
+        AppCompatResources.getDrawable(this@CreaListaActivity, R.drawable.delete_sweep_24px)
             ?.let {
                 it.setTint(MaterialColors.getColor(view, R.attr.colorOnPrimary))
                 val touchCallback = SimpleSwipeDragCallback(

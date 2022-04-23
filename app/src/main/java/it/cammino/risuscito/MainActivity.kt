@@ -514,7 +514,7 @@ class MainActivity : ThemeableActivity() {
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(
                     R.id.fab_pulisci,
-                    AppCompatResources.getDrawable(this, R.drawable.eraser_variant_24)
+                    AppCompatResources.getDrawable(this, R.drawable.cleaning_services_24px)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.dialog_reset_list_title))
@@ -527,7 +527,7 @@ class MainActivity : ThemeableActivity() {
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(
                     R.id.fab_add_lista,
-                    AppCompatResources.getDrawable(this, R.drawable.baseline_add_24)
+                    AppCompatResources.getDrawable(this, R.drawable.add_24px)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.action_add_list))
@@ -540,7 +540,7 @@ class MainActivity : ThemeableActivity() {
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(
                     R.id.fab_condividi,
-                    AppCompatResources.getDrawable(this, R.drawable.baseline_share_24)
+                    AppCompatResources.getDrawable(this, R.drawable.share_24px)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.action_share))
@@ -554,7 +554,7 @@ class MainActivity : ThemeableActivity() {
                 binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(
                         R.id.fab_condividi_file,
-                        AppCompatResources.getDrawable(this, R.drawable.baseline_attachment_24)
+                        AppCompatResources.getDrawable(this, R.drawable.attachment_24px)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_share_file))
@@ -567,7 +567,7 @@ class MainActivity : ThemeableActivity() {
                 binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(
                         R.id.fab_edit_lista,
-                        AppCompatResources.getDrawable(this, R.drawable.baseline_edit_24)
+                        AppCompatResources.getDrawable(this, R.drawable.edit_24px)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_edit_list))
@@ -580,7 +580,7 @@ class MainActivity : ThemeableActivity() {
                 binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(
                         R.id.fab_delete_lista,
-                        AppCompatResources.getDrawable(this, R.drawable.baseline_delete_24)
+                        AppCompatResources.getDrawable(this, R.drawable.delete_24px)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_remove_list))
@@ -786,11 +786,11 @@ class MainActivity : ThemeableActivity() {
 
         if (profilePhotoUrl.isEmpty()) {
             profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
-                ?.setImageResource(R.drawable.baseline_account_circle_56)
+                ?.setImageResource(R.drawable.account_circle_56px)
             profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)?.background =
                 null
         } else {
-            AppCompatResources.getDrawable(this, R.drawable.baseline_account_circle_56)?.let {
+            AppCompatResources.getDrawable(this, R.drawable.account_circle_56px)?.let {
                 Picasso.get().load(profilePhotoUrl)
                     .placeholder(it)
                     .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon))

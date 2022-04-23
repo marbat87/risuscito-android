@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="?listPreferredItemPaddingStart"
             android:contentDescription="@null"
-            android:src="@drawable/baseline_expand_less_24"
+            android:src="@drawable/expand_less_24px"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/group_title"

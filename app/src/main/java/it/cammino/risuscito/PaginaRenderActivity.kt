@@ -1281,7 +1281,13 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private fun showScrolling(scrolling: Boolean) {
-        (binding.playScroll as? MaterialButton)?.setIconResource(if (scrolling) R.drawable.baseline_pause_circle_24 else R.drawable.baseline_play_circle_24)
+        val anim = if (scrolling) AnimatedVectorDrawableCompat.create(
+            this,
+            R.drawable.play_to_pause_circle_anim
+        ) else AnimatedVectorDrawableCompat.create(this, R.drawable.pause_to_play_circle_anim)
+        (binding.playScroll as? MaterialButton)?.icon = anim
+        anim?.start()
+//        (binding.playScroll as? MaterialButton)?.setIconResource(if (scrolling) R.drawable.pause_circle_24px else R.drawable.play_circle_24px)
         binding.playScroll.isSelected = scrolling
     }
 
@@ -1684,7 +1690,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         binding.fabCanti.addActionItem(
             SpeedDialActionItem.Builder(
                 R.id.fab_fullscreen_on,
-                AppCompatResources.getDrawable(this, R.drawable.baseline_fullscreen_24)
+                AppCompatResources.getDrawable(this, R.drawable.fullscreen_24px)
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                 .setLabel(getString(R.string.fullscreen))
@@ -1699,7 +1705,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 R.id.fab_sound_off,
                 AppCompatResources.getDrawable(
                     this,
-                    if (mCantiViewModel.mostraAudio) R.drawable.baseline_headset_24 else R.drawable.baseline_headset_off_24
+                    if (mCantiViewModel.mostraAudio) R.drawable.headphones_24px else R.drawable.headset_off_24px
                 )
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -1713,7 +1719,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         if (mDownload) {
             val icon = AppCompatResources.getDrawable(
                 this,
-                if ((!personalUrl.isNullOrEmpty())) R.drawable.baseline_link_off_24 else R.drawable.baseline_delete_24
+                if ((!personalUrl.isNullOrEmpty())) R.drawable.link_off_24px else R.drawable.delete_24px
             )
             val text = if (!personalUrl.isNullOrEmpty())
                 getString(R.string.dialog_delete_link_title) else
@@ -1732,7 +1738,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 binding.fabCanti.addActionItem(
                     SpeedDialActionItem.Builder(
                         R.id.fab_save_file,
-                        AppCompatResources.getDrawable(this, R.drawable.baseline_file_download_24)
+                        AppCompatResources.getDrawable(this, R.drawable.file_download_24px)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.save_file))
@@ -1744,7 +1750,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(
                     R.id.fab_link_file,
-                    AppCompatResources.getDrawable(this, R.drawable.baseline_add_link_24)
+                    AppCompatResources.getDrawable(this, R.drawable.add_link_24px)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.only_link_title))
@@ -1761,7 +1767,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 R.id.fab_favorite,
                 AppCompatResources.getDrawable(
                     this,
-                    if (mCantiViewModel.mCurrentCanto?.favorite == 1) R.drawable.baseline_bookmark_remove_24 else R.drawable.baseline_bookmark_add_24
+                    if (mCantiViewModel.mCurrentCanto?.favorite == 1) R.drawable.bookmark_remove_24px else R.drawable.bookmark_add_24px
                 )
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
