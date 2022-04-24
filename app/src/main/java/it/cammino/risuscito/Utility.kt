@@ -17,13 +17,11 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
-import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.PreferenceManager
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.elevation.SurfaceColors
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.LUtils.Companion.hasQ
@@ -275,24 +273,10 @@ object Utility {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun setLightNavigationBar(context: Activity) {
-        if (LUtils.hasR())
-            setLightNavigationBarR(context)
-        else
-            setLightNavigationBarLegacy(context)
-    }
-
-    @Suppress("DEPRECATION")
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun setLightNavigationBarLegacy(context: Activity) {
-        context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    fun setLightNavigationBarR(context: Activity) {
-        context.window.insetsController?.setSystemBarsAppearance(
-            WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-            WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-        )
+        WindowInsetsControllerCompat(
+            context.window,
+            context.window.decorView
+        ).isAppearanceLightNavigationBars = true
     }
 
     internal fun random(start: Int, end: Int): Int {
