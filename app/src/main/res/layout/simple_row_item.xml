@@ -16,7 +16,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/listPreferredItemHeight"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/listPreferredItemHeight"
         android:paddingStart="?listPreferredItemPaddingStart"
         android:paddingTop="12dp"
         android:paddingEnd="?listPreferredItemPaddingEnd"
