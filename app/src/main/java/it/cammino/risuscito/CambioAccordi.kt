@@ -240,8 +240,8 @@ class CambioAccordi internal constructor(private val mContext: Context) {
                             for (j in i + 1 until line.length) {
                                 Log.v(TAG, "recuperaPrimoAccordo - DA ISP: " + line[j])
                                 val myMatcher = when (language) {
-                                    LANGUAGE_ENGLISH -> Pattern.compile("[^m][a-z]|#]").matcher(line[j].toString())
-                                    else -> Pattern.compile("[a-z]|#]").matcher(line[j].toString())
+                                    LANGUAGE_ENGLISH -> Pattern.compile("[^m][a-z]|#").matcher(line[j].toString())
+                                    else -> Pattern.compile("[a-z]|#").matcher(line[j].toString())
                                 }
                                 if (myMatcher.find()) {
                                     Log.v(TAG, "recuperaPrimoAccordo - matchato OK")
