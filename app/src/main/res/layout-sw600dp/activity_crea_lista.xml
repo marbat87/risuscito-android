@@ -22,11 +22,10 @@
             app:expandedTitleTextColor="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/action_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="bottom"
                 android:paddingBottom="20dp"
                 app:layout_collapseMode="parallax">
 
@@ -35,15 +34,15 @@
                     style="@style/TitoloSezione"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/text_field_title"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:text="@string/list_title"
-                    android:textColor="?colorOnSurface" />
+                    android:textColor="?colorOnSurface"
+                    app:layout_constraintBottom_toBottomOf="@id/text_field_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/text_field_title" />
 
                 <EditText
                     android:id="@+id/text_field_title"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/abc_action_bar_content_inset_material"
                     android:layout_marginBottom="@dimen/activity_min_margin"
@@ -57,9 +56,11 @@
                     android:textColor="?colorOnSurface"
                     android:textCursorDrawable="@null"
                     android:textSize="30sp"
-                    tools:ignore="UnusedAttribute" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/text_title_description" />
 
-            </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/risuscito_toolbar"
@@ -72,48 +73,9 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:colorBackground"
-        android:orientation="vertical"
-        app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior">
-
-        <TextView
-            style="?textAppearanceTitleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:gravity="start|center_vertical"
-            android:paddingStart="@dimen/myListPreferredItemMargin"
-            android:paddingLeft="@dimen/myListPreferredItemMargin"
-            android:paddingEnd="@dimen/myListPreferredItemMargin"
-            android:paddingRight="@dimen/myListPreferredItemMargin"
-            android:text="@string/list_elements" />
-
-        <TextView
-            android:id="@+id/noElementsAdded"
-            style="?textAppearanceBodyMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_min_margin"
-            android:paddingStart="@dimen/myListPreferredItemMargin"
-            android:paddingEnd="@dimen/myListPreferredItemMargin"
-            android:text="@string/no_elements_added" />
-
-        <include
-            android:id="@+id/main_hint_layout"
-            layout="@layout/hint_layout" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical" />
-
-    </LinearLayout>
+    <include
+        android:id="@+id/recycler_container"
+        layout="@layout/layout_crealista_recycler" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_crea_lista"

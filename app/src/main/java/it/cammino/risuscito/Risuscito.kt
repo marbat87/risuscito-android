@@ -4,9 +4,7 @@ import android.Manifest
 import android.annotation.TargetApi
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import android.os.SystemClock
+import android.os.*
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -19,6 +17,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
+import androidx.core.os.postDelayed
 import androidx.core.view.GravityCompat.START
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -130,8 +129,8 @@ class Risuscito : AccountMenuFragment() {
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
 
-        binding.imageView1.isVisible = true
-        binding.imageView1.setOnClickListener {
+        binding.coverLayout.coverImage.isVisible = true
+        binding.coverLayout.coverImage.setOnClickListener {
             if (!activityViewModel.isOnTablet)
                 mMainActivity?.activityDrawer?.openDrawer(START)
         }
@@ -278,6 +277,13 @@ class Risuscito : AccountMenuFragment() {
             mPopupMenu.show()
         }
 
+        // to hide soft keyboard
+        Handler(Looper.getMainLooper()).postDelayed(500) {
+            context?.let {
+                ContextCompat.getSystemService(it, InputMethodManager::class.java)
+                    ?.hideSoftInputFromWindow(binding.textFieldRicerca.windowToken, 0)
+            }
+        }
     }
 
     private fun checkPermission() {
@@ -342,7 +348,7 @@ class Risuscito : AccountMenuFragment() {
     private fun ricercaStringa(s: String) {
         job = lifecycleScope.launch {
             // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
-            binding.imageView1.isVisible = s.isEmpty()
+            binding.coverLayout.coverImage.isVisible = s.isEmpty()
             binding.signInButton.isVisible =
                 s.isEmpty() && !(activityViewModel.signedIn.value ?: false)
             if (s.trim { it <= ' ' }.length >= 3) {

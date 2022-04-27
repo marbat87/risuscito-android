@@ -155,28 +155,28 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         }
 
         val llm = LinearLayoutManager(this)
-        binding.recyclerView.layoutManager = llm
+        binding.recyclerContainer.recyclerView.layoutManager = llm
 
-        binding.recyclerView.adapter = mAdapter
+        binding.recyclerContainer.recyclerView.adapter = mAdapter
 
-        mTouchHelper?.attachToRecyclerView(binding.recyclerView) // Attach ItemTouchHelper to RecyclerView
+        mTouchHelper?.attachToRecyclerView(binding.recyclerContainer.recyclerView) // Attach ItemTouchHelper to RecyclerView
 
         binding.textTitleDescription.requestFocus()
 
-        binding.mainHintLayout.hintText.setText(R.string.showcase_rename_desc)
-        binding.mainHintLayout.hintText.append(System.getProperty("line.separator"))
-        binding.mainHintLayout.hintText.append(getString(R.string.showcase_delete_desc))
-        ViewCompat.setElevation(binding.mainHintLayout.questionMark, 1f)
-        binding.mainHintLayout.mainHintLayout.setOnTouchListener(
+        binding.recyclerContainer.hintText.setText(R.string.showcase_rename_desc)
+        binding.recyclerContainer.hintText.append(System.getProperty("line.separator"))
+        binding.recyclerContainer.hintText.append(getString(R.string.showcase_delete_desc))
+        ViewCompat.setElevation(binding.recyclerContainer.questionMark, 1f)
+        binding.recyclerContainer.mainHintLayout.setOnTouchListener(
             SwipeDismissTouchListener(
-                binding.mainHintLayout.mainHintLayout, null,
+                binding.recyclerContainer.mainHintLayout, null,
                 object : SwipeDismissTouchListener.DismissCallbacks {
                     override fun canDismiss(token: Any?): Boolean {
                         return true
                     }
 
                     override fun onDismiss(view: View, token: Any?) {
-                        binding.mainHintLayout.mainHintLayout.isVisible = false
+                        binding.recyclerContainer.mainHintLayout.isVisible = false
                         PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity)
                             .edit { putBoolean(Utility.INTRO_CREALISTA_2, true) }
                     }
@@ -230,7 +230,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             }
                             ADD_POSITION -> {
                                 inputdialogViewModel.handled = true
-                                binding.noElementsAdded.isVisible = false
+                                binding.recyclerContainer.noElementsAdded.isVisible = false
                                 mAdapter.add(swipeableItem {
                                     identifier = Utility.random(0, 5000).toLong()
                                     touchHelper = mTouchHelper
@@ -249,7 +249,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                                         false
                                     )
                                 )
-                                binding.mainHintLayout.mainHintLayout.isVisible =
+                                binding.recyclerContainer.mainHintLayout.isVisible =
                                     !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
                             }
                         }
@@ -311,7 +311,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 playIntro()
             }
         }
-        binding.mainHintLayout.mainHintLayout.isVisible =
+        binding.recyclerContainer.mainHintLayout.isVisible =
             mAdapter.adapterItems.isNotEmpty() && !mSharedPrefs.getBoolean(
                 Utility.INTRO_CREALISTA_2,
                 false
@@ -323,7 +323,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         when (item.itemId) {
             R.id.action_help -> {
                 playIntro()
-                binding.mainHintLayout.mainHintLayout.isVisible = mAdapter.adapterItems.isNotEmpty()
+                binding.recyclerContainer.mainHintLayout.isVisible =
+                    mAdapter.adapterItems.isNotEmpty()
                 return true
             }
             R.id.action_save_list -> {
@@ -447,7 +448,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
     override fun itemTouchDropped(oldPosition: Int, newPosition: Int) {
         @Suppress("UNCHECKED_CAST")
         val viewHolder =
-            binding.recyclerView.findViewHolderForAdapterPosition(newPosition) as? BindingViewHolder<SwipeableItemBinding>?
+            binding.recyclerContainer.recyclerView.findViewHolderForAdapterPosition(newPosition) as? BindingViewHolder<SwipeableItemBinding>?
         viewHolder?.binding?.listViewItemContainer?.isDragged = false
     }
 
@@ -460,8 +461,9 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         val item = mAdapter.getItem(position) ?: return
 
         mAdapter.remove(position)
-        binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
-        if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible = false
+        binding.recyclerContainer.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+        if (mAdapter.adapterItemCount == 0) binding.recyclerContainer.mainHintLayout.isVisible =
+            false
 
         Snackbar.make(
             binding.mainContent,
@@ -473,8 +475,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 mAdapter.add(position, item)
                 if (position != RecyclerView.NO_POSITION)
                     mAdapter.notifyItemChanged(position)
-                binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
-                if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible =
+                binding.recyclerContainer.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+                if (mAdapter.adapterItemCount == 0) binding.recyclerContainer.mainHintLayout.isVisible =
                     false
             }.show()
     }
@@ -577,7 +579,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 mCreaListaViewModel.tempTitle = listaPers.titolo ?: DEFAULT_TITLE
             binding.textFieldTitle.setText(mCreaListaViewModel.tempTitle)
             binding.collapsingToolbarLayout.title = mCreaListaViewModel.tempTitle
-            binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+            binding.recyclerContainer.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
         }
     }
 

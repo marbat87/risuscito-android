@@ -23,7 +23,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,139 +31,146 @@
         android:background="?android:colorBackground"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/music_controls"
             android:layout_width="match_parent"
             android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:layout_alignParentTop="true">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.constraintlayout.widget.Group
                 android:id="@+id/no_record"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:minHeight="@dimen/myListPreferredItemHeightMedium"
-                android:visibility="invisible">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:constraint_referenced_ids="no_record_image, no_record_text" />
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                    android:contentDescription="@null"
-                    android:src="@drawable/music_off_24px"
-                    android:translationZ="1dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/material_on_background_disabled" />
+            <ImageView
+                android:id="@+id/no_record_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                android:contentDescription="@null"
+                android:src="@drawable/music_off_24px"
+                android:translationZ="1dp"
+                app:layout_constraintBottom_toBottomOf="@id/no_record_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/no_record_text"
+                app:tint="@color/material_on_background_disabled" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                    android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                    android:text="@string/no_record"
-                    android:textAppearance="?textAppearanceTitleMedium"
-                    android:textColor="@color/material_on_background_disabled"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/imageView"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/no_record_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+                android:text="@string/no_record"
+                android:textAppearance="?textAppearanceTitleMedium"
+                android:textColor="@color/material_on_background_disabled"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/no_record_image"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/no_connection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:constraint_referenced_ids="no_internet_image, no_internet_text" />
+
+            <ImageView
+                android:id="@+id/no_internet_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                android:contentDescription="@null"
+                android:src="@drawable/wifi_off_24px"
+                android:translationZ="1dp"
+                app:layout_constraintBottom_toBottomOf="@id/no_internet_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/no_internet_text"
+                app:tint="@color/material_on_background_disabled" />
+
+            <TextView
+                android:id="@+id/no_internet_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/myListPreferredItemMargin"
+                android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+                android:text="@string/no_connection"
+                android:textAppearance="?textAppearanceTitleMedium"
+                android:textColor="@color/material_on_background_disabled"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/no_internet_image"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/no_connection"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:minHeight="@dimen/myListPreferredItemHeightMedium"
-                android:visibility="invisible">
-
-                <ImageView
-                    android:id="@+id/no_internet_image"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                    android:contentDescription="@null"
-                    android:src="@drawable/wifi_off_24px"
-                    android:translationZ="1dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/material_on_background_disabled" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/myListPreferredItemMargin"
-                    android:layout_marginEnd="@dimen/myListPreferredItemMargin"
-                    android:text="@string/no_connection"
-                    android:textAppearance="?textAppearanceTitleMedium"
-                    android:textColor="@color/material_on_background_disabled"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/no_internet_image"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <LinearLayout
                 android:id="@+id/music_buttons"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/time_text"
                     android:layout_width="50dip"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_min_margin"
                     android:gravity="end"
                     android:labelFor="@+id/music_seekbar"
                     android:text="00:00"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat"
                     android:textColor="?android:textColorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="HardcodedText,RtlSymmetry" />
 
-                <FrameLayout
-                    android:layout_width="0dip"
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/music_seekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="1000dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    app:labelBehavior="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/play_barrier"
+                    app:layout_constraintStart_toEndOf="@id/time_text"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/music_loadingbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/play_barrier"
+                    app:layout_constraintStart_toEndOf="@id/time_text"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/play_barrier"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <com.google.android.material.slider.Slider
-                        android:id="@+id/music_seekbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:maxHeight="1000dp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        app:labelBehavior="gone" />
-
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/music_loadingbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:indeterminate="true"
-                        android:visibility="gone" />
-
-
-                </FrameLayout>
+                    app:barrierDirection="start"
+                    app:constraint_referenced_ids="play_song, loading_bar" />
 
                 <Button
                     android:id="@+id/play_song"
                     style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="@dimen/activity_min_margin"
                     android:visibility="gone"
                     app:icon="@drawable/play_arrow_24px"
                     app:iconSize="24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="SpeakableTextPresentCheck"
                     tools:visibility="visible" />
 
@@ -171,23 +178,27 @@
                     android:id="@+id/loading_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="@dimen/activity_min_margin"
                     android:elevation="1dp"
-                    android:indeterminate="true" />
+                    android:indeterminate="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <WebView
             android:id="@+id/canto_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_below="@id/music_controls" />
+            android:layout_height="0dp"
+            android:layout_below="@id/music_controls"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/music_controls" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
@@ -198,29 +209,28 @@
         app:contentInsetStart="0dp"
         app:hideOnScroll="false">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/slider_text"
                 android:layout_width="50dip"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:gravity="center_horizontal"
                 android:labelFor="@+id/speed_seekbar"
                 android:text="0 %"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat"
                 android:textColor="?android:textColorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="HardcodedText,RtlSymmetry" />
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/speed_seekbar"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
                 android:maxHeight="1000dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
@@ -228,6 +238,10 @@
                 android:valueFrom="0.0"
                 android:valueTo="100.0"
                 app:labelBehavior="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/play_scroll"
+                app:layout_constraintStart_toEndOf="@id/slider_text"
+                app:layout_constraintTop_toTopOf="parent"
                 app:tickVisible="false" />
 
             <Button
@@ -235,15 +249,17 @@
                 style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/activity_min_margin"
                 app:icon="@drawable/play_circle_24px"
                 app:iconSize="24dp"
                 app:iconTint="?colorControlNormal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="SpeakableTextPresentCheck"
                 tools:visibility="visible" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 

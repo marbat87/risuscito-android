@@ -20,26 +20,19 @@
         android:paddingTop="12dp"
         android:paddingBottom="12dp">
 
-        <FrameLayout
-            android:id="@+id/page_icon"
+        <TextView
+            android:id="@+id/text_page"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="?listPreferredItemPaddingStart"
+            android:background="@drawable/page_oval_bkg"
+            android:gravity="center"
+            android:textAppearance="?textAppearanceListItem"
+            android:textColor="@color/primary_text_default_material_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/text_page"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/page_oval_bkg"
-                android:gravity="center"
-                android:textAppearance="?textAppearanceListItem"
-                android:textColor="@color/primary_text_default_material_light"
-                tools:text="15" />
-
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="15" />
 
         <TextView
             android:id="@+id/text_title"
@@ -49,9 +42,9 @@
             android:textAppearance="?textAppearanceListItem"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/check_box"
-            app:layout_constraintStart_toEndOf="@id/page_icon"
+            app:layout_constraintStart_toEndOf="@id/text_page"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Single line text " />
+            tools:text="Multiple \n line text " />
 
         <CheckBox
             android:id="@+id/check_box"

@@ -23,46 +23,38 @@
         android:paddingEnd="?listPreferredItemPaddingEnd"
         android:paddingBottom="12dp">
 
-        <FrameLayout
-            android:id="@+id/page_icon"
+        <TextView
+            android:id="@+id/text_page"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:background="@drawable/page_oval_bkg"
+            android:gravity="center"
+            android:textAppearance="?textAppearanceListItem"
+            android:textColor="@color/primary_text_default_material_light"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="15" />
 
-            <TextView
-                android:id="@+id/text_page"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/page_oval_bkg"
-                android:gravity="center"
-                android:textAppearance="?textAppearanceListItem"
-                android:textColor="@color/primary_text_default_material_light"
-                tools:text="15" />
+        <ImageView
+            android:id="@+id/selected_mark"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/page_oval_bkg_selected"
+            android:contentDescription="@null"
+            android:gravity="center"
+            android:padding="10dp"
+            android:src="@drawable/check_24px"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?colorOnPrimary" />
 
-            <!--            <com.google.android.material.imageview.ShapeableImageView-->
-            <!--                android:id="@+id/selected_mark"-->
-            <!--                android:layout_width="48dp"-->
-            <!--                android:layout_height="48dp"-->
-            <!--                android:scaleType="fitXY"-->
-            <!--                android:src="@drawable/ic_mtrl_checked_circle"-->
-            <!--                app:layout_constraintStart_toStartOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent"-->
-            <!--                app:shapeAppearanceOverlay="?attr/shapeAppearanceMediumComponent" />-->
-
-            <ImageView
-                android:id="@+id/selected_mark"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/page_oval_bkg_selected"
-                android:contentDescription="@null"
-                android:gravity="center"
-                android:padding="10dp"
-                android:src="@drawable/check_24px"
-                android:visibility="invisible"
-                app:tint="?colorOnPrimary" />
-
-        </FrameLayout>
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/history_item_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="text_page, selected_mark" />
 
         <TextView
             android:id="@+id/text_title"
@@ -72,7 +64,7 @@
             android:textAppearance="?textAppearanceListItem"
             app:layout_constraintBottom_toTopOf="@id/text_timestamp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/page_icon"
+            app:layout_constraintStart_toEndOf="@id/history_item_barrier"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Two line item" />
 
@@ -83,7 +75,7 @@
             android:layout_marginStart="?listPreferredItemPaddingStart"
             android:textAppearance="?textAppearanceListItemSecondary"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/page_icon"
+            app:layout_constraintStart_toEndOf="@id/history_item_barrier"
             app:layout_constraintTop_toBottomOf="@id/text_title"
             tools:text="Secondary Text" />
 

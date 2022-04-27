@@ -488,7 +488,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     @Suppress("DEPRECATION")
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setTaskDescriptionL() {
         val taskDesc = ActivityManager.TaskDescription(
             null,
