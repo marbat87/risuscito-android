@@ -72,7 +72,7 @@ dependencies {
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
     implementation("androidx.constraintlayout:constraintlayout:2.1.3")
-    implementation("androidx.media:media:1.5.0")
+    implementation("androidx.media:media:1.6.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
