@@ -59,6 +59,17 @@
             android:text="@string/about_subtitle"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/loading_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="11dp"
+            android:indeterminate="true"
+            app:indeterminateAnimationType="contiguous"
+            app:indicatorColor="@array/cat_custom_progress_colors"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintTop_toBottomOf="@+id/changelog_subtitle" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/about_text"
             android:layout_width="match_parent"

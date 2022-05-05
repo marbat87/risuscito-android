@@ -1,10 +1,14 @@
 package it.cammino.risuscito
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.addCallback
+import androidx.core.os.postDelayed
+import androidx.core.view.isVisible
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.michaelflisar.changelog.ChangelogBuilder
@@ -40,9 +44,12 @@ class ChangelogActivity : ThemeableActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        ChangelogBuilder()
-            .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
-            .buildAndSetup(binding.aboutText) // second parameter defines, if the dialog has a dark or light theme
+        Handler(Looper.getMainLooper()).postDelayed(1000) {
+            ChangelogBuilder()
+                .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
+                .buildAndSetup(binding.aboutText) // second parameter defines, if the dialog has a dark or light theme
+            binding.loadingBar.isVisible = false
+        }
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
@@ -52,12 +59,14 @@ class ChangelogActivity : ThemeableActivity() {
 
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
+        binding.aboutText.isVisible = false
         mViewModel.mLUtils.finishAfterTransitionWrapper()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
+                binding.aboutText.isVisible = false
                 mViewModel.mLUtils.finishAfterTransitionWrapper()
                 true
             }
