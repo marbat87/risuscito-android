@@ -24,7 +24,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.elevation.SurfaceColors
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import it.cammino.risuscito.LUtils.Companion.hasQ
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import java.io.BufferedReader
 import java.io.File
@@ -103,7 +103,7 @@ object Utility {
     internal fun isOnline(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-        return if (LUtils.hasM())
+        return if (OSUtils.hasM())
             isOnlineM(connectivityManager)
         else isOnlineLegacy(connectivityManager)
     }
@@ -166,7 +166,7 @@ object Utility {
 
         if (link.isNullOrEmpty()) return ""
 
-        return if (hasQ())
+        return if (OSUtils.hasQ())
             retrieveMediaFileLinkQ(activity, link, cercaEsterno)
         else
             retrieveMediaFileLinkLegacy(activity, link, cercaEsterno)
@@ -264,7 +264,7 @@ object Utility {
     }
 
     fun setupNavBarColor(context: Activity) {
-        if (LUtils.hasO()) {
+        if (OSUtils.hasO()) {
             context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             if (!ThemeUtils.isDarkMode(context)) setLightNavigationBar(context)
             context.window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(context)
@@ -305,7 +305,7 @@ object Utility {
         name: String,
         description: String
     ) {
-        if (LUtils.hasO()) createNotificationChannel(
+        if (OSUtils.hasO()) createNotificationChannel(
             applicationContext,
             channelId,
             name,
@@ -343,7 +343,7 @@ object Utility {
             Color.parseColor(t)
 
     fun getExternalLink(link: String): String {
-        return if (hasQ())
+        return if (OSUtils.hasQ())
             getExternalLinkQ(link)
         else
             getExternalLinkLegacy(link)

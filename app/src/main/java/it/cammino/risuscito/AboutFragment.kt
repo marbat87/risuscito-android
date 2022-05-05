@@ -12,6 +12,8 @@ import com.vansuita.materialabout.builder.AboutBuilder
 import it.cammino.risuscito.Utility.CLICK_DELAY
 import it.cammino.risuscito.databinding.AboutLayoutBinding
 import it.cammino.risuscito.ui.AccountMenuFragment
+import it.cammino.risuscito.ui.Animations
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.ThemeUtils
 
 
@@ -50,16 +52,21 @@ class AboutFragment : AccountMenuFragment() {
         val mChangeLogClickListener = View.OnClickListener {
             if (SystemClock.elapsedRealtime() - mLastClickTime >= CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                it.transitionName = "shared_element_about"
-                val options = ActivityOptions.makeSceneTransitionAnimation(
-                    mMainActivity,
-                    it,
-                    "shared_element_about" // The transition name to be matched in Activity B.
-                )
-                startActivity(
-                    Intent(mMainActivity, ChangelogActivity::class.java),
-                    options.toBundle()
-                )
+                if (OSUtils.isNbySamsung()) {
+                    startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
+                    Animations.slideInRight(mMainActivity)
+                } else {
+                    it.transitionName = "shared_element_about"
+                    val options = ActivityOptions.makeSceneTransitionAnimation(
+                        mMainActivity,
+                        it,
+                        "shared_element_about" // The transition name to be matched in Activity B.
+                    )
+                    startActivity(
+                        Intent(mMainActivity, ChangelogActivity::class.java),
+                        options.toBundle()
+                    )
+                }
             }
         }
 

@@ -34,6 +34,7 @@ import it.cammino.risuscito.database.dao.Backup
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
@@ -119,7 +120,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     class NoIdException internal constructor() : Exception("no ID linked to this Account")
 
     private fun setTaskDescription() {
-        if (LUtils.hasP())
+        if (OSUtils.hasP())
             setTaskDescriptionP()
         else
             setTaskDescriptionL()

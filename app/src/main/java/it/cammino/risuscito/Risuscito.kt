@@ -44,6 +44,7 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -168,7 +169,7 @@ class Risuscito : AccountMenuFragment() {
                 ThemeUtils.isDarkMode(requireContext())
             ) // second parameter defines, if the dialog has a dark or light theme
 
-        if (!LUtils.hasQ())
+        if (!OSUtils.hasQ())
             checkPermission()
 
         if (savedInstanceState == null) {
@@ -339,7 +340,7 @@ class Risuscito : AccountMenuFragment() {
     }
 
     private fun getVersionCodeWrapper(): Int {
-        return if (LUtils.hasP())
+        return if (OSUtils.hasP())
             getVersionCodeP()
         else
             getVersionCodeLegacy()

@@ -45,7 +45,6 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
-import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.Utility.getExternalLink
 import it.cammino.risuscito.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.Utility.isDefaultLocationPublic
@@ -65,10 +64,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.utils.DownloadState
-import it.cammino.risuscito.utils.Downloader
-import it.cammino.risuscito.utils.PdfExporter
-import it.cammino.risuscito.utils.getTypedValueResId
+import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -495,7 +491,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 simpleDialogViewModel.handled = true
                                 localUrl?.let { url ->
                                     stopMedia()
-                                    if (isDefaultLocationPublic(this) && hasQ()) {
+                                    if (isDefaultLocationPublic(this) && OSUtils.hasQ()) {
                                         mCantiViewModel.toDelete = ContentUris.withAppendedId(
                                             MediaStore.Audio.Media
                                                 .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
@@ -506,7 +502,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                             deleteAudio(mCantiViewModel.toDelete!!)
                                             mCantiViewModel.toDelete = null
                                         } catch (securityException: SecurityException) {
-                                            if (hasQ()) {
+                                            if (OSUtils.hasQ()) {
                                                 val recoverableSecurityException =
                                                     securityException as?
                                                             RecoverableSecurityException
@@ -628,7 +624,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                         dismissProgressDialog(DOWNLOAD_MP3)
                         // initiate media scan and put the new things into the path array to
                         // make the scanner aware of the location and the files you want to see
-                        if (isDefaultLocationPublic(this@PaginaRenderActivity) && !hasQ())
+                        if (isDefaultLocationPublic(this@PaginaRenderActivity) && !OSUtils.hasQ())
                             mediaScan(this@PaginaRenderActivity, url ?: "")
                         Snackbar.make(
                             findViewById(android.R.id.content),
