@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/43ea8b74c537a2f3dfdd857b16065a5f/transformed/jetified-speed-dial-3.2.0/res/layout/sd_fab_with_label_view.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/aa3fa8fdb2ea9ae4064fb7aa3c77a618/transformed/jetified-changelog-1.1.7/res/layout/changelog_row.xml" value="0.13269927536231885" />
+        <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/e41841c2429dcc61a9750f5c1dd33b00/transformed/jetified-MaterialAbout-0.2.6/res/layout-ldrtl-v17/xab_each_action.xml" value="0.17552083333333332" />
+        <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/e41841c2429dcc61a9750f5c1dd33b00/transformed/jetified-MaterialAbout-0.2.6/res/layout/xab_each_action.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable-anydpi-v24/ic_notification_done.xml" value="0.1855" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable-anydpi-v24/ic_notification_error.xml" value="0.1855" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable-anydpi-v24/ic_notification_music.xml" value="0.1855" />
@@ -14,6 +17,7 @@
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable-xxxhdpi/swap_vert_24px.xml" value="0.1855" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable-xxxhdpi/view_carousel_24px.xml" value="0.1855" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/account_circle_24px.xml" value="0.1855" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/account_circle_56px.xml" value="0.1935" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/account_key_24.xml" value="0.184" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/account_remove_24.xml" value="0.332" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/add_24px.xml" value="0.1855" />
@@ -151,6 +155,7 @@
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable/wifi_off_24px.xml" value="0.1855" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout-land/activity_crea_lista.xml" value="0.15696649029982362" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout-land/cover_layout.xml" value="0.30687830687830686" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout-ldrtl-v17/xab_each_action.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout-sw600dp/activity_crea_lista.xml" value="0.1390625" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/about_layout.xml" value="0.3625" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_crea_lista.xml" value="0.19375" />
@@ -164,6 +169,7 @@
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/bottom_sheet.xml" value="0.2798913043478261" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/changelo_row.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/changelog_layout.xml" value="0.33" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/changelog_row.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/checkable_row_item.xml" value="0.3625" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/cover_layout.xml" value="0.3625" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/header_navigation_drawer.xml" value="0.3625" />
@@ -177,14 +183,17 @@
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/layout_recycler.xml" value="0.3625" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/linear_progressbar.xml" value="0.3625" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/list_group_item.xml" value="0.17708333333333334" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/profile.xml" value="0.1" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/profile_dialog_content.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/row_item_history.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/row_item_notable.xml" value="0.17708333333333334" />
-        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/row_item_to_insert.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/row_item_to_insert.xml" value="0.1" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/sd_fab_with_label_view.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/search_layout.xml" value="0.25" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/simple_row_item.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/swipeable_item.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/tabs_layout.xml" value="0.3625" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/xab_each_action.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/ù.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/menu-sw600dp-port/navigation_drawer.xml" value="0.33203125" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/menu-sw840dp/navigation_drawer.xml" value="0.1328125" />
