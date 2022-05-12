@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/m.battain/.gradle/caches/transforms-3/aa3fa8fdb2ea9ae4064fb7aa3c77a618/transformed/jetified-changelog-1.1.7/res/layout/changelog_row.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable-anydpi-v24/ic_notification_done.xml" value="0.1855" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable-anydpi-v24/ic_notification_error.xml" value="0.1855" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/drawable-anydpi-v24/ic_notification_music.xml" value="0.1855" />
@@ -161,6 +162,7 @@
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/activity_risuscito.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/bottom_item.xml" value="0.3625" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/bottom_sheet.xml" value="0.2798913043478261" />
+        <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/changelo_row.xml" value="0.13269927536231885" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/changelog_layout.xml" value="0.33" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/checkable_row_item.xml" value="0.3625" />
         <entry key="..\:/Users/m.battain/StudioProjects/risuscito-android/app/src/main/res/layout/cover_layout.xml" value="0.3625" />
@@ -420,7 +422,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17_PREVIEW" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

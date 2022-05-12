@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5015
+        versionCode = 5016
         versionName = "5.0.0"
         kapt {
             arguments {
@@ -51,12 +51,13 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    namespace = "it.cammino.risuscito"
 
 }
 
 val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
-val roomVersion = "2.4.1"
+val roomVersion = "2.4.2"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21")
     implementation("androidx.multidex:multidex:2.0.1")
@@ -78,10 +79,9 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-RC3")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("com.google.android.gms:play-services-auth:20.2.0")
-    implementation(platform("com.google.firebase:firebase-bom:29.3.1"))
+    implementation(platform("com.google.firebase:firebase-bom:30.0.0"))
     implementation("com.google.firebase:firebase-core")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
