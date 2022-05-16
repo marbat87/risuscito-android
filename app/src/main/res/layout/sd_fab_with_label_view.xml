@@ -18,35 +18,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/sd_label_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:clickable="true"
         android:focusable="true"
-        android:minHeight="?listPreferredItemHeightSmall">
+        android:foreground="?attr/selectableItemBackground"
+        android:minHeight="?listPreferredItemHeightSmall"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="4dp"
+        app:strokeWidth="0dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/sd_label_container"
+        <TextView
+            android:id="@+id/sd_label"
+            style="@style/SpeedDial.FabLabelStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:minHeight="36dp"
-            app:contentPaddingLeft="8dp"
-            app:contentPaddingRight="8dp"
-            app:strokeWidth="0dp">
-
-            <TextView
-                android:id="@+id/sd_label"
-                style="@style/SpeedDial.FabLabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                tools:text="A label" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-    </FrameLayout>
+            tools:text="A label" />
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/sd_fab"
@@ -55,6 +47,7 @@
         android:layout_gravity="center_vertical|end"
         app:fabSize="mini"
         app:tint="@null"
+        app:useCompatPadding="true"
         tools:ignore="ContentDescription" />
 
 </merge>
