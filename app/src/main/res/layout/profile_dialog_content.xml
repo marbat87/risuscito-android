@@ -36,7 +36,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:src="@drawable/baseline_account_circle_56"
+        android:src="@drawable/account_circle_56px"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/close_modal"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Risuscito.CornerSize50Percent" />

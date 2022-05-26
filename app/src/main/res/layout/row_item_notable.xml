@@ -23,25 +23,18 @@
         android:paddingEnd="?listPreferredItemPaddingEnd"
         android:paddingBottom="12dp">
 
-        <FrameLayout
-            android:id="@+id/page_icon"
+        <TextView
+            android:id="@+id/text_page"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:background="@drawable/page_oval_bkg"
+            android:gravity="center"
+            android:textAppearance="?textAppearanceListItem"
+            android:textColor="@color/primary_text_default_material_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/text_page"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/page_oval_bkg"
-                android:gravity="center"
-                android:textAppearance="?textAppearanceListItem"
-                android:textColor="@color/primary_text_default_material_light"
-                tools:text="15" />
-
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="15" />
 
         <TextView
             android:id="@+id/text_title"
@@ -50,40 +43,42 @@
             android:layout_marginStart="?listPreferredItemPaddingStart"
             android:textAppearance="?textAppearanceListItem"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/edit_note_container"
-            app:layout_constraintStart_toEndOf="@id/page_icon"
+            app:layout_constraintEnd_toStartOf="@id/history_item_barrier"
+            app:layout_constraintStart_toEndOf="@id/text_page"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Single line text " />
 
-        <FrameLayout
-            android:id="@+id/edit_note_container"
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/history_item_barrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:barrierDirection="start"
+            app:constraint_referenced_ids="edit_note_filled, edit_note" />
+
+        <Button
+            android:id="@+id/edit_note"
+            style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/sell_24px"
+            app:iconSize="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/text_title"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck" />
 
-            <Button
-                android:id="@+id/edit_note"
-                style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/outline_sell_24"
-                app:iconSize="24dp"
-                tools:ignore="SpeakableTextPresentCheck" />
-
-            <Button
-                android:id="@+id/edit_note_filled"
-                style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:icon="@drawable/baseline_sell_24"
-                app:iconSize="24dp"
-                tools:ignore="SpeakableTextPresentCheck" />
-
-        </FrameLayout>
+        <Button
+            android:id="@+id/edit_note_filled"
+            style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:icon="@drawable/filled_sell_24px"
+            app:iconSize="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

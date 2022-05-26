@@ -4,14 +4,14 @@
 
     <item
         android:id="@+id/list_reset"
-        android:icon="@drawable/baseline_clear_all_24"
+        android:icon="@drawable/clear_all_24px"
         android:orderInCategory="99"
         android:title="@string/dialog_reset_favorites_title"
         risuscito:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_help"
-        android:icon="@drawable/baseline_help_24"
+        android:icon="@drawable/help_24px"
         android:orderInCategory="100"
         android:title="@string/action_help"
         risuscito:showAsAction="ifRoom" />

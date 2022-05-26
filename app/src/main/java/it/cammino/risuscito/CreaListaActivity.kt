@@ -49,6 +49,7 @@ import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -79,22 +80,24 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Set the transition name, which matches Activity A’s start view transition name, on
-        // the root view.
-        findViewById<View>(android.R.id.content).transitionName = "shared_element_crealista"
+        if (!OSUtils.isNbySamsung()) {
+            // Set the transition name, which matches Activity A’s start view transition name, on
+            // the root view.
+            findViewById<View>(android.R.id.content).transitionName = "shared_element_crealista"
 
-        // Attach a callback used to receive the shared elements from Activity A to be
-        // used by the container transform transition.
-        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+            // Attach a callback used to receive the shared elements from Activity A to be
+            // used by the container transform transition.
+            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
 
-        // Set this Activity’s enter and return transition to a MaterialContainerTransform
-        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-            addTarget(android.R.id.content)
-            duration = 700L
+            // Set this Activity’s enter and return transition to a MaterialContainerTransform
+            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+                addTarget(android.R.id.content)
+                duration = 700L
+            }
+
+            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+            window.sharedElementsUseOverlay = false
         }
-
-        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-        window.sharedElementsUseOverlay = false
 
         super.onCreate(savedInstanceState)
         binding = ActivityCreaListaBinding.inflate(layoutInflater)
@@ -112,7 +115,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        AppCompatResources.getDrawable(this@CreaListaActivity, R.drawable.baseline_delete_sweep_24)
+        AppCompatResources.getDrawable(this@CreaListaActivity, R.drawable.delete_sweep_24px)
             ?.let {
                 it.setTint(MaterialColors.getColor(view, R.attr.colorOnPrimary))
                 val touchCallback = SimpleSwipeDragCallback(
@@ -155,28 +158,28 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         }
 
         val llm = LinearLayoutManager(this)
-        binding.recyclerView.layoutManager = llm
+        binding.recyclerContainer.recyclerView.layoutManager = llm
 
-        binding.recyclerView.adapter = mAdapter
+        binding.recyclerContainer.recyclerView.adapter = mAdapter
 
-        mTouchHelper?.attachToRecyclerView(binding.recyclerView) // Attach ItemTouchHelper to RecyclerView
+        mTouchHelper?.attachToRecyclerView(binding.recyclerContainer.recyclerView) // Attach ItemTouchHelper to RecyclerView
 
         binding.textTitleDescription.requestFocus()
 
-        binding.mainHintLayout.hintText.setText(R.string.showcase_rename_desc)
-        binding.mainHintLayout.hintText.append(System.getProperty("line.separator"))
-        binding.mainHintLayout.hintText.append(getString(R.string.showcase_delete_desc))
-        ViewCompat.setElevation(binding.mainHintLayout.questionMark, 1f)
-        binding.mainHintLayout.mainHintLayout.setOnTouchListener(
+        binding.recyclerContainer.hintText.setText(R.string.showcase_rename_desc)
+        binding.recyclerContainer.hintText.append(System.getProperty("line.separator"))
+        binding.recyclerContainer.hintText.append(getString(R.string.showcase_delete_desc))
+        ViewCompat.setElevation(binding.recyclerContainer.questionMark, 1f)
+        binding.recyclerContainer.mainHintLayout.setOnTouchListener(
             SwipeDismissTouchListener(
-                binding.mainHintLayout.mainHintLayout, null,
+                binding.recyclerContainer.mainHintLayout, null,
                 object : SwipeDismissTouchListener.DismissCallbacks {
                     override fun canDismiss(token: Any?): Boolean {
                         return true
                     }
 
                     override fun onDismiss(view: View, token: Any?) {
-                        binding.mainHintLayout.mainHintLayout.isVisible = false
+                        binding.recyclerContainer.mainHintLayout.isVisible = false
                         PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity)
                             .edit { putBoolean(Utility.INTRO_CREALISTA_2, true) }
                     }
@@ -230,7 +233,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             }
                             ADD_POSITION -> {
                                 inputdialogViewModel.handled = true
-                                binding.noElementsAdded.isVisible = false
+                                binding.recyclerContainer.noElementsAdded.isVisible = false
                                 mAdapter.add(swipeableItem {
                                     identifier = Utility.random(0, 5000).toLong()
                                     touchHelper = mTouchHelper
@@ -249,7 +252,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                                         false
                                     )
                                 )
-                                binding.mainHintLayout.mainHintLayout.isVisible =
+                                binding.recyclerContainer.mainHintLayout.isVisible =
                                     !mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA_2, false)
                             }
                         }
@@ -311,7 +314,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 playIntro()
             }
         }
-        binding.mainHintLayout.mainHintLayout.isVisible =
+        binding.recyclerContainer.mainHintLayout.isVisible =
             mAdapter.adapterItems.isNotEmpty() && !mSharedPrefs.getBoolean(
                 Utility.INTRO_CREALISTA_2,
                 false
@@ -323,7 +326,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         when (item.itemId) {
             R.id.action_help -> {
                 playIntro()
-                binding.mainHintLayout.mainHintLayout.isVisible = mAdapter.adapterItems.isNotEmpty()
+                binding.recyclerContainer.mainHintLayout.isVisible =
+                    mAdapter.adapterItems.isNotEmpty()
                 return true
             }
             R.id.action_save_list -> {
@@ -447,7 +451,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
     override fun itemTouchDropped(oldPosition: Int, newPosition: Int) {
         @Suppress("UNCHECKED_CAST")
         val viewHolder =
-            binding.recyclerView.findViewHolderForAdapterPosition(newPosition) as? BindingViewHolder<SwipeableItemBinding>?
+            binding.recyclerContainer.recyclerView.findViewHolderForAdapterPosition(newPosition) as? BindingViewHolder<SwipeableItemBinding>?
         viewHolder?.binding?.listViewItemContainer?.isDragged = false
     }
 
@@ -460,8 +464,9 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         val item = mAdapter.getItem(position) ?: return
 
         mAdapter.remove(position)
-        binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
-        if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible = false
+        binding.recyclerContainer.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+        if (mAdapter.adapterItemCount == 0) binding.recyclerContainer.mainHintLayout.isVisible =
+            false
 
         Snackbar.make(
             binding.mainContent,
@@ -473,8 +478,8 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 mAdapter.add(position, item)
                 if (position != RecyclerView.NO_POSITION)
                     mAdapter.notifyItemChanged(position)
-                binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
-                if (mAdapter.adapterItemCount == 0) binding.mainHintLayout.mainHintLayout.isVisible =
+                binding.recyclerContainer.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+                if (mAdapter.adapterItemCount == 0) binding.recyclerContainer.mainHintLayout.isVisible =
                     false
             }.show()
     }
@@ -577,7 +582,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 mCreaListaViewModel.tempTitle = listaPers.titolo ?: DEFAULT_TITLE
             binding.textFieldTitle.setText(mCreaListaViewModel.tempTitle)
             binding.collapsingToolbarLayout.title = mCreaListaViewModel.tempTitle
-            binding.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
+            binding.recyclerContainer.noElementsAdded.isVisible = mAdapter.adapterItemCount == 0
         }
     }
 

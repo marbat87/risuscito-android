@@ -39,7 +39,9 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.AccountMenuFragment
+import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -197,7 +199,7 @@ class CustomLists : AccountMenuFragment() {
                         .icon(
                             AppCompatResources.getDrawable(
                                 requireContext(),
-                                R.drawable.baseline_check_24
+                                R.drawable.check_24px
                             )
                         )
                         .descriptionTypeface(mRegularFont) // Specify a typeface for the text
@@ -260,25 +262,40 @@ class CustomLists : AccountMenuFragment() {
                                 inputdialogViewModel.handled = true
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
                                 mMainActivity?.let { act ->
-                                    act.getFab().transitionName = "shared_element_crealista"
-                                    val options =
-                                        ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                            act,
-                                            act.getFab(),
-                                            "shared_element_crealista" // The transition name to be matched in Activity B.
-                                        )
-                                    startListEditForResult.launch(
-                                        Intent(
-                                            activity,
-                                            CreaListaActivity::class.java
-                                        ).putExtras(
-                                            bundleOf(
-                                                LIST_TITLE to inputdialogViewModel.outputText,
-                                                EDIT_EXISTING_LIST to false
+                                    if (OSUtils.isNbySamsung()) {
+                                        startListEditForResult.launch(
+                                            Intent(
+                                                act,
+                                                CreaListaActivity::class.java
+                                            ).putExtras(
+                                                bundleOf(
+                                                    LIST_TITLE to inputdialogViewModel.outputText,
+                                                    EDIT_EXISTING_LIST to false
+                                                )
                                             )
-                                        ),
-                                        options
-                                    )
+                                        )
+                                        Animations.slideInRight(act)
+                                    } else {
+                                        act.getFab().transitionName = "shared_element_crealista"
+                                        val options =
+                                            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                                act,
+                                                act.getFab(),
+                                                "shared_element_crealista" // The transition name to be matched in Activity B.
+                                            )
+                                        startListEditForResult.launch(
+                                            Intent(
+                                                act,
+                                                CreaListaActivity::class.java
+                                            ).putExtras(
+                                                bundleOf(
+                                                    LIST_TITLE to inputdialogViewModel.outputText,
+                                                    EDIT_EXISTING_LIST to false
+                                                )
+                                            ),
+                                            options
+                                        )
+                                    }
                                 }
 //                                startListEditForResult.launch(
 //                                    Intent(
@@ -350,7 +367,7 @@ class CustomLists : AccountMenuFragment() {
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.baseline_add_24)
+        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.add_24px)
         val actionListener = SpeedDialView.OnActionSelectedListener {
             when (it.id) {
                 R.id.fab_pulisci -> {
@@ -392,24 +409,39 @@ class CustomLists : AccountMenuFragment() {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
                     mMainActivity?.let { act ->
-                        act.getFab().transitionName = "shared_element_crealista"
-                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            act,
-                            act.getFab(),
-                            "shared_element_crealista" // The transition name to be matched in Activity B.
-                        )
-                        startListEditForResult.launch(
-                            Intent(
-                                activity,
-                                CreaListaActivity::class.java
-                            ).putExtras(
-                                bundleOf(
-                                    ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                    EDIT_EXISTING_LIST to true
+                        if (OSUtils.isNbySamsung()) {
+                            startListEditForResult.launch(
+                                Intent(
+                                    act,
+                                    CreaListaActivity::class.java
+                                ).putExtras(
+                                    bundleOf(
+                                        ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                        EDIT_EXISTING_LIST to true
+                                    )
                                 )
-                            ),
-                            options
-                        )
+                            )
+                            Animations.slideInRight(act)
+                        } else {
+                            act.getFab().transitionName = "shared_element_crealista"
+                            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                act,
+                                act.getFab(),
+                                "shared_element_crealista" // The transition name to be matched in Activity B.
+                            )
+                            startListEditForResult.launch(
+                                Intent(
+                                    act,
+                                    CreaListaActivity::class.java
+                                ).putExtras(
+                                    bundleOf(
+                                        ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                        EDIT_EXISTING_LIST to true
+                                    )
+                                ),
+                                options
+                            )
+                        }
                     }
                     true
                 }

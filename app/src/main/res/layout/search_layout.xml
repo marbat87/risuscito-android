@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_min_margin"
         android:layout_marginEnd="@dimen/activity_min_margin"
-        app:icon="@drawable/baseline_more_vert_24"
+        app:icon="@drawable/more_vert_24px"
         app:iconSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/text_box_ricerca"
@@ -101,24 +101,9 @@
         app:layout_constraintTop_toBottomOf="@id/no_results_image"
         tools:ignore="MissingPrefix" />
 
-    <ImageView
-        android:id="@+id/image_view_1"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/text_min_margin"
-        android:layout_marginEnd="@dimen/text_min_margin"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/copertina"
-        android:paddingBottom="?actionBarSize"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_main_cover"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.55"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_box_ricerca"
-        tools:visibility="visible" />
+    <include
+        android:id="@+id/cover_layout"
+        layout="@layout/cover_layout" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"

@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/select_none"
-        android:icon="@drawable/checkbox_multiple_blank_24"
+        android:icon="@drawable/filter_none_24px"
         android:orderInCategory="1"
         android:title="select none"
         risuscito:showAsAction="always"
@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/select_all"
-        android:icon="@drawable/baseline_library_add_check_24"
+        android:icon="@drawable/library_add_check_24px"
         android:orderInCategory="2"
         android:title="@android:string/selectAll"
         risuscito:showAsAction="always"
@@ -21,7 +21,7 @@
 
     <item
         android:id="@+id/cancel_change"
-        android:icon="@drawable/baseline_undo_24"
+        android:icon="@drawable/undo_24px"
         android:orderInCategory="4"
         android:title="@android:string/cancel"
         risuscito:showAsAction="always"
@@ -29,7 +29,7 @@
 
     <item
         android:id="@+id/confirm_changes"
-        android:icon="@drawable/baseline_save_24"
+        android:icon="@drawable/save_24px"
         android:orderInCategory="4"
         android:title="@android:string/ok"
         risuscito:showAsAction="always"

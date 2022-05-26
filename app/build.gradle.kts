@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5010
+        versionCode = 5018
         versionName = "5.0.0"
         kapt {
             arguments {
@@ -51,18 +51,19 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    namespace = "it.cammino.risuscito"
 
 }
 
 val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
-val roomVersion = "2.4.1"
+val roomVersion = "2.4.2"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.material:material:1.6.0-rc01")
-    implementation("androidx.core:core-splashscreen:1.0.0-beta02")
+    implementation("com.google.android.material:material:1.6.0")
+    implementation("androidx.core:core-splashscreen:1.0.0-rc01")
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.appcompat:appcompat-resources:1.4.1")
@@ -71,17 +72,16 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
-    implementation("androidx.media:media:1.5.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.media:media:1.6.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-RC3")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("com.google.android.gms:play-services-auth:20.1.0")
-    implementation(platform("com.google.firebase:firebase-bom:29.3.1"))
+    implementation("com.google.android.gms:play-services-auth:20.2.0")
+    implementation(platform("com.google.firebase:firebase-bom:30.0.1"))
     implementation("com.google.firebase:firebase-core")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
@@ -101,7 +101,7 @@ dependencies {
     implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
-    implementation("com.leinardi.android:speed-dial:3.2.0")
+    implementation("com.leinardi.android:speed-dial:3.3.0")
     implementation("com.github.Ferfalk:SimpleSearchView:0.2.0")
     implementation("com.github.MFlisar:changelog:1.1.7")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")

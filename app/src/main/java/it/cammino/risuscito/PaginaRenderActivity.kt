@@ -45,7 +45,6 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
-import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.Utility.getExternalLink
 import it.cammino.risuscito.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.Utility.isDefaultLocationPublic
@@ -65,10 +64,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.utils.DownloadState
-import it.cammino.risuscito.utils.Downloader
-import it.cammino.risuscito.utils.PdfExporter
-import it.cammino.risuscito.utils.getTypedValueResId
+import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -304,23 +300,25 @@ class PaginaRenderActivity : ThemeableActivity() {
     private lateinit var binding: ActivityPaginaRenderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Set the transition name, which matches Activity A’s start view transition name, on
-        // the root view.
-        findViewById<View>(android.R.id.content).transitionName = "shared_element_container"
+        if (!OSUtils.isNbySamsung()) {
+            // Set the transition name, which matches Activity A’s start view transition name, on
+            // the root view.
+            findViewById<View>(android.R.id.content).transitionName = "shared_element_container"
 
-        // Attach a callback used to receive the shared elements from Activity A to be
-        // used by the container transform transition.
-        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+            // Attach a callback used to receive the shared elements from Activity A to be
+            // used by the container transform transition.
+            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+            setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
 
-        // Set this Activity’s enter and return transition to a MaterialContainerTransform
-        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-            addTarget(android.R.id.content)
-            duration = 700L
+            // Set this Activity’s enter and return transition to a MaterialContainerTransform
+            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+                addTarget(android.R.id.content)
+                duration = 700L
+            }
+
+            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+            window.sharedElementsUseOverlay = false
         }
-
-        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-        window.sharedElementsUseOverlay = false
 
         super.onCreate(savedInstanceState)
         binding = ActivityPaginaRenderBinding.inflate(layoutInflater)
@@ -495,7 +493,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 simpleDialogViewModel.handled = true
                                 localUrl?.let { url ->
                                     stopMedia()
-                                    if (isDefaultLocationPublic(this) && hasQ()) {
+                                    if (isDefaultLocationPublic(this) && OSUtils.hasQ()) {
                                         mCantiViewModel.toDelete = ContentUris.withAppendedId(
                                             MediaStore.Audio.Media
                                                 .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
@@ -506,7 +504,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                             deleteAudio(mCantiViewModel.toDelete!!)
                                             mCantiViewModel.toDelete = null
                                         } catch (securityException: SecurityException) {
-                                            if (hasQ()) {
+                                            if (OSUtils.hasQ()) {
                                                 val recoverableSecurityException =
                                                     securityException as?
                                                             RecoverableSecurityException
@@ -628,7 +626,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                         dismissProgressDialog(DOWNLOAD_MP3)
                         // initiate media scan and put the new things into the path array to
                         // make the scanner aware of the location and the files you want to see
-                        if (isDefaultLocationPublic(this@PaginaRenderActivity) && !hasQ())
+                        if (isDefaultLocationPublic(this@PaginaRenderActivity) && !OSUtils.hasQ())
                             mediaScan(this@PaginaRenderActivity, url ?: "")
                         Snackbar.make(
                             findViewById(android.R.id.content),
@@ -1281,7 +1279,13 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private fun showScrolling(scrolling: Boolean) {
-        (binding.playScroll as? MaterialButton)?.setIconResource(if (scrolling) R.drawable.baseline_pause_circle_24 else R.drawable.baseline_play_circle_24)
+        val anim = if (scrolling) AnimatedVectorDrawableCompat.create(
+            this,
+            R.drawable.play_to_pause_circle_anim
+        ) else AnimatedVectorDrawableCompat.create(this, R.drawable.pause_to_play_circle_anim)
+        (binding.playScroll as? MaterialButton)?.icon = anim
+        anim?.start()
+//        (binding.playScroll as? MaterialButton)?.setIconResource(if (scrolling) R.drawable.pause_circle_24px else R.drawable.play_circle_24px)
         binding.playScroll.isSelected = scrolling
     }
 
@@ -1684,7 +1688,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         binding.fabCanti.addActionItem(
             SpeedDialActionItem.Builder(
                 R.id.fab_fullscreen_on,
-                AppCompatResources.getDrawable(this, R.drawable.baseline_fullscreen_24)
+                AppCompatResources.getDrawable(this, R.drawable.fullscreen_24px)
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                 .setLabel(getString(R.string.fullscreen))
@@ -1699,7 +1703,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 R.id.fab_sound_off,
                 AppCompatResources.getDrawable(
                     this,
-                    if (mCantiViewModel.mostraAudio) R.drawable.baseline_headset_24 else R.drawable.baseline_headset_off_24
+                    if (mCantiViewModel.mostraAudio) R.drawable.headphones_24px else R.drawable.headset_off_24px
                 )
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
@@ -1713,7 +1717,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         if (mDownload) {
             val icon = AppCompatResources.getDrawable(
                 this,
-                if ((!personalUrl.isNullOrEmpty())) R.drawable.baseline_link_off_24 else R.drawable.baseline_delete_24
+                if ((!personalUrl.isNullOrEmpty())) R.drawable.link_off_24px else R.drawable.delete_24px
             )
             val text = if (!personalUrl.isNullOrEmpty())
                 getString(R.string.dialog_delete_link_title) else
@@ -1732,7 +1736,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 binding.fabCanti.addActionItem(
                     SpeedDialActionItem.Builder(
                         R.id.fab_save_file,
-                        AppCompatResources.getDrawable(this, R.drawable.baseline_file_download_24)
+                        AppCompatResources.getDrawable(this, R.drawable.file_download_24px)
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.save_file))
@@ -1744,7 +1748,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(
                     R.id.fab_link_file,
-                    AppCompatResources.getDrawable(this, R.drawable.baseline_add_link_24)
+                    AppCompatResources.getDrawable(this, R.drawable.add_link_24px)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.only_link_title))
@@ -1761,7 +1765,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 R.id.fab_favorite,
                 AppCompatResources.getDrawable(
                     this,
-                    if (mCantiViewModel.mCurrentCanto?.favorite == 1) R.drawable.baseline_bookmark_remove_24 else R.drawable.baseline_bookmark_add_24
+                    if (mCantiViewModel.mCurrentCanto?.favorite == 1) R.drawable.bookmark_remove_24px else R.drawable.bookmark_add_24px
                 )
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)

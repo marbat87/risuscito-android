@@ -17,16 +17,14 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
-import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.PreferenceManager
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.elevation.SurfaceColors
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import it.cammino.risuscito.LUtils.Companion.hasQ
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import java.io.BufferedReader
 import java.io.File
@@ -105,7 +103,7 @@ object Utility {
     internal fun isOnline(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-        return if (LUtils.hasM())
+        return if (OSUtils.hasM())
             isOnlineM(connectivityManager)
         else isOnlineLegacy(connectivityManager)
     }
@@ -168,7 +166,7 @@ object Utility {
 
         if (link.isNullOrEmpty()) return ""
 
-        return if (hasQ())
+        return if (OSUtils.hasQ())
             retrieveMediaFileLinkQ(activity, link, cercaEsterno)
         else
             retrieveMediaFileLinkLegacy(activity, link, cercaEsterno)
@@ -266,7 +264,7 @@ object Utility {
     }
 
     fun setupNavBarColor(context: Activity) {
-        if (LUtils.hasO()) {
+        if (OSUtils.hasO()) {
             context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             if (!ThemeUtils.isDarkMode(context)) setLightNavigationBar(context)
             context.window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(context)
@@ -275,24 +273,10 @@ object Utility {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun setLightNavigationBar(context: Activity) {
-        if (LUtils.hasR())
-            setLightNavigationBarR(context)
-        else
-            setLightNavigationBarLegacy(context)
-    }
-
-    @Suppress("DEPRECATION")
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun setLightNavigationBarLegacy(context: Activity) {
-        context.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    fun setLightNavigationBarR(context: Activity) {
-        context.window.insetsController?.setSystemBarsAppearance(
-            WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-            WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-        )
+        WindowInsetsControllerCompat(
+            context.window,
+            context.window.decorView
+        ).isAppearanceLightNavigationBars = true
     }
 
     internal fun random(start: Int, end: Int): Int {
@@ -321,7 +305,7 @@ object Utility {
         name: String,
         description: String
     ) {
-        if (LUtils.hasO()) createNotificationChannel(
+        if (OSUtils.hasO()) createNotificationChannel(
             applicationContext,
             channelId,
             name,
@@ -359,7 +343,7 @@ object Utility {
             Color.parseColor(t)
 
     fun getExternalLink(link: String): String {
-        return if (hasQ())
+        return if (OSUtils.hasQ())
             getExternalLinkQ(link)
         else
             getExternalLinkLegacy(link)

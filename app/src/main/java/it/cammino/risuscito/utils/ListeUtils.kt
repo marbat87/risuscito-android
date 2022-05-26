@@ -510,7 +510,7 @@ object ListeUtils {
     //ISSUE in API 21
     private fun finishAfterTransitionWrapper(activity: AppCompatActivity) {
         closeKeyboard(activity)
-        if (LUtils.hasM())
+        if (OSUtils.hasM())
             activity.finishAfterTransition()
         else
             activity.finish()

@@ -9,8 +9,8 @@ import android.provider.Settings
 import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.Utility
+import it.cammino.risuscito.utils.OSUtils
 import java.util.*
 
 
@@ -141,7 +141,7 @@ class LocaleManager(context: Context) {
         }
 
         fun isLocaleNotEmpty(config: Configuration): Boolean {
-            return if (LUtils.hasN())
+            return if (OSUtils.hasN())
                 isLocaleNotEmptyN(config)
             else
                 isLocaleNotEmptyLegacy(config)
@@ -158,7 +158,7 @@ class LocaleManager(context: Context) {
         }
 
         fun getSystemLocale(res: Resources): Locale {
-            return if (LUtils.hasN())
+            return if (OSUtils.hasN())
                 getSystemLocaleN(res.configuration)
             else
                 getSystemLocaleLegacy(res.configuration)

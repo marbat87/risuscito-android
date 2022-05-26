@@ -35,10 +35,10 @@ import android.util.Log
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
-import it.cammino.risuscito.LUtils.Companion.hasQ
 import it.cammino.risuscito.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.Utility.isDefaultLocationPublic
 import it.cammino.risuscito.Utility.isExternalStorageReadable
+import it.cammino.risuscito.utils.OSUtils
 import java.io.FileInputStream
 import java.io.IOException
 
@@ -155,7 +155,7 @@ class Playback internal constructor(
                     source?.let {
                         if (it.contains("com.android.providers.media"))
                             mMediaPlayer?.setDataSource(mService.applicationContext, Uri.parse(it))
-                        else if (hasQ() && isExternalStorageReadable && isDefaultLocationPublic(
+                        else if (OSUtils.hasQ() && isExternalStorageReadable && isDefaultLocationPublic(
                                 mService.applicationContext
                             )
                         ) {

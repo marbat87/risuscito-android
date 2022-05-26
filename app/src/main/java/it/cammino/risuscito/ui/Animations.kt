@@ -46,4 +46,11 @@ object Animations {
             R.anim.animate_zoom_exit
         )
     }
+
+    fun slideInRight(activity: Activity?) {
+        activity?.overridePendingTransition(
+            R.anim.animate_slide_in_right,
+            R.anim.animate_slide_out_left
+        )
+    }
 }

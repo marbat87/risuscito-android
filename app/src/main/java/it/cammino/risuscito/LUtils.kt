@@ -34,6 +34,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.ui.Animations
+import it.cammino.risuscito.utils.OSUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.*
@@ -67,13 +68,17 @@ class LUtils private constructor(private val mActivity: Activity) {
         startView: View?
     ) {
 
-        val options = ActivityOptions.makeSceneTransitionAnimation(
-            mActivity,
-            startView,
-            "shared_element_container" // The transition name to be matched in Activity B.
-        )
-
-        mActivity.startActivity(intent, options.toBundle())
+        if (OSUtils.isNbySamsung()) {
+            mActivity.startActivity(intent)
+            Animations.slideInRight(mActivity)
+        } else {
+            val options = ActivityOptions.makeSceneTransitionAnimation(
+                mActivity,
+                startView,
+                "shared_element_container" // The transition name to be matched in Activity B.
+            )
+            mActivity.startActivity(intent, options.toBundle())
+        }
 
         val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
         val cronologia = Cronologia()
@@ -92,7 +97,7 @@ class LUtils private constructor(private val mActivity: Activity) {
 
     //ISSUE in API 21
     fun finishAfterTransitionWrapper() {
-        if (hasM())
+        if (OSUtils.hasM())
             mActivity.finishAfterTransition()
         else
             mActivity.finish()
@@ -107,7 +112,7 @@ class LUtils private constructor(private val mActivity: Activity) {
     }
 
     private fun setLighStatusBarFlag(light: Boolean) {
-        if (hasM())
+        if (OSUtils.hasM())
             setLighStatusBarFlagM(light)
     }
 
@@ -278,7 +283,7 @@ class LUtils private constructor(private val mActivity: Activity) {
     }
 
     val hasStorageAccess: Boolean
-        get() = hasQ() || ContextCompat.checkSelfPermission(
+        get() = OSUtils.hasQ() || ContextCompat.checkSelfPermission(
             mActivity,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
@@ -296,34 +301,6 @@ class LUtils private constructor(private val mActivity: Activity) {
             return LUtils(activity)
         }
 
-        fun hasO(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        }
-
-        fun hasQ(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-        }
-
-        fun hasM(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-        }
-
-        fun hasN(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-        }
-
-        fun hasP(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-        }
-
-        fun hasR(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-        }
-
-        fun hasS(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-        }
-
         @Suppress("DEPRECATION")
         private fun fromHtmlLegacy(input: String): Spanned {
             return Html.fromHtml(input)
@@ -335,7 +312,7 @@ class LUtils private constructor(private val mActivity: Activity) {
         }
 
         fun fromHtmlWrapper(input: String): Spanned {
-            return if (hasN())
+            return if (OSUtils.hasN())
                 fromHtml(input)
             else
                 fromHtmlLegacy(input)

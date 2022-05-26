@@ -36,10 +36,9 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.PaginaRenderActivity
 import it.cammino.risuscito.R
-import java.util.*
+import it.cammino.risuscito.utils.OSUtils
 import java.util.concurrent.TimeUnit
 
 class MusicService : MediaBrowserServiceCompat() {
@@ -113,7 +112,7 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     private fun getPendingIntent(intent: Intent, context: Context): PendingIntent {
-        return if (LUtils.hasM()) getPendingIntentM(intent, context) else getPendingIntentLegacy(
+        return if (OSUtils.hasM()) getPendingIntentM(intent, context) else getPendingIntentLegacy(
             intent,
             context
         )

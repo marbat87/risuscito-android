@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColorsOptions
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.Utility.DYNAMIC_COLORS
 import it.cammino.risuscito.Utility.NIGHT_MODE
 
@@ -31,7 +30,7 @@ class ThemeUtils {
             when (getPrefNightMode(context)) {
                 LIGHT_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 DARK_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                DEFAULT_MODE -> AppCompatDelegate.setDefaultNightMode(if (LUtils.hasP()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+                DEFAULT_MODE -> AppCompatDelegate.setDefaultNightMode(if (OSUtils.hasP()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
             }
         }
 

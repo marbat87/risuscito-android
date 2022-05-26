@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_switch_item"
-        android:icon="@drawable/baseline_shuffle_24"
+        android:icon="@drawable/shuffle_24px"
         android:orderInCategory="99"
         android:title="@string/action_switch_to"
         risuscito:showAsAction="always"
@@ -12,7 +12,7 @@
 
     <item
         android:id="@+id/action_remove_item"
-        android:icon="@drawable/baseline_delete_24"
+        android:icon="@drawable/delete_24px"
         android:orderInCategory="100"
         android:title="@string/action_remove"
         risuscito:showAsAction="always" />

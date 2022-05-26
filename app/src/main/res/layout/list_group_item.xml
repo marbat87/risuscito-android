@@ -15,7 +15,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/siple_row_item"
         android:layout_width="match_parent"
-        android:layout_height="?attr/listPreferredItemHeightSmall"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/listPreferredItemHeightSmall"
         android:paddingStart="?listPreferredItemPaddingStart"
         android:paddingTop="12dp"
         android:paddingEnd="?listPreferredItemPaddingEnd"
@@ -38,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="?listPreferredItemPaddingStart"
             android:contentDescription="@null"
-            android:src="@drawable/baseline_expand_less_24"
+            android:src="@drawable/expand_less_24px"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/group_title"

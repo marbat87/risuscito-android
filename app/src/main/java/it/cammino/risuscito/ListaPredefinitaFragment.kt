@@ -30,9 +30,11 @@ import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.items.listaPersonalizzataItem
 import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.posizioneItem
+import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.BottomSheetFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -532,12 +534,17 @@ class ListaPredefinitaFragment : Fragment() {
                         )
 
                         mMainActivity?.let {
-                            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                it,
-                                v,
-                                "shared_insert_container" // The transition name to be matched in Activity B.
-                            )
-                            startListInsertForResult.launch(intent, options)
+                            if (OSUtils.isNbySamsung()) {
+                                startListInsertForResult.launch(intent)
+                                Animations.slideInRight(it)
+                            } else {
+                                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                    it,
+                                    v,
+                                    "shared_insert_container" // The transition name to be matched in Activity B.
+                                )
+                                startListInsertForResult.launch(intent, options)
+                            }
                         }
                     }
                 }
