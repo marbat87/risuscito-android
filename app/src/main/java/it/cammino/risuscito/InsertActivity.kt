@@ -33,6 +33,7 @@ import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -62,22 +63,24 @@ class InsertActivity : ThemeableActivity() {
     private lateinit var binding: ActivityInsertSearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Set the transition name, which matches Activity A’s start view transition name, on
-        // the root view.
-        findViewById<View>(android.R.id.content).transitionName = "shared_insert_container"
+        if (!OSUtils.isNbySamsung()) {
+            // Set the transition name, which matches Activity A’s start view transition name, on
+            // the root view.
+            findViewById<View>(android.R.id.content).transitionName = "shared_insert_container"
 
-        // Attach a callback used to receive the shared elements from Activity A to be
-        // used by the container transform transition.
-        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+            // Attach a callback used to receive the shared elements from Activity A to be
+            // used by the container transform transition.
+            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
 
-        // Set this Activity’s enter and return transition to a MaterialContainerTransform
-        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-            addTarget(android.R.id.content)
-            duration = 700L
+            // Set this Activity’s enter and return transition to a MaterialContainerTransform
+            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+                addTarget(android.R.id.content)
+                duration = 700L
+            }
+
+            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+            window.sharedElementsUseOverlay = false
         }
-
-        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-        window.sharedElementsUseOverlay = false
 
         super.onCreate(savedInstanceState)
         binding = ActivityInsertSearchBinding.inflate(layoutInflater)

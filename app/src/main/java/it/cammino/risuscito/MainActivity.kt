@@ -62,6 +62,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPI
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.getTypedValueResId
 import kotlinx.coroutines.Dispatchers
@@ -115,22 +116,29 @@ class MainActivity : ThemeableActivity() {
         // Handle the splash screen transition.
         installSplashScreen()
         DynamicColors.applyToActivityIfAvailable(this, ThemeUtils.getDynamicColorOptions(this))
-        // Attach a callback used to capture the shared elements from this Activity to be used
-        // by the container transform transition
-        setExitSharedElementCallback(object : MaterialContainerTransformSharedElementCallback() {
-            override fun onSharedElementEnd(
-                sharedElementNames: MutableList<String>,
-                sharedElements: MutableList<View>,
-                sharedElementSnapshots: MutableList<View>
-            ) {
-                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots)
-                Log.d(TAG, "onTransitionEnd")
-                if (!mViewModel.isOnTablet) updateStatusBarLightMode(true)
-            }
-        })
+        if (!OSUtils.isNbySamsung()) {
+            // Attach a callback used to capture the shared elements from this Activity to be used
+            // by the container transform transition
+            setExitSharedElementCallback(object :
+                MaterialContainerTransformSharedElementCallback() {
+                override fun onSharedElementEnd(
+                    sharedElementNames: MutableList<String>,
+                    sharedElements: MutableList<View>,
+                    sharedElementSnapshots: MutableList<View>
+                ) {
+                    super.onSharedElementEnd(
+                        sharedElementNames,
+                        sharedElements,
+                        sharedElementSnapshots
+                    )
+                    Log.d(TAG, "onTransitionEnd")
+                    if (!mViewModel.isOnTablet) updateStatusBarLightMode(true)
+                }
+            })
 
-        // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-        window.sharedElementsUseOverlay = false
+            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
+            window.sharedElementsUseOverlay = false
+        }
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)

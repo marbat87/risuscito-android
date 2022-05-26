@@ -4,8 +4,8 @@
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
         <option name="GRADLE_PROJECT_PATH" value=":app" />
-        <option name="LAST_SUCCESSFUL_SYNC_AGP_VERSION" value="7.2.0" />
-        <option name="LAST_KNOWN_AGP_VERSION" value="7.2.0" />
+        <option name="LAST_SUCCESSFUL_SYNC_AGP_VERSION" value="7.2.1" />
+        <option name="LAST_KNOWN_AGP_VERSION" value="7.2.1" />
       </configuration>
     </facet>
     <facet type="android" name="Android">
@@ -83,8 +83,8 @@
     <orderEntry type="module-library" scope="TEST">
       <library name="Gradle: kaptGeneratedTestClasses">
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../app/build/tmp/kapt3/classes/debugAndroidTest" />
           <root url="file://$MODULE_DIR$/../../../app/build/tmp/kapt3/classes/debugUnitTest" />
+          <root url="file://$MODULE_DIR$/../../../app/build/tmp/kapt3/classes/debugAndroidTest" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
