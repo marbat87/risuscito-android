@@ -1,20 +1,12 @@
 package it.cammino.risuscito
 
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Base64
 import android.util.Log
-import android.view.View
 import androidx.activity.addCallback
 import androidx.lifecycle.lifecycleScope
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.community.material.CommunityMaterial
-import com.mikepenz.iconics.utils.colorInt
-import com.mikepenz.iconics.utils.paddingDp
-import com.mikepenz.iconics.utils.sizeDp
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.databinding.ActivityPaginaRenderFullscreenBinding
@@ -61,12 +53,6 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
 
-        val icon = IconicsDrawable(this, CommunityMaterial.Icon2.cmd_fullscreen_exit).apply {
-            colorInt = Color.WHITE
-            sizeDp = 24
-            paddingDp = 2
-        }
-        binding.fabFullscreenOff.setImageDrawable(icon)
         binding.fabFullscreenOff.setOnClickListener { lifecycleScope.launch { saveZoom() } }
 
         onBackPressedDispatcher.addCallback(this) {
@@ -106,10 +92,6 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             mDao.getCantoById(idCanto)
         }
 
-        // fix per crash su android 4.1
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN)
-            binding.cantoView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-
         loadContentIntoWebView(htmlContent)
 
         val webSettings = binding.cantoView.settings
@@ -130,19 +112,6 @@ class PaginaRenderFullScreen : ThemeableActivity() {
             mScrollDown.run()
 
     }
-
-//    private inner class MyWebViewClient : WebViewClient() {
-//        override fun onPageFinished(view: WebView, url: String) {
-//            view.postDelayed(600) {
-//                if ((currentCanto?.scrollX
-//                                ?: 0) > 0 || (currentCanto?.scrollY ?: 0) > 0)
-//                    view.scrollTo(
-//                            currentCanto?.scrollX
-//                                    ?: 0, currentCanto?.scrollY ?: 0)
-//            }
-//            super.onPageFinished(view, url)
-//        }
-//    }
 
     private fun loadContentIntoWebView(content: String?) {
         if (!content.isNullOrEmpty()) binding.cantoView.loadData(

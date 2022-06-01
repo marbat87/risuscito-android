@@ -2,9 +2,13 @@
 
 package it.cammino.risuscito.utils
 
+import android.content.Context
+import android.content.res.Resources
+import android.util.TypedValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
+import it.cammino.risuscito.ui.LocaleManager
 
 /**
  * This function creates a [LiveData] of a [Pair] of the two types provided. The resulting LiveData is updated whenever either input LiveData updates and both LiveData have updated to a non-null value at least once before.
@@ -90,7 +94,8 @@ infix fun <A, B> LiveData<A>.zipTo(b: LiveData<B>): LiveData<Pair<A, B>> = zipLi
  * @since 0.1.0
  * @author Mitchell Skaggs
  */
-infix fun <A, B> LiveData<A>.zipToNullable(b: LiveData<B>): LiveData<Pair<A?, B?>> = zipLiveDataNullable(this, b)
+infix fun <A, B> LiveData<A>.zipToNullable(b: LiveData<B>): LiveData<Pair<A?, B?>> =
+    zipLiveDataNullable(this, b)
 
 /**
  * This is an extension function that calls to [Transformations.map]. If null is received, null is returned instead of calling the provided function.
@@ -100,9 +105,9 @@ infix fun <A, B> LiveData<A>.zipToNullable(b: LiveData<B>): LiveData<Pair<A?, B?
  * @author Mitchell Skaggs
  */
 inline fun <A, B> LiveData<A>.map(crossinline function: (A) -> B): LiveData<B> =
-        Transformations.map(this) {
-            if (it == null) null else function(it)
-        }
+    Transformations.map(this) {
+        if (it == null) null else function(it)
+    }
 
 /**
  * This is an extension function that calls to [Transformations.map]. It exposes the possibilities of receiving and returning null.
@@ -112,7 +117,7 @@ inline fun <A, B> LiveData<A>.map(crossinline function: (A) -> B): LiveData<B> =
  * @author Mitchell Skaggs
  */
 fun <A, B> LiveData<A>.mapNullable(function: (A?) -> B?): LiveData<B> =
-        Transformations.map(this, function)
+    Transformations.map(this, function)
 
 /**
  * This is an extension function that calls to [Transformations.switchMap]. If null is received, null is returned instead of calling the provided function.
@@ -122,9 +127,9 @@ fun <A, B> LiveData<A>.mapNullable(function: (A?) -> B?): LiveData<B> =
  * @author Mitchell Skaggs
  */
 fun <A, B> LiveData<A>.switchMap(function: (A) -> LiveData<B>): LiveData<B> =
-        Transformations.switchMap(this) {
-            if (it == null) null else function(it)
-        }
+    Transformations.switchMap(this) {
+        if (it == null) null else function(it)
+    }
 
 /**
  * This is an extension function that calls to [Transformations.switchMap]. It exposes the possibilities of receiving and returning null.
@@ -134,7 +139,7 @@ fun <A, B> LiveData<A>.switchMap(function: (A) -> LiveData<B>): LiveData<B> =
  * @author Mitchell Skaggs
  */
 fun <A, B> LiveData<A>.switchMapNullable(function: (A?) -> LiveData<B>?): LiveData<B> =
-        Transformations.switchMap(this, function)
+    Transformations.switchMap(this, function)
 
 /**
  * This is an extension function that links two [MediatorLiveData] instances using a function [apply] and its inverse, [unapply]. Changes made to either [MediatorLiveData] are reflected in the other based on the two functions.
@@ -144,7 +149,10 @@ fun <A, B> LiveData<A>.switchMapNullable(function: (A?) -> LiveData<B>?): LiveDa
  * @since 0.1.0
  * @author Mitchell Skaggs
  */
-fun <A, B> MediatorLiveData<A>.bidiMap(apply: (currentA: A, oldB: B?) -> B?, unapply: (oldA: A, currentB: B) -> A?): MediatorLiveData<B> {
+fun <A, B> MediatorLiveData<A>.bidiMap(
+    apply: (currentA: A, oldB: B?) -> B?,
+    unapply: (oldA: A, currentB: B) -> A?
+): MediatorLiveData<B> {
     return MediatorLiveData<B>().apply {
         this@apply.addSource(this@bidiMap) {
             it?.let { a ->
@@ -166,4 +174,26 @@ fun <A, B> MediatorLiveData<A>.bidiMap(apply: (currentA: A, oldB: B?) -> B?, una
             }
         }
     }
+}
+
+fun String.capitalize(res: Resources): String {
+    return this.replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(
+            LocaleManager.getSystemLocale(res)
+        ) else it.toString()
+    }
+}
+
+fun CharSequence.capitalize(res: Resources): String {
+    return this.toString().replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(
+            LocaleManager.getSystemLocale(res)
+        ) else it.toString()
+    }
+}
+
+fun Context.getTypedValueResId(resId: Int): Int {
+    val outTypedValue = TypedValue()
+    theme.resolveAttribute(resId, outTypedValue, true)
+    return outTypedValue.resourceId
 }

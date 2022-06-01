@@ -1,34 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.preference.PreferenceCategory android:title="@string/theme">
 
-        <ColorPickerPreference
-            android:defaultValue="@color/md_indigo_500"
-            android:dialogTitle="@string/primary_color"
-            android:key="new_primary_color"
-            android:summary="@string/primary_color_desc"
-            android:title="@string/primary_color"
-            risuscito:pref_sortColors="true"
-            risuscito:pref_colors="@array/primary_colors_list" />
-
-        <ColorPickerPreference
-            android:defaultValue="@color/md_orange_a200"
-            android:dialogTitle="@string/accent_color"
-            android:key="new_accent_color"
-            android:summary="@string/accent_color_desc"
-            android:title="@string/accent_color"
-            risuscito:pref_sortColors="true"
-            risuscito:pref_colors="@array/accent_colors_list"  />
-
-        <SimpleMenuPreference
-            android:defaultValue="default"
-            android:title="@string/night_theme_title"
-            risuscito:useSimpleSummaryProvider="true"
+        <ListPreference
             android:entries="@array/themeListArray"
             android:entryValues="@array/themeEntryArray"
-            android:key="night_mode" />
+            android:key="night_mode"
+            android:title="@string/night_theme_title"
+            app:useSimpleSummaryProvider="true" />
 
     </androidx.preference.PreferenceCategory>
 
@@ -37,40 +18,40 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_seconda_lettura"
-            android:title="@string/show_seconda_title"
-            android:summary="@string/show_seconda_summary"/>
+            android:summary="@string/show_seconda_summary"
+            android:title="@string/show_seconda_title" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_canto_offertorio"
-            android:title="@string/show_offertorio_title"
-            android:summary="@string/show_offertorio_summary"/>
+            android:summary="@string/show_offertorio_summary"
+            android:title="@string/show_offertorio_title" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_santo"
-            android:title="@string/show_santo_title"
-            android:summary="@string/show_santo_summary"/>
+            android:summary="@string/show_santo_summary"
+            android:title="@string/show_santo_title" />
 
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_canto_pace"
-            android:title="@string/show_pace_title"
-            android:summary="@string/show_pace_summary"/>
+            android:summary="@string/show_pace_summary"
+            android:title="@string/show_pace_title" />
 
-        <SimpleMenuPreference
+        <DropDownPreference
             android:defaultValue="0"
-            android:title="@string/default_index_title"
             android:entries="@array/pref_default_index_entries"
             android:entryValues="@array/pref_default_index_values"
-            android:key="indice_predefinito" />
+            android:key="indice_predefinito_new"
+            android:title="@string/default_index_title" />
 
-        <SimpleMenuPreference
+        <DropDownPreference
             android:defaultValue="0"
-            android:title="@string/default_search_title"
             android:entries="@array/pref_default_search_entries"
             android:entryValues="@array/pref_default_search_values"
-            android:key="ricerca_predefinita" />
+            android:key="ricerca_predefinita"
+            android:title="@string/default_search_title" />
 
     </androidx.preference.PreferenceCategory>
 
@@ -79,27 +60,27 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="sempre_acceso"
-            android:title="@string/always_on"
-            android:summary="@string/always_on_summary"/>
+            android:summary="@string/always_on_summary"
+            android:title="@string/always_on" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="mostra_audio"
-            android:title="@string/show_audio_title"
-            android:summary="@string/show_audio_summary"/>
+            android:summary="@string/show_audio_summary"
+            android:title="@string/show_audio_title" />
 
-        <SimpleMenuPreference
+        <DropDownPreference
             android:defaultValue="0"
-            android:title="@string/save_location_title"
             android:entries="@array/save_location_sd_entries"
             android:entryValues="@array/save_location_sd_values"
-            android:key="memoria_salvataggio_scelta" />
+            android:key="memoria_salvataggio_scelta"
+            android:title="@string/save_location_title" />
 
-        <SimpleMenuPreference
-            android:title="@string/language_title"
+        <ListPreference
             android:entries="@array/pref_languages_entries"
             android:entryValues="@array/pref_languages_values"
-            android:key="lingua_sistema_new" />
+            android:key="lingua_sistema_new"
+            android:title="@string/language_title" />
 
     </androidx.preference.PreferenceCategory>
 

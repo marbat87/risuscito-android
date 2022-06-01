@@ -9,7 +9,6 @@
     <string name="letter_order_text">Alphabetical Index</string>
     <string name="page_order_text">Page index</string>
     <string name="search_name_text">Song searching</string>
-    <string name="arg_search_text">Analytical index</string>
     <string name="always_on">No standby</string>
     <string name="always_on_summary">It prevents the display to move to standby inside the application.</string>
     <string name="title_activity_favourites">Favorites</string>
@@ -53,7 +52,6 @@
     <string name="dialog_wonna_replace">Do you want to substitute it?</string>
     <string name="fast_search_title">Speed search</string>
     <string name="advanced_search_title">Advanced search</string>
-    <string name="title_activity_search">Search song</string>
     <string name="advanced_search_subtitle">SEARCH IN THE TITLE AND IN THE TEXT</string>
     <string name="fast_search_subtitle">SEARCH BY TITLE</string>
     <string name="show_seconda_title">Eucharist - 2nd reading</string>
@@ -64,7 +62,7 @@
     <string name="list_save_exit">Save and exit</string>
     <string name="add_position">Add element</string>
     <string name="content_drag">drag element</string>
-    <string name="aggiungi_confirm">ADD</string>
+    <string name="aggiungi_confirm">add</string>
     <string name="posizione_add_desc">Title of the new element</string>
     <string name="lista_pers_piena">The maximum number of allowed elements is 30</string>
     <string name="lista_pers_vuota">The list is empty</string>
@@ -116,7 +114,7 @@
     <string name="open_pdf">Open PDF</string>
     <string name="activity_homepage">Home page</string>
     <string name="no_memory_writable">Memory not available or in mode of read only</string>
-    <string name="salmi_musica_index">Psalms index set in music</string>
+    <string name="salmi_musica_index">Biblical index</string>
     <string name="only_link">Do you want to associate an mp3 file present in the memory of your device?</string>
     <string name="dialog_delete_link">Are you sure you want to disconnect the song present in the memory? (The file will not be deleted)</string>
     <string name="delink_delete">File is disconnected</string>
@@ -127,7 +125,7 @@
     <string name="no_elements_added">You haven\'t yet added any elements.</string>
     <string name="dialog_replace_title">Substitute the song</string>
     <string name="dialog_reset_list_title">Reset the list</string>
-    <string name="aggiungi_rename">RENAME</string>
+    <string name="aggiungi_rename">rename</string>
     <string name="save_list_title">Save the list</string>
     <string name="dialog_delete_mp3_title">Delete downloaded file</string>
     <string name="dialog_delete_link_title">Disconnect local file</string>
@@ -140,10 +138,6 @@
     <string name="show_santo_summary">Authorize the viewing of Holy for the Eucharist</string>
     <string name="fullscreen">Full display</string>
     <string name="file_selected">Selected file</string>
-    <string name="primary_color">Primary colour</string>
-    <string name="primary_color_desc">The most used colour in the interface</string>
-    <string name="accent_color">Colour of emphasis</string>
-    <string name="accent_color_desc">The colour used for the widgets and other details of the interface</string>
     <string name="theme">Theme</string>
     <string name="lists_pref">Lists</string>
     <string name="system">System</string>
@@ -173,7 +167,6 @@
     <string name="showcase_consegnati_howto">Press this button to access the list and mark the songs.</string>
     <string name="showcase_consegnati_confirm">When you have finished, press ENTER to save the modifications&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;or press CANCEL to delete them.</string>
-    <string name="save_consegnati_running">Saving in progress&#8230;</string>
     <string name="title_activity_history">Chronology</string>
     <string name="new_hint_remove">Press and hold an element to remove it.</string>
     <string name="history_empty">Chronology is empty.</string>
@@ -311,4 +304,6 @@
     <string name="elezione_2">Election (Second)</string>
     <string name="elezione_3">Election - final</string>
     <string name="passaggio_none">None</string>
+    <string name="dynamic_colors_title">Dynamic colors</string>
+    <string name="dynamic_colors_summary">Apply dynamic colors based on your wallpaper</string>
 </resources>

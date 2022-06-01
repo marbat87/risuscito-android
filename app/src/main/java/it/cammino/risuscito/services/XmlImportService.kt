@@ -7,122 +7,125 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.util.Xml
-import androidx.core.app.JobIntentService
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
-import org.xml.sax.helpers.XMLFilterImpl
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 
-class XmlImportService : JobIntentService() {
+class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
+    Worker(appContext, workerParams) {
 
-    override fun onHandleWork(intent: Intent) {
-        Log.d(TAG, "onHandleWork: Starting")
-        val data = intent.data
-        data?.let {
-            intent.data = null
-            importData(it)
-        }
+    override fun doWork(): Result {
+        Log.d(TAG, "doWork: Starting")
+        val resourceUri = inputData.getString(TAG_IMPORT_DATA)
+        return importData(Uri.parse(resourceUri))
     }
 
-    private fun importData(data: Uri) {
+    private fun importData(data: Uri): Result {
         Log.d(TAG, "$TAG_IMPORT_DATA: data = $data")
         Log.d(TAG, "$TAG_IMPORT_DATA:  data.getScheme = ${data.scheme}")
         val scheme = data.scheme
+        val appContext = applicationContext
 
-        val mNotificationManager = NotificationManagerCompat.from(this)
+
+        val mNotificationManager = NotificationManagerCompat.from(appContext)
         mNotificationManager.cancelAll()
         var mNotification: Notification
 
-        Utility.createNotificationChannelWrapper(applicationContext, CHANNEL_ID, "XML Import", "Importing selected XML")
+        Utility.createNotificationChannelWrapper(
+            appContext,
+            CHANNEL_ID,
+            "XML Import",
+            "Importing selected XML"
+        )
 
-        mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentTitle(getString(R.string.app_name))
-                .setProgress(0, 0, true)
-                .setContentText(getString(R.string.import_running))
-                .build()
+        mNotification = NotificationCompat.Builder(appContext, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setContentTitle(appContext.getString(R.string.app_name))
+            .setProgress(0, 0, true)
+            .setContentText(appContext.getString(R.string.import_running))
+            .build()
 
         mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
         if (ContentResolver.SCHEME_CONTENT == scheme) {
             try {
-                val fis = contentResolver.openInputStream(data)
+                val fis = appContext.contentResolver.openInputStream(data)
                 val celebrazione = parse(fis)
 
-                val mDao = RisuscitoDatabase.getInstance(this).listePersDao()
+                val mDao = RisuscitoDatabase.getInstance(appContext).listePersDao()
                 val listaPers = ListaPers()
                 listaPers.titolo = celebrazione.name
                 listaPers.lista = celebrazione
                 mDao.insertLista(listaPers)
 
-                mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_notification_done)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setContentText(getString(R.string.import_done))
-                        .build()
+                mNotification = NotificationCompat.Builder(appContext, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification_done)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setContentTitle(appContext.getString(R.string.app_name))
+                    .setContentText(appContext.getString(R.string.import_done))
+                    .build()
 
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
-                Log.d(TAG, ACTION_FINISH)
-                val intentBroadcast = Intent(ACTION_FINISH)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-
-                val i = baseContext
-                        .packageManager
-                        .getLaunchIntentForPackage(baseContext.packageName)
+                val i = appContext
+                    .packageManager
+                    .getLaunchIntentForPackage(appContext.packageName)
                 i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(i)
-                stopSelf()
+                appContext.startActivity(i)
+                return Result.success()
             } catch (e: XmlPullParserException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                mNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_notification_error)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setTicker(getString(R.string.import_error))
-                        .setContentText(getString(R.string.import_error))
-                        .build()
+                mNotification = NotificationCompat.Builder(appContext, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification_error)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setContentTitle(appContext.getString(R.string.app_name))
+                    .setTicker(appContext.getString(R.string.import_error))
+                    .setContentText(appContext.getString(R.string.import_error))
+                    .build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
 
-                Log.d(TAG, ACTION_FINISH)
-                val intentBroadcast = Intent(ACTION_FINISH)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-
-                stopSelf()
+                return Result.failure()
             } catch (e: SecurityException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
+                mNotification = NotificationCompat.Builder(appContext, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification_error)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setContentTitle(appContext.getString(R.string.app_name))
+                    .setTicker(appContext.getString(R.string.import_error))
+                    .setContentText(appContext.getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
-                Log.d(TAG, ACTION_FINISH)
-                val intentBroadcast = Intent(ACTION_FINISH)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-                stopSelf()
+
+                return Result.failure()
             } catch (e: IOException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                mNotification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_error).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentTitle(getString(R.string.app_name)).setTicker(getString(R.string.import_error)).setContentText(getString(R.string.import_error)).build()
+                mNotification = NotificationCompat.Builder(appContext, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification_error)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setContentTitle(appContext.getString(R.string.app_name))
+                    .setTicker(appContext.getString(R.string.import_error))
+                    .setContentText(appContext.getString(R.string.import_error)).build()
                 mNotificationManager.notify(NOTIFICATION_ID, mNotification)
-                Log.d(TAG, ACTION_FINISH)
-                val intentBroadcast = Intent(ACTION_FINISH)
-                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
-                stopSelf()
+
+                return Result.failure()
             }
 
         }
+        return Result.success()
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
@@ -213,20 +216,17 @@ class XmlImportService : JobIntentService() {
         internal const val NOTIFICATION_ID = 2
         internal val TAG = XmlImportService::class.java.canonicalName
         internal const val TAG_IMPORT_DATA = "importData"
-        private const val JOB_ID = 5000
-        const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
-        const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
+
+        //        private const val JOB_ID = 5000
+//        const val ACTION_URL = "it.cammino.risuscito.import.action.URL"
+//        const val ACTION_FINISH = "it.cammino.risuscito.import.action.URL"
         private const val CHANNEL_ID = "itcr_import_channel"
         private const val POSITION_TAG = "position"
 
         // We don't use namespaces
         private val ns: String? = null
 
-        /**
-         * Convenience method for enqueuing work in to this service.
-         */
-        fun enqueueWork(context: Context, work: Intent) {
-            enqueueWork(context, XMLFilterImpl::class.java, JOB_ID, work)
-        }
     }
+
+
 }

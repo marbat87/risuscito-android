@@ -1,24 +1,23 @@
 plugins {
     id("com.android.application")
     id("com.google.firebase.crashlytics")
-    id("com.google.gms.google-services")
     kotlin("android")
     kotlin("kapt")
+    id("com.google.gms.google-services")
 }
 
 
 android {
 
-    compileSdkVersion(30)
-    buildToolsVersion("30.0.3")
+    compileSdk = 32
+    buildToolsVersion = "32.0.0"
     defaultConfig {
         applicationId = "it.cammino.risuscito"
-        minSdkVersion(16)
-        targetSdkVersion(30)
+        minSdk = 21
+        targetSdk = 32
         multiDexEnabled = true
-        versionCode = 4703
-        versionName = "4.7.0"
-        vectorDrawables.useSupportLibrary = true
+        versionCode = 5018
+        versionName = "5.0.0"
         kapt {
             arguments {
                 arg("room.incremental", "true")
@@ -29,17 +28,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-
-    lintOptions {
-        disable("PrivateResource")
-        disable("MissingTranslation")
+        jvmTarget = JavaVersion.VERSION_11.toString()
+        freeCompilerArgs = listOf("-Xjvm-default=all")
     }
 
     buildTypes {
@@ -53,64 +48,50 @@ android {
         }
     }
 
-    dexOptions {
-        javaMaxHeapSize = "2g"
-        jumboMode = true
-    }
-
     buildFeatures {
         viewBinding = true
     }
+    namespace = "it.cammino.risuscito"
 
 }
 
 val preferenceFixVersion = "1.1.0"
-val fastAdapterVersion = "5.4.1"
-val materialDrawerVersion = "8.4.0"
-val materialDialogsVersion = "3.3.0"
-val roomVersion = "2.3.0"
-val iconicVersion = "5.2.8"
+val fastAdapterVersion = "5.6.0"
+val roomVersion = "2.4.2"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.play:core:1.10.0")
-    implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.activity:activity-ktx:1.2.3")
-    implementation("androidx.appcompat:appcompat:1.3.0")
-    implementation("androidx.appcompat:appcompat-resources:1.3.0")
-    implementation("androidx.core:core-ktx:1.5.0")
-    implementation("androidx.fragment:fragment-ktx:1.3.4")
-    implementation("androidx.recyclerview:recyclerview:1.2.0")
-    implementation("androidx.slidingpanelayout:slidingpanelayout:1.1.0")
-    implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.media:media:1.3.1")
+    implementation("com.google.android.play:core:1.10.3")
+    implementation("com.google.android.material:material:1.6.0")
+    implementation("androidx.core:core-splashscreen:1.0.0-rc01")
+    implementation("androidx.activity:activity-ktx:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.appcompat:appcompat-resources:1.4.1")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.fragment:fragment-ktx:1.4.1")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.media:media:1.6.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
-    implementation("androidx.preference:preference-ktx:1.1.1")
-    implementation("com.takisoft.preferencex:preferencex:$preferenceFixVersion")
-    implementation("com.takisoft.preferencex:preferencex-simplemenu:$preferenceFixVersion")
-    implementation("com.takisoft.preferencex:preferencex-colorpicker:$preferenceFixVersion")
-    implementation("com.google.android.gms:play-services-auth:19.0.0")
-    implementation("com.google.firebase:firebase-core:19.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:23.0.0")
-    implementation("com.google.firebase:firebase-storage-ktx:20.0.0")
-    implementation("com.google.firebase:firebase-auth:21.0.1")
-    implementation("com.google.firebase:firebase-crashlytics:18.0.0")
-    implementation("com.google.firebase:firebase-analytics:19.0.0")
-    implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
-    implementation("com.afollestad.material-dialogs:input:$materialDialogsVersion")
-    implementation("com.afollestad.material-dialogs:files:$materialDialogsVersion")
-    implementation("com.mikepenz:materialdrawer:$materialDrawerVersion")
-    implementation("com.mikepenz:materialdrawer-iconics:$materialDrawerVersion")
-    implementation("com.mikepenz:crossfader:1.6.0")
-    implementation("com.mikepenz:iconics-core:$iconicVersion")
-    implementation("com.mikepenz:iconics-views:$iconicVersion")
-    implementation("com.mikepenz:community-material-typeface:5.8.55.0-kotlin@aar")
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
+    implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("com.google.android.gms:play-services-auth:20.2.0")
+    implementation(platform("com.google.firebase:firebase-bom:30.0.1"))
+    implementation("com.google.firebase:firebase-core")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.mikepenz:itemanimators:1.1.0")
-    implementation("com.github.jrvansuita:MaterialAbout:0.2.5.1")
-    implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.2")
+    implementation("com.github.jrvansuita:MaterialAbout:0.2.6")
+    implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
     implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-drag:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-swipe:$fastAdapterVersion")
@@ -119,14 +100,9 @@ dependencies {
     implementation("com.mikepenz:fastadapter-extensions-binding:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
     implementation("com.squareup.picasso:picasso:2.8")
-    implementation("pub.devrel:easypermissions:3.0.0")
     implementation("it.marbat.pdfjet.lib:lib:1.0.0")
-    implementation("com.github.turing-tech:MaterialScrollBar:13.3.4")
-    implementation("com.leinardi.android:speed-dial:3.2.0")
-    implementation("com.github.mohammadatif:Animatoo:master")
+    implementation("com.leinardi.android:speed-dial:3.3.0")
     implementation("com.github.Ferfalk:SimpleSearchView:0.2.0")
     implementation("com.github.MFlisar:changelog:1.1.7")
-    implementation("com.github.stupacki:MultiFunctions:1.2.2")
-    implementation("com.wada811:android-material-design-colors:3.0.0")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
 }

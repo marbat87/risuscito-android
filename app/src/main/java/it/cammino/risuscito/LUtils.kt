@@ -1,33 +1,40 @@
 package it.cammino.risuscito
 
+import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.animation.TimeInterpolator
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import android.view.View
-import android.view.Window
+import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.google.android.material.animation.AnimationUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.ui.Animations
+import it.cammino.risuscito.utils.OSUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.*
@@ -57,10 +64,21 @@ class LUtils private constructor(private val mActivity: Activity) {
         get() = mActivity.resources.getBoolean(R.bool.fab_orientation_left)
 
     fun startActivityWithTransition(
-        intent: Intent
+        intent: Intent,
+        startView: View?
     ) {
-        mActivity.startActivity(intent)
-        Animations.enterRight(mActivity)
+
+        if (OSUtils.isNbySamsung()) {
+            mActivity.startActivity(intent)
+            Animations.slideInRight(mActivity)
+        } else {
+            val options = ActivityOptions.makeSceneTransitionAnimation(
+                mActivity,
+                startView,
+                "shared_element_container" // The transition name to be matched in Activity B.
+            )
+            mActivity.startActivity(intent, options.toBundle())
+        }
 
         val mDao = RisuscitoDatabase.getInstance(mActivity).cronologiaDao()
         val cronologia = Cronologia()
@@ -77,55 +95,73 @@ class LUtils private constructor(private val mActivity: Activity) {
         Animations.enterZoom(mActivity)
     }
 
-    fun closeActivityWithTransition() {
-        mActivity.finish()
-        Animations.exitRight(mActivity)
+    //ISSUE in API 21
+    fun finishAfterTransitionWrapper() {
+        if (OSUtils.hasM())
+            mActivity.finishAfterTransition()
+        else
+            mActivity.finish()
     }
 
-    internal fun goFullscreen() {
-        when {
-            hasR() -> goFullscreenR()
-            hasK() -> goFullscreenK()
-            else -> goFullscreenJB()
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    internal fun goFullscreenR() {
-        WindowCompat.setDecorFitsSystemWindows(mActivity.window, false)
+    fun setLigthStatusBar(light: Boolean) {
         WindowInsetsControllerCompat(
             mActivity.window,
             mActivity.window.decorView
-        ).let { controller ->
-            controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars())
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
+        ).isAppearanceLightStatusBars = light
+        setLighStatusBarFlag(light)
+    }
+
+    private fun setLighStatusBarFlag(light: Boolean) {
+        if (OSUtils.hasM())
+            setLighStatusBarFlagM(light)
     }
 
     @Suppress("DEPRECATION")
-    internal fun goFullscreenJB() {
-        mActivity.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        mActivity
-            .window
-            .setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun setLighStatusBarFlagM(light: Boolean) {
+        if (light)
+            mActivity
+                .window
+                .decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     }
 
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
-    @Suppress("DEPRECATION")
-    internal fun goFullscreenK() {
-        mActivity
-            .window
-            .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+    internal fun goFullscreen() {
+        val windowInsetsController =
+            ViewCompat.getWindowInsetsController(mActivity.window.decorView) ?: return
+        // Configure the behavior of the hidden system bars
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        // Hide both the status bar and the navigation bar
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+//        when {
+//            hasR() -> goFullscreenR()
+//            else -> goFullscreenLegacy()
+//        }
     }
+
+//    private fun goFullscreenR() {
+//        WindowCompat.setDecorFitsSystemWindows(mActivity.window, false)
+//        WindowInsetsControllerCompat(
+//            mActivity.window,
+//            mActivity.window.decorView
+//        ).let { controller ->
+//            controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars())
+//            controller.systemBarsBehavior =
+//                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+//        }
+//    }
+
+//    @Suppress("DEPRECATION")
+//    private fun goFullscreenLegacy() {
+//        mActivity
+//            .window
+//            .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                or View.SYSTEM_UI_FLAG_FULLSCREEN
+//                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+//    }
 
     // controlla se l'app deve mantenere lo schermo acceso
     fun checkScreenAwake() {
@@ -230,13 +266,13 @@ class LUtils private constructor(private val mActivity: Activity) {
     internal fun animateIn(view: View) {
         view.isVisible = true
         view.animate().translationY(0f)
-            .setInterpolator(AnimationUtils.LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L)
+            .setInterpolator(LINEAR_OUT_SLOW_IN_INTERPOLATOR).setDuration(225L)
             .setListener(null).start()
     }
 
     internal fun animateOut(view: View) {
         view.animate().translationY(view.height.toFloat())
-            .setInterpolator(AnimationUtils.FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L)
+            .setInterpolator(FAST_OUT_LINEAR_IN_INTERPOLATOR).setDuration(175L)
             .setListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator?) {
@@ -246,49 +282,23 @@ class LUtils private constructor(private val mActivity: Activity) {
             ).start()
     }
 
+    val hasStorageAccess: Boolean
+        get() = OSUtils.hasQ() || ContextCompat.checkSelfPermission(
+            mActivity,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
     companion object {
 
         private const val FILE_FORMAT = ".risuscito"
         internal val TAG = LUtils::class.java.canonicalName
+        internal val FAST_OUT_LINEAR_IN_INTERPOLATOR: TimeInterpolator =
+            FastOutLinearInInterpolator()
+        internal val LINEAR_OUT_SLOW_IN_INTERPOLATOR: TimeInterpolator =
+            LinearOutSlowInInterpolator()
 
         fun getInstance(activity: Activity): LUtils {
             return LUtils(activity)
-        }
-
-        fun hasK(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-        }
-
-        fun hasL(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-        }
-
-        fun hasO(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        }
-
-        fun hasQ(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-        }
-
-        fun hasJB(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
-        }
-
-        fun hasM(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-        }
-
-        fun hasN(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-        }
-
-        fun hasP(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-        }
-
-        fun hasR(): Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
         }
 
         @Suppress("DEPRECATION")
@@ -302,7 +312,7 @@ class LUtils private constructor(private val mActivity: Activity) {
         }
 
         fun fromHtmlWrapper(input: String): Spanned {
-            return if (hasN())
+            return if (OSUtils.hasN())
                 fromHtml(input)
             else
                 fromHtmlLegacy(input)
@@ -314,13 +324,14 @@ class LUtils private constructor(private val mActivity: Activity) {
                     val idField = c.getDeclaredField(it)
                     idField.getInt(idField)
                 } catch (e: Exception) {
-                    Log.e(TAG, "getResId: " + e.localizedMessage, e)
+                    Log.e(TAG, "getResId: $resName" + e.localizedMessage, e)
                     -1
                 }
             }
             Log.e(TAG, "resName NULL")
             return -1
         }
+
     }
 
 }

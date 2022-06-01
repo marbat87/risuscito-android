@@ -12,11 +12,11 @@
     <string name="santo_1983_title">HOLY, HOLY, HOLY (1983)</string>
     <string name="preghiera_eucarestica_II_title">EUCHARISTIC PRAYER II (Preface)</string>
     <string name="preghiera_eucaristica_II_parte2_title">EUCHARISTIC PRAYER II (CONS. AND ACCL. - B: NEW MISSAL) </string>
-	<string name="preghiera_eucaristica_II_2_offerta_title">EUCHARISTIC PRAYER II (OFFERING, INTERCESSION, DOXOLOGY)</string>
-	<string name="preghiera_eucaristia_II_2_prefazio_title">EUCHARISTIC PRAYER II (2): PREFACE</string>
-	<string name="preghiera_eucaristica_II_2_consacrazione_title">EUCHARISTIC PRAYER II (CONS. AND ACCL. - A: NEW MISSAL)</string>
-	<string name="prefazio_eucarestia_veglia_pasquale_title">PREFACE OF THE EUCHARISTIC PRAYER OF THE PASCHAL VIGIL</string>
-	<string name="benedizione_acqua_fonte_title">BLESSING OF THE WATER OF THE BAPTISMAL FONT</string>
+    <string name="preghiera_eucaristica_II_2_offerta_title">EUCHARISTIC PRAYER II (OFFERING, INTERCESSION, DOXOLOGY)</string>
+    <string name="preghiera_eucaristia_II_2_prefazio_title">EUCHARISTIC PRAYER II (2): PREFACE</string>
+    <string name="preghiera_eucaristica_II_2_consacrazione_title">EUCHARISTIC PRAYER II (CONS. AND ACCL. - A: NEW MISSAL)</string>
+    <string name="prefazio_eucarestia_veglia_pasquale_title">PREFACE OF THE EUCHARISTIC PRAYER OF THE PASCHAL VIGIL</string>
+    <string name="benedizione_acqua_fonte_title">BLESSING OF THE WATER OF THE BAPTISMAL FONT</string>
     <string name="preconio_pasquale_title">EXULTET (Paschal Preconium)</string>
     <string name="inno_lodi_avvento_fino16_title">HYMN OF LAUDS FOR ADVENT UNTIL DECEMBER 16th</string>
     <string name="inno_lodi_avvento_dopo16_title">HYMN OF LAUDS FOR ADVENT AFTER DECEMBER 16th</string>
@@ -30,7 +30,7 @@
     <string name="acclamazioni_al_vangelo_title">ALLELUIA TO WELCOME THE GOSPEL</string>
     <string name="acclamazioni_al_vangelo_quaresima_title">ACCLAMATION TO THE GOSPEL DURING LENT</string>
     <string name="te_deum_title">TE DEUM</string>
-	<string name="agnello_di_dio_title">LAMB OF GOD</string>
+    <string name="agnello_di_dio_title">LAMB OF GOD</string>
     <string name="padre_nostro_title">OUR FATHER (MT. 6, 9–13)</string>
     <string name="credo_apostolico_title">APOSTLES’ CREED</string>
     <string name="risuscito_title">HE ROSE FROM DEATH (1 COR. 15)</string>
@@ -41,7 +41,7 @@
     <string name="benedici_anima_mia_jahve_title">BLESS YAHWEH MY SOUL - Ps 102/103</string>
     <string name="fino_a_quando_title">HOW MUCH LONGER? - Ps 12/13</string>
     <string name="jahve_tu_sei_mio_dio_title">YAHWEH YOU ARE MY GOD(Is 25:1–8; 26:6)</string>
-    <string name="cantiamo_cantiamo_title">LET’S SING, LET’S SING (Ex. 15,1–2)</string>
+    <!--    <string name="cantiamo_cantiamo_title">LET’S SING, LET’S SING (Ex. 15,1–2)</string>-->
     <string name="giunga_la_mia_preghiera_title">MAY MY PLEA REACH YOUR PRESENCE - Ps 118/119</string>
     <string name="guardate_come_e_bello_title">LOOK HOW DELIGHTFUL IT IS - Ps 132/133</string>
     <string name="come_bello_come_da_gioia_title">HOW GOOD IT IS, WHAT A JOY - Ps 132/133</string>
@@ -68,7 +68,7 @@
     <string name="abramo_title">ABRAHAM (Gen 18:1–5)</string>
     <string name="cantico_di_mose_title">SONG OF MOSES (Ex 15:1–18)</string>
     <string name="lodate_il_signore_title">PRAISE THE LORD ALL PEOPLES OF THE EARTH - Ps 116/117</string>
-	
+
     <string name="quando_israele_usci_egitto_title">WHEN ISRAEL CAME OUT OF EGYPT - Ps 113/114</string>
     <string name="alzate_o_porte_title">GATES, LIFT UP YOU HEADS - Ps 23/24</string>
     <string name="signore_mio_pastore_title">THE LORD IS MY SHEPHERD - Ps 22/23</string>
@@ -82,7 +82,7 @@
     <string name="alzo_gli_occhi_title">I LIFT UP MY EYES TO THE MOUNTAINS - Ps 120/121</string>
     <string name="canto_liberati_title">SONG OF THOSE WHO WERE FREED (Is 12:4–6)</string>
     <string name="se_oggi_ascoltate_sua_voce_title">IF TODAY YOU LISTEN TO HIS VOICE - Ps 94/95</string>
-    <string name="venite_applaudiamo_al_signore_title">COME LET’S APPLAUD TO THE LORD - Ps 94/95</string>
+    <!--    <string name="venite_applaudiamo_al_signore_title">COME LET’S APPLAUD TO THE LORD - Ps 94/95</string>-->
     <string name="dajenu_title">DAYENU</string>
     <string name="alla_vittima_pasquale_title">TO THE PASCHAL VICTIM</string>
     <string name="inno_di_pasqua_title">HYMN OF PASSOVER</string>
@@ -106,13 +106,11 @@
     <string name="o_dio_tu_sei_il_mio_dio_title">O GOD, YOU ARE MY GOD - Ps 62/63</string>
     <string name="sale_dio_tra_acclamazioni_title">GOD GOES UP WITH SHOUTS OF JOY - Ps 46/47</string>
     <string name="popolo_camminava_tenebre_title">THE PEOPLE THAT WALKED IN DARKNESS (Is 9:1–5)</string>
-	
-    <string name="da_lode_al_signore_title">Give praise to the Lord - Ps 145/146</string>
-	
+    <!--    <string name="da_lode_al_signore_title">Give praise to the Lord - Ps 145/146</string>-->
     <string name="canto_di_balaam_title">SONG OF BALAAM (Nm 23:7–24)</string>
     <string name="davanti_agli_angeli_title">BEFORE THE ANGELS - Ps 137/138</string>
-    <string name="quando_israele_era_un_bimbo_title">WHEN ISRAEL WAS A CHILD (Hos 11:1–11)</string>
-    <string name="e_la_pasqua_del_signore_title">IT\'S THE PASSOVER OF THE LORD</string>
+    <!--    <string name="quando_israele_era_un_bimbo_title">WHEN ISRAEL WAS A CHILD (Hos 11:1–11)</string>-->
+    <!--    <string name="e_la_pasqua_del_signore_title">IT\'S THE PASSOVER OF THE LORD</string>-->
     <string name="tempo_ogni_cosa_title">THERE IS A SEASON FOR EVERYTHING (Qo 3:1–5)</string>
     <string name="benedici_anima_mia_title">BLESS, MY SOUL, THE LORD (Song of Tobit) (Tob 13)</string>
     <string name="quanto_sono_amabili_dimore_title">HOW LOVELY ARE YOUR DWELLING PLACES - Ps 83/84</string>
@@ -122,11 +120,7 @@
     <string name="cerano_due_angeli_title">TWO ANGELS MET</string>
     <string name="amo_il_signore_title">I LOVE THE LORD - Ps 114/115</string>
     <string name="venite_a_me_voi_tutti_title">COME TO ME ALL OF YOU (Mat 11:28–30)</string>
-	
     <string name="a_te_si_deve_lode_in_sion_title">TO YOU, O LORD, PRAISE IS DUE IN ZION - Ps 64/65</string>
-	
-	
-	
     <string name="se_signore_sono_rifugiato_title">IF IN THE LORD I HAVE TAKEN REFUGE - Ps 10/11</string>
     <string name="signore_annuncia_una_notizia_title">THE LORD ANNOUNCES A GOOD NEWS –  (vv 12–16.33.34) - Ps 67/68</string>
     <string name="benedite_il_signore_title">BLESS THE LORD - Ps 133/134</string>
@@ -144,12 +138,10 @@
     <string name="mietitura_delle_nazioni_title">THE HARVEST OF THE NATIONS (Jo 4:31–38)</string>
     <string name="dice_il_signore_al_mio_signore_title">SAYS THE LORD TO MY LORD (Ps 109/110)</string>
     <string name="felice_uomo_title">HAPPY THE MAN (Ps 1)</string>
-    
     <string name="tu_sei_il_piu_bello_title">YOU ARE BEAUTIFUL (Ps 44/45)</string>
     <string name="felicita_per_l_uomo_title">HAPPINESS FOR THE MAN (1990) (Ps 127/128)</string>
     <string name="sorga_dio_title">LET GOD ARISE (Ps 67/68: 2.4–7)</string>
     <string name="andiamo_gia_pastori_title">LET’S GO ALREADY SHEPHERDS</string>
-	
     <string name="maria_di_jasna_gora_title">MARIA DI JASNA GORA (Hymn to the Virgin of Czestochowa)</string>
     <string name="a_te_signore_con_la_mia_voce_title">TO YOU, O LORD, WITH MY VOICE I CRY FOR HELP (Ps 141/142)</string>
     <string name="un_germoglio_spunta_tronco_title">A SHOOT SPRINGS FROM THE STOCK OF JESSE (Is 11)</string>
@@ -166,25 +158,24 @@
     <string name="andate_ed_annunziate_title">GO AND ANNOUNCE TO MY BROTHERS (Mt 28:7–20)</string>
     <string name="mi_indicherai_sentiero_vita_title">YOU WILL SHOW ME THE PATH OF LIFE (Ps15/16)</string>
     <string name="o_dio_per_il_tuo_nome_title">O GOD, BY YOUR NAME SAVE ME (Ps 53/54)</string>
-	<string name="ave_maria_colomba_title">HAIL, O MARY, INCORRUPT DOVE</string>
-	    <string name="mi_rubasti_cuore_title">YOU STOLE MY HEART (Songs 4:9 – 5:1)</string>
-	<string name="come_pecora_che_vede_title">LIKE A MOTHER EWE WHO SEES (From a himn of Roman the Melodist)</string>
-    
+    <string name="ave_maria_colomba_title">HAIL, O MARY, INCORRUPT DOVE</string>
+    <string name="mi_rubasti_cuore_title">YOU STOLE MY HEART (Songs 4:9 – 5:1)</string>
+    <string name="come_pecora_che_vede_title">LIKE A MOTHER EWE WHO SEES (From a himn of Roman the Melodist)</string>
     <string name="signore_ascolta_mia_preghiera_title">LORD, LISTEN TO MY PRAYER (Ps 142/143)</string>
-	<string name="stolto_pensa_che_non_ce_dio_title">THE FOOL THINKS THERE IS NO GOD (Ps 13/14)</string>
-	 <string name="tu_sei_bella_amica_mia_title">YOU ARE BEAUTIFUL MY BELOVED (Songs 6–7)</string>
-	<string name="vi_prendero_dalle_genti_title">I WILL TAKE YOU FROM THE NATIONS (Ez 36:24–28)</string>
-	<string name="sola_a_solo_title">SOLA A SOLO</string>
-	<string name="fratelli_non_diamo_a_nessuno_title">BROTHERS (Cf. 2 Cor 6:3–16)</string>
+    <string name="stolto_pensa_che_non_ce_dio_title">THE FOOL THINKS THERE IS NO GOD (Ps 13/14)</string>
+    <string name="tu_sei_bella_amica_mia_title">YOU ARE BEAUTIFUL MY BELOVED (Songs 6–7)</string>
+    <string name="vi_prendero_dalle_genti_title">I WILL TAKE YOU FROM THE NATIONS (Ez 36:24–28)</string>
+    <string name="sola_a_solo_title">SOLA A SOLO</string>
+    <string name="fratelli_non_diamo_a_nessuno_title">BROTHERS (Cf. 2 Cor 6:3–16)</string>
     <string name="non_e_qui_e_risorto_title">HE IS NOT HERE, HE HAS RISEN (Mt 28:1–7)</string>
-	<string name="in_mezzo_grande_folla_title">IN THE MIDST OF A GREAT CROWD (Lk 8:42–48)</string>
+    <string name="in_mezzo_grande_folla_title">IN THE MIDST OF A GREAT CROWD (Lk 8:42–48)</string>
     <string name="zaccheo_title">ZACCHEUS (LK 19:1–10)</string>
-	<string name="voi_siete_la_luce_del_mondo_title">YOU ARE THE LIGHT OF THE WORLD (MT 5:14–16)</string>		
+    <string name="voi_siete_la_luce_del_mondo_title">YOU ARE THE LIGHT OF THE WORLD (MT 5:14–16)</string>
     <string name="questo_e_io_mio_comandamento_title">THIS IS MY COMMANDMENT (Jo 15:12.13.16.18; 17:21)</string>
     <string name="se_siete_risorti_title">IF YOU ARE RISEN WITH CHRIST (Co 3:1–4)</string>
     <string name="messia_leone_vincere_title">THE MESSIAH LION TO VANQUISH</string>
     <string name="e_paziente_title">HE IS PATIENT (hymn to the holy spirit)</string>
-	<string name="siedi_solitario_silenzioso_title">SIT DOWN IN SOLITUDE AND IN SILENCE (Lam 3:1–33)</string>
+    <string name="siedi_solitario_silenzioso_title">SIT DOWN IN SOLITUDE AND IN SILENCE (Lam 3:1–33)</string>
     <string name="cosi_parla_amen_title">THUS SPEAKS THE AMEN (Rev 3:14–22)</string>
     <string name="ti_vedranno_i_re_title">THE KINGS SHALL SEE YOU: 2nd Song of the Suffering Servant (Is 49:1–16)</string>
     <string name="giacobbe_title">JACOB (Gen 32:23–29)</string>
@@ -220,8 +211,8 @@
     <string name="tu_che_abiti_nei_giardini_title">YOU WHO DWELL IN THE GARDENS (Songs 8:13–14)</string>
     <string name="agnella_di_dio_title">SONG OF THE LAMB</string>
     <string name="non_ce_in_lui_bellezza_title">IN HIM THERE IS NO BEAUTY: IV SONG OF THE SERVANT OF YAHWEH (ls. 53,2ff)</string>
-	  <string name="canto_dell_agnello_title">SONG OF THE LAMB(Rev 5:9 ff)</string>
-	<string name="chi_e_colei_title">WHO IS THIS COMING UP FROM THE DESERT(Songs 8:5–7)</string>
+    <string name="canto_dell_agnello_title">SONG OF THE LAMB(Rev 5:9 ff)</string>
+    <string name="chi_e_colei_title">WHO IS THIS COMING UP FROM THE DESERT(Songs 8:5–7)</string>
     <string name="voce_del_mio_amato_title">THE VOICE OF MY BELOVED (Songs 2:8–17)</string>
     <string name="colomba_volo_title">THE DOVE HOVERED OVER (XXIV Ode of Solomon)</string>
     <string name="come_stilla_il_miele_title">AS THE HONEY DRIPS(XI Ode of Solomon)</string>
@@ -229,7 +220,7 @@
     <string name="portami_in_cielo_title">TAKE ME TO HEAVEN</string>
     <string name="tu_sei_mia_speranza_signore_title">YOU ARE MY HOPE, O LORD (XXIX Ode of Solomon)</string>
     <string name="una_donna_vestita_di_sole_title">A WOMAN CLOTHED WITH THE SUN (Rev 12)</string>
-	<string name="una_gran_senal_title">UNA GRAN SEÑAL (Rev 12)</string>
+    <string name="una_gran_senal_title">UNA GRAN SEÑAL (Rev 12)</string>
     <string name="ho_steso_le_mani_title">I HAVE STRETCHED OUT MY HANDS (Ode of Solomon)</string>
     <string name="omelia_pasquale_melitone_sardi_title">PASCHAL HOMILY OF MELITO OF SARDIS</string>
     <string name="carmen_63_title">CARMEN ‘63 (from Tagore)</string>
@@ -237,9 +228,16 @@
     <string name="noli_me_tangere_title">NOLI ME TANGERE (Jo 20:3–17)</string>
     <string name="signore_aiutami_signore_title">LORD, HELP ME</string>
     <string name="mi_hai_sedotto_signore_title">YOU HAVE SEDUCED ME, LORD (Jeremiah 20, 7–18)</string>
-	<string name="in_una_notte_oscura_title">THE DARK NIGHT OF THE SOUL (St John of the Cross)</string>
+    <string name="in_una_notte_oscura_title">THE DARK NIGHT OF THE SOUL (St John of the Cross)</string>
     <string name="amate_i_vostri_nemici_title">LOVE YOUR ENEMIES (THE SERMON ON THE MOUNT) Luke 6:20–30; 36–37</string>
-	<string name="resurrexit_title">RESURREXIT (Jo 11:25–27)</string>
-	<string name="ecco_il_mio_servo_title">THIS IS MY SERVANT: 1ST SONG OF THE SUFFERING SERVANT (Is 42:1–4)</string>
-	<string name="inno_cristo_luce_title">HYMN TO CHRIST LIGHT (1967)</string>
+    <string name="resurrexit_title">RESURREXIT (Jo 11:25–27)</string>
+    <string name="ecco_il_mio_servo_title">THIS IS MY SERVANT: 1ST SONG OF THE SUFFERING SERVANT (Is 42:1–4)</string>
+    <string name="inno_cristo_luce_title">HYMN TO CHRIST LIGHT (1967)</string>
+    <string name="preghiera_eucaristica_IV_title">Preghiera Eucaristica IV - (Dossologia)</string>
+    <string name="preghiere_universali_cantate_title">PRAYER OF THE FAITHFUL(UNIVERSAL PRAYER)</string>
+    <string name="salga_sposo_sul_legno_title">Salga lo sposo sul legno del suo talamo</string>
+    <string name="salmodia_salmo_responsoriale_title">Salmodia per il salmo responsoriale</string>
+    <string name="salve_regina_title">Salve Regina</string>
+    <string name="sequenza_corpus_domini_title">Sequenza Corpus Domini</string>
+    <string name="un_angelo_venne_dal_cielo_title">Un angelo venne dal cielo - Allegria Allegria</string>
 </resources>

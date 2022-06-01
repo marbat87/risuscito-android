@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recycler_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:colorBackground"
+    app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior">
+
+    <TextView
+        android:id="@+id/crea_lista_subtitle"
+        style="?textAppearanceTitleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="start|center_vertical"
+        android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:text="@string/list_elements"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/noElementsAdded"
+        style="?textAppearanceBodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_min_margin"
+        android:paddingStart="@dimen/myListPreferredItemMargin"
+        android:paddingEnd="@dimen/myListPreferredItemMargin"
+        android:text="@string/no_elements_added"
+        app:layout_constraintTop_toBottomOf="@id/crea_lista_subtitle" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_hint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/myListPreferredItemHeightMedium"
+        android:background="@android:color/transparent"
+        android:minHeight="@dimen/myListPreferredItemHeightMedium"
+        app:layout_constraintTop_toBottomOf="@id/crea_lista_subtitle">
+
+        <ImageView
+            android:id="@+id/question_mark"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="@dimen/myListPreferredItemMargin"
+            android:background="@drawable/oval_bg_hint"
+            android:contentDescription="@null"
+            android:src="@drawable/info_24px"
+            android:translationZ="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?colorControlActivated" />
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:background="?colorControlActivated"
+            app:layout_constraintEnd_toEndOf="@id/question_mark"
+            app:layout_constraintStart_toStartOf="@id/question_mark"
+            app:layout_constraintTop_toBottomOf="@id/question_mark" />
+
+        <TextView
+            android:id="@+id/hint_text"
+            style="@style/TextAppearance.Design.Hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/myListPreferredTextMarginStart"
+            android:layout_marginEnd="@dimen/myListPreferredItemMargin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/showcase_rename_desc" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/cleat_list_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="noElementsAdded, main_hint_layout" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cleat_list_barrier" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,21 +4,18 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.os.Build.VERSION_CODES.JELLY_BEAN_MR1
 import android.os.Build.VERSION_CODES.N
 import android.provider.Settings
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.Utility
+import it.cammino.risuscito.utils.OSUtils
 import java.util.*
 
 
 class LocaleManager(context: Context) {
 
-    //    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private var customScale = 0F
 
     init {
@@ -29,40 +26,51 @@ class LocaleManager(context: Context) {
         } else {
             // non è ancora stata impostata nessuna lingua nelle impostazioni --> setto una lingua
             // selezionabile oppure IT se non presente
-            val mLanguage = when (getSystemLocale(context.resources).language) {
-                LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
-                LANGUAGE_ENGLISH -> if (getSystemLocale(context.resources).country.isNotEmpty() && getSystemLocale(context.resources).country == COUNTRY_PHILIPPINES)
-                    LANGUAGE_ENGLISH_PHILIPPINES
-                else
-                    LANGUAGE_ENGLISH
-                LANGUAGE_TURKISH -> LANGUAGE_TURKISH
-                LANGUAGE_POLISH -> LANGUAGE_POLISH
-                else -> LANGUAGE_ITALIAN
-            }
-            Log.d(TAG, "attachBaseContext - default language set: $mLanguage")
-            persistLanguage(context, mLanguage)
+            setDefaultSystemLanguage(context)
         }
 
         var returnScale = 0F
         try {
             val actualScale = context.resources.configuration.fontScale
             Log.d(TAG, "actualScale: $actualScale")
-            val systemScale = Settings.System.getFloat(context.contentResolver, Settings.System.FONT_SCALE)
+            val systemScale =
+                Settings.System.getFloat(context.contentResolver, Settings.System.FONT_SCALE)
             Log.d(TAG, "systemScale: $systemScale")
             if (actualScale != systemScale) {
                 returnScale = systemScale
             }
         } catch (e: Settings.SettingNotFoundException) {
-            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
+            Log.w(
+                TAG,
+                "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}"
+            )
         } catch (e: NullPointerException) {
-            Log.w(TAG, "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}")
+            Log.w(
+                TAG,
+                "Settings.SettingNotFoundException - FUNZIONE RESIZE TESTO NON SUPPORTATA: ${e.localizedMessage}"
+            )
         }
         customScale = returnScale
 
     }
 
-//    val language: String
-//        get() = prefs.getString(Utility.SYSTEM_LANGUAGE, "") ?: ""
+    fun setDefaultSystemLanguage(context: Context) {
+        val mLanguage = when (getSystemLocale(context.resources).language) {
+            LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
+            LANGUAGE_ENGLISH -> if (getSystemLocale(context.resources).country.isNotEmpty() && getSystemLocale(
+                    context.resources
+                ).country == COUNTRY_PHILIPPINES
+            )
+                LANGUAGE_ENGLISH_PHILIPPINES
+            else
+                LANGUAGE_ENGLISH
+            LANGUAGE_TURKISH -> LANGUAGE_TURKISH
+            LANGUAGE_POLISH -> LANGUAGE_POLISH
+            else -> LANGUAGE_ITALIAN
+        }
+        Log.d(TAG, "setDefaultSystemLanguage - default language set: $mLanguage")
+        persistLanguage(context, mLanguage)
+    }
 
     fun persistLanguage(context: Context, language: String) {
         PreferenceManager.getDefaultSharedPreferences(context).edit {
@@ -71,28 +79,41 @@ class LocaleManager(context: Context) {
     }
 
     fun getLanguage(context: Context): String {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(Utility.SYSTEM_LANGUAGE, "")
-                ?: ""
+        return PreferenceManager.getDefaultSharedPreferences(context)
+            .getString(Utility.SYSTEM_LANGUAGE, "")
+            ?: ""
     }
 
     fun useCustomConfig(context: Context): Context {
         Log.d(TAG, "useCustomConfig language: ${getLanguage(context)}")
-        val locale = if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(LANGUAGE_ENGLISH, COUNTRY_PHILIPPINES) else Locale(getLanguage(context))
+        val locale = if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(
+            LANGUAGE_ENGLISH,
+            COUNTRY_PHILIPPINES
+        ) else Locale(getLanguage(context))
         Log.d(TAG, "useCustomConfig language: ${locale.language}")
         Log.d(TAG, "useCustomConfig country: ${locale.country}")
         Locale.setDefault(locale)
-        val config = if (LUtils.hasJB()) Configuration() else Configuration(context.resources.configuration)
+        val config = Configuration()
         if (customScale > 0F)
             config.fontScale = customScale
-        setSystemLocale(config, locale)
-        return context.updateConfiguration(config)
+        config.setLocale(locale)
+        config.setLayoutDirection(locale)
+        return context.createConfigurationContext(config)
     }
 
-    fun updateConfigurationIfSupported(context: Context, overrideConfiguration: Configuration?): Configuration? {
+    fun updateConfigurationIfSupported(
+        context: Context,
+        overrideConfiguration: Configuration?
+    ): Configuration? {
         overrideConfiguration?.let { config ->
             if (isLocaleNotEmpty(config))
                 return config
-            setSystemLocale(config, if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(LANGUAGE_ENGLISH, COUNTRY_PHILIPPINES) else Locale(getLanguage(context)))
+            val locale = if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(
+                LANGUAGE_ENGLISH,
+                COUNTRY_PHILIPPINES
+            ) else Locale(getLanguage(context))
+            config.setLocale(locale)
+            config.setLayoutDirection(locale)
         }
         return overrideConfiguration
     }
@@ -110,24 +131,6 @@ class LocaleManager(context: Context) {
         const val COUNTRY_PHILIPPINES = "PH"
 
         @Suppress("DEPRECATION")
-        private fun updateConfigurationLegacy(context: Context, config: Configuration): Context {
-            context.resources.updateConfiguration(config, context.resources.displayMetrics)
-            return context
-        }
-
-        @RequiresApi(JELLY_BEAN_MR1)
-        private fun updateConfigurationJB(context: Context, config: Configuration): Context {
-            return context.createConfigurationContext(config)
-        }
-
-        fun Context.updateConfiguration(config: Configuration): Context {
-            return if (LUtils.hasJB())
-                updateConfigurationJB(this, config)
-            else
-                updateConfigurationLegacy(this, config)
-        }
-
-        @Suppress("DEPRECATION")
         private fun isLocaleNotEmptyLegacy(config: Configuration): Boolean {
             return config.locale != null
         }
@@ -138,7 +141,7 @@ class LocaleManager(context: Context) {
         }
 
         fun isLocaleNotEmpty(config: Configuration): Boolean {
-            return if (LUtils.hasN())
+            return if (OSUtils.hasN())
                 isLocaleNotEmptyN(config)
             else
                 isLocaleNotEmptyLegacy(config)
@@ -155,28 +158,11 @@ class LocaleManager(context: Context) {
         }
 
         fun getSystemLocale(res: Resources): Locale {
-            return if (LUtils.hasN())
+            return if (OSUtils.hasN())
                 getSystemLocaleN(res.configuration)
             else
                 getSystemLocaleLegacy(res.configuration)
         }
 
-        @Suppress("DEPRECATION")
-        private fun setSystemLocaleLegacy(config: Configuration, locale: Locale) {
-            config.locale = locale
-        }
-
-        @TargetApi(JELLY_BEAN_MR1)
-        private fun setSystemLocaleJB(config: Configuration, locale: Locale) {
-            config.setLocale(locale)
-            config.setLayoutDirection(locale)
-        }
-
-        fun setSystemLocale(config: Configuration, locale: Locale) {
-            if (LUtils.hasJB())
-                setSystemLocaleJB(config, locale)
-            else
-                setSystemLocaleLegacy(config, locale)
-        }
     }
 }

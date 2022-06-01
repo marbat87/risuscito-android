@@ -3,12 +3,9 @@
 
     <item
         android:id="@+id/action_remove_item"
+        android:icon="@drawable/delete_24px"
         android:orderInCategory="100"
         android:title="@string/action_remove"
-        risuscito:ico_color="@android:color/white"
-        risuscito:ico_icon="cmd_delete"
-        risuscito:ico_padding="2dp"
-        risuscito:ico_size="24dp"
         risuscito:showAsAction="always" />
 
 </menu>

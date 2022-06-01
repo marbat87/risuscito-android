@@ -6,11 +6,8 @@
         android:id="@+id/action_help"
         android:orderInCategory="99"
         risuscito:showAsAction="always"
+        android:icon="@drawable/help_24px"
         android:title="@string/action_help"
-        risuscito:ico_color="?colorOnPrimarySurface"
-        risuscito:ico_icon="cmd_help_circle"
-        risuscito:ico_padding="2dp"
-        risuscito:ico_size="24dp"
         />
 
 </menu>

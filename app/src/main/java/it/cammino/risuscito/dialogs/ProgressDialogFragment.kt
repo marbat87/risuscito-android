@@ -1,9 +1,11 @@
 package it.cammino.risuscito.dialogs
 
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -14,11 +16,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import it.cammino.risuscito.R
+import it.cammino.risuscito.utils.capitalize
 import java.io.Serializable
 import java.text.NumberFormat
 
@@ -30,23 +31,25 @@ class ProgressDialogFragment : DialogFragment() {
     private val progressPercentFormat = NumberFormat.getPercentInstance()
     private val progressNumberFormat = "%1d/%2d"
 
-    private val builder: Builder?
-        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(BUILDER_TAG) as? Builder
+    private var mView: View? = null
 
+    private val builder: Builder?
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(
+            BUILDER_TAG
+        ) as? Builder
+
+    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mBuilder = builder
-                ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
+            ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")
 
-        val dialog = MaterialDialog(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
 
         if (mBuilder.mTitle != 0)
-            dialog.title(res = mBuilder.mTitle)
-
-        if (!mBuilder.mAutoDismiss)
-            dialog.noAutoDismiss()
+            dialog.setTitle(mBuilder.mTitle)
 
         mBuilder.mPositiveButton?.let {
-            dialog.positiveButton(text = it) {
+            dialog.setPositiveButton(it) { _, _ ->
                 viewModel.mTag = mBuilder.mTag
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Positive(this)
@@ -54,7 +57,7 @@ class ProgressDialogFragment : DialogFragment() {
         }
 
         mBuilder.mNegativeButton?.let {
-            dialog.negativeButton(text = it) {
+            dialog.setNegativeButton(it) { _, _ ->
                 viewModel.mTag = mBuilder.mTag
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Positive(this)
@@ -62,22 +65,27 @@ class ProgressDialogFragment : DialogFragment() {
         }
 
         if (mBuilder.mProgressIndeterminate) {
-            dialog.customView(R.layout.indeterminate_progressbar)
-            val mdContent = dialog.getCustomView().findViewById<TextView>(R.id.md_content_indeterminate)
-            mdContent.isVisible = mBuilder.mContent != null
-            mdContent.text = mBuilder.mContent
-                    ?: ""
+            mView = layoutInflater.inflate(R.layout.indeterminate_progressbar, null, false)
+            dialog.setView(mView)
+            val mdContent =
+                mView?.findViewById<TextView>(R.id.md_content_indeterminate)
+            mdContent?.isVisible = mBuilder.mContent != null
+            mdContent?.text = mBuilder.mContent
+                ?: ""
         } else {
-            dialog.customView(R.layout.linear_progressbar)
-            dialog.getCustomView().findViewById<LinearProgressIndicator>(R.id.working_progress).max = mBuilder.mProgressMax
-            dialog.getCustomView().findViewById<TextView>(R.id.md_minMax).isVisible = mBuilder.mShowMinMax
-            val mdContent = dialog.getCustomView().findViewById<TextView>(R.id.md_content_linear)
-            mdContent.isVisible = mBuilder.mContent != null
-            mdContent.text = mBuilder.mContent
-                    ?: ""
+            mView = layoutInflater.inflate(R.layout.linear_progressbar, null, false)
+            dialog.setView(mView)
+            mView?.findViewById<LinearProgressIndicator>(R.id.working_progress)?.max =
+                mBuilder.mProgressMax
+            mView?.findViewById<TextView>(R.id.md_minMax)?.isVisible =
+                mBuilder.mShowMinMax
+            val mdContent = mView?.findViewById<TextView>(R.id.md_content_linear)
+            mdContent?.isVisible = mBuilder.mContent != null
+            mdContent?.text = mBuilder.mContent
+                ?: ""
         }
 
-        dialog.cancelable(mBuilder.mCanceable)
+        dialog.setCancelable(mBuilder.mCanceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false
@@ -88,20 +96,21 @@ class ProgressDialogFragment : DialogFragment() {
             returnValue
         }
 
-        return dialog
+        return dialog.show()
     }
 
     fun setContent(@StringRes res: Int) {
-        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<TextView>(R.id.md_content_indeterminate)?.setText(res)
+        mView?.findViewById<TextView>(R.id.md_content_indeterminate)?.setText(res)
     }
 
     fun setProgress(progress: Int) {
-        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<LinearProgressIndicator>(R.id.working_progress)?.progress = progress
-        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<TextView>(R.id.md_label)?.text =
-                progressPercentFormat.format(
-                        progress.toFloat() / (builder?.mProgressMax?.toFloat() ?: Float.MIN_VALUE))
-        (dialog as? MaterialDialog)?.getCustomView()?.findViewById<TextView>(R.id.md_minMax)?.text =
-                String.format(progressNumberFormat, progress, builder?.mProgressMax)
+        mView?.findViewById<LinearProgressIndicator>(R.id.working_progress)?.progress = progress
+        mView?.findViewById<TextView>(R.id.md_label)?.text =
+            progressPercentFormat.format(
+                progress.toFloat() / (builder?.mProgressMax?.toFloat() ?: Float.MIN_VALUE)
+            )
+        mView?.findViewById<TextView>(R.id.md_minMax)?.text =
+            String.format(progressNumberFormat, progress, builder?.mProgressMax)
     }
 
     fun cancel() {
@@ -123,7 +132,6 @@ class ProgressDialogFragment : DialogFragment() {
         internal var mPositiveButton: CharSequence? = null
         internal var mNegativeButton: CharSequence? = null
         internal var mCanceable = false
-        internal var mAutoDismiss = true
         internal var mShowMinMax = false
 
         fun title(@StringRes text: Int): Builder {
@@ -152,12 +160,12 @@ class ProgressDialogFragment : DialogFragment() {
         }
 
         fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text)
+            mPositiveButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
             return this
         }
 
         fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text)
+            mNegativeButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
             return this
         }
 
@@ -181,7 +189,7 @@ class ProgressDialogFragment : DialogFragment() {
         private fun newInstance(builder: Builder): ProgressDialogFragment {
             return newInstance().apply {
                 arguments = bundleOf(
-                        Pair(BUILDER_TAG, builder)
+                    Pair(BUILDER_TAG, builder)
                 )
             }
         }

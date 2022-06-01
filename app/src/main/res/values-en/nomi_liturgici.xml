@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">Advent Time</string>
-    <string name="tempo_natale">Christmas Time</string>
-    <string name="tempo_quaresima">Lent Time</string>
-    <string name="tempo_pasqua">Easter Time</string>
-    <string name="canti_pentecoste">Pentecost</string>
-    <string name="canti_vergine">Songs to the Virgin</string>
-    <string name="lodi_vespri">Lauds and Vespers</string>
-    <string name="canti_ingresso">Entrance</string>
-    <string name="canti_pace">Peace</string>
-    <string name="canti_pane">Bread</string>
-    <string name="canti_vino">Wine</string>
-    <string name="canti_fine">Final</string>
+    <string name="tempo_avvento">ADVENT TIME</string>
+    <string name="tempo_natale">CHRISTMAS TIME</string>
+    <string name="tempo_quaresima">LENT TIME</string>
+    <string name="tempo_pasqua">EASTER TIME</string>
+    <string name="canti_pentecoste">PENTECOST</string>
+    <string name="canti_vergine">SONGS TO THE VIRGIN</string>
+    <string name="lodi_vespri">LAUDS AND VESPERS</string>
+    <string name="canti_ingresso">ENTRANCE</string>
+    <string name="canti_pace">PEACE</string>
+    <string name="canti_pane">BREAD</string>
+    <string name="canti_fine">FINAL</string>
+    <string name="canti_comunione">COMMUNION</string>
+    <string name="canti_bambini">SONGS FOR CHILDREN</string>
 </resources>

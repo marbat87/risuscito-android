@@ -13,9 +13,11 @@ import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetString
 
-fun simpleSubExpandableItem(block: SimpleSubExpandableItem.() -> Unit): SimpleSubExpandableItem = SimpleSubExpandableItem().apply(block)
+fun simpleSubExpandableItem(block: SimpleSubExpandableItem.() -> Unit): SimpleSubExpandableItem =
+    SimpleSubExpandableItem().apply(block)
 
-class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.ViewHolder>(), IClickable<SimpleSubExpandableItem>, ISubItem<SimpleSubExpandableItem.ViewHolder> {
+class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.ViewHolder>(),
+    IClickable<SimpleSubExpandableItem>, ISubItem<SimpleSubExpandableItem.ViewHolder> {
 
     var title: StringHolder? = null
         private set
@@ -24,36 +26,31 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
             title = helperSetString(value)
         }
 
-    private var subTitle: StringHolder? = null
-
-    @Suppress("unused")
-    var setSubTitle: Any? = null
-        set(value) {
-            subTitle = helperSetString(value)
-        }
-
     var totItems: Int = 0
 
     var position: Int = 0
 
-    private var mOnClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = null
+    private var mOnClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? =
+        null
 
-    override var onItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = { v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int ->
-        v?.let {
-            if (!item.isExpanded) {
-                ViewCompat.animate(it.findViewById(R.id.group_indicator)).rotation(180f).start()
-            } else {
-                ViewCompat.animate(it.findViewById(R.id.group_indicator)).rotation(0f).start()
+    override var onItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? =
+        { v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int ->
+            v?.let {
+                if (!item.isExpanded) {
+                    ViewCompat.animate(it.findViewById(R.id.group_indicator)).rotation(180f).start()
+                } else {
+                    ViewCompat.animate(it.findViewById(R.id.group_indicator)).rotation(0f).start()
+                }
             }
+            mOnClickListener?.invoke(v, adapter, item, position) ?: true
         }
-        mOnClickListener?.invoke(v, adapter, item, position) ?: true
-    }
         set(onClickListener) {
             this.mOnClickListener = onClickListener // on purpose
             field = onClickListener
         }
 
-    override var onPreItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? = null
+    override var onPreItemClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? =
+        null
 
     override//this might not be true for your application
     var isSelectable: Boolean
@@ -75,7 +72,6 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
     class ViewHolder(var view: View) : FastAdapter.ViewHolder<SimpleSubExpandableItem>(view) {
 
         private var mTitle: TextView? = null
-        private var mSubTitle: TextView? = null
         private var mIndicator: ImageView? = null
 
         override fun bindView(item: SimpleSubExpandableItem, payloads: List<Any>) {
@@ -84,7 +80,6 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
             // set the text for the name
             val newTitle = "${item.title?.getText(ctx)} (${item.totItems})"
             mTitle?.text = newTitle
-            StringHolder.applyToOrHide(item.subTitle, mSubTitle)
 
             if (item.isExpanded)
                 mIndicator?.rotation = 0f
@@ -94,14 +89,12 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
 
         override fun unbindView(item: SimpleSubExpandableItem) {
             mTitle?.text = null
-            mSubTitle?.text = null
             // make sure all animations are stopped
             mIndicator?.clearAnimation()
         }
 
         init {
             mTitle = view.findViewById(R.id.group_title)
-            mSubTitle = view.findViewById(R.id.group_subtitle)
             mIndicator = view.findViewById(R.id.group_indicator)
         }
     }

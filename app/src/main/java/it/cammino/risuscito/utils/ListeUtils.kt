@@ -1,10 +1,11 @@
 package it.cammino.risuscito.utils
 
 import android.database.SQLException
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.google.android.material.snackbar.Snackbar
 import it.cammino.risuscito.CustomLists
 import it.cammino.risuscito.LUtils
@@ -34,26 +35,62 @@ object ListeUtils {
                 position.position = listPosition
                 position.idCanto = idDaAgg
                 position.timestamp = Date(System.currentTimeMillis())
-                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.insertPosition(position) }
+                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    mDao.insertPosition(
+                        position
+                    )
+                }
             } catch (e: SQLException) {
-                Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    fragment.requireActivity().findViewById(R.id.main_content),
+                    R.string.present_yet,
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
-            Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.list_added, Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(
+                fragment.requireActivity().findViewById(R.id.main_content),
+                R.string.list_added,
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
     }
 
-    fun addToListaNoDup(fragment: Fragment, idLista: Int, listPosition: Int, idDaAgg: Int, replaceTag: String) {
+    fun addToListaNoDup(
+        fragment: Fragment,
+        idLista: Int,
+        listPosition: Int,
+        idDaAgg: Int,
+        replaceTag: String
+    ) {
         fragment.lifecycleScope.launch {
             val db = RisuscitoDatabase.getInstance(fragment.requireContext())
             val listeDao = db.customListDao()
             val cantoDao = db.cantoDao()
-            val idPresente = withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { listeDao.getIdByPosition(idLista, listPosition) }
+            val idPresente =
+                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    listeDao.getIdByPosition(
+                        idLista,
+                        listPosition
+                    )
+                }
             idPresente?.let {
                 if (idDaAgg == it) {
-                    Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(
+                        fragment.requireActivity().findViewById(R.id.main_content),
+                        R.string.present_yet,
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                     return@launch
                 } else {
-                    val titoloPresente = withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { fragment.resources.getString(LUtils.getResId(cantoDao.getCantoById(it).titolo, R.string::class.java)) }
+                    val titoloPresente =
+                        withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                            fragment.resources.getString(
+                                LUtils.getResId(
+                                    cantoDao.getCantoById(it)?.titolo ?: "",
+                                    R.string::class.java
+                                )
+                            )
+                        }
 
                     val sb = StringBuilder()
                     sb.append(fragment.getString(R.string.dialog_present_yet))
@@ -63,14 +100,17 @@ object ListeUtils {
                     sb.append(System.getProperty("line.separator"))
                     sb.append(fragment.getString(R.string.dialog_wonna_replace))
 
-                    SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+                    SimpleDialogFragment.show(
+                        SimpleDialogFragment.Builder(
                             fragment.requireActivity() as AppCompatActivity,
-                            replaceTag)
+                            replaceTag
+                        )
                             .title(R.string.dialog_replace_title)
                             .content(sb.toString())
                             .positiveButton(R.string.replace_confirm)
                             .negativeButton(R.string.cancel),
-                            fragment.requireActivity().supportFragmentManager)
+                        fragment.requireActivity().supportFragmentManager
+                    )
                     return@launch
                 }
             }
@@ -80,8 +120,16 @@ object ListeUtils {
             position.position = listPosition
             position.idCanto = idDaAgg
             position.timestamp = Date(System.currentTimeMillis())
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { listeDao.insertPosition(position) }
-            Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.list_added, Snackbar.LENGTH_SHORT).show()
+            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                listeDao.insertPosition(
+                    position
+                )
+            }
+            Snackbar.make(
+                fragment.requireActivity().findViewById(R.id.main_content),
+                R.string.list_added,
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -89,9 +137,17 @@ object ListeUtils {
     fun addToFavorites(fragment: Fragment, idDaAgg: Int, showSnackbar: Boolean) {
         fragment.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).favoritesDao()
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.setFavorite(idDaAgg) }
+            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                mDao.setFavorite(
+                    idDaAgg
+                )
+            }
             if (showSnackbar)
-                Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.favorite_added, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    fragment.requireActivity().findViewById(R.id.main_content),
+                    R.string.favorite_added,
+                    Snackbar.LENGTH_SHORT
+                ).show()
         }
     }
 
@@ -103,11 +159,22 @@ object ListeUtils {
                     for (removedItem in removedItems)
                         mDao.removeFavorite(removedItem.id)
                 }
-                Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), fragment.resources.getQuantityString(R.plurals.favorites_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
-                        .setAction(fragment.getString(R.string.cancel).uppercase(getSystemLocale(fragment.resources))) {
-                            for (removedItem in removedItems)
-                                addToFavorites(fragment, removedItem.id, false)
-                        }.show()
+                Snackbar.make(
+                    fragment.requireActivity().findViewById(R.id.main_content),
+                    fragment.resources.getQuantityString(
+                        R.plurals.favorites_removed,
+                        removedItems.size,
+                        removedItems.size
+                    ),
+                    Snackbar.LENGTH_SHORT
+                )
+                    .setAction(
+                        fragment.getString(R.string.cancel)
+                            .uppercase(getSystemLocale(fragment.resources))
+                    ) {
+                        for (removedItem in removedItems)
+                            addToFavorites(fragment, removedItem.id, false)
+                    }.show()
             }
 
         }
@@ -120,17 +187,41 @@ object ListeUtils {
                 for (removedItem in removedItems) {
                     val cronTemp = Cronologia()
                     cronTemp.idCanto = removedItem.id
-                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.deleteCronologia(cronTemp) }
+                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                        mDao.deleteCronologia(
+                            cronTemp
+                        )
+                    }
                 }
-                Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), fragment.resources.getQuantityString(R.plurals.histories_removed, removedItems.size, removedItems.size), Snackbar.LENGTH_SHORT)
-                        .setAction(fragment.getString(R.string.cancel).uppercase(getSystemLocale(fragment.resources))) {
-                            for (removedItem in removedItems) {
-                                val cronTemp = Cronologia()
-                                cronTemp.idCanto = removedItem.id
-                                cronTemp.ultimaVisita = Date(java.lang.Long.parseLong(removedItem.timestamp?.getText(fragment.requireContext()).toString()))
-                                fragment.lifecycleScope.launch(Dispatchers.IO) { mDao.insertCronologia(cronTemp) }
+                Snackbar.make(
+                    fragment.requireActivity().findViewById(R.id.main_content),
+                    fragment.resources.getQuantityString(
+                        R.plurals.histories_removed,
+                        removedItems.size,
+                        removedItems.size
+                    ),
+                    Snackbar.LENGTH_SHORT
+                )
+                    .setAction(
+                        fragment.getString(R.string.cancel)
+                            .uppercase(getSystemLocale(fragment.resources))
+                    ) {
+                        for (removedItem in removedItems) {
+                            val cronTemp = Cronologia()
+                            cronTemp.idCanto = removedItem.id
+                            cronTemp.ultimaVisita = Date(
+                                java.lang.Long.parseLong(
+                                    removedItem.timestamp?.getText(fragment.requireContext())
+                                        .toString()
+                                )
+                            )
+                            fragment.lifecycleScope.launch(Dispatchers.IO) {
+                                mDao.insertCronologia(
+                                    cronTemp
+                                )
                             }
-                        }.show()
+                        }
+                    }.show()
             }
         }
     }
@@ -138,78 +229,136 @@ object ListeUtils {
     fun updateListaPersonalizzata(fragment: Fragment, listaUpd: ListaPers) {
         fragment.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).listePersDao()
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.updateLista(listaUpd) }
-            Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.list_added, Snackbar.LENGTH_SHORT).show()
+            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                mDao.updateLista(
+                    listaUpd
+                )
+            }
+            Snackbar.make(
+                fragment.requireActivity().findViewById(R.id.main_content),
+                R.string.list_added,
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
     }
 
     fun updatePosizione(fragment: Fragment, idDaAgg: Int, idListaDaAgg: Int, posizioneDaAgg: Int) {
         fragment.lifecycleScope.launch {
-            val mCustomListDao = RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mCustomListDao.updatePositionNoTimestamp(idDaAgg, idListaDaAgg, posizioneDaAgg) }
-            Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.list_added, Snackbar.LENGTH_SHORT).show()
+            val mCustomListDao =
+                RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
+            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                mCustomListDao.updatePositionNoTimestamp(
+                    idDaAgg,
+                    idListaDaAgg,
+                    posizioneDaAgg
+                )
+            }
+            Snackbar.make(
+                fragment.requireActivity().findViewById(R.id.main_content),
+                R.string.list_added,
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
     }
 
-    fun removePositionWithUndo(fragment: Fragment, idLista: Int, posizioneDaCanc: Int, idDaCanc: Int, timestampDaCanc: String) {
+    fun removePositionWithUndo(
+        fragment: Fragment,
+        idLista: Int,
+        posizioneDaCanc: Int,
+        idDaCanc: Int,
+        timestampDaCanc: String
+    ) {
         fragment.lifecycleScope.launch {
             val positionToDelete = CustomList()
             positionToDelete.id = idLista
             positionToDelete.position = posizioneDaCanc
             positionToDelete.idCanto = idDaCanc
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.deletePosition(positionToDelete) }
+            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                mDao.deletePosition(
+                    positionToDelete
+                )
+            }
             Snackbar.make(
-                    fragment.requireActivity().findViewById(R.id.main_content),
-                    R.string.song_removed,
-                    Snackbar.LENGTH_LONG)
-                    .setAction(
-                            fragment.getString(R.string.cancel).uppercase(getSystemLocale(fragment.resources))
-                    ) {
-                        val positionToInsert = CustomList()
-                        positionToInsert.id = idLista
-                        positionToInsert.position = posizioneDaCanc
-                        positionToInsert.idCanto = idDaCanc
-                        positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
-                        val mDao2 = RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
-                        fragment.lifecycleScope.launch(Dispatchers.IO) { mDao2.insertPosition(positionToInsert) }
+                fragment.requireActivity().findViewById(R.id.main_content),
+                R.string.song_removed,
+                Snackbar.LENGTH_LONG
+            )
+                .setAction(
+                    fragment.getString(R.string.cancel)
+                        .uppercase(getSystemLocale(fragment.resources))
+                ) {
+                    val positionToInsert = CustomList()
+                    positionToInsert.id = idLista
+                    positionToInsert.position = posizioneDaCanc
+                    positionToInsert.idCanto = idDaCanc
+                    positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
+                    val mDao2 =
+                        RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
+                    fragment.lifecycleScope.launch(Dispatchers.IO) {
+                        mDao2.insertPosition(
+                            positionToInsert
+                        )
                     }
-                    .show()
+                }
+                .show()
         }
     }
 
     fun manageReplaceDialog(fragment: Fragment, idCanto: Int, replaceTag: String) {
         fragment.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cantoDao()
-            val existingTitle = withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                mDao.getCantoById(idCanto).titolo ?: ""
-            }
-            SimpleDialogFragment.show(SimpleDialogFragment.Builder(
+            val existingTitle =
+                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    mDao.getCantoById(idCanto)?.titolo ?: ""
+                }
+            SimpleDialogFragment.show(
+                SimpleDialogFragment.Builder(
                     fragment.requireActivity() as AppCompatActivity,
-                    replaceTag)
+                    replaceTag
+                )
                     .title(R.string.dialog_replace_title)
                     .content(
-                            (fragment.getString(R.string.dialog_present_yet)
-                                    + " "
-                                    + fragment.resources.getString(LUtils.getResId(existingTitle, R.string::class.java))
-                                    + fragment.getString(R.string.dialog_wonna_replace)))
+                        (fragment.getString(R.string.dialog_present_yet)
+                                + " "
+                                + fragment.resources.getString(
+                            LUtils.getResId(
+                                existingTitle,
+                                R.string::class.java
+                            )
+                        )
+                                + fragment.getString(R.string.dialog_wonna_replace))
+                    )
                     .positiveButton(R.string.replace_confirm)
                     .negativeButton(R.string.cancel),
-                    fragment.requireActivity().supportFragmentManager)
+                fragment.requireActivity().supportFragmentManager
+            )
         }
     }
 
-    fun scambioConVuoto(fragment: Fragment, idLista: Int, posizioneDaCanc: Int, idDaCanc: Int, newPosition: Int) {
+    fun scambioConVuoto(
+        fragment: Fragment,
+        idLista: Int,
+        posizioneDaCanc: Int,
+        idDaCanc: Int,
+        newPosition: Int
+    ) {
         fragment.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
-            val existingTitle = withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                mDao.checkExistsPosition(idLista, newPosition, idDaCanc)
-            }
+            val existingTitle =
+                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    mDao.checkExistsPosition(idLista, newPosition, idDaCanc)
+                }
             if (existingTitle > 0)
-                Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    fragment.requireActivity().findViewById(R.id.main_content),
+                    R.string.present_yet,
+                    Snackbar.LENGTH_SHORT
+                ).show()
             else {
                 withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                    val positionToDelete = mDao.getPositionSpecific(idLista, posizioneDaCanc, idDaCanc)
+                    val positionToDelete =
+                        mDao.getPositionSpecific(idLista, posizioneDaCanc, idDaCanc)
                     mDao.deletePosition(positionToDelete)
                     val positionToInsert = CustomList()
                     positionToInsert.id = idLista
@@ -218,12 +367,23 @@ object ListeUtils {
                     positionToInsert.timestamp = Date(System.currentTimeMillis())
                     mDao.insertPosition(positionToInsert)
                 }
-                Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.switch_done, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    fragment.requireActivity().findViewById(R.id.main_content),
+                    R.string.switch_done,
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
-    fun scambioCanto(fragment: Fragment, idLista: Int, posizioneDaCanc: Int, idDaCanc: Int, newPosition: Int, newId: Int) {
+    fun scambioCanto(
+        fragment: Fragment,
+        idLista: Int,
+        posizioneDaCanc: Int,
+        idDaCanc: Int,
+        newPosition: Int,
+        newId: Int
+    ) {
         fragment.lifecycleScope.launch {
             if (newId != idDaCanc || posizioneDaCanc != newPosition) {
                 val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
@@ -234,12 +394,28 @@ object ListeUtils {
                     mDao.checkExistsPosition(idLista, posizioneDaCanc, newId)
                 }
                 if ((existingOldTitle.await() > 0
-                                || existingNewTitle.await() > 0)
-                        && newPosition != posizioneDaCanc) {
-                    Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.present_yet, Snackbar.LENGTH_SHORT).show()
+                            || existingNewTitle.await() > 0)
+                    && newPosition != posizioneDaCanc
+                ) {
+                    Snackbar.make(
+                        fragment.requireActivity().findViewById(R.id.main_content),
+                        R.string.present_yet,
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                 } else {
-                    val positionToDelete = withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.getPositionSpecific(idLista, newPosition, newId) }
-                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.deletePosition(positionToDelete) }
+                    val positionToDelete =
+                        withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                            mDao.getPositionSpecific(
+                                idLista,
+                                newPosition,
+                                newId
+                            )
+                        }
+                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                        mDao.deletePosition(
+                            positionToDelete
+                        )
+                    }
 
                     val positionToInsert = CustomList()
                     positionToInsert.id = idLista
@@ -247,16 +423,40 @@ object ListeUtils {
                     positionToInsert.idCanto = idDaCanc
                     positionToInsert.timestamp = positionToDelete.timestamp
 
-                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.updatePositionNoTimestamp(newId, idLista, posizioneDaCanc, idDaCanc) }
-                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.insertPosition(positionToInsert) }
-                    Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.switch_done, Snackbar.LENGTH_SHORT).show()
+                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                        mDao.updatePositionNoTimestamp(
+                            newId,
+                            idLista,
+                            posizioneDaCanc,
+                            idDaCanc
+                        )
+                    }
+                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                        mDao.insertPosition(
+                            positionToInsert
+                        )
+                    }
+                    Snackbar.make(
+                        fragment.requireActivity().findViewById(R.id.main_content),
+                        R.string.switch_done,
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                 }
             } else
-                Snackbar.make(fragment.requireActivity().findViewById(R.id.main_content), R.string.switch_impossible, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    fragment.requireActivity().findViewById(R.id.main_content),
+                    R.string.switch_impossible,
+                    Snackbar.LENGTH_SHORT
+                ).show()
         }
     }
 
-    fun addToListaDupAndFinish(activity: AppCompatActivity, idLista: Int, listPosition: Int, idDaAgg: Int) {
+    fun addToListaDupAndFinish(
+        activity: AppCompatActivity,
+        idLista: Int,
+        listPosition: Int,
+        idDaAgg: Int
+    ) {
         activity.lifecycleScope.launch {
             try {
                 val mDao = RisuscitoDatabase.getInstance(activity).customListDao()
@@ -265,34 +465,76 @@ object ListeUtils {
                 position.position = listPosition
                 position.idCanto = idDaAgg
                 position.timestamp = Date(System.currentTimeMillis())
-                withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.insertPosition(position) }
+                withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    mDao.insertPosition(
+                        position
+                    )
+                }
             } catch (e: SQLException) {
                 activity.setResult(CustomLists.RESULT_KO)
-                activity.finish()
-                Animatoo.animateShrink(activity)
+                finishAfterTransitionWrapper(activity)
             }
             activity.setResult(CustomLists.RESULT_OK)
-            activity.finish()
-            Animatoo.animateShrink(activity)
+            finishAfterTransitionWrapper(activity)
         }
     }
 
-    fun updateListaPersonalizzataAndFinish(activity: AppCompatActivity, idLista: Int, idCanto: Int, listPosition: Int) {
+    fun updateListaPersonalizzataAndFinish(
+        activity: AppCompatActivity,
+        idLista: Int,
+        idCanto: Int,
+        listPosition: Int
+    ) {
         activity.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(activity).listePersDao()
-            val listaPers = withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.getListById(idLista) }
+            val listaPers = withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                mDao.getListById(idLista)
+            }
             if (listaPers?.lista != null) {
                 listaPers.lista?.addCanto(idCanto.toString(), listPosition)
-                withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.updateLista(listaPers) }
+                withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    mDao.updateLista(
+                        listaPers
+                    )
+                }
                 activity.setResult(CustomLists.RESULT_OK)
-                activity.finish()
-                Animatoo.animateShrink(activity)
+                finishAfterTransitionWrapper(activity)
                 return@launch
             }
             activity.setResult(CustomLists.RESULT_CANCELED)
-            activity.finish()
-            Animatoo.animateShrink(activity)
+            finishAfterTransitionWrapper(activity)
             return@launch
+        }
+    }
+
+    //ISSUE in API 21
+    private fun finishAfterTransitionWrapper(activity: AppCompatActivity) {
+        closeKeyboard(activity)
+        if (OSUtils.hasM())
+            activity.finishAfterTransition()
+        else
+            activity.finish()
+    }
+
+    private fun closeKeyboard(activity: AppCompatActivity) {
+        // this will give us the view
+        // which is currently focus
+        // in this layout
+        val view: View? = activity.currentFocus
+
+        // if nothing is currently
+        // focus then this will protect
+        // the app from crash
+        if (view != null) {
+            // now assign the system
+            // service to InputMethodManager
+            val manager: InputMethodManager = activity.getSystemService(
+                AppCompatActivity.INPUT_METHOD_SERVICE
+            ) as InputMethodManager
+            manager
+                .hideSoftInputFromWindow(
+                    view.windowToken, 0
+                )
         }
     }
 

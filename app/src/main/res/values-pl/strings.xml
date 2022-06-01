@@ -9,7 +9,6 @@
     <string name="letter_order_text">Alfabetycznie</string>
     <string name="page_order_text">Numerycznie</string>
     <string name="search_name_text">Wyszukaj pieśń</string>
-    <string name="arg_search_text">Analityczny podział</string>
     <string name="always_on">Wyświetlacz zawsze włączony</string>
     <string name="always_on_summary">Zapobiega wygaszaniu wyświetlacza w aplikacji.</string>
     <string name="title_activity_favourites">Ulubione</string>
@@ -53,7 +52,6 @@
     <string name="dialog_wonna_replace">Czy chcesz to zastąpić?</string>
     <string name="fast_search_title">Szybkie szukanie</string>
     <string name="advanced_search_title">Zaawansowane szukanie</string>
-    <string name="title_activity_search">Wyszukaj pieśń</string>
     <string name="advanced_search_subtitle">SZUKAJ W TYTULE I W TEKŚCIE</string>
     <string name="fast_search_subtitle">SZUKAJ W TYTULE</string>
     <string name="show_seconda_title">Eucharystia - drugie czytanie</string>
@@ -64,7 +62,7 @@
     <string name="list_save_exit">Zapisz i wyjdź</string>
     <string name="add_position">Dodaj pozycję</string>
     <string name="content_drag">Przenieś pozycję</string>
-    <string name="aggiungi_confirm">DODAJ</string>
+    <string name="aggiungi_confirm">dodaj</string>
     <string name="posizione_add_desc">Tytuł nowej pozycji</string>
     <string name="lista_pers_piena">Maksymalna liczba pozycji wynosi 30</string>
     <string name="lista_pers_vuota">Lista jest pusta</string>
@@ -127,7 +125,7 @@
     <string name="no_elements_added">Nie dodano żadnych pozycji.</string>
     <string name="dialog_replace_title">Podmień pieśń</string>
     <string name="dialog_reset_list_title">Resetuj listę</string>
-    <string name="aggiungi_rename">ZMIEŃ NAZWĘ</string>
+    <string name="aggiungi_rename">zmień nazwę</string>
     <string name="save_list_title">Zapisz listę</string>
     <string name="dialog_delete_mp3_title">Usuń pobrany plik</string>
     <string name="dialog_delete_link_title">Odłącz plik lokalny</string>
@@ -140,10 +138,6 @@
     <string name="show_santo_summary">Dodaje dodatkową pozycję w Eucharystii - pieśń Święty</string>
     <string name="fullscreen">Pełny ekran</string>
     <string name="file_selected">Wybrany plik</string>
-    <string name="primary_color">Kolor główny</string>
-    <string name="primary_color_desc">Najczęściej używany kolor w aplikacji</string>
-    <string name="accent_color">Kolor dodatkowy</string>
-    <string name="accent_color_desc">Kolor używany do bardziej szczegółowych elementów interfejsu</string>
     <string name="theme">Tło</string>
     <string name="lists_pref">Listy</string>
     <string name="system">System</string>
@@ -173,7 +167,6 @@
     <string name="showcase_consegnati_howto">Naciśnij na ten przycisk, aby uzyskać dostęp do listy i zaznaczyć pieśni.</string>
     <string name="showcase_consegnati_confirm">Gdy skończysz, naciśnij ENTER aby zapisać zmiany&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;lub wciśnij ANULUJ aby odrzucić je.</string>
-    <string name="save_consegnati_running">Zapisywanie w trakcie&#8230;</string>
     <string name="title_activity_history">Historia</string>
     <string name="new_hint_remove">Naciśnij i przytrzymaj na elemencie aby go usunąć.</string>
     <string name="history_empty">Historia jest pusta.</string>
@@ -212,7 +205,7 @@
     <string name="share_by">Udostępnij&#8230;</string>
     <string name="delete_list_dialog">Czy aby na pewno chcesz usunąć tę listę?</string>
     <string name="barre_search_string">Barre</string>
-    <string name="barre_add_al"></string>
+    <string name="barre_add_al" />
     <string name="barre_al_tasto">Barre %1$s próg</string>
     <string name="external_storage_denied">Pamięć zewnętrzna nie jest dostępna.</string>
     <string name="external_storage_pref_rationale">Aplikacja Zmartwychwstał Pan pyta cię o pozwolenie na dostęp do pamięci zewnętrznej. Jest to konieczne aby można było zapisywać w pamięci publicznej. Jeśli nie wyrazisz zgody, opcja ta nie będzie widoczna.</string>
@@ -317,5 +310,6 @@
     <string name="elezione_2">Wybranie (Drugie)</string>
     <string name="elezione_3">Wybranie - końcowe</string>
     <string name="passaggio_none">Żadne</string>
-
+    <string name="dynamic_colors_title">Dynamic colors</string>
+    <string name="dynamic_colors_summary">Apply dynamic colors based on your wallpaper</string>
 </resources>

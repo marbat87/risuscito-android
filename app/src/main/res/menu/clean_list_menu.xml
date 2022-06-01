@@ -4,24 +4,16 @@
 
     <item
         android:id="@+id/list_reset"
+        android:icon="@drawable/clear_all_24px"
         android:orderInCategory="99"
-        risuscito:showAsAction="ifRoom"
-        android:title="@string/action_help"
-        risuscito:ico_color="?colorOnPrimarySurface"
-        risuscito:ico_icon="cmd_notification_clear_all"
-        risuscito:ico_padding="2dp"
-        risuscito:ico_size="24dp"
-        />
+        android:title="@string/dialog_reset_favorites_title"
+        risuscito:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_help"
+        android:icon="@drawable/help_24px"
         android:orderInCategory="100"
-        risuscito:showAsAction="ifRoom"
         android:title="@string/action_help"
-        risuscito:ico_color="?colorOnPrimarySurface"
-        risuscito:ico_icon="cmd_help_circle"
-        risuscito:ico_padding="2dp"
-        risuscito:ico_size="24dp"
-        />
+        risuscito:showAsAction="ifRoom" />
 
 </menu>

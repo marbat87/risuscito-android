@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import it.cammino.risuscito.LUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -22,7 +21,8 @@ import java.net.URL
 
 class Downloader(val activity: FragmentActivity) {
 
-    private val viewModel: DownloaderViewModel = ViewModelProvider(activity).get(DownloaderViewModel::class.java)
+    private val viewModel: DownloaderViewModel =
+        ViewModelProvider(activity)[DownloaderViewModel::class.java]
 
     private var isCancelled = false
 
@@ -38,8 +38,10 @@ class Downloader(val activity: FragmentActivity) {
         Log.d(TAG, "startSaving isExternal $isExternal")
 
         val pm = activity.getSystemService(Context.POWER_SERVICE) as? PowerManager
-        val wakelock = pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                javaClass.name)
+        val wakelock = pm?.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            javaClass.name
+        )
         wakelock?.acquire(30000)
 
         var input: InputStream? = null
@@ -54,7 +56,8 @@ class Downloader(val activity: FragmentActivity) {
             // expect HTTP 200 OK, so we don't mistakenly save error report
             // instead of the file
             if (connection?.responseCode != HttpURLConnection.HTTP_OK) {
-                val errorMessage = ("Server returned HTTP ${connection?.responseCode} ${connection?.responseMessage}")
+                val errorMessage =
+                    ("Server returned HTTP ${connection?.responseCode} ${connection?.responseMessage}")
                 viewModel.handled = false
                 viewModel.state.postValue(DownloadState.Error(errorMessage))
                 return
@@ -65,7 +68,7 @@ class Downloader(val activity: FragmentActivity) {
             // download the file
             input = connection.inputStream
 
-            if (isExternal && LUtils.hasQ())
+            if (isExternal && OSUtils.hasQ())
                 startSavingO(input, destinationPath, fileLength)
             else
                 startSavingLegacy(input, destinationPath, fileLength)
@@ -98,7 +101,7 @@ class Downloader(val activity: FragmentActivity) {
         }
 
         val collection = MediaStore.Audio.Media
-                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         val mUri = resolver.insert(collection, contentValues)
 
         mUri?.let {

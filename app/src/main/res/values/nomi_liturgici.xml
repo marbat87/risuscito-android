@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">Tempo di Avvento</string>
-    <string name="tempo_natale">Tempo di Natale</string>
-    <string name="tempo_quaresima">Tempo di Quaresima</string>
-    <string name="tempo_pasqua">Tempo di Pasqua</string>
-    <string name="canti_pentecoste">Pentecoste</string>
-    <string name="canti_vergine">Canti alla Vergine</string>
-    <string name="lodi_vespri">Lodi e Vespri</string>
-    <string name="canti_ingresso">Ingresso</string>
-    <string name="canti_pace">Pace</string>
-    <string name="canti_pane">Pane</string>
-    <string name="canti_vino">Vino</string>
-    <string name="canti_fine">Finale</string>
+    <string name="tempo_avvento">AVVENTO</string>
+    <string name="tempo_natale">NATALE</string>
+    <string name="tempo_quaresima">QUARESIMA</string>
+    <string name="tempo_pasqua">PASQUA</string>
+    <string name="canti_pentecoste">PENTECOSTE</string>
+    <string name="canti_vergine">CANTI ALLA VERGINE</string>
+    <string name="lodi_vespri">LODI - VESPRI</string>
+    <string name="canti_ingresso">CANTI D\'INGRESSO</string>
+    <string name="canti_pace">PACE - PRESENTAZIONE DELLE OFFERTE</string>
+    <string name="canti_pane">FRAZIONE DEL PANE</string>
+    <string name="canti_fine">CANTO FINALE</string>
+    <string name="canti_comunione">COMUNIONE</string>
+    <string name="canti_bambini">CANTI PER I BAMBINI</string>
 </resources>

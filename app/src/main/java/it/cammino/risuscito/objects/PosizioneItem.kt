@@ -1,17 +1,16 @@
 package it.cammino.risuscito.objects
 
 import android.graphics.Color
-import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.materialdrawer.holder.ColorHolder
+import it.cammino.risuscito.Utility.helperSetColor
 
 fun posizioneItem(block: PosizioneItem.() -> Unit): PosizioneItem = PosizioneItem().apply(block)
 
 @Suppress("unused")
 class PosizioneItem {
 
-    var color: ColorHolder? = null
+    var color: Int = Color.WHITE
     var title: StringHolder? = null
         private set
     var page: StringHolder? = null
@@ -61,12 +60,7 @@ class PosizioneItem {
     }
 
     fun withColor(color: String): PosizioneItem {
-        this.color = ColorHolder.fromColor(Color.parseColor(color))
-        return this
-    }
-
-    fun withColor(@ColorRes colorRes: Int): PosizioneItem {
-        this.color = ColorHolder.fromColorRes(colorRes)
+        this.color = helperSetColor(color)
         return this
     }
 

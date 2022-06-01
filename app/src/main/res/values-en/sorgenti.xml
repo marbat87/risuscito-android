@@ -40,7 +40,7 @@
     <string name="benedici_anima_mia_jahve_source">benedici_anima_mia_jahve</string>
     <string name="fino_a_quando_source">fino_a_quando</string>
     <string name="jahve_tu_sei_mio_dio_source">jahve_tu_sei_mio_dio</string>
-    <string name="cantiamo_cantiamo_source">cantiamo_cantiamo</string>
+<!--    <string name="cantiamo_cantiamo_source">cantiamo_cantiamo</string>-->
     <string name="giunga_la_mia_preghiera_source">giunga_la_mia_preghiera</string>
     <string name="guardate_come_e_bello_source">guardate_come_e_bello</string>
     <string name="come_bello_come_da_gioia_source">come_bello_come_da_gioia</string>
@@ -80,7 +80,7 @@
     <string name="alzo_gli_occhi_source">alzo_gli_occhi</string>
     <string name="canto_liberati_source">canto_liberati</string>
     <string name="se_oggi_ascoltate_sua_voce_source">se_oggi_ascoltate_sua_voce</string>
-    <string name="venite_applaudiamo_al_signore_source">venite_applaudiamo_al_signore</string>
+<!--    <string name="venite_applaudiamo_al_signore_source">venite_applaudiamo_al_signore</string>-->
     <string name="dajenu_source">dajenu</string>
     <string name="alla_vittima_pasquale_source">alla_vittima_pasquale</string>
     <string name="inno_di_pasqua_source">inno_di_pasqua</string>
@@ -104,11 +104,11 @@
     <string name="o_dio_tu_sei_il_mio_dio_source">o_dio_tu_sei_il_mio_dio</string>
     <string name="sale_dio_tra_acclamazioni_source">sale_dio_tra_acclamazioni</string>
     <string name="popolo_camminava_tenebre_source">popolo_camminava_tenebre</string>
-    <string name="da_lode_al_signore_source">no_canto</string>
+<!--    <string name="da_lode_al_signore_source">no_canto</string>-->
     <string name="canto_di_balaam_source">canto_di_balaam</string>
     <string name="davanti_agli_angeli_source">davanti_agli_angeli</string>
-    <string name="quando_israele_era_un_bimbo_source">quando_israele_era_un_bimbo</string>
-    <string name="e_la_pasqua_del_signore_source">e_la_pasqua_del_signore</string>
+<!--    <string name="quando_israele_era_un_bimbo_source">quando_israele_era_un_bimbo</string>-->
+<!--    <string name="e_la_pasqua_del_signore_source">e_la_pasqua_del_signore</string>-->
     <string name="tempo_ogni_cosa_source">tempo_ogni_cosa</string>
     <string name="benedici_anima_mia_source">benedici_anima_mia</string>
     <string name="quanto_sono_amabili_dimore_source">quanto_sono_amabili_dimore</string>
@@ -232,4 +232,11 @@
     <string name="come_pecora_che_vede_source">come_pecora_che_vede</string>
     <string name="e_paziente_source">e_paziente</string>
     <string name="inno_cristo_luce_source">inno_cristo_luce</string>
+    <string name="preghiera_eucaristica_IV_source">no_canto</string>
+    <string name="preghiere_universali_cantate_source">preghiere_universali_cantate</string>
+    <string name="salga_sposo_sul_legno_source">no_canto</string>
+    <string name="salmodia_salmo_responsoriale_source">no_canto</string>
+    <string name="salve_regina_source">salve_regina</string>
+    <string name="sequenza_corpus_domini_source">no_canto</string>
+    <string name="un_angelo_venne_dal_cielo_source">no_canto</string>
 </resources>

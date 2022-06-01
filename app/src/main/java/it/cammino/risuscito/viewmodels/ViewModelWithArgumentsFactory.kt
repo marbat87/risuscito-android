@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import java.lang.reflect.Constructor
 
 class ViewModelWithArgumentsFactory(private val application: Application, private val args: Bundle) : ViewModelProvider.NewInstanceFactory() {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         try {
             val constructor: Constructor<T> = modelClass.getDeclaredConstructor(Application::class.java, Bundle::class.java)
             return constructor.newInstance(application, args)
@@ -17,4 +17,5 @@ class ViewModelWithArgumentsFactory(private val application: Application, privat
             throw e
         }
     }
+
 }

@@ -16,6 +16,7 @@
 
 package it.cammino.risuscito.playback
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -23,23 +24,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
+import android.os.*
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.KeyEvent
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
 import it.cammino.risuscito.PaginaRenderActivity
 import it.cammino.risuscito.R
-import java.util.*
+import it.cammino.risuscito.utils.OSUtils
 import java.util.concurrent.TimeUnit
 
 class MusicService : MediaBrowserServiceCompat() {
@@ -47,6 +46,7 @@ class MusicService : MediaBrowserServiceCompat() {
     private var mMusicProvider: MusicProvider? = null
     private var mSession: MediaSessionCompat? = null
     private lateinit var mNotificationManager: NotificationManagerCompat
+
     // Indicates whether the service was started.
     private var mServiceStarted: Boolean = false
     private var mPlayback: Playback? = null
@@ -102,14 +102,36 @@ class MusicService : MediaBrowserServiceCompat() {
         // This is an Intent to launch the app's UI, used primarily by the ongoing notification.
         val intent = Intent(context, PaginaRenderActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        val pi = PendingIntent.getActivity(context, REQUEST_CODE, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT)
+        val pi = getPendingIntent(intent, context)
         mSession?.setSessionActivity(pi)
 
         mNotificationManager = NotificationManagerCompat.from(this)
         mAudioBecomingNoisyReceiver = AudioBecomingNoisyReceiver(this)
 
         updatePlaybackState(null)
+    }
+
+    private fun getPendingIntent(intent: Intent, context: Context): PendingIntent {
+        return if (OSUtils.hasM()) getPendingIntentM(intent, context) else getPendingIntentLegacy(
+            intent,
+            context
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun getPendingIntentM(intent: Intent, context: Context): PendingIntent {
+        return PendingIntent.getActivity(
+            context, REQUEST_CODE, intent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private fun getPendingIntentLegacy(intent: Intent, context: Context): PendingIntent {
+        return PendingIntent.getActivity(
+            context, REQUEST_CODE, intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
     }
 
     override fun onStartCommand(startIntent: Intent?, flags: Int, startId: Int): Int {
@@ -128,8 +150,10 @@ class MusicService : MediaBrowserServiceCompat() {
         mSession?.release()
     }
 
-    override fun onGetRoot(clientPackageName: String,
-                           clientUid: Int, rootHints: Bundle?): BrowserRoot {
+    override fun onGetRoot(
+        clientPackageName: String,
+        clientUid: Int, rootHints: Bundle?
+    ): BrowserRoot {
         // Verify the client is authorized to browse media and return the root that
         // makes the most sense here. In this example we simply verify the package name
         // is the same as ours, but more complicated checks, and responses, are possible
@@ -142,8 +166,10 @@ class MusicService : MediaBrowserServiceCompat() {
          */
     }
 
-    override fun onLoadChildren(parentMediaId: String,
-                                result: Result<List<MediaBrowserCompat.MediaItem>>) {
+    override fun onLoadChildren(
+        parentMediaId: String,
+        result: Result<List<MediaBrowserCompat.MediaItem>>
+    ) {
         Log.d(TAG, "OnLoadChildren: parentMediaId=$parentMediaId")
 
         if (mMusicProvider?.isInitialized != true) {
@@ -167,14 +193,18 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
-    private fun loadChildrenImpl(parentMediaId: String,
-                                 result: Result<List<MediaBrowserCompat.MediaItem>>) {
+    private fun loadChildrenImpl(
+        parentMediaId: String,
+        result: Result<List<MediaBrowserCompat.MediaItem>>
+    ) {
         val mediaItems = ArrayList<MediaBrowserCompat.MediaItem>()
 
         when (parentMediaId) {
             MusicProvider.MEDIA_ID_ROOT -> mMusicProvider?.allMusics?.mapTo(mediaItems) {
-                MediaBrowserCompat.MediaItem(it.description,
-                        MediaBrowserCompat.MediaItem.FLAG_PLAYABLE)
+                MediaBrowserCompat.MediaItem(
+                    it.description,
+                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
+                )
             }
             MusicProvider.MEDIA_ID_EMPTY_ROOT -> {
             }
@@ -196,7 +226,8 @@ class MusicService : MediaBrowserServiceCompat() {
             // selected from.
             val media = mMusicProvider?.getMusic(mediaId)
             if (media != null) {
-                mCurrentMedia = MediaSessionCompat.QueueItem(media.description, media.hashCode().toLong())
+                mCurrentMedia =
+                    MediaSessionCompat.QueueItem(media.description, media.hashCode().toLong())
 
                 // play the music
                 handlePlayRequest()
@@ -247,11 +278,11 @@ class MusicService : MediaBrowserServiceCompat() {
                 mPlayback?.setmMusicProvider(mMusicProvider)
                 sendMusicProviderStatusBroadcast(false)
                 mMusicProvider?.retrieveMediaAsync(
-                        object : MusicProvider.Callback {
-                            override fun onMusicCatalogReady(success: Boolean) {
-                                sendMusicProviderStatusBroadcast(success)
-                            }
-                        })
+                    object : MusicProvider.Callback {
+                        override fun onMusicCatalogReady(success: Boolean) {
+                            sendMusicProviderStatusBroadcast(success)
+                        }
+                    })
             }
             super.onCustomAction(action, extras)
         }
@@ -319,13 +350,14 @@ class MusicService : MediaBrowserServiceCompat() {
             position = mPlayback?.currentStreamPosition?.toLong() ?: 0
         }
 
-        var playbackActions = PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
+        var playbackActions =
+            PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
         if (mPlayback?.isPlaying == true) {
             playbackActions = playbackActions or PlaybackStateCompat.ACTION_PAUSE
         }
 
         val stateBuilder = PlaybackStateCompat.Builder()
-                .setActions(playbackActions)
+            .setActions(playbackActions)
 
         var state = mPlayback?.state ?: PlaybackStateCompat.STATE_NONE
 
@@ -352,21 +384,51 @@ class MusicService : MediaBrowserServiceCompat() {
         if (state == PlaybackStateCompat.STATE_PLAYING) {
             val oldMetadataCompat = mMusicProvider?.getMusic(mCurrentMedia?.description?.mediaId)
             val newMetadataCompat = MediaMetadataCompat.Builder()
-                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))
-                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI))
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM))
-                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST))
-                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayback?.duration ?: 0)
-                    .putString(MediaMetadataCompat.METADATA_KEY_GENRE, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_GENRE))
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
-                    .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER)
-                            ?: 0)
-                    .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS)
-                            ?: 0)
-                    .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, oldMetadataCompat?.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART))
-                    .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, oldMetadataCompat?.getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON))
-                    .build()
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
+                    oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
+                )
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
+                    oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI)
+                )
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_ALBUM,
+                    oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
+                )
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_ARTIST,
+                    oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
+                )
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayback?.duration ?: 0)
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_GENRE,
+                    oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_GENRE)
+                )
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_TITLE,
+                    oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
+                )
+                .putLong(
+                    MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER,
+                    oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER)
+                        ?: 0
+                )
+                .putLong(
+                    MediaMetadataCompat.METADATA_KEY_NUM_TRACKS,
+                    oldMetadataCompat?.getLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS)
+                        ?: 0
+                )
+                .putBitmap(
+                    MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
+                    oldMetadataCompat?.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
+                )
+                .putBitmap(
+                    MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
+                    oldMetadataCompat?.getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON)
+                )
+                .build()
             mMusicProvider?.updateMusic(mCurrentMedia?.description?.mediaId, newMetadataCompat)
             mSession?.setMetadata(newMetadataCompat)
             val notification = postNotification()
@@ -385,7 +447,7 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private fun postNotification(): Notification? {
         val notification = MediaNotificationHelper.createNotification(this, mSession)
-                ?: return null
+            ?: return null
 
         mNotificationManager.notify(NOTIFICATION_ID, notification)
         return notification

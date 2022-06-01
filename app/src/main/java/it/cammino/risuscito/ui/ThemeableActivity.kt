@@ -1,5 +1,6 @@
 package it.cammino.risuscito.ui
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
@@ -8,14 +9,14 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
-import android.view.ViewConfiguration
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.elevation.SurfaceColors
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -33,33 +34,30 @@ import it.cammino.risuscito.database.dao.Backup
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.ThemeUtils
-import it.cammino.risuscito.utils.ThemeUtils.Companion.getStatusBarDefaultColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
 import java.sql.Date
-import java.util.*
 import java.util.concurrent.ExecutionException
 
 abstract class ThemeableActivity : AppCompatActivity() {
 
-    protected var hasNavDrawer = false
-
     protected val mViewModel: MainActivityViewModel by viewModels()
 
+    @SuppressLint("NewApi")
     public override fun onCreate(savedInstanceState: Bundle?) {
-        if (isMenuWorkaroundRequired)
-            forceOverflowMenu()
 
         Log.d(TAG, "Configuration.UI_MODE_NIGHT_NO: ${Configuration.UI_MODE_NIGHT_NO}")
         Log.d(TAG, "Configuration.UI_MODE_NIGHT_YES: ${Configuration.UI_MODE_NIGHT_YES}")
-        Log.d(TAG, "getResources().getConfiguration().uiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}")
+        Log.d(
+            TAG,
+            "getResources().getConfiguration().uiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}"
+        )
 
-        val themeUtils = ThemeUtils(this)
         Log.d(TAG, "ThemeUtils.isDarkMode(this): ${ThemeUtils.isDarkMode(this)}")
         mViewModel.mLUtils = LUtils.getInstance(this)
         mViewModel.mLUtils.convertIntPreferences()
-        setTheme(themeUtils.current)
 
         mViewModel.isOnTablet = mViewModel.mLUtils.isOnTablet
         Log.d(TAG, "onCreate: isOnTablet = ${mViewModel.isOnTablet}")
@@ -74,9 +72,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
         mViewModel.isTabletWithNoFixedDrawer = mViewModel.isOnTablet && !mViewModel.isLandscape
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
-        // setta il colore della barra di stato, solo su KITKAT
-        Utility.setupTransparentTints(this, getStatusBarDefaultColor(this), hasNavDrawer, mViewModel.isOnTablet)
         Utility.setupNavBarColor(this)
+        updateStatusBarLightMode(true)
 
         setTaskDescription()
 
@@ -85,36 +82,19 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        updateStatusBarLightMode(true)
         LUtils.getInstance(this).checkScreenAwake()
     }
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_MENU && isMenuWorkaroundRequired) {
-            openOptionsMenu()
-            return true
-        }
-        return super.onKeyUp(keyCode, event)
+    fun updateStatusBarLightMode(auto: Boolean) {
+        mViewModel.mLUtils.setLigthStatusBar(if (auto) !ThemeUtils.isDarkMode(this) else false)
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        return keyCode == KeyEvent.KEYCODE_MENU && isMenuWorkaroundRequired || super.onKeyDown(keyCode, event)
-    }
-
-    private fun forceOverflowMenu() {
-        try {
-            val config = ViewConfiguration.get(this)
-            val menuKeyField = ViewConfiguration::class.java.getDeclaredField("sHasPermanentMenuKey")
-            @Suppress("SENSELESS_COMPARISON")
-            if (menuKeyField != null) {
-                menuKeyField.isAccessible = true
-                menuKeyField.setBoolean(config, false)
-            }
-        } catch (e: IllegalAccessException) {
-            Log.w(javaClass.toString(), "IllegalAccessException - Failed to force overflow menu.", e)
-        } catch (e: NoSuchFieldException) {
-            Log.w(javaClass.toString(), "NoSuchFieldException - Failed to force overflow menu.", e)
-        }
-
+    fun setTransparentStatusBar(trasparent: Boolean) {
+        window.statusBarColor = if (trasparent) ContextCompat.getColor(
+            this,
+            android.R.color.transparent
+        ) else SurfaceColors.SURFACE_2.getColor(this)
     }
 
     override fun attachBaseContext(newBase: Context) {
@@ -126,17 +106,23 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
         Log.d(TAG, "applyOverrideConfiguration")
-        super.applyOverrideConfiguration(RisuscitoApplication.localeManager.updateConfigurationIfSupported(this, overrideConfiguration))
+        super.applyOverrideConfiguration(
+            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
+                this,
+                overrideConfiguration
+            )
+        )
     }
 
-    class NoBackupException internal constructor(val resources: Resources) : Exception(resources.getString(R.string.no_restore_found))
+    class NoBackupException internal constructor(val resources: Resources) :
+        Exception(resources.getString(R.string.no_restore_found))
 
     class NoIdException internal constructor() : Exception("no ID linked to this Account")
 
     private fun setTaskDescription() {
-        if (LUtils.hasP())
+        if (OSUtils.hasP())
             setTaskDescriptionP()
-        else if (LUtils.hasL())
+        else
             setTaskDescriptionL()
     }
 
@@ -149,7 +135,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val db = Firebase.firestore
 
         // Create a query against the collection.
-        val query = db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).whereEqualTo(FIREBASE_FIELD_USER_ID, userId)
+        val query = db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI)
+            .whereEqualTo(FIREBASE_FIELD_USER_ID, userId)
 
         val querySnapshot = Tasks.await(query.get())
 
@@ -159,15 +146,20 @@ abstract class ThemeableActivity : AppCompatActivity() {
         usersPreferences[FIREBASE_FIELD_USER_ID] = userId
         usersPreferences[FIREBASE_FIELD_EMAIL] = userEmail ?: ""
         usersPreferences[FIREBASE_FIELD_TIMESTAMP] = Date(System.currentTimeMillis())
-        usersPreferences[FIREBASE_FIELD_PREFERENCE] = PreferenceManager.getDefaultSharedPreferences(this).all
+        usersPreferences[FIREBASE_FIELD_PREFERENCE] =
+            PreferenceManager.getDefaultSharedPreferences(this).all
 
         if (querySnapshot.documents.size > 0) {
-            Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).document(querySnapshot.documents[0].id).delete())
+            Tasks.await(
+                db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI)
+                    .document(querySnapshot.documents[0].id).delete()
+            )
             Log.d(TAG, "existing deleted")
         }
 
         // Add a new document with a generated ID
-        val documentReference = Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
+        val documentReference =
+            Tasks.await(db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).add(usersPreferences))
         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.id)
 
     }
@@ -181,7 +173,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val db = Firebase.firestore
 
         // Create a query against the collection.
-        val query = db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI).whereEqualTo(FIREBASE_FIELD_USER_ID, userId)
+        val query = db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI)
+            .whereEqualTo(FIREBASE_FIELD_USER_ID, userId)
 
         val querySnapshot = Tasks.await(query.get())
 
@@ -207,6 +200,10 @@ abstract class ThemeableActivity : AppCompatActivity() {
             }
         }
         prefEdit.apply()
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Utility.SYSTEM_LANGUAGE, "").isNullOrEmpty()
+        )
+            RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
     }
 
     fun backupDatabase(userId: String?) {
@@ -258,7 +255,11 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "BACKUP DB COMPLETATO")
     }
 
-    private fun deleteExistingFile(storageRef: StorageReference, fileName: String, userId: String): StorageReference {
+    private fun deleteExistingFile(
+        storageRef: StorageReference,
+        fileName: String,
+        userId: String
+    ): StorageReference {
         val fileRef = storageRef.child("database_$userId/$fileName.json")
 
         try {
@@ -274,7 +275,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     private fun putFileToFirebase(fileRef: StorageReference, jsonObject: Any, fileName: String) {
-        val gson = GsonBuilder().registerTypeAdapter(Date::class.java, DateTimeSerializer()).create()
+        val gson =
+            GsonBuilder().registerTypeAdapter(Date::class.java, DateTimeSerializer()).create()
         Log.d(TAG, "=== List to JSON ===")
         val jsonList: String = gson.toJson(jsonObject)
         Log.d(TAG, jsonList)
@@ -297,11 +299,20 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
-        val gson = GsonBuilder().registerTypeAdapter(Date::class.java, DateTimeDeserializer()).create()
+        val gson =
+            GsonBuilder().registerTypeAdapter(Date::class.java, DateTimeDeserializer()).create()
         val risuscitoDb = RisuscitoDatabase.getInstance(this)
 
         //RESTORE CANTI
-        val backupCanti: List<Backup> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CANTO_FILE_NAME, userId)), object : TypeToken<List<Backup>>() {}.type)
+        val backupCanti: List<Backup> = gson.fromJson(
+            InputStreamReader(
+                getFileFromFirebase(
+                    storageRef,
+                    CANTO_FILE_NAME,
+                    userId
+                )
+            ), object : TypeToken<List<Backup>>() {}.type
+        )
 
         val cantoDao = risuscitoDb.cantoDao()
         cantoDao.truncateTable()
@@ -309,82 +320,159 @@ abstract class ThemeableActivity : AppCompatActivity() {
         cantoDao.insertCanto(Canto.defaultCantoData())
         Log.d(TAG, "Canto default data inserted")
         for (backup in backupCanti) {
-            Log.d(TAG, "backupCanto.id + ${backup.id} / backupCanto.savedTab ${backup.savedTab} / backupCanto.savedBarre ${backup.savedBarre}")
+            Log.d(
+                TAG,
+                "backupCanto.id + ${backup.id} / backupCanto.savedTab ${backup.savedTab} / backupCanto.savedBarre ${backup.savedBarre}"
+            )
             cantoDao.setBackup(
-                    backup.id,
-                    backup.zoom,
-                    backup.scrollX,
-                    backup.scrollY,
-                    backup.favorite,
-                    backup.savedTab,
-                    backup.savedBarre,
-                    backup.savedSpeed)
+                backup.id,
+                backup.zoom,
+                backup.scrollX,
+                backup.scrollY,
+                backup.favorite,
+                backup.savedTab,
+                backup.savedBarre,
+                backup.savedSpeed
+            )
         }
 
 
         //RESTORE CUSTOM LIST
-        val backupCustomList: List<CustomList> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CUSTOM_LIST_FILE_NAME, userId)), object : TypeToken<List<CustomList>>() {}.type)
+        val backupCustomList: List<CustomList> = gson.fromJson(
+            InputStreamReader(
+                getFileFromFirebase(
+                    storageRef,
+                    CUSTOM_LIST_FILE_NAME,
+                    userId
+                )
+            ), object : TypeToken<List<CustomList>>() {}.type
+        )
 
         val customListDao = risuscitoDb.customListDao()
+
         customListDao.truncateTable()
         Log.d(TAG, "Custom List Truncated!")
         for (backup in backupCustomList) {
-            Log.d(TAG, "backupCustomList.id + ${backup.id} / backupCustomList.position ${backup.position} / backupCustomList.idCanto ${backup.idCanto} / backupCustomList.timestamp ${backup.timestamp}")
-            customListDao.insertPosition(backup)
+            Log.d(
+                TAG,
+                "backupCustomList.id + ${backup.id} / backupCustomList.position ${backup.position} / backupCustomList.idCanto ${backup.idCanto} / backupCustomList.timestamp ${backup.timestamp}"
+            )
+            if (cantoDao.getCantoById(backup.idCanto) != null)
+                customListDao.insertPosition(backup)
         }
 
 
         //RESTORE LISTA PERS
-        val backupListePers: List<ListaPers> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, LISTA_PERS_FILE_NAME, userId)), object : TypeToken<List<ListaPers>>() {}.type)
+        val backupListePers: List<ListaPers> = gson.fromJson(
+            InputStreamReader(
+                getFileFromFirebase(
+                    storageRef,
+                    LISTA_PERS_FILE_NAME,
+                    userId
+                )
+            ), object : TypeToken<List<ListaPers>>() {}.type
+        )
 
         val listePersDao = risuscitoDb.listePersDao()
         listePersDao.truncateTable()
         Log.d(TAG, "Liste Pers Truncated!")
         for (backup in backupListePers) {
-            Log.d(TAG, "backupListePers.id + ${backup.id} / backupCustomList.position ${backup.titolo}")
+            Log.d(
+                TAG,
+                "backupListePers.id + ${backup.id} / backupCustomList.position ${backup.titolo}"
+            )
+            backup.lista?.let {
+                for (i in 0 until it.numPosizioni) {
+                    if (it.getCantoPosizione(i).isNotEmpty() && cantoDao.getCantoById(
+                            it.getCantoPosizione(i).toInt()
+                        ) == null
+                    )
+                        it.removeCanto(i)
+                }
+            }
             listePersDao.insertLista(backup)
         }
 
 
         //RESTORE LOCAL LINK
-        val backupLocalLink: List<LocalLink> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, LOCAL_LINK_FILE_NAME, userId)), object : TypeToken<List<LocalLink>>() {}.type)
+        val backupLocalLink: List<LocalLink> = gson.fromJson(
+            InputStreamReader(
+                getFileFromFirebase(
+                    storageRef,
+                    LOCAL_LINK_FILE_NAME,
+                    userId
+                )
+            ), object : TypeToken<List<LocalLink>>() {}.type
+        )
 
         val localLinkDao = risuscitoDb.localLinksDao()
         localLinkDao.truncateTable()
         Log.d(TAG, "Liste Pers Truncated!")
         for (backup in backupLocalLink) {
-            Log.d(TAG, "backupLocalLink.idCanto + ${backup.idCanto} / backupLocalLink.localPath ${backup.localPath}")
-            localLinkDao.insertLocalLink(backup)
+            Log.d(
+                TAG,
+                "backupLocalLink.idCanto + ${backup.idCanto} / backupLocalLink.localPath ${backup.localPath}"
+            )
+            if (cantoDao.getCantoById(backup.idCanto) != null)
+                localLinkDao.insertLocalLink(backup)
         }
 
 
         //RESTORE CONSEGNATI
-        val backupConsegnati: List<Consegnato> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CONSEGNATO_FILE_NAME, userId)), object : TypeToken<List<Consegnato>>() {}.type)
+        val backupConsegnati: List<Consegnato> = gson.fromJson(
+            InputStreamReader(
+                getFileFromFirebase(
+                    storageRef,
+                    CONSEGNATO_FILE_NAME,
+                    userId
+                )
+            ), object : TypeToken<List<Consegnato>>() {}.type
+        )
 
         val consegnatiDao = risuscitoDb.consegnatiDao()
         consegnatiDao.truncateTable()
         Log.d(TAG, "Liste Pers Truncated!")
         for (backup in backupConsegnati) {
-            Log.d(TAG, "backupConsegnati.idConsegnato + ${backup.idConsegnato} / backupConsegnati.idCanto ${backup.idCanto}")
-            consegnatiDao.insertConsegnati(backup)
+            Log.d(
+                TAG,
+                "backupConsegnati.idConsegnato + ${backup.idConsegnato} / backupConsegnati.idCanto ${backup.idCanto}"
+            )
+            if (cantoDao.getCantoById(backup.idCanto) != null)
+                consegnatiDao.insertConsegnati(backup)
         }
 
 
         //RESTORE CRONOLOGIA
-        val backupCronologia: List<Cronologia> = gson.fromJson(InputStreamReader(getFileFromFirebase(storageRef, CRONOLOGIA_FILE_NAME, userId)), object : TypeToken<List<Cronologia>>() {}.type)
+        val backupCronologia: List<Cronologia> = gson.fromJson(
+            InputStreamReader(
+                getFileFromFirebase(
+                    storageRef,
+                    CRONOLOGIA_FILE_NAME,
+                    userId
+                )
+            ), object : TypeToken<List<Cronologia>>() {}.type
+        )
 
         val cronologiaDao = risuscitoDb.cronologiaDao()
         cronologiaDao.truncateTable()
         Log.d(TAG, "Liste Pers Truncated!")
         for (backup in backupCronologia) {
-            Log.d(TAG, "backupCronologia.idCanto + ${backup.idCanto} / backupCronologia.ultimaVisita ${backup.ultimaVisita}")
-            cronologiaDao.insertCronologia(backup)
+            Log.d(
+                TAG,
+                "backupCronologia.idCanto + ${backup.idCanto} / backupCronologia.ultimaVisita ${backup.ultimaVisita}"
+            )
+            if (cantoDao.getCantoById(backup.idCanto) != null)
+                cronologiaDao.insertCronologia(backup)
         }
 
         Log.d(TAG, "RESTORE DB COMPLETATO")
     }
 
-    private fun getFileFromFirebase(storageRef: StorageReference, fileName: String, userId: String): InputStream {
+    private fun getFileFromFirebase(
+        storageRef: StorageReference,
+        fileName: String,
+        userId: String
+    ): InputStream {
         try {
 
             val cantoRef = storageRef.child("database_$userId/$fileName.json")
@@ -401,15 +489,22 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     @Suppress("DEPRECATION")
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setTaskDescriptionL() {
-        val taskDesc = ActivityManager.TaskDescription(null, null, MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
+        val taskDesc = ActivityManager.TaskDescription(
+            null,
+            null,
+            MaterialColors.getColor(this, R.attr.colorPrimary, TAG)
+        )
         setTaskDescription(taskDesc)
     }
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun setTaskDescriptionP() {
-        val taskDesc = ActivityManager.TaskDescription(null, R.mipmap.ic_launcher, MaterialColors.getColor(this, R.attr.colorPrimary, TAG))
+        val taskDesc = ActivityManager.TaskDescription(
+            null,
+            R.mipmap.ic_launcher,
+            MaterialColors.getColor(this, R.attr.colorPrimary, TAG)
+        )
         setTaskDescription(taskDesc)
     }
 
@@ -428,8 +523,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         internal const val CONSEGNATO_FILE_NAME = "Consegnato"
         internal const val CRONOLOGIA_FILE_NAME = "Cronologia"
 
-        val isMenuWorkaroundRequired: Boolean
-            get() = Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && ("LGE".equals(Build.MANUFACTURER, ignoreCase = true) || "E6710".equals(Build.DEVICE, ignoreCase = true))
-
     }
+
 }

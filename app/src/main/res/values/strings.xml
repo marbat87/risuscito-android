@@ -18,6 +18,8 @@
     <string name="label_play" translatable="false">Play</string>
     <string name="label_restart" translatable="false">Restart</string>
     <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
+    <string name="material_drawer_open" translatable="false">Open</string>
+    <string name="material_drawer_close" translatable="false">Close</string>
 
     <string name="private_memory">Memoria privata</string>
     <string name="public_memory">Memoria pubblica</string>
@@ -27,7 +29,6 @@
     <string name="letter_order_text">Indice alfabetico</string>
     <string name="page_order_text">Indice per pagina</string>
     <string name="search_name_text">Ricerca canto</string>
-    <string name="arg_search_text">Indice per argomento</string>
     <string name="always_on">No standby</string>
     <string name="always_on_summary">Impedisce allo schermo di andare in standby all\'interno dell\'applicazione.</string>
     <string name="title_activity_favourites">Preferiti</string>
@@ -71,7 +72,6 @@
     <string name="dialog_wonna_replace">Vuoi sostituirlo?</string>
     <string name="fast_search_title">Ricerca veloce</string>
     <string name="advanced_search_title">Ricerca avanzata</string>
-    <string name="title_activity_search">Ricerca canto</string>
     <string name="advanced_search_subtitle">CERCA NEL TITOLO E NEL TESTO</string>
     <string name="fast_search_subtitle">CERCA PER TITOLO</string>
     <string name="show_seconda_title">Eucarestia - 2^ lettura</string>
@@ -82,7 +82,7 @@
     <string name="list_save_exit">Salva ed esci</string>
     <string name="add_position">Aggiungi elemento</string>
     <string name="content_drag">trascina elemento</string>
-    <string name="aggiungi_confirm">AGGIUNGI</string>
+    <string name="aggiungi_confirm">aggiungi</string>
     <string name="posizione_add_desc">Titolo del nuovo elemento</string>
     <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 30</string>
     <string name="lista_pers_vuota">La lista è vuota</string>
@@ -135,7 +135,7 @@
     <string name="open_pdf">Apri PDF</string>
     <string name="activity_homepage">Home page</string>
     <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
-    <string name="salmi_musica_index">Indice salmi musicati</string>
+    <string name="salmi_musica_index">Indice biblico</string>
     <string name="only_link">Vuoi associare un file mp3 presente nella memoria del tuo dispositivo?</string>
     <string name="dialog_delete_link">Sei sicuro di voler scollegare dal brano presente nella memoria? (Il file non sarà cancellato)</string>
     <string name="delink_delete">File scollegato</string>
@@ -146,7 +146,7 @@
     <string name="no_elements_added">Non hai ancora aggiunto nessun elemento.</string>
     <string name="dialog_replace_title">Sostituisci canto</string>
     <string name="dialog_reset_list_title">Resetta lista</string>
-    <string name="aggiungi_rename">RINOMINA</string>
+    <string name="aggiungi_rename">rinomina</string>
     <string name="save_list_title">Salva lista</string>
     <string name="dialog_delete_mp3_title">Elimina file scaricato</string>
     <string name="dialog_delete_link_title">Scollega file locale</string>
@@ -159,10 +159,6 @@
     <string name="show_santo_summary">Abilita la visualizzazione del Santo per l\'Eucarestia</string>
     <string name="fullscreen">Schermo intero</string>
     <string name="file_selected">File selezionato</string>
-    <string name="primary_color">Colore principale</string>
-    <string name="primary_color_desc">Il colore usato maggiormente nell\'interfaccia</string>
-    <string name="accent_color">Colore di risalto</string>
-    <string name="accent_color_desc">Il colore usato per i widget e altri dettagli dell\'interfaccia</string>
     <string name="theme">Tema</string>
     <string name="lists_pref">Liste</string>
     <string name="system">Sistema</string>
@@ -192,7 +188,6 @@
     <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
     <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;oppure premi ANNULLA per cancellarle.</string>
-    <string name="save_consegnati_running">Salvataggio in corso&#8230;</string>
     <string name="title_activity_history">Cronologia</string>
     <string name="new_hint_remove">Tieni premuto su un elemento per rimuoverlo</string>
     <string name="history_empty">La cronologia è vuota.</string>
@@ -335,5 +330,7 @@
     <string name="elezione_2">Elezione - Parte intermedia</string>
     <string name="elezione_3">Elezione - finale</string>
     <string name="passaggio_none">Nessuno</string>
+    <string name="dynamic_colors_title">Colori dinamici</string>
+    <string name="dynamic_colors_summary">Applica i colori dinamici in base al tuo sfondo</string>
 </resources>
 

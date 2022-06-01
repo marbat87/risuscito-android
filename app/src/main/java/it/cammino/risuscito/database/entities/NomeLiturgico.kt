@@ -47,31 +47,36 @@ class NomeLiturgico {
 
             mDato = NomeLiturgico()
             mDato.idIndice = 7
-            mDato.nome = "lodi_vespri"
+            mDato.nome = "canti_bambini"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
             mDato.idIndice = 8
-            mDato.nome = "canti_ingresso"
+            mDato.nome = "lodi_vespri"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
             mDato.idIndice = 9
-            mDato.nome = "canti_pace"
+            mDato.nome = "canti_ingresso"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
             mDato.idIndice = 10
-            mDato.nome = "canti_pane"
+            mDato.nome = "canti_pace"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
             mDato.idIndice = 11
-            mDato.nome = "canti_vino"
+            mDato.nome = "canti_pane"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
             mDato.idIndice = 12
+            mDato.nome = "canti_comunione"
+            mList.add(mDato)
+
+            mDato = NomeLiturgico()
+            mDato.idIndice = 13
             mDato.nome = "canti_fine"
             mList.add(mDato)
 

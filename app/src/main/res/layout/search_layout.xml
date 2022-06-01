@@ -1,95 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/search_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_min_top_margin">
-
-    <FrameLayout
-        android:id="@+id/more_options"
-        android:layout_width="@dimen/myListPreferredItemHeightMedium"
-        android:layout_height="@dimen/myListPreferredItemHeightMedium"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="?attr/customSelectorRound"
-        android:soundEffectsEnabled="true">
-
-        <com.mikepenz.iconics.view.IconicsImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter"
-            risuscito:iiv_color="?android:textColorSecondary"
-            risuscito:iiv_icon="cmd-dots-vertical"
-            risuscito:iiv_padding="2dp"
-            risuscito:iiv_size="24dp"
-            tools:ignore="MissingPrefix" />
-
-    </FrameLayout>
-
-    <RelativeLayout
-        android:id="@+id/search_no_results"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_box_ricerca"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <ImageView
-            android:id="@+id/no_results_image"
-            android:layout_width="120dip"
-            android:layout_height="120dip"
-            android:layout_centerHorizontal="true"
-            android:contentDescription="@string/search_no_results"
-            risuscito:srcCompat="@drawable/ic_search_question_mark" />
-
-        <TextView
-            android:id="@+id/no_history_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/no_results_image"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="@dimen/text_min_margin"
-            android:layout_marginRight="@dimen/text_min_margin"
-            android:gravity="center_horizontal"
-            android:text="@string/search_no_results"
-            android:textAppearance="@style/SuperStateViewSubTitle"
-            android:textColor="?android:textColorSecondary"
-            risuscito:fontFamily="@font/googlesans_italic"
-            tools:ignore="MissingPrefix" />
-
-    </RelativeLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/matched_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/text_box_ricerca"
-        android:fadeScrollbars="true"
-        android:scrollbars="vertical"
-        android:visibility="gone" />
-
+    android:layout_marginTop="@dimen/activity_min_top_margin">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_box_ricerca"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/more_options"
-        android:layout_marginStart="@dimen/myListPreferredItemMargin"
-        android:layout_marginLeft="@dimen/myListPreferredItemMargin"
-        android:layout_toStartOf="@id/more_options"
-        android:layout_toLeftOf="@id/more_options"
+        android:layout_marginStart="8dp"
         android:hint="@string/fast_search_subtitle"
-        risuscito:endIconMode="clear_text"
-        risuscito:endIconTint="@color/text_color_secondary"
-        risuscito:helperText="@string/search_hint"
+        android:paddingStart="?listPreferredItemPaddingStart"
+        app:endIconMode="clear_text"
+        app:helperText="@string/search_hint"
+        app:layout_constraintEnd_toStartOf="@id/more_options"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlSymmetry">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -103,16 +32,88 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <Button
+        android:id="@+id/more_options"
+        style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_min_margin"
+        android:layout_marginEnd="@dimen/activity_min_margin"
+        app:icon="@drawable/more_vert_24px"
+        app:iconSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/text_box_ricerca"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/matched_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fadeScrollbars="true"
+        android:scrollbars="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_box_ricerca" />
+
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/search_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_box_ricerca"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal|top"
         android:elevation="1dp"
         android:indeterminate="true"
         android:visibility="invisible"
-        tools:targetApi="lollipop" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_box_ricerca" />
 
-</RelativeLayout>
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/search_no_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="no_results_image,no_history_text"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/no_results_image"
+        android:layout_width="120dip"
+        android:layout_height="120dip"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/search_no_results"
+        android:src="@drawable/ic_search_question_mark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_box_ricerca" />
+
+    <TextView
+        android:id="@+id/no_history_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_min_margin"
+        android:layout_marginEnd="@dimen/text_min_margin"
+        android:gravity="center"
+        android:text="@string/search_no_results"
+        android:textAppearance="?textAppearanceBodyMedium"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/no_results_image"
+        tools:ignore="MissingPrefix" />
+
+    <include
+        android:id="@+id/cover_layout"
+        layout="@layout/cover_layout" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="?actionBarSize"
+        android:paddingBottom="@dimen/activity_min_top_margin"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="navigation_home" type="id" />
-    <item name="navigation_consegnati" type="id" />
-    <item name="navigation_search" type="id" />
-    <item name="navigation_indexes" type="id" />
-    <item name="navitagion_lists" type="id" />
-    <item name="navigation_favorites" type="id" />
-    <item name="navigation_settings" type="id" />
-    <item name="navigation_changelog" type="id" />
-    <item name="navigation_history" type="id" />
-    <item name="gdrive_backup" type="id" />
-    <item name="gdrive_restore" type="id" />
-    <item name="gplus_signout" type="id" />
-    <item name="gplus_revoke" type="id" />
+    <!--    <item name="navigation_home" type="id" />-->
+    <!--    <item name="navigation_consegnati" type="id" />-->
+    <!--    <item name="navigation_search" type="id" />-->
+    <!--    <item name="navigation_indexes" type="id" />-->
+    <!--    <item name="navigation_lists" type="id" />-->
+    <!--    <item name="navigation_favorites" type="id" />-->
+    <!--    <item name="navigation_settings" type="id" />-->
+    <!--    <item name="navigation_changelog" type="id" />-->
+    <!--    <item name="navigation_history" type="id" />-->
+    <!--    <item name="gdrive_backup" type="id" />-->
+    <!--    <item name="gdrive_restore" type="id" />-->
+    <!--    <item name="gplus_signout" type="id" />-->
+    <!--    <item name="gplus_revoke" type="id" />-->
     <item name="fastadapter_sub_item_id" type="id" />
     <item name="fastadapter_checkable_item_id" type="id" />
     <item name="fastadapter_history_item_id" type="id" />

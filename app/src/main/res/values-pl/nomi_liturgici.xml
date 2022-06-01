@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">Adwent</string>
-    <string name="tempo_natale">Boże Narodzenie</string>
-    <string name="tempo_quaresima">Wielki Post</string>
-    <string name="tempo_pasqua">Wielkanoc</string>
-    <string name="canti_pentecoste">Zesłanie Ducha Świętego</string>
-    <string name="canti_vergine">Pieśni do dziewicy</string>
-    <string name="lodi_vespri">Laudesy i Nieszpory</string>
-    <string name="canti_ingresso">Wejście</string>
-    <string name="canti_pace">Znak pokoju</string>
-    <string name="canti_pane">Chleb</string>
-    <string name="canti_vino">Wino</string>
-    <string name="canti_fine">Zakończenie</string>
+    <string name="tempo_avvento">ADWENT</string>
+    <string name="tempo_natale">BOŻE NARODZENIE</string>
+    <string name="tempo_quaresima">WIELKI POST</string>
+    <string name="tempo_pasqua">WIELKANOC</string>
+    <string name="canti_pentecoste">ZESŁANIE DUCHA ŚWIĘTEGO</string>
+    <string name="canti_vergine">PIEŚNI DO DZIEWICY</string>
+    <string name="lodi_vespri">LAUDESY I NIESZPORY</string>
+    <string name="canti_ingresso">WEJŚCIE</string>
+    <string name="canti_pace">ZNAK POKOJU</string>
+    <string name="canti_pane">CHLEB</string>
+    <string name="canti_fine">ZAKOŃCZENIE</string>
+    <string name="canti_comunione">COMUNIONE</string>
+    <string name="canti_bambini">CANTI PER I BAMBINI</string>
 </resources>

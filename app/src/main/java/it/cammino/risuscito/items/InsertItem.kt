@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import com.mikepenz.materialdrawer.holder.ColorHolder
 import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
@@ -38,9 +37,9 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
             source = helperSetString(value)
         }
     var undecodedSource: String? = null
-    var color: ColorHolder? = null
+    var color: Int = Color.WHITE
         private set
-    var setColor: Any? = null
+    var setColor: String? = null
         set(value) {
             color = helperSetColor(value)
         }
@@ -55,7 +54,10 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
     override val type: Int
         get() = R.id.fastadapter_insert_item_id
 
-    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup?): RowItemToInsertBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup?
+    ): RowItemToInsertBinding {
         return RowItemToInsertBinding.inflate(inflater, parent, false)
     }
 
@@ -66,17 +68,22 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
         //set the text for the name
         filter?.let {
             if (it.isNotEmpty()) {
-                val normalizedTitle = Utility.removeAccents(title?.getText(ctx)
-                        ?: "")
-                val mPosition = normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
+                val normalizedTitle = Utility.removeAccents(
+                    title?.getText(ctx)
+                        ?: ""
+                )
+                val mPosition =
+                    normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
                 if (mPosition >= 0) {
                     val stringTitle = title?.getText(ctx)
-                    val highlighted = StringBuilder(if (mPosition > 0) (stringTitle?.substring(0, mPosition)
-                            ?: "") else "")
-                            .append("<b>")
-                            .append(stringTitle?.substring(mPosition, mPosition + it.length))
-                            .append("</b>")
-                            .append(stringTitle?.substring(mPosition + it.length))
+                    val highlighted = StringBuilder(
+                        if (mPosition > 0) (stringTitle?.substring(0, mPosition)
+                            ?: "") else ""
+                    )
+                        .append("<b>")
+                        .append(stringTitle?.substring(mPosition, mPosition + it.length))
+                        .append("</b>")
+                        .append(stringTitle?.substring(mPosition + it.length))
                     binding.textTitle.text = LUtils.fromHtmlWrapper(highlighted.toString())
                 } else
                     StringHolder.applyTo(title, binding.textTitle)
@@ -87,7 +94,7 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
         //set the text for the description or hide
         StringHolder.applyToOrHide(page, binding.textPage)
         val bgShape = binding.textPage.background as? GradientDrawable
-        bgShape?.setColor(color?.colorInt ?: Color.WHITE)
+        bgShape?.setColor(color)
     }
 
     override fun unbindView(binding: RowItemToInsertBinding) {

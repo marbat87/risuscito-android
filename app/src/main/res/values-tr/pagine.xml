@@ -11,7 +11,7 @@
     <string name="santo_1988_page">7</string>
     <string name="santo_1983_page">7</string>
     <string name="preghiera_eucarestica_II_page">8</string>
-    <string name="preghiera_eucaristica_II_parte2_page">9</string>
+    <string name="preghiera_eucaristica_II_parte2_page">8</string>
     <string name="benedizione_acqua_fonte_page">10</string>
     <string name="preconio_pasquale_page">12</string>
     <string name="prefazio_eucarestia_veglia_pasquale_page">14</string>
@@ -24,8 +24,8 @@
     <string name="inno_lodi_pentecoste_page">19</string>
     <string name="sequenza_di_pentecoste_page">20</string>
     <string name="preghiera_eucaristia_II_2_prefazio_page">21</string>
-    <string name="preghiera_eucaristica_II_2_consacrazione_page">22</string>
-    <string name="preghiera_eucaristica_II_2_offerta_page">23</string>
+    <string name="preghiera_eucaristica_II_2_consacrazione_page">21</string>
+    <string name="preghiera_eucaristica_II_2_offerta_page">21</string>
     <string name="alleluja_pasquale_page">24</string>
     <string name="acclamazioni_al_vangelo_page">24</string>
     <string name="acclamazioni_al_vangelo_quaresima_page">25</string>
@@ -41,7 +41,7 @@
     <string name="benedici_anima_mia_jahve_page">34</string>
     <string name="fino_a_quando_page">35</string>
     <string name="jahve_tu_sei_mio_dio_page">35</string>
-    <string name="cantiamo_cantiamo_page">36</string>
+    <!--    <string name="cantiamo_cantiamo_page">36</string>-->
     <string name="giunga_la_mia_preghiera_page">36</string>
     <string name="guardate_come_e_bello_page">37</string>
     <string name="come_bello_come_da_gioia_page">37</string>
@@ -81,7 +81,7 @@
     <string name="alzo_gli_occhi_page">67</string>
     <string name="canto_liberati_page">67</string>
     <string name="se_oggi_ascoltate_sua_voce_page">68</string>
-    <string name="venite_applaudiamo_al_signore_page">69</string>
+    <!--    <string name="venite_applaudiamo_al_signore_page">69</string>-->
     <string name="dajenu_page">70</string>
     <string name="alla_vittima_pasquale_page">71</string>
     <string name="uri_uri_ura_page">72</string>
@@ -105,11 +105,11 @@
     <string name="o_dio_tu_sei_il_mio_dio_page">88</string>
     <string name="sale_dio_tra_acclamazioni_page">88</string>
     <string name="popolo_camminava_tenebre_page">89</string>
-    <string name="da_lode_al_signore_page">89</string>
+    <!--    <string name="da_lode_al_signore_page">89</string>-->
     <string name="canto_di_balaam_page">90</string>
     <string name="davanti_agli_angeli_page">91</string>
-    <string name="quando_israele_era_un_bimbo_page">92</string>
-    <string name="e_la_pasqua_del_signore_page">92</string>
+    <!--    <string name="quando_israele_era_un_bimbo_page">92</string>-->
+    <!--    <string name="e_la_pasqua_del_signore_page">92</string>-->
     <string name="tempo_ogni_cosa_page">93</string>
     <string name="benedici_anima_mia_page">94</string>
     <string name="quanto_sono_amabili_dimore_page">95</string>
@@ -232,4 +232,11 @@
     <string name="ave_maria_colomba_page">145</string>
     <string name="messia_leone_vincere_page">301</string>
     <string name="inno_cristo_luce_page">150</string>
+    <string name="preghiera_eucaristica_IV_page">500</string>
+    <string name="preghiere_universali_cantate_page">501</string>
+    <string name="salga_sposo_sul_legno_page">502</string>
+    <string name="salmodia_salmo_responsoriale_page">503</string>
+    <string name="salve_regina_page">504</string>
+    <string name="sequenza_corpus_domini_page">505</string>
+    <string name="un_angelo_venne_dal_cielo_page">506</string>
 </resources>

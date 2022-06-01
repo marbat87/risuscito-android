@@ -4,23 +4,17 @@
 
     <item
         android:id="@+id/tonalita"
+        android:icon="@drawable/music_note_24px"
         android:orderInCategory="88"
         android:title="@string/action_tonalita"
-        risuscito:ico_color="?colorOnPrimarySurface"
-        risuscito:ico_icon="cmd_music_note"
-        risuscito:ico_padding="2dp"
-        risuscito:ico_size="24dp"
         risuscito:showAsAction="always">
 
         <menu>
             <item
                 android:id="@+id/action_trasporta"
+                android:icon="@drawable/swap_vert_24px"
                 android:orderInCategory="89"
-                android:title="@string/action_trasporta"
-                risuscito:ico_color="@color/text_color_secondary"
-                risuscito:ico_icon="cmd_swap_vertical"
-                risuscito:ico_padding="2dp"
-                risuscito:ico_size="24dp">
+                android:title="@string/action_trasporta">
 
                 <menu>
                     <group android:id="@+id/menu_gruppo_note">
@@ -78,21 +72,15 @@
 
             <item
                 android:id="@+id/action_save_tab"
+                android:icon="@drawable/save_24px"
                 android:orderInCategory="90"
-                android:title="@string/action_salva"
-                risuscito:ico_color="@color/text_color_secondary"
-                risuscito:ico_icon="cmd_content_save"
-                risuscito:ico_padding="2dp"
-                risuscito:ico_size="24dp" />
+                android:title="@string/action_salva" />
 
             <item
                 android:id="@+id/action_reset_tab"
+                android:icon="@drawable/refresh_24px"
                 android:orderInCategory="91"
-                android:title="@string/action_reset_tonalita"
-                risuscito:ico_color="@color/text_color_secondary"
-                risuscito:ico_icon="cmd_refresh"
-                risuscito:ico_padding="2dp"
-                risuscito:ico_size="24dp" />
+                android:title="@string/action_reset_tonalita" />
 
         </menu>
 
@@ -100,24 +88,18 @@
 
     <item
         android:id="@+id/barre"
+        android:icon="@drawable/guitar_acoustic_24"
         android:orderInCategory="92"
         android:title="@string/action_barre"
-        risuscito:ico_color="?colorOnPrimarySurface"
-        risuscito:ico_icon="cmd_guitar_electric"
-        risuscito:ico_padding="2dp"
-        risuscito:ico_size="24dp"
         risuscito:showAsAction="always">
 
         <menu>
 
             <item
                 android:id="@+id/action_trasporta_barre"
+                android:icon="@drawable/swap_vert_24px"
                 android:orderInCategory="93"
-                android:title="@string/action_trasporta"
-                risuscito:ico_color="@color/text_color_secondary"
-                risuscito:ico_icon="cmd_swap_vertical"
-                risuscito:ico_padding="2dp"
-                risuscito:ico_size="24dp">
+                android:title="@string/action_trasporta">
 
                 <menu>
                     <group android:id="@+id/menu_gruppo_barre">
@@ -159,21 +141,15 @@
 
             <item
                 android:id="@+id/action_save_barre"
+                android:icon="@drawable/save_24px"
                 android:orderInCategory="94"
-                android:title="@string/action_salva"
-                risuscito:ico_color="@color/text_color_secondary"
-                risuscito:ico_icon="cmd_content_save"
-                risuscito:ico_padding="2dp"
-                risuscito:ico_size="24dp" />
+                android:title="@string/action_salva" />
 
             <item
                 android:id="@+id/action_reset_barre"
+                android:icon="@drawable/refresh_24px"
                 android:orderInCategory="95"
-                android:title="@string/action_reset_barre"
-                risuscito:ico_color="@color/text_color_secondary"
-                risuscito:ico_icon="cmd_refresh"
-                risuscito:ico_padding="2dp"
-                risuscito:ico_size="24dp" />
+                android:title="@string/action_reset_barre" />
 
         </menu>
 
@@ -181,22 +157,16 @@
 
     <item
         android:id="@+id/action_exp_pdf"
+        android:icon="@drawable/picture_as_pdf_24px"
         android:orderInCategory="97"
         android:title="@string/action_exp_pdf"
-        risuscito:ico_color="?colorOnPrimarySurface"
-        risuscito:ico_icon="cmd_file_pdf_box"
-        risuscito:ico_padding="2dp"
-        risuscito:ico_size="24dp"
         risuscito:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_help_canto"
+        android:icon="@drawable/help_24px"
         android:orderInCategory="98"
         android:title="@string/action_help"
-        risuscito:ico_color="?colorOnPrimarySurface"
-        risuscito:ico_icon="cmd_help_circle"
-        risuscito:ico_padding="2dp"
-        risuscito:ico_size="24dp"
         risuscito:showAsAction="never" />
 
 </menu>

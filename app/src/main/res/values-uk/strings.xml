@@ -9,7 +9,6 @@
     <string name="letter_order_text">Зміст алфавітний</string>
     <string name="page_order_text">Зміст по сторінкам</string>
     <string name="search_name_text">Пошук</string>
-    <string name="arg_search_text">Літургічний зміст</string>
     <string name="always_on">Відкл. сплячий режим</string>
     <string name="always_on_summary">Не переходить на сплячий режим поки відкритий додаток.</string>
     <string name="title_activity_favourites">Закладки</string>
@@ -53,7 +52,6 @@
     <string name="dialog_wonna_replace">Хочеш замінити?</string>
     <string name="fast_search_title">Швидкий пошук</string>
     <string name="advanced_search_title">Детальний пошук</string>
-    <string name="title_activity_search">Пошук пісні</string>
     <string name="advanced_search_subtitle">ПОШУК У ЗАГОЛОВКУ ТА В ТЕКСТІ</string>
     <string name="fast_search_subtitle">ПОШУК ЗА НАЗВОЮ</string>
     <string name="show_seconda_title">Євхаристія - 2^ читання</string>
@@ -64,7 +62,7 @@
     <string name="list_save_exit">Зберегти і вийти</string>
     <string name="add_position">Додати елемент</string>
     <string name="content_drag">перенести елемент</string>
-    <string name="aggiungi_confirm">ДОДАТИ</string>
+    <string name="aggiungi_confirm">додати</string>
     <string name="posizione_add_desc">Назва нового елементу</string>
     <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 30</string>
     <string name="lista_pers_vuota">Список порожній</string>
@@ -127,7 +125,7 @@
     <string name="no_elements_added">Не додано ще жодного елементу.</string>
     <string name="dialog_replace_title">Замінити пісню</string>
     <string name="dialog_reset_list_title">Відновити список</string>
-    <string name="aggiungi_rename">ПЕРЕЙМЕНУВАТИ</string>
+    <string name="aggiungi_rename">перейменувати</string>
     <string name="save_list_title">Зберегти список</string>
     <string name="dialog_delete_mp3_title">Видалити завантажений файл</string>
     <string name="dialog_delete_link_title">Від\'єднати локальний файл</string>
@@ -140,10 +138,6 @@
     <string name="show_santo_summary">Додати Свят для Євхаристії</string>
     <string name="fullscreen">Повний екран</string>
     <string name="file_selected">Вибраний файл</string>
-    <string name="primary_color">Головний колір</string>
-    <string name="primary_color_desc">Більш використаний колір в інтерфейсі</string>
-    <string name="accent_color">Виділяємий колір</string>
-    <string name="accent_color_desc">Колір, використаний для віджетів та інших деталей інтерфейсу</string>
     <string name="theme">Тема</string>
     <string name="lists_pref">Списки</string>
     <string name="system">Система</string>
@@ -173,7 +167,6 @@
     <string name="showcase_consegnati_howto">Натисніть цю кнопку, щоб відкрити список та позначити пісні.</string>
     <string name="showcase_consegnati_confirm">Коли закінчите, натисніть ПІДТВЕРДИТИ, щоб зберегти зміни&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;або натисніть СКАСУВАТИ, щоб скасувати.</string>
-    <string name="save_consegnati_running">Збереження&#8230;</string>
     <string name="title_activity_history">Хронологія</string>
     <string name="new_hint_remove">Натисніть на елемент та тримайте для того, щоб видалити його</string>
     <string name="history_empty">Хронологія пуста.</string>
@@ -317,4 +310,6 @@
     <string name="elezione_2">Вибрання - середня частина</string>
     <string name="elezione_3">Вибрання - кінцева</string>
     <string name="passaggio_none">Жоден</string>
+    <string name="dynamic_colors_title">Dynamic colors</string>
+    <string name="dynamic_colors_summary">Apply dynamic colors based on your wallpaper</string>
 </resources>

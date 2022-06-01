@@ -13,23 +13,22 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import it.cammino.risuscito.databinding.TabsLayoutBinding
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class GeneralIndex : Fragment() {
-
-    private var mMainActivity: MainActivity? = null
+class GeneralIndex : AccountMenuFragment() {
 
     private val mViewModel: GeneralIndexViewModel by viewModels()
 
-    private val mPageChange: ViewPager2.OnPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageSelected(position: Int) {
-            Log.d(TAG, "onPageSelected: $position")
-            mViewModel.pageViewed = position
+    private val mPageChange: ViewPager2.OnPageChangeCallback =
+        object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                Log.d(TAG, "onPageSelected: $position")
+                mViewModel.pageViewed = position
+            }
         }
-    }
 
     private var _binding: TabsLayoutBinding? = null
 
@@ -37,7 +36,11 @@ class GeneralIndex : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = TabsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -51,7 +54,6 @@ class GeneralIndex : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity = activity as? MainActivity
         mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
         mMainActivity?.setTabVisible(true)
         mMainActivity?.enableFab(false)
@@ -60,15 +62,15 @@ class GeneralIndex : Fragment() {
         binding.viewPager.adapter = IndexTabsAdapter(this)
         mMainActivity?.getMaterialTabs()?.let {
             TabLayoutMediator(it, binding.viewPager) { tab, position ->
-                val l = getSystemLocale(resources)
-                tab.text = when (position) {
-                    0 -> getString(R.string.letter_order_text).uppercase(l)
-                    1 -> getString(R.string.page_order_text).uppercase(l)
-                    2 -> getString(R.string.arg_search_text).uppercase(l)
-                    3 -> getString(R.string.salmi_musica_index).uppercase(l)
-                    4 -> getString(R.string.indice_liturgico_index).uppercase(l)
-                    else -> getString(R.string.letter_order_text).uppercase(l)
-                }
+                tab.setText(
+                    when (position) {
+                        0 -> R.string.letter_order_text
+                        1 -> R.string.page_order_text
+                        2 -> R.string.indice_liturgico_index
+                        3 -> R.string.salmi_musica_index
+                        else -> R.string.letter_order_text
+                    }
+                )
             }.attach()
         }
         binding.viewPager.registerOnPageChangeCallback(mPageChange)
@@ -76,9 +78,11 @@ class GeneralIndex : Fragment() {
         lifecycleScope.launch {
             delay(500)
             if (savedInstanceState == null) {
-                val pref = PreferenceManager.getDefaultSharedPreferences(context)
-                binding.viewPager.currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_INDEX, "0")
-                        ?: "0")
+                val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                binding.viewPager.currentItem = Integer.parseInt(
+                    pref.getString(Utility.DEFAULT_INDEX, "0")
+                        ?: "0"
+                )
             } else
                 binding.viewPager.currentItem = mViewModel.pageViewed
         }
@@ -86,17 +90,16 @@ class GeneralIndex : Fragment() {
     }
 
     private class IndexTabsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-        override fun getItemCount(): Int = 5
+        override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment =
-                when (position) {
-                    0 -> SimpleIndexFragment.newInstance(0)
-                    1 -> SimpleIndexFragment.newInstance(1)
-                    2 -> SectionedIndexFragment.newInstance(0)
-                    3 -> SimpleIndexFragment.newInstance(2)
-                    4 -> SectionedIndexFragment.newInstance(1)
-                    else -> SimpleIndexFragment.newInstance(0)
-                }
+            when (position) {
+                0 -> SimpleIndexFragment.newInstance(0)
+                1 -> SimpleIndexFragment.newInstance(1)
+                2 -> SectionedIndexFragment.newInstance(0)
+                3 -> SimpleIndexFragment.newInstance(2)
+                else -> SimpleIndexFragment.newInstance(0)
+            }
     }
 
     companion object {

@@ -3,10 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:background="?customSelectorRound"
+    android:background="?attr/selectableItemBackgroundBorderless"
     android:layout_height="wrap_content"
-    style="@style/BottomSheet.GridItem"
-    tools:ignore="UseCompoundDrawables">
+    style="@style/BottomSheet.GridItem">
 
     <ImageView
         android:id="@+id/app_icon"

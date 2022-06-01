@@ -9,7 +9,6 @@
     <string name="letter_order_text">Alfabetik sıra</string>
     <string name="page_order_text">Sayfa sırası</string>
     <string name="search_name_text">İlahi arama</string>
-    <string name="arg_search_text">Konuya göre sıra</string>
     <string name="always_on">Bekleme yok</string>
     <string name="always_on_summary">Uygulamanın içindeyken ekranın beklemeye gitmesine izin verme.</string>
     <string name="title_activity_favourites">Favoriler</string>
@@ -53,7 +52,6 @@
     <string name="dialog_wonna_replace">Yerine koymak ister misin?</string>
     <string name="fast_search_title">Hızlı arama</string>
     <string name="advanced_search_title">Gelişmiş arama</string>
-    <string name="title_activity_search">İlahi Arama</string>
     <string name="advanced_search_subtitle">BAŞLIKTA VE METİNDE ARA</string>
     <string name="fast_search_subtitle">BAŞLIĞA GÖRE ARA</string>
     <string name="show_seconda_title">Efkaristiya - 2^ Okuma</string>
@@ -64,7 +62,7 @@
     <string name="list_save_exit">Kaydet ve çık</string>
     <string name="add_position">Öğe ekle</string>
     <string name="content_drag">Öğeyi sürükle</string>
-    <string name="aggiungi_confirm">EKLE</string>
+    <string name="aggiungi_confirm">ekle</string>
     <string name="posizione_add_desc">Yeni öğenin başlığı</string>
     <string name="lista_pers_piena">Maksimum eklenebilir öğe sayısı 30 </string>
     <string name="lista_pers_vuota">Bu liste boş</string>
@@ -128,7 +126,7 @@
     <string name="no_elements_added">Hala hiçbir öğe eklemedin.</string>
     <string name="dialog_replace_title">Bir ilahi yerleştir</string>
     <string name="dialog_reset_list_title">Listeyi sıfırla</string>
-    <string name="aggiungi_rename">YENİDEN ADLANDIR</string>
+    <string name="aggiungi_rename">yeni̇den adlandir</string>
     <string name="save_list_title">Liste kaydet</string>
     <string name="dialog_delete_mp3_title">İndirilmiş dosyayı sil</string>
     <string name="dialog_delete_link_title">Yerel dosyanın bağlantısını kes</string>
@@ -141,10 +139,6 @@
     <string name="show_santo_summary">Efkaristiya için Kutsalın eklenebilmesi</string>
     <string name="fullscreen"> Büyük ekran</string>
     <string name="file_selected">Dosya seçildi</string>
-    <string name="primary_color">Baş renk</string>
-    <string name="primary_color_desc">Arayüzde daha çok kullanılan renk</string>
-    <string name="accent_color">Öne çıkan renk</string>
-    <string name="accent_color_desc">Widget ve Arayüzün detayları için kullanılan renk</string>
     <string name="theme">Tema</string>
     <string name="lists_pref">Listeler</string>
     <string name="system">Sistem</string>
@@ -174,7 +168,6 @@
     <string name="showcase_consegnati_howto">Listeye girip ilahileri işaretlemek için bu düğmeye tıkla.</string>
     <string name="showcase_consegnati_confirm">Bitirdiğinde, kaydetmek için KABUL e tıkla.</string>
     <string name="showcase_consegnati_cancel">Onları silmek için &#8230; yada İPTAL e tıkla.</string>
-    <string name="save_consegnati_running">Kaydediliyor&#8230;</string>
     <string name="title_activity_history">Geçmiş</string>
     <string name="new_hint_remove">Öğeyi kaldırmak için üzerine basılı tut</string>
     <string name="history_empty">Geçmiş boş</string>
@@ -212,7 +205,7 @@
     <string name="share_by">Şununla paylas&#8230;</string>
     <string name="delete_list_dialog">Silmek istediğinden emin misin?</string>
     <string name="barre_search_string">Bare</string>
-    <string name="barre_add_al"></string>
+    <string name="barre_add_al" />
     <string name="barre_al_tasto">Bare %1$s Perdede</string>
     <string name="external_storage_denied">Ortak hafıza mevcut degil.</string>
     <string name="external_storage_pref_rationale">Dirildi sana dış hafızaya erişmek için izin istiyor. Bunun için ortak hafızaya kaydetme gerekli.</string>
@@ -317,5 +310,7 @@
     <string name="elezione_2">Seçilmişlik - Orta bölüm</string>
     <string name="elezione_3">Seçilmişlik - Final</string>
     <string name="passaggio_none">Hiçbiri</string>
+    <string name="dynamic_colors_title">Dynamic colors</string>
+    <string name="dynamic_colors_summary">Apply dynamic colors based on your wallpaper</string>
 </resources>
 

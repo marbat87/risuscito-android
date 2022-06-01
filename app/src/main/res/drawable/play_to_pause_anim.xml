@@ -1,0 +1,15 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:drawable="@drawable/play_arrow_24px">
+    <target android:name="play">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="pathData"
+                android:duration="300"
+                android:valueFrom="M 9.525 18.025 Q 9.025 18.35 8.512 18.062 Q 8 17.775 8 17.175 L 8 6.825 Q 8 6.225 8.512 5.937 Q 9.025 5.65 9.525 5.975 L 13.6 8.563 Q 15.637 9.856 17.675 11.15 Q 18.125 11.45 18.125 12 Q 18.125 12.55 17.675 12.85 Q 16.317 13.713 14.958 14.575 Q 13.6 15.438 12.242 16.3 Z M 10 12 Q 10 12 10 12 Q 10 12 10 12 L 10 12 Q 10 12 10 12 Q 10 12 10 12 L 10 12 Q 10 12 10 12 Q 10 12 10 12 L 10 12 Q 10 12 10 12 Q 10 12 10 12 L 10 12 M 10 15.35 L 12.625 13.675 L 15.25 12 L 10 8.65 Z M 8 12 L 8 12 L 8 12 L 8 12 L 8 12 M 7 7 L 7 7 L 7 7 M 15 7 L 15 7 L 15 7"
+                android:valueTo="M 15 19 Q 14.175 19 13.588 18.413 Q 13 17.825 13 17 L 13 7 Q 13 6.175 13.588 5.588 Q 14.175 5 15 5 L 17 5 Q 17.825 5 18.413 5.588 Q 19 6.175 19 7 Q 19 12 19 17 Q 19 17.825 18.413 18.413 Q 17.825 19 17 19 Z M 11 17 Q 11 17.825 10.413 18.413 Q 9.825 19 9 19 L 7 19 Q 6.175 19 5.588 18.413 Q 5 17.825 5 17 L 5 7 Q 5 6.175 5.588 5.588 Q 6.175 5 7 5 L 9 5 Q 9.825 5 10.413 5.588 Q 11 6.175 11 7 L 11 17 M 15 17 L 17 17 L 17 7 L 15 7 Z M 7 17 L 9 17 L 9 7 L 7 7 L 7 17 M 7 7 L 7 17 L 7 7 M 15 7 L 15 17 L 15 7"
+                android:valueType="pathType"
+                android:interpolator="@android:anim/decelerate_interpolator"/>
+        </aapt:attr>
+    </target>
+</animated-vector>
