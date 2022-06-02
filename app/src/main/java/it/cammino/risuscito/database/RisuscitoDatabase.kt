@@ -1,6 +1,8 @@
 package it.cammino.risuscito.database
 
+import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
@@ -430,14 +432,17 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                             update = true
                         }
                     }
-                    if (update)
-                        database.execSQL(
-                            "UPDATE listapers SET lista = ${
-                                converter.fromListaPersonalizzata(
-                                    it
-                                )
-                            } WHERE id = ${listapers.id}"
+                    if (update) {
+                        val updateValues = ContentValues()
+                        updateValues.put("lista", converter.fromListaPersonalizzata(it))
+                        database.update(
+                            "listapers",
+                            SQLiteDatabase.CONFLICT_REPLACE,
+                            updateValues,
+                            "id = ?",
+                            arrayOf(listapers.id)
                         )
+                    }
                 }
             }
         }

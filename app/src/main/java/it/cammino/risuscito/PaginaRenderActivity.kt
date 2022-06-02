@@ -413,15 +413,16 @@ class PaginaRenderActivity : ThemeableActivity() {
             val state = stateObj?.state ?: PlaybackStateCompat.STATE_NONE
             Log.d(TAG, "playPause: Button pressed, in state $state")
 
-            if (state == PlaybackStateCompat.STATE_STOPPED || state == PlaybackStateCompat.STATE_NONE) {
-                playFromId(mCantiViewModel.idCanto.toString())
-            } else if (state == PlaybackStateCompat.STATE_PLAYING
-                || state == PlaybackStateCompat.STATE_BUFFERING
-                || state == PlaybackStateCompat.STATE_CONNECTING
-            ) {
-                pauseMedia()
-            } else if (state == PlaybackStateCompat.STATE_PAUSED) {
-                playMedia()
+            when (state) {
+                PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.STATE_NONE -> {
+                    playFromId(mCantiViewModel.idCanto.toString())
+                }
+                PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.STATE_CONNECTING -> {
+                    pauseMedia()
+                }
+                PlaybackStateCompat.STATE_PAUSED -> {
+                    playMedia()
+                }
             }
         }
 
