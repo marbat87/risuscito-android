@@ -56,7 +56,7 @@ object OSUtils {
     }
 
     fun isNbySamsung(): Boolean {
-        return Build.VERSION.SDK_INT == Build.VERSION_CODES.N && isSamsungDevice()
+        return (Build.VERSION.SDK_INT == Build.VERSION_CODES.N || Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1) && isSamsungDevice()
     }
 
 }
