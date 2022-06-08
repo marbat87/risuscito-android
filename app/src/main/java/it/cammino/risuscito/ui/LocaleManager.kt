@@ -11,6 +11,7 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
 import java.util.*
 
 
@@ -80,8 +81,7 @@ class LocaleManager(context: Context) {
 
     fun getLanguage(context: Context): String {
         return PreferenceManager.getDefaultSharedPreferences(context)
-            .getString(Utility.SYSTEM_LANGUAGE, "")
-            ?: ""
+            .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).orEmpty()
     }
 
     fun useCustomConfig(context: Context): Context {

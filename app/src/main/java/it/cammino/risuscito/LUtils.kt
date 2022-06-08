@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
@@ -30,7 +30,8 @@ import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.ui.Animations
@@ -127,7 +128,7 @@ class LUtils private constructor(private val mActivity: Activity) {
 
     internal fun goFullscreen() {
         val windowInsetsController =
-            ViewCompat.getWindowInsetsController(mActivity.window.decorView) ?: return
+            WindowCompat.getInsetsController(mActivity.window, mActivity.window.decorView)
         // Configure the behavior of the hidden system bars
         windowInsetsController.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -188,7 +189,7 @@ class LUtils private constructor(private val mActivity: Activity) {
                 for (i in 0 until it.numPosizioni) {
                     val position = doc.createElement("position")
                     position.setAttribute("name", it.getNomePosizione(i))
-                    if (it.getCantoPosizione(i) != "")
+                    if (it.getCantoPosizione(i).isNotEmpty())
                         position.appendChild(doc.createTextNode(it.getCantoPosizione(i)))
                     else
                         position.appendChild(doc.createTextNode("0"))
@@ -218,23 +219,23 @@ class LUtils private constructor(private val mActivity: Activity) {
 
             } catch (e: ParserConfigurationException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                Firebase.crashlytics.recordException(e)
                 return null
             } catch (e: TransformerConfigurationException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                Firebase.crashlytics.recordException(e)
                 return null
             } catch (e: TransformerException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                Firebase.crashlytics.recordException(e)
                 return null
             } catch (e: FileNotFoundException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                Firebase.crashlytics.recordException(e)
                 return null
             } catch (e: IOException) {
                 Log.e(TAG, "listToXML: " + e.localizedMessage, e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                Firebase.crashlytics.recordException(e)
                 return null
             }
         }

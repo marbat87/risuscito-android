@@ -19,6 +19,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.databinding.BottomSheetBinding
 import it.cammino.risuscito.items.BottomSheetItem
+import it.cammino.risuscito.utils.StringUtils
 
 class BottomSheetFragment : BottomSheetDialogFragment() {
 
@@ -28,7 +29,11 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = BottomSheetBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,7 +51,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         if (showTitle)
             binding.sheetTitle.setText(arguments?.getInt("title") ?: 0)
         else
-            binding.sheetTitle.text = ""
+            binding.sheetTitle.text = StringUtils.EMPTY
         binding.sheetTitleArea.isVisible = showTitle
 
         val intent = arguments?.getParcelable<Intent>("intent")
@@ -56,27 +61,35 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             val list = pm.queryIntentActivities(mIntent, 0)
 
             val lastApp = PreferenceManager
-                    .getDefaultSharedPreferences(requireContext())
-                    .getString(Utility.ULTIMA_APP_USATA, "")
+                .getDefaultSharedPreferences(requireContext())
+                .getString(Utility.ULTIMA_APP_USATA, StringUtils.EMPTY)
             val lastAppInfo: ResolveInfo? = list.indices
-                    .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
-                    ?.let { list.removeAt(it) }
+                .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
+                ?.let { list.removeAt(it) }
 
             lastAppInfo?.let { list.add(0, it) }
 
             val mList = list.map { BottomSheetItem().withItem(it) }
 
-            val mOnClickListener = { _: View?, _: IAdapter<BottomSheetItem>, item: BottomSheetItem, _: Int ->
-                PreferenceManager.getDefaultSharedPreferences(requireContext()).edit { putString(Utility.ULTIMA_APP_USATA, item.infoItem?.activityInfo?.packageName) }
+            val mOnClickListener =
+                { _: View?, _: IAdapter<BottomSheetItem>, item: BottomSheetItem, _: Int ->
+                    PreferenceManager.getDefaultSharedPreferences(requireContext()).edit {
+                        putString(
+                            Utility.ULTIMA_APP_USATA,
+                            item.infoItem?.activityInfo?.packageName
+                        )
+                    }
 
-                val name = ComponentName(item.infoItem?.activityInfo?.packageName
-                        ?: "", item.infoItem?.activityInfo?.name ?: "")
-                val newIntent = mIntent.clone() as? Intent
-                newIntent?.component = name
-                activity?.startActivity(newIntent)
-                dialog?.dismiss()
-                true
-            }
+                    val name = ComponentName(
+                        item.infoItem?.activityInfo?.packageName.orEmpty(),
+                        item.infoItem?.activityInfo?.name.orEmpty()
+                    )
+                    val newIntent = mIntent.clone() as? Intent
+                    newIntent?.component = name
+                    activity?.startActivity(newIntent)
+                    dialog?.dismiss()
+                    true
+                }
 
             val adapter = FastItemAdapter<BottomSheetItem>()
             adapter.add(mList)
@@ -91,7 +104,8 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         // Resize bottom sheet dialog so it doesn't span the entire width past a particular measurement
         val mLimited = requireContext().resources.getBoolean(R.bool.is_bottom_sheet_limited)
         if (mLimited) {
-            val mMaxWidth = requireActivity().resources.getDimension(R.dimen.max_bottomsheet_width).toInt()
+            val mMaxWidth =
+                requireActivity().resources.getDimension(R.dimen.max_bottomsheet_width).toInt()
             val win = dialog?.window
             win?.setLayout(mMaxWidth, -1)
         }

@@ -43,6 +43,9 @@ import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.crashlytics.ktx.setCustomKeys
+import com.google.firebase.ktx.Firebase
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import it.cammino.risuscito.Utility.getExternalLink
@@ -338,7 +341,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
         mCantiViewModel.pagina = mCantiViewModel.pagina
-            ?: bundle?.getCharSequence(Utility.PAGINA, "")?.toString()
+            ?: bundle?.getCharSequence(Utility.PAGINA, StringUtils.EMPTY)?.toString()
         mCantiViewModel.idCanto = bundle?.getInt(Utility.ID_CANTO) ?: return
 
         Log.d(TAG, "LINGUA CTX: ${getSystemLocale(resources).language}")
@@ -346,28 +349,35 @@ class PaginaRenderActivity : ThemeableActivity() {
         cambioAccordi = CambioAccordi(this)
 
         try {
+            Firebase.crashlytics.setCustomKeys {
+                key("pagina_canto", mCantiViewModel.pagina ?: StringUtils.EMPTY)
+                key("lingua", getSystemLocale(resources).language)
+            }
+
             mCantiViewModel.primaNota =
-                if (mCantiViewModel.primaNota == PaginaRenderViewModel.NOT_VAL) CambioAccordi.recuperaPrimoAccordo(
-                    resources.openRawResource(
-                        LUtils.getResId(
-                            mCantiViewModel.pagina,
-                            R.raw::class.java
-                        )
-                    ),
-                    getSystemLocale(resources).language
-                )
-                else mCantiViewModel.primaNota
+                mCantiViewModel.primaNota.ifEmpty {
+                    CambioAccordi.recuperaPrimoAccordo(
+                        resources.openRawResource(
+                            LUtils.getResId(
+                                mCantiViewModel.pagina,
+                                R.raw::class.java
+                            )
+                        ),
+                        getSystemLocale(resources).language
+                    )
+                }
             mCantiViewModel.primoBarre =
-                if (mCantiViewModel.primoBarre == PaginaRenderViewModel.NOT_VAL) cambioAccordi.recuperaBarre(
-                    resources.openRawResource(
-                        LUtils.getResId(
-                            mCantiViewModel.pagina,
-                            R.raw::class.java
-                        )
-                    ),
-                    getSystemLocale(resources).language
-                )
-                else mCantiViewModel.primoBarre
+                mCantiViewModel.primoBarre.ifEmpty {
+                    cambioAccordi.recuperaBarre(
+                        resources.openRawResource(
+                            LUtils.getResId(
+                                mCantiViewModel.pagina,
+                                R.raw::class.java
+                            )
+                        ),
+                        getSystemLocale(resources).language
+                    )
+                }
         } catch (e: IOException) {
             Log.e(TAG, e.localizedMessage, e)
         }
@@ -628,7 +638,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                         // initiate media scan and put the new things into the path array to
                         // make the scanner aware of the location and the files you want to see
                         if (isDefaultLocationPublic(this@PaginaRenderActivity) && !OSUtils.hasQ())
-                            mediaScan(this@PaginaRenderActivity, url ?: "")
+                            mediaScan(this@PaginaRenderActivity, url.orEmpty())
                         Snackbar.make(
                             findViewById(android.R.id.content),
                             R.string.download_completed,
@@ -696,9 +706,9 @@ class PaginaRenderActivity : ThemeableActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home ->
-                if (mCantiViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL
+                if (mCantiViewModel.notaCambio.isEmpty()
                     || mCantiViewModel.mCurrentCanto?.savedTab == null
-                    || mCantiViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL
+                    || mCantiViewModel.barreCambio.isEmpty()
                     || mCantiViewModel.mCurrentCanto?.savedBarre == null
                     || noChangesTabBarre
                 ) {
@@ -944,9 +954,9 @@ class PaginaRenderActivity : ThemeableActivity() {
             return
         }
 
-        if (mCantiViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL
+        if (mCantiViewModel.notaCambio.isEmpty()
             || mCantiViewModel.mCurrentCanto?.savedTab == null
-            || mCantiViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL
+            || mCantiViewModel.barreCambio.isEmpty()
             || mCantiViewModel.mCurrentCanto?.savedBarre == null
             || noChangesTabBarre
         ) {
@@ -1018,12 +1028,12 @@ class PaginaRenderActivity : ThemeableActivity() {
         url = if (!mCantiViewModel.mCurrentCanto?.link.isNullOrEmpty())
             getString(LUtils.getResId(mCantiViewModel.mCurrentCanto?.link, R.string::class.java))
         else
-            ""
+            StringUtils.EMPTY
 
         val mDao = mRiuscitoDb.localLinksDao()
         val localLink = mDao.getLocalLinkByCantoId(mCantiViewModel.idCanto)
 
-        personalUrl = localLink?.localPath ?: ""
+        personalUrl = localLink?.localPath.orEmpty()
     }
 
     private fun saveZoom(andSpeedAlso: Boolean, andSaveTabAlso: Boolean) {
@@ -1108,9 +1118,8 @@ class PaginaRenderActivity : ThemeableActivity() {
                     val sb2 = StringBuffer()
                     while (matcher.find()) matcher.appendReplacement(
                         sb, conversione?.get(
-                            matcher.group(0)
-                                ?: ""
-                        ) ?: ""
+                            matcher.group(0).orEmpty()
+                        ).orEmpty()
                     )
                     matcher.appendTail(sb)
                     if (language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || language.equals(
@@ -1122,9 +1131,8 @@ class PaginaRenderActivity : ThemeableActivity() {
                         while (matcherMin?.find() == true)
                             matcherMin.appendReplacement(
                                 sb2, conversioneMin?.get(
-                                    matcherMin.group(0)
-                                        ?: ""
-                                ) ?: ""
+                                    matcherMin.group(0).orEmpty()
+                                ).orEmpty()
                             )
                         matcherMin?.appendTail(sb2)
                         line = sb2.toString()
@@ -1252,8 +1260,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 mDownloader.startSaving(
                     url, if (isExternal) getExternalLink(
-                        url
-                            ?: ""
+                        url.orEmpty()
                     ) else localFilePath, isExternal
                 )
             }
@@ -1530,26 +1537,24 @@ class PaginaRenderActivity : ThemeableActivity() {
             getRecordLink()
         }
         if (mCantiViewModel.mCurrentCanto?.savedTab == null) {
-            if (mCantiViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL) {
+            if (mCantiViewModel.notaCambio.isEmpty()) {
                 mCantiViewModel.notaCambio = mCantiViewModel.primaNota
                 mCantiViewModel.mCurrentCanto?.savedTab = mCantiViewModel.notaCambio
             } else
                 mCantiViewModel.mCurrentCanto?.savedTab = mCantiViewModel.primaNota
-        } else if (mCantiViewModel.notaCambio == PaginaRenderViewModel.NOT_VAL)
-            mCantiViewModel.notaCambio = mCantiViewModel.mCurrentCanto?.savedTab
-                ?: PaginaRenderViewModel.NOT_VAL
+        } else if (mCantiViewModel.notaCambio.isEmpty())
+            mCantiViewModel.notaCambio = mCantiViewModel.mCurrentCanto?.savedTab.orEmpty()
 
         if (mCantiViewModel.mCurrentCanto?.savedBarre == null) {
-            if (mCantiViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL) {
+            if (mCantiViewModel.barreCambio.isEmpty()) {
                 mCantiViewModel.barreCambio = mCantiViewModel.primoBarre
                 mCantiViewModel.mCurrentCanto?.savedBarre = mCantiViewModel.barreCambio
             } else
                 mCantiViewModel.mCurrentCanto?.savedBarre = mCantiViewModel.primoBarre
         } else {
             //	    	Log.i("BARRESALVATO", barreSalvato);
-            if (mCantiViewModel.barreCambio == PaginaRenderViewModel.NOT_VAL)
-                mCantiViewModel.barreCambio = mCantiViewModel.mCurrentCanto?.savedBarre
-                    ?: PaginaRenderViewModel.NOT_VAL
+            if (mCantiViewModel.barreCambio.isEmpty())
+                mCantiViewModel.barreCambio = mCantiViewModel.mCurrentCanto?.savedBarre.orEmpty()
         }
 
         val convMap =

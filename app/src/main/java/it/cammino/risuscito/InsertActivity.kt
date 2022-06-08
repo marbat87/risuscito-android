@@ -23,7 +23,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.listeners.addClickListener
@@ -34,6 +35,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -107,10 +109,10 @@ class InsertActivity : ThemeableActivity() {
             inputStream.close()
         } catch (e: XmlPullParserException) {
             Log.e(TAG, "Error:", e)
-            FirebaseCrashlytics.getInstance().recordException(e)
+            Firebase.crashlytics.recordException(e)
         } catch (e: IOException) {
             Log.e(TAG, "Error:", e)
-            FirebaseCrashlytics.getInstance().recordException(e)
+            Firebase.crashlytics.recordException(e)
         }
 
         binding.searchLayout.textBoxRicerca.hint =
@@ -254,7 +256,7 @@ class InsertActivity : ThemeableActivity() {
                     for (aText in simpleIndexViewModel.aTexts) {
                         if (!isActive) return@launch
 
-                        if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
+                        if (aText[0] == null || aText[0].isNullOrEmpty()) break
 
                         var found = true
                         for (word in words) {
@@ -273,12 +275,11 @@ class InsertActivity : ThemeableActivity() {
                             Log.d(TAG, "aText[0]: ${aText[0]}")
                             simpleIndexViewModel.titoliInsert
                                 .filter {
-                                    (aText[0]
-                                        ?: "") == it.undecodedSource && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
+                                    (aText[0].orEmpty()) == it.undecodedSource && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
                                 }
                                 .forEach {
                                     if (!isActive) return@launch
-                                    titoliResult.add(it.apply { filter = "" })
+                                    titoliResult.add(it.apply { filter = StringUtils.EMPTY })
                                 }
 
                         }
@@ -289,8 +290,7 @@ class InsertActivity : ThemeableActivity() {
                     simpleIndexViewModel.titoliInsert
                         .filter {
                             Utility.removeAccents(
-                                it.title?.getText(this@InsertActivity)
-                                    ?: ""
+                                it.title?.getText(this@InsertActivity).orEmpty()
                             ).lowercase(getSystemLocale(resources))
                                 .contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
                         }

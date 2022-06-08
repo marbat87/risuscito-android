@@ -14,6 +14,7 @@ import com.mikepenz.fastadapter.utils.DragDropUtil
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.SwipeableItemBinding
+import it.cammino.risuscito.utils.StringUtils
 
 fun swipeableItem(block: SwipeableItem.() -> Unit): SwipeableItem = SwipeableItem().apply(block)
 
@@ -26,7 +27,7 @@ class SwipeableItem : AbstractBindingItem<SwipeableItemBinding>(), ISwipeable,
             name = helperSetString(value)
         }
 
-    var idCanto: String = ""
+    var idCanto: String = StringUtils.EMPTY
 
     var swipedDirection: Int = 0
 
@@ -49,7 +50,7 @@ class SwipeableItem : AbstractBindingItem<SwipeableItemBinding>(), ISwipeable,
 
     override fun bindView(binding: SwipeableItemBinding, payloads: List<Any>) {
         StringHolder.applyTo(name, binding.swipeableText1)
-        binding.swipeableText1.text = name?.textString ?: ""
+        binding.swipeableText1.text = name?.textString ?: StringUtils.EMPTY
     }
 
     override fun bindView(holder: BindingViewHolder<SwipeableItemBinding>, payloads: List<Any>) {

@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import it.cammino.risuscito.R
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.capitalize
 import java.io.Serializable
 import java.text.NumberFormat
@@ -71,7 +72,7 @@ class ProgressDialogFragment : DialogFragment() {
                 mView?.findViewById<TextView>(R.id.md_content_indeterminate)
             mdContent?.isVisible = mBuilder.mContent != null
             mdContent?.text = mBuilder.mContent
-                ?: ""
+                ?: StringUtils.EMPTY
         } else {
             mView = layoutInflater.inflate(R.layout.linear_progressbar, null, false)
             dialog.setView(mView)
@@ -82,7 +83,7 @@ class ProgressDialogFragment : DialogFragment() {
             val mdContent = mView?.findViewById<TextView>(R.id.md_content_linear)
             mdContent?.isVisible = mBuilder.mContent != null
             mdContent?.text = mBuilder.mContent
-                ?: ""
+                ?: StringUtils.EMPTY
         }
 
         dialog.setCancelable(mBuilder.mCanceable)
@@ -210,7 +211,7 @@ class ProgressDialogFragment : DialogFragment() {
     }
 
     class DialogViewModel : ViewModel() {
-        var mTag: String = ""
+        var mTag: String = StringUtils.EMPTY
         var handled = true
         val state = MutableLiveData<DialogState<ProgressDialogFragment>>()
     }

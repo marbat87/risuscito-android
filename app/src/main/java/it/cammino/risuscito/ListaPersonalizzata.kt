@@ -1,38 +1,36 @@
 package it.cammino.risuscito
 
 import android.util.Log
+import it.cammino.risuscito.utils.StringUtils
 import java.io.*
 
 @Suppress("unused")
 class ListaPersonalizzata : Serializable {
 
-    var name: String = ""
+    var name: String = StringUtils.EMPTY
     private var posizioni: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
     var canti: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
     var numPosizioni: Int = 0
 
     init {
         for (i in 0 until MAX_POSIZIONI) {
-            posizioni[i] = ""
-            canti[i] = ""
+            posizioni[i] = StringUtils.EMPTY
+            canti[i] = StringUtils.EMPTY
         }
     }
 
     //restituisce il titolo della posizione all'indice "index"
     fun getNomePosizione(index: Int): String {
-        return if (index < 0 || index >= numPosizioni) "" else (posizioni[index]?.trim() ?: "")
+        return if (index < 0 || index >= numPosizioni) StringUtils.EMPTY else posizioni[index].orEmpty()
+            .trim()
 
     }
 
     //restituisce il titolo della canto in posizione "index"
     fun getCantoPosizione(index: Int): String {
         if (index < 0 || index >= numPosizioni)
-            return ""
-
-        canti[index]?.let {
-            return it.trim()
-        }
-        return ""
+            return StringUtils.EMPTY
+        return canti[index].orEmpty().trim()
     }
 
     /*aggiunge una nuova posizione
@@ -70,7 +68,7 @@ class ListaPersonalizzata : Serializable {
         if (posizione < 0 || posizione >= MAX_POSIZIONI)
             return -1
 
-        canti[posizione] = ""
+        canti[posizione] = StringUtils.EMPTY
         return 0
     }
 

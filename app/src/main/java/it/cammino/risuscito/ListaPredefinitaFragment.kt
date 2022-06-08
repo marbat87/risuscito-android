@@ -20,7 +20,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
@@ -203,8 +204,7 @@ class ListaPredefinitaFragment : Fragment() {
                             mCantiViewModel.defaultListaId,
                             posizioneDaCanc,
                             idDaCanc,
-                            timestampDaCanc
-                                ?: ""
+                            timestampDaCanc.orEmpty()
                         )
                         true
                     }
@@ -236,7 +236,7 @@ class ListaPredefinitaFragment : Fragment() {
                             ?.setmSelected(false)
                         cantoAdapter.notifyItemChanged(longclickedPos)
                     } catch (e: Exception) {
-                        FirebaseCrashlytics.getInstance().recordException(e)
+                        Firebase.crashlytics.recordException(e)
                     }
                 }
                 mMainActivity?.destroyActionMode()

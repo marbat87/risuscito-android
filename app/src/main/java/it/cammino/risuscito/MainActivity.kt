@@ -63,6 +63,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.utils.getTypedValueResId
 import kotlinx.coroutines.Dispatchers
@@ -78,9 +79,9 @@ class MainActivity : ThemeableActivity() {
     private var mSignInClient: GoogleSignInClient? = null
     private lateinit var auth: FirebaseAuth
     private var profileItem: MenuItem? = null
-    private var profilePhotoUrl: String = ""
-    private var profileName: String = ""
-    private var profileEmail: String = ""
+    private var profilePhotoUrl: String = StringUtils.EMPTY
+    private var profileName: String = StringUtils.EMPTY
+    private var profileEmail: String = StringUtils.EMPTY
 
     private lateinit var binding: ActivityMainBinding
 
@@ -315,9 +316,6 @@ class MainActivity : ThemeableActivity() {
 
     private fun setupNavDrawer() {
 
-//        profilePhotoUrl = ""
-//        updateHeaderImage()
-
         binding.navigationView.setNavigationItemSelectedListener {
             onDrawerItemClick(it)
         }
@@ -414,9 +412,9 @@ class MainActivity : ThemeableActivity() {
                             + " -> CONVERTO DA "
                             + canto.savedTab
                             + " A "
-                            + mappa[canto.savedTab ?: ""]
+                            + mappa[canto.savedTab.orEmpty()]
                 )
-                canto.savedTab = mappa[canto.savedTab ?: ""]
+                canto.savedTab = mappa[canto.savedTab.orEmpty()]
                 mDao.updateCanto(canto)
             }
         }
@@ -756,8 +754,8 @@ class MainActivity : ThemeableActivity() {
             PreferenceManager.getDefaultSharedPreferences(this)
                 .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
         if (signedIn) {
-            profileName = acct?.displayName ?: ""
-            profileEmail = acct?.email ?: ""
+            profileName = acct?.displayName.orEmpty()
+            profileEmail = acct?.email.orEmpty()
             val profilePhoto = acct?.photoUrl
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
@@ -766,12 +764,12 @@ class MainActivity : ThemeableActivity() {
                 Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
                 profilePhotoUrl = personPhotoUrl
             } else {
-                profilePhotoUrl = ""
+                profilePhotoUrl = StringUtils.EMPTY
             }
         } else {
-            profileName = ""
-            profileEmail = ""
-            profilePhotoUrl = ""
+            profileName = StringUtils.EMPTY
+            profileEmail = StringUtils.EMPTY
+            profilePhotoUrl = StringUtils.EMPTY
         }
         updateProfileImage()
         hideProgressDialog()

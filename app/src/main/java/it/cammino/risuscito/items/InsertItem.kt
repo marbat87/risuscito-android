@@ -13,6 +13,7 @@ import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.StringUtils
 
 fun insertItem(block: InsertItem.() -> Unit): InsertItem = InsertItem().apply(block)
 
@@ -69,8 +70,7 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
         filter?.let {
             if (it.isNotEmpty()) {
                 val normalizedTitle = Utility.removeAccents(
-                    title?.getText(ctx)
-                        ?: ""
+                    title?.getText(ctx).orEmpty()
                 )
                 val mPosition =
                     normalizedTitle.lowercase(getSystemLocale(ctx.resources)).indexOf(it)
@@ -78,7 +78,7 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
                     val stringTitle = title?.getText(ctx)
                     val highlighted = StringBuilder(
                         if (mPosition > 0) (stringTitle?.substring(0, mPosition)
-                            ?: "") else ""
+                            .orEmpty()) else StringUtils.EMPTY
                     )
                         .append("<b>")
                         .append(stringTitle?.substring(mPosition, mPosition + it.length))

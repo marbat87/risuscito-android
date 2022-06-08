@@ -39,6 +39,7 @@ import androidx.media.session.MediaButtonReceiver
 import it.cammino.risuscito.PaginaRenderActivity
 import it.cammino.risuscito.R
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
 import java.util.concurrent.TimeUnit
 
 class MusicService : MediaBrowserServiceCompat() {
@@ -405,7 +406,7 @@ class MusicService : MediaBrowserServiceCompat() {
                     MediaMetadataCompat.METADATA_KEY_GENRE,
                     oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_GENRE)
                 )
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, StringUtils.EMPTY)
                 .putString(
                     MediaMetadataCompat.METADATA_KEY_TITLE,
                     oldMetadataCompat?.getString(MediaMetadataCompat.METADATA_KEY_TITLE)

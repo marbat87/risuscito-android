@@ -35,6 +35,7 @@ import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
@@ -144,7 +145,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         val usersPreferences = HashMap<String, Any>()
         usersPreferences[FIREBASE_FIELD_USER_ID] = userId
-        usersPreferences[FIREBASE_FIELD_EMAIL] = userEmail ?: ""
+        usersPreferences[FIREBASE_FIELD_EMAIL] = userEmail.orEmpty()
         usersPreferences[FIREBASE_FIELD_TIMESTAMP] = Date(System.currentTimeMillis())
         usersPreferences[FIREBASE_FIELD_PREFERENCE] =
             PreferenceManager.getDefaultSharedPreferences(this).all
@@ -201,7 +202,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         }
         prefEdit.apply()
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Utility.SYSTEM_LANGUAGE, "").isNullOrEmpty()
+                .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).isNullOrEmpty()
         )
             RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
     }

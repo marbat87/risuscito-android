@@ -27,6 +27,7 @@ import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.RisuscitoApplication
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SettingsViewModel
@@ -48,7 +49,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     private val listener = SplitInstallStateUpdatedListener { state ->
         if (state.sessionId() == sessionId) {
             val newLanguage = mSettingsViewModel.persistingLanguage
-            mSettingsViewModel.persistingLanguage = ""
+            mSettingsViewModel.persistingLanguage = StringUtils.EMPTY
             when (state.status()) {
                 FAILED -> {
                     Log.e(TAG, "Module install failed with ${state.errorCode()}")

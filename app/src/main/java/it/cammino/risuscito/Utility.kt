@@ -25,6 +25,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.elevation.SurfaceColors
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import java.io.BufferedReader
 import java.io.File
@@ -76,7 +77,6 @@ object Utility {
     internal const val ID_CANTO = "idCanto"
     internal const val PAGINA = "pagina"
     internal const val TIPO_LISTA = "tipoLista"
-//    internal const val WRITE_STORAGE_RC = 123
 
 
     /* Checks if external storage is available for read and write */
@@ -138,7 +138,7 @@ object Utility {
                     else -> it
                 }
             }
-        } ?: return ""
+        } ?: return StringUtils.EMPTY
     }
 
     /* Filtra il link di input per tenere solo il nome del file */
@@ -159,12 +159,12 @@ object Utility {
                     else -> it
                 }
             }
-        } ?: return ""
+        } ?: return StringUtils.EMPTY
     }
 
     fun retrieveMediaFileLink(activity: Context, link: String?, cercaEsterno: Boolean): String {
 
-        if (link.isNullOrEmpty()) return ""
+        if (link.isNullOrEmpty()) return StringUtils.EMPTY
 
         return if (OSUtils.hasQ())
             retrieveMediaFileLinkQ(activity, link, cercaEsterno)
@@ -260,7 +260,7 @@ object Utility {
 //        else
 //            Log.v(TAG, "FILE INTERNO NON TROVATO")
         //		Log.i("FILE INTERNO:", "NON TROVATO");
-        return ""
+        return StringUtils.EMPTY
     }
 
     fun setupNavBarColor(context: Activity) {
@@ -296,7 +296,7 @@ object Utility {
 
         normalized = Normalizer.normalize(normalized, Normalizer.Form.NFD)
         val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
-        return pattern.matcher(normalized).replaceAll("")
+        return pattern.matcher(normalized).replaceAll(StringUtils.EMPTY)
     }
 
     fun createNotificationChannelWrapper(

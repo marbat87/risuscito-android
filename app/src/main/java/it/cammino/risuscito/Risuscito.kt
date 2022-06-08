@@ -31,7 +31,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.michaelflisar.changelog.ChangelogBuilder
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -45,6 +46,7 @@ import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.ThemeUtils
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -184,10 +186,10 @@ class Risuscito : AccountMenuFragment() {
             inputStream.close()
         } catch (e: XmlPullParserException) {
             Log.e(TAG, "Error:", e)
-            FirebaseCrashlytics.getInstance().recordException(e)
+            Firebase.crashlytics.recordException(e)
         } catch (e: IOException) {
             Log.e(TAG, "Error:", e)
-            FirebaseCrashlytics.getInstance().recordException(e)
+            Firebase.crashlytics.recordException(e)
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -366,7 +368,7 @@ class Risuscito : AccountMenuFragment() {
                     for (aText in mViewModel.aTexts) {
                         if (!isActive) return@launch
 
-                        if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
+                        if (aText[0] == null || aText[0].isNullOrEmpty()) break
 
                         var found = true
                         for (word in words) {
@@ -384,10 +386,10 @@ class Risuscito : AccountMenuFragment() {
                         if (found) {
                             Log.d(tag, "aText[0]: ${aText[0]}")
                             mViewModel.titoli
-                                .filter { (aText[0] ?: "") == it.undecodedSource }
+                                .filter { (aText[0].orEmpty()) == it.undecodedSource }
                                 .forEach {
                                     if (!isActive) return@launch
-                                    titoliResult.add(it.apply { filter = "" })
+                                    titoliResult.add(it.apply { filter = StringUtils.EMPTY })
                                 }
                         }
                     }
@@ -401,8 +403,7 @@ class Risuscito : AccountMenuFragment() {
                     mViewModel.titoli
                         .filter {
                             Utility.removeAccents(
-                                it.title?.getText(requireContext())
-                                    ?: ""
+                                it.title?.getText(requireContext()).orEmpty()
                             ).lowercase(LocaleManager.getSystemLocale(resources)).contains(stringa)
                         }
                         .forEach {

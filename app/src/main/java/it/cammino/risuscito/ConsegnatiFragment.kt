@@ -43,6 +43,7 @@ import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.getTypedValueResId
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -229,8 +230,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
                 if (simplifiedString.isNotEmpty()) {
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter {
                         Utility.removeAccents(
-                            it.title?.getText(requireContext())
-                                ?: ""
+                            it.title?.getText(requireContext()).orEmpty()
                         ).lowercase(getSystemLocale(resources)).contains(simplifiedString)
                     }
                     mCantiViewModel.titoliChooseFiltered.forEach { it.filter = simplifiedString }
@@ -316,7 +316,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
             }
             R.id.action_filter_remove -> {
                 mPopupMenu.menu.children.forEach { it.isChecked = false }
-                cantoAdapter.filter("")
+                cantoAdapter.filter(StringUtils.EMPTY)
                 activity?.invalidateOptionsMenu()
             }
             R.id.action_help -> {

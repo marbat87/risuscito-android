@@ -10,7 +10,7 @@ import java.io.IOException
 
 class PdfExporter(context: Context) {
 
-    private var localPDFPath: String = ""
+    private var localPDFPath: String = StringUtils.EMPTY
     private var pdf: PDF? = null
     private var page: Page? = null
     private var startingY: Float = 0.toFloat()
@@ -45,30 +45,30 @@ class PdfExporter(context: Context) {
                         if (it.contains("A13F3C")) {
                             text?.color = Color.red
                         }
-                        line = it.replace("<H4>".toRegex(), "")
-                        line = line.replace("</H4>".toRegex(), "")
-                        line = line.replace("<FONT COLOR=\"#000000\">".toRegex(), "")
-                        line = line.replace("<FONT COLOR=\"#A13F3C\">".toRegex(), "")
-                        line = line.replace("<FONT COLOR='#000000'>".toRegex(), "")
-                        line = line.replace("<FONT COLOR='#A13F3C'>".toRegex(), "")
-                        line = line.replace("</FONT>".toRegex(), "")
-                        line = line.replace("<H5>".toRegex(), "")
-                        line = line.replace("<H3>".toRegex(), "")
-                        line = line.replace("<H2>".toRegex(), "")
-                        line = line.replace("</H5>".toRegex(), "")
-                        line = line.replace("</H3>".toRegex(), "")
-                        line = line.replace("</H2>".toRegex(), "")
-                        line = line.replace("<I>".toRegex(), "")
-                        line = line.replace("</I>".toRegex(), "")
-                        line = line.replace("<i>".toRegex(), "")
-                        line = line.replace("</i>".toRegex(), "")
-                        line = line.replace("<u>".toRegex(), "")
-                        line = line.replace("</u>".toRegex(), "")
-                        line = line.replace("<B>".toRegex(), "")
-                        line = line.replace("</B>".toRegex(), "")
-                        line = line.replace("<br>".toRegex(), "")
-                        line = line.replace("<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">".toRegex(), "")
-                        line = line.replace("</SPAN>".toRegex(), "")
+                        line = it.replace("<H4>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</H4>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<FONT COLOR=\"#000000\">".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<FONT COLOR=\"#A13F3C\">".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<FONT COLOR='#000000'>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<FONT COLOR='#A13F3C'>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</FONT>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<H5>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<H3>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<H2>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</H5>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</H3>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</H2>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<I>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</I>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<i>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</i>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<u>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</u>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<B>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</B>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<br>".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("<SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\">".toRegex(), StringUtils.EMPTY)
+                        line = line.replace("</SPAN>".toRegex(), StringUtils.EMPTY)
                         Log.d(TAG, "line: $line")
                         writeString(line)
                     } else {
@@ -94,7 +94,7 @@ class PdfExporter(context: Context) {
         return output
     }
 
-    class PdfExportOutput(val pdfPath: String, var isError: Boolean = false, var errorMessage: String = "")
+    class PdfExportOutput(val pdfPath: String, var isError: Boolean = false, var errorMessage: String = StringUtils.EMPTY)
 
     @Throws(Exception::class)
     fun writeString(line: String) {

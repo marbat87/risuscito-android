@@ -21,7 +21,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -221,7 +222,7 @@ class ListaPersonalizzataFragment : Fragment() {
                     R.id.action_remove_item -> {
                         cantoDaCanc =
                             mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc)
-                                ?: ""
+                                .orEmpty()
                         mCantiViewModel.listaPersonalizzata?.removeCanto(posizioneDaCanc)
                         runUpdate()
                         actionModeOk = true
@@ -252,7 +253,7 @@ class ListaPersonalizzataFragment : Fragment() {
                     R.id.action_switch_item -> {
                         cantoDaCanc =
                             mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc)
-                                ?: ""
+                                .orEmpty()
                         mSwhitchMode = true
                         updateActionModeTitle(true)
                         Toast.makeText(
@@ -279,7 +280,7 @@ class ListaPersonalizzataFragment : Fragment() {
                             ?.setmSelected(false)
                         cantoAdapter.notifyItemChanged(longclickedPos)
                     } catch (e: Exception) {
-                        FirebaseCrashlytics.getInstance().recordException(e)
+                        Firebase.crashlytics.recordException(e)
                     }
                 }
                 mMainActivity?.destroyActionMode()

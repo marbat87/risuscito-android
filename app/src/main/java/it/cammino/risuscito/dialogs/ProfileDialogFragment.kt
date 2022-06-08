@@ -20,6 +20,7 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Picasso
 import it.cammino.risuscito.R
+import it.cammino.risuscito.utils.StringUtils
 import java.io.Serializable
 
 @Suppress("unused")
@@ -102,9 +103,9 @@ class ProfileDialogFragment : DialogFragment() {
         @Transient
         private val mContext: AppCompatActivity = context
 
-        var mProfileName = ""
-        var mProfileEmail = ""
-        var mProfileImageSrc = ""
+        var mProfileName = StringUtils.EMPTY
+        var mProfileEmail = StringUtils.EMPTY
+        var mProfileImageSrc = StringUtils.EMPTY
         var mCanceable = false
         var mPrefill: CharSequence? = null
 
@@ -152,7 +153,7 @@ class ProfileDialogFragment : DialogFragment() {
     }
 
     class DialogViewModel : ViewModel() {
-        var mTag: String = ""
+        var mTag: String = StringUtils.EMPTY
         var menuItemId: Int = 0
         var handled = true
         val state = MutableLiveData<DialogState<ProfileDialogFragment>>()

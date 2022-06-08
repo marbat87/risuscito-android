@@ -206,7 +206,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             subscribeUiChanges()
         else {
             if (mCreaListaViewModel.tempTitle.isEmpty())
-                mCreaListaViewModel.tempTitle = intent.extras?.getString(LIST_TITLE) ?: ""
+                mCreaListaViewModel.tempTitle = intent.extras?.getString(LIST_TITLE).orEmpty()
             binding.textFieldTitle.setText(mCreaListaViewModel.tempTitle)
             binding.collapsingToolbarLayout.title = mCreaListaViewModel.tempTitle
             if (mCreaListaViewModel.elementi == null)
@@ -391,7 +391,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             }
         }
 
-        if (celebrazione.getNomePosizione(0).equals("", ignoreCase = true)) {
+        if (celebrazione.getNomePosizione(0).isEmpty()) {
             Snackbar.make(
                 binding.mainContent, R.string.lista_pers_vuota,
                 Snackbar.LENGTH_SHORT
