@@ -234,7 +234,7 @@ class SectionedIndexFragment : Fragment() {
                         setSource = LUtils.getResId(canti[i].source, R.string::class.java)
                         setColor = canti[i].color
                         id = canti[i].id
-                        identifier = (i * 1000).toLong()
+                        identifier = ((canti[i].idIndice * 10000) + canti[i].id).toLong()
                         isHasDivider =
                             !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
                     }
@@ -261,7 +261,7 @@ class SectionedIndexFragment : Fragment() {
                                     }
                                     false
                                 }
-                            identifier = canti[i].idIndice.toLong()
+                            id = canti[i].idIndice
                             subItems = mSubItems
                             subItems.sortWith(compareBy(Collator.getInstance(resources.systemLocale)) {
                                 (it as? SimpleSubItem)?.title?.getText(
