@@ -46,11 +46,11 @@ import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.items.swipeableItem
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.getTypedValueResId
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -473,7 +473,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             getString(R.string.generic_removed, item.name?.getText(this@CreaListaActivity)),
             Snackbar.LENGTH_SHORT
         )
-            .setAction(getString(R.string.cancel).uppercase(getSystemLocale(resources))) {
+            .setAction(getString(R.string.cancel).uppercase(resources.systemLocale)) {
                 item.swipedDirection = 0
                 mAdapter.add(position, item)
                 if (position != RecyclerView.NO_POSITION)

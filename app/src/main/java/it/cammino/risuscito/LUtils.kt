@@ -15,9 +15,7 @@ import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import android.view.View
-import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -104,28 +102,6 @@ class LUtils private constructor(private val mActivity: Activity) {
             mActivity.finish()
     }
 
-    fun setLigthStatusBar(light: Boolean) {
-        WindowInsetsControllerCompat(
-            mActivity.window,
-            mActivity.window.decorView
-        ).isAppearanceLightStatusBars = light
-        setLighStatusBarFlag(light)
-    }
-
-    private fun setLighStatusBarFlag(light: Boolean) {
-        if (OSUtils.hasM())
-            setLighStatusBarFlagM(light)
-    }
-
-    @Suppress("DEPRECATION")
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun setLighStatusBarFlagM(light: Boolean) {
-        if (light)
-            mActivity
-                .window
-                .decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-    }
-
     internal fun goFullscreen() {
         val windowInsetsController =
             WindowCompat.getInsetsController(mActivity.window, mActivity.window.decorView)
@@ -134,35 +110,7 @@ class LUtils private constructor(private val mActivity: Activity) {
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         // Hide both the status bar and the navigation bar
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
-//        when {
-//            hasR() -> goFullscreenR()
-//            else -> goFullscreenLegacy()
-//        }
     }
-
-//    private fun goFullscreenR() {
-//        WindowCompat.setDecorFitsSystemWindows(mActivity.window, false)
-//        WindowInsetsControllerCompat(
-//            mActivity.window,
-//            mActivity.window.decorView
-//        ).let { controller ->
-//            controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars())
-//            controller.systemBarsBehavior =
-//                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-//        }
-//    }
-
-//    @Suppress("DEPRECATION")
-//    private fun goFullscreenLegacy() {
-//        mActivity
-//            .window
-//            .decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                or View.SYSTEM_UI_FLAG_FULLSCREEN
-//                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-//    }
 
     // controlla se l'app deve mantenere lo schermo acceso
     fun checkScreenAwake() {

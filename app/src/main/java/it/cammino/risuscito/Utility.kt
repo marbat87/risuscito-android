@@ -1,7 +1,6 @@
 package it.cammino.risuscito
 
 import android.annotation.TargetApi
-import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -17,16 +16,11 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.PreferenceManager
-import com.google.android.material.elevation.SurfaceColors
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.ThemeUtils
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -261,22 +255,6 @@ object Utility {
 //            Log.v(TAG, "FILE INTERNO NON TROVATO")
         //		Log.i("FILE INTERNO:", "NON TROVATO");
         return StringUtils.EMPTY
-    }
-
-    fun setupNavBarColor(context: Activity) {
-        if (OSUtils.hasO()) {
-            context.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            if (!ThemeUtils.isDarkMode(context)) setLightNavigationBar(context)
-            context.window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(context)
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun setLightNavigationBar(context: Activity) {
-        WindowInsetsControllerCompat(
-            context.window,
-            context.window.decorView
-        ).isAppearanceLightNavigationBars = true
     }
 
     internal fun random(start: Int, end: Int): Int {

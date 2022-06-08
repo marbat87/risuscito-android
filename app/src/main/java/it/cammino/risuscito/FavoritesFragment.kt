@@ -30,8 +30,8 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.AccountMenuFragment
-import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
@@ -248,11 +248,7 @@ class FavoritesFragment : AccountMenuFragment() {
             cantoAdapter.set(
                 canti.sortedWith(
                     compareBy(
-                        Collator.getInstance(
-                            LocaleManager.getSystemLocale(
-                                resources
-                            )
-                        )
+                        Collator.getInstance(resources.systemLocale)
                     ) { it.title?.getText(requireContext()) })
             )
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0

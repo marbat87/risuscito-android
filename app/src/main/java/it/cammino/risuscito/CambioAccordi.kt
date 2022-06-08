@@ -9,8 +9,8 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.systemLocale
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -72,8 +72,8 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         if (primaNota.isNullOrEmpty() || notaCambio.isNullOrEmpty())
             return null
 
-        val language = getSystemLocale(mContext.resources).language
-        val locale = getSystemLocale(mContext.resources)
+        val language = mContext.resources.systemLocale.language
+        val locale = mContext.resources.systemLocale
 
         Log.v(TAG, "diffSemiToni: language $language")
 
@@ -135,8 +135,8 @@ class CambioAccordi internal constructor(private val mContext: Context) {
 
     fun diffSemiToniMin(primaNota: String?, notaCambio: String?): HashMap<String, String>? {
 
-        val language = getSystemLocale(mContext.resources).language
-        val locale = getSystemLocale(mContext.resources)
+        val language = mContext.resources.systemLocale.language
+        val locale = mContext.resources.systemLocale
 
         Log.v(TAG, "diffSemiToniMin - language: $language")
 

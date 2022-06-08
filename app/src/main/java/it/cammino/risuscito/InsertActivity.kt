@@ -31,11 +31,11 @@ import com.mikepenz.fastadapter.binding.listeners.addClickListener
 import it.cammino.risuscito.databinding.ActivityInsertSearchBinding
 import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.items.InsertItem
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -264,7 +264,7 @@ class InsertActivity : ThemeableActivity() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.lowercase(getSystemLocale(resources))
+                                text = text.lowercase(resources.systemLocale)
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -285,13 +285,13 @@ class InsertActivity : ThemeableActivity() {
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).lowercase(getSystemLocale(resources))
+                    val stringa = Utility.removeAccents(s).lowercase(resources.systemLocale)
                     Log.d(TAG, "performInsertSearch onTextChanged: stringa $stringa")
                     simpleIndexViewModel.titoliInsert
                         .filter {
                             Utility.removeAccents(
                                 it.title?.getText(this@InsertActivity).orEmpty()
-                            ).lowercase(getSystemLocale(resources))
+                            ).lowercase(resources.systemLocale)
                                 .contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
                         }
                         .forEach {
@@ -303,9 +303,7 @@ class InsertActivity : ThemeableActivity() {
                     cantoAdapter.set(
                         titoliResult.sortedWith(
                             compareBy(
-                                Collator.getInstance(
-                                    getSystemLocale(resources)
-                                )
+                                Collator.getInstance(resources.systemLocale)
                             ) { it.title?.getText(this@InsertActivity) })
                     )
                     binding.searchLayout.searchProgress.isVisible = false
@@ -328,7 +326,7 @@ class InsertActivity : ThemeableActivity() {
     private fun subscribeObservers() {
         simpleIndexViewModel.insertItemsResult?.observe(this) { canti ->
             simpleIndexViewModel.titoliInsert =
-                canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) {
+                canti.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
                     it.title?.getText(this)
                 })
         }

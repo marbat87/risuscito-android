@@ -42,9 +42,9 @@ import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.ui.AccountMenuFragment
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.getTypedValueResId
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
@@ -225,13 +225,13 @@ class ConsegnatiFragment : AccountMenuFragment() {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 val simplifiedString =
-                    Utility.removeAccents(newText).lowercase(getSystemLocale(resources))
+                    Utility.removeAccents(newText).lowercase(resources.systemLocale)
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
                     mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter {
                         Utility.removeAccents(
                             it.title?.getText(requireContext()).orEmpty()
-                        ).lowercase(getSystemLocale(resources)).contains(simplifiedString)
+                        ).lowercase(resources.systemLocale).contains(simplifiedString)
                     }
                     mCantiViewModel.titoliChooseFiltered.forEach { it.filter = simplifiedString }
                     selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
@@ -447,7 +447,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
     private fun subscribeUiConsegnati() {
         mCantiViewModel.mIndexResult?.observe(viewLifecycleOwner) { cantos ->
             mCantiViewModel.titoli =
-                cantos.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) {
+                cantos.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
                     it.title?.getText(requireContext())
                 })
             cantoAdapter.set(mCantiViewModel.titoli)
@@ -518,7 +518,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
             )
         }
         mCantiViewModel.titoliChoose =
-            newList.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) {
+            newList.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
                 it.title?.getText(requireContext())
             })
         mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose

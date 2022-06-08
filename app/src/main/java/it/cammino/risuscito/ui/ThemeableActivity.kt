@@ -34,9 +34,7 @@ import it.cammino.risuscito.database.dao.Backup
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
-import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
 import java.sql.Date
@@ -56,7 +54,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
             "getResources().getConfiguration().uiMode: ${resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK}"
         )
 
-        Log.d(TAG, "ThemeUtils.isDarkMode(this): ${ThemeUtils.isDarkMode(this)}")
+        Log.d(TAG, "isDarkMode: $isDarkMode")
         mViewModel.mLUtils = LUtils.getInstance(this)
         mViewModel.mLUtils.convertIntPreferences()
 
@@ -73,7 +71,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         mViewModel.isTabletWithNoFixedDrawer = mViewModel.isOnTablet && !mViewModel.isLandscape
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
-        Utility.setupNavBarColor(this)
+        setupNavBarColor()
         updateStatusBarLightMode(true)
 
         setTaskDescription()
@@ -88,7 +86,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     fun updateStatusBarLightMode(auto: Boolean) {
-        mViewModel.mLUtils.setLigthStatusBar(if (auto) !ThemeUtils.isDarkMode(this) else false)
+        setLigthStatusBar(if (auto) !isDarkMode else false)
     }
 
     fun setTransparentStatusBar(trasparent: Boolean) {

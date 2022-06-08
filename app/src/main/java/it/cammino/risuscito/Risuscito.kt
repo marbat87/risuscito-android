@@ -43,11 +43,7 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.AccountMenuFragment
-import it.cammino.risuscito.ui.LocaleManager
-import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -168,7 +164,7 @@ class Risuscito : AccountMenuFragment() {
             .withOkButtonLabel(getString(R.string.ok)) // provide a custom ok button text if desired, default one is "OK"
             .buildAndShowDialog(
                 mMainActivity,
-                ThemeUtils.isDarkMode(requireContext())
+                requireContext().isDarkMode
             ) // second parameter defines, if the dialog has a dark or light theme
 
         if (!OSUtils.hasQ())
@@ -376,7 +372,7 @@ class Risuscito : AccountMenuFragment() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.lowercase(LocaleManager.getSystemLocale(resources))
+                                text = text.lowercase(resources.systemLocale)
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -394,17 +390,13 @@ class Risuscito : AccountMenuFragment() {
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).lowercase(
-                        LocaleManager.getSystemLocale(
-                            resources
-                        )
-                    )
+                    val stringa = Utility.removeAccents(s).lowercase(resources.systemLocale)
                     Log.d(tag, "performSearch onTextChanged: stringa $stringa")
                     mViewModel.titoli
                         .filter {
                             Utility.removeAccents(
                                 it.title?.getText(requireContext()).orEmpty()
-                            ).lowercase(LocaleManager.getSystemLocale(resources)).contains(stringa)
+                            ).lowercase(resources.systemLocale).contains(stringa)
                         }
                         .forEach {
                             if (!isActive) return@launch
@@ -415,9 +407,7 @@ class Risuscito : AccountMenuFragment() {
                     cantoAdapter.set(
                         titoliResult.sortedWith(
                             compareBy(
-                                Collator.getInstance(
-                                    LocaleManager.getSystemLocale(resources)
-                                )
+                                Collator.getInstance(resources.systemLocale)
                             ) { it.title?.getText(requireContext()) })
                     )
                     binding.searchProgress.isVisible = false
@@ -440,11 +430,7 @@ class Risuscito : AccountMenuFragment() {
         mViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mViewModel.titoli =
                 canti.sortedWith(compareBy(
-                    Collator.getInstance(
-                        LocaleManager.getSystemLocale(
-                            resources
-                        )
-                    )
+                    Collator.getInstance(resources.systemLocale)
                 ) {
                     it.title?.getText(requireContext())
                 })

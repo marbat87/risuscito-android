@@ -22,8 +22,8 @@ import it.cammino.risuscito.databinding.LayoutRecyclerBinding
 import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -190,7 +190,7 @@ class SimpleIndexFragment : Fragment() {
         mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mAdapter.set(
                 when (mCantiViewModel.tipoLista) {
-                    0 -> canti.sortedWith(compareBy(Collator.getInstance(getSystemLocale(resources))) {
+                    0 -> canti.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
                         it.title?.getText(
                             requireContext()
                         )

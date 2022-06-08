@@ -62,10 +62,7 @@ import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPI
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.ui.ThemeableActivity
-import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.ThemeUtils
-import it.cammino.risuscito.utils.getTypedValueResId
+import it.cammino.risuscito.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -116,7 +113,7 @@ class MainActivity : ThemeableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
         installSplashScreen()
-        DynamicColors.applyToActivityIfAvailable(this, ThemeUtils.getDynamicColorOptions(this))
+        DynamicColors.applyToActivityIfAvailable(this, dynamicColorOptions)
         if (!OSUtils.isNbySamsung()) {
             // Attach a callback used to capture the shared elements from this Activity to be used
             // by the container transform transition

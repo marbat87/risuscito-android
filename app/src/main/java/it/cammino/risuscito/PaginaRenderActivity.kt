@@ -65,7 +65,6 @@ import it.cammino.risuscito.ui.InitialScrollWebClient
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
@@ -344,14 +343,14 @@ class PaginaRenderActivity : ThemeableActivity() {
             ?: bundle?.getCharSequence(Utility.PAGINA, StringUtils.EMPTY)?.toString()
         mCantiViewModel.idCanto = bundle?.getInt(Utility.ID_CANTO) ?: return
 
-        Log.d(TAG, "LINGUA CTX: ${getSystemLocale(resources).language}")
-        Log.d(TAG, "LINGUA BASE: ${getSystemLocale(baseContext.resources).language}")
+        Log.d(TAG, "LINGUA CTX: ${resources.systemLocale.language}")
+        Log.d(TAG, "LINGUA BASE: ${baseContext.resources.systemLocale.language}")
         cambioAccordi = CambioAccordi(this)
 
         try {
             Firebase.crashlytics.setCustomKeys {
                 key("pagina_canto", mCantiViewModel.pagina ?: StringUtils.EMPTY)
-                key("lingua", getSystemLocale(resources).language)
+                key("lingua", resources.systemLocale.language)
             }
 
             mCantiViewModel.primaNota =
@@ -363,7 +362,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 R.raw::class.java
                             )
                         ),
-                        getSystemLocale(resources).language
+                        resources.systemLocale.language
                     )
                 }
             mCantiViewModel.primoBarre =
@@ -375,7 +374,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 R.raw::class.java
                             )
                         ),
-                        getSystemLocale(resources).language
+                        resources.systemLocale.language
                     )
                 }
         } catch (e: IOException) {
@@ -397,7 +396,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         binding.musicSeekbar.addOnChangeListener { _, value, _ ->
             val time = String.format(
-                getSystemLocale(resources),
+                resources.systemLocale,
                 "%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(value.toLong()),
                 TimeUnit.MILLISECONDS.toSeconds(value.toLong()) - TimeUnit.MINUTES.toSeconds(
@@ -765,10 +764,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                     mCantiViewModel.notaCambio
                 )
                 var convMin: HashMap<String, String>? = null
-                if (getSystemLocale(resources).language.equals(
+                if (resources.systemLocale.language.equals(
                         LANGUAGE_UKRAINIAN,
                         ignoreCase = true
-                    ) || getSystemLocale(resources).language.equals(
+                    ) || resources.systemLocale.language.equals(
                         LANGUAGE_POLISH,
                         ignoreCase = true
                     )
@@ -824,10 +823,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                     mCantiViewModel.notaCambio
                 )
                 var convMin1: HashMap<String, String>? = null
-                if (getSystemLocale(resources).language.equals(
+                if (resources.systemLocale.language.equals(
                         LANGUAGE_UKRAINIAN,
                         ignoreCase = true
-                    ) || getSystemLocale(resources).language.equals(
+                    ) || resources.systemLocale.language.equals(
                         LANGUAGE_POLISH,
                         ignoreCase = true
                     )
@@ -866,10 +865,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                         mCantiViewModel.notaCambio
                     )
                     var convMin2: HashMap<String, String>? = null
-                    if (getSystemLocale(resources).language.equals(
+                    if (resources.systemLocale.language.equals(
                             LANGUAGE_UKRAINIAN,
                             ignoreCase = true
-                        ) || getSystemLocale(resources).language.equals(
+                        ) || resources.systemLocale.language.equals(
                             LANGUAGE_POLISH,
                             ignoreCase = true
                         )
@@ -907,10 +906,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                         mCantiViewModel.notaCambio
                     )
                     var convMin3: HashMap<String, String>? = null
-                    if (getSystemLocale(resources).language.equals(
+                    if (resources.systemLocale.language.equals(
                             LANGUAGE_UKRAINIAN,
                             ignoreCase = true
-                        ) || getSystemLocale(resources).language.equals(
+                        ) || resources.systemLocale.language.equals(
                             LANGUAGE_POLISH,
                             ignoreCase = true
                         )
@@ -1078,7 +1077,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
             var line: String? = br.readLine()
 
-            val language = getSystemLocale(resources).language
+            val language = resources.systemLocale.language
 
             val pattern: Pattern
             var patternMinore: Pattern? = null
@@ -1149,10 +1148,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 if (Utility.isLowerCase(mCantiViewModel.primaNota[0])) {
                                     var notaCambioMin = mCantiViewModel.notaCambio
                                     notaCambioMin = if (notaCambioMin.length == 1)
-                                        notaCambioMin.lowercase(getSystemLocale(resources))
+                                        notaCambioMin.lowercase(resources.systemLocale)
                                     else
                                         notaCambioMin.substring(0, 1)
-                                            .lowercase(getSystemLocale(resources)) + notaCambioMin.substring(
+                                            .lowercase(resources.systemLocale) + notaCambioMin.substring(
                                             1
                                         )
                                     line = line.replaceFirst(
@@ -1560,10 +1559,10 @@ class PaginaRenderActivity : ThemeableActivity() {
         val convMap =
             cambioAccordi.diffSemiToni(mCantiViewModel.primaNota, mCantiViewModel.notaCambio)
         var convMin: HashMap<String, String>? = null
-        if (getSystemLocale(resources).language.equals(
+        if (resources.systemLocale.language.equals(
                 LANGUAGE_UKRAINIAN,
                 ignoreCase = true
-            ) || getSystemLocale(resources).language.equals(LANGUAGE_POLISH, ignoreCase = true)
+            ) || resources.systemLocale.language.equals(LANGUAGE_POLISH, ignoreCase = true)
         )
             convMin =
                 cambioAccordi.diffSemiToniMin(mCantiViewModel.primaNota, mCantiViewModel.notaCambio)

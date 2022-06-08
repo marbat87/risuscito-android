@@ -30,8 +30,8 @@ import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.BottomSheetFragment
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -234,11 +234,7 @@ class ListaPersonalizzataFragment : Fragment() {
                                 Snackbar.LENGTH_LONG
                             )
                                 .setAction(
-                                    getString(R.string.cancel).uppercase(
-                                        getSystemLocale(
-                                            resources
-                                        )
-                                    )
+                                    getString(R.string.cancel).uppercase(resources.systemLocale)
                                 ) {
                                     mCantiViewModel.listaPersonalizzata?.addCanto(
                                         cantoDaCanc,
@@ -331,7 +327,7 @@ class ListaPersonalizzataFragment : Fragment() {
 
     private val titlesList: String
         get() {
-            val l = getSystemLocale(resources)
+            val l = resources.systemLocale
             val result = StringBuilder()
             result.append("-- ").append(mCantiViewModel.listaPersonalizzata?.name?.uppercase(l))
                 .append(" --\n")

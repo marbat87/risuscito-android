@@ -14,7 +14,7 @@ import it.cammino.risuscito.databinding.AboutLayoutBinding
 import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.isDarkMode
 
 
 class AboutFragment : AccountMenuFragment() {
@@ -88,7 +88,7 @@ class AboutFragment : AccountMenuFragment() {
                 addPrivacyPolicyAction("https://marbat87.altervista.org/privacy_policy.html")
                 isShowAsCard = false
                 backgroundColor =
-                    if (ThemeUtils.isDarkMode(it)) R.color.md_theme_dark_surface else R.color.md_theme_light_surface
+                    if (it.isDarkMode) R.color.md_theme_dark_surface else R.color.md_theme_light_surface
             }
             val builderView = builder.build()
             builderView.findItem(builder.lastLink).findViewById<AppCompatImageView>(R.id.icon)

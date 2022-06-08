@@ -33,9 +33,9 @@ import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.BottomSheetFragment
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -388,7 +388,7 @@ class ListaPredefinitaFragment : Fragment() {
 
     private val titlesList: String
         get() {
-            val l = getSystemLocale(resources)
+            val l = resources.systemLocale
             val result = StringBuilder()
             var progressivePos = 0
 
