@@ -10,7 +10,7 @@ plugins {
 android {
 
     compileSdk = 32
-    buildToolsVersion = "32.0.0"
+    buildToolsVersion = "33.0.0"
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdk = 21
@@ -59,7 +59,7 @@ val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
 val roomVersion = "2.4.2"
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.6.1")

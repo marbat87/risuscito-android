@@ -252,6 +252,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     /** This is needed to handle the result of the manager.startConfirmationDialogForResult
     request that can be made from SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION
     in the listener above. */
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == CONFIRMATION_REQUEST_CODE) {
             // Handle the user's decision. For example, if the user selects "Cancel",
