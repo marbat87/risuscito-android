@@ -394,7 +394,7 @@ class ListaPersonalizzataFragment : Fragment() {
                             )
                         )
                         mMainActivity?.let {
-                            if (OSUtils.isNbySamsung()) {
+                            if (OSUtils.isObySamsung()) {
                                 startListInsertForResult.launch(intent)
                                 Animations.slideInRight(it)
                             } else {

@@ -262,7 +262,7 @@ class CustomLists : AccountMenuFragment() {
                                 inputdialogViewModel.handled = true
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
                                 mMainActivity?.let { act ->
-                                    if (OSUtils.isNbySamsung()) {
+                                    if (OSUtils.isObySamsung()) {
                                         startListEditForResult.launch(
                                             Intent(
                                                 act,
@@ -409,7 +409,7 @@ class CustomLists : AccountMenuFragment() {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
                     mMainActivity?.let { act ->
-                        if (OSUtils.isNbySamsung()) {
+                        if (OSUtils.isObySamsung()) {
                             startListEditForResult.launch(
                                 Intent(
                                     act,

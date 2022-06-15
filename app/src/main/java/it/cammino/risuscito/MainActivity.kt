@@ -114,7 +114,7 @@ class MainActivity : ThemeableActivity() {
         // Handle the splash screen transition.
         installSplashScreen()
         DynamicColors.applyToActivityIfAvailable(this, dynamicColorOptions)
-        if (!OSUtils.isNbySamsung()) {
+        if (!OSUtils.isObySamsung()) {
             // Attach a callback used to capture the shared elements from this Activity to be used
             // by the container transform transition
             setExitSharedElementCallback(object :

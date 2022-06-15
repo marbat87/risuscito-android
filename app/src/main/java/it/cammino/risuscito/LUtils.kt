@@ -67,7 +67,7 @@ class LUtils private constructor(private val mActivity: Activity) {
         startView: View?
     ) {
 
-        if (OSUtils.isNbySamsung()) {
+        if (OSUtils.isObySamsung()) {
             mActivity.startActivity(intent)
             Animations.slideInRight(mActivity)
         } else {

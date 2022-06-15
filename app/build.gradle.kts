@@ -16,8 +16,8 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5020
-        versionName = "5.0.2"
+        versionCode = 5030
+        versionName = "5.0.3"
         kapt {
             arguments {
                 arg("room.incremental", "true")
@@ -59,6 +59,7 @@ val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
 val roomVersion = "2.4.2"
 dependencies {
+    implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
@@ -100,7 +101,6 @@ dependencies {
     implementation("com.mikepenz:fastadapter-extensions-binding:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
     implementation("com.squareup.picasso:picasso:2.8")
-    implementation("it.marbat.pdfjet.lib:lib:1.0.0")
     implementation("com.leinardi.android:speed-dial:3.3.0")
     implementation("com.github.Ferfalk:SimpleSearchView:0.2.0")
     implementation("com.github.MFlisar:changelog:1.1.7")

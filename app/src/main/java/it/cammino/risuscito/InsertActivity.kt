@@ -65,7 +65,7 @@ class InsertActivity : ThemeableActivity() {
     private lateinit var binding: ActivityInsertSearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!OSUtils.isNbySamsung()) {
+        if (!OSUtils.isObySamsung()) {
             // Set the transition name, which matches Activity A’s start view transition name, on
             // the root view.
             findViewById<View>(android.R.id.content).transitionName = "shared_insert_container"

@@ -52,7 +52,7 @@ class AboutFragment : AccountMenuFragment() {
         val mChangeLogClickListener = View.OnClickListener {
             if (SystemClock.elapsedRealtime() - mLastClickTime >= CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                if (OSUtils.isNbySamsung()) {
+                if (OSUtils.isObySamsung()) {
                     startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
                     Animations.slideInRight(mMainActivity)
                 } else {
