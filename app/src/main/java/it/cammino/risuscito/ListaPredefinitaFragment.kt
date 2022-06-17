@@ -20,7 +20,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
@@ -32,9 +33,9 @@ import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.ui.BottomSheetFragment
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -203,8 +204,7 @@ class ListaPredefinitaFragment : Fragment() {
                             mCantiViewModel.defaultListaId,
                             posizioneDaCanc,
                             idDaCanc,
-                            timestampDaCanc
-                                ?: ""
+                            timestampDaCanc.orEmpty()
                         )
                         true
                     }
@@ -236,7 +236,7 @@ class ListaPredefinitaFragment : Fragment() {
                             ?.setmSelected(false)
                         cantoAdapter.notifyItemChanged(longclickedPos)
                     } catch (e: Exception) {
-                        FirebaseCrashlytics.getInstance().recordException(e)
+                        Firebase.crashlytics.recordException(e)
                     }
                 }
                 mMainActivity?.destroyActionMode()
@@ -388,7 +388,7 @@ class ListaPredefinitaFragment : Fragment() {
 
     private val titlesList: String
         get() {
-            val l = getSystemLocale(resources)
+            val l = resources.systemLocale
             val result = StringBuilder()
             var progressivePos = 0
 
@@ -534,7 +534,7 @@ class ListaPredefinitaFragment : Fragment() {
                         )
 
                         mMainActivity?.let {
-                            if (OSUtils.isNbySamsung()) {
+                            if (OSUtils.isObySamsung()) {
                                 startListInsertForResult.launch(intent)
                                 Animations.slideInRight(it)
                             } else {

@@ -8,12 +8,13 @@ import it.cammino.risuscito.CreaListaActivity
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.SwipeableItem
+import it.cammino.risuscito.utils.StringUtils
 
 class CreaListaViewModel(application: Application, args: Bundle) : AndroidViewModel(application) {
 
     var positionToRename = 0
 
-    var tempTitle = ""
+    var tempTitle = StringUtils.EMPTY
 
     var elementi: ArrayList<SwipeableItem>? = null
 

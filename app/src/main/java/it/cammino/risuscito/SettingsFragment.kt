@@ -25,9 +25,10 @@ import it.cammino.risuscito.Utility.SCREEN_ON
 import it.cammino.risuscito.Utility.SYSTEM_LANGUAGE
 import it.cammino.risuscito.dialogs.ProgressDialogFragment
 import it.cammino.risuscito.ui.LocaleManager
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.RisuscitoApplication
-import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.setDefaultNightMode
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SettingsViewModel
 import java.util.*
@@ -48,7 +49,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     private val listener = SplitInstallStateUpdatedListener { state ->
         if (state.sessionId() == sessionId) {
             val newLanguage = mSettingsViewModel.persistingLanguage
-            mSettingsViewModel.persistingLanguage = ""
+            mSettingsViewModel.persistingLanguage = StringUtils.EMPTY
             when (state.status()) {
                 FAILED -> {
                     Log.e(TAG, "Module install failed with ${state.errorCode()}")
@@ -81,7 +82,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 INSTALLED -> {
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     if (state.languages().isNotEmpty()) {
-                        val currentLang = getSystemLocale(resources).language
+                        val currentLang = resources.systemLocale.language
                         Log.i(TAG, "Module installed: language $newLanguage")
                         Log.i(TAG, "Module installed: newLanguage $newLanguage")
                         RisuscitoApplication.localeManager.persistLanguage(
@@ -251,6 +252,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     /** This is needed to handle the result of the manager.startConfirmationDialogForResult
     request that can be made from SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION
     in the listener above. */
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == CONFIRMATION_REQUEST_CODE) {
             // Handle the user's decision. For example, if the user selects "Cancel",
@@ -274,7 +276,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         Log.d(TAG, "onSharedPreferenceChanged: $s")
         if (s == NIGHT_MODE) {
             Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0"))
-            ThemeUtils.setDefaultNightMode(requireContext())
+            context?.setDefaultNightMode()
         }
         if (s == SCREEN_ON) LUtils.getInstance(requireActivity()).checkScreenAwake()
         if (s == DYNAMIC_COLORS) activity?.recreate()

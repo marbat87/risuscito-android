@@ -3,7 +3,6 @@ package it.cammino.risuscito.ui
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Build.VERSION_CODES.N
 import android.provider.Settings
 import android.util.Log
@@ -11,6 +10,8 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.systemLocale
 import java.util.*
 
 
@@ -55,11 +56,10 @@ class LocaleManager(context: Context) {
     }
 
     fun setDefaultSystemLanguage(context: Context) {
-        val mLanguage = when (getSystemLocale(context.resources).language) {
+        val mLanguage = when (context.resources.systemLocale.language) {
             LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
-            LANGUAGE_ENGLISH -> if (getSystemLocale(context.resources).country.isNotEmpty() && getSystemLocale(
-                    context.resources
-                ).country == COUNTRY_PHILIPPINES
+            LANGUAGE_ENGLISH -> if (context.resources.systemLocale.country.isNotEmpty()
+                && context.resources.systemLocale.country == COUNTRY_PHILIPPINES
             )
                 LANGUAGE_ENGLISH_PHILIPPINES
             else
@@ -80,8 +80,7 @@ class LocaleManager(context: Context) {
 
     fun getLanguage(context: Context): String {
         return PreferenceManager.getDefaultSharedPreferences(context)
-            .getString(Utility.SYSTEM_LANGUAGE, "")
-            ?: ""
+            .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).orEmpty()
     }
 
     fun useCustomConfig(context: Context): Context {
@@ -145,23 +144,6 @@ class LocaleManager(context: Context) {
                 isLocaleNotEmptyN(config)
             else
                 isLocaleNotEmptyLegacy(config)
-        }
-
-        @Suppress("DEPRECATION")
-        private fun getSystemLocaleLegacy(config: Configuration): Locale {
-            return config.locale
-        }
-
-        @TargetApi(N)
-        private fun getSystemLocaleN(config: Configuration): Locale {
-            return config.locales.get(0)
-        }
-
-        fun getSystemLocale(res: Resources): Locale {
-            return if (OSUtils.hasN())
-                getSystemLocaleN(res.configuration)
-            else
-                getSystemLocaleLegacy(res.configuration)
         }
 
     }

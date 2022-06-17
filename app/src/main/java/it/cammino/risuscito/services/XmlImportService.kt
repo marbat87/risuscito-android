@@ -11,12 +11,14 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.utils.StringUtils
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -87,7 +89,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                 return Result.success()
             } catch (e: XmlPullParserException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                Firebase.crashlytics.recordException(e)
                 mNotification = NotificationCompat.Builder(appContext, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification_error)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -100,7 +102,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                 return Result.failure()
             } catch (e: SecurityException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                Firebase.crashlytics.recordException(e)
                 mNotification = NotificationCompat.Builder(appContext, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification_error)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -112,7 +114,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                 return Result.failure()
             } catch (e: IOException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
-                FirebaseCrashlytics.getInstance().recordException(e)
+                Firebase.crashlytics.recordException(e)
                 mNotification = NotificationCompat.Builder(appContext, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification_error)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -150,8 +152,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
             list.name = parser.getAttributeValue(null, "title")
         else {
             Log.e(TAG, "readLista: title is null")
-            //      FirebaseCrash.log("importData: title is null");
-            FirebaseCrashlytics.getInstance().log("$TAG_IMPORT_DATA: title is null")
+            Firebase.crashlytics.log("$TAG_IMPORT_DATA: title is null")
         }
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.eventType != XmlPullParser.START_TAG) {
@@ -187,7 +188,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
     // For the tags title and summary, extracts their text values.
     @Throws(IOException::class, XmlPullParserException::class)
     private fun readCanto(parser: XmlPullParser): String {
-        var result = ""
+        var result = StringUtils.EMPTY
         if (parser.next() == XmlPullParser.TEXT) {
             result = parser.text
             parser.nextTag()

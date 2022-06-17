@@ -14,7 +14,8 @@ import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.items.insertItem
 import it.cammino.risuscito.items.simpleItem
 
-class SimpleIndexViewModel(application: Application, args: Bundle) : GenericIndexViewModel(application) {
+class SimpleIndexViewModel(application: Application, args: Bundle) :
+    GenericIndexViewModel(application) {
 
     var itemsResult: LiveData<List<SimpleItem>>? = null
         private set
@@ -37,14 +38,14 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
-                                simpleItem {
-                                    setTitle = LUtils.getResId(it.titolo, R.string::class.java)
-                                    setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                    setSource = LUtils.getResId(it.source, R.string::class.java)
-                                    setColor = it.color
-                                    id = it.id
-                                    undecodedSource = it.source
-                                }
+                            simpleItem {
+                                setTitle = LUtils.getResId(it.titolo, R.string::class.java)
+                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
+                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setColor = it.color
+                                id = it.id
+                                undecodedSource = it.source
+                            }
                         )
                     }
                     newList
@@ -54,13 +55,13 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
-                                simpleItem {
-                                    setTitle = LUtils.getResId(it.titoloIndice, R.string::class.java)
-                                    setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                    setSource = LUtils.getResId(it.source, R.string::class.java)
-                                    setColor = it.color
-                                    id = it.id
-                                }
+                            simpleItem {
+                                setTitle = LUtils.getResId(it.titoloIndice, R.string::class.java)
+                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
+                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setColor = it.color
+                                id = it.id
+                            }
                         )
                     }
                     newList
@@ -70,15 +71,15 @@ class SimpleIndexViewModel(application: Application, args: Bundle) : GenericInde
                     val newList = ArrayList<InsertItem>()
                     canti.forEach {
                         newList.add(
-                                insertItem {
-                                    setTitle = LUtils.getResId(it.titolo, R.string::class.java)
-                                    setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                    setSource = LUtils.getResId(it.source, R.string::class.java)
-                                    setColor = it.color
-                                    id = it.id
-                                    undecodedSource = it.source ?: ""
-                                    consegnato = it.consegnato
-                                }
+                            insertItem {
+                                setTitle = LUtils.getResId(it.titolo, R.string::class.java)
+                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
+                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setColor = it.color
+                                id = it.id
+                                undecodedSource = it.source.orEmpty()
+                                consegnato = it.consegnato
+                            }
                         )
                     }
                     newList

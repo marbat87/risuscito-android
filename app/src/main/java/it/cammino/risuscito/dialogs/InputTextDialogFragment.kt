@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import it.cammino.risuscito.R
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.capitalize
 import java.io.Serializable
 
@@ -39,7 +40,7 @@ class InputTextDialogFragment : DialogFragment() {
         val mView = layoutInflater.inflate(R.layout.input_search, null, false)
         dialog.setView(mView)
         val input = mView.findViewById<TextInputEditText>(R.id.input_text)
-        input.setText(mBuilder.mPrefill ?: "")
+        input.setText(mBuilder.mPrefill ?: StringUtils.EMPTY)
         input.selectAll()
 
         if (mBuilder.mTitle != 0)
@@ -146,8 +147,8 @@ class InputTextDialogFragment : DialogFragment() {
     }
 
     class DialogViewModel : ViewModel() {
-        var mTag: String = ""
-        var outputText: String = ""
+        var mTag: String = StringUtils.EMPTY
+        var outputText: String = StringUtils.EMPTY
         var handled = true
         val state = MutableLiveData<DialogState<InputTextDialogFragment>>()
     }

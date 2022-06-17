@@ -13,7 +13,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.Utility.helperSetColor
 import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.RowItemHistoryBinding
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.systemLocale
 import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -91,7 +91,7 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
             val df = DateFormat.getDateTimeInstance(
-                DateFormat.SHORT, DateFormat.MEDIUM, getSystemLocale(ctx.resources)
+                DateFormat.SHORT, DateFormat.MEDIUM, ctx.resources.systemLocale
             )
             val tempTimestamp: String
 

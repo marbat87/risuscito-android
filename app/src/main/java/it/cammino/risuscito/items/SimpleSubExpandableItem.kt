@@ -30,6 +30,12 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
 
     var position: Int = 0
 
+    var id: Int = 0
+        set(value) {
+            identifier = value.toLong()
+            field = value
+        }
+
     private var mOnClickListener: ((v: View?, adapter: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, position: Int) -> Boolean)? =
         null
 

@@ -18,7 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
@@ -29,8 +30,8 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.AccountMenuFragment
-import it.cammino.risuscito.ui.LocaleManager
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
@@ -218,7 +219,7 @@ class FavoritesFragment : AccountMenuFragment() {
                     try {
                         selectExtension?.deselect()
                     } catch (e: Exception) {
-                        FirebaseCrashlytics.getInstance().recordException(e)
+                        Firebase.crashlytics.recordException(e)
                     }
                 }
                 mMainActivity?.destroyActionMode()
@@ -247,11 +248,7 @@ class FavoritesFragment : AccountMenuFragment() {
             cantoAdapter.set(
                 canti.sortedWith(
                     compareBy(
-                        Collator.getInstance(
-                            LocaleManager.getSystemLocale(
-                                resources
-                            )
-                        )
+                        Collator.getInstance(resources.systemLocale)
                     ) { it.title?.getText(requireContext()) })
             )
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0

@@ -17,7 +17,6 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -86,7 +85,7 @@ object ListeUtils {
                         withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
                             fragment.resources.getString(
                                 LUtils.getResId(
-                                    cantoDao.getCantoById(it)?.titolo ?: "",
+                                    cantoDao.getCantoById(it)?.titolo.orEmpty(),
                                     R.string::class.java
                                 )
                             )
@@ -170,7 +169,7 @@ object ListeUtils {
                 )
                     .setAction(
                         fragment.getString(R.string.cancel)
-                            .uppercase(getSystemLocale(fragment.resources))
+                            .uppercase(fragment.resources.systemLocale)
                     ) {
                         for (removedItem in removedItems)
                             addToFavorites(fragment, removedItem.id, false)
@@ -204,7 +203,7 @@ object ListeUtils {
                 )
                     .setAction(
                         fragment.getString(R.string.cancel)
-                            .uppercase(getSystemLocale(fragment.resources))
+                            .uppercase(fragment.resources.systemLocale)
                     ) {
                         for (removedItem in removedItems) {
                             val cronTemp = Cronologia()
@@ -286,7 +285,7 @@ object ListeUtils {
             )
                 .setAction(
                     fragment.getString(R.string.cancel)
-                        .uppercase(getSystemLocale(fragment.resources))
+                        .uppercase(fragment.resources.systemLocale)
                 ) {
                     val positionToInsert = CustomList()
                     positionToInsert.id = idLista
@@ -310,7 +309,7 @@ object ListeUtils {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cantoDao()
             val existingTitle =
                 withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                    mDao.getCantoById(idCanto)?.titolo ?: ""
+                    mDao.getCantoById(idCanto)?.titolo.orEmpty()
                 }
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(

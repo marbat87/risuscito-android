@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="5019"
+    <release versionCode="5020"
         date="Giugno 2022"
-        versionName="5.0.1">
+        versionName="5.0.2">
         <new>Stile Material 3 (rimossa l'opzione per scegliere i colori dell'app)</new>
         <new>Nuovi color dei canti, numeri di pagina e testi basati sull'edizione 2020 del libro "Risuscitò"</new>
         <new>L'indice biblico sostituisce l'indice dei Salmi cantati</new>

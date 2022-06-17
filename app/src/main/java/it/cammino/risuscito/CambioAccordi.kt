@@ -2,24 +2,25 @@ package it.cammino.risuscito
 
 import android.content.Context
 import android.util.Log
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_ITALIAN
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_TURKISH
 import it.cammino.risuscito.ui.LocaleManager.Companion.LANGUAGE_UKRAINIAN
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.systemLocale
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.util.*
 import java.util.regex.Pattern
 
 class CambioAccordi internal constructor(private val mContext: Context) {
 
     internal fun recuperaBarre(canto: InputStream?, language: String): String {
 
-        if (canto == null) return ""
+        if (canto == null) return StringUtils.EMPTY
 
         var primoBarre = "0"
 
@@ -57,24 +58,22 @@ class CambioAccordi internal constructor(private val mContext: Context) {
             return primoBarre
         } catch (ex: Exception) {
             Log.e(javaClass.name, ex.localizedMessage, ex)
-            return ""
+            Firebase.crashlytics.recordException(ex)
+            return StringUtils.EMPTY
         }
 
     }
 
     fun diffSemiToni(primaNota: String?, notaCambio: String?): HashMap<String, String>? {
 
-        primaNota ?: return null
-        notaCambio ?: return null
-
         Log.v(TAG, "diffSemiToni - primaNota: $primaNota")
         Log.v(TAG, "diffSemiToni - notaCambio: $notaCambio")
 
-        if (primaNota == "" || notaCambio == "")
+        if (primaNota.isNullOrEmpty() || notaCambio.isNullOrEmpty())
             return null
 
-        val language = getSystemLocale(mContext.resources).language
-        val locale = getSystemLocale(mContext.resources)
+        val language = mContext.resources.systemLocale.language
+        val locale = mContext.resources.systemLocale
 
         Log.v(TAG, "diffSemiToni: language $language")
 
@@ -82,14 +81,14 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         var cambioAccordo: String = notaCambio
 
         val accordi: Array<String> =
-                when (language) {
-                    LANGUAGE_ITALIAN, LANGUAGE_TURKISH -> accordi_it
-                    LANGUAGE_UKRAINIAN -> accordi_uk
-                    LANGUAGE_POLISH -> accordi_pl
-                    LANGUAGE_ENGLISH -> accordi_en
+            when (language) {
+                LANGUAGE_ITALIAN, LANGUAGE_TURKISH -> accordi_it
+                LANGUAGE_UKRAINIAN -> accordi_uk
+                LANGUAGE_POLISH -> accordi_pl
+                LANGUAGE_ENGLISH -> accordi_en
 //            LANGUAGE_TURKISH -> accordi = accordi_tr
-                    else -> accordi_it
-                }
+                else -> accordi_it
+            }
 
         if (language == LANGUAGE_UKRAINIAN || language == LANGUAGE_POLISH) {
             primoAccordo = if (primoAccordo.length == 1)
@@ -125,7 +124,10 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         val mappa = HashMap<String, String>()
         for (i in accordi.indices) {
             Log.v(TAG, "diffSemiToni - NUOVO: " + (i + differenza) % 12)
-            Log.v(TAG, "diffSemiToni - CONVE: " + accordi[i] + " in " + accordi[(i + differenza) % 12])
+            Log.v(
+                TAG,
+                "diffSemiToni - CONVE: " + accordi[i] + " in " + accordi[(i + differenza) % 12]
+            )
             mappa[accordi[i]] = accordi[(i + differenza) % 12]
         }
         return mappa
@@ -133,12 +135,12 @@ class CambioAccordi internal constructor(private val mContext: Context) {
 
     fun diffSemiToniMin(primaNota: String?, notaCambio: String?): HashMap<String, String>? {
 
-        val language = getSystemLocale(mContext.resources).language
-        val locale = getSystemLocale(mContext.resources)
+        val language = mContext.resources.systemLocale.language
+        val locale = mContext.resources.systemLocale
 
         Log.v(TAG, "diffSemiToniMin - language: $language")
 
-        if (primaNota == null || primaNota == "" || notaCambio == null || primaNota == "")
+        if (primaNota.isNullOrEmpty() || notaCambio.isNullOrEmpty())
             return null
 
         var primoAccordo: String = primaNota
@@ -153,11 +155,11 @@ class CambioAccordi internal constructor(private val mContext: Context) {
             cambioAccordo.substring(0, 1).lowercase(locale) + cambioAccordo.substring(1)
 
         val accordiMin: Array<String> =
-                when (language) {
-                    LANGUAGE_UKRAINIAN -> accordi_uk_lower
-                    LANGUAGE_POLISH -> accordi_pl_lower
-                    else -> accordi_uk_lower
-                }
+            when (language) {
+                LANGUAGE_UKRAINIAN -> accordi_uk_lower
+                LANGUAGE_POLISH -> accordi_pl_lower
+                else -> accordi_uk_lower
+            }
 
         var start = 0
         while (start < accordiMin.size) {
@@ -182,11 +184,12 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         for (i in accordiMin.indices) {
             Log.v(TAG, "diffSemiToniMin - NUOVO: " + (i + differenza) % 12)
             Log.v(
-                    TAG,
-                    "diffSemiToniMin - CONVE: "
-                            + accordiMin[i]
-                            + " in "
-                            + accordiMin[(i + differenza) % 12])
+                TAG,
+                "diffSemiToniMin - CONVE: "
+                        + accordiMin[i]
+                        + " in "
+                        + accordiMin[(i + differenza) % 12]
+            )
             mappa[accordiMin[i]] = accordiMin[(i + differenza) % 12]
         }
         return mappa
@@ -194,19 +197,25 @@ class CambioAccordi internal constructor(private val mContext: Context) {
 
     companion object {
 
-        internal val accordi_it = arrayOf("Do", "Do#", "Re", "Mib", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "Sib", "Si")
-        internal val accordi_uk = arrayOf("C", "Cis", "D", "Eb", "E", "F", "Fis", "G", "Gis", "A", "B", "H")
-        internal val accordi_pl = arrayOf("C", "Cis", "D", "Dis", "E", "F", "Fis", "G", "Gis", "A", "B", "H")
-        internal val accordi_en = arrayOf("C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B")
+        internal val accordi_it =
+            arrayOf("Do", "Do#", "Re", "Mib", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "Sib", "Si")
+        internal val accordi_uk =
+            arrayOf("C", "Cis", "D", "Eb", "E", "F", "Fis", "G", "Gis", "A", "B", "H")
+        internal val accordi_pl =
+            arrayOf("C", "Cis", "D", "Dis", "E", "F", "Fis", "G", "Gis", "A", "B", "H")
+        internal val accordi_en =
+            arrayOf("C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B")
         internal val barre_it = arrayOf("0", "I", "II", "III", "IV", "V", "VI", "VII")
         internal val barre_en = arrayOf("0", "1", "2", "3", "4", "5", "6", "7")
         private val TAG = CambioAccordi::class.java.canonicalName
-        private val accordi_uk_lower = arrayOf("c", "cis", "d", "eb", "e", "f", "fis", "g", "gis", "a", "b", "h")
-        private val accordi_pl_lower = arrayOf("c", "cis", "d", "dis", "e", "f", "fis", "g", "gis", "a", "b", "h")
+        private val accordi_uk_lower =
+            arrayOf("c", "cis", "d", "eb", "e", "f", "fis", "g", "gis", "a", "b", "h")
+        private val accordi_pl_lower =
+            arrayOf("c", "cis", "d", "dis", "e", "f", "fis", "g", "gis", "a", "b", "h")
 
         internal fun recuperaPrimoAccordo(canto: InputStream?, language: String): String {
 
-            if (canto == null) return ""
+            if (canto == null) return StringUtils.EMPTY
 
             val primaNota = StringBuilder()
 
@@ -222,7 +231,7 @@ class CambioAccordi internal constructor(private val mContext: Context) {
                         val inizioRiga = line.indexOf("A13F3C") + 8
 
                         if (inizioRiga < line.length) {
-                            Log.v(TAG, """recuperaPrimoAccordo - inizioRiga: $inizioRiga""")
+                            Log.v(TAG, "recuperaPrimoAccordo - inizioRiga: $inizioRiga")
                             Log.v(TAG, "recuperaPrimoAccordo - carattere: " + line[inizioRiga])
                             var i = inizioRiga
                             while (i < line.length) {
@@ -240,7 +249,8 @@ class CambioAccordi internal constructor(private val mContext: Context) {
                             for (j in i + 1 until line.length) {
                                 Log.v(TAG, "recuperaPrimoAccordo - DA ISP: " + line[j])
                                 val myMatcher = when (language) {
-                                    LANGUAGE_ENGLISH -> Pattern.compile("[^m][a-z]|#").matcher(line[j].toString())
+                                    LANGUAGE_ENGLISH -> Pattern.compile("[^m][a-z]|#")
+                                        .matcher(line[j].toString())
                                     else -> Pattern.compile("[a-z]|#").matcher(line[j].toString())
                                 }
                                 if (myMatcher.find()) {
@@ -258,8 +268,8 @@ class CambioAccordi internal constructor(private val mContext: Context) {
                 return primaNota.toString()
             } catch (ex: Exception) {
                 Log.e(TAG, "Error:", ex)
-                FirebaseCrashlytics.getInstance().recordException(ex)
-                return ""
+                Firebase.crashlytics.recordException(ex)
+                return StringUtils.EMPTY
             }
 
         }
