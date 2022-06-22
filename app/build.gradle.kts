@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5030
+        versionCode = 5031
         versionName = "5.0.3"
         kapt {
             arguments {

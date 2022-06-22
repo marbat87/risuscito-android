@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="5020"
+    <release versionCode="5031"
         date="Giugno 2022"
         versionName="5.0.2">
         <new>Stile Material 3 (rimossa l'opzione per scegliere i colori dell'app)</new>
