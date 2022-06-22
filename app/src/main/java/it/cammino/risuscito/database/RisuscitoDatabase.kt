@@ -4,10 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import it.cammino.risuscito.database.dao.*
@@ -18,7 +15,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [(Canto::class), (ListaPers::class), (CustomList::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class), (IndiceBiblico::class)],
-    version = 9
+    version = 10
 )
 @TypeConverters(Converters::class)
 abstract class RisuscitoDatabase : RoomDatabase() {
@@ -123,6 +120,24 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                 database.execSQL("DROP TABLE IF EXISTS salmo")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `IndiceBiblico` (`ordinamento` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, `titoloIndice` TEXT, PRIMARY KEY(`ordinamento`))")
                 reinsertDefault(database)
+            }
+        }
+
+        private val MIGRATION_9_10 = Migration9to10()
+
+        class Migration9to10 : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 9 to 10")
+                database.execSQL("DELETE FROM IndiceLiturgico")
+
+                //8. Prepopulate new table NomeLiturgico
+                IndiceLiturgico.defaultData()
+                    .forEach {
+                        val insertValue = ContentValues()
+                        insertValue.put("idIndice", it.idIndice)
+                        insertValue.put("idCanto", it.idCanto)
+                        database.insert("IndiceLiturgico", OnConflictStrategy.REPLACE, insertValue)
+                    }
             }
         }
 
@@ -276,7 +291,8 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                             MIGRATION_5_6,
                             MIGRATION_6_7,
                             MIGRATION_7_8,
-                            MIGRATION_8_9
+                            MIGRATION_8_9,
+                            MIGRATION_9_10
                         )
                         .addCallback(object : Callback() {
                             /**

@@ -15,11 +15,13 @@ import it.cammino.risuscito.items.listaPersonalizzataItem
 import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.posizioneItem
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.map
 import it.cammino.risuscito.utils.zipLiveDataNullable
 
 
-class ListaPersonalizzataViewModel(application: Application, args: Bundle) : AndroidViewModel(application) {
+class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
+    AndroidViewModel(application) {
 
     var posizioniList: List<ListaPersonalizzataItem> = ArrayList()
     var listaPersonalizzataId: Int = 0
@@ -33,46 +35,63 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) : And
         listaPersonalizzataId = args.getInt(Utility.TIPO_LISTA)
         val mDb = RisuscitoDatabase.getInstance(getApplication())
         mDb.listePersDao().getLiveListById(listaPersonalizzataId)?.let { liveList ->
-            listaPersonalizzataResult = zipLiveDataNullable(liveList, mDb.cantoDao().liveAll).map { result ->
-                val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
-                listaPersonalizzata = result.first?.lista
-                listaPersonalizzataTitle = result.first?.titolo
+            listaPersonalizzataResult =
+                zipLiveDataNullable(liveList, mDb.cantoDao().liveAll).map { result ->
+                    val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
+                    listaPersonalizzata = result.first?.lista
+                    listaPersonalizzataTitle = result.first?.titolo
 
-                listaPersonalizzata?.let { lista ->
-                    for (cantoIndex in 0 until lista.numPosizioni) {
-                        val list = ArrayList<PosizioneItem>()
-                        if (lista.getCantoPosizione(cantoIndex).isNotEmpty()) {
-                            result.second?.find {
-                                it.id == Integer.parseInt(
-                                        lista.getCantoPosizione(cantoIndex))
-                            }?.let {
-                                list.add(
+                    listaPersonalizzata?.let { lista ->
+                        for (cantoIndex in 0 until lista.numPosizioni) {
+                            val list = ArrayList<PosizioneItem>()
+                            if (lista.getCantoPosizione(cantoIndex).isNotEmpty()) {
+                                result.second?.find {
+                                    it.id == Integer.parseInt(
+                                        lista.getCantoPosizione(cantoIndex)
+                                    )
+                                }?.let {
+                                    list.add(
                                         posizioneItem {
-                                            withTitle(LUtils.getResId(it.titolo, R.string::class.java))
-                                            withPage(LUtils.getResId(it.pagina, R.string::class.java))
-                                            withSource(LUtils.getResId(it.source, R.string::class.java))
+                                            withTitle(
+                                                LUtils.getResId(
+                                                    it.titolo,
+                                                    R.string::class.java
+                                                )
+                                            )
+                                            withPage(
+                                                LUtils.getResId(
+                                                    it.pagina,
+                                                    R.string::class.java
+                                                )
+                                            )
+                                            withSource(
+                                                LUtils.getResId(
+                                                    it.source,
+                                                    R.string::class.java
+                                                )
+                                            )
                                             withColor(it.color ?: Canto.BIANCO)
                                             withId(it.id)
-                                            withTimestamp("")
+                                            withTimestamp(StringUtils.EMPTY)
                                         })
+                                }
                             }
-                        }
 
-                        val listaResult = listaPersonalizzataItem {
-                            posizioneTitleItem {
-                                titoloPosizione = lista.getNomePosizione(cantoIndex)
-                                idPosizione = cantoIndex
-                                tagPosizione = cantoIndex
+                            val listaResult = listaPersonalizzataItem {
+                                posizioneTitleItem {
+                                    titoloPosizione = lista.getNomePosizione(cantoIndex)
+                                    idPosizione = cantoIndex
+                                    tagPosizione = cantoIndex
+                                }
+                                listItem = list
+                                id = cantoIndex
                             }
-                            listItem = list
-                            id = cantoIndex
-                        }
 
-                        mPosizioniList.add(listaResult)
+                            mPosizioniList.add(listaResult)
+                        }
                     }
+                    mPosizioniList
                 }
-                mPosizioniList
-            }
         }
     }
 

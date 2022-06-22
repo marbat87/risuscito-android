@@ -48,7 +48,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
 
         // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
         val bundle = this.intent.extras
-        htmlContent = bundle?.getString(Utility.HTML_CONTENT) ?: ""
+        htmlContent = bundle?.getString(Utility.HTML_CONTENT).orEmpty()
         speedValue = bundle?.getInt(Utility.SPEED_VALUE) ?: 0
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
         idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0

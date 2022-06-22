@@ -1,6 +1,7 @@
 package it.cammino.risuscito
 
 import android.util.Xml
+import it.cammino.risuscito.utils.StringUtils
 
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
@@ -89,7 +90,7 @@ internal class CantiXmlParser {
     // For the tags title and summary, extracts their text values.
     @Throws(IOException::class, XmlPullParserException::class)
     private fun readText(parser: XmlPullParser): String {
-        var result = ""
+        var result = StringUtils.EMPTY
         if (parser.next() == XmlPullParser.TEXT) {
             result = parser.text
             parser.nextTag()

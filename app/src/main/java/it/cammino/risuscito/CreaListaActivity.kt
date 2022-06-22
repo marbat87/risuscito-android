@@ -46,11 +46,11 @@ import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.items.swipeableItem
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.ThemeableActivity
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.getTypedValueResId
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -80,7 +80,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!OSUtils.isNbySamsung()) {
+        if (!OSUtils.isObySamsung()) {
             // Set the transition name, which matches Activity A’s start view transition name, on
             // the root view.
             findViewById<View>(android.R.id.content).transitionName = "shared_element_crealista"
@@ -206,7 +206,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             subscribeUiChanges()
         else {
             if (mCreaListaViewModel.tempTitle.isEmpty())
-                mCreaListaViewModel.tempTitle = intent.extras?.getString(LIST_TITLE) ?: ""
+                mCreaListaViewModel.tempTitle = intent.extras?.getString(LIST_TITLE).orEmpty()
             binding.textFieldTitle.setText(mCreaListaViewModel.tempTitle)
             binding.collapsingToolbarLayout.title = mCreaListaViewModel.tempTitle
             if (mCreaListaViewModel.elementi == null)
@@ -391,7 +391,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             }
         }
 
-        if (celebrazione.getNomePosizione(0).equals("", ignoreCase = true)) {
+        if (celebrazione.getNomePosizione(0).isEmpty()) {
             Snackbar.make(
                 binding.mainContent, R.string.lista_pers_vuota,
                 Snackbar.LENGTH_SHORT
@@ -473,7 +473,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             getString(R.string.generic_removed, item.name?.getText(this@CreaListaActivity)),
             Snackbar.LENGTH_SHORT
         )
-            .setAction(getString(R.string.cancel).uppercase(getSystemLocale(resources))) {
+            .setAction(getString(R.string.cancel).uppercase(resources.systemLocale)) {
                 item.swipedDirection = 0
                 mAdapter.add(position, item)
                 if (position != RecyclerView.NO_POSITION)

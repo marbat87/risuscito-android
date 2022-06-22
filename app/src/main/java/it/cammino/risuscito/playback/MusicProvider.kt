@@ -30,11 +30,11 @@ import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
 import it.cammino.risuscito.ui.RisuscitoApplication
+import it.cammino.risuscito.utils.StringUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.*
 
 @Suppress("unused")
 /**
@@ -166,7 +166,7 @@ class MusicProvider internal constructor(
                         canto.link,
                         R.string::class.java
                     )
-                // altrimenti ci metto il link che sarà un URI
+                    // altrimenti ci metto il link che sarà un URI
                 ) else canto.link
 
                 //controllo se il file è scaricato
@@ -204,7 +204,10 @@ class MusicProvider internal constructor(
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
                         .putString(MediaMetadataCompat.METADATA_KEY_GENRE, "Sacred")
-                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "")
+                        .putString(
+                            MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
+                            StringUtils.EMPTY
+                        )
                         .putString(
                             MediaMetadataCompat.METADATA_KEY_TITLE,
                             mNewBase.resources.getString(

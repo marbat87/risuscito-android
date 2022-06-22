@@ -31,8 +31,8 @@ import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -65,7 +65,11 @@ class SectionedIndexFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = LayoutRecyclerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -86,42 +90,59 @@ class SectionedIndexFragment : Fragment() {
         val itemExpandableExtension = mAdapter.getExpandableExtension()
         itemExpandableExtension.isOnlyOneExpandedItem = true
 
-        mAdapter.onClickListener = { mView: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
-            var consume = false
-            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                mLastClickTime = SystemClock.elapsedRealtime()
-                val intent = Intent(activity, PaginaRenderActivity::class.java)
-                intent.putExtras(bundleOf(Utility.PAGINA to (item as SimpleSubItem).source?.getText(requireContext()), Utility.ID_CANTO to item.id))
-                activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
-                consume = true
-            }
-            consume
-        }
-
-        mAdapter.onLongClickListener = { v: View, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
-            if (item is SimpleSubItem) {
-                mCantiViewModel.idDaAgg = item.id
-                when (mCantiViewModel.tipoLista) {
-                    0 -> mCantiViewModel.popupMenu(this, v, LITURGICO_REPLACE + mCantiViewModel.tipoLista, LITURGICO_REPLACE_2 + mCantiViewModel.tipoLista, listePersonalizzate)
+        mAdapter.onClickListener =
+            { mView: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+                var consume = false
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    val intent = Intent(activity, PaginaRenderActivity::class.java)
+                    intent.putExtras(
+                        bundleOf(
+                            Utility.PAGINA to (item as SimpleSubItem).source?.getText(
+                                requireContext()
+                            ), Utility.ID_CANTO to item.id
+                        )
+                    )
+                    activityViewModel.mLUtils.startActivityWithTransition(intent, mView)
+                    consume = true
                 }
+                consume
             }
-            true
-        }
 
-        mAdapter.onPreClickListener = { _: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
-            if (item is SimpleSubExpandableItem) {
-                Log.i(TAG, "item.position ${item.position}")
-                if (!item.isExpanded) {
-                    if (activityViewModel.isGridLayout)
-                        glm?.scrollToPositionWithOffset(
-                                item.position, 0)
-                    else
-                        llm?.scrollToPositionWithOffset(
-                                item.position, 0)
+        mAdapter.onLongClickListener =
+            { v: View, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+                if (item is SimpleSubItem) {
+                    mCantiViewModel.idDaAgg = item.id
+                    when (mCantiViewModel.tipoLista) {
+                        0 -> mCantiViewModel.popupMenu(
+                            this,
+                            v,
+                            LITURGICO_REPLACE + mCantiViewModel.tipoLista,
+                            LITURGICO_REPLACE_2 + mCantiViewModel.tipoLista,
+                            listePersonalizzate
+                        )
+                    }
                 }
+                true
             }
-            false
-        }
+
+        mAdapter.onPreClickListener =
+            { _: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+                if (item is SimpleSubExpandableItem) {
+                    Log.i(TAG, "item.position ${item.position}")
+                    if (!item.isExpanded) {
+                        if (activityViewModel.isGridLayout)
+                            glm?.scrollToPositionWithOffset(
+                                item.position, 0
+                            )
+                        else
+                            llm?.scrollToPositionWithOffset(
+                                item.position, 0
+                            )
+                    }
+                }
+                false
+            }
 
         if (activityViewModel.isGridLayout) {
             glm = GridLayoutManager(context, if (activityViewModel.hasThreeColumns) 3 else 2)
@@ -156,13 +177,24 @@ class SectionedIndexFragment : Fragment() {
                                 simpleDialogViewModel.handled = true
                                 listePersonalizzate?.let { lista ->
                                     lista[mCantiViewModel.idListaClick]
-                                            .lista?.addCanto((mCantiViewModel.idDaAgg).toString(), mCantiViewModel.idPosizioneClick)
-                                    ListeUtils.updateListaPersonalizzata(this, lista[mCantiViewModel.idListaClick])
+                                        .lista?.addCanto(
+                                            (mCantiViewModel.idDaAgg).toString(),
+                                            mCantiViewModel.idPosizioneClick
+                                        )
+                                    ListeUtils.updateListaPersonalizzata(
+                                        this,
+                                        lista[mCantiViewModel.idListaClick]
+                                    )
                                 }
                             }
                             LITURGICO_REPLACE_2 + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
-                                ListeUtils.updatePosizione(this, mCantiViewModel.idDaAgg, mCantiViewModel.idListaDaAgg, mCantiViewModel.posizioneDaAgg)
+                                ListeUtils.updatePosizione(
+                                    this,
+                                    mCantiViewModel.idDaAgg,
+                                    mCantiViewModel.idListaDaAgg,
+                                    mCantiViewModel.posizioneDaAgg
+                                )
                             }
                         }
                     }
@@ -176,7 +208,9 @@ class SectionedIndexFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch(Dispatchers.IO) { listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all }
+        lifecycleScope.launch(Dispatchers.IO) {
+            listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -194,39 +228,47 @@ class SectionedIndexFragment : Fragment() {
 
             for (i in canti.indices) {
                 mSubItems.add(
-                        simpleSubItem {
-                            setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
-                            setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
-                            setSource = LUtils.getResId(canti[i].source, R.string::class.java)
-                            setColor = canti[i].color
-                            id = canti[i].id
-                            identifier = (i * 1000).toLong()
-                            isHasDivider = !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
-                        }
+                    simpleSubItem {
+                        setTitle = LUtils.getResId(canti[i].titolo, R.string::class.java)
+                        setPage = LUtils.getResId(canti[i].pagina, R.string::class.java)
+                        setSource = LUtils.getResId(canti[i].source, R.string::class.java)
+                        setColor = canti[i].color
+                        id = canti[i].id
+                        identifier = ((canti[i].idIndice * 10000) + canti[i].id).toLong()
+                        isHasDivider =
+                            !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
+                    }
                 )
                 totCanti++
 
                 if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
                     // serve a non mettere il divisore sull'ultimo elemento della lista
                     mCantiViewModel.titoliList.add(
-                            simpleSubExpandableItem {
-                                setTitle = LUtils.getResId(canti[i].nome, R.string::class.java)
-                                totItems = totCanti
-                                onPreItemClickListener = { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
+                        simpleSubExpandableItem {
+                            setTitle = LUtils.getResId(canti[i].nome, R.string::class.java)
+                            totItems = totCanti
+                            onPreItemClickListener =
+                                { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
                                     if (!item.isExpanded) {
                                         if (activityViewModel.isGridLayout)
                                             glm?.scrollToPositionWithOffset(
-                                                    item.position, 0)
+                                                item.position, 0
+                                            )
                                         else
                                             llm?.scrollToPositionWithOffset(
-                                                    item.position, 0)
+                                                item.position, 0
+                                            )
                                     }
                                     false
                                 }
-                                identifier = canti[i].idIndice.toLong()
-                                subItems = mSubItems
-                                subItems.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubItem)?.title?.getText(requireContext()) })
-                            }
+                            id = canti[i].idIndice
+                            subItems = mSubItems
+                            subItems.sortWith(compareBy(Collator.getInstance(resources.systemLocale)) {
+                                (it as? SimpleSubItem)?.title?.getText(
+                                    requireContext()
+                                )
+                            })
+                        }
                     )
                     mSubItems = LinkedList()
                     totCanti = 0
@@ -236,7 +278,9 @@ class SectionedIndexFragment : Fragment() {
 
         var totListe = 0
 //        mCantiViewModel.titoliList.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) })
-        mCantiViewModel.titoliList.forEach { (it as? SimpleSubExpandableItem)?.position = totListe++ }
+        mCantiViewModel.titoliList.forEach {
+            (it as? SimpleSubExpandableItem)?.position = totListe++
+        }
         mAdapter.set(mCantiViewModel.titoliList)
         mAdapter.withSavedInstanceState(savedInstanceState)
     }

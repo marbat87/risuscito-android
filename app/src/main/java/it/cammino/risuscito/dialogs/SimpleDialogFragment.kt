@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.capitalize
 import java.io.Serializable
 
@@ -191,7 +192,7 @@ class SimpleDialogFragment : DialogFragment() {
     }
 
     class DialogViewModel : ViewModel() {
-        var mTag: String = ""
+        var mTag: String = StringUtils.EMPTY
         var handled = true
         val state = MutableLiveData<DialogState<SimpleDialogFragment>>()
     }

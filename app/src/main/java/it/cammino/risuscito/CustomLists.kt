@@ -40,9 +40,9 @@ import it.cammino.risuscito.dialogs.InputTextDialogFragment
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.Animations
-import it.cammino.risuscito.ui.LocaleManager.Companion.getSystemLocale
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.getTypedValueResId
+import it.cammino.risuscito.utils.systemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -262,7 +262,7 @@ class CustomLists : AccountMenuFragment() {
                                 inputdialogViewModel.handled = true
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
                                 mMainActivity?.let { act ->
-                                    if (OSUtils.isNbySamsung()) {
+                                    if (OSUtils.isObySamsung()) {
                                         startListEditForResult.launch(
                                             Intent(
                                                 act,
@@ -409,7 +409,7 @@ class CustomLists : AccountMenuFragment() {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
                     mMainActivity?.let { act ->
-                        if (OSUtils.isNbySamsung()) {
+                        if (OSUtils.isObySamsung()) {
                             startListEditForResult.launch(
                                 Intent(
                                     act,
@@ -510,7 +510,7 @@ class CustomLists : AccountMenuFragment() {
                 Snackbar.LENGTH_LONG
             )
                 .setAction(
-                    getString(R.string.cancel).uppercase(getSystemLocale(resources))
+                    getString(R.string.cancel).uppercase(resources.systemLocale)
                 ) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                         mLastClickTime = SystemClock.elapsedRealtime()

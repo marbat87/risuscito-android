@@ -2,13 +2,9 @@
 
 package it.cammino.risuscito.utils
 
-import android.content.Context
-import android.content.res.Resources
-import android.util.TypedValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
-import it.cammino.risuscito.ui.LocaleManager
 
 /**
  * This function creates a [LiveData] of a [Pair] of the two types provided. The resulting LiveData is updated whenever either input LiveData updates and both LiveData have updated to a non-null value at least once before.
@@ -174,26 +170,4 @@ fun <A, B> MediatorLiveData<A>.bidiMap(
             }
         }
     }
-}
-
-fun String.capitalize(res: Resources): String {
-    return this.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(
-            LocaleManager.getSystemLocale(res)
-        ) else it.toString()
-    }
-}
-
-fun CharSequence.capitalize(res: Resources): String {
-    return this.toString().replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(
-            LocaleManager.getSystemLocale(res)
-        ) else it.toString()
-    }
-}
-
-fun Context.getTypedValueResId(resId: Int): Int {
-    val outTypedValue = TypedValue()
-    theme.resolveAttribute(resId, outTypedValue, true)
-    return outTypedValue.resourceId
 }

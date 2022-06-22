@@ -18,7 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.select.SelectExtension
@@ -219,7 +220,7 @@ class HistoryFragment : AccountMenuFragment() {
                     try {
                         selectExtension?.deselect()
                     } catch (e: Exception) {
-                        FirebaseCrashlytics.getInstance().recordException(e)
+                        Firebase.crashlytics.recordException(e)
                     }
                 }
                 mMainActivity?.destroyActionMode()

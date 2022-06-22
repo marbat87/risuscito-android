@@ -31,7 +31,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.michaelflisar.changelog.ChangelogBuilder
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
@@ -42,10 +43,7 @@ import it.cammino.risuscito.dialogs.DialogState
 import it.cammino.risuscito.dialogs.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.AccountMenuFragment
-import it.cammino.risuscito.ui.LocaleManager
-import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.ThemeUtils
+import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -166,7 +164,7 @@ class Risuscito : AccountMenuFragment() {
             .withOkButtonLabel(getString(R.string.ok)) // provide a custom ok button text if desired, default one is "OK"
             .buildAndShowDialog(
                 mMainActivity,
-                ThemeUtils.isDarkMode(requireContext())
+                requireContext().isDarkMode
             ) // second parameter defines, if the dialog has a dark or light theme
 
         if (!OSUtils.hasQ())
@@ -184,10 +182,10 @@ class Risuscito : AccountMenuFragment() {
             inputStream.close()
         } catch (e: XmlPullParserException) {
             Log.e(TAG, "Error:", e)
-            FirebaseCrashlytics.getInstance().recordException(e)
+            Firebase.crashlytics.recordException(e)
         } catch (e: IOException) {
             Log.e(TAG, "Error:", e)
-            FirebaseCrashlytics.getInstance().recordException(e)
+            Firebase.crashlytics.recordException(e)
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -366,7 +364,7 @@ class Risuscito : AccountMenuFragment() {
                     for (aText in mViewModel.aTexts) {
                         if (!isActive) return@launch
 
-                        if (aText[0] == null || aText[0].equals("", ignoreCase = true)) break
+                        if (aText[0] == null || aText[0].isNullOrEmpty()) break
 
                         var found = true
                         for (word in words) {
@@ -374,7 +372,7 @@ class Risuscito : AccountMenuFragment() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.lowercase(LocaleManager.getSystemLocale(resources))
+                                text = text.lowercase(resources.systemLocale)
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -384,26 +382,21 @@ class Risuscito : AccountMenuFragment() {
                         if (found) {
                             Log.d(tag, "aText[0]: ${aText[0]}")
                             mViewModel.titoli
-                                .filter { (aText[0] ?: "") == it.undecodedSource }
+                                .filter { (aText[0].orEmpty()) == it.undecodedSource }
                                 .forEach {
                                     if (!isActive) return@launch
-                                    titoliResult.add(it.apply { filter = "" })
+                                    titoliResult.add(it.apply { filter = StringUtils.EMPTY })
                                 }
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).lowercase(
-                        LocaleManager.getSystemLocale(
-                            resources
-                        )
-                    )
+                    val stringa = Utility.removeAccents(s).lowercase(resources.systemLocale)
                     Log.d(tag, "performSearch onTextChanged: stringa $stringa")
                     mViewModel.titoli
                         .filter {
                             Utility.removeAccents(
-                                it.title?.getText(requireContext())
-                                    ?: ""
-                            ).lowercase(LocaleManager.getSystemLocale(resources)).contains(stringa)
+                                it.title?.getText(requireContext()).orEmpty()
+                            ).lowercase(resources.systemLocale).contains(stringa)
                         }
                         .forEach {
                             if (!isActive) return@launch
@@ -414,9 +407,7 @@ class Risuscito : AccountMenuFragment() {
                     cantoAdapter.set(
                         titoliResult.sortedWith(
                             compareBy(
-                                Collator.getInstance(
-                                    LocaleManager.getSystemLocale(resources)
-                                )
+                                Collator.getInstance(resources.systemLocale)
                             ) { it.title?.getText(requireContext()) })
                     )
                     binding.searchProgress.isVisible = false
@@ -439,11 +430,7 @@ class Risuscito : AccountMenuFragment() {
         mViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mViewModel.titoli =
                 canti.sortedWith(compareBy(
-                    Collator.getInstance(
-                        LocaleManager.getSystemLocale(
-                            resources
-                        )
-                    )
+                    Collator.getInstance(resources.systemLocale)
                 ) {
                     it.title?.getText(requireContext())
                 })
