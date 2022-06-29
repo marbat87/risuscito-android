@@ -57,16 +57,14 @@ For example for French, the new folder will be called **values-fr**.
 Below a little explanation of files that need to be translated.
 
 **IMPORTANT**: For all files ONLY TAG CONTENTS must be translated, not tag names.
+ 
+1. **LINK.XML** --> It contains the links to the records. For each song, you must put inside each tag, the link to the ONLINE record. If it's not present you can leave the TAG empty (like the UK and EN versions)
+ 
+2. **NOMI_LITURGICI.XML** --> It contains the name of the sections of Liturgic Index (for example some liturgic periods)
+ 
+3. **PAGINE.XML** --> It contains the pages of the songs in your version of the songbook.
 
-1. **ARGOMENTI.XML** --> it contains the titles of the arguments of songs
- 
-2. **LINK.XML** --> It contains the links to the records. For each song, you must put inside each tag, the link to the ONLINE record. If it's not present you can leave the TAG empty (like the UK and EN versions)
- 
-3. **NOMI_LITURGICI.XML** --> It contains the name of some liturgic periods
- 
-4. **PAGINE.XML** --> It contains the pages of the songs in your version of the songbook.
-
-5. **SALMI.XML** --> It contains the titles of all psalms with a corresponding song in the Risuscito songbook
+4. **INDICE_BIBLICO.XML** --> It contains the songs titles used in Biblic Index (those with the bible reference ad the beginning)
  
 6. **SORGENTI.XML** --> It contains the names of the HTM files with the song texts. They correspond  to the files inside the raw folder. If a song is not translated, you must put the value **no_canto** in the corresponding tag (see examples in [values-uk/sorgenti.xml](app/src/main/res/values-uk/sorgenti.xml) file)
  
