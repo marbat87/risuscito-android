@@ -8,13 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
+import com.google.android.material.color.MaterialColors
 import com.vansuita.materialabout.builder.AboutBuilder
 import it.cammino.risuscito.Utility.CLICK_DELAY
 import it.cammino.risuscito.databinding.AboutLayoutBinding
 import it.cammino.risuscito.ui.AccountMenuFragment
 import it.cammino.risuscito.ui.Animations
 import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.isDarkMode
 
 
 class AboutFragment : AccountMenuFragment() {
@@ -77,6 +77,10 @@ class AboutFragment : AccountMenuFragment() {
                 setAppName(R.string.app_name)
                 setPhoto(R.drawable.ic_brand_icon)
                 setCover(R.mipmap.profile_cover)
+                backgroundColor = MaterialColors.getColor(
+                    requireContext(), android.R.attr.colorBackground,
+                    TAG
+                )
                 linksColumnsCount = 1
                 addEmailLink("marbat87@outlook.it", getString(R.string.app_name), null)
                 addFiveStarsAction(BuildConfig.APPLICATION_ID)
@@ -87,8 +91,6 @@ class AboutFragment : AccountMenuFragment() {
                 addChangeLogAction(mChangeLogClickListener)
                 addPrivacyPolicyAction("https://marbat87.altervista.org/privacy_policy.html")
                 isShowAsCard = false
-                backgroundColor =
-                    if (it.isDarkMode) R.color.md_theme_dark_surface else R.color.md_theme_light_surface
             }
             val builderView = builder.build()
             builderView.findItem(builder.lastLink).findViewById<AppCompatImageView>(R.id.icon)
@@ -106,6 +108,10 @@ class AboutFragment : AccountMenuFragment() {
                 .setImageResource(R.drawable.policy_24px)
             binding.about.addView(builderView)
         }
+    }
+
+    companion object {
+        private val TAG = AboutFragment::class.java.canonicalName
     }
 
 }
