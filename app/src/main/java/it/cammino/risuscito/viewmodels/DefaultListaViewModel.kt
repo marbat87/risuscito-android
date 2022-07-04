@@ -4,7 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import it.cammino.risuscito.Utility
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.pojo.Posizione
 

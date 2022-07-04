@@ -11,7 +11,7 @@ import com.mikepenz.fastadapter.ISubItem
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.utils.Utility.helperSetString
 
 fun simpleSubExpandableItem(block: SimpleSubExpandableItem.() -> Unit): SimpleSubExpandableItem =
     SimpleSubExpandableItem().apply(block)

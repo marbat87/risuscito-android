@@ -36,7 +36,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
-import it.cammino.risuscito.PaginaRenderActivity
+import it.cammino.risuscito.ui.activity.PaginaRenderActivity
 import it.cammino.risuscito.R
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils

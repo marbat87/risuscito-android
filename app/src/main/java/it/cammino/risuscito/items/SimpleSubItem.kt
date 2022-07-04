@@ -10,8 +10,8 @@ import com.mikepenz.fastadapter.IExpandable
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility.helperSetColor
-import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.utils.Utility.helperSetColor
+import it.cammino.risuscito.utils.Utility.helperSetString
 
 fun simpleSubItem(block: SimpleSubItem.() -> Unit): SimpleSubItem = SimpleSubItem().apply(block)
 

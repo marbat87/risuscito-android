@@ -1,7 +1,7 @@
 package it.cammino.risuscito.database
 
 import androidx.room.TypeConverter
-import it.cammino.risuscito.ListaPersonalizzata
+import it.cammino.risuscito.objects.ListaPersonalizzata
 import java.sql.Date
 
 @Suppress("unused")

@@ -40,7 +40,7 @@
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup">
         <activity
-            android:name="it.cammino.risuscito.MainActivity"
+            android:name="it.cammino.risuscito.ui.activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting"
             android:windowSoftInputMode="adjustPan">
@@ -50,19 +50,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="it.cammino.risuscito.PaginaRenderActivity"
+            android:name="it.cammino.risuscito.ui.activity.PaginaRenderActivity"
             android:label="" />
         <activity
-            android:name="it.cammino.risuscito.PaginaRenderFullScreen"
+            android:name="it.cammino.risuscito.ui.activity.PaginaRenderFullScreen"
             android:label="" />
         <activity
-            android:name="it.cammino.risuscito.InsertActivity"
+            android:name="it.cammino.risuscito.ui.activity.InsertActivity"
             android:label="" />
         <activity
-            android:name="it.cammino.risuscito.CreaListaActivity"
+            android:name="it.cammino.risuscito.ui.activity.CreaListaActivity"
             android:label="" />
         <activity
-            android:name="it.cammino.risuscito.ChangelogActivity"
+            android:name="it.cammino.risuscito.ui.activity.ChangelogActivity"
             android:label="" />
 
         <provider
@@ -76,7 +76,7 @@
         </provider>
 
         <activity
-            android:name="it.cammino.risuscito.ImportActivity"
+            android:name="it.cammino.risuscito.ui.activity.ImportActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:theme="@style/Risuscito.Theme.Invisibile">

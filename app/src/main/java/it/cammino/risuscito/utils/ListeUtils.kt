@@ -1,22 +1,21 @@
 package it.cammino.risuscito.utils
 
 import android.database.SQLException
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
-import it.cammino.risuscito.CustomLists
-import it.cammino.risuscito.LUtils
+import it.cammino.risuscito.ui.fragment.CustomListsFragment
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.dialogs.SimpleDialogFragment
+import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
+import it.cammino.risuscito.utils.extension.systemLocale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -84,7 +83,7 @@ object ListeUtils {
                     val titoloPresente =
                         withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
                             fragment.resources.getString(
-                                LUtils.getResId(
+                                Utility.getResId(
                                     cantoDao.getCantoById(it)?.titolo.orEmpty(),
                                     R.string::class.java
                                 )
@@ -321,7 +320,7 @@ object ListeUtils {
                         (fragment.getString(R.string.dialog_present_yet)
                                 + " "
                                 + fragment.resources.getString(
-                            LUtils.getResId(
+                            Utility.getResId(
                                 existingTitle,
                                 R.string::class.java
                             )
@@ -470,11 +469,11 @@ object ListeUtils {
                     )
                 }
             } catch (e: SQLException) {
-                activity.setResult(CustomLists.RESULT_KO)
-                finishAfterTransitionWrapper(activity)
+                activity.setResult(CustomListsFragment.RESULT_KO)
+                activity.finishAfterTransitionWrapper()
             }
-            activity.setResult(CustomLists.RESULT_OK)
-            finishAfterTransitionWrapper(activity)
+            activity.setResult(CustomListsFragment.RESULT_OK)
+            activity.finishAfterTransitionWrapper()
         }
     }
 
@@ -496,44 +495,13 @@ object ListeUtils {
                         listaPers
                     )
                 }
-                activity.setResult(CustomLists.RESULT_OK)
-                finishAfterTransitionWrapper(activity)
+                activity.setResult(CustomListsFragment.RESULT_OK)
+                activity.finishAfterTransitionWrapper()
                 return@launch
             }
-            activity.setResult(CustomLists.RESULT_CANCELED)
-            finishAfterTransitionWrapper(activity)
+            activity.setResult(CustomListsFragment.RESULT_CANCELED)
+            activity.finishAfterTransitionWrapper()
             return@launch
-        }
-    }
-
-    //ISSUE in API 21
-    private fun finishAfterTransitionWrapper(activity: AppCompatActivity) {
-        closeKeyboard(activity)
-        if (OSUtils.hasM())
-            activity.finishAfterTransition()
-        else
-            activity.finish()
-    }
-
-    private fun closeKeyboard(activity: AppCompatActivity) {
-        // this will give us the view
-        // which is currently focus
-        // in this layout
-        val view: View? = activity.currentFocus
-
-        // if nothing is currently
-        // focus then this will protect
-        // the app from crash
-        if (view != null) {
-            // now assign the system
-            // service to InputMethodManager
-            val manager: InputMethodManager = activity.getSystemService(
-                AppCompatActivity.INPUT_METHOD_SERVICE
-            ) as InputMethodManager
-            manager
-                .hideSoftInputFromWindow(
-                    view.windowToken, 0
-                )
         }
     }
 

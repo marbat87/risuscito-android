@@ -3,12 +3,9 @@ package it.cammino.risuscito.ui
 import android.content.Context
 import androidx.multidex.MultiDexApplication
 import com.google.android.material.color.DynamicColors
-import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.utils.dynamicColorOptions
-import it.cammino.risuscito.utils.setDefaultNightMode
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import it.cammino.risuscito.utils.LocaleManager
+import it.cammino.risuscito.utils.extension.dynamicColorOptions
+import it.cammino.risuscito.utils.extension.setDefaultNightMode
 
 
 class RisuscitoApplication : MultiDexApplication() {
@@ -19,9 +16,6 @@ class RisuscitoApplication : MultiDexApplication() {
         applicationContext.setDefaultNightMode()
 
         DynamicColors.applyToActivitiesIfAvailable(this, dynamicColorOptions)
-
-        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        GlobalScope.launch(Dispatchers.IO) { mDao.getCantoById(1) }
 
     }
 

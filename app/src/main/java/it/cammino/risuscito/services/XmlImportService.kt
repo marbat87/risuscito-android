@@ -13,9 +13,9 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import it.cammino.risuscito.ListaPersonalizzata
+import it.cammino.risuscito.objects.ListaPersonalizzata
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.utils.StringUtils

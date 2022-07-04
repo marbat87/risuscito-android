@@ -8,8 +8,8 @@ import androidx.core.view.isGone
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility.helperSetColor
-import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.utils.Utility.helperSetColor
+import it.cammino.risuscito.utils.Utility.helperSetString
 import it.cammino.risuscito.databinding.RowItemNotableBinding
 
 fun notableItem(block: NotableItem.() -> Unit): NotableItem = NotableItem().apply(block)

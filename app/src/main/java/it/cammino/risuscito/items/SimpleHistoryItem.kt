@@ -10,10 +10,10 @@ import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility.helperSetColor
-import it.cammino.risuscito.Utility.helperSetString
+import it.cammino.risuscito.utils.Utility.helperSetColor
+import it.cammino.risuscito.utils.Utility.helperSetString
 import it.cammino.risuscito.databinding.RowItemHistoryBinding
-import it.cammino.risuscito.utils.systemLocale
+import it.cammino.risuscito.utils.extension.systemLocale
 import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
