@@ -5,6 +5,7 @@
         date="Settembre 2022"
         versionName="5.1.0">
         <new>Aggiunte le icone ai popup</new>
+        <bugfix>Sistemato il colore di sfondo in alcune schermate</bugfix>
     </release>
 
     <release versionCode="5031"

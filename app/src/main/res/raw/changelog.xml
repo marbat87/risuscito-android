@@ -5,6 +5,7 @@
         date="September 2022"
         versionName="5.1.0">
         <new>Added icons to dialogs</new>
+        <bugfix>Fixed background color in some views</bugfix>
     </release>
 
     <release versionCode="5031"
