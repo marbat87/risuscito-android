@@ -48,19 +48,22 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.squareup.picasso.Picasso
-import it.cammino.risuscito.*
+import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.ui.fragment.*
+import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
-import it.cammino.risuscito.ui.fragment.*
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
@@ -79,8 +82,8 @@ class MainActivity : ThemeableActivity() {
     private lateinit var auth: FirebaseAuth
     private var profileItem: MenuItem? = null
     private var profilePhotoUrl: String = StringUtils.EMPTY
-    private var profileName: String = StringUtils.EMPTY
-    private var profileEmail: String = StringUtils.EMPTY
+    private var profileNameStr: String = StringUtils.EMPTY
+    private var profileEmailStr: String = StringUtils.EMPTY
 
     private lateinit var binding: ActivityMainBinding
 
@@ -197,10 +200,12 @@ class MainActivity : ThemeableActivity() {
                             BACKUP_ASK -> {
                                 simpleDialogViewModel.handled = true
                                 ProgressDialogFragment.show(
-                                    ProgressDialogFragment.Builder(this, BACKUP_RUNNING)
-                                        .title(R.string.backup_running)
-                                        .content(R.string.backup_database)
-                                        .progressIndeterminate(true),
+                                    ProgressDialogFragment.Builder(BACKUP_RUNNING).apply {
+                                        title = R.string.backup_running
+                                        icon = R.drawable.cloud_upload_24px
+                                        content = R.string.backup_database
+                                        progressIndeterminate = true
+                                    },
                                     supportFragmentManager
                                 )
                                 backToHome(false)
@@ -209,10 +214,12 @@ class MainActivity : ThemeableActivity() {
                             RESTORE_ASK -> {
                                 simpleDialogViewModel.handled = true
                                 ProgressDialogFragment.show(
-                                    ProgressDialogFragment.Builder(this, RESTORE_RUNNING)
-                                        .title(R.string.restore_running)
-                                        .content(R.string.restoring_database)
-                                        .progressIndeterminate(true),
+                                    ProgressDialogFragment.Builder(RESTORE_RUNNING).apply {
+                                        title = R.string.restore_running
+                                        icon = R.drawable.cloud_download_24px
+                                        content = R.string.restoring_database
+                                        progressIndeterminate = true
+                                    },
                                     supportFragmentManager
                                 )
                                 backToHome(false)
@@ -753,8 +760,8 @@ class MainActivity : ThemeableActivity() {
             PreferenceManager.getDefaultSharedPreferences(this)
                 .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
         if (signedIn) {
-            profileName = acct?.displayName.orEmpty()
-            profileEmail = acct?.email.orEmpty()
+            profileNameStr = acct?.displayName.orEmpty()
+            profileEmailStr = acct?.email.orEmpty()
             val profilePhoto = acct?.photoUrl
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
@@ -766,8 +773,8 @@ class MainActivity : ThemeableActivity() {
                 profilePhotoUrl = StringUtils.EMPTY
             }
         } else {
-            profileName = StringUtils.EMPTY
-            profileEmail = StringUtils.EMPTY
+            profileNameStr = StringUtils.EMPTY
+            profileEmailStr = StringUtils.EMPTY
             profilePhotoUrl = StringUtils.EMPTY
         }
         updateProfileImage()
@@ -779,12 +786,12 @@ class MainActivity : ThemeableActivity() {
         val listener = View.OnClickListener {
             ProfileDialogFragment.show(
                 ProfileDialogFragment.Builder(
-                    this,
                     PROFILE_DIALOG
-                )
-                    .profileName(profileName)
-                    .profileEmail(profileEmail)
-                    .profileImageSrc(profilePhotoUrl),
+                ).apply {
+                    profileName = profileNameStr
+                    profileEmail = profileEmailStr
+                    profileImageSrc = profilePhotoUrl
+                },
                 supportFragmentManager
             )
         }
@@ -857,21 +864,25 @@ class MainActivity : ThemeableActivity() {
                 when (tag) {
                     BACKUP_ASK -> {
                         title(R.string.gdrive_backup)
+                        icon(R.drawable.cloud_upload_24px)
                         content(R.string.gdrive_backup_content)
                         positiveButton(R.string.backup_confirm)
                     }
                     RESTORE_ASK -> {
                         title(R.string.gdrive_restore)
+                        icon(R.drawable.cloud_download_24px)
                         content(R.string.gdrive_restore_content)
                         positiveButton(R.string.restore_confirm)
                     }
                     SIGNOUT -> {
                         title(R.string.gplus_signout)
+                        icon(R.drawable.person_remove_24px)
                         content(R.string.dialog_acc_disconn_text)
                         positiveButton(R.string.disconnect_confirm)
                     }
                     REVOKE -> {
                         title(R.string.gplus_revoke)
+                        icon(R.drawable.person_off_24px)
                         content(R.string.dialog_acc_revoke_text)
                         positiveButton(R.string.disconnect_confirm)
                     }
@@ -885,9 +896,10 @@ class MainActivity : ThemeableActivity() {
 
     private suspend fun translate() {
         ProgressDialogFragment.show(
-            ProgressDialogFragment.Builder(this, "TRANSLATION")
-                .content(R.string.translation_running)
-                .progressIndeterminate(true),
+            ProgressDialogFragment.Builder(TRANSLATION).apply {
+                content = R.string.translation_running
+                progressIndeterminate = true
+            },
             supportFragmentManager
         )
         intent.removeExtra(CHANGE_LANGUAGE)
@@ -898,7 +910,7 @@ class MainActivity : ThemeableActivity() {
         intent.removeExtra(OLD_LANGUAGE)
         intent.removeExtra(NEW_LANGUAGE)
         try {
-            dismissProgressDialog("TRANSLATION")
+            dismissProgressDialog(TRANSLATION)
         } catch (e: IllegalArgumentException) {
             Log.e(javaClass.name, e.localizedMessage, e)
         }
@@ -919,12 +931,14 @@ class MainActivity : ThemeableActivity() {
             }
 
             dismissProgressDialog(BACKUP_RUNNING)
-            Snackbar.make(
-                binding.mainContent,
-                R.string.gdrive_backup_success,
-                Snackbar.LENGTH_LONG
+            SimpleDialogFragment.show(
+                SimpleDialogFragment.Builder(this, BACKUP_DONE)
+                    .title(R.string.general_message)
+                    .icon(R.drawable.cloud_done_24px)
+                    .content(R.string.gdrive_backup_success)
+                    .positiveButton(R.string.ok),
+                supportFragmentManager
             )
-                .show()
         } catch (e: Exception) {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
             Snackbar.make(
@@ -953,6 +967,7 @@ class MainActivity : ThemeableActivity() {
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(this, RESTART)
                     .title(R.string.general_message)
+                    .icon(R.drawable.cloud_done_24px)
                     .content(R.string.gdrive_restore_success)
                     .positiveButton(R.string.ok),
                 supportFragmentManager
@@ -985,11 +1000,13 @@ class MainActivity : ThemeableActivity() {
         private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val RESTORE_RUNNING = "RESTORE_RUNNING"
         private const val BACKUP_RUNNING = "BACKUP_RUNNING"
+        private const val TRANSLATION = "TRANSLATION"
         private const val BACKUP_ASK = "BACKUP_ASK"
         private const val RESTORE_ASK = "RESTORE_ASK"
         private const val SIGNOUT = "SIGNOUT"
         private const val REVOKE = "REVOKE"
         private const val RESTART = "RESTART"
+        private const val BACKUP_DONE = "BACKUP_DONE"
         private const val RESTORE = "RESTORE"
         private const val OLD_PHOTO_RES = "s96-c"
         private const val NEW_PHOTO_RES = "s400-c"

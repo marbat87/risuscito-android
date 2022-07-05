@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.KeyEvent
 import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -41,25 +40,32 @@ class ListChoiceDialogFragment : DialogFragment() {
             viewModel.state.value = DialogState.Positive(this)
         }
 
-        if (mBuilder.mTitle != 0)
-            dialog.setTitle(mBuilder.mTitle)
+        if (mBuilder.title != 0)
+            dialog.setTitle(mBuilder.title)
 
-        mBuilder.mContent?.let {
-            dialog.setMessage(it)
-        }
-
-        mBuilder.mPositiveButton?.let {
-            dialog.setPositiveButton(it, null)
-        }
-
-        mBuilder.mNegativeButton?.let {
-            dialog.setNegativeButton(it) { _, _ ->
-                viewModel.handled = false
-                viewModel.state.value = DialogState.Negative(this)
+        if (mBuilder.content != 0)
+            context?.let {
+                dialog.setMessage(it.resources.getText(mBuilder.content))
             }
-        }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        if (mBuilder.positiveButton != 0)
+            context?.let {
+                dialog.setPositiveButton(
+                    it.resources.getText(mBuilder.positiveButton).capitalize(it.resources), null
+                )
+            }
+
+        if (mBuilder.negativeButton != 0)
+            context?.let {
+                dialog.setNegativeButton(
+                    it.resources.getText(mBuilder.negativeButton).capitalize(it.resources)
+                ) { _, _ ->
+                    viewModel.handled = false
+                    viewModel.state.value = DialogState.Negative(this)
+                }
+            }
+
+        dialog.setCancelable(mBuilder.canceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false
@@ -81,58 +87,24 @@ class ListChoiceDialogFragment : DialogFragment() {
         super.dismissAllowingStateLoss()
     }
 
-    class Builder(context: AppCompatActivity, internal val mTag: String) : Serializable {
+    class Builder(internal val mTag: String) : Serializable {
 
-        @Transient
-        private val mContext: AppCompatActivity = context
-        internal var mTitle = 0
-        internal var mContent: CharSequence? = null
-        internal var mPositiveButton: CharSequence? = null
-        internal var mNegativeButton: CharSequence? = null
-        internal var mCanceable = false
+        @StringRes
+        var title = 0
 
-        internal var listArrayId: Int = 0
-        internal var initialSelection: Int = -1
+        @StringRes
+        var content: Int = 0
 
-        fun listArrayId(@ArrayRes res: Int): Builder {
-            listArrayId = res
-            return this
-        }
+        @StringRes
+        var positiveButton: Int = 0
 
-        fun initialSelection(sel: Int): Builder {
-            initialSelection = sel
-            return this
-        }
+        @StringRes
+        var negativeButton: Int = 0
+        var canceable = false
 
-        fun title(@StringRes text: Int): Builder {
-            mTitle = text
-            return this
-        }
-
-        fun content(@StringRes content: Int): Builder {
-            mContent = this.mContext.resources.getText(content)
-            return this
-        }
-
-        fun content(content: String): Builder {
-            mContent = content
-            return this
-        }
-
-        fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
-            return this
-        }
-
-        fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
-            return this
-        }
-
-        fun setCanceable(): Builder {
-            mCanceable = true
-            return this
-        }
+        @ArrayRes
+        var listArrayId: Int = 0
+        var initialSelection: Int = -1
 
     }
 

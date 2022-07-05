@@ -42,14 +42,15 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityCreaListaBinding
 import it.cammino.risuscito.databinding.SwipeableItemBinding
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.items.swipeableItem
 import it.cammino.risuscito.objects.ListaPersonalizzata
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.ui.dialog.DialogState
+import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
+import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
 import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.systemLocale
@@ -149,12 +150,13 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             mCreaListaViewModel.positionToRename = position
             InputTextDialogFragment.show(
                 InputTextDialogFragment.Builder(
-                    this, RENAME
-                )
-                    .title(R.string.posizione_rename)
-                    .prefill(item.name?.getText(this).toString())
-                    .positiveButton(R.string.aggiungi_rename)
-                    .negativeButton(R.string.cancel), supportFragmentManager
+                    RENAME
+                ).apply {
+                    title = R.string.posizione_rename
+                    prefill = item.name?.getText(this@CreaListaActivity).toString()
+                    positiveButton = R.string.aggiungi_rename
+                    negativeButton = R.string.cancel
+                }, supportFragmentManager
             )
             true
         }
@@ -196,11 +198,12 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         binding.fabCreaLista.setOnClickListener {
             InputTextDialogFragment.show(
                 InputTextDialogFragment.Builder(
-                    this, ADD_POSITION
-                )
-                    .title(R.string.posizione_add_desc)
-                    .positiveButton(R.string.aggiungi_confirm)
-                    .negativeButton(R.string.cancel), supportFragmentManager
+                    ADD_POSITION
+                ).apply {
+                    title = R.string.posizione_add_desc
+                    positiveButton = R.string.aggiungi_confirm
+                    negativeButton = R.string.cancel
+                }, supportFragmentManager
             )
         }
 
@@ -283,7 +286,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             SAVE_LIST -> {
                                 simpleDialogViewModel.handled = true
                                 setResult(RESULT_CANCELED)
-                               finishAfterTransitionWrapper()
+                                finishAfterTransitionWrapper()
                             }
                         }
                     }

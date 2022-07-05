@@ -52,15 +52,15 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.databinding.ActivityPaginaRenderBinding
+import it.cammino.risuscito.playback.MusicService
+import it.cammino.risuscito.ui.InitialScrollWebClient
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.playback.MusicService
-import it.cammino.risuscito.ui.InitialScrollWebClient
+import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
-import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.utils.Utility.getExternalLink
 import it.cammino.risuscito.utils.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.utils.Utility.mediaScan
@@ -723,6 +723,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                             this, SAVE_TAB
                         )
                             .title(R.string.dialog_save_tab_title)
+                            .icon(R.drawable.save_24px)
                             .content(R.string.dialog_save_tab)
                             .positiveButton(R.string.save_exit_confirm)
                             .negativeButton(R.string.discard_exit_confirm),
@@ -970,6 +971,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     this, SAVE_TAB
                 )
                     .title(R.string.dialog_save_tab_title)
+                    .icon(R.drawable.save_24px)
                     .content(R.string.dialog_save_tab)
                     .positiveButton(R.string.save_exit_confirm)
                     .negativeButton(R.string.discard_exit_confirm),
@@ -1248,11 +1250,14 @@ class PaginaRenderActivity : ThemeableActivity() {
         if ((isExternal && Utility.isExternalStorageWritable) || !isExternal) {
             val localFilePath = this.filesDir.toString() + "/" + Utility.filterMediaLink(url)
             ProgressDialogFragment.show(
-                ProgressDialogFragment.Builder(this, DOWNLOAD_MP3)
-                    .content(R.string.download_running)
-                    .progressIndeterminate(false)
-                    .progressMax(100)
-                    .positiveButton(R.string.cancel),
+                ProgressDialogFragment.Builder(DOWNLOAD_MP3).apply {
+                    title = R.string.save_file
+                    content = R.string.download_running
+                    icon = R.drawable.file_download_24px
+                    progressIndeterminate = false
+                    progressMax = 100
+                    positiveButton = R.string.cancel
+                },
                 supportFragmentManager
             )
             lifecycleScope.launch(Dispatchers.IO) {
@@ -1812,6 +1817,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 this, DELETE_MP3
                             )
                                 .title(R.string.dialog_delete_mp3_title)
+                                .icon(R.drawable.delete_24px)
                                 .content(R.string.dialog_delete_mp3)
                                 .positiveButton(R.string.delete_confirm)
                                 .negativeButton(R.string.cancel),
@@ -1823,6 +1829,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 this, DELETE_LINK
                             )
                                 .title(R.string.dialog_delete_link_title)
+                                .icon(R.drawable.link_off_24px)
                                 .content(R.string.dialog_delete_link)
                                 .positiveButton(R.string.unlink_confirm)
                                 .negativeButton(R.string.cancel),
@@ -1838,6 +1845,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                             this, DOWNLINK_CHOOSE
                         )
                             .title(R.string.save_file)
+                            .icon(R.drawable.file_download_24px)
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
                             .negativeButton(R.string.cancel),
@@ -1852,6 +1860,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                             this, ONLY_LINK
                         )
                             .title(R.string.only_link_title)
+                            .icon(R.drawable.add_link_24px)
                             .content(R.string.only_link)
                             .positiveButton(R.string.associate_confirm)
                             .negativeButton(R.string.cancel),
@@ -1878,10 +1887,13 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private suspend fun exportPdf() {
         ProgressDialogFragment.show(
-            ProgressDialogFragment.Builder(this, EXPORT_PDF)
-                .content(R.string.export_running)
-                .progressIndeterminate(true)
-                .setCanceable(),
+            ProgressDialogFragment.Builder(EXPORT_PDF).apply {
+                title = R.string.action_exp_pdf
+                icon = R.drawable.picture_as_pdf_24px
+                content = R.string.export_running
+                progressIndeterminate = true
+                canceable = true
+            },
             supportFragmentManager
         )
         val pdfOutput = PdfExporter(this).exportPdf(htmlContent)

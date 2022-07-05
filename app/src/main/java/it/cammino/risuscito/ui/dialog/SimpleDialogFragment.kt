@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.KeyEvent
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -39,8 +40,8 @@ class SimpleDialogFragment : DialogFragment() {
         if (mBuilder.mTitle != 0)
             dialog.setTitle(mBuilder.mTitle)
 
-//        if (!mBuilder.mAutoDismiss)
-//            dialog.noAutoDismiss()
+        if (mBuilder.mIcon != 0)
+            dialog.setIcon(mBuilder.mIcon)
 
         mBuilder.mContent?.let {
             dialog.setMessage(it)
@@ -61,10 +62,6 @@ class SimpleDialogFragment : DialogFragment() {
                 viewModel.state.value = DialogState.Negative(this)
             }
         }
-
-//        if (mBuilder.mCustomView != 0) {
-//            dialog.customView(mBuilder.mCustomView)
-//        }
 
         dialog.setCancelable(mBuilder.mCanceable)
 
@@ -107,17 +104,20 @@ class SimpleDialogFragment : DialogFragment() {
         @Transient
         private val mContext: AppCompatActivity = context
         internal var mTitle = 0
+        internal var mIcon = 0
         internal var mContent: CharSequence? = null
         internal var mPositiveButton: CharSequence? = null
         internal var mNegativeButton: CharSequence? = null
         internal var mCanceable = false
-
-        //        internal var mAutoDismiss = true
         internal var mCanceListener = false
-//        internal var mCustomView = 0
 
         fun title(@StringRes text: Int): Builder {
             mTitle = text
+            return this
+        }
+
+        fun icon(@DrawableRes text: Int): Builder {
+            mIcon = text
             return this
         }
 
@@ -150,16 +150,6 @@ class SimpleDialogFragment : DialogFragment() {
             mCanceable = true
             return this
         }
-
-//        fun setAutoDismiss(autoDismiss: Boolean): Builder {
-//            mAutoDismiss = autoDismiss
-//            return this
-//        }
-
-//        fun setCustomView(@LayoutRes customView: Int): Builder {
-//            mCustomView = customView
-//            return this
-//        }
 
     }
 

@@ -29,11 +29,12 @@ import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.LayoutHistoryBinding
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.ui.activity.PaginaRenderActivity
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.ui.dialog.DialogState
+import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.hasThreeColumns
 import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
@@ -172,6 +173,7 @@ class HistoryFragment : AccountMenuFragment() {
                                     act, RESET_HISTORY
                                 )
                                     .title(R.string.dialog_reset_history_title)
+                                    .icon(R.drawable.clear_all_24px)
                                     .content(R.string.dialog_reset_history_desc)
                                     .positiveButton(R.string.clear_confirm)
                                     .negativeButton(R.string.cancel),

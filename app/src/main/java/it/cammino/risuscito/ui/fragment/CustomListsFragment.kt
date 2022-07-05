@@ -42,7 +42,8 @@ import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.slideInRight
 import it.cammino.risuscito.utils.extension.systemLocale
@@ -383,6 +384,7 @@ class CustomListsFragment : AccountMenuFragment() {
                                 mActivity, RESET_LIST
                             )
                                 .title(R.string.dialog_reset_list_title)
+                                .icon(R.drawable.cleaning_services_24px)
                                 .content(R.string.reset_list_question)
                                 .positiveButton(R.string.reset_confirm)
                                 .negativeButton(R.string.cancel),
@@ -396,11 +398,12 @@ class CustomListsFragment : AccountMenuFragment() {
                         closeFabMenu()
                         InputTextDialogFragment.show(
                             InputTextDialogFragment.Builder(
-                                mActivity, NEW_LIST
-                            )
-                                .title(R.string.lista_add_desc)
-                                .positiveButton(R.string.create_confirm)
-                                .negativeButton(R.string.cancel), mActivity.supportFragmentManager
+                                NEW_LIST
+                            ).apply {
+                                title = R.string.lista_add_desc
+                                positiveButton = R.string.create_confirm
+                                negativeButton = R.string.cancel
+                            }, mActivity.supportFragmentManager
                         )
                     }
                     true
@@ -493,6 +496,7 @@ class CustomListsFragment : AccountMenuFragment() {
                     DELETE_LIST
                 )
                     .title(R.string.action_remove_list)
+                    .icon(R.drawable.delete_24px)
                     .content(R.string.delete_list_dialog)
                     .positiveButton(R.string.delete_confirm)
                     .negativeButton(R.string.cancel),

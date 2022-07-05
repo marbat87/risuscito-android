@@ -5,15 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
-import it.cammino.risuscito.ui.fragment.CustomListsFragment
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.ui.fragment.CustomListsFragment
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
 import it.cammino.risuscito.utils.extension.systemLocale
 import kotlinx.coroutines.Dispatchers
@@ -104,6 +104,7 @@ object ListeUtils {
                             replaceTag
                         )
                             .title(R.string.dialog_replace_title)
+                            .icon(R.drawable.find_replace_24px)
                             .content(sb.toString())
                             .positiveButton(R.string.replace_confirm)
                             .negativeButton(R.string.cancel),
@@ -316,6 +317,7 @@ object ListeUtils {
                     replaceTag
                 )
                     .title(R.string.dialog_replace_title)
+                    .icon(R.drawable.find_replace_24px)
                     .content(
                         (fragment.getString(R.string.dialog_present_yet)
                                 + " "

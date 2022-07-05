@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -40,30 +39,39 @@ class InputTextDialogFragment : DialogFragment() {
         val mView = layoutInflater.inflate(R.layout.input_search, null, false)
         dialog.setView(mView)
         val input = mView.findViewById<TextInputEditText>(R.id.input_text)
-        input.setText(mBuilder.mPrefill ?: StringUtils.EMPTY)
+        if (mBuilder.prefill.isNotEmpty())
+            input.setText(mBuilder.prefill)
         input.selectAll()
 
-        if (mBuilder.mTitle != 0)
-            dialog.setTitle(mBuilder.mTitle)
+        if (mBuilder.title != 0)
+            dialog.setTitle(mBuilder.title)
 
-        mBuilder.mPositiveButton?.let {
-            dialog.setPositiveButton(it) { _, _ ->
-                viewModel.mTag = mBuilder.mTag
-                viewModel.outputText = input.text.toString()
-                viewModel.handled = false
-                viewModel.state.value = DialogState.Positive(this)
+        if (mBuilder.positiveButton != 0)
+            context?.let {
+                dialog.setPositiveButton(
+                    it.resources.getText(mBuilder.positiveButton)
+                        .capitalize(it.resources)
+                ) { _, _ ->
+                    viewModel.mTag = mBuilder.mTag
+                    viewModel.outputText = input.text.toString()
+                    viewModel.handled = false
+                    viewModel.state.value = DialogState.Positive(this)
+                }
             }
-        }
 
-        mBuilder.mNegativeButton?.let {
-            dialog.setNegativeButton(it) { _, _ ->
-                viewModel.mTag = mBuilder.mTag
-                viewModel.handled = false
-                viewModel.state.value = DialogState.Negative(this)
+        if (mBuilder.negativeButton != 0)
+            context?.let {
+                dialog.setNegativeButton(
+                    it.resources.getText(mBuilder.negativeButton)
+                        .capitalize(it.resources)
+                ) { _, _ ->
+                    viewModel.mTag = mBuilder.mTag
+                    viewModel.handled = false
+                    viewModel.state.value = DialogState.Negative(this)
+                }
             }
-        }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        dialog.setCancelable(mBuilder.canceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false
@@ -81,47 +89,18 @@ class InputTextDialogFragment : DialogFragment() {
         dialog?.cancel()
     }
 
-    class Builder(context: AppCompatActivity, val mTag: String) : Serializable {
-
-        @Transient
-        private val mContext: AppCompatActivity = context
+    class Builder(val mTag: String) : Serializable {
 
         @StringRes
-        var mTitle = 0
-        var mPositiveButton: CharSequence? = null
-        var mNegativeButton: CharSequence? = null
-        var mCanceable = false
-        var mPrefill: CharSequence? = null
+        var title = 0
 
-        fun title(@StringRes text: Int): Builder {
-            mTitle = text
-            return this
-        }
+        @StringRes
+        var positiveButton: Int = 0
 
-        fun prefill(@StringRes text: Int): Builder {
-            mPrefill = this.mContext.resources.getText(text)
-            return this
-        }
-
-        fun prefill(text: String): Builder {
-            mPrefill = text
-            return this
-        }
-
-        fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
-            return this
-        }
-
-        fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
-            return this
-        }
-
-        fun setCanceable(canceable: Boolean): Builder {
-            mCanceable = canceable
-            return this
-        }
+        @StringRes
+        var negativeButton: Int = 0
+        var canceable = false
+        var prefill: String = StringUtils.EMPTY
 
     }
 

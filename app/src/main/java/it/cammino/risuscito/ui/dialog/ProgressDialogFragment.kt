@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -46,47 +47,61 @@ class ProgressDialogFragment : DialogFragment() {
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
 
-        if (mBuilder.mTitle != 0)
-            dialog.setTitle(mBuilder.mTitle)
+        if (mBuilder.title != 0)
+            dialog.setTitle(mBuilder.title)
 
-        mBuilder.mPositiveButton?.let {
-            dialog.setPositiveButton(it) { _, _ ->
-                viewModel.mTag = mBuilder.mTag
-                viewModel.handled = false
-                viewModel.state.value = DialogState.Positive(this)
+        if (mBuilder.icon != 0)
+            dialog.setIcon(mBuilder.icon)
+
+        if (mBuilder.positiveButton != 0)
+            context?.let {
+                dialog.setPositiveButton(
+                    it.resources.getText(mBuilder.positiveButton)
+                        .capitalize(it.resources)
+                ) { _, _ ->
+                    viewModel.mTag = mBuilder.mTag
+                    viewModel.handled = false
+                    viewModel.state.value = DialogState.Positive(this)
+                }
             }
-        }
 
-        mBuilder.mNegativeButton?.let {
-            dialog.setNegativeButton(it) { _, _ ->
-                viewModel.mTag = mBuilder.mTag
-                viewModel.handled = false
-                viewModel.state.value = DialogState.Positive(this)
+
+        if (mBuilder.negativeButton != 0)
+            context?.let {
+                dialog.setNegativeButton(
+                    it.resources.getText(mBuilder.negativeButton)
+                        .capitalize(it.resources)
+                ) { _, _ ->
+                    viewModel.mTag = mBuilder.mTag
+                    viewModel.handled = false
+                    viewModel.state.value = DialogState.Positive(this)
+                }
             }
-        }
 
-        if (mBuilder.mProgressIndeterminate) {
+        val mdContent: TextView?
+
+        if (mBuilder.progressIndeterminate) {
             mView = layoutInflater.inflate(R.layout.indeterminate_progressbar, null, false)
             dialog.setView(mView)
-            val mdContent =
-                mView?.findViewById<TextView>(R.id.md_content_indeterminate)
-            mdContent?.isVisible = mBuilder.mContent != null
-            mdContent?.text = mBuilder.mContent
-                ?: StringUtils.EMPTY
+            mdContent =
+                mView?.findViewById(R.id.md_content_indeterminate)
         } else {
             mView = layoutInflater.inflate(R.layout.linear_progressbar, null, false)
             dialog.setView(mView)
             mView?.findViewById<LinearProgressIndicator>(R.id.working_progress)?.max =
-                mBuilder.mProgressMax
+                mBuilder.progressMax
             mView?.findViewById<TextView>(R.id.md_minMax)?.isVisible =
-                mBuilder.mShowMinMax
-            val mdContent = mView?.findViewById<TextView>(R.id.md_content_linear)
-            mdContent?.isVisible = mBuilder.mContent != null
-            mdContent?.text = mBuilder.mContent
-                ?: StringUtils.EMPTY
+                mBuilder.showMinMax
+            mdContent = mView?.findViewById(R.id.md_content_linear)
         }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        mdContent?.isVisible = mBuilder.content != 0
+        if (mBuilder.content != 0)
+            context?.let {
+                mdContent?.text = it.resources.getText(mBuilder.content)
+            }
+
+        dialog.setCancelable(mBuilder.canceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false
@@ -108,10 +123,10 @@ class ProgressDialogFragment : DialogFragment() {
         mView?.findViewById<LinearProgressIndicator>(R.id.working_progress)?.progress = progress
         mView?.findViewById<TextView>(R.id.md_label)?.text =
             progressPercentFormat.format(
-                progress.toFloat() / (builder?.mProgressMax?.toFloat() ?: Float.MIN_VALUE)
+                progress.toFloat() / (builder?.progressMax?.toFloat() ?: Float.MIN_VALUE)
             )
         mView?.findViewById<TextView>(R.id.md_minMax)?.text =
-            String.format(progressNumberFormat, progress, builder?.mProgressMax)
+            String.format(progressNumberFormat, progress, builder?.progressMax)
     }
 
     fun cancel() {
@@ -122,63 +137,26 @@ class ProgressDialogFragment : DialogFragment() {
         super.dismissAllowingStateLoss()
     }
 
-    class Builder(context: AppCompatActivity, internal val mTag: String) : Serializable {
+    class Builder(internal val mTag: String) : Serializable {
 
-        @Transient
-        private val mContext: AppCompatActivity = context
-        internal var mTitle = 0
-        internal var mProgressIndeterminate: Boolean = false
-        internal var mProgressMax: Int = 0
-        internal var mContent: CharSequence? = null
-        internal var mPositiveButton: CharSequence? = null
-        internal var mNegativeButton: CharSequence? = null
-        internal var mCanceable = false
-        internal var mShowMinMax = false
+        @StringRes
+        var title = 0
 
-        fun title(@StringRes text: Int): Builder {
-            mTitle = text
-            return this
-        }
+        @DrawableRes
+        var icon = 0
+        var progressIndeterminate: Boolean = false
+        var progressMax: Int = 0
 
-        fun content(@StringRes content: Int): Builder {
-            mContent = this.mContext.resources.getText(content)
-            return this
-        }
+        @StringRes
+        var content: Int = 0
 
-        fun content(content: String): Builder {
-            mContent = content
-            return this
-        }
+        @StringRes
+        var positiveButton: Int = 0
 
-        fun progressIndeterminate(progressIndeterminate: Boolean): Builder {
-            mProgressIndeterminate = progressIndeterminate
-            return this
-        }
-
-        fun progressMax(progressMax: Int): Builder {
-            mProgressMax = progressMax
-            return this
-        }
-
-        fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
-            return this
-        }
-
-        fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
-            return this
-        }
-
-        fun setCanceable(): Builder {
-            mCanceable = true
-            return this
-        }
-
-        fun showMinMax(): Builder {
-            mShowMinMax = true
-            return this
-        }
+        @StringRes
+        var negativeButton: Int = 0
+        var canceable = false
+        var showMinMax = false
 
     }
 

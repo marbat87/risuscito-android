@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -43,19 +42,19 @@ class ProfileDialogFragment : DialogFragment() {
         val mView = layoutInflater.inflate(R.layout.profile_dialog_content, null, false)
         dialog.setView(mView)
 
-        if (mBuilder.mProfileName.isNotEmpty())
-            mView.findViewById<TextView>(R.id.profile_name).text = mBuilder.mProfileName
+        if (mBuilder.profileName.isNotEmpty())
+            mView.findViewById<TextView>(R.id.profile_name).text = mBuilder.profileName
 
-        if (mBuilder.mProfileEmail.isNotEmpty())
-            mView.findViewById<TextView>(R.id.profile_email).text = mBuilder.mProfileEmail
+        if (mBuilder.profileEmail.isNotEmpty())
+            mView.findViewById<TextView>(R.id.profile_email).text = mBuilder.profileEmail
 
-        if (mBuilder.mProfileImageSrc.isEmpty())
+        if (mBuilder.profileImageSrc.isEmpty())
             mView.findViewById<ShapeableImageView>(R.id.profile_icon)
                 ?.setImageResource(R.drawable.account_circle_56px)
         else {
             AppCompatResources.getDrawable(mView.context, R.drawable.account_circle_56px)
                 ?.let {
-                    Picasso.get().load(mBuilder.mProfileImageSrc)
+                    Picasso.get().load(mBuilder.profileImageSrc)
                         .placeholder(it)
                         .into(mView.findViewById<ShapeableImageView>(R.id.profile_icon))
                 }
@@ -80,7 +79,7 @@ class ProfileDialogFragment : DialogFragment() {
             cancel()
         }
 
-        dialog.setCancelable(mBuilder.mCanceable)
+        dialog.setCancelable(mBuilder.canceable)
 
         dialog.setOnKeyListener { arg0, keyCode, event ->
             var returnValue = false
@@ -98,36 +97,12 @@ class ProfileDialogFragment : DialogFragment() {
         dialog?.cancel()
     }
 
-    class Builder(context: AppCompatActivity, val mTag: String) : Serializable {
+    class Builder(val mTag: String) : Serializable {
 
-        @Transient
-        private val mContext: AppCompatActivity = context
-
-        var mProfileName = StringUtils.EMPTY
-        var mProfileEmail = StringUtils.EMPTY
-        var mProfileImageSrc = StringUtils.EMPTY
-        var mCanceable = false
-        var mPrefill: CharSequence? = null
-
-        fun profileName(text: String): Builder {
-            mProfileName = text
-            return this
-        }
-
-        fun profileEmail(text: String): Builder {
-            mProfileEmail = text
-            return this
-        }
-
-        fun profileImageSrc(text: String): Builder {
-            mProfileImageSrc = text
-            return this
-        }
-
-        fun setCanceable(canceable: Boolean): Builder {
-            mCanceable = canceable
-            return this
-        }
+        var profileName = StringUtils.EMPTY
+        var profileEmail = StringUtils.EMPTY
+        var profileImageSrc = StringUtils.EMPTY
+        var canceable = false
 
     }
 

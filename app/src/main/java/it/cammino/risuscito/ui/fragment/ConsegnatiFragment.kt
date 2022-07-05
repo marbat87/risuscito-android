@@ -38,14 +38,15 @@ import it.cammino.risuscito.database.entities.Consegnato
 import it.cammino.risuscito.databinding.CheckableRowItemBinding
 import it.cammino.risuscito.databinding.LayoutConsegnatiBinding
 import it.cammino.risuscito.databinding.RowItemNotableBinding
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.ListChoiceDialogFragment
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
 import it.cammino.risuscito.ui.activity.PaginaRenderActivity
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.ui.dialog.DialogState
+import it.cammino.risuscito.ui.dialog.ListChoiceDialogFragment
+import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.*
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.coroutines.Dispatchers
@@ -137,6 +138,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
                                     mainActivity, CONFIRM_SAVE
                                 )
                                     .title(R.string.dialog_save_consegnati_title)
+                                    .icon(R.drawable.save_24px)
                                     .content(R.string.dialog_save_consegnati_desc)
                                     .positiveButton(R.string.action_salva)
                                     .negativeButton(R.string.cancel),
@@ -579,13 +581,14 @@ class ConsegnatiFragment : AccountMenuFragment() {
             val prefill = passaggiValues[item.numPassaggio] ?: -1
             ListChoiceDialogFragment.show(
                 ListChoiceDialogFragment.Builder(
-                    activity, ADD_PASSAGE
-                )
-                    .title(R.string.passage_title)
-                    .listArrayId(R.array.passaggi_entries)
-                    .initialSelection(prefill)
-                    .positiveButton(R.string.action_salva)
-                    .negativeButton(R.string.cancel), activity.supportFragmentManager
+                    ADD_PASSAGE
+                ).apply {
+                    title = R.string.passage_title
+                    listArrayId = R.array.passaggi_entries
+                    initialSelection = prefill
+                    positiveButton = R.string.action_salva
+                    negativeButton = R.string.cancel
+                }, activity.supportFragmentManager
             )
         }
     }

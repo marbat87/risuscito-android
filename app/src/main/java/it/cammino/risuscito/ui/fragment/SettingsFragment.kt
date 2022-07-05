@@ -16,11 +16,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
-import it.cammino.risuscito.utils.LocaleManager
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.activity.MainActivity
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
+import it.cammino.risuscito.utils.LocaleManager
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.DEFAULT_INDEX
 import it.cammino.risuscito.utils.Utility.DEFAULT_SEARCH
@@ -130,11 +131,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
             mMainActivity?.let { activity ->
                 ProgressDialogFragment.show(
                     ProgressDialogFragment.Builder(
-                        activity, DOWNLOAD_LANGUAGE
-                    )
-                        .content(R.string.download_running)
-                        .progressIndeterminate(false)
-                        .progressMax(100),
+                        DOWNLOAD_LANGUAGE
+                    ).apply {
+                        content = R.string.download_running
+                        icon = R.drawable.file_download_24px
+                        progressIndeterminate = false
+                        progressMax = 100
+                    },
                     activity.supportFragmentManager
                 )
             }

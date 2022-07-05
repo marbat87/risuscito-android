@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
+    <release versionCode="5100"
+        date="Settembre 2022"
+        versionName="5.1.0">
+        <new>Aggiunte le icone ai popup</new>
+    </release>
+
     <release versionCode="5031"
         date="Giugno 2022"
         versionName="5.0.2">
