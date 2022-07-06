@@ -17,6 +17,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.extension.capitalize
 import java.io.Serializable
 
 @Suppress("unused")
@@ -52,17 +53,25 @@ class SimpleDialogFragment : DialogFragment() {
             dialog.setMessage(mBuilder.stringContent)
 
         if (mBuilder.positiveButton != 0)
-            dialog.setPositiveButton(mBuilder.positiveButton) { _, _ ->
-                viewModel.mTag = mBuilder.mTag
-                viewModel.handled = false
-                viewModel.state.value = DialogState.Positive(this)
+            context?.let {
+                dialog.setPositiveButton(
+                    it.resources.getText(mBuilder.positiveButton).capitalize(it.resources)
+                ) { _, _ ->
+                    viewModel.mTag = mBuilder.mTag
+                    viewModel.handled = false
+                    viewModel.state.value = DialogState.Positive(this)
+                }
             }
 
         if (mBuilder.negativeButton != 0)
-            dialog.setNegativeButton(mBuilder.negativeButton) { _, _ ->
-                viewModel.mTag = mBuilder.mTag
-                viewModel.handled = false
-                viewModel.state.value = DialogState.Negative(this)
+            context?.let {
+                dialog.setNegativeButton(
+                    it.resources.getText(mBuilder.negativeButton).capitalize(it.resources)
+                ) { _, _ ->
+                    viewModel.mTag = mBuilder.mTag
+                    viewModel.handled = false
+                    viewModel.state.value = DialogState.Negative(this)
+                }
             }
 
         dialog.setCancelable(mBuilder.mCanceable)
