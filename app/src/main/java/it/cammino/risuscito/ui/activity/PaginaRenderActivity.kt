@@ -720,7 +720,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 } else {
                     SimpleDialogFragment.show(
                         SimpleDialogFragment.Builder(
-                            this, SAVE_TAB
+                            SAVE_TAB
                         )
                             .title(R.string.dialog_save_tab_title)
                             .icon(R.drawable.save_24px)
@@ -968,7 +968,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         } else {
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(
-                    this, SAVE_TAB
+                    SAVE_TAB
                 )
                     .title(R.string.dialog_save_tab_title)
                     .icon(R.drawable.save_24px)
@@ -988,19 +988,9 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     public override fun onResume() {
         super.onResume()
-
         Log.d(TAG, "onResume: ")
-
         binding.musicControls.isVisible = mCantiViewModel.mostraAudio
-
-        val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
-        // registra un receiver per ricevere la notifica di preparazione della registrazione
-//        mLocalBroadcastManager.registerReceiver(
-//                downloadPosBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_PROGRESS))
-//        mLocalBroadcastManager.registerReceiver(
-//                downloadCompletedBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_COMPLETED))
-//        mLocalBroadcastManager.registerReceiver(downloadErrorBRec, IntentFilter(DownloadService.BROADCAST_DOWNLOAD_ERROR))
-        mLocalBroadcastManager.registerReceiver(
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
             catalogReadyBR,
             IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC)
         )
@@ -1008,11 +998,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     override fun onPause() {
         super.onPause()
-        val mLocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext)
-//        mLocalBroadcastManager.unregisterReceiver(downloadPosBRec)
-//        mLocalBroadcastManager.unregisterReceiver(downloadCompletedBRec)
-//        mLocalBroadcastManager.unregisterReceiver(downloadErrorBRec)
-        mLocalBroadcastManager.unregisterReceiver(catalogReadyBR)
+        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(catalogReadyBR)
     }
 
     public override fun onDestroy() {
@@ -1814,7 +1800,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     if (!url.isNullOrEmpty() && personalUrl.isNullOrEmpty()) {
                         SimpleDialogFragment.show(
                             SimpleDialogFragment.Builder(
-                                this, DELETE_MP3
+                                DELETE_MP3
                             )
                                 .title(R.string.dialog_delete_mp3_title)
                                 .icon(R.drawable.delete_24px)
@@ -1826,7 +1812,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     } else {
                         SimpleDialogFragment.show(
                             SimpleDialogFragment.Builder(
-                                this, DELETE_LINK
+                                DELETE_LINK
                             )
                                 .title(R.string.dialog_delete_link_title)
                                 .icon(R.drawable.link_off_24px)
@@ -1842,7 +1828,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     binding.fabCanti.close()
                     SimpleDialogFragment.show(
                         SimpleDialogFragment.Builder(
-                            this, DOWNLINK_CHOOSE
+                            DOWNLINK_CHOOSE
                         )
                             .title(R.string.save_file)
                             .icon(R.drawable.file_download_24px)
@@ -1857,7 +1843,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     binding.fabCanti.close()
                     SimpleDialogFragment.show(
                         SimpleDialogFragment.Builder(
-                            this, ONLY_LINK
+                            ONLY_LINK
                         )
                             .title(R.string.only_link_title)
                             .icon(R.drawable.add_link_24px)

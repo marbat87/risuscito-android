@@ -167,7 +167,7 @@ class FavoritesFragment : AccountMenuFragment() {
                     when (menuItem.itemId) {
                         R.id.list_reset -> {
                             SimpleDialogFragment.show(
-                                SimpleDialogFragment.Builder(act, FAVORITES_RESET)
+                                SimpleDialogFragment.Builder(FAVORITES_RESET)
                                     .title(R.string.dialog_reset_favorites_title)
                                     .icon(R.drawable.clear_all_24px)
                                     .content(R.string.dialog_reset_favorites_desc)

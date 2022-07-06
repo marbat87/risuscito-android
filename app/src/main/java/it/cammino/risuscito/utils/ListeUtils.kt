@@ -100,7 +100,6 @@ object ListeUtils {
 
                     SimpleDialogFragment.show(
                         SimpleDialogFragment.Builder(
-                            fragment.requireActivity() as AppCompatActivity,
                             replaceTag
                         )
                             .title(R.string.dialog_replace_title)
@@ -313,7 +312,6 @@ object ListeUtils {
                 }
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(
-                    fragment.requireActivity() as AppCompatActivity,
                     replaceTag
                 )
                     .title(R.string.dialog_replace_title)

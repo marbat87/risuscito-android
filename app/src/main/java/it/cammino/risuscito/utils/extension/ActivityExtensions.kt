@@ -29,7 +29,7 @@ import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
-import it.cammino.risuscito.objects.ListaPersonalizzata
+import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package it.cammino.risuscito.objects
+package it.cammino.risuscito
 
 import android.util.Log
 import it.cammino.risuscito.utils.StringUtils

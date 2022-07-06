@@ -44,7 +44,7 @@ import it.cammino.risuscito.databinding.ActivityCreaListaBinding
 import it.cammino.risuscito.databinding.SwipeableItemBinding
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.items.swipeableItem
-import it.cammino.risuscito.objects.ListaPersonalizzata
+import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
@@ -343,7 +343,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                 if (mAdapter.adapterItems.isNotEmpty()) {
                     SimpleDialogFragment.show(
                         SimpleDialogFragment.Builder(
-                            this, SAVE_LIST
+                            SAVE_LIST
                         )
                             .title(R.string.save_list_title)
                             .content(R.string.save_list_question)
@@ -434,7 +434,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         Log.d(TAG, "onBackPressed: ")
         if (mAdapter.adapterItems.isNotEmpty()) {
             SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(this, SAVE_LIST)
+                SimpleDialogFragment.Builder(SAVE_LIST)
                     .title(R.string.save_list_title)
                     .content(R.string.save_list_question)
                     .positiveButton(R.string.save_exit_confirm)

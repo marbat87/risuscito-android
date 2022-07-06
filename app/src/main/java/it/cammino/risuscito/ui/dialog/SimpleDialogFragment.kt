@@ -17,7 +17,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.extension.capitalize
 import java.io.Serializable
 
 @Suppress("unused")
@@ -37,31 +36,34 @@ class SimpleDialogFragment : DialogFragment() {
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
 
-        if (mBuilder.mTitle != 0)
-            dialog.setTitle(mBuilder.mTitle)
+        if (mBuilder.title != 0)
+            dialog.setTitle(mBuilder.title)
+
+        if (mBuilder.stringTitle.isNotEmpty())
+            dialog.setTitle(mBuilder.stringTitle)
 
         if (mBuilder.mIcon != 0)
             dialog.setIcon(mBuilder.mIcon)
 
-        mBuilder.mContent?.let {
-            dialog.setMessage(it)
-        }
+        if (mBuilder.content != 0)
+            dialog.setMessage(mBuilder.content)
 
-        mBuilder.mPositiveButton?.let {
-            dialog.setPositiveButton(it) { _, _ ->
+        if (mBuilder.stringContent.isNotEmpty())
+            dialog.setMessage(mBuilder.stringContent)
+
+        if (mBuilder.positiveButton != 0)
+            dialog.setPositiveButton(mBuilder.positiveButton) { _, _ ->
                 viewModel.mTag = mBuilder.mTag
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Positive(this)
             }
-        }
 
-        mBuilder.mNegativeButton?.let {
-            dialog.setNegativeButton(it) { _, _ ->
+        if (mBuilder.negativeButton != 0)
+            dialog.setNegativeButton(mBuilder.negativeButton) { _, _ ->
                 viewModel.mTag = mBuilder.mTag
                 viewModel.handled = false
                 viewModel.state.value = DialogState.Negative(this)
             }
-        }
 
         dialog.setCancelable(mBuilder.mCanceable)
 
@@ -99,20 +101,33 @@ class SimpleDialogFragment : DialogFragment() {
         }
     }
 
-    class Builder(context: AppCompatActivity, internal val mTag: String) : Serializable {
+    class Builder(internal val mTag: String) : Serializable {
 
-        @Transient
-        private val mContext: AppCompatActivity = context
-        internal var mTitle = 0
+        @StringRes
+        internal var title = 0
+        internal var stringTitle: CharSequence = StringUtils.EMPTY
         internal var mIcon = 0
-        internal var mContent: CharSequence? = null
-        internal var mPositiveButton: CharSequence? = null
-        internal var mNegativeButton: CharSequence? = null
+
+        @StringRes
+        internal var content: Int = 0
+        internal var stringContent: CharSequence = StringUtils.EMPTY
+
+        @StringRes
+        internal var positiveButton: Int = 0
+
+        @StringRes
+        internal var negativeButton: Int = 0
+
         internal var mCanceable = false
         internal var mCanceListener = false
 
         fun title(@StringRes text: Int): Builder {
-            mTitle = text
+            title = text
+            return this
+        }
+
+        fun title(text: String): Builder {
+            stringTitle = text
             return this
         }
 
@@ -122,22 +137,22 @@ class SimpleDialogFragment : DialogFragment() {
         }
 
         fun content(@StringRes content: Int): Builder {
-            mContent = this.mContext.resources.getText(content)
+            this.content = content
             return this
         }
 
         fun content(content: String): Builder {
-            mContent = content
+            this.stringContent = content
             return this
         }
 
         fun positiveButton(@StringRes text: Int): Builder {
-            mPositiveButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
+            positiveButton = text
             return this
         }
 
         fun negativeButton(@StringRes text: Int): Builder {
-            mNegativeButton = this.mContext.resources.getText(text).capitalize(mContext.resources)
+            negativeButton = text
             return this
         }
 

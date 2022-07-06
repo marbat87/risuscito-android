@@ -1,9 +1,6 @@
 package it.cammino.risuscito.ui.activity
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -25,13 +22,13 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -45,6 +42,8 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.squareup.picasso.Picasso
@@ -68,6 +67,7 @@ import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -89,31 +89,6 @@ class MainActivity : ThemeableActivity() {
 
     var actionMode: ActionMode? = null
         private set
-
-    private val nextStepReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.v(TAG, BROADCAST_NEXT_STEP)
-                if (intent.getStringExtra(WHICH) != null) {
-                    val which = intent.getStringExtra(WHICH)
-                    Log.v(TAG, "$BROADCAST_NEXT_STEP: $which")
-                    if (which.equals(RESTORE, ignoreCase = true)) {
-                        val sFragment =
-                            ProgressDialogFragment.findVisible(this@MainActivity, RESTORE_RUNNING)
-                        sFragment?.setContent(R.string.restoring_settings)
-                    } else {
-                        val sFragment =
-                            ProgressDialogFragment.findVisible(this@MainActivity, BACKUP_RUNNING)
-                        sFragment?.setContent(R.string.backup_settings)
-                    }
-                }
-            } catch (e: IllegalArgumentException) {
-                Log.e(TAG, e.localizedMessage, e)
-            }
-
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
@@ -191,6 +166,61 @@ class MainActivity : ThemeableActivity() {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
+        subscribeUiChanges()
+
+        Firebase.messaging.token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            Log.d(TAG, "token ok $token")
+//            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+        })
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val task = mSignInClient?.silentSignIn()
+        task?.let {
+            if (it.isSuccessful) {
+                // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+                // and the GoogleSignInResult will be available instantly.
+                Log.d(TAG, "Got cached sign-in")
+                handleSignInResult(task)
+            } else {
+                // If the user has not previously signed in on this device or the sign-in has expired,
+                // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+                // single sign-on will occur in this branch.
+                showProgressDialog()
+
+                task.addOnCompleteListener { mTask: Task<GoogleSignInAccount> ->
+                    Log.d(TAG, "Reconnected")
+                    handleSignInResult(mTask)
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "ONRESUME")
+        hideProgressDialog()
+
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        binding.fabPager.expansionMode =
+            if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+    }
+
+    private fun subscribeUiChanges() {
         simpleDialogViewModel.state.observe(this) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
@@ -199,29 +229,11 @@ class MainActivity : ThemeableActivity() {
                         when (simpleDialogViewModel.mTag) {
                             BACKUP_ASK -> {
                                 simpleDialogViewModel.handled = true
-                                ProgressDialogFragment.show(
-                                    ProgressDialogFragment.Builder(BACKUP_RUNNING).apply {
-                                        title = R.string.backup_running
-                                        icon = R.drawable.cloud_upload_24px
-                                        content = R.string.backup_database
-                                        progressIndeterminate = true
-                                    },
-                                    supportFragmentManager
-                                )
                                 backToHome(false)
                                 lifecycleScope.launch { backupDbPrefs() }
                             }
                             RESTORE_ASK -> {
                                 simpleDialogViewModel.handled = true
-                                ProgressDialogFragment.show(
-                                    ProgressDialogFragment.Builder(RESTORE_RUNNING).apply {
-                                        title = R.string.restore_running
-                                        icon = R.drawable.cloud_download_24px
-                                        content = R.string.restoring_database
-                                        progressIndeterminate = true
-                                    },
-                                    supportFragmentManager
-                                )
                                 backToHome(false)
                                 lifecycleScope.launch { restoreDbPrefs() }
                             }
@@ -233,7 +245,7 @@ class MainActivity : ThemeableActivity() {
                                 simpleDialogViewModel.handled = true
                                 revokeAccess()
                             }
-                            RESTART -> {
+                            RESTORE_DONE -> {
                                 simpleDialogViewModel.handled = true
                                 val i = baseContext
                                     .packageManager
@@ -275,49 +287,47 @@ class MainActivity : ThemeableActivity() {
             }
         }
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val task = mSignInClient?.silentSignIn()
-        task?.let {
-            if (it.isSuccessful) {
-                // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-                // and the GoogleSignInResult will be available instantly.
-                Log.d(TAG, "Got cached sign-in")
-                handleSignInResult(task)
-            } else {
-                // If the user has not previously signed in on this device or the sign-in has expired,
-                // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-                // single sign-on will occur in this branch.
-                showProgressDialog()
-
-                task.addOnCompleteListener { mTask: Task<GoogleSignInAccount> ->
-                    Log.d(TAG, "Reconnected")
-                    handleSignInResult(mTask)
+        mViewModel.backupRestoreState.observe(this) { state ->
+            state?.let {
+                when (it) {
+                    MainActivityViewModel.BakupRestoreState.RESTORE_STARTED ->
+                        ProgressDialogFragment.show(
+                            ProgressDialogFragment.Builder(RESTORE_RUNNING).apply {
+                                title = R.string.restore_running
+                                icon = R.drawable.cloud_download_24px
+                                content = R.string.restoring_database
+                                progressIndeterminate = true
+                            },
+                            supportFragmentManager
+                        )
+                    MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2 -> {
+                        val sFragment =
+                            ProgressDialogFragment.findVisible(this@MainActivity, RESTORE_RUNNING)
+                        sFragment?.setContent(R.string.restoring_settings)
+                    }
+                    MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED ->
+                        dismissProgressDialog(RESTORE_RUNNING)
+                    MainActivityViewModel.BakupRestoreState.BACKUP_STARTED ->
+                        ProgressDialogFragment.show(
+                            ProgressDialogFragment.Builder(BACKUP_RUNNING).apply {
+                                title = R.string.backup_running
+                                icon = R.drawable.cloud_upload_24px
+                                content = R.string.backup_database
+                                progressIndeterminate = true
+                            },
+                            supportFragmentManager
+                        )
+                    MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2 -> {
+                        val sFragment =
+                            ProgressDialogFragment.findVisible(this@MainActivity, BACKUP_RUNNING)
+                        sFragment?.setContent(R.string.backup_settings)
+                    }
+                    MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED ->
+                        dismissProgressDialog(BACKUP_RUNNING)
+                    MainActivityViewModel.BakupRestoreState.NONE -> {}
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "ONRESUME")
-        LocalBroadcastManager.getInstance(applicationContext)
-            .registerReceiver(nextStepReceiver, IntentFilter(BROADCAST_NEXT_STEP))
-        hideProgressDialog()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "ONPAUSE")
-        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(nextStepReceiver)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        binding.fabPager.expansionMode =
-            if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
     private fun setupNavDrawer() {
@@ -860,7 +870,7 @@ class MainActivity : ThemeableActivity() {
 
     private fun showAccountRelatedDialog(tag: String) {
         SimpleDialogFragment.show(
-            SimpleDialogFragment.Builder(this, tag).apply {
+            SimpleDialogFragment.Builder(tag).apply {
                 when (tag) {
                     BACKUP_ASK -> {
                         title(R.string.gdrive_backup)
@@ -918,21 +928,29 @@ class MainActivity : ThemeableActivity() {
 
     private suspend fun backupDbPrefs() {
         try {
+
+            mViewModel.backupRestoreState.value =
+                MainActivityViewModel.BakupRestoreState.BACKUP_STARTED
+
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 backupDatabase(acct?.id)
             }
 
-            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-            intentBroadcast.putExtra(WHICH, "BACKUP")
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
+//            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
+//            intentBroadcast.putExtra(WHICH, "BACKUP")
+//            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
+            mViewModel.backupRestoreState.value =
+                MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 backupSharedPreferences(acct?.id, acct?.email)
             }
 
-            dismissProgressDialog(BACKUP_RUNNING)
+//            dismissProgressDialog(BACKUP_RUNNING)
+            mViewModel.backupRestoreState.value =
+                MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED
             SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(this, BACKUP_DONE)
+                SimpleDialogFragment.Builder(BACKUP_DONE)
                     .title(R.string.general_message)
                     .icon(R.drawable.cloud_done_24px)
                     .content(R.string.gdrive_backup_success)
@@ -951,21 +969,29 @@ class MainActivity : ThemeableActivity() {
 
     private suspend fun restoreDbPrefs() {
         try {
+
+            mViewModel.backupRestoreState.value =
+                MainActivityViewModel.BakupRestoreState.RESTORE_STARTED
+
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 restoreDatabase(acct?.id)
             }
 
-            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-            intentBroadcast.putExtra(WHICH, RESTORE)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
+//            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
+//            intentBroadcast.putExtra(WHICH, RESTORE)
+//            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
+            mViewModel.backupRestoreState.value =
+                MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 restoreSharedPreferences(acct?.id)
             }
 
-            dismissProgressDialog(RESTORE_RUNNING)
+//            dismissProgressDialog(RESTORE_RUNNING)
+            mViewModel.backupRestoreState.value =
+                MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED
             SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(this, RESTART)
+                SimpleDialogFragment.Builder(RESTORE_DONE)
                     .title(R.string.general_message)
                     .icon(R.drawable.cloud_done_24px)
                     .content(R.string.gdrive_restore_success)
@@ -995,8 +1021,6 @@ class MainActivity : ThemeableActivity() {
     }
 
     companion object {
-        private const val BROADCAST_NEXT_STEP = "BROADCAST_NEXT_STEP"
-        private const val WHICH = "WHICH"
         private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val RESTORE_RUNNING = "RESTORE_RUNNING"
         private const val BACKUP_RUNNING = "BACKUP_RUNNING"
@@ -1005,9 +1029,8 @@ class MainActivity : ThemeableActivity() {
         private const val RESTORE_ASK = "RESTORE_ASK"
         private const val SIGNOUT = "SIGNOUT"
         private const val REVOKE = "REVOKE"
-        private const val RESTART = "RESTART"
         private const val BACKUP_DONE = "BACKUP_DONE"
-        private const val RESTORE = "RESTORE"
+        private const val RESTORE_DONE = "RESTORE_DONE"
         private const val OLD_PHOTO_RES = "s96-c"
         private const val NEW_PHOTO_RES = "s400-c"
         private val TAG = MainActivity::class.java.canonicalName

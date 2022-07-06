@@ -3,7 +3,10 @@ package it.cammino.risuscito.ui.activity
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
@@ -13,6 +16,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.color.MaterialColors
@@ -32,8 +36,12 @@ import it.cammino.risuscito.database.dao.Backup
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
+import it.cammino.risuscito.services.RisuscitoMessagingService
 import it.cammino.risuscito.ui.RisuscitoApplication
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.*
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import java.io.*
@@ -77,7 +85,17 @@ abstract class ThemeableActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateStatusBarLightMode(true)
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
+            showInfoBroadcastReceiver,
+            IntentFilter(RisuscitoMessagingService.MESSAGE_RECEIVED_TAG)
+        )
         checkScreenAwake()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(applicationContext)
+            .unregisterReceiver(showInfoBroadcastReceiver)
     }
 
     fun updateStatusBarLightMode(auto: Boolean) {
@@ -502,6 +520,24 @@ abstract class ThemeableActivity : AppCompatActivity() {
         setTaskDescription(taskDesc)
     }
 
+    private val showInfoBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            // Implement UI change code here once notification is received
+            val title = intent.getStringExtra(RisuscitoMessagingService.MESSAGE_TITLE) ?: getString(
+                R.string.general_message
+            )
+            val body = intent.getStringExtra(RisuscitoMessagingService.MESSAGE_BODY).orEmpty()
+            SimpleDialogFragment.show(
+                SimpleDialogFragment.Builder(NOTIFICATION_DIALOG)
+                    .title(title)
+                    .icon(R.drawable.info_24px)
+                    .content(body)
+                    .positiveButton(R.string.ok),
+                supportFragmentManager
+            )
+        }
+    }
+
     companion object {
         internal val TAG = ThemeableActivity::class.java.canonicalName
 
@@ -511,6 +547,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         internal const val FIREBASE_FIELD_TIMESTAMP = "timestamp"
         internal const val FIREBASE_COLLECTION_IMPOSTAZIONI = "Impostazioni"
         internal const val CANTO_FILE_NAME = "Canto"
+        internal const val NOTIFICATION_DIALOG = "NOTIFICATION_DIALOG"
         internal const val CUSTOM_LIST_FILE_NAME = "CustomList"
         internal const val LISTA_PERS_FILE_NAME = "ListaPers"
         internal const val LOCAL_LINK_FILE_NAME = "LocalLink"

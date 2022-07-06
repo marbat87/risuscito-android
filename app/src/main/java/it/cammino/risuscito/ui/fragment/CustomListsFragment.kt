@@ -381,7 +381,7 @@ class CustomListsFragment : AccountMenuFragment() {
                         closeFabMenu()
                         SimpleDialogFragment.show(
                             SimpleDialogFragment.Builder(
-                                mActivity, RESET_LIST
+                                RESET_LIST
                             )
                                 .title(R.string.dialog_reset_list_title)
                                 .icon(R.drawable.cleaning_services_24px)
@@ -492,7 +492,6 @@ class CustomListsFragment : AccountMenuFragment() {
             mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(
-                    mActivity,
                     DELETE_LIST
                 )
                     .title(R.string.action_remove_list)

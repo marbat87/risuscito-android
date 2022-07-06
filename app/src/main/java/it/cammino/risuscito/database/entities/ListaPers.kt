@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-import it.cammino.risuscito.objects.ListaPersonalizzata
+import it.cammino.risuscito.ListaPersonalizzata
 
 @Entity
 class ListaPers {

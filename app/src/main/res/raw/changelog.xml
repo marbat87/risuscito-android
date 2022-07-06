@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="5100"
+    <release versionCode="5101"
         date="September 2022"
         versionName="5.1.0">
         <new>Added icons to dialogs</new>
         <bugfix>Fixed background color in some views</bugfix>
+        <bugfix>Implemented system of notifications from app developer</bugfix>
     </release>
 
     <release versionCode="5031"

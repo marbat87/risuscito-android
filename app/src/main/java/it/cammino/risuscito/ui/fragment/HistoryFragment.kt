@@ -170,7 +170,7 @@ class HistoryFragment : AccountMenuFragment() {
                         R.id.list_reset -> {
                             SimpleDialogFragment.show(
                                 SimpleDialogFragment.Builder(
-                                    act, RESET_HISTORY
+                                    RESET_HISTORY
                                 )
                                     .title(R.string.dialog_reset_history_title)
                                     .icon(R.drawable.clear_all_24px)

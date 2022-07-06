@@ -135,7 +135,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
                         mMainActivity?.let { mainActivity ->
                             SimpleDialogFragment.show(
                                 SimpleDialogFragment.Builder(
-                                    mainActivity, CONFIRM_SAVE
+                                    CONFIRM_SAVE
                                 )
                                     .title(R.string.dialog_save_consegnati_title)
                                     .icon(R.drawable.save_24px)
