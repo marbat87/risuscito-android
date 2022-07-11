@@ -6,7 +6,7 @@
         versionName="5.1.0">
         <new>Aggiunte le icone ai popup</new>
         <bugfix>Sistemato il colore di sfondo in alcune schermate</bugfix>
-        <bugfix>Implementato sistema di notifiche da parte dello sviluppatore</bugfix>
+        <new>Implementato sistema di notifiche da parte dello sviluppatore</new>
     </release>
 
     <release versionCode="5031"

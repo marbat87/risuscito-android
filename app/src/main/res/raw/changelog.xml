@@ -6,7 +6,7 @@
         versionName="5.1.0">
         <new>Added icons to dialogs</new>
         <bugfix>Fixed background color in some views</bugfix>
-        <bugfix>Implemented system of notifications from app developer</bugfix>
+        <new>Implemented system of notifications from app developer</new>
     </release>
 
     <release versionCode="5031"
