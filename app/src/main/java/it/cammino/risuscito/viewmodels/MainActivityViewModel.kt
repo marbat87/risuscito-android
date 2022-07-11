@@ -1,6 +1,5 @@
 package it.cammino.risuscito.viewmodels
 
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import it.cammino.risuscito.R
