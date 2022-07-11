@@ -520,9 +520,7 @@ class MainActivity : ThemeableActivity() {
         Log.d(TAG, "initFab()")
         enableFab(false)
         binding.fabPager.setMainFabClosedDrawable(icon)
-        val colorPrimaryContainer = MaterialColors.getColor(this, R.attr.colorPrimaryContainer, TAG)
-        binding.fabPager.mainFabOpenedBackgroundColor = colorPrimaryContainer
-        binding.fabPager.mainFabClosedBackgroundColor = colorPrimaryContainer
+        binding.fabPager.mainFab.rippleColor = android.R.color.transparent
         binding.fabPager.clearActionItems()
         binding.fabPager.expansionMode =
             if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
@@ -530,8 +528,8 @@ class MainActivity : ThemeableActivity() {
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
         if (optionMenu) {
-            val iconColor = MaterialColors.getColor(this, R.attr.colorOnSecondaryContainer, TAG)
-            val backgroundColor = MaterialColors.getColor(this, R.attr.colorSecondaryContainer, TAG)
+            val iconColor = MaterialColors.getColor(this, R.attr.colorOnPrimaryContainer, TAG)
+            val backgroundColor = MaterialColors.getColor(this, R.attr.colorPrimaryContainer, TAG)
 
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(

@@ -83,6 +83,15 @@
         <item name="colorOnSecondary">?colorOnSecondaryContainer</item>
     </style>
 
+    <style name="Risuscito_SpeedDialMainFab">
+        <item name="sdMainFabAnimationRotateAngle">90</item>
+        <item name="sdMainFabClosedBackgroundColor">?colorPrimaryContainer</item>
+        <item name="sdMainFabClosedIconColor">?colorOnPrimaryContainer</item>
+        <item name="sdMainFabOpenedBackgroundColor">?colorPrimary</item>
+        <item name="sdMainFabOpenedIconColor">?colorOnPrimary</item>
+        <item name="sdMainFabOpenedSrc">@drawable/close_24px</item>
+    </style>
+
     <style name="SimpleSearchViewStyle">
         <item name="cursorColor">?colorPrimary</item>
         <item name="backIconTint">?colorOnSurfaceVariant</item>

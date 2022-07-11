@@ -1666,16 +1666,9 @@ class PaginaRenderActivity : ThemeableActivity() {
 
 
     private fun initFabOptions() {
-        val iconColor = MaterialColors.getColor(this, R.attr.colorOnSecondaryContainer, TAG)
-        val backgroundColor = MaterialColors.getColor(this, R.attr.colorSecondaryContainer, TAG)
-
-        val colorPrimaryContainer = MaterialColors.getColor(this, R.attr.colorPrimaryContainer, TAG)
-        val colorOnPrimaryContainer =
-            MaterialColors.getColor(this, R.attr.colorOnPrimaryContainer, TAG)
-        binding.fabCanti.mainFabOpenedBackgroundColor = colorPrimaryContainer
-        binding.fabCanti.mainFabClosedBackgroundColor = colorPrimaryContainer
-        binding.fabCanti.mainFabClosedIconColor = colorOnPrimaryContainer
-        binding.fabCanti.mainFabOpenedIconColor = colorOnPrimaryContainer
+        val iconColor = MaterialColors.getColor(this, R.attr.colorOnPrimaryContainer, TAG)
+        val backgroundColor = MaterialColors.getColor(this, R.attr.colorPrimaryContainer, TAG)
+        binding.fabCanti.mainFab.rippleColor = android.R.color.transparent
         binding.fabCanti.clearActionItems()
         binding.fabCanti.expansionMode =
             if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP

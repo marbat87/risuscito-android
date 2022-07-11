@@ -271,6 +271,7 @@
 
     <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/fab_canti"
+        style="@style/Risuscito_SpeedDialMainFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
