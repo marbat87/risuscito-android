@@ -14,9 +14,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.mikepenz.fastadapter.IAdapter
-import com.mikepenz.fastadapter.IItem
+import com.mikepenz.fastadapter.GenericAdapter
+import com.mikepenz.fastadapter.GenericItem
 import com.mikepenz.fastadapter.ISubItem
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.adapters.GenericFastItemAdapter
@@ -26,15 +25,16 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.LayoutRecyclerBinding
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.activity.PaginaRenderActivity
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.ui.dialog.DialogState
+import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.hasThreeColumns
 import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
@@ -95,26 +95,28 @@ class SectionedIndexFragment : Fragment() {
         itemExpandableExtension.isOnlyOneExpandedItem = true
 
         mAdapter.onClickListener =
-            { mView: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+            { mView: View?, _: GenericAdapter, item: GenericItem, _: Int ->
                 var consume = false
-                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                    mLastClickTime = SystemClock.elapsedRealtime()
-                    val intent = Intent(activity, PaginaRenderActivity::class.java)
-                    intent.putExtras(
-                        bundleOf(
-                            Utility.PAGINA to (item as SimpleSubItem).source?.getText(
-                                requireContext()
-                            ), Utility.ID_CANTO to item.id
+                if (item is SimpleSubItem) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                        mLastClickTime = SystemClock.elapsedRealtime()
+                        val intent = Intent(activity, PaginaRenderActivity::class.java)
+                        intent.putExtras(
+                            bundleOf(
+                                Utility.PAGINA to item.source?.getText(
+                                    requireContext()
+                                ), Utility.ID_CANTO to item.id
+                            )
                         )
-                    )
-                    activity?.startActivityWithTransition(intent, mView)
-                    consume = true
+                        activity?.startActivityWithTransition(intent, mView)
+                        consume = true
+                    }
                 }
                 consume
             }
 
         mAdapter.onLongClickListener =
-            { v: View, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+            { v: View, _: GenericAdapter, item: GenericItem, _: Int ->
                 if (item is SimpleSubItem) {
                     mCantiViewModel.idDaAgg = item.id
                     when (mCantiViewModel.tipoLista) {
@@ -131,7 +133,7 @@ class SectionedIndexFragment : Fragment() {
             }
 
         mAdapter.onPreClickListener =
-            { _: View?, _: IAdapter<IItem<out RecyclerView.ViewHolder>>, item: IItem<out RecyclerView.ViewHolder>, _: Int ->
+            { _: View?, _: GenericAdapter, item: GenericItem, _: Int ->
                 if (item is SimpleSubExpandableItem) {
                     Log.i(TAG, "item.position ${item.position}")
                     if (!item.isExpanded) {
@@ -239,8 +241,6 @@ class SectionedIndexFragment : Fragment() {
                         setColor = canti[i].color
                         id = canti[i].id
                         identifier = ((canti[i].idIndice * 10000) + canti[i].id).toLong()
-                        isHasDivider =
-                            !((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice))
                     }
                 )
                 totCanti++
@@ -251,20 +251,6 @@ class SectionedIndexFragment : Fragment() {
                         simpleSubExpandableItem {
                             setTitle = Utility.getResId(canti[i].nome, R.string::class.java)
                             totItems = totCanti
-                            onPreItemClickListener =
-                                { _: View?, _: IAdapter<SimpleSubExpandableItem>, item: SimpleSubExpandableItem, _: Int ->
-                                    if (!item.isExpanded) {
-                                        if (context?.isGridLayout == true)
-                                            glm?.scrollToPositionWithOffset(
-                                                item.position, 0
-                                            )
-                                        else
-                                            llm?.scrollToPositionWithOffset(
-                                                item.position, 0
-                                            )
-                                    }
-                                    false
-                                }
                             id = canti[i].idIndice
                             subItems = mSubItems
                             subItems.sortWith(compareBy(Collator.getInstance(resources.systemLocale)) {
