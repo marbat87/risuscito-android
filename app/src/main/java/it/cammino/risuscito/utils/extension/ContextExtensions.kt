@@ -2,6 +2,7 @@ package it.cammino.risuscito.utils.extension
 
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.TypedValue
@@ -72,6 +73,23 @@ fun Context.readTextFromResource(resourceID: String): String {
     return cantoTrasportato.toString()
 }
 
+fun Resources.readTextFromResource(resourceID: String): String {
+    val inputStream =
+        openRawResource(Utility.getResId(resourceID, R.raw::class.java))
+    val br = BufferedReader(InputStreamReader(inputStream, "utf-8"))
+    var line: String? = br.readLine()
+    val cantoTrasportato = StringBuffer()
+
+    while (line != null) {
+//            Log.d(TAG, "line: $line")
+        cantoTrasportato.append(line)
+        cantoTrasportato.append("\n")
+        line = br.readLine()
+    }
+    br.close()
+    return cantoTrasportato.toString()
+}
+
 val Context.isDefaultLocationPublic: Boolean
     get() {
         return Integer.parseInt(
@@ -106,8 +124,8 @@ private val ConnectivityManager.isOnlineLegacy: Boolean
 val Context.isOnTablet: Boolean
     get() = resources.getBoolean(R.bool.is_tablet)
 
-val Context.hasThreeColumns: Boolean
-    get() = resources.getBoolean(R.bool.has_three_columns)
+val Context.isOnPhone: Boolean
+    get() = resources.getBoolean(R.bool.is_phone_view)
 
 val Context.isGridLayout: Boolean
     get() = resources.getBoolean(R.bool.is_grid_layout)

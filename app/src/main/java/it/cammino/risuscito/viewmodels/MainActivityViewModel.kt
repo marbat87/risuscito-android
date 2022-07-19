@@ -1,5 +1,7 @@
 package it.cammino.risuscito.viewmodels
 
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import it.cammino.risuscito.R
@@ -13,6 +15,10 @@ class MainActivityViewModel : ViewModel() {
     var isTabletWithFixedDrawer: Boolean = false
     var isTabletWithNoFixedDrawer: Boolean = false
     var selectedMenuItemId: Int = R.id.navigation_home
+    var catalogRefreshReady = MutableLiveData(true)
+    var lastPlaybackState = MutableLiveData<PlaybackStateCompat>()
+    var medatadaCompat = MutableLiveData<MediaMetadataCompat>()
+    var playerConnected = MutableLiveData(false)
 
     enum class BakupRestoreState {
         NONE,

@@ -3,18 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:paddingBottom="?dialogPreferredPadding"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="?dialogPreferredPadding">
 
     <Button
         android:id="@+id/close_modal"
-        style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+        style="?attr/materialIconButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:icon="@drawable/close_24px"
         android:layout_marginStart="15dp"
         android:layout_marginTop="?dialogPreferredPadding"
-        app:iconSize="24dp"
+        app:icon="@drawable/close_24px"
         app:iconTint="?colorSecondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,16 +26,16 @@
         android:text="@string/app_name"
         android:textAppearance="?textAppearanceHeadlineSmall"
         android:textColor="?attr/colorOnSurface"
+        app:layout_constraintBottom_toBottomOf="@id/close_modal"
         app:layout_constraintStart_toEndOf="@id/close_modal"
-        app:layout_constraintTop_toTopOf="@id/close_modal"
-        app:layout_constraintBottom_toBottomOf="@id/close_modal"/>
+        app:layout_constraintTop_toTopOf="@id/close_modal" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginTop="20dp"
         android:layout_marginStart="?dialogPreferredPadding"
+        android:layout_marginTop="20dp"
         android:src="@drawable/account_circle_56px"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/close_modal"

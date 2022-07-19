@@ -1,4 +1,4 @@
-package it.cammino.risuscito.ui.activity
+package it.cammino.risuscito.ui.fragment
 
 import android.app.Activity
 import android.app.RecoverableSecurityException
@@ -6,23 +6,24 @@ import android.content.*
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.*
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.provider.MediaStore
-import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Base64.DEFAULT
 import android.util.Base64.encodeToString
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
@@ -31,8 +32,9 @@ import androidx.core.os.postDelayed
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.getkeepsafe.taptargetview.TapTarget
@@ -41,8 +43,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.crashlytics.ktx.setCustomKeys
 import com.google.firebase.ktx.Firebase
@@ -54,6 +54,8 @@ import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.databinding.ActivityPaginaRenderBinding
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.ui.InitialScrollWebClient
+import it.cammino.risuscito.ui.activity.PaginaRenderFullScreen
+import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
@@ -66,6 +68,7 @@ import it.cammino.risuscito.utils.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.utils.Utility.mediaScan
 import it.cammino.risuscito.utils.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -82,7 +85,7 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 
-class PaginaRenderActivity : ThemeableActivity() {
+open class CantoFragment : Fragment() {
 
     private lateinit var cambioAccordi: CambioAccordi
     private val mExecutorService = Executors.newSingleThreadScheduledExecutor()
@@ -91,24 +94,23 @@ class PaginaRenderActivity : ThemeableActivity() {
     private val noChangesTabBarre: Boolean
         get() = mCantiViewModel.notaCambio == mCantiViewModel.mCurrentCanto?.savedTab && mCantiViewModel.barreCambio == mCantiViewModel.mCurrentCanto?.savedBarre
 
-    private val mSharedPrefs: SharedPreferences
-        get() = PreferenceManager.getDefaultSharedPreferences(this)
+    private lateinit var mSharedPrefs: SharedPreferences
 
-    private val mRiuscitoDb: RisuscitoDatabase
-        get() = RisuscitoDatabase.getInstance(this)
+    private lateinit var mRisuscitoDb: RisuscitoDatabase
 
     private lateinit var mDownloader: Downloader
 
     private val mCantiViewModel: PaginaRenderViewModel by viewModels()
-    private val progressDialogViewModel: ProgressDialogFragment.DialogViewModel by viewModels()
-    private val downloaderViewModel: Downloader.DownloaderViewModel by viewModels()
-    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
+    private val mainActivityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
+    private val progressDialogViewModel: ProgressDialogFragment.DialogViewModel by viewModels({ requireActivity() })
+    private val downloaderViewModel: Downloader.DownloaderViewModel by viewModels({ requireActivity() })
+    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private var url: String? = null
     private var personalUrl: String? = null
     private var localUrl: String? = null
     private var htmlContent: String? = null
-    private var mLastPlaybackState: PlaybackStateCompat? = null
-    private val mUpdateProgressTask = Runnable { updateProgress() }
+    private val mUpdateProgressTask =
+        Runnable { if (!mExecutorService.isShutdown) updateProgress() }
     private var mScheduleFuture: ScheduledFuture<*>? = null
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
@@ -136,7 +138,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     "${getString(R.string.file_selected)}: $it",
                 )
                 Snackbar.make(
-                    findViewById(android.R.id.content),
+                    requireActivity().findViewById(android.R.id.content),
                     getString(R.string.file_selected) + ": " + it,
                     Snackbar.LENGTH_SHORT
                 )
@@ -146,205 +148,338 @@ class PaginaRenderActivity : ThemeableActivity() {
             }
         }
 
-    // Callback that ensures that we are showing the controls
-    private val mMediaControllerCallback = object : MediaControllerCompat.Callback() {
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            Log.d(TAG, "onPlaybackStateChanged: a " + state.state)
-            mLastPlaybackState = state
-            when (state.state) {
-                PlaybackStateCompat.STATE_PAUSED -> {
-                    stopSeekbarUpdate()
-                    showPlaying(false)
-                    binding.musicSeekbar.isEnabled = true
-                }
-                PlaybackStateCompat.STATE_STOPPED -> {
-                    stopSeekbarUpdate()
-                    updateSeekBarValue(0F)
-                    binding.musicSeekbar.isEnabled = false
-                    showPlaying(false)
-                }
-                PlaybackStateCompat.STATE_ERROR -> {
-                    binding.musicSeekbar.isVisible = true
-                    binding.musicLoadingbar.isVisible = false
-                    stopSeekbarUpdate()
-                    updateSeekBarValue(0F)
-                    binding.musicSeekbar.isEnabled = false
-                    showPlaying(false)
-                    Log.e(TAG, "onPlaybackStateChanged: " + state.errorMessage)
-                    Snackbar.make(
-                        findViewById(android.R.id.content),
-                        state.errorMessage,
-                        Snackbar.LENGTH_SHORT
-                    )
-                        .show()
-                }
-                PlaybackStateCompat.STATE_PLAYING -> {
-                    binding.musicSeekbar.isVisible = true
-                    binding.musicLoadingbar.isVisible = false
-                    scheduleSeekbarUpdate()
-                    showPlaying(true)
-                    binding.musicSeekbar.isEnabled = true
-                }
-                else -> {
-                    Log.i(TAG, "Non gestito")
-                }
-            }
-        }
+    private var mMainActivity: ThemeableActivity? = null
 
-        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-            Log.d(TAG, "onMetadataChanged")
-            if (metadata != null) {
-                updateSeekBarValueTo(
-                    metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toFloat()
-                )
-                binding.musicSeekbar.isEnabled = true
-            }
-        }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mMainActivity = activity as? ThemeableActivity
+        mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        mRisuscitoDb = RisuscitoDatabase.getInstance(context)
+        mDownloader = Downloader(requireActivity())
     }
 
-    private var mMediaBrowser: MediaBrowserCompat? = null
-    private val mConnectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
-        override fun onConnected() {
-            Log.d(TAG, "onConnected")
-            try {
-                mMediaBrowser?.let {
-                    val mediaController = MediaControllerCompat(
-                        this@PaginaRenderActivity, it.sessionToken
-                    )
-                    MediaControllerCompat.setMediaController(
-                        this@PaginaRenderActivity,
-                        mediaController
-                    )
-                    mediaController.registerCallback(mMediaControllerCallback)
-                    mLastPlaybackState = mediaController.playbackState
-                    if (mLastPlaybackState?.state == PlaybackStateCompat.STATE_PLAYING) {
-                        scheduleSeekbarUpdate()
-                    }
-                    showPlaying(mLastPlaybackState?.state == PlaybackStateCompat.STATE_PLAYING)
-                    binding.musicSeekbar.isEnabled =
-                        mLastPlaybackState?.state == PlaybackStateCompat.STATE_PLAYING || mLastPlaybackState?.state == PlaybackStateCompat.STATE_PAUSED
+    private var _binding: ActivityPaginaRenderBinding? = null
 
-                    if (mediaController.metadata != null) {
-                        Log.d(
-                            TAG,
-                            "onConnected: duration " + mediaController
-                                .metadata
-                                .getLong(MediaMetadataCompat.METADATA_KEY_DURATION)
-                        )
-                        updateSeekBarValueTo(
-                            mediaController
-                                .metadata
-                                .getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toFloat()
-                        )
-                    }
-                    Log.d(
-                        TAG,
-                        "onConnected: mLastPlaybackState.getPosition() ${mLastPlaybackState?.position}"
-                    )
-                    updateSeekBarValue(mLastPlaybackState?.position?.toFloat() ?: 0F)
-                } ?: Log.e(TAG, "onConnected: mMediaBrowser is NULL")
-            } catch (e: RemoteException) {
-                Log.e(TAG, "onConnected: could not connect media controller", e)
-            }
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
-        }
-
-        override fun onConnectionFailed() {
-            Log.e(TAG, "onConnectionFailed")
-        }
-
-        override fun onConnectionSuspended() {
-            Log.d(TAG, "onConnectionSuspended")
-            val mediaController =
-                MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
-            mediaController?.unregisterCallback(mMediaControllerCallback)
-            MediaControllerCompat.setMediaController(this@PaginaRenderActivity, null)
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = ActivityPaginaRenderBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    private val catalogReadyBR = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Implement UI change code here once notification is received
-            try {
-                Log.d(TAG, MusicService.MSG_RETRIEVE_DONE)
-                val done = intent.getBooleanExtra(MusicService.MSG_RETRIEVE_DONE, false)
-                Log.d(TAG, "MSG_RETRIEVE_DONE: $done")
-                mCantiViewModel.retrieveDone = done
-                showPlaying(false)
-                binding.playSong.isEnabled = done
-            } catch (e: IllegalArgumentException) {
-                Log.e(TAG, e.localizedMessage, e)
-            }
-
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d(TAG, "onDestroyView()")
+        stopSeekbarUpdate()
+        mExecutorService.shutdown()
+        _binding = null
     }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart: ")
-        try {
-            mMediaBrowser?.connect()
-        } catch (e: IllegalStateException) {
-            Log.e(TAG, "onStart: mMediaBrowser connecting")
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop: ")
-        mMediaBrowser?.disconnect()
-        val controller = MediaControllerCompat.getMediaController(this)
-        controller?.unregisterCallback(mMediaControllerCallback)
-
-    }
-
-    private lateinit var binding: ActivityPaginaRenderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!OSUtils.isObySamsung()) {
-            // Set the transition name, which matches Activity A’s start view transition name, on
-            // the root view.
-            findViewById<View>(android.R.id.content).transitionName = "shared_element_container"
+        super.onCreate(savedInstanceState)
 
-            // Attach a callback used to receive the shared elements from Activity A to be
-            // used by the container transform transition.
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-            setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-
-            // Set this Activity’s enter and return transition to a MaterialContainerTransform
-            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-                addTarget(android.R.id.content)
-                duration = 700L
+        if (savedInstanceState == null) {
+            arguments?.let {
+                // Load the placeholder content specified by the fragment
+                // arguments. In a real-world scenario, use a Loader
+                // to load content from a content provider.
+                mCantiViewModel.idCanto = it.getInt(ARG_ID_CANTO)
+                mCantiViewModel.pagina = it.getString(ARG_NUM_PAGINA)
+                mCantiViewModel.inActivity = it.getBoolean(ARG_ON_ACTIVITY)
             }
+        }
+    }
 
-            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-            window.sharedElementsUseOverlay = false
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (mCantiViewModel.inActivity) {
+            binding.risuscitoToolbarCanto.setNavigationIcon(R.drawable.arrow_back_24px)
+            binding.risuscitoToolbarCanto.setNavigationOnClickListener {
+                if (mCantiViewModel.notaCambio.isEmpty()
+                    || mCantiViewModel.mCurrentCanto?.savedTab == null
+                    || mCantiViewModel.barreCambio.isEmpty()
+                    || mCantiViewModel.mCurrentCanto?.savedBarre == null
+                    || noChangesTabBarre
+                ) {
+                    if (mCantiViewModel.scrollPlaying) {
+                        showScrolling(false)
+                        mHandler.removeCallbacks(mScrollDown)
+                    }
+                    saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
+                    activity?.finishAfterTransitionWrapper()
+                } else {
+                    SimpleDialogFragment.show(
+                        SimpleDialogFragment.Builder(
+                            SAVE_TAB
+                        )
+                            .title(R.string.dialog_save_tab_title)
+                            .icon(R.drawable.save_24px)
+                            .content(R.string.dialog_save_tab)
+                            .positiveButton(R.string.save_exit_confirm)
+                            .negativeButton(R.string.discard_exit_confirm),
+                        requireActivity().supportFragmentManager
+                    )
+                }
+            }
         }
 
-        super.onCreate(savedInstanceState)
-        binding = ActivityPaginaRenderBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        mDownloader = Downloader(this)
-
         mRegularFont =
-            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_regular_font))
+            ResourcesCompat.getFont(
+                requireContext(),
+                requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
+            )
         mMediumFont =
-            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_medium_font))
+            ResourcesCompat.getFont(
+                requireContext(),
+                requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
+            )
 
-        setSupportActionBar(binding.risuscitoToolbar)
+        binding.risuscitoToolbarCanto.menu.clear()
+        binding.risuscitoToolbarCanto.inflateMenu(R.menu.canto)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        Log.d(
+            TAG,
+            "onCreateOptionsMenu - INTRO_PAGINARENDER: ${
+                mSharedPrefs.getBoolean(
+                    Utility.INTRO_PAGINARENDER,
+                    false
+                )
+            }"
+        )
+        if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
+            Handler(Looper.getMainLooper()).postDelayed(1500) {
+                playIntro(binding.musicButtons.isVisible)
+            }
+        }
 
-        // recupera il numero della pagina da visualizzare dal parametro passato dalla chiamata
-        val bundle = this.intent.extras
-        mCantiViewModel.pagina = mCantiViewModel.pagina
-            ?: bundle?.getCharSequence(Utility.PAGINA, StringUtils.EMPTY)?.toString()
-        mCantiViewModel.idCanto = bundle?.getInt(Utility.ID_CANTO) ?: return
+        binding.risuscitoToolbarCanto.setOnMenuItemClickListener { item ->
+            var managed = false
+            when (item.itemId) {
+                R.id.action_exp_pdf -> {
+                    lifecycleScope.launch { exportPdf() }
+                    managed = true
+                }
+                R.id.action_help_canto -> {
+                    playIntro(binding.musicButtons.isVisible)
+                    managed = true
+                }
+                R.id.action_save_tab -> {
+                    if (!mCantiViewModel.mCurrentCanto?.savedTab.equals(
+                            mCantiViewModel.notaCambio,
+                            ignoreCase = true
+                        )
+                    ) {
+                        mCantiViewModel.mCurrentCanto?.savedTab = mCantiViewModel.notaCambio
+                        lifecycleScope.launch { updateCanto(1) }
+                    } else {
+                        Snackbar.make(
+                            requireActivity().findViewById(android.R.id.content),
+                            R.string.tab_not_saved,
+                            Snackbar.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                    managed = true
+                }
+                R.id.action_reset_tab -> {
+                    mCantiViewModel.notaCambio = mCantiViewModel.primaNota
+                    val convMap = cambioAccordi.diffSemiToni(
+                        mCantiViewModel.primaNota,
+                        mCantiViewModel.notaCambio
+                    )
+                    var convMin: HashMap<String, String>? = null
+                    if (resources.systemLocale.language.equals(
+                            LANGUAGE_UKRAINIAN,
+                            ignoreCase = true
+                        ) || resources.systemLocale.language.equals(
+                            LANGUAGE_POLISH,
+                            ignoreCase = true
+                        )
+                    )
+                        convMin = cambioAccordi.diffSemiToniMin(
+                            mCantiViewModel.primaNota,
+                            mCantiViewModel.notaCambio
+                        )
+                    saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
+                    if (convMap != null) {
+                        loadContentIntoWebView(
+                            cambiaAccordi(
+                                convMap,
+                                mCantiViewModel.barreCambio,
+                                convMin
+                            )
+                        )
+                    } else
+                        loadContentIntoWebView(
+                            resources.readTextFromResource(
+                                mCantiViewModel.pagina
+                                    ?: NO_CANTO
+                            )
+                        )
+                    mCantiViewModel.mCurrentCanto?.let {
+                        if (it.zoom > 0)
+                            binding.cantoView.setInitialScale(it.zoom)
+                    }
+                    managed = true
+                }
+                R.id.action_save_barre -> {
+                    if (!mCantiViewModel.mCurrentCanto?.savedBarre.equals(
+                            mCantiViewModel.barreCambio,
+                            ignoreCase = true
+                        )
+                    ) {
+                        mCantiViewModel.mCurrentCanto?.savedBarre =
+                            mCantiViewModel.barreCambio
+                        lifecycleScope.launch { updateCanto(2) }
+                    } else {
+                        Snackbar.make(
+                            requireActivity().findViewById(android.R.id.content),
+                            R.string.barre_not_saved,
+                            Snackbar.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                    managed = true
+                }
+                R.id.action_reset_barre -> {
+                    mCantiViewModel.barreCambio = mCantiViewModel.primoBarre
+                    val convMap1 = cambioAccordi.diffSemiToni(
+                        mCantiViewModel.primaNota,
+                        mCantiViewModel.notaCambio
+                    )
+                    var convMin1: HashMap<String, String>? = null
+                    if (resources.systemLocale.language.equals(
+                            LANGUAGE_UKRAINIAN,
+                            ignoreCase = true
+                        ) || resources.systemLocale.language.equals(
+                            LANGUAGE_POLISH,
+                            ignoreCase = true
+                        )
+                    )
+                        convMin1 = cambioAccordi.diffSemiToniMin(
+                            mCantiViewModel.primaNota,
+                            mCantiViewModel.notaCambio
+                        )
+                    saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
+                    if (convMap1 != null) {
+                        loadContentIntoWebView(
+                            cambiaAccordi(
+                                convMap1,
+                                mCantiViewModel.barreCambio,
+                                convMin1
+                            )
+                        )
+                    } else
+                        loadContentIntoWebView(
+                            resources.readTextFromResource(
+                                mCantiViewModel.pagina
+                                    ?: NO_CANTO
+                            )
+                        )
+                    mCantiViewModel.mCurrentCanto?.let {
+                        if (it.zoom > 0)
+                            binding.cantoView.setInitialScale(it.zoom)
+                    }
+                    managed = true
+                }
+                else -> {
+                    if (item.groupId == R.id.menu_gruppo_note) {
+                        mCantiViewModel.notaCambio = item.titleCondensed.toString()
+                        val convMap2 = cambioAccordi.diffSemiToni(
+                            mCantiViewModel.primaNota,
+                            mCantiViewModel.notaCambio
+                        )
+                        var convMin2: HashMap<String, String>? = null
+                        if (resources.systemLocale.language.equals(
+                                LANGUAGE_UKRAINIAN,
+                                ignoreCase = true
+                            ) || resources.systemLocale.language.equals(
+                                LANGUAGE_POLISH,
+                                ignoreCase = true
+                            )
+                        )
+                            convMin2 = cambioAccordi.diffSemiToniMin(
+                                mCantiViewModel.primaNota,
+                                mCantiViewModel.notaCambio
+                            )
+                        saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
+                        if (convMap2 != null) {
+                            loadContentIntoWebView(
+                                cambiaAccordi(
+                                    convMap2,
+                                    mCantiViewModel.barreCambio,
+                                    convMin2
+                                )
+                            )
+                        } else
+                            loadContentIntoWebView(
+                                resources.readTextFromResource(
+                                    mCantiViewModel.pagina
+                                        ?: NO_CANTO
+                                )
+                            )
+                        mCantiViewModel.mCurrentCanto?.let {
+                            if (it.zoom > 0)
+                                binding.cantoView.setInitialScale(it.zoom)
+                        }
+                        managed = true
+                    }
+                    if (item.groupId == R.id.menu_gruppo_barre) {
+                        mCantiViewModel.barreCambio = item.titleCondensed.toString()
+                        val convMap3 = cambioAccordi.diffSemiToni(
+                            mCantiViewModel.primaNota,
+                            mCantiViewModel.notaCambio
+                        )
+                        var convMin3: HashMap<String, String>? = null
+                        if (resources.systemLocale.language.equals(
+                                LANGUAGE_UKRAINIAN,
+                                ignoreCase = true
+                            ) || resources.systemLocale.language.equals(
+                                LANGUAGE_POLISH,
+                                ignoreCase = true
+                            )
+                        )
+                            convMin3 = cambioAccordi.diffSemiToniMin(
+                                mCantiViewModel.primaNota,
+                                mCantiViewModel.notaCambio
+                            )
+                        saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
+                        if (convMap3 != null) {
+                            loadContentIntoWebView(
+                                cambiaAccordi(
+                                    convMap3,
+                                    mCantiViewModel.barreCambio,
+                                    convMin3
+                                )
+                            )
+                        } else
+                            loadContentIntoWebView(
+                                resources.readTextFromResource(
+                                    mCantiViewModel.pagina
+                                        ?: NO_CANTO
+                                )
+                            )
+                        mCantiViewModel.mCurrentCanto?.let {
+                            if (it.zoom > 0)
+                                binding.cantoView.setInitialScale(it.zoom)
+                        }
+                        managed = true
+                    }
+                }
+            }
+            managed
+        }
 
         Log.d(TAG, "LINGUA CTX: ${resources.systemLocale.language}")
-        Log.d(TAG, "LINGUA BASE: ${baseContext.resources.systemLocale.language}")
-        cambioAccordi = CambioAccordi(this)
+        Log.d(TAG, "LINGUA BASE: ${requireActivity().baseContext.resources.systemLocale.language}")
+        cambioAccordi = CambioAccordi(requireContext())
 
         try {
             Firebase.crashlytics.setCustomKeys {
@@ -386,7 +521,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             }
 
             override fun onStopTrackingTouch(slider: Slider) {
-                val controller = MediaControllerCompat.getMediaController(this@PaginaRenderActivity)
+                val controller = MediaControllerCompat.getMediaController(requireActivity())
                 controller?.transportControls?.seekTo(slider.value.toLong())
                     ?: return
                 scheduleSeekbarUpdate()
@@ -416,7 +551,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         lifecycleScope.launch { retrieveData() }
 
         binding.playSong.setOnClickListener {
-            val controller = MediaControllerCompat.getMediaController(this)
+            val controller = MediaControllerCompat.getMediaController(requireActivity())
             val stateObj = controller.playbackState
             val state = stateObj?.state ?: PlaybackStateCompat.STATE_NONE
             Log.d(TAG, "playPause: Button pressed, in state $state")
@@ -449,20 +584,82 @@ class PaginaRenderActivity : ThemeableActivity() {
         if (savedInstanceState == null)
             mCantiViewModel.mostraAudio = mSharedPrefs.getBoolean(Utility.SHOW_AUDIO, true)
 
-        // Connect a media browser just to get the media session token. There are other ways
-        // this can be done, for example by sharing the session token directly.
-        mMediaBrowser = MediaBrowserCompat(
-            this, ComponentName(
-                this, MusicService::
-                class.java
-            ), mConnectionCallback, null
-        )
-
-        onBackPressedDispatcher.addCallback(this) {
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
         }
 
-        progressDialogViewModel.state.observe(this) {
+        resolveDeleteAudioConsent = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                mCantiViewModel.toDelete?.let {
+                    deleteAudio(it)
+                    mCantiViewModel.toDelete = null
+                }
+            } else {
+                Snackbar.make(
+                    requireActivity().findViewById(android.R.id.content),
+                    getString(R.string.external_storage_denied),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        subscribeUiChange()
+
+    }
+
+    private fun subscribeUiChange() {
+        mainActivityViewModel.lastPlaybackState.value?.let {
+            updatePlayBackStatus(it)
+        }
+
+        mainActivityViewModel.lastPlaybackState.observe(viewLifecycleOwner) {
+            updatePlayBackStatus(it)
+        }
+
+        mainActivityViewModel.medatadaCompat.observe(viewLifecycleOwner) {
+            updateSeekBarValueTo(
+                it.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toFloat()
+            )
+            binding.musicSeekbar.isEnabled = true
+        }
+
+        mainActivityViewModel.playerConnected.observe(viewLifecycleOwner) {
+            if (mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
+                scheduleSeekbarUpdate()
+            }
+            showPlaying(mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING)
+            binding.musicSeekbar.isEnabled =
+                mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING || mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PAUSED
+
+            mainActivityViewModel.medatadaCompat.value?.let {
+                Log.d(
+                    TAG,
+                    "onConnected: duration ${it.getLong(MediaMetadataCompat.METADATA_KEY_DURATION)}"
+                )
+                updateSeekBarValueTo(
+                    it.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toFloat()
+                )
+            }
+
+            Log.d(
+                TAG,
+                "onConnected: mLastPlaybackState.getPosition() ${mainActivityViewModel.lastPlaybackState.value?.position}"
+            )
+            updateSeekBarValue(
+                mainActivityViewModel.lastPlaybackState.value?.position?.toFloat() ?: 0F
+            )
+        }
+
+        mainActivityViewModel.catalogRefreshReady.observe(viewLifecycleOwner) {
+            mCantiViewModel.retrieveDone = it
+            showPlaying(false)
+            binding.playSong.isEnabled = it
+            stopMedia()
+        }
+
+        progressDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "progressDialogViewModel state $it")
             if (!progressDialogViewModel.handled) {
                 when (it) {
@@ -481,7 +678,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             }
         }
 
-        simpleDialogViewModel.state.observe(this) {
+        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "simpleDialogViewModel state $it")
             if (!simpleDialogViewModel.handled) {
                 when (it) {
@@ -490,7 +687,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                             DELETE_LINK -> {
                                 simpleDialogViewModel.handled = true
                                 Snackbar.make(
-                                    findViewById(android.R.id.content),
+                                    requireActivity().findViewById(android.R.id.content),
                                     R.string.delink_delete,
                                     Snackbar.LENGTH_SHORT
                                 )
@@ -502,11 +699,11 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 simpleDialogViewModel.handled = true
                                 localUrl?.let { url ->
                                     stopMedia()
-                                    if (isDefaultLocationPublic && OSUtils.hasQ()) {
+                                    if ((activity?.isDefaultLocationPublic == true) && OSUtils.hasQ()) {
                                         mCantiViewModel.toDelete = ContentUris.withAppendedId(
                                             MediaStore.Audio.Media
                                                 .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
-                                            getExternalMediaIdByName(this, url)
+                                            getExternalMediaIdByName(requireContext(), url)
                                         )
                                         Log.d(TAG, "DELETE_MP3 toDelete: $mCantiViewModel.toDelete")
                                         try {
@@ -541,21 +738,21 @@ class PaginaRenderActivity : ThemeableActivity() {
                                                 // initiate media scan and put the new things into the path array to
                                                 // make the scanner aware of the location and the files you want to see
                                                 MediaScannerConnection.scanFile(
-                                                    applicationContext,
+                                                    requireActivity().applicationContext,
                                                     arrayOf(fileToDelete.absolutePath),
                                                     null,
                                                     null
                                                 )
                                             }
                                             Snackbar.make(
-                                                findViewById(android.R.id.content),
+                                                requireActivity().findViewById(android.R.id.content),
                                                 R.string.file_delete,
                                                 Snackbar.LENGTH_SHORT
                                             )
                                                 .show()
                                         } else
                                             Snackbar.make(
-                                                findViewById(android.R.id.content),
+                                                requireActivity().findViewById(android.R.id.content),
                                                 R.string.error,
                                                 Snackbar.LENGTH_SHORT
                                             )
@@ -567,14 +764,14 @@ class PaginaRenderActivity : ThemeableActivity() {
                             }
                             DOWNLINK_CHOOSE -> {
                                 simpleDialogViewModel.handled = true
-                                if (isDefaultLocationPublic) {
-                                    if (hasStorageAccess)
+                                if (activity?.isDefaultLocationPublic == true) {
+                                    if (activity?.hasStorageAccess == true)
                                     // Have permission, do the thing!
                                         startDownload(true)
                                     else {
                                         mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                                         Snackbar.make(
-                                            findViewById(android.R.id.content),
+                                            requireActivity().findViewById(android.R.id.content),
                                             R.string.forced_private,
                                             Snackbar.LENGTH_SHORT
                                         )
@@ -595,7 +792,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                     mHandler.removeCallbacks(mScrollDown)
                                 }
                                 saveZoom(andSpeedAlso = true, andSaveTabAlso = true)
-                                finishAfterTransitionWrapper()
+                                mMainActivity?.finishAfterTransitionWrapper()
                             }
                         }
                     }
@@ -608,7 +805,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                     mHandler.removeCallbacks(mScrollDown)
                                 }
                                 saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-                                finishAfterTransitionWrapper()
+                                mMainActivity?.finishAfterTransitionWrapper()
                             }
                         }
                     }
@@ -616,7 +813,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             }
         }
 
-        downloaderViewModel.state.observe(this) {
+        downloaderViewModel.state.observe(viewLifecycleOwner) {
             Log.d(TAG, "downloaderViewModel state $it")
             if (!downloaderViewModel.handled) {
                 when (it) {
@@ -624,7 +821,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                         Log.d(TAG, "DownloadListener update: ${it.progress}")
                         downloaderViewModel.handled = true
                         val sFragment = ProgressDialogFragment.findVisible(
-                            this@PaginaRenderActivity,
+                            mMainActivity,
                             DOWNLOAD_MP3
                         )
                         sFragment?.setProgress(it.progress)
@@ -635,10 +832,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                         dismissProgressDialog(DOWNLOAD_MP3)
                         // initiate media scan and put the new things into the path array to
                         // make the scanner aware of the location and the files you want to see
-                        if (isDefaultLocationPublic && !OSUtils.hasQ())
-                            mediaScan(this@PaginaRenderActivity, url.orEmpty())
+                        if ((activity?.isDefaultLocationPublic == true) && !OSUtils.hasQ())
+                            mediaScan(requireContext(), url.orEmpty())
                         Snackbar.make(
-                            findViewById(android.R.id.content),
+                            requireActivity().findViewById(android.R.id.content),
                             R.string.download_completed,
                             Snackbar.LENGTH_SHORT
                         )
@@ -652,7 +849,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                         downloaderViewModel.handled = true
                         dismissProgressDialog(DOWNLOAD_MP3)
                         Snackbar.make(
-                            findViewById(android.R.id.content),
+                            requireActivity().findViewById(android.R.id.content),
                             " ${getString(R.string.download_error)}: $it.message",
                             Snackbar.LENGTH_SHORT
                         )
@@ -661,288 +858,47 @@ class PaginaRenderActivity : ThemeableActivity() {
                 }
             }
         }
+    }
 
-        resolveDeleteAudioConsent = registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult()
-        ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                mCantiViewModel.toDelete?.let {
-                    deleteAudio(it)
-                    mCantiViewModel.toDelete = null
-                }
-            } else {
+    private fun updatePlayBackStatus(state: PlaybackStateCompat) {
+        when (state.state) {
+            PlaybackStateCompat.STATE_PAUSED -> {
+                stopSeekbarUpdate()
+                showPlaying(false)
+                binding.musicSeekbar.isEnabled = true
+            }
+            PlaybackStateCompat.STATE_STOPPED -> {
+                stopSeekbarUpdate()
+                updateSeekBarValue(0F)
+                binding.musicSeekbar.isEnabled = false
+                showPlaying(false)
+            }
+            PlaybackStateCompat.STATE_ERROR -> {
+                binding.musicSeekbar.isVisible = true
+                binding.musicLoadingbar.isVisible = false
+                stopSeekbarUpdate()
+                updateSeekBarValue(0F)
+                binding.musicSeekbar.isEnabled = false
+                showPlaying(false)
+                Log.e(TAG, "onPlaybackStateChanged: " + state.errorMessage)
                 Snackbar.make(
-                    findViewById(android.R.id.content),
-                    getString(R.string.external_storage_denied),
+                    requireActivity().findViewById(android.R.id.content),
+                    state.errorMessage,
                     Snackbar.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.canto, menu)
-        super.onCreateOptionsMenu(menu)
-        Log.d(
-            TAG,
-            "onCreateOptionsMenu - INTRO_PAGINARENDER: ${
-                mSharedPrefs.getBoolean(
-                    Utility.INTRO_PAGINARENDER,
-                    false
                 )
-            }"
-        )
-        if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
-            Handler(Looper.getMainLooper()).postDelayed(1500) {
-                playIntro(binding.musicButtons.isVisible)
+                    .show()
             }
-        }
-
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home ->
-                if (mCantiViewModel.notaCambio.isEmpty()
-                    || mCantiViewModel.mCurrentCanto?.savedTab == null
-                    || mCantiViewModel.barreCambio.isEmpty()
-                    || mCantiViewModel.mCurrentCanto?.savedBarre == null
-                    || noChangesTabBarre
-                ) {
-                    if (mCantiViewModel.scrollPlaying) {
-                        showScrolling(false)
-                        mHandler.removeCallbacks(mScrollDown)
-                    }
-                    saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-                    finishAfterTransitionWrapper()
-                    return true
-                } else {
-                    SimpleDialogFragment.show(
-                        SimpleDialogFragment.Builder(
-                            SAVE_TAB
-                        )
-                            .title(R.string.dialog_save_tab_title)
-                            .icon(R.drawable.save_24px)
-                            .content(R.string.dialog_save_tab)
-                            .positiveButton(R.string.save_exit_confirm)
-                            .negativeButton(R.string.discard_exit_confirm),
-                        supportFragmentManager
-                    )
-                    return true
-                }
-            R.id.action_exp_pdf -> {
-                lifecycleScope.launch { exportPdf() }
-                return true
-            }
-            R.id.action_help_canto -> {
-                playIntro(binding.musicButtons.isVisible)
-                return true
-            }
-            R.id.action_save_tab -> {
-                if (!mCantiViewModel.mCurrentCanto?.savedTab.equals(
-                        mCantiViewModel.notaCambio,
-                        ignoreCase = true
-                    )
-                ) {
-                    mCantiViewModel.mCurrentCanto?.savedTab = mCantiViewModel.notaCambio
-                    lifecycleScope.launch { updateCanto(1) }
-                } else {
-                    Snackbar.make(
-                        findViewById(android.R.id.content),
-                        R.string.tab_not_saved,
-                        Snackbar.LENGTH_SHORT
-                    )
-                        .show()
-                }
-                return true
-            }
-            R.id.action_reset_tab -> {
-                mCantiViewModel.notaCambio = mCantiViewModel.primaNota
-                val convMap = cambioAccordi.diffSemiToni(
-                    mCantiViewModel.primaNota,
-                    mCantiViewModel.notaCambio
-                )
-                var convMin: HashMap<String, String>? = null
-                if (resources.systemLocale.language.equals(
-                        LANGUAGE_UKRAINIAN,
-                        ignoreCase = true
-                    ) || resources.systemLocale.language.equals(
-                        LANGUAGE_POLISH,
-                        ignoreCase = true
-                    )
-                )
-                    convMin = cambioAccordi.diffSemiToniMin(
-                        mCantiViewModel.primaNota,
-                        mCantiViewModel.notaCambio
-                    )
-                saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
-                if (convMap != null) {
-                    loadContentIntoWebView(
-                        cambiaAccordi(
-                            convMap,
-                            mCantiViewModel.barreCambio,
-                            convMin
-                        )
-                    )
-                } else
-                    loadContentIntoWebView(
-                        readTextFromResource(
-                            mCantiViewModel.pagina
-                                ?: NO_CANTO
-                        )
-                    )
-                mCantiViewModel.mCurrentCanto?.let {
-                    if (it.zoom > 0)
-                        binding.cantoView.setInitialScale(it.zoom)
-                }
-                return true
-            }
-            R.id.action_save_barre -> {
-                if (!mCantiViewModel.mCurrentCanto?.savedBarre.equals(
-                        mCantiViewModel.barreCambio,
-                        ignoreCase = true
-                    )
-                ) {
-                    mCantiViewModel.mCurrentCanto?.savedBarre = mCantiViewModel.barreCambio
-                    lifecycleScope.launch { updateCanto(2) }
-                } else {
-                    Snackbar.make(
-                        findViewById(android.R.id.content),
-                        R.string.barre_not_saved,
-                        Snackbar.LENGTH_SHORT
-                    )
-                        .show()
-                }
-                return true
-            }
-            R.id.action_reset_barre -> {
-                mCantiViewModel.barreCambio = mCantiViewModel.primoBarre
-                val convMap1 = cambioAccordi.diffSemiToni(
-                    mCantiViewModel.primaNota,
-                    mCantiViewModel.notaCambio
-                )
-                var convMin1: HashMap<String, String>? = null
-                if (resources.systemLocale.language.equals(
-                        LANGUAGE_UKRAINIAN,
-                        ignoreCase = true
-                    ) || resources.systemLocale.language.equals(
-                        LANGUAGE_POLISH,
-                        ignoreCase = true
-                    )
-                )
-                    convMin1 = cambioAccordi.diffSemiToniMin(
-                        mCantiViewModel.primaNota,
-                        mCantiViewModel.notaCambio
-                    )
-                saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
-                if (convMap1 != null) {
-                    loadContentIntoWebView(
-                        cambiaAccordi(
-                            convMap1,
-                            mCantiViewModel.barreCambio,
-                            convMin1
-                        )
-                    )
-                } else
-                    loadContentIntoWebView(
-                        readTextFromResource(
-                            mCantiViewModel.pagina
-                                ?: NO_CANTO
-                        )
-                    )
-                mCantiViewModel.mCurrentCanto?.let {
-                    if (it.zoom > 0)
-                        binding.cantoView.setInitialScale(it.zoom)
-                }
-                return true
+            PlaybackStateCompat.STATE_PLAYING -> {
+                binding.musicSeekbar.isVisible = true
+                binding.musicLoadingbar.isVisible = false
+                scheduleSeekbarUpdate()
+                showPlaying(true)
+                binding.musicSeekbar.isEnabled = true
             }
             else -> {
-                if (item.groupId == R.id.menu_gruppo_note) {
-                    mCantiViewModel.notaCambio = item.titleCondensed.toString()
-                    val convMap2 = cambioAccordi.diffSemiToni(
-                        mCantiViewModel.primaNota,
-                        mCantiViewModel.notaCambio
-                    )
-                    var convMin2: HashMap<String, String>? = null
-                    if (resources.systemLocale.language.equals(
-                            LANGUAGE_UKRAINIAN,
-                            ignoreCase = true
-                        ) || resources.systemLocale.language.equals(
-                            LANGUAGE_POLISH,
-                            ignoreCase = true
-                        )
-                    )
-                        convMin2 = cambioAccordi.diffSemiToniMin(
-                            mCantiViewModel.primaNota,
-                            mCantiViewModel.notaCambio
-                        )
-                    saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
-                    if (convMap2 != null) {
-                        loadContentIntoWebView(
-                            cambiaAccordi(
-                                convMap2,
-                                mCantiViewModel.barreCambio,
-                                convMin2
-                            )
-                        )
-                    } else
-                        loadContentIntoWebView(
-                            readTextFromResource(
-                                mCantiViewModel.pagina
-                                    ?: NO_CANTO
-                            )
-                        )
-                    mCantiViewModel.mCurrentCanto?.let {
-                        if (it.zoom > 0)
-                            binding.cantoView.setInitialScale(it.zoom)
-                    }
-                    return true
-                }
-                if (item.groupId == R.id.menu_gruppo_barre) {
-                    mCantiViewModel.barreCambio = item.titleCondensed.toString()
-                    val convMap3 = cambioAccordi.diffSemiToni(
-                        mCantiViewModel.primaNota,
-                        mCantiViewModel.notaCambio
-                    )
-                    var convMin3: HashMap<String, String>? = null
-                    if (resources.systemLocale.language.equals(
-                            LANGUAGE_UKRAINIAN,
-                            ignoreCase = true
-                        ) || resources.systemLocale.language.equals(
-                            LANGUAGE_POLISH,
-                            ignoreCase = true
-                        )
-                    )
-                        convMin3 = cambioAccordi.diffSemiToniMin(
-                            mCantiViewModel.primaNota,
-                            mCantiViewModel.notaCambio
-                        )
-                    saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
-                    if (convMap3 != null) {
-                        loadContentIntoWebView(
-                            cambiaAccordi(
-                                convMap3,
-                                mCantiViewModel.barreCambio,
-                                convMin3
-                            )
-                        )
-                    } else
-                        loadContentIntoWebView(
-                            readTextFromResource(
-                                mCantiViewModel.pagina
-                                    ?: NO_CANTO
-                            )
-                        )
-                    mCantiViewModel.mCurrentCanto?.let {
-                        if (it.zoom > 0)
-                            binding.cantoView.setInitialScale(it.zoom)
-                    }
-                    return true
-                }
+                Log.i(TAG, "Non gestito")
             }
         }
-        return false
     }
 
     private fun onBackPressedAction() {
@@ -964,7 +920,8 @@ class PaginaRenderActivity : ThemeableActivity() {
                 mHandler.removeCallbacks(mScrollDown)
             }
             saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-            finishAfterTransitionWrapper()
+            if (mCantiViewModel.inActivity)
+                activity?.finishAfterTransitionWrapper()
         } else {
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(
@@ -975,38 +932,21 @@ class PaginaRenderActivity : ThemeableActivity() {
                     .content(R.string.dialog_save_tab)
                     .positiveButton(R.string.save_exit_confirm)
                     .negativeButton(R.string.discard_exit_confirm),
-                supportFragmentManager
+                requireActivity().supportFragmentManager
             )
         }
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
         binding.fabCanti.expansionMode =
-            if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+            if (activity?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
     }
 
-    public override fun onResume() {
+    override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: ")
         binding.musicControls.isVisible = mCantiViewModel.mostraAudio
-        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
-            catalogReadyBR,
-            IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC)
-        )
-    }
-
-    override fun onPause() {
-        super.onPause()
-        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(catalogReadyBR)
-    }
-
-    public override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy(): $isFinishing")
-        if (isFinishing) stopMedia()
-        stopSeekbarUpdate()
-        mExecutorService.shutdown()
     }
 
     // recupera e setta il record per la registrazione
@@ -1016,7 +956,7 @@ class PaginaRenderActivity : ThemeableActivity() {
         else
             StringUtils.EMPTY
 
-        val mDao = mRiuscitoDb.localLinksDao()
+        val mDao = mRisuscitoDb.localLinksDao()
         val localLink = mDao.getLocalLinkByCantoId(mCantiViewModel.idCanto)
 
         personalUrl = localLink?.localPath.orEmpty()
@@ -1234,7 +1174,8 @@ class PaginaRenderActivity : ThemeableActivity() {
             "startDownload - isExternalStorageWritable: ${Utility.isExternalStorageWritable}"
         )
         if ((isExternal && Utility.isExternalStorageWritable) || !isExternal) {
-            val localFilePath = this.filesDir.toString() + "/" + Utility.filterMediaLink(url)
+            val localFilePath =
+                mMainActivity?.filesDir?.toString().orEmpty() + "/" + Utility.filterMediaLink(url)
             ProgressDialogFragment.show(
                 ProgressDialogFragment.Builder(DOWNLOAD_MP3).apply {
                     title = R.string.save_file
@@ -1244,7 +1185,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                     progressMax = 100
                     positiveButton = R.string.cancel
                 },
-                supportFragmentManager
+                requireActivity().supportFragmentManager
             )
             lifecycleScope.launch(Dispatchers.IO) {
                 mDownloader.startSaving(
@@ -1255,7 +1196,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             }
         } else
             Snackbar.make(
-                findViewById(android.R.id.content),
+                requireActivity().findViewById(android.R.id.content),
                 R.string.no_memory_writable,
                 Snackbar.LENGTH_SHORT
             )
@@ -1264,11 +1205,10 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun showPlaying(started: Boolean) {
         Log.d(TAG, "showPlaying: ")
-//        (binding.playSong as? MaterialButton)?.setIconResource(if (started) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24)
         val anim = if (started) AnimatedVectorDrawableCompat.create(
-            this,
+            requireContext(),
             R.drawable.play_to_pause_anim
-        ) else AnimatedVectorDrawableCompat.create(this, R.drawable.pause_to_play_anim)
+        ) else AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.pause_to_play_anim)
         (binding.playSong as? MaterialButton)?.icon = anim
         anim?.start()
         binding.playSong.isVisible = mCantiViewModel.retrieveDone
@@ -1277,9 +1217,12 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun showScrolling(scrolling: Boolean) {
         val anim = if (scrolling) AnimatedVectorDrawableCompat.create(
-            this,
+            requireContext(),
             R.drawable.play_to_pause_circle_anim
-        ) else AnimatedVectorDrawableCompat.create(this, R.drawable.pause_to_play_circle_anim)
+        ) else AnimatedVectorDrawableCompat.create(
+            requireContext(),
+            R.drawable.pause_to_play_circle_anim
+        )
         (binding.playScroll as? MaterialButton)?.icon = anim
         anim?.start()
 //        (binding.playScroll as? MaterialButton)?.setIconResource(if (scrolling) R.drawable.pause_circle_24px else R.drawable.play_circle_24px)
@@ -1288,13 +1231,13 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun playIntro(isFull: Boolean) {
         binding.musicControls.isVisible = true
-        val colorOnPrimary = MaterialColors.getColor(this, R.attr.colorOnPrimary, TAG)
+        val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
         var id = 1
-        TapTargetSequence(this).apply {
+        TapTargetSequence(requireActivity()).apply {
             continueOnCancel(true)
             target(
                 TapTarget.forToolbarMenuItem(
-                    binding.risuscitoToolbar,
+                    binding.risuscitoToolbarCanto,
                     R.id.tonalita,
                     getString(R.string.action_tonalita),
                     getString(R.string.sc_tonalita_desc)
@@ -1310,7 +1253,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             )
             target(
                 TapTarget.forToolbarMenuItem(
-                    binding.risuscitoToolbar,
+                    binding.risuscitoToolbarCanto,
                     R.id.barre,
                     getString(R.string.action_barre),
                     getString(R.string.sc_barre_desc)
@@ -1355,7 +1298,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             )
             target(
                 TapTarget.forToolbarOverflow(
-                    binding.risuscitoToolbar,
+                    binding.risuscitoToolbarCanto,
                     getString(R.string.showcase_end_title),
                     getString(R.string.showcase_help_general)
                 )
@@ -1389,20 +1332,20 @@ class PaginaRenderActivity : ThemeableActivity() {
 
     private fun playMedia() {
         Log.d(TAG, "playMedia: ")
-        val controller = MediaControllerCompat.getMediaController(this)
+        val controller = MediaControllerCompat.getMediaController(requireActivity())
         controller?.transportControls?.play()
     }
 
     private fun pauseMedia() {
         Log.d(TAG, "pauseMedia: ")
-        val controller = MediaControllerCompat.getMediaController(this)
+        val controller = MediaControllerCompat.getMediaController(requireActivity())
         controller?.transportControls?.pause()
     }
 
     private fun stopMedia() {
         Log.d(TAG, "stopMedia: ")
-        if (mLastPlaybackState?.state != PlaybackStateCompat.STATE_STOPPED) {
-            val controller = MediaControllerCompat.getMediaController(this)
+        if (mainActivityViewModel.lastPlaybackState.value?.state != PlaybackStateCompat.STATE_STOPPED) {
+            val controller = MediaControllerCompat.getMediaController(requireActivity())
             controller?.transportControls?.stop()
         }
     }
@@ -1410,15 +1353,14 @@ class PaginaRenderActivity : ThemeableActivity() {
     private fun playFromId(id: String) {
         binding.musicSeekbar.isVisible = false
         binding.musicLoadingbar.isVisible = true
-//        showPlaying(true)
-        val controller = MediaControllerCompat.getMediaController(this)
+        val controller = MediaControllerCompat.getMediaController(requireActivity())
         controller?.transportControls?.playFromMediaId(id, null)
     }
 
     private fun refreshCatalog() {
         Log.d(TAG, "refreshCatalog")
         binding.playSong.isEnabled = false
-        val controller = MediaControllerCompat.getMediaController(this)
+        val controller = MediaControllerCompat.getMediaController(requireActivity())
         controller?.transportControls?.sendCustomAction(MusicService.ACTION_REFRESH, null)
     }
 
@@ -1439,19 +1381,19 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private fun updateProgress() {
-        if (mLastPlaybackState == null) {
+        if (mainActivityViewModel.lastPlaybackState.value == null) {
             return
         }
-        var currentPosition = mLastPlaybackState?.position ?: 0
-        if (mLastPlaybackState?.state == PlaybackStateCompat.STATE_PLAYING) {
+        var currentPosition = mainActivityViewModel.lastPlaybackState.value?.position ?: 0
+        if (mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
             // Calculate the elapsed time between the last position update and now and unless
             // paused, we can assume (delta * speed) + current position is approximately the
             // latest position. This ensure that we do not repeatedly call the getPlaybackState()
             // on MediaControllerCompat.
             val timeDelta =
-                SystemClock.elapsedRealtime() - (mLastPlaybackState?.lastPositionUpdateTime
+                SystemClock.elapsedRealtime() - (mainActivityViewModel.lastPlaybackState.value?.lastPositionUpdateTime
                     ?: 0L)
-            currentPosition += (timeDelta.toInt() * (mLastPlaybackState?.playbackSpeed
+            currentPosition += (timeDelta.toInt() * (mainActivityViewModel.lastPlaybackState.value?.playbackSpeed
                 ?: 0F)).toLong()
         }
         binding.musicSeekbar.isEnabled = true
@@ -1474,22 +1416,22 @@ class PaginaRenderActivity : ThemeableActivity() {
         // c'è la registrazione online
         if (!url.isNullOrEmpty()) {
             // controllo se ho scaricato un file in locale
-            if (isDefaultLocationPublic) {
-                localUrl = if (hasStorageAccess) {
+            if (mMainActivity?.isDefaultLocationPublic == true) {
+                localUrl = if (mMainActivity?.hasStorageAccess == true) {
                     // Have permission, do the thing!
-                    retrieveMediaFileLink(this, url, true)
+                    retrieveMediaFileLink(requireActivity(), url, true)
                 } else {
                     mSharedPrefs.edit { putString(Utility.SAVE_LOCATION, "0") }
                     Snackbar.make(
-                        findViewById(android.R.id.content),
+                        requireActivity().findViewById(android.R.id.content),
                         getString(R.string.external_storage_denied),
                         Snackbar.LENGTH_SHORT
                     )
                         .show()
-                    retrieveMediaFileLink(this, url, false)
+                    retrieveMediaFileLink(requireActivity(), url, false)
                 }
             } else
-                localUrl = retrieveMediaFileLink(this, url, false)
+                localUrl = retrieveMediaFileLink(requireActivity(), url, false)
 
             mDownload = !(localUrl.isNullOrEmpty() && personalUrl.isNullOrEmpty())
 
@@ -1497,9 +1439,9 @@ class PaginaRenderActivity : ThemeableActivity() {
             binding.noRecord.isVisible = false
             // mostra i pulsanti per il lettore musicale se ho una registrazione locale oppure se sono
             // online, altrimenti mostra il messaggio di mancata connessione
-            Log.d(TAG, "isOnline $isOnline")
-            binding.musicButtons.isVisible = isOnline || mDownload
-            binding.noConnection.isInvisible = isOnline || mDownload
+            Log.d(TAG, "isOnline ${context?.isOnline == true}")
+            binding.musicButtons.isVisible = (context?.isOnline == true) || mDownload
+            binding.noConnection.isInvisible = (context?.isOnline == true) || mDownload
         } else {
             mDownload = !personalUrl.isNullOrEmpty()
             // Se c'è una registrazione locale mostro i pulsanti
@@ -1520,7 +1462,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private suspend fun retrieveData() {
-        val mDao = mRiuscitoDb.cantoDao()
+        val mDao = mRisuscitoDb.cantoDao()
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
             mCantiViewModel.mCurrentCanto = mDao.getCantoById(mCantiViewModel.idCanto)
             getRecordLink()
@@ -1560,7 +1502,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             loadContentIntoWebView(cambiaAccordi(convMap, mCantiViewModel.barreCambio, convMin))
         } else
             loadContentIntoWebView(
-                readTextFromResource(
+                resources.readTextFromResource(
                     mCantiViewModel.pagina
                         ?: NO_CANTO
                 )
@@ -1600,7 +1542,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private suspend fun insertLink(path: String) {
-        val mDao = mRiuscitoDb.localLinksDao()
+        val mDao = mRisuscitoDb.localLinksDao()
         val linkToInsert = LocalLink()
         linkToInsert.idCanto = mCantiViewModel.idCanto
         linkToInsert.localPath = path
@@ -1620,7 +1562,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private suspend fun deleteLink() {
-        val mDao = mRiuscitoDb.localLinksDao()
+        val mDao = mRisuscitoDb.localLinksDao()
         val linkToDelete = LocalLink()
         linkToDelete.idCanto = mCantiViewModel.idCanto
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
@@ -1632,14 +1574,14 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private suspend fun updateFavorite() {
-        val mDao = mRiuscitoDb.cantoDao()
+        val mDao = mRisuscitoDb.cantoDao()
         mCantiViewModel.mCurrentCanto?.let {
             it.favorite = if (mCantiViewModel.mCurrentCanto?.favorite == 1) 0 else 1
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 mDao.updateCanto(it)
             }
             Snackbar.make(
-                findViewById(android.R.id.content),
+                requireActivity().findViewById(android.R.id.content),
                 if (it.favorite == 1) R.string.favorite_added else R.string.favorite_removed,
                 Snackbar.LENGTH_SHORT
             )
@@ -1649,14 +1591,14 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private suspend fun updateCanto(option: Int) {
-        val mDao = mRiuscitoDb.cantoDao()
+        val mDao = mRisuscitoDb.cantoDao()
         mCantiViewModel.mCurrentCanto?.let {
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 mDao.updateCanto(it)
             }
             if (option != 0)
                 Snackbar.make(
-                    findViewById(android.R.id.content),
+                    requireActivity().findViewById(android.R.id.content),
                     if (option == 1) R.string.tab_saved else R.string.barre_saved,
                     Snackbar.LENGTH_SHORT
                 )
@@ -1666,17 +1608,20 @@ class PaginaRenderActivity : ThemeableActivity() {
 
 
     private fun initFabOptions() {
-        val iconColor = MaterialColors.getColor(this, R.attr.colorOnPrimaryContainer, TAG)
-        val backgroundColor = MaterialColors.getColor(this, R.attr.colorPrimaryContainer, TAG)
+        val iconColor =
+            MaterialColors.getColor(requireContext(), R.attr.colorOnPrimaryContainer, TAG)
+        val backgroundColor =
+            MaterialColors.getColor(requireContext(), R.attr.colorPrimaryContainer, TAG)
+        binding.fabCanti.overlayLayout = binding.overlayCanto
         binding.fabCanti.mainFab.rippleColor = android.R.color.transparent
         binding.fabCanti.clearActionItems()
         binding.fabCanti.expansionMode =
-            if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+            if (context?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
 
         binding.fabCanti.addActionItem(
             SpeedDialActionItem.Builder(
                 R.id.fab_fullscreen_on,
-                AppCompatResources.getDrawable(this, R.drawable.fullscreen_24px)
+                AppCompatResources.getDrawable(requireContext(), R.drawable.fullscreen_24px)
             )
                 .setTheme(R.style.Risuscito_SpeedDialActionItem)
                 .setLabel(getString(R.string.fullscreen))
@@ -1690,7 +1635,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             SpeedDialActionItem.Builder(
                 R.id.fab_sound_off,
                 AppCompatResources.getDrawable(
-                    this,
+                    requireContext(),
                     if (mCantiViewModel.mostraAudio) R.drawable.headphones_24px else R.drawable.headset_off_24px
                 )
             )
@@ -1704,7 +1649,7 @@ class PaginaRenderActivity : ThemeableActivity() {
 
         if (mDownload) {
             val icon = AppCompatResources.getDrawable(
-                this,
+                requireContext(),
                 if ((!personalUrl.isNullOrEmpty())) R.drawable.link_off_24px else R.drawable.delete_24px
             )
             val text = if (!personalUrl.isNullOrEmpty())
@@ -1724,7 +1669,10 @@ class PaginaRenderActivity : ThemeableActivity() {
                 binding.fabCanti.addActionItem(
                     SpeedDialActionItem.Builder(
                         R.id.fab_save_file,
-                        AppCompatResources.getDrawable(this, R.drawable.file_download_24px)
+                        AppCompatResources.getDrawable(
+                            requireContext(),
+                            R.drawable.file_download_24px
+                        )
                     )
                         .setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.save_file))
@@ -1736,7 +1684,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             binding.fabCanti.addActionItem(
                 SpeedDialActionItem.Builder(
                     R.id.fab_link_file,
-                    AppCompatResources.getDrawable(this, R.drawable.add_link_24px)
+                    AppCompatResources.getDrawable(requireContext(), R.drawable.add_link_24px)
                 )
                     .setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.only_link_title))
@@ -1752,7 +1700,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             SpeedDialActionItem.Builder(
                 R.id.fab_favorite,
                 AppCompatResources.getDrawable(
-                    this,
+                    requireContext(),
                     if (mCantiViewModel.mCurrentCanto?.favorite == 1) R.drawable.bookmark_remove_24px else R.drawable.bookmark_add_24px
                 )
             )
@@ -1776,9 +1724,9 @@ class PaginaRenderActivity : ThemeableActivity() {
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mCantiViewModel.scrollPlaying)
                     bundle.putInt(Utility.ID_CANTO, mCantiViewModel.idCanto)
 
-                    val intent = Intent(this, PaginaRenderFullScreen::class.java)
+                    val intent = Intent(requireContext(), PaginaRenderFullScreen::class.java)
                     intent.putExtras(bundle)
-                    startActivityWithFadeIn(intent)
+                    activity?.startActivityWithFadeIn(intent)
                     true
                 }
                 R.id.fab_sound_off -> {
@@ -1800,7 +1748,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 .content(R.string.dialog_delete_mp3)
                                 .positiveButton(R.string.delete_confirm)
                                 .negativeButton(R.string.cancel),
-                            supportFragmentManager
+                            requireActivity().supportFragmentManager
                         )
                     } else {
                         SimpleDialogFragment.show(
@@ -1812,7 +1760,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                                 .content(R.string.dialog_delete_link)
                                 .positiveButton(R.string.unlink_confirm)
                                 .negativeButton(R.string.cancel),
-                            supportFragmentManager
+                            requireActivity().supportFragmentManager
                         )
                     }
                     true
@@ -1828,7 +1776,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                             .content(R.string.download_message)
                             .positiveButton(R.string.download_confirm)
                             .negativeButton(R.string.cancel),
-                        supportFragmentManager
+                        requireActivity().supportFragmentManager
                     )
                     true
                 }
@@ -1843,7 +1791,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                             .content(R.string.only_link)
                             .positiveButton(R.string.associate_confirm)
                             .negativeButton(R.string.cancel),
-                        supportFragmentManager
+                        requireActivity().supportFragmentManager
                     )
                     true
                 }
@@ -1860,7 +1808,7 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private fun dismissProgressDialog(tag: String) {
-        val sFragment = ProgressDialogFragment.findVisible(this, tag)
+        val sFragment = ProgressDialogFragment.findVisible(mMainActivity, tag)
         sFragment?.dismiss()
     }
 
@@ -1873,14 +1821,14 @@ class PaginaRenderActivity : ThemeableActivity() {
                 progressIndeterminate = true
                 canceable = true
             },
-            supportFragmentManager
+            requireActivity().supportFragmentManager
         )
-        val pdfOutput = PdfExporter(this).exportPdf(htmlContent)
+        val pdfOutput = PdfExporter(requireContext()).exportPdf(htmlContent)
         delay(1000)
         dismissProgressDialog(EXPORT_PDF)
         if (pdfOutput.isError) {
             Snackbar.make(
-                findViewById(android.R.id.content),
+                requireActivity().findViewById(android.R.id.content),
                 "${getString(R.string.error)}: ${pdfOutput.errorMessage}",
                 Snackbar.LENGTH_SHORT
             )
@@ -1889,7 +1837,7 @@ class PaginaRenderActivity : ThemeableActivity() {
             val file = File(pdfOutput.pdfPath)
             val target = Intent(Intent.ACTION_VIEW)
             val pdfUri = FileProvider.getUriForFile(
-                this@PaginaRenderActivity, "it.cammino.risuscito.fileprovider", file
+                requireContext(), "it.cammino.risuscito.fileprovider", file
             )
             Log.d(TAG, "pdfUri: $pdfUri")
             target.setDataAndType(pdfUri, "application/pdf")
@@ -1899,7 +1847,7 @@ class PaginaRenderActivity : ThemeableActivity() {
                 startActivity(intent2)
             } catch (e: ActivityNotFoundException) {
                 Snackbar.make(
-                    findViewById(android.R.id.content),
+                    requireActivity().findViewById(android.R.id.content),
                     R.string.no_pdf_reader,
                     Snackbar.LENGTH_SHORT
                 )
@@ -1909,9 +1857,9 @@ class PaginaRenderActivity : ThemeableActivity() {
     }
 
     private fun deleteAudio(toDelete: Uri) {
-        if (contentResolver.delete(toDelete, null, null) > 0) {
+        if (requireContext().contentResolver.delete(toDelete, null, null) > 0) {
             Snackbar.make(
-                findViewById(android.R.id.content),
+                requireActivity().findViewById(android.R.id.content),
                 R.string.file_delete,
                 Snackbar.LENGTH_SHORT
             )
@@ -1920,14 +1868,17 @@ class PaginaRenderActivity : ThemeableActivity() {
             lifecycleScope.launch { checkRecordState() }
         } else
             Snackbar.make(
-                findViewById(android.R.id.content),
+                requireActivity().findViewById(android.R.id.content),
                 R.string.error,
                 Snackbar.LENGTH_SHORT
             ).show()
     }
 
     companion object {
-        internal val TAG = PaginaRenderActivity::class.java.canonicalName
+        internal val TAG = CantoFragment::class.java.canonicalName
+        const val ARG_ID_CANTO = "ARG_ID_CANTO"
+        const val ARG_NUM_PAGINA = "ARG_NUM_PAGINA"
+        const val ARG_ON_ACTIVITY = "ARG_ON_ACTIVITY"
         private const val PROGRESS_UPDATE_INTERNAL: Long = 1000
         private const val PROGRESS_UPDATE_INITIAL_INTERVAL: Long = 100
         private const val EXPORT_PDF = "EXPORT_PDF"

@@ -1,6 +1,5 @@
 package it.cammino.risuscito.ui.fragment
 
-import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
@@ -11,7 +10,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.MenuProvider
 import androidx.core.view.children
 import androidx.core.view.isInvisible
@@ -41,13 +39,15 @@ import it.cammino.risuscito.databinding.RowItemNotableBinding
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.checkableItem
-import it.cammino.risuscito.ui.activity.PaginaRenderActivity
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ListChoiceDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.utils.extension.getTypedValueResId
+import it.cammino.risuscito.utils.extension.isGridLayout
+import it.cammino.risuscito.utils.extension.openCanto
+import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -159,14 +159,12 @@ class ConsegnatiFragment : AccountMenuFragment() {
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
-                    val intent = Intent(activity, PaginaRenderActivity::class.java)
-                    intent.putExtras(
-                        bundleOf(
-                            Utility.PAGINA to item.source?.getText(requireContext()),
-                            Utility.ID_CANTO to item.id
-                        )
+                    mMainActivity?.openCanto(
+                        mView,
+                        item.id,
+                        item.source?.getText(requireContext()),
+                        false
                     )
-                    mMainActivity?.startActivityWithTransition(intent, mView)
                     consume = true
                 }
                 consume
@@ -186,7 +184,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
             !found.isNullOrEmpty()
         }
         binding.cantiRecycler.adapter = cantoAdapter
-        val glm = GridLayoutManager(context, if (context?.hasThreeColumns == true) 3 else 2)
+        val glm = GridLayoutManager(context, 2)
         val llm = LinearLayoutManager(context)
         binding.cantiRecycler.layoutManager = if (context?.isGridLayout == true) glm else llm
         binding.cantiRecycler.itemAnimator = SlideRightAlphaAnimator()
@@ -213,7 +211,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
 
         binding.chooseRecycler.adapter = selectableAdapter
         val llm2 = if (context?.isGridLayout == true)
-            GridLayoutManager(context, if (context?.hasThreeColumns == true) 3 else 2)
+            GridLayoutManager(context, 2)
         else
             LinearLayoutManager(context)
         binding.chooseRecycler.layoutManager = llm2

@@ -3,14 +3,16 @@ package it.cammino.risuscito.ui.activity
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
+import android.os.RemoteException
+import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +38,7 @@ import it.cammino.risuscito.database.dao.Backup
 import it.cammino.risuscito.database.entities.*
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
+import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
@@ -66,7 +69,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         convertIntPreferences()
 
         Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
-        Log.d(TAG, "onCreate: hasThreeColumns = $hasThreeColumns")
         Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
         Log.d(TAG, "onCreate: isLandscape = $isLandscape")
         mViewModel.isTabletWithFixedDrawer = isOnTablet && isLandscape
@@ -79,15 +81,47 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         setTaskDescription()
 
+        // Connect a media browser just to get the media session token. There are other ways
+        // this can be done, for example by sharing the session token directly.
+        mMediaBrowser = MediaBrowserCompat(
+            this, ComponentName(
+                this, MusicService::
+                class.java
+            ), mConnectionCallback, null
+        )
+
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: ")
+        try {
+            mMediaBrowser?.connect()
+        } catch (e: IllegalStateException) {
+            Log.e(TAG, "onStart: mMediaBrowser connecting")
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop: ")
+        mMediaBrowser?.disconnect()
+        val controller = MediaControllerCompat.getMediaController(this)
+        controller?.unregisterCallback(mMediaControllerCallback)
     }
 
     override fun onResume() {
         super.onResume()
+
         updateStatusBarLightMode(true)
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
             showInfoBroadcastReceiver,
             IntentFilter(RisuscitoMessagingService.MESSAGE_RECEIVED_TAG)
+        )
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
+            catalogReadyBR,
+            IntentFilter(MusicService.BROADCAST_RETRIEVE_ASYNC)
         )
         checkScreenAwake()
     }
@@ -96,6 +130,13 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.onPause()
         LocalBroadcastManager.getInstance(applicationContext)
             .unregisterReceiver(showInfoBroadcastReceiver)
+        LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(catalogReadyBR)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy(): $isFinishing")
+        if (isFinishing) stopMedia()
     }
 
     fun updateStatusBarLightMode(auto: Boolean) {
@@ -535,6 +576,80 @@ abstract class ThemeableActivity : AppCompatActivity() {
                     .positiveButton(R.string.ok),
                 supportFragmentManager
             )
+        }
+    }
+
+    private val catalogReadyBR = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            // Implement UI change code here once notification is received
+            try {
+                Log.d(TAG, MusicService.MSG_RETRIEVE_DONE)
+                val done = intent.getBooleanExtra(MusicService.MSG_RETRIEVE_DONE, false)
+                Log.d(TAG, "MSG_RETRIEVE_DONE: $done")
+                mViewModel.catalogRefreshReady.value = done
+            } catch (e: IllegalArgumentException) {
+                Log.e(TAG, e.localizedMessage, e)
+            }
+
+        }
+    }
+
+    // Callback that ensures that we are showing the controls
+    private val mMediaControllerCallback = object : MediaControllerCompat.Callback() {
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
+            Log.d(TAG, "onPlaybackStateChanged: a " + state.state)
+            mViewModel.lastPlaybackState.value = state
+        }
+
+        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            Log.d(TAG, "onMetadataChanged")
+            if (metadata != null) {
+                mViewModel.medatadaCompat.value = metadata
+            }
+        }
+    }
+
+    private var mMediaBrowser: MediaBrowserCompat? = null
+    private val mConnectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
+        override fun onConnected() {
+            Log.d(TAG, "onConnected")
+            try {
+                mMediaBrowser?.let {
+                    val mediaController = MediaControllerCompat(
+                        this@ThemeableActivity, it.sessionToken
+                    )
+                    MediaControllerCompat.setMediaController(
+                        this@ThemeableActivity,
+                        mediaController
+                    )
+                    mediaController.registerCallback(mMediaControllerCallback)
+                    mViewModel.lastPlaybackState.value = mediaController.playbackState
+                    mViewModel.playerConnected.value = true
+                } ?: Log.e(TAG, "onConnected: mMediaBrowser is NULL")
+            } catch (e: RemoteException) {
+                Log.e(TAG, "onConnected: could not connect media controller", e)
+            }
+
+        }
+
+        override fun onConnectionFailed() {
+            Log.e(TAG, "onConnectionFailed")
+        }
+
+        override fun onConnectionSuspended() {
+            Log.d(TAG, "onConnectionSuspended")
+            val mediaController =
+                MediaControllerCompat.getMediaController(this@ThemeableActivity)
+            mediaController?.unregisterCallback(mMediaControllerCallback)
+            MediaControllerCompat.setMediaController(this@ThemeableActivity, null)
+        }
+    }
+
+    fun stopMedia() {
+        Log.d(TAG, "stopMedia: ")
+        if (mViewModel.lastPlaybackState.value?.state != PlaybackStateCompat.STATE_STOPPED) {
+            val controller = MediaControllerCompat.getMediaController(this)
+            controller?.transportControls?.stop()
         }
     }
 

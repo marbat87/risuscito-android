@@ -18,18 +18,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.elevation.SurfaceColors
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
-import it.cammino.risuscito.ListaPersonalizzata
+import it.cammino.risuscito.ui.activity.CantoHostActivity
+import it.cammino.risuscito.ui.activity.ThemeableActivity
+import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import kotlinx.coroutines.Dispatchers
@@ -295,4 +301,34 @@ fun Activity.slideInRight() {
         R.anim.animate_slide_in_right,
         R.anim.animate_slide_out_left
     )
+}
+
+fun ThemeableActivity.openCanto(
+    view: View?,
+    idCanto: Int,
+    numPagina: String?,
+    forceOpenActivity: Boolean = false
+) {
+    val args = bundleOf(
+        CantoFragment.ARG_NUM_PAGINA to numPagina,
+        CantoFragment.ARG_ID_CANTO to idCanto,
+        CantoFragment.ARG_ON_ACTIVITY to (forceOpenActivity || isOnPhone)
+    )
+
+    if (forceOpenActivity || isOnPhone) {
+        val intent = Intent(this, CantoHostActivity::class.java)
+        intent.putExtras(args)
+        startActivityWithTransition(intent, view)
+    } else {
+        stopMedia()
+        val fragment: Fragment = CantoFragment()
+        fragment.arguments = args
+        supportFragmentManager.commit {
+            replace(
+                R.id.detail_fragment,
+                fragment,
+                R.id.canto_fragment.toString()
+            )
+        }
+    }
 }

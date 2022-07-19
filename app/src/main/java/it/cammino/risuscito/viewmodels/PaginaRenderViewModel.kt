@@ -21,6 +21,7 @@ class PaginaRenderViewModel : ViewModel() {
 
     var pagina: String? = null
     var idCanto: Int = 0
+    var inActivity = false
     var primaNota: String = StringUtils.EMPTY
     var primoBarre: String = StringUtils.EMPTY
     var toDelete: Uri? = null

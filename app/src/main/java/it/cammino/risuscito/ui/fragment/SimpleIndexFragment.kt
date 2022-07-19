@@ -1,7 +1,6 @@
 package it.cammino.risuscito.ui.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -19,15 +18,14 @@ import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.LayoutRecyclerBinding
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.activity.MainActivity
-import it.cammino.risuscito.ui.activity.PaginaRenderActivity
-import it.cammino.risuscito.utils.*
-import it.cammino.risuscito.utils.extension.hasThreeColumns
+import it.cammino.risuscito.ui.dialog.DialogState
+import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.startActivityWithTransition
+import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -77,8 +75,6 @@ class SimpleIndexFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        mAdapter = FastScrollIndicatorAdapter(mCantiViewModel.tipoLista, requireContext())
-
         subscribeUiChanges()
 
         mAdapter.onClickListener =
@@ -87,14 +83,12 @@ class SimpleIndexFragment : Fragment() {
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     // lancia l'activity che visualizza il canto passando il parametro creato
-                    val intent = Intent(activity, PaginaRenderActivity::class.java)
-                    intent.putExtras(
-                        bundleOf(
-                            Utility.PAGINA to item.source?.getText(requireContext()),
-                            Utility.ID_CANTO to item.id
-                        )
+                    mActivity?.openCanto(
+                        mView,
+                        item.id,
+                        item.source?.getText(requireContext()),
+                        false
                     )
-                    activity?.startActivityWithTransition(intent, mView)
                     consume = true
                 }
                 consume
@@ -131,55 +125,10 @@ class SimpleIndexFragment : Fragment() {
 
         mAdapter.setHasStableIds(true)
         val llm = LinearLayoutManager(context)
-        val glm = GridLayoutManager(context, if (context?.hasThreeColumns == true) 3 else 2)
+        val glm = GridLayoutManager(context, 2)
         binding.recyclerView.layoutManager = if (context?.isGridLayout == true) glm else llm
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.adapter = mAdapter
-//        if (mCantiViewModel.tipoLista != 2) {
-//            binding.dragScrollBar.setRecyclerView(binding.cantiList)
-//            if (ViewCompat.isAttachedToWindow(binding.dragScrollBar)) {
-//                binding.dragScrollBar.setTextColor(
-//                    MaterialColors.getColor(
-//                        requireContext(),
-//                        R.attr.colorOnTertiary,
-//                        TAG
-//                    )
-//                )
-//                binding.dragScrollBar.setHandleColor(
-//                    MaterialColors.getColor(
-//                        context, R.attr.colorTertiary, TAG
-//                    )
-//                )
-//                binding.dragScrollBar.setIndicator(CustomIndicator(context), true)
-//                binding.dragScrollBar.setAutoHide(false)
-//            } else
-//                binding.dragScrollBar.addOnAttachStateChangeListener(object :
-//                    View.OnAttachStateChangeListener {
-//                    override fun onViewDetachedFromWindow(p0: View?) {
-//                        // no-op
-//                    }
-//
-//                    override fun onViewAttachedToWindow(p0: View?) {
-//                        (p0 as? TouchScrollBar)?.setTextColor(
-//                            MaterialColors.getColor(
-//                                requireContext(),
-//                                R.attr.colorOnTertiary,
-//                                TAG
-//                            )
-//                        )
-//                        (p0 as? TouchScrollBar)?.setHandleColor(
-//                            MaterialColors.getColor(
-//                                context, R.attr.colorTertiary, TAG
-//                            )
-//                        )
-//                        (p0 as? TouchScrollBar)?.setIndicator(CustomIndicator(context), true)
-//                        (p0 as? TouchScrollBar)?.setAutoHide(false)
-//                        p0?.removeOnAttachStateChangeListener(this)
-//                    }
-//                })
-//        } else {
-//            binding.dragScrollBar.isGone = true
-//        }
     }
 
     override fun onResume() {

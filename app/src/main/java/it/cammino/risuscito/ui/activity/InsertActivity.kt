@@ -1,6 +1,5 @@
 package it.cammino.risuscito.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -13,7 +12,6 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -28,13 +26,16 @@ import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.listeners.addClickListener
-import it.cammino.risuscito.ui.fragment.CustomListsFragment
 import it.cammino.risuscito.R
 import it.cammino.risuscito.databinding.ActivityInsertSearchBinding
 import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.items.InsertItem
+import it.cammino.risuscito.ui.fragment.CustomListsFragment
 import it.cammino.risuscito.utils.*
-import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
+import it.cammino.risuscito.utils.extension.isGridLayout
+import it.cammino.risuscito.utils.extension.openCanto
+import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -142,21 +143,14 @@ class InsertActivity : ThemeableActivity() {
         cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { mView, _, _, item ->
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                val intent = Intent(applicationContext, PaginaRenderActivity::class.java)
-                intent.putExtras(
-                    bundleOf(
-                        Utility.PAGINA to item.source?.getText(this@InsertActivity),
-                        Utility.ID_CANTO to item.id
-                    )
-                )
-                startActivityWithTransition(intent, mView)
+                openCanto(mView, item.id, item.source?.getText(this@InsertActivity), true)
             }
         }
 
         cantoAdapter.setHasStableIds(true)
 
         binding.searchLayout.matchedList.adapter = cantoAdapter
-        val glm = GridLayoutManager(this, if (hasThreeColumns) 3 else 2)
+        val glm = GridLayoutManager(this, 2)
         val llm = LinearLayoutManager(this)
         binding.searchLayout.matchedList.layoutManager = if (isGridLayout) glm else llm
 

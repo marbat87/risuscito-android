@@ -1,6 +1,5 @@
 package it.cammino.risuscito.ui.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,7 +9,6 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.view.ActionMode
 import androidx.core.content.edit
-import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
 import androidx.core.view.isInvisible
@@ -30,14 +28,12 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.databinding.LayoutHistoryBinding
 import it.cammino.risuscito.items.SimpleHistoryItem
-import it.cammino.risuscito.ui.activity.PaginaRenderActivity
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.hasThreeColumns
 import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.startActivityWithTransition
+import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -119,14 +115,12 @@ class HistoryFragment : AccountMenuFragment() {
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
-                    val intent = Intent(activity, PaginaRenderActivity::class.java)
-                    intent.putExtras(
-                        bundleOf(
-                            Utility.PAGINA to item.source?.getText(requireContext()),
-                            Utility.ID_CANTO to item.id
-                        )
+                    mMainActivity?.openCanto(
+                        mView,
+                        item.id,
+                        item.source?.getText(requireContext()),
+                        false
                     )
-                    mMainActivity?.startActivityWithTransition(intent, mView)
                     consume = true
                 }
                 consume
@@ -152,7 +146,7 @@ class HistoryFragment : AccountMenuFragment() {
 
         binding.historyRecycler.adapter = cantoAdapter
         val llm = if (context?.isGridLayout == true)
-            GridLayoutManager(context, if (context?.hasThreeColumns == true) 3 else 2)
+            GridLayoutManager(context, 2)
         else
             LinearLayoutManager(context)
         binding.historyRecycler.layoutManager = llm

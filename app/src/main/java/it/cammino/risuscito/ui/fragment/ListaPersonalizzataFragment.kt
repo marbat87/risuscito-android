@@ -31,12 +31,12 @@ import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.activity.InsertActivity
 import it.cammino.risuscito.ui.activity.MainActivity
-import it.cammino.risuscito.ui.activity.PaginaRenderActivity
 import it.cammino.risuscito.ui.dialog.BottomSheetFragment
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.listToXML
+import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.slideInRight
-import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -136,14 +136,12 @@ class ListaPersonalizzataFragment : Fragment() {
     private fun openPagina(v: View) {
         // crea un bundle e ci mette il parametro "pagina", contente il nome del file della pagina da
         // visualizzare
-        val intent = Intent(activity, PaginaRenderActivity::class.java)
-        intent.putExtras(
-            bundleOf(
-                Utility.PAGINA to v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
-                Utility.ID_CANTO to Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
-            )
+        mMainActivity?.openCanto(
+            v,
+            Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString()),
+            v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
+            false
         )
-        mMainActivity?.startActivityWithTransition(intent, v)
     }
 
     private fun snackBarRimuoviCanto(view: View) {

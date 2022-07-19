@@ -1,7 +1,6 @@
 package it.cammino.risuscito.ui.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -30,14 +29,12 @@ import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
 import it.cammino.risuscito.ui.activity.MainActivity
-import it.cammino.risuscito.ui.activity.PaginaRenderActivity
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.hasThreeColumns
 import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.startActivityWithTransition
+import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -100,15 +97,14 @@ class SectionedIndexFragment : Fragment() {
                 if (item is SimpleSubItem) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                         mLastClickTime = SystemClock.elapsedRealtime()
-                        val intent = Intent(activity, PaginaRenderActivity::class.java)
-                        intent.putExtras(
-                            bundleOf(
-                                Utility.PAGINA to item.source?.getText(
-                                    requireContext()
-                                ), Utility.ID_CANTO to item.id
-                            )
+                        mActivity?.openCanto(
+                            mView,
+                            item.id,
+                            item.source?.getText(
+                                requireContext()
+                            ),
+                            false
                         )
-                        activity?.startActivityWithTransition(intent, mView)
                         consume = true
                     }
                 }
@@ -151,11 +147,11 @@ class SectionedIndexFragment : Fragment() {
             }
 
         if (context?.isGridLayout == true) {
-            glm = GridLayoutManager(context, if (context?.hasThreeColumns == true) 3 else 2)
+            glm = GridLayoutManager(context, 2)
             glm?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return when (mAdapter.getItemViewType(position)) {
-                        R.id.fastadapter_expandable_item_id -> if (context?.hasThreeColumns == true) 3 else 2
+                        R.id.fastadapter_expandable_item_id -> 2
                         R.id.fastadapter_sub_item_id -> 1
                         else -> -1
                     }

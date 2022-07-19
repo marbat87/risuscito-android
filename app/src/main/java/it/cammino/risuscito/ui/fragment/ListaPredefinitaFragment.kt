@@ -34,11 +34,12 @@ import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.activity.InsertActivity
 import it.cammino.risuscito.ui.activity.MainActivity
-import it.cammino.risuscito.ui.activity.PaginaRenderActivity
 import it.cammino.risuscito.ui.dialog.BottomSheetFragment
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.slideInRight
-import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -562,14 +563,12 @@ class ListaPredefinitaFragment : Fragment() {
                         snackBarRimuoviCanto(v)
                     } else {
                         //apri canto
-                        val intent = Intent(activity, PaginaRenderActivity::class.java)
-                        intent.putExtras(
-                            bundleOf(
-                                Utility.PAGINA to v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
-                                Utility.ID_CANTO to Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
-                            )
+                        mMainActivity?.openCanto(
+                            v,
+                            Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString()),
+                            v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
+                            false
                         )
-                        mMainActivity?.startActivityWithTransition(intent, v)
                     }
                 else {
                     actionModeOk = true

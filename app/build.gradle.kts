@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5101
+        versionCode = 5102
         versionName = "5.1.0"
         kapt {
             arguments {
@@ -60,10 +60,10 @@ val fastAdapterVersion = "5.6.0"
 val roomVersion = "2.4.2"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.material:material:1.6.1")
+    implementation("com.google.android.material:material:1.7.0-alpha03")
     implementation("androidx.core:core-splashscreen:1.0.0-rc01")
     implementation("androidx.activity:activity-ktx:1.5.0")
     implementation("androidx.appcompat:appcompat:1.4.2")

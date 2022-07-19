@@ -50,7 +50,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="it.cammino.risuscito.ui.activity.PaginaRenderActivity"
+            android:name="it.cammino.risuscito.ui.activity.CantoHostActivity"
             android:label="" />
         <activity
             android:name="it.cammino.risuscito.ui.activity.PaginaRenderFullScreen"

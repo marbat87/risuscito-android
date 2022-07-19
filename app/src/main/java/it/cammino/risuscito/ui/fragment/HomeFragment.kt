@@ -2,7 +2,6 @@ package it.cammino.risuscito.ui.fragment
 
 import android.Manifest
 import android.annotation.TargetApi
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.*
 import android.util.Log
@@ -16,7 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.core.view.GravityCompat.START
 import androidx.core.view.isGone
@@ -40,10 +38,9 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.SearchLayoutBinding
+import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.activity.PaginaRenderActivity
 import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.utils.extension.*
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -206,17 +203,12 @@ class HomeFragment : AccountMenuFragment() {
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
-                    val intent = Intent(
-                        requireActivity().applicationContext,
-                        PaginaRenderActivity::class.java
+                    mMainActivity?.openCanto(
+                        mView,
+                        item.id,
+                        item.source?.getText(requireContext()),
+                        false
                     )
-                    intent.putExtras(
-                        bundleOf(
-                            Utility.PAGINA to item.source?.getText(requireContext()),
-                            Utility.ID_CANTO to item.id
-                        )
-                    )
-                    mMainActivity?.startActivityWithTransition(intent, mView)
                     consume = true
                 }
                 consume
@@ -237,7 +229,7 @@ class HomeFragment : AccountMenuFragment() {
 
         binding.matchedList.adapter = cantoAdapter
         val llm = if (context?.isGridLayout == true)
-            GridLayoutManager(context, if (context?.hasThreeColumns == true) 3 else 2)
+            GridLayoutManager(context, 2)
         else
             LinearLayoutManager(context)
         binding.matchedList.layoutManager = llm

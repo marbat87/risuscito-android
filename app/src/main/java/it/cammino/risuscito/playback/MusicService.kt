@@ -36,10 +36,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
-import it.cammino.risuscito.ui.activity.PaginaRenderActivity
 import it.cammino.risuscito.R
+import it.cammino.risuscito.ui.activity.CantoHostActivity
+import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.extension.isOnPhone
 import java.util.concurrent.TimeUnit
 
 class MusicService : MediaBrowserServiceCompat() {
@@ -101,7 +103,10 @@ class MusicService : MediaBrowserServiceCompat() {
         val context = applicationContext
 
         // This is an Intent to launch the app's UI, used primarily by the ongoing notification.
-        val intent = Intent(context, PaginaRenderActivity::class.java)
+        val intent = Intent(
+            context,
+            if (applicationContext.isOnPhone) CantoHostActivity::class.java else MainActivity::class.java
+        )
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val pi = getPendingIntent(intent, context)
         mSession?.setSessionActivity(pi)
