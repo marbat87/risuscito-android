@@ -57,7 +57,7 @@
 
         <Button
             android:id="@+id/edit_note"
-            style="?attr/materialIconButtonStyle"
+            style="?attr/materialIconButtonFilledTonalStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:icon="@drawable/sell_24px"
@@ -68,7 +68,7 @@
 
         <Button
             android:id="@+id/edit_note_filled"
-            style="?attr/materialIconButtonStyle"
+            style="?attr/materialIconButtonFilledTonalStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"

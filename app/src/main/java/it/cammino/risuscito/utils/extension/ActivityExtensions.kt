@@ -124,7 +124,7 @@ fun Activity.startActivityWithTransition(
 
     val mDao = RisuscitoDatabase.getInstance(this).cronologiaDao()
     val cronologia = Cronologia()
-    cronologia.idCanto = intent.extras?.getInt(Utility.ID_CANTO) ?: 0
+    cronologia.idCanto = intent.extras?.getInt(CantoFragment.ARG_ID_CANTO) ?: 0
     (this as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) {
         mDao.insertCronologia(
             cronologia

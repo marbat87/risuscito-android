@@ -11,6 +11,7 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.databinding.ActivityPaginaRenderFullscreenBinding
 import it.cammino.risuscito.ui.InitialScrollWebClient
+import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.exitZoom
 import it.cammino.risuscito.utils.extension.goFullscreen
@@ -52,7 +53,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         htmlContent = bundle?.getString(Utility.HTML_CONTENT).orEmpty()
         speedValue = bundle?.getInt(Utility.SPEED_VALUE) ?: 0
         scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
-        idCanto = bundle?.getInt(Utility.ID_CANTO) ?: 0
+        idCanto = bundle?.getInt(CantoFragment.ARG_ID_CANTO) ?: 0
 
         binding.fabFullscreenOff.setOnClickListener { lifecycleScope.launch { saveZoom() } }
 

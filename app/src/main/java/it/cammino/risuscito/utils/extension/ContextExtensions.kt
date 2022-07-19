@@ -56,23 +56,6 @@ private const val LIGHT_MODE = "light"
 private const val DARK_MODE = "dark"
 private const val DEFAULT_MODE = "default"
 
-fun Context.readTextFromResource(resourceID: String): String {
-    val inputStream =
-        resources.openRawResource(Utility.getResId(resourceID, R.raw::class.java))
-    val br = BufferedReader(InputStreamReader(inputStream, "utf-8"))
-    var line: String? = br.readLine()
-    val cantoTrasportato = StringBuffer()
-
-    while (line != null) {
-//            Log.d(TAG, "line: $line")
-        cantoTrasportato.append(line)
-        cantoTrasportato.append("\n")
-        line = br.readLine()
-    }
-    br.close()
-    return cantoTrasportato.toString()
-}
-
 fun Resources.readTextFromResource(resourceID: String): String {
     val inputStream =
         openRawResource(Utility.getResId(resourceID, R.raw::class.java))

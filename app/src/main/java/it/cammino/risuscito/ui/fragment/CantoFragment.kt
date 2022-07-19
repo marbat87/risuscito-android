@@ -1722,7 +1722,7 @@ open class CantoFragment : Fragment() {
                     bundle.putString(Utility.HTML_CONTENT, htmlContent)
                     bundle.putInt(Utility.SPEED_VALUE, binding.speedSeekbar.value.toInt())
                     bundle.putBoolean(Utility.SCROLL_PLAYING, mCantiViewModel.scrollPlaying)
-                    bundle.putInt(Utility.ID_CANTO, mCantiViewModel.idCanto)
+                    bundle.putInt(ARG_ID_CANTO, mCantiViewModel.idCanto)
 
                     val intent = Intent(requireContext(), PaginaRenderFullScreen::class.java)
                     intent.putExtras(bundle)

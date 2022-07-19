@@ -61,8 +61,6 @@ object Utility {
     internal const val HTML_CONTENT = "htmlContent"
     internal const val SPEED_VALUE = "speedValue"
     internal const val SCROLL_PLAYING = "scrollPlaying"
-    internal const val ID_CANTO = "idCanto"
-    internal const val PAGINA = "pagina"
     internal const val TIPO_LISTA = "tipoLista"
 
 

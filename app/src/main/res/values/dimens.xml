@@ -16,4 +16,6 @@
 
     <dimen name="custom_peek_height">335dp</dimen>
 
+    <dimen name="m3_btn_icon_only_default_size">24dp</dimen>
+
 </resources>
