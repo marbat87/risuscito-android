@@ -264,7 +264,8 @@ object ListeUtils {
         idLista: Int,
         posizioneDaCanc: Int,
         idDaCanc: Int,
-        timestampDaCanc: String
+        timestampDaCanc: String,
+        notaDaCanc: String
     ) {
         fragment.lifecycleScope.launch {
             val positionToDelete = CustomList()
@@ -291,6 +292,7 @@ object ListeUtils {
                     positionToInsert.position = posizioneDaCanc
                     positionToInsert.idCanto = idDaCanc
                     positionToInsert.timestamp = Date(java.lang.Long.parseLong(timestampDaCanc))
+                    positionToInsert.notaPosizione = notaDaCanc
                     val mDao2 =
                         RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
                     fragment.lifecycleScope.launch(Dispatchers.IO) {
@@ -310,23 +312,29 @@ object ListeUtils {
                 withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
                     mDao.getCantoById(idCanto)?.titolo.orEmpty()
                 }
+
+            val sb = StringBuilder()
+            sb.append(fragment.getString(R.string.dialog_present_yet))
+            sb.append(" ")
+            sb.append(
+                fragment.resources.getString(
+                    Utility.getResId(
+                        existingTitle,
+                        R.string::class.java
+                    )
+                )
+            )
+            sb.append(".")
+            sb.append(System.getProperty("line.separator"))
+            sb.append(fragment.getString(R.string.dialog_wonna_replace))
+
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(
                     replaceTag
                 )
                     .title(R.string.dialog_replace_title)
                     .icon(R.drawable.find_replace_24px)
-                    .content(
-                        (fragment.getString(R.string.dialog_present_yet)
-                                + " "
-                                + fragment.resources.getString(
-                            Utility.getResId(
-                                existingTitle,
-                                R.string::class.java
-                            )
-                        )
-                                + fragment.getString(R.string.dialog_wonna_replace))
-                    )
+                    .content(sb.toString())
                     .positiveButton(R.string.replace_confirm)
                     .negativeButton(R.string.cancel),
                 fragment.requireActivity().supportFragmentManager
@@ -339,6 +347,7 @@ object ListeUtils {
         idLista: Int,
         posizioneDaCanc: Int,
         idDaCanc: Int,
+        notaDaCanc: String,
         newPosition: Int
     ) {
         fragment.lifecycleScope.launch {
@@ -363,6 +372,7 @@ object ListeUtils {
                     positionToInsert.position = newPosition
                     positionToInsert.idCanto = idDaCanc
                     positionToInsert.timestamp = Date(System.currentTimeMillis())
+                    positionToInsert.notaPosizione = notaDaCanc
                     mDao.insertPosition(positionToInsert)
                 }
                 Snackbar.make(
@@ -379,8 +389,10 @@ object ListeUtils {
         idLista: Int,
         posizioneDaCanc: Int,
         idDaCanc: Int,
+        notaDaCanc: String,
         newPosition: Int,
-        newId: Int
+        newId: Int,
+        newNota: String
     ) {
         fragment.lifecycleScope.launch {
             if (newId != idDaCanc || posizioneDaCanc != newPosition) {
@@ -420,10 +432,12 @@ object ListeUtils {
                     positionToInsert.position = newPosition
                     positionToInsert.idCanto = idDaCanc
                     positionToInsert.timestamp = positionToDelete.timestamp
+                    positionToInsert.notaPosizione = notaDaCanc
 
                     withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
                         mDao.updatePositionNoTimestamp(
                             newId,
+                            newNota,
                             idLista,
                             posizioneDaCanc,
                             idDaCanc

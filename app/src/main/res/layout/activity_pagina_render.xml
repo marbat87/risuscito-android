@@ -161,7 +161,7 @@
 
                 <Button
                     android:id="@+id/play_song"
-                    style="?attr/materialIconButtonFilledStyle"
+                    style="?attr/materialIconButtonFilledTonalStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/activity_min_margin"

@@ -26,6 +26,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
     var listaPersonalizzataId: Int = 0
     var listaPersonalizzata: ListaPersonalizzata? = null
     var listaPersonalizzataTitle: String? = null
+    var posizioneDaCanc: Int = 0
 
     var listaPersonalizzataResult: LiveData<List<ListaPersonalizzataItem>>? = null
         private set
@@ -69,6 +70,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
                                                     R.string::class.java
                                                 )
                                             )
+                                            withNota(lista.getNotaPosizione(cantoIndex))
                                             withColor(it.color ?: Canto.BIANCO)
                                             withId(it.id)
                                             withTimestamp(StringUtils.EMPTY)

@@ -312,4 +312,6 @@
     <string name="passaggio_none">Żadne</string>
     <string name="dynamic_colors_title">Dynamic colors</string>
     <string name="dynamic_colors_summary">Apply dynamic colors based on your wallpaper</string>
+    <string name="edit_note_title">Notatka</string>
+    <string name="edit_note_confirm_message">Nota salvata</string>
 </resources>

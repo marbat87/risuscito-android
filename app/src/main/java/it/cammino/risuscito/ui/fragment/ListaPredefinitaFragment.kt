@@ -35,8 +35,11 @@ import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.activity.InsertActivity
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.dialog.BottomSheetFragment
+import it.cammino.risuscito.ui.dialog.DialogState
+import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.slideInRight
@@ -53,8 +56,10 @@ class ListaPredefinitaFragment : Fragment() {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA, 0) ?: 0)
         })
     }
+    private val inputdialogViewModel: InputTextDialogFragment.DialogViewModel by viewModels({ requireActivity() })
 
     private var posizioneDaCanc: Int = 0
+    private var notaDaCanc: String = StringUtils.EMPTY
     private var idDaCanc: Int = 0
     private var timestampDaCanc: String? = null
     private var mSwhitchMode: Boolean = false
@@ -135,6 +140,7 @@ class ListaPredefinitaFragment : Fragment() {
                     withTitle(Utility.getResId(it.titolo, R.string::class.java))
                     withPage(Utility.getResId(it.pagina, R.string::class.java))
                     withSource(Utility.getResId(it.source, R.string::class.java))
+                    withNota(it.notaPosizione)
                     withColor(it.color ?: Canto.BIANCO)
                     withId(it.id)
                     withTimestamp(it.timestamp?.time.toString())
@@ -142,6 +148,7 @@ class ListaPredefinitaFragment : Fragment() {
             }
             createClickListener = click
             createLongClickListener = longClick
+            editNoteClickListener = noteClick
             id = tag
         }
     }
@@ -159,6 +166,10 @@ class ListaPredefinitaFragment : Fragment() {
                     .append(" - ")
                     .append(getString(R.string.page_contracted))
                     .append(tempItem.page?.getText(requireContext()))
+                if (tempItem.nota.isNotEmpty())
+                    result.append(" (")
+                        .append(tempItem.nota)
+                        .append(")")
                 result.append("\n")
             }
         } else {
@@ -207,7 +218,8 @@ class ListaPredefinitaFragment : Fragment() {
                             mCantiViewModel.defaultListaId,
                             posizioneDaCanc,
                             idDaCanc,
-                            timestampDaCanc.orEmpty()
+                            timestampDaCanc.orEmpty(),
+                            notaDaCanc
                         )
                         true
                     }
@@ -379,6 +391,42 @@ class ListaPredefinitaFragment : Fragment() {
             }
             cantoAdapter.set(posizioniList)
         }
+
+        inputdialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(ListaPersonalizzataFragment.TAG, "inputdialogViewModel state $it")
+            if (!inputdialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (inputdialogViewModel.mTag) {
+                            EDIT_NOTE_PREDEFINITA + mCantiViewModel.defaultListaId -> {
+                                inputdialogViewModel.handled = true
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    val mDao =
+                                        RisuscitoDatabase.getInstance(requireContext())
+                                            .customListDao()
+                                    mDao.updateNotaPosition(
+                                        inputdialogViewModel.outputText,
+                                        mCantiViewModel.defaultListaId,
+                                        inputdialogViewModel.outputItemId,
+                                        inputdialogViewModel.outputCantoId
+                                    )
+                                }
+                                mMainActivity?.activityMainContent?.let { v ->
+                                    Snackbar.make(
+                                        v,
+                                        R.string.edit_note_confirm_message,
+                                        Snackbar.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        inputdialogViewModel.handled = true
+                    }
+                }
+            }
+        }
     }
 
     private val defaultIntent: Intent
@@ -519,6 +567,7 @@ class ListaPredefinitaFragment : Fragment() {
                         mCantiViewModel.defaultListaId,
                         posizioneDaCanc,
                         idDaCanc,
+                        notaDaCanc,
                         Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                     )
                 } else {
@@ -560,6 +609,8 @@ class ListaPredefinitaFragment : Fragment() {
                             Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
                         timestampDaCanc =
                             v.findViewById<TextView>(R.id.text_timestamp).text.toString()
+                        notaDaCanc =
+                            v.findViewById<TextView>(R.id.text_nota_canto).text.toString()
                         snackBarRimuoviCanto(v)
                     } else {
                         //apri canto
@@ -578,8 +629,10 @@ class ListaPredefinitaFragment : Fragment() {
                         mCantiViewModel.defaultListaId,
                         posizioneDaCanc,
                         idDaCanc,
+                        notaDaCanc,
                         Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString()),
-                        Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
+                        Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString()),
+                        v.findViewById<TextView>(R.id.text_nota_canto).text.toString()
                     )
                 }
             }
@@ -593,12 +646,34 @@ class ListaPredefinitaFragment : Fragment() {
         idDaCanc =
             Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString())
         timestampDaCanc = v.findViewById<TextView>(R.id.text_timestamp).text.toString()
+        notaDaCanc = v.findViewById<TextView>(R.id.text_nota_canto).text.toString()
         snackBarRimuoviCanto(v)
         true
     }
 
+    private val noteClick = object : ListaPersonalizzataItem.NoteClickListener {
+        override fun onclick(idPosizione: Int, nota: String, idCanto: Int) {
+            mMainActivity?.let { mActivity ->
+                InputTextDialogFragment.show(
+                    InputTextDialogFragment.Builder(
+                        EDIT_NOTE_PREDEFINITA + mCantiViewModel.defaultListaId
+                    ).apply {
+                        title = R.string.edit_note_title
+                        positiveButton = R.string.action_salva
+                        negativeButton = R.string.cancel
+                        prefill = nota
+                        itemId = idPosizione
+                        cantoId = idCanto
+                        multiLine = true
+                    }, mActivity.supportFragmentManager
+                )
+            }
+        }
+    }
+
     companion object {
         private const val INDICE_LISTA = "indiceLista"
+        private const val EDIT_NOTE_PREDEFINITA = "EDIT_NOTE_PREDEFINITA"
         private val TAG = ListaPredefinitaFragment::class.java.canonicalName
 
         fun newInstance(indiceLista: Int): ListaPredefinitaFragment {

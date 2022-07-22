@@ -32,6 +32,8 @@ import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.activity.InsertActivity
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.dialog.BottomSheetFragment
+import it.cammino.risuscito.ui.dialog.DialogState
+import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.listToXML
@@ -50,9 +52,10 @@ class ListaPersonalizzataFragment : Fragment() {
             putInt(Utility.TIPO_LISTA, arguments?.getInt(INDICE_LISTA) ?: 0)
         })
     }
+    private val inputdialogViewModel: InputTextDialogFragment.DialogViewModel by viewModels({ requireActivity() })
 
     private lateinit var cantoDaCanc: String
-    private var posizioneDaCanc: Int = 0
+    private lateinit var notaDaCanc: String
     private var mSwhitchMode: Boolean = false
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
@@ -112,7 +115,6 @@ class ListaPersonalizzataFragment : Fragment() {
         binding.buttonInviaFile.setOnClickListener {
             val exportUri = activity?.listToXML(mCantiViewModel.listaPersonalizzata)
             Log.d(TAG, "onClick: exportUri = $exportUri")
-            @Suppress("SENSELESS_COMPARISON")
             exportUri?.let {
                 val bottomSheetDialog =
                     BottomSheetFragment.newInstance(R.string.share_by, getSendIntent(it))
@@ -155,14 +157,20 @@ class ListaPersonalizzataFragment : Fragment() {
     }
 
     private fun scambioCanto(posizioneNew: Int) {
-        if (posizioneNew != posizioneDaCanc) {
+        if (posizioneNew != mCantiViewModel.posizioneDaCanc) {
 
             val cantoTmp = mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneNew)
+            val notaTmp = mCantiViewModel.listaPersonalizzata?.getNotaPosizione(posizioneNew)
             mCantiViewModel.listaPersonalizzata?.addCanto(
-                mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc),
+                mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc),
                 posizioneNew
             )
-            mCantiViewModel.listaPersonalizzata?.addCanto(cantoTmp, posizioneDaCanc)
+            mCantiViewModel.listaPersonalizzata?.addNota(
+                mCantiViewModel.listaPersonalizzata?.getNotaPosizione(mCantiViewModel.posizioneDaCanc),
+                posizioneNew
+            )
+            mCantiViewModel.listaPersonalizzata?.addCanto(cantoTmp, mCantiViewModel.posizioneDaCanc)
+            mCantiViewModel.listaPersonalizzata?.addNota(notaTmp, mCantiViewModel.posizioneDaCanc)
 
             runUpdate()
 
@@ -187,9 +195,15 @@ class ListaPersonalizzataFragment : Fragment() {
         //        Log.i(getClass().toString(), "positioneNew: " + posizioneNew);
         //        Log.i(getClass().toString(), "posizioneDaCanc: " + posizioneDaCanc);
         mCantiViewModel.listaPersonalizzata?.addCanto(
-            mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc), posizioneNew
+            mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc),
+            posizioneNew
         )
-        mCantiViewModel.listaPersonalizzata?.removeCanto(posizioneDaCanc)
+        mCantiViewModel.listaPersonalizzata?.addNota(
+            mCantiViewModel.listaPersonalizzata?.getNotaPosizione(mCantiViewModel.posizioneDaCanc),
+            posizioneNew
+        )
+        mCantiViewModel.listaPersonalizzata?.removeCanto(mCantiViewModel.posizioneDaCanc)
+        mCantiViewModel.listaPersonalizzata?.removeNota(mCantiViewModel.posizioneDaCanc)
 
         runUpdate()
 
@@ -224,9 +238,13 @@ class ListaPersonalizzataFragment : Fragment() {
                 return when (item?.itemId) {
                     R.id.action_remove_item -> {
                         cantoDaCanc =
-                            mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc)
+                            mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
                                 .orEmpty()
-                        mCantiViewModel.listaPersonalizzata?.removeCanto(posizioneDaCanc)
+                        notaDaCanc =
+                            mCantiViewModel.listaPersonalizzata?.getNotaPosizione(mCantiViewModel.posizioneDaCanc)
+                                .orEmpty()
+                        mCantiViewModel.listaPersonalizzata?.removeCanto(mCantiViewModel.posizioneDaCanc)
+                        mCantiViewModel.listaPersonalizzata?.removeNota(mCantiViewModel.posizioneDaCanc)
                         runUpdate()
                         actionModeOk = true
                         mMainActivity?.actionMode?.finish()
@@ -241,7 +259,11 @@ class ListaPersonalizzataFragment : Fragment() {
                                 ) {
                                     mCantiViewModel.listaPersonalizzata?.addCanto(
                                         cantoDaCanc,
-                                        posizioneDaCanc
+                                        mCantiViewModel.posizioneDaCanc
+                                    )
+                                    mCantiViewModel.listaPersonalizzata?.addNota(
+                                        notaDaCanc,
+                                        mCantiViewModel.posizioneDaCanc
                                     )
                                     runUpdate()
                                 }
@@ -251,7 +273,10 @@ class ListaPersonalizzataFragment : Fragment() {
                     }
                     R.id.action_switch_item -> {
                         cantoDaCanc =
-                            mCantiViewModel.listaPersonalizzata?.getCantoPosizione(posizioneDaCanc)
+                            mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
+                                .orEmpty()
+                        notaDaCanc =
+                            mCantiViewModel.listaPersonalizzata?.getNotaPosizione(mCantiViewModel.posizioneDaCanc)
                                 .orEmpty()
                         mSwhitchMode = true
                         updateActionModeTitle(true)
@@ -317,9 +342,48 @@ class ListaPersonalizzataFragment : Fragment() {
                 it.apply {
                     createClickListener = click
                     createLongClickListener = longClick
+                    editNoteClickListener = noteClick
                 }
             }
             cantoAdapter.set(mCantiViewModel.posizioniList)
+        }
+
+        inputdialogViewModel.state.observe(viewLifecycleOwner) {
+            Log.d(TAG, "inputdialogViewModel state $it")
+            if (!inputdialogViewModel.handled) {
+                when (it) {
+                    is DialogState.Positive -> {
+                        when (inputdialogViewModel.mTag) {
+                            EDIT_NOTE + mCantiViewModel.listaPersonalizzataId -> {
+                                inputdialogViewModel.handled = true
+                                Log.d(
+                                    TAG,
+                                    "inputdialogViewModel.outputText ${inputdialogViewModel.outputText}"
+                                )
+                                Log.d(
+                                    TAG,
+                                    " mCantiViewModel.posizioneDaCanc ${mCantiViewModel.posizioneDaCanc}"
+                                )
+                                mCantiViewModel.listaPersonalizzata?.addNota(
+                                    inputdialogViewModel.outputText,
+                                    inputdialogViewModel.outputItemId
+                                )
+                                runUpdate()
+                                mMainActivity?.activityMainContent?.let { v ->
+                                    Snackbar.make(
+                                        v,
+                                        R.string.edit_note_confirm_message,
+                                        Snackbar.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
+                    is DialogState.Negative -> {
+                        inputdialogViewModel.handled = true
+                    }
+                }
+            }
         }
     }
 
@@ -346,6 +410,10 @@ class ListaPersonalizzataFragment : Fragment() {
                                 .append(" - ")
                                 .append(getString(R.string.page_contracted))
                                 .append(tempItem.page?.getText(requireContext()))
+                            if (tempItem.nota.isNotEmpty())
+                                result.append(" (")
+                                    .append(tempItem.nota)
+                                    .append(")")
                             result.append("\n")
                         }
                     }
@@ -414,7 +482,7 @@ class ListaPersonalizzataFragment : Fragment() {
             } else {
                 if (!mSwhitchMode)
                     if (mMainActivity?.actionMode != null) {
-                        posizioneDaCanc =
+                        mCantiViewModel.posizioneDaCanc =
                             Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                         snackBarRimuoviCanto(v)
                     } else
@@ -430,15 +498,35 @@ class ListaPersonalizzataFragment : Fragment() {
 
     private val longClick = OnLongClickListener { v ->
         val parent = v.parent.parent as? View
-        posizioneDaCanc =
+        mCantiViewModel.posizioneDaCanc =
             Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
         snackBarRimuoviCanto(v)
         true
     }
 
+    private val noteClick = object : ListaPersonalizzataItem.NoteClickListener {
+        override fun onclick(idPosizione: Int, nota: String, idCanto: Int) {
+            mMainActivity?.let { mActivity ->
+                InputTextDialogFragment.show(
+                    InputTextDialogFragment.Builder(
+                        EDIT_NOTE + mCantiViewModel.listaPersonalizzataId
+                    ).apply {
+                        title = R.string.edit_note_title
+                        positiveButton = R.string.action_salva
+                        negativeButton = R.string.cancel
+                        prefill = nota
+                        itemId = idPosizione
+                        multiLine = true
+                    }, mActivity.supportFragmentManager
+                )
+            }
+        }
+    }
+
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
         private const val INDICE_LISTA = "indiceLista"
+        private const val EDIT_NOTE = "EDIT_NOTE"
 
         fun newInstance(indiceLista: Int): ListaPersonalizzataFragment {
             val f = ListaPersonalizzataFragment()

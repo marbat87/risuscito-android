@@ -3,6 +3,7 @@ package it.cammino.risuscito.objects
 import android.graphics.Color
 import androidx.annotation.StringRes
 import com.mikepenz.fastadapter.ui.utils.StringHolder
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility.helperSetColor
 
 fun posizioneItem(block: PosizioneItem.() -> Unit): PosizioneItem = PosizioneItem().apply(block)
@@ -20,6 +21,7 @@ class PosizioneItem {
     var idCanto: Int = 0
     var timestamp: StringHolder? = null
     private var mSelected: Boolean = false
+    var nota: String = StringUtils.EMPTY
 
     fun ismSelected(): Boolean {
         return mSelected
@@ -71,6 +73,11 @@ class PosizioneItem {
 
     fun withId(id: Int): PosizioneItem {
         this.idCanto = id
+        return this
+    }
+
+    fun withNota(nota: String): PosizioneItem {
+        this.nota = nota
         return this
     }
 

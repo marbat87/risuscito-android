@@ -9,19 +9,35 @@
     android:paddingEnd="?dialogPreferredPadding">
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/single_line_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:endIconMode="clear_text"
         tools:ignore="RtlSymmetry">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
             android:inputType="text|textCapSentences"
             android:maxLines="1"
             android:scrollHorizontally="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/multiple_line_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:endIconMode="clear_text"
+        tools:ignore="RtlSymmetry">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="textMultiLine" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

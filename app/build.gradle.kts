@@ -55,7 +55,6 @@ android {
 
 }
 
-val preferenceFixVersion = "1.1.0"
 val fastAdapterVersion = "5.6.0"
 val roomVersion = "2.4.2"
 dependencies {

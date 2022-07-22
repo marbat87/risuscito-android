@@ -37,6 +37,7 @@ import com.mikepenz.fastadapter.drag.ItemTouchCallback
 import com.mikepenz.fastadapter.swipe.SimpleSwipeCallback
 import com.mikepenz.fastadapter.swipe_drag.SimpleSwipeDragCallback
 import com.mikepenz.fastadapter.utils.DragDropUtil
+import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -44,7 +45,6 @@ import it.cammino.risuscito.databinding.ActivityCreaListaBinding
 import it.cammino.risuscito.databinding.SwipeableItemBinding
 import it.cammino.risuscito.items.SwipeableItem
 import it.cammino.risuscito.items.swipeableItem
-import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
@@ -393,6 +393,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     return
                 }
                 celebrazione.addCanto(it.idCanto, i)
+                celebrazione.addNota(it.nota, i)
             }
         }
 
@@ -576,6 +577,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                                 touchHelper = mTouchHelper
                                 setName = it.getNomePosizione(i)
                                 idCanto = it.getCantoPosizione(i)
+                                nota = it.getNotaPosizione(i)
                             }
                         )
                     }

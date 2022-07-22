@@ -303,18 +303,6 @@ class CustomListsFragment : AccountMenuFragment() {
                                         )
                                     }
                                 }
-//                                startListEditForResult.launch(
-//                                    Intent(
-//                                        activity,
-//                                        CreaListaActivity::class.java
-//                                    ).putExtras(
-//                                        bundleOf(
-//                                            LIST_TITLE to inputdialogViewModel.outputText,
-//                                            EDIT_EXISTING_LIST to false
-//                                        )
-//                                    )
-//                                )
-//                                Animations.enterDown(activity)
                             }
                         }
                     }

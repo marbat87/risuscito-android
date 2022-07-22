@@ -332,5 +332,7 @@
     <string name="passaggio_none">Nessuno</string>
     <string name="dynamic_colors_title">Colori dinamici</string>
     <string name="dynamic_colors_summary">Applica i colori dinamici in base al tuo sfondo</string>
+    <string name="edit_note_title">Nota</string>
+    <string name="edit_note_confirm_message">Nota salvata</string>
 </resources>
 

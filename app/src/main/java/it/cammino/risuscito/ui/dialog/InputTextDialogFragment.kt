@@ -7,13 +7,14 @@ import android.os.Bundle
 import android.view.KeyEvent
 import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import it.cammino.risuscito.R
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.extension.capitalize
@@ -38,10 +39,13 @@ class InputTextDialogFragment : DialogFragment() {
 
         val mView = layoutInflater.inflate(R.layout.input_search, null, false)
         dialog.setView(mView)
-        val input = mView.findViewById<TextInputEditText>(R.id.input_text)
+
+        val input =
+            mView.findViewById<TextInputLayout>(if (mBuilder.multiLine) R.id.multiple_line_text else R.id.single_line_text).editText
         if (mBuilder.prefill.isNotEmpty())
-            input.setText(mBuilder.prefill)
-        input.selectAll()
+            input?.setText(mBuilder.prefill)
+        mView.findViewById<TextInputLayout>(R.id.multiple_line_text).isVisible = mBuilder.multiLine
+        mView.findViewById<TextInputLayout>(R.id.single_line_text).isVisible = !mBuilder.multiLine
 
         if (mBuilder.title != 0)
             dialog.setTitle(mBuilder.title)
@@ -53,7 +57,9 @@ class InputTextDialogFragment : DialogFragment() {
                         .capitalize(it.resources)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
-                    viewModel.outputText = input.text.toString()
+                    viewModel.outputText = input?.text.toString()
+                    viewModel.outputItemId = mBuilder.itemId
+                    viewModel.outputCantoId = mBuilder.cantoId
                     viewModel.handled = false
                     viewModel.state.value = DialogState.Positive(this)
                 }
@@ -101,6 +107,9 @@ class InputTextDialogFragment : DialogFragment() {
         var negativeButton: Int = 0
         var canceable = false
         var prefill: String = StringUtils.EMPTY
+        var itemId: Int = 0
+        var cantoId: Int = 0
+        var multiLine: Boolean = false
 
     }
 
@@ -128,6 +137,8 @@ class InputTextDialogFragment : DialogFragment() {
     class DialogViewModel : ViewModel() {
         var mTag: String = StringUtils.EMPTY
         var outputText: String = StringUtils.EMPTY
+        var outputItemId: Int = 0
+        var outputCantoId: Int = 0
         var handled = true
         val state = MutableLiveData<DialogState<InputTextDialogFragment>>()
     }
