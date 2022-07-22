@@ -2,12 +2,13 @@
 <changelog>
 
     <release
-        versionCode="5103"
+        versionCode="5104"
         date="September 2022"
         versionName="5.1.0">
         <new>Added icons to dialogs</new>
         <bugfix>Fixed background color in some views</bugfix>
         <new>Implemented system of notifications from app developer</new>
+        <new>Added NOTES to custom lists elements</new>
     </release>
 
     <release

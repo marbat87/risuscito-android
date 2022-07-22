@@ -2,12 +2,13 @@
 <changelog>
 
     <release
-        versionCode="5103"
+        versionCode="5104"
         date="Settembre 2022"
         versionName="5.1.0">
         <new>Aggiunte le icone ai popup</new>
         <bugfix>Sistemato il colore di sfondo in alcune schermate</bugfix>
         <new>Implementato sistema di notifiche da parte dello sviluppatore</new>
+        <new>Aggiunte le NOTE agli elementi delle liste personalizzate</new>
     </release>
 
     <release
