@@ -39,6 +39,14 @@ class ListaPersonalizzata : Serializable {
     fun getNotaPosizione(index: Int): String {
         if (index < 0 || index >= numPosizioni)
             return StringUtils.EMPTY
+        //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
+        @Suppress("SENSELESS_COMPARISON")
+        if (note == null) {
+            note = arrayOfNulls(MAX_POSIZIONI)
+            for (i in 0 until MAX_POSIZIONI) {
+                note[i] = StringUtils.EMPTY
+            }
+        }
         return note[index].orEmpty().trim()
     }
 
@@ -91,7 +99,14 @@ class ListaPersonalizzata : Serializable {
 
         if (posizione < 0 || posizione >= MAX_POSIZIONI || posizione >= numPosizioni)
             return -2
-
+        //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
+        @Suppress("SENSELESS_COMPARISON")
+        if (note == null) {
+            note = arrayOfNulls(MAX_POSIZIONI)
+            for (i in 0 until MAX_POSIZIONI) {
+                note[i] = StringUtils.EMPTY
+            }
+        }
         note[posizione] = testoNota.trim()
         return 0
     }
@@ -100,7 +115,14 @@ class ListaPersonalizzata : Serializable {
     fun removeNota(posizione: Int): Int {
         if (posizione < 0 || posizione >= MAX_POSIZIONI)
             return -1
-
+        //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
+        @Suppress("SENSELESS_COMPARISON")
+        if (note == null) {
+            note = arrayOfNulls(MAX_POSIZIONI)
+            for (i in 0 until MAX_POSIZIONI) {
+                note[i] = StringUtils.EMPTY
+            }
+        }
         note[posizione] = StringUtils.EMPTY
         return 0
     }

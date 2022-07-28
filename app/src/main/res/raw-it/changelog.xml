@@ -2,7 +2,7 @@
 <changelog>
 
     <release
-        versionCode="5104"
+        versionCode="5105"
         date="Settembre 2022"
         versionName="5.1.0">
         <new>Aggiunte le icone ai popup</new>

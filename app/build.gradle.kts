@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5104
+        versionCode = 5105
         versionName = "5.1.0"
         kapt {
             arguments {
@@ -63,12 +63,12 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.7.0-alpha03")
-    implementation("androidx.core:core-splashscreen:1.0.0-rc01")
-    implementation("androidx.activity:activity-ktx:1.5.0")
-    implementation("androidx.appcompat:appcompat:1.4.2")
-    implementation("androidx.appcompat:appcompat-resources:1.4.2")
+    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation("androidx.activity:activity-ktx:1.5.1")
+    implementation("androidx.appcompat:appcompat:1.5.0-rc01")
+    implementation("androidx.appcompat:appcompat-resources:1.5.0-rc01")
     implementation("androidx.core:core-ktx:1.8.0")
-    implementation("androidx.fragment:fragment-ktx:1.5.0")
+    implementation("androidx.fragment:fragment-ktx:1.5.1")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
@@ -77,8 +77,8 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("com.google.android.gms:play-services-auth:20.2.0")
     implementation(platform("com.google.firebase:firebase-bom:30.3.0"))
