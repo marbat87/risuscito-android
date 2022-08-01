@@ -4,7 +4,6 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
@@ -82,7 +81,7 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
                     itemViewBinding.itemTag.text = i.toString()
                     cantoView.background = FastAdapterUIUtils.getSelectableBackground(
                         context,
-                        ContextCompat.getColor(context, R.color.selected_bg_color),
+                        MaterialColors.getColor(context, R.attr.colorSecondaryContainer, TAG),
                         true
                     )
 
