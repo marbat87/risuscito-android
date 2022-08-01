@@ -120,19 +120,24 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         AppCompatResources.getDrawable(this@CreaListaActivity, R.drawable.delete_sweep_24px)
             ?.let {
-                it.setTint(MaterialColors.getColor(view, R.attr.colorOnPrimary))
+                it.setTint(MaterialColors.getColor(view, R.attr.colorOnError))
                 val touchCallback = SimpleSwipeDragCallback(
                     this,
                     this,
                     it,
                     ItemTouchHelper.LEFT,
-                    MaterialColors.getColor(this, R.attr.colorPrimary, TAG)
+                    MaterialColors.harmonizeWithPrimary(
+                        this,
+                        MaterialColors.getColor(this, R.attr.colorError, TAG)
+                    )
                 )
                     .withBackgroundSwipeRight(
-                        MaterialColors.getColor(
-                            this,
-                            R.attr.colorPrimary,
-                            TAG
+                        MaterialColors.harmonizeWithPrimary(
+                            this, MaterialColors.getColor(
+                                this,
+                                R.attr.colorError,
+                                TAG
+                            )
                         )
                     )
                     .withLeaveBehindSwipeRight(it)
