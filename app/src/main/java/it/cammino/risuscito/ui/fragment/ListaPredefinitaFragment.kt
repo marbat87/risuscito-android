@@ -346,11 +346,12 @@ class ListaPredefinitaFragment : Fragment() {
                             )
                         )
 
-                    posizioniList.add(
-                        getCantofromPosition(
-                            mCanti, getString(R.string.canto_pace), 2, progressiveTag++
+                    if (pref.getBoolean(Utility.SHOW_EUCARESTIA_PACE, true))
+                        posizioniList.add(
+                            getCantofromPosition(
+                                mCanti, getString(R.string.canto_pace), 2, progressiveTag++
+                            )
                         )
-                    )
 
                     if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
                         posizioniList.add(
@@ -503,11 +504,15 @@ class ListaPredefinitaFragment : Fragment() {
                         result.append(getTitoloToSendFromPosition(progressivePos++))
                         result.append("\n")
                     }
-                    result.append(resources.getString(R.string.canto_pace).uppercase(l))
-                    result.append("\n")
 
-                    result.append(getTitoloToSendFromPosition(progressivePos++))
-                    result.append("\n")
+                    if (pref.getBoolean(Utility.SHOW_EUCARESTIA_PACE, true)) {
+                        result.append(resources.getString(R.string.canto_pace).uppercase(l))
+                        result.append("\n")
+
+                        result.append(getTitoloToSendFromPosition(progressivePos++))
+                        result.append("\n")
+                    }
+
                     if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false)) {
                         result.append(resources.getString(R.string.canto_offertorio).uppercase(l))
                         result.append("\n")

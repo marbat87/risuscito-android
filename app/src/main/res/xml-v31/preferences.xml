@@ -34,6 +34,12 @@
             android:title="@string/show_offertorio_title" />
 
         <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="mostra_eucarestia_pace"
+            android:summary="@string/show_eucarestia_pace_summary"
+            android:title="@string/show_eucarestia_pace_title" />
+
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="mostra_santo"
             android:summary="@string/show_santo_summary"

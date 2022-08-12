@@ -2,13 +2,14 @@
 <changelog>
 
     <release
-        versionCode="5106"
+        versionCode="5107"
         date="Settembre 2022"
         versionName="5.1.0">
         <new>Aggiunte le icone ai popup</new>
         <bugfix>Sistemato il colore di sfondo in alcune schermate</bugfix>
         <new>Implementato sistema di notifiche da parte dello sviluppatore</new>
         <new>Aggiunte le NOTE agli elementi delle liste personalizzate</new>
+        <new>Aggiunta opzione per disabilitare il canto alla pace dall'Eucarestia</new>
     </release>
 
     <release
