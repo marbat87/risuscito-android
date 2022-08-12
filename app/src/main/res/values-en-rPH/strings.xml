@@ -308,4 +308,6 @@
     <string name="dynamic_colors_summary">Apply dynamic colors based on your wallpaper</string>
     <string name="edit_note_title">Note</string>
     <string name="edit_note_confirm_message">Note saved</string>
+    <string name="show_eucarestia_pace_summary">Authorize the song of peace for the Eucharist</string>
+    <string name="show_eucarestia_pace_title">Eucharist - Song of peace</string>
 </resources>
