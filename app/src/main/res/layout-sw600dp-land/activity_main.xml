@@ -92,9 +92,8 @@
 
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_bar"
-                style="@style/Widget.Material3.BottomAppBar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:visibility="invisible"
                 app:hideOnScroll="true"

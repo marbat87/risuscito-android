@@ -3,6 +3,7 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -13,7 +14,7 @@ import it.cammino.risuscito.utils.Utility
 
 class ConsegnatiViewModel(application: Application) : AndroidViewModel(application) {
 
-    var editMode: Boolean = false
+    var editMode: MutableLiveData<Boolean> = MutableLiveData(false)
 
     var titoliChoose: List<CheckableItem> = ArrayList()
     var titoliChooseFiltered: List<CheckableItem> = ArrayList()

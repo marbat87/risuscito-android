@@ -16,6 +16,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.ActionMode
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isVisible
@@ -489,14 +490,15 @@ class MainActivity : ThemeableActivity() {
         binding.fabPager.toggle()
     }
 
-    fun enableFab(enable: Boolean) {
+    fun enableFab(enable: Boolean, autoHide: Boolean = true) {
         Log.d(TAG, "enableFab: $enable")
         if (enable) {
             if (binding.fabPager.isOpen)
                 binding.fabPager.close()
             else {
                 val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
-                params?.behavior = SpeedDialView.ScrollingViewSnackbarBehavior()
+                params?.behavior =
+                    if (autoHide) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
                 binding.fabPager.requestLayout()
                 binding.fabPager.show()
             }
@@ -520,7 +522,8 @@ class MainActivity : ThemeableActivity() {
         Log.d(TAG, "initFab()")
         enableFab(false)
         binding.fabPager.setMainFabClosedDrawable(icon)
-        binding.fabPager.mainFab.rippleColor = android.R.color.transparent
+        binding.fabPager.mainFab.rippleColor =
+            ContextCompat.getColor(this, android.R.color.transparent)
         binding.fabPager.clearActionItems()
         binding.fabPager.expansionMode =
             if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
