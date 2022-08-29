@@ -201,9 +201,8 @@
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
-        style="@style/Widget.Material3.BottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:contentInsetStart="0dp"
         app:hideOnScroll="false">
@@ -273,9 +272,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="?actionBarSize"
+        android:layout_marginBottom="@dimen/m3_bottomappbar_height"
         app:sdExpansionMode="top"
         app:sdMainFabClosedSrc="@drawable/add_24px"
-        app:sdOverlayLayout="@id/overlay_canto" />
+        app:sdOverlayLayout="@id/overlay_canto"
+        tools:ignore="PrivateResource" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

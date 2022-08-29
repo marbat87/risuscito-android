@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 32
         multiDexEnabled = true
-        versionCode = 5107
+        versionCode = 5108
         versionName = "5.1.0"
         kapt {
             arguments {
@@ -62,7 +62,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.material:material:1.7.0-alpha03")
+    implementation("com.google.android.material:material:1.7.0-beta01")
     implementation("androidx.core:core-splashscreen:1.0.0")
     implementation("androidx.activity:activity-ktx:1.5.1")
     implementation("androidx.appcompat:appcompat:1.5.0")

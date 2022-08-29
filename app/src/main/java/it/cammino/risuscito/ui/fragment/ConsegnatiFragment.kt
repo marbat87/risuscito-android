@@ -58,7 +58,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
 
     private var cantoAdapter: FastItemAdapter<NotableItem> = FastItemAdapter()
 
-    private val mCantiViewModel: ConsegnatiViewModel by viewModels()
+    private val consegnatiViewModel: ConsegnatiViewModel by viewModels()
     private val dialogViewModel: ListChoiceDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
@@ -123,28 +123,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
                         true
                     }
                     R.id.cancel_change -> {
-                        mCantiViewModel.editMode = false
-                        backCallback?.isEnabled = false
-                        binding.chooseRecycler.isVisible = false
-                        enableBottombar(false)
-                        binding.selectedView.isVisible = true
-                        enableFab(true)
-                        true
-                    }
-                    R.id.confirm_changes -> {
-                        mMainActivity?.let { mainActivity ->
-                            SimpleDialogFragment.show(
-                                SimpleDialogFragment.Builder(
-                                    CONFIRM_SAVE
-                                )
-                                    .title(R.string.dialog_save_consegnati_title)
-                                    .icon(R.drawable.save_24px)
-                                    .content(R.string.dialog_save_consegnati_desc)
-                                    .positiveButton(R.string.action_salva)
-                                    .negativeButton(R.string.cancel),
-                                mainActivity.supportFragmentManager
-                            )
-                        }
+                        consegnatiViewModel.editMode.value = false
                         true
                     }
                     else -> false
@@ -178,7 +157,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
             openPassageModal(item)
         }
 
-        cantoAdapter.set(mCantiViewModel.titoli)
+        cantoAdapter.set(consegnatiViewModel.titoli)
         cantoAdapter.itemFilter.filterPredicate = { item: NotableItem, constraint: CharSequence? ->
             val found = constraint?.split("|")?.filter { it.toInt() == item.numPassaggio }
             !found.isNullOrEmpty()
@@ -190,7 +169,6 @@ class ConsegnatiFragment : AccountMenuFragment() {
         binding.cantiRecycler.itemAnimator = SlideRightAlphaAnimator()
 
         // Creating new adapter object
-//        selectExtension = SelectExtension(selectableAdapter)
         selectExtension.isSelectable = true
         selectableAdapter.setHasStableIds(true)
 
@@ -207,7 +185,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
             selectExtension.toggleSelection(position)
         }
 
-        selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
+        selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
 
         binding.chooseRecycler.adapter = selectableAdapter
         val llm2 = if (context?.isGridLayout == true)
@@ -228,21 +206,24 @@ class ConsegnatiFragment : AccountMenuFragment() {
                     Utility.removeAccents(newText).lowercase(resources.systemLocale)
                 Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
                 if (simplifiedString.isNotEmpty()) {
-                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose.filter {
-                        Utility.removeAccents(
-                            it.title?.getText(requireContext()).orEmpty()
-                        ).lowercase(resources.systemLocale).contains(simplifiedString)
+                    consegnatiViewModel.titoliChooseFiltered =
+                        consegnatiViewModel.titoliChoose.filter {
+                            Utility.removeAccents(
+                                it.title?.getText(requireContext()).orEmpty()
+                            ).lowercase(resources.systemLocale).contains(simplifiedString)
+                        }
+                    consegnatiViewModel.titoliChooseFiltered.forEach {
+                        it.filter = simplifiedString
                     }
-                    mCantiViewModel.titoliChooseFiltered.forEach { it.filter = simplifiedString }
-                    selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
+                    selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
                 } else
-                    mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose
+                    consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose
                 return true
             }
 
             override fun onQueryTextCleared(): Boolean {
-                mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose
-                selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
+                consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose
+                selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
                 return true
             }
 
@@ -267,7 +248,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
         mMainActivity?.let { act ->
             act.addMenuProvider(object : MenuProvider {
                 override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    if (mCantiViewModel.editMode) {
+                    if (consegnatiViewModel.editMode.value == true) {
                         menuInflater.inflate(R.menu.consegnati_menu_edit_mode, menu)
                         val item = menu.findItem(R.id.action_search)
                         mMainActivity?.activitySearchView?.setMenuItem(item)
@@ -290,7 +271,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
                             activity?.invalidateOptionsMenu()
                         }
                         R.id.action_help -> {
-                            if (mCantiViewModel.editMode)
+                            if (consegnatiViewModel.editMode.value == true)
                                 managerIntro()
                             else
                                 fabIntro()
@@ -309,20 +290,13 @@ class ConsegnatiFragment : AccountMenuFragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.chooseRecycler.isVisible = mCantiViewModel.editMode
-        enableBottombar(mCantiViewModel.editMode)
-        binding.selectedView.isVisible = !mCantiViewModel.editMode
-        enableFab(!mCantiViewModel.editMode)
-        backCallback = object : OnBackPressedCallback(mCantiViewModel.editMode) {
+
+        updateEditMode(consegnatiViewModel.editMode.value == true)
+        backCallback = object : OnBackPressedCallback(consegnatiViewModel.editMode.value == true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "handleOnBackPressed")
-                mCantiViewModel.editMode = false
-                this.isEnabled = false
+                consegnatiViewModel.editMode.value = false
                 mMainActivity?.expandToolbar()
-                binding.chooseRecycler.isVisible = false
-                enableBottombar(false)
-                binding.selectedView.isVisible = true
-                enableFab(true)
             }
         }
         // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
@@ -333,6 +307,14 @@ class ConsegnatiFragment : AccountMenuFragment() {
         }
     }
 
+    private fun updateEditMode(editMode: Boolean) {
+        binding.chooseRecycler.isVisible = editMode
+        enableBottombar(editMode)
+        initFab()
+        binding.selectedView.isVisible = !editMode
+        backCallback?.isEnabled = editMode
+    }
+
     private fun enableBottombar(enabled: Boolean) {
         mMainActivity?.enableBottombar(enabled)
         if (!enabled)
@@ -340,28 +322,39 @@ class ConsegnatiFragment : AccountMenuFragment() {
         activity?.invalidateOptionsMenu()
     }
 
-    private fun enableFab(enabled: Boolean) {
-        mMainActivity?.enableFab(enabled)
-    }
-
     private fun initFab() {
-        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.edit_24px)
+        val icon = AppCompatResources.getDrawable(
+            requireContext(),
+            if (consegnatiViewModel.editMode.value == true) R.drawable.save_24px else R.drawable.edit_24px
+        )
         val onClick = View.OnClickListener {
-            mCantiViewModel.editMode = true
-            backCallback?.isEnabled = true
-            lifecycleScope.launch { updateChooseList() }
-            binding.selectedView.isVisible = false
-            binding.chooseRecycler.isVisible = true
-            enableBottombar(true)
-            enableFab(false)
-            val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-            if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
-                managerIntro()
+            if (consegnatiViewModel.editMode.value == true) {
+                mMainActivity?.let { mainActivity ->
+                    SimpleDialogFragment.show(
+                        SimpleDialogFragment.Builder(
+                            CONFIRM_SAVE
+                        )
+                            .title(R.string.dialog_save_consegnati_title)
+                            .icon(R.drawable.save_24px)
+                            .content(R.string.dialog_save_consegnati_desc)
+                            .positiveButton(R.string.action_salva)
+                            .negativeButton(R.string.cancel),
+                        mainActivity.supportFragmentManager
+                    )
+                }
+            } else {
+                consegnatiViewModel.editMode.value = true
+                lifecycleScope.launch { updateChooseList() }
+                val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
+                    managerIntro()
+                }
             }
         }
         icon?.let {
             mMainActivity?.initFab(false, it, onClick, null, false)
         }
+        mMainActivity?.enableFab(enable = true, autoHide = false)
     }
 
     private fun fabIntro() {
@@ -397,63 +390,65 @@ class ConsegnatiFragment : AccountMenuFragment() {
 
     private fun managerIntro() {
         val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
-        TapTargetSequence(requireActivity())
-            .continueOnCancel(true)
-            .targets(
-                TapTarget.forToolbarMenuItem(
-                    mMainActivity?.activityBottomBar,
-                    R.id.confirm_changes,
-                    getString(R.string.title_activity_consegnati),
-                    getString(R.string.showcase_consegnati_confirm)
+        mMainActivity?.getFab()?.let { fab ->
+            TapTargetSequence(requireActivity())
+                .continueOnCancel(true)
+                .targets(
+                    TapTarget.forView(
+                        fab,
+                        getString(R.string.title_activity_consegnati),
+                        getString(R.string.showcase_consegnati_confirm)
+                    )
+                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTypeface(mMediumFont) // Specify a typeface for the text
+                        .titleTextColorInt(colorOnPrimary)
+                        .textColorInt(colorOnPrimary)
+                        .tintTarget(false),
+                    TapTarget.forToolbarMenuItem(
+                        mMainActivity?.activityBottomBar,
+                        R.id.cancel_change,
+                        getString(R.string.title_activity_consegnati),
+                        getString(R.string.showcase_consegnati_cancel)
+                    )
+                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                        .titleTypeface(mMediumFont) // Specify a typeface for the text
+                        .titleTextColorInt(colorOnPrimary)
+                        .textColorInt(colorOnPrimary)
                 )
-                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-                    .titleTextColorInt(colorOnPrimary)
-                    .textColorInt(colorOnPrimary),
-                TapTarget.forToolbarMenuItem(
-                    mMainActivity?.activityBottomBar,
-                    R.id.cancel_change,
-                    getString(R.string.title_activity_consegnati),
-                    getString(R.string.showcase_consegnati_cancel)
-                )
-                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-                    .titleTextColorInt(colorOnPrimary)
-                    .textColorInt(colorOnPrimary)
-            )
-            .listener(
-                object :
-                    TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                    override fun onSequenceFinish() {
-                        context?.let {
-                            PreferenceManager.getDefaultSharedPreferences(it)
-                                .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
+                .listener(
+                    object :
+                        TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+                        override fun onSequenceFinish() {
+                            context?.let {
+                                PreferenceManager.getDefaultSharedPreferences(it)
+                                    .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
+                            }
                         }
-                    }
 
-                    override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-                        // no-op
-                    }
-
-                    override fun onSequenceCanceled(tapTarget: TapTarget) {
-                        context?.let {
-                            PreferenceManager.getDefaultSharedPreferences(it)
-                                .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
+                        override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                            // no-op
                         }
-                    }
-                })
-            .start()
+
+                        override fun onSequenceCanceled(tapTarget: TapTarget) {
+                            context?.let {
+                                PreferenceManager.getDefaultSharedPreferences(it)
+                                    .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
+                            }
+                        }
+                    })
+                .start()
+        }
     }
 
     private fun subscribeUiConsegnati() {
-        mCantiViewModel.mIndexResult?.observe(viewLifecycleOwner) { cantos ->
-            mCantiViewModel.titoli =
+        consegnatiViewModel.mIndexResult?.observe(viewLifecycleOwner) { cantos ->
+            consegnatiViewModel.titoli =
                 cantos.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
                     it.title?.getText(requireContext())
                 })
-            cantoAdapter.set(mCantiViewModel.titoli)
+            cantoAdapter.set(consegnatiViewModel.titoli)
             cantoAdapter.filter(mPopupMenu.menu.children.filter { item -> item.isChecked }
                 .map { item -> item.titleCondensed }
                 .joinToString("|"))
@@ -468,8 +463,8 @@ class ConsegnatiFragment : AccountMenuFragment() {
                     is DialogState.Positive -> {
                         dialogViewModel.handled = true
                         val consegnato = Consegnato().apply {
-                            idConsegnato = mCantiViewModel.mIdConsegnatoSelected
-                            idCanto = mCantiViewModel.mIdCantoSelected
+                            idConsegnato = consegnatiViewModel.mIdConsegnatoSelected
+                            idCanto = consegnatiViewModel.mIdCantoSelected
                             numPassaggio = passaggiArray[dialogViewModel.index]
                         }
                         val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
@@ -490,8 +485,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
                         when (simpleDialogViewModel.mTag) {
                             CONFIRM_SAVE -> {
                                 simpleDialogViewModel.handled = true
-                                mCantiViewModel.editMode = false
-                                backCallback?.isEnabled = false
+                                consegnatiViewModel.editMode.value = false
                                 lifecycleScope.launch { saveConsegnati() }
                             }
                         }
@@ -501,6 +495,10 @@ class ConsegnatiFragment : AccountMenuFragment() {
                     }
                 }
             }
+        }
+
+        consegnatiViewModel.editMode.observe(viewLifecycleOwner) {
+            updateEditMode(it)
         }
     }
 
@@ -520,12 +518,12 @@ class ConsegnatiFragment : AccountMenuFragment() {
                 }
             )
         }
-        mCantiViewModel.titoliChoose =
+        consegnatiViewModel.titoliChoose =
             newList.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
                 it.title?.getText(requireContext())
             })
-        mCantiViewModel.titoliChooseFiltered = mCantiViewModel.titoliChoose
-        selectableAdapter.set(mCantiViewModel.titoliChooseFiltered)
+        consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose
+        selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
     }
 
     private fun showProgress(show: Boolean) {
@@ -537,14 +535,13 @@ class ConsegnatiFragment : AccountMenuFragment() {
     }
 
     private suspend fun saveConsegnati() {
-        enableBottombar(false)
         showProgress(true)
 
         val mSelected = selectExtension.selectedItems
         val mSelectedId = mSelected.mapTo(ArrayList()) { item -> item.id }
 
         //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
-        mCantiViewModel.titoliChoose.forEach { item ->
+        consegnatiViewModel.titoliChoose.forEach { item ->
             if (item.isSelected)
                 if (!mSelectedId.any { i -> i == item.id })
                     mSelectedId.add(item.id)
@@ -566,16 +563,13 @@ class ConsegnatiFragment : AccountMenuFragment() {
             mDao.emptyConsegnati()
             mDao.insertConsegnati(consegnati)
         }
-        binding.chooseRecycler.isVisible = false
-        binding.selectedView.isVisible = true
-        enableFab(true)
         showProgress(false)
     }
 
     private fun openPassageModal(item: NotableItem) {
         mMainActivity?.let { activity ->
-            mCantiViewModel.mIdConsegnatoSelected = item.idConsegnato
-            mCantiViewModel.mIdCantoSelected = item.id
+            consegnatiViewModel.mIdConsegnatoSelected = item.idConsegnato
+            consegnatiViewModel.mIdCantoSelected = item.id
             val prefill = passaggiValues[item.numPassaggio] ?: -1
             ListChoiceDialogFragment.show(
                 ListChoiceDialogFragment.Builder(
