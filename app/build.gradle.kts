@@ -56,7 +56,7 @@ android {
 }
 
 val fastAdapterVersion = "5.6.0"
-val roomVersion = "2.4.2"
+val roomVersion = "2.4.3"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
