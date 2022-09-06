@@ -80,7 +80,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("com.google.android.gms:play-services-auth:20.2.0")
+    implementation("com.google.android.gms:play-services-auth:20.3.0")
     implementation(platform("com.google.firebase:firebase-bom:30.3.2"))
     implementation("com.google.firebase:firebase-core")
     implementation("com.google.firebase:firebase-firestore-ktx")
