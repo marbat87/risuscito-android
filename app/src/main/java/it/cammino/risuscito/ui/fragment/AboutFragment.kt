@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import com.google.android.material.color.MaterialColors
 import com.vansuita.materialabout.builder.AboutBuilder
 import it.cammino.risuscito.BuildConfig
@@ -16,6 +17,7 @@ import it.cammino.risuscito.databinding.AboutLayoutBinding
 import it.cammino.risuscito.ui.activity.ChangelogActivity
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility.CLICK_DELAY
+import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.slideInRight
 
 
@@ -30,9 +32,7 @@ class AboutFragment : AccountMenuFragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = AboutLayoutBinding.inflate(inflater, container, false)
         return binding.root
@@ -65,8 +65,7 @@ class AboutFragment : AccountMenuFragment() {
                         "shared_element_about" // The transition name to be matched in Activity B.
                     )
                     startActivity(
-                        Intent(mMainActivity, ChangelogActivity::class.java),
-                        options.toBundle()
+                        Intent(mMainActivity, ChangelogActivity::class.java), options.toBundle()
                     )
                 }
             }
@@ -79,10 +78,6 @@ class AboutFragment : AccountMenuFragment() {
                 setAppName(R.string.app_name)
                 setPhoto(R.drawable.ic_brand_icon)
                 setCover(R.mipmap.profile_cover)
-                backgroundColor = MaterialColors.getColor(
-                    requireContext(), android.R.attr.colorBackground,
-                    TAG
-                )
                 linksColumnsCount = 1
                 addEmailLink("marbat87@outlook.it", getString(R.string.app_name), null)
                 addFiveStarsAction(BuildConfig.APPLICATION_ID)
@@ -95,19 +90,57 @@ class AboutFragment : AccountMenuFragment() {
                 isShowAsCard = false
             }
             val builderView = builder.build()
-            builderView.findItem(builder.lastLink).findViewById<AppCompatImageView>(R.id.icon)
-                .setImageResource(R.drawable.mail_24px)
+
+            val bgColor = MaterialColors.getColor(
+                requireContext(), android.R.attr.colorBackground, TAG
+            )
+
+            builderView.holder.setBackgroundColor(bgColor)
+
+            builderView.findItem(builder.lastLink).apply {
+                background = ContextCompat.getDrawable(
+                    requireContext(),
+                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
+                )
+                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.mail_24px)
+            }
             val actions = builder.actions
-            builderView.findItem(actions[0]).findViewById<AppCompatImageView>(R.id.icon)
-                .setImageResource(R.drawable.star_24px)
-            builderView.findItem(actions[1]).findViewById<AppCompatImageView>(R.id.icon)
-                .setImageResource(R.drawable.share_24px)
-            builderView.findItem(actions[2]).findViewById<AppCompatImageView>(R.id.icon)
-                .setImageResource(R.drawable.file_download_24px)
-            builderView.findItem(actions[3]).findViewById<AppCompatImageView>(R.id.icon)
-                .setImageResource(R.drawable.list_alt_24px)
-            builderView.findItem(actions[4]).findViewById<AppCompatImageView>(R.id.icon)
-                .setImageResource(R.drawable.policy_24px)
+            builderView.findItem(actions[0]).apply {
+                background = ContextCompat.getDrawable(
+                    requireContext(),
+                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
+                )
+                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.star_24px)
+            }
+            builderView.findItem(actions[1]).apply {
+                background = ContextCompat.getDrawable(
+                    requireContext(),
+                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
+                )
+                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.share_24px)
+            }
+            builderView.findItem(actions[2]).apply {
+                background = ContextCompat.getDrawable(
+                    requireContext(),
+                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
+                )
+                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.file_download_24px)
+            }
+            builderView.findItem(actions[3]).apply {
+                background = ContextCompat.getDrawable(
+                    requireContext(),
+                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
+                )
+                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.list_alt_24px)
+            }
+            builderView.findItem(actions[4]).apply {
+                background = ContextCompat.getDrawable(
+                    requireContext(),
+                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
+                )
+                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.policy_24px)
+            }
+
             binding.about.addView(builderView)
         }
     }

@@ -1,9 +1,11 @@
 package it.cammino.risuscito.ui.fragment
 
 import android.Manifest
-import android.annotation.TargetApi
 import android.content.pm.PackageManager
-import android.os.*
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -148,11 +150,11 @@ class HomeFragment : AccountMenuFragment() {
             binding.signInButton.isVisible = !it
         }
 
-        Log.d(TAG, "getVersionCodeWrapper(): ${getVersionCodeWrapper()}")
+        Log.d(TAG, "getVersionCodeWrapper(): ${requireActivity().getVersionCode()}")
 
         ChangelogBuilder()
             .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
-            .withMinVersionToShow(getVersionCodeWrapper())     // provide a number and the log will only show changelog rows for versions equal or higher than this number
+            .withMinVersionToShow(requireActivity().getVersionCode())     // provide a number and the log will only show changelog rows for versions equal or higher than this number
             .withManagedShowOnStart(
                 requireContext().getSharedPreferences(
                     "com.michaelflisar.changelog",
@@ -313,29 +315,6 @@ class HomeFragment : AccountMenuFragment() {
                 )
             }
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.P)
-    private fun getVersionCodeP(): Int {
-        return requireActivity()
-            .packageManager
-            .getPackageInfo(requireActivity().packageName, 0)
-            .longVersionCode.toInt()
-    }
-
-    @Suppress("DEPRECATION")
-    private fun getVersionCodeLegacy(): Int {
-        return requireActivity()
-            .packageManager
-            .getPackageInfo(requireActivity().packageName, 0)
-            .versionCode
-    }
-
-    private fun getVersionCodeWrapper(): Int {
-        return if (OSUtils.hasP())
-            getVersionCodeP()
-        else
-            getVersionCodeLegacy()
     }
 
     private fun ricercaStringa(s: String) {

@@ -32,12 +32,13 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.text.TextUtils
 import android.util.Log
+import androidx.core.app.ServiceCompat
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.utils.Utility.isExternalStorageReadable
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
 import java.io.FileInputStream
 import java.io.IOException
@@ -372,7 +373,7 @@ class Playback internal constructor(
     private fun relaxResources(releaseMediaPlayer: Boolean) {
         Log.d(TAG, "relaxResources. releaseMediaPlayer= $releaseMediaPlayer")
 
-        mService.stopForeground(true)
+        ServiceCompat.stopForeground(mService, ServiceCompat.STOP_FOREGROUND_REMOVE)
 
         // stop and release the Media Player, if it's available
         if (releaseMediaPlayer && mMediaPlayer != null) {

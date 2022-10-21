@@ -15,8 +15,10 @@ import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.helperSetColor
 import it.cammino.risuscito.utils.Utility.helperSetString
+import it.cammino.risuscito.utils.extension.createCheckedList
 import it.cammino.risuscito.utils.extension.spannedFromHtml
 import it.cammino.risuscito.utils.extension.systemLocale
+
 
 fun simpleItem(block: SimpleItem.() -> Unit): SimpleItem = SimpleItem().apply(block)
 
@@ -95,6 +97,14 @@ class SimpleItem : AbstractBindingItem<SimpleRowItemBinding>() {
         } ?: StringHolder.applyTo(title, binding.textTitle)
         StringHolder.applyToOrHide(page, binding.textPage)
         binding.listViewItemContainer.isChecked = isSelected
+
+        //Fix because setting attr on state list xml resource doesn't work correcly on older Android versions
+        binding.listViewItemContainer.setCardBackgroundColor(
+            binding.listViewItemContainer.createCheckedList(
+                R.attr.colorSurface,
+                R.attr.colorSecondaryContainer
+            )
+        )
 
         val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color)

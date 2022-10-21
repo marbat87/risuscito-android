@@ -1,8 +1,10 @@
 package it.cammino.risuscito.utils.extension
 
 import android.content.res.Resources
+import android.os.Build
 import android.text.Html
 import android.text.Spanned
+import androidx.annotation.RequiresApi
 import it.cammino.risuscito.utils.OSUtils
 
 fun String.capitalize(res: Resources): String {
@@ -18,12 +20,13 @@ fun CharSequence.capitalize(res: Resources): String {
 }
 
 @Suppress("DEPRECATION")
-val String.spannedFromHtmlLegacy: Spanned
+private val String.spannedFromHtmlLegacy: Spanned
     get() {
         return Html.fromHtml(this)
     }
 
 private val String.spannedFromHtmlN: Spanned
+    @RequiresApi(Build.VERSION_CODES.N)
     get() {
         return Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
     }

@@ -12,6 +12,7 @@ import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.helperSetColor
 import it.cammino.risuscito.utils.Utility.helperSetString
+import it.cammino.risuscito.utils.extension.createCheckedList
 import it.cammino.risuscito.utils.extension.spannedFromHtml
 import it.cammino.risuscito.utils.extension.systemLocale
 
@@ -58,6 +59,14 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
     override fun bindView(binding: CheckableRowItemBinding, payloads: List<Any>) {
         // get the context
         val ctx = binding.root.context
+
+        //Fix because setting attr on state list xml resource doesn't work correcly on older Android versions
+        binding.listViewItemContainer.setCardBackgroundColor(
+            binding.listViewItemContainer.createCheckedList(
+                R.attr.colorSurface,
+                R.attr.colorSecondaryContainer
+            )
+        )
 
         binding.checkBox.isChecked = isSelected
         binding.listViewItemContainer.isChecked = isSelected

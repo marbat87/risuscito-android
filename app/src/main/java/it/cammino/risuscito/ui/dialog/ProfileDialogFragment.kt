@@ -20,6 +20,7 @@ import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Picasso
 import it.cammino.risuscito.R
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.extension.getSerializableWrapper
 import java.io.Serializable
 
 @Suppress("unused")
@@ -28,8 +29,9 @@ class ProfileDialogFragment : DialogFragment() {
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })
 
     private val builder: Builder?
-        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(
-            BUILDER_TAG
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializableWrapper(
+            BUILDER_TAG,
+            Builder::class.java
         ) as? Builder
 
     @SuppressLint("CheckResult")

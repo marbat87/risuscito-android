@@ -369,9 +369,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_baseline_close_24dp" />
-                            <entry key="sourceFile" value="C:\Users\marcello.battain\Downloads\Immagine.svg" />
+                            <entry key="outputName" value="monocrhome" />
+                            <entry key="sourceFile" value="C:\Users\m.battain\Downloads\monocrhome.svg" />
                           </map>
                         </option>
                       </PersistentState>

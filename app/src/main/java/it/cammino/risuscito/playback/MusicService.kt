@@ -33,6 +33,7 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
@@ -270,7 +271,11 @@ class MusicService : MediaBrowserServiceCompat() {
         }
 
         override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-            val mKeyEvent = mediaButtonEvent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)
+            @Suppress("DEPRECATION") val mKeyEvent =
+                if (OSUtils.hasT()) mediaButtonEvent.getParcelableExtra(
+                    Intent.EXTRA_KEY_EVENT,
+                    KeyEvent::class.java
+                ) else mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT)
             Log.d(TAG, "onMediaButtonEvent keycode: ${mKeyEvent?.keyCode}")
             if (mKeyEvent?.keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
                 onSkipToPrevious()
@@ -446,7 +451,7 @@ class MusicService : MediaBrowserServiceCompat() {
             } else {
                 mNotificationManager.cancel(NOTIFICATION_ID)
             }
-            stopForeground(false)
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH)
             mAudioBecomingNoisyReceiver?.unregister()
         }
     }

@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.extension.capitalize
+import it.cammino.risuscito.utils.extension.getSerializableWrapper
 import java.io.Serializable
 
 @Suppress("unused")
@@ -26,8 +27,9 @@ class SimpleDialogFragment : DialogFragment() {
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })
 
     private val builder: Builder?
-        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializable(
-            BUILDER_TAG
+        get() = if (arguments?.containsKey(BUILDER_TAG) != true) null else arguments?.getSerializableWrapper(
+            BUILDER_TAG,
+            Builder::class.java
         ) as? Builder
 
     @SuppressLint("CheckResult")
