@@ -1,11 +1,17 @@
 package it.cammino.risuscito.utils.extension
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.TypedValue
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColorsOptions
@@ -92,6 +98,7 @@ val Context.isOnline: Boolean
     }
 
 private val ConnectivityManager.isOnlineM: Boolean
+    @RequiresApi(Build.VERSION_CODES.M)
     get() {
         val network = activeNetwork
         val capabilities = getNetworkCapabilities(network)
@@ -118,3 +125,43 @@ val Context.isLandscape: Boolean
 
 val Context.isFabExpansionLeft: Boolean
     get() = resources.getBoolean(R.bool.fab_orientation_left)
+
+fun PackageManager.queryIntentActivities(intent: Intent): MutableList<ResolveInfo> {
+    return if (OSUtils.hasT())
+        queryIntentActivitiesTiramisu(intent)
+    else
+        queryIntentActivitiesLegacy(intent)
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+fun PackageManager.queryIntentActivitiesTiramisu(intent: Intent): MutableList<ResolveInfo> {
+    return queryIntentActivities(
+        intent,
+        PackageManager.ResolveInfoFlags.of(0)
+    )
+}
+
+@Suppress("DEPRECATION")
+fun PackageManager.queryIntentActivitiesLegacy(intent: Intent): MutableList<ResolveInfo> {
+    return queryIntentActivities(intent, 0)
+}
+
+fun PackageManager.getPackageInfo(packageName: String): PackageInfo {
+    return if (OSUtils.hasT())
+        getPackageInfoTiramisu(packageName)
+    else
+        getPackageInfoLegacy(packageName)
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+fun PackageManager.getPackageInfoTiramisu(packageName: String): PackageInfo {
+    return getPackageInfo(
+        packageName,
+        PackageManager.PackageInfoFlags.of(0)
+    )
+}
+
+@Suppress("DEPRECATION")
+fun PackageManager.getPackageInfoLegacy(packageName: String): PackageInfo {
+    return getPackageInfo(packageName, 0)
+}

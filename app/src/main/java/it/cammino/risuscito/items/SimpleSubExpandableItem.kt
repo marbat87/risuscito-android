@@ -1,5 +1,6 @@
 package it.cammino.risuscito.items
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -41,6 +42,7 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
     override val layoutRes: Int
         get() = R.layout.list_group_item
 
+    @SuppressLint("SetTextI18n")
     override fun bindView(holder: ViewHolder, payloads: List<Any>) {
         super.bindView(holder, payloads)
 

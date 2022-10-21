@@ -3,6 +3,7 @@ package it.cammino.risuscito.utils.extension
 import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -26,6 +27,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.elevation.SurfaceColors
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
@@ -331,4 +333,66 @@ fun ThemeableActivity.openCanto(
             )
         }
     }
+}
+
+@TargetApi(Build.VERSION_CODES.P)
+fun Activity.getVersionCodeP(): Int {
+    return packageManager
+        .getPackageInfo(packageName)
+        .longVersionCode.toInt()
+}
+
+@Suppress("DEPRECATION")
+fun Activity.getVersionCodeLegacy(): Int {
+    return packageManager
+        .getPackageInfo(packageName)
+        .versionCode
+}
+
+fun Activity.getVersionCode(): Int {
+    return if (OSUtils.hasP())
+        getVersionCodeP()
+    else
+        getVersionCodeLegacy()
+}
+
+fun Activity.createTaskDescription(): ActivityManager.TaskDescription {
+    return when (true) {
+        OSUtils.hasT() -> createTaskDescriptionTiramisu()
+        OSUtils.hasP() -> createTaskDescriptionP()
+        else -> createTaskDescriptionLegacy()
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun Activity.createTaskDescriptionTiramisu(): ActivityManager.TaskDescription {
+    val builder = ActivityManager.TaskDescription.Builder()
+    builder.setIcon(R.mipmap.ic_launcher)
+    builder.setPrimaryColor(
+        MaterialColors.getColor(
+            this,
+            R.attr.colorPrimary,
+            ThemeableActivity.TAG
+        )
+    )
+    return builder.build()
+}
+
+@Suppress("DEPRECATION")
+@RequiresApi(Build.VERSION_CODES.P)
+private fun Activity.createTaskDescriptionP(): ActivityManager.TaskDescription {
+    return ActivityManager.TaskDescription(
+        null,
+        R.mipmap.ic_launcher,
+        MaterialColors.getColor(this, R.attr.colorPrimary, ThemeableActivity.TAG)
+    )
+}
+
+@Suppress("DEPRECATION")
+private fun Activity.createTaskDescriptionLegacy(): ActivityManager.TaskDescription {
+    return ActivityManager.TaskDescription(
+        null,
+        null,
+        MaterialColors.getColor(this, R.attr.colorPrimary, ThemeableActivity.TAG)
+    )
 }

@@ -25,6 +25,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
@@ -1613,7 +1614,8 @@ open class CantoFragment : Fragment() {
         val backgroundColor =
             MaterialColors.getColor(requireContext(), R.attr.colorPrimaryContainer, TAG)
         binding.fabCanti.overlayLayout = binding.overlayCanto
-        binding.fabCanti.mainFab.rippleColor = android.R.color.transparent
+        binding.fabCanti.mainFab.rippleColor =
+            ContextCompat.getColor(requireContext(), android.R.color.transparent)
         binding.fabCanti.clearActionItems()
         binding.fabCanti.expansionMode =
             if (context?.isFabExpansionLeft == true) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP

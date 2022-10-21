@@ -16,10 +16,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
-import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.databinding.BottomSheetBinding
 import it.cammino.risuscito.items.BottomSheetItem
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.queryIntentActivities
 
 class BottomSheetFragment : BottomSheetDialogFragment() {
 
@@ -54,11 +56,14 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             binding.sheetTitle.text = StringUtils.EMPTY
         binding.sheetTitleArea.isVisible = showTitle
 
-        val intent = arguments?.getParcelable<Intent>("intent")
+        @Suppress("DEPRECATION") val intent = if (OSUtils.hasT()) arguments?.getParcelable(
+            "intent",
+            Intent::class.java
+        ) else arguments?.getParcelable("intent")
         val pm = requireActivity().packageManager
 
         intent?.let { mIntent ->
-            val list = pm.queryIntentActivities(mIntent, 0)
+            val list = pm.queryIntentActivities(mIntent)
 
             val lastApp = PreferenceManager
                 .getDefaultSharedPreferences(requireContext())
@@ -67,7 +72,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
                 ?.let { list.removeAt(it) }
 
-            lastAppInfo?.let { list.add(0, it) }
+            lastAppInfo?.let { list.add(it) }
 
             val mList = list.map { BottomSheetItem().withItem(it) }
 

@@ -1,12 +1,9 @@
 package it.cammino.risuscito.ui.activity
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
-import android.app.ActivityManager
 import android.content.*
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
 import android.support.v4.media.MediaBrowserCompat
@@ -21,7 +18,6 @@ import androidx.core.net.toUri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.elevation.SurfaceColors
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.firestore.ktx.firestore
@@ -42,7 +38,6 @@ import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.*
@@ -79,7 +74,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         setupNavBarColor()
         updateStatusBarLightMode(true)
 
-        setTaskDescription()
+        setTaskDescription(this.createTaskDescription())
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
@@ -171,13 +166,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Exception(resources.getString(R.string.no_restore_found))
 
     class NoIdException internal constructor() : Exception("no ID linked to this Account")
-
-    private fun setTaskDescription() {
-        if (OSUtils.hasP())
-            setTaskDescriptionP()
-        else
-            setTaskDescriptionL()
-    }
 
     fun backupSharedPreferences(userId: String?, userEmail: String?) {
         Log.d(TAG, "backupSharedPreferences $userId")
@@ -539,26 +527,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
             else
                 throw e
         }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun setTaskDescriptionL() {
-        val taskDesc = ActivityManager.TaskDescription(
-            null,
-            null,
-            MaterialColors.getColor(this, R.attr.colorPrimary, TAG)
-        )
-        setTaskDescription(taskDesc)
-    }
-
-    @TargetApi(Build.VERSION_CODES.P)
-    private fun setTaskDescriptionP() {
-        val taskDesc = ActivityManager.TaskDescription(
-            null,
-            R.mipmap.ic_launcher,
-            MaterialColors.getColor(this, R.attr.colorPrimary, TAG)
-        )
-        setTaskDescription(taskDesc)
     }
 
     private val showInfoBroadcastReceiver = object : BroadcastReceiver() {

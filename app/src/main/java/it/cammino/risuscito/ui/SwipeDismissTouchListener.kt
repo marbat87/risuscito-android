@@ -49,8 +49,9 @@ class SwipeDismissTouchListener
  * @param mCallbacks The callback to trigger when the user has indicated that she would like to
  * dismiss this view.
  */
-(// Fixed properties
-        private val mView: View, private val mToken: Any?, private val mCallbacks: DismissCallbacks) : View.OnTouchListener {
+    (// Fixed properties
+    private val mView: View, private val mToken: Any?, private val mCallbacks: DismissCallbacks
+) : View.OnTouchListener {
     // Cached ViewConfiguration and system-wide constant values
     private val mSlop: Int
     private val mMinFlingVelocity: Int
@@ -91,7 +92,8 @@ class SwipeDismissTouchListener
         mMinFlingVelocity = vc.scaledMinimumFlingVelocity * 16
         mMaxFlingVelocity = vc.scaledMaximumFlingVelocity
         mAnimationTime = mView.context.resources.getInteger(
-                android.R.integer.config_shortAnimTime).toLong()
+            android.R.integer.config_shortAnimTime
+        ).toLong()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -133,8 +135,8 @@ class SwipeDismissTouchListener
                     dismiss = true
                     dismissRight = deltaX > 0
                 } else if (mMinFlingVelocity <= absVelocityX && absVelocityX <= mMaxFlingVelocity
-                        && absVelocityY < absVelocityX
-                        && absVelocityY < absVelocityX && mSwiping) {
+                    && absVelocityY < absVelocityX && mSwiping
+                ) {
                     // dismiss only if flinging in the same direction as dragging
                     dismiss = velocityX < 0 == deltaX < 0
                     dismissRight = (mVelocityTracker?.xVelocity ?: 0f) > 0
@@ -142,21 +144,21 @@ class SwipeDismissTouchListener
                 if (dismiss) {
                     // dismiss
                     mView.animate()
-                            .translationX((if (dismissRight) mViewWidth else -mViewWidth).toFloat())
-                            .alpha(0f)
-                            .setDuration(mAnimationTime)
-                            .setListener(object : AnimatorListenerAdapter() {
-                                override fun onAnimationEnd(animation: Animator) {
-                                    performDismiss()
-                                }
-                            })
+                        .translationX((if (dismissRight) mViewWidth else -mViewWidth).toFloat())
+                        .alpha(0f)
+                        .setDuration(mAnimationTime)
+                        .setListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                performDismiss()
+                            }
+                        })
                 } else if (mSwiping) {
                     // cancel
                     mView.animate()
-                            .translationX(0f)
-                            .alpha(1f)
-                            .setDuration(mAnimationTime)
-                            .setListener(null)
+                        .translationX(0f)
+                        .alpha(1f)
+                        .setDuration(mAnimationTime)
+                        .setListener(null)
                 }
                 mVelocityTracker?.recycle()
                 mVelocityTracker = null
@@ -172,10 +174,10 @@ class SwipeDismissTouchListener
                 }
 
                 mView.animate()
-                        .translationX(0f)
-                        .alpha(1f)
-                        .setDuration(mAnimationTime)
-                        .setListener(null)
+                    .translationX(0f)
+                    .alpha(1f)
+                    .setDuration(mAnimationTime)
+                    .setListener(null)
                 mVelocityTracker?.recycle()
                 mVelocityTracker = null
                 mTranslationX = 0f
@@ -199,7 +201,8 @@ class SwipeDismissTouchListener
 
                     // Cancel listview's touch
                     val cancelEvent = MotionEvent.obtain(motionEvent)
-                    cancelEvent.action = MotionEvent.ACTION_CANCEL or (motionEvent.actionIndex shl MotionEvent.ACTION_POINTER_INDEX_SHIFT)
+                    cancelEvent.action =
+                        MotionEvent.ACTION_CANCEL or (motionEvent.actionIndex shl MotionEvent.ACTION_POINTER_INDEX_SHIFT)
                     mView.onTouchEvent(cancelEvent)
                     cancelEvent.recycle()
                 }
