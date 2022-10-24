@@ -95,8 +95,4 @@
         <item name="android:hint">@string/title_filter</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.Risuscito.CornerSize50Percent" parent="">
-        <item name="cornerSize">50%</item>
-    </style>
-
 </resources>
