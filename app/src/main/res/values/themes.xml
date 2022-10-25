@@ -73,6 +73,7 @@
         <item name="textAppearanceBodySmall">@style/TextAppearance.Risuscito.BodySmall</item>
         <item name="textAppearanceLabelLarge">@style/TextAppearance.Risuscito.LabelLarge</item>
         <item name="textAppearanceLabelMedium">@style/TextAppearance.Risuscito.LabelMedium</item>
+        <item name="preferenceTheme">@style/RisuscitoPreferenceThemeOverlay</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.Risuscito.LabelSmall</item>
     </style>
 
@@ -167,6 +168,16 @@
     <style name="TextAppearance.Risuscito.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
         <item name="fontFamily">?risuscito_medium_font</item>
         <item name="android:fontFamily">?risuscito_medium_font</item>
+    </style>
+
+    <style name="RisuscitoPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
+        <item name="switchPreferenceCompatStyle">
+            @style/Preference.SwitchPreferenceCompat.Material.Risuscito
+        </item>
+    </style>
+
+    <style name="Preference.SwitchPreferenceCompat.Material.Risuscito">
+        <item name="android:widgetLayout">@layout/preference_widget_material_switch</item>
     </style>
 
 </resources>
