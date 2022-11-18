@@ -11,6 +11,7 @@
     android:layout_marginBottom="4dp"
     android:checkable="true"
     android:transitionName="shared_element_container"
+    app:cardForegroundColor="@color/card_selectable_foreground"
     app:checkedIconTint="@android:color/transparent"
     app:strokeWidth="0dp">
 

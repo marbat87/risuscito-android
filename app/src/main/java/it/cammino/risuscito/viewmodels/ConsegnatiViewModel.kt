@@ -3,18 +3,18 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.CheckableItem
 import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.notableItem
-import java.util.*
+import it.cammino.risuscito.utils.Utility
 
 class ConsegnatiViewModel(application: Application) : AndroidViewModel(application) {
 
-    var editMode: Boolean = false
+    var editMode: MutableLiveData<Boolean> = MutableLiveData(false)
 
     var titoliChoose: List<CheckableItem> = ArrayList()
     var titoliChooseFiltered: List<CheckableItem> = ArrayList()
@@ -32,15 +32,15 @@ class ConsegnatiViewModel(application: Application) : AndroidViewModel(applicati
             val newList = ArrayList<NotableItem>()
             canti.forEach {
                 newList.add(
-                        notableItem {
-                            setTitle = LUtils.getResId(it.titolo, R.string::class.java)
-                            setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                            setSource = LUtils.getResId(it.source, R.string::class.java)
-                            setColor = it.color
-                            id = it.id
-                            idConsegnato = it.consegnato
-                            numPassaggio = it.numPassaggio
-                        }
+                    notableItem {
+                        setTitle = Utility.getResId(it.titolo, R.string::class.java)
+                        setPage = Utility.getResId(it.pagina, R.string::class.java)
+                        setSource = Utility.getResId(it.source, R.string::class.java)
+                        setColor = it.color
+                        id = it.id
+                        idConsegnato = it.consegnato
+                        numPassaggio = it.numPassaggio
+                    }
                 )
             }
             newList

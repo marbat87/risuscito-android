@@ -5,14 +5,13 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.mikepenz.fastadapter.IItem
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.items.insertItem
 import it.cammino.risuscito.items.simpleItem
+import it.cammino.risuscito.utils.Utility
 
 class SimpleIndexViewModel(application: Application, args: Bundle) :
     GenericIndexViewModel(application) {
@@ -39,9 +38,9 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                     canti.forEach {
                         newList.add(
                             simpleItem {
-                                setTitle = LUtils.getResId(it.titolo, R.string::class.java)
-                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setTitle = Utility.getResId(it.titolo, R.string::class.java)
+                                setPage = Utility.getResId(it.pagina, R.string::class.java)
+                                setSource = Utility.getResId(it.source, R.string::class.java)
                                 setColor = it.color
                                 id = it.id
                                 undecodedSource = it.source
@@ -56,9 +55,9 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                     canti.forEach {
                         newList.add(
                             simpleItem {
-                                setTitle = LUtils.getResId(it.titoloIndice, R.string::class.java)
-                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setTitle = Utility.getResId(it.titoloIndice, R.string::class.java)
+                                setPage = Utility.getResId(it.pagina, R.string::class.java)
+                                setSource = Utility.getResId(it.source, R.string::class.java)
                                 setColor = it.color
                                 id = it.id
                             }
@@ -72,9 +71,9 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                     canti.forEach {
                         newList.add(
                             insertItem {
-                                setTitle = LUtils.getResId(it.titolo, R.string::class.java)
-                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setTitle = Utility.getResId(it.titolo, R.string::class.java)
+                                setPage = Utility.getResId(it.pagina, R.string::class.java)
+                                setSource = Utility.getResId(it.source, R.string::class.java)
                                 setColor = it.color
                                 id = it.id
                                 undecodedSource = it.source.orEmpty()

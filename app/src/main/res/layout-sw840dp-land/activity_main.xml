@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/header_navigation_drawer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/navigation_drawer" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/half_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_percent="0.50"
+        app:layout_constraintStart_toEndOf="@id/navigation_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toStartOf="@id/half_guideline"
+        app:layout_constraintStart_toEndOf="@id/navigation_view">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:statusBarForeground="@android:color/transparent">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_scrollFlags="scroll|enterAlways">
+
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/risuscito_toolbar"
+                        style="@style/Widget.Material3.Toolbar.Surface"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize" />
+
+                    <com.ferfalk.simplesearchview.SimpleSearchView
+                        android:id="@+id/search_view"
+                        style="@style/SimpleSearchViewStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/material_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/loading_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:elevation="11dp"
+                android:indeterminate="true"
+                android:visibility="invisible"
+                app:indeterminateAnimationType="contiguous"
+                app:indicatorColor="@array/cat_custom_progress_colors"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:colorBackground"
+                app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
+
+            <com.google.android.material.bottomappbar.BottomAppBar
+                android:id="@+id/bottom_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:visibility="invisible"
+                app:hideOnScroll="true"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:menu="@menu/consegnati" />
+
+            <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+                android:id="@+id/overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_dim_overlay" />
+
+            <com.leinardi.android.speeddial.SpeedDialView
+                android:id="@+id/fab_pager"
+                style="@style/Risuscito_SpeedDialMainFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                app:sdExpansionMode="top"
+                app:sdOverlayLayout="@id/overlay" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewElevatedStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/activity_min_margin"
+        android:layout_marginEnd="@dimen/activity_min_margin"
+        android:layout_marginBottom="@dimen/activity_min_top_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/half_guideline">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/detail_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

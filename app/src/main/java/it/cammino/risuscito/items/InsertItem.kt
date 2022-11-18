@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
-import it.cammino.risuscito.Utility.helperSetColor
-import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.systemLocale
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.Utility.helperSetColor
+import it.cammino.risuscito.utils.Utility.helperSetString
+import it.cammino.risuscito.utils.extension.spannedFromHtml
+import it.cammino.risuscito.utils.extension.systemLocale
 
 fun insertItem(block: InsertItem.() -> Unit): InsertItem = InsertItem().apply(block)
 
@@ -84,7 +84,7 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
                         .append(stringTitle?.substring(mPosition, mPosition + it.length))
                         .append("</b>")
                         .append(stringTitle?.substring(mPosition + it.length))
-                    binding.textTitle.text = LUtils.fromHtmlWrapper(highlighted.toString())
+                    binding.textTitle.text = highlighted.toString().spannedFromHtml
                 } else
                     StringHolder.applyTo(title, binding.textTitle)
             } else

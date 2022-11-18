@@ -57,11 +57,10 @@
 
         <Button
             android:id="@+id/edit_note"
-            style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+            style="?attr/materialIconButtonFilledTonalStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:icon="@drawable/sell_24px"
-            app:iconSize="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -69,12 +68,11 @@
 
         <Button
             android:id="@+id/edit_note_filled"
-            style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+            style="?attr/materialIconButtonFilledTonalStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:icon="@drawable/filled_sell_24px"
-            app:iconSize="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

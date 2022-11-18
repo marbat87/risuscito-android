@@ -21,16 +21,16 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility.decodeSampledBitmapFromResource
-import it.cammino.risuscito.Utility.isDefaultLocationPublic
-import it.cammino.risuscito.Utility.isExternalStorageReadable
-import it.cammino.risuscito.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.Utility.decodeSampledBitmapFromResource
+import it.cammino.risuscito.utils.Utility.isExternalStorageReadable
+import it.cammino.risuscito.utils.Utility.retrieveMediaFileLink
+import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -137,18 +137,18 @@ class MusicProvider internal constructor(
                     TAG,
                     "$RETRIEVE_MEDIA: ${canto.id} / ${
                         mNewBase.resources.getString(
-                            LUtils.getResId(
+                            Utility.getResId(
                                 canto.titolo,
                                 R.string::class.java
                             )
                         )
                     } / ${
-                        if (LUtils.getResId(
+                        if (Utility.getResId(
                                 canto.link,
                                 R.string::class.java
                             ) != -1
                         ) mNewBase.resources.getString(
-                            LUtils.getResId(
+                            Utility.getResId(
                                 canto.link,
                                 R.string::class.java
                             )
@@ -157,12 +157,12 @@ class MusicProvider internal constructor(
                 )
 
                 //tento di valorizzare dapprima con l'url presente nei link predefiniti
-                var url = if (LUtils.getResId(
+                var url = if (Utility.getResId(
                         canto.link,
                         R.string::class.java
                     ) != -1
                 ) mNewBase.resources.getString(
-                    LUtils.getResId(
+                    Utility.getResId(
                         canto.link,
                         R.string::class.java
                     )
@@ -170,7 +170,7 @@ class MusicProvider internal constructor(
                 ) else canto.link
 
                 //controllo se il file è scaricato
-                if (isExternalStorageReadable && isDefaultLocationPublic(mNewBase)) {
+                if (isExternalStorageReadable && mNewBase.isDefaultLocationPublic) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
                     if (retrieveMediaFileLink(mContext, url, true).isNotEmpty())
                         url = retrieveMediaFileLink(mContext, url, true)
@@ -183,7 +183,7 @@ class MusicProvider internal constructor(
                     TAG,
                     "$RETRIEVE_MEDIA: ${canto.id} / ${
                         mNewBase.resources.getString(
-                            LUtils.getResId(
+                            Utility.getResId(
                                 canto.titolo,
                                 R.string::class.java
                             )
@@ -211,7 +211,7 @@ class MusicProvider internal constructor(
                         .putString(
                             MediaMetadataCompat.METADATA_KEY_TITLE,
                             mNewBase.resources.getString(
-                                LUtils.getResId(
+                                Utility.getResId(
                                     canto.titolo,
                                     R.string::class.java
                                 )

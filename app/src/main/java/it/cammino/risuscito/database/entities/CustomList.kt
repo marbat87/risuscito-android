@@ -1,6 +1,8 @@
 package it.cammino.risuscito.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import it.cammino.risuscito.utils.StringUtils
 
 import java.sql.Date
 
@@ -12,6 +14,10 @@ class CustomList {
     var position: Int = 0
 
     var idCanto: Int = 0
+
+    //IMPORTANTE PER FAR FUNZIONARE L'AUTO-MIGRATION DI ROOM
+    @ColumnInfo(defaultValue = StringUtils.EMPTY)
+    var notaPosizione: String = StringUtils.EMPTY
 
     var timestamp: Date? = null
 }

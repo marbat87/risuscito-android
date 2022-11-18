@@ -15,7 +15,10 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [(Canto::class), (ListaPers::class), (CustomList::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class), (IndiceBiblico::class)],
-    version = 10
+    version = 11,
+    autoMigrations = [
+        AutoMigration(from = 10, to = 11)
+    ]
 )
 @TypeConverters(Converters::class)
 abstract class RisuscitoDatabase : RoomDatabase() {

@@ -10,7 +10,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem

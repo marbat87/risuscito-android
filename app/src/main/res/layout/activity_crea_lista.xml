@@ -75,13 +75,14 @@
         android:id="@+id/recycler_container"
         layout="@layout/layout_crealista_recycler" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_crea_lista"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin_coord"
-        android:src="@drawable/add_24px"
+        android:text="@string/add_position"
+        app:icon="@drawable/add_24px"
         tools:ignore="ContentDescription" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

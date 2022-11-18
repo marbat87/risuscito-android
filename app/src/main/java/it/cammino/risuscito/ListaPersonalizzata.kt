@@ -10,12 +10,14 @@ class ListaPersonalizzata : Serializable {
     var name: String = StringUtils.EMPTY
     private var posizioni: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
     var canti: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
+    var note: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
     var numPosizioni: Int = 0
 
     init {
         for (i in 0 until MAX_POSIZIONI) {
             posizioni[i] = StringUtils.EMPTY
             canti[i] = StringUtils.EMPTY
+            note[i] = StringUtils.EMPTY
         }
     }
 
@@ -31,6 +33,21 @@ class ListaPersonalizzata : Serializable {
         if (index < 0 || index >= numPosizioni)
             return StringUtils.EMPTY
         return canti[index].orEmpty().trim()
+    }
+
+    //restituisce il titolo della canto in posizione "index"
+    fun getNotaPosizione(index: Int): String {
+        if (index < 0 || index >= numPosizioni)
+            return StringUtils.EMPTY
+        //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
+        @Suppress("SENSELESS_COMPARISON")
+        if (note == null) {
+            note = arrayOfNulls(MAX_POSIZIONI)
+            for (i in 0 until MAX_POSIZIONI) {
+                note[i] = StringUtils.EMPTY
+            }
+        }
+        return note[index].orEmpty().trim()
     }
 
     /*aggiunge una nuova posizione
@@ -56,7 +73,7 @@ class ListaPersonalizzata : Serializable {
         if (titoloCanto.isNullOrBlank())
             return -1
 
-        if (posizione >= MAX_POSIZIONI || posizione >= numPosizioni)
+        if (posizione < 0 || posizione >= MAX_POSIZIONI || posizione >= numPosizioni)
             return -2
 
         canti[posizione] = titoloCanto.trim()
@@ -72,10 +89,54 @@ class ListaPersonalizzata : Serializable {
         return 0
     }
 
+    /*aggiunge una nuova nuova alla posizione indicata
+        ritorna -1 se il nome inserito è nullo o vuoto
+        ritorna -2 se l'indice non è valido
+    */
+    fun addNota(testoNota: String?, posizione: Int): Int {
+        if (testoNota == null)
+            return -1
+
+        if (posizione < 0 || posizione >= MAX_POSIZIONI || posizione >= numPosizioni)
+            return -2
+        //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
+        @Suppress("SENSELESS_COMPARISON")
+        if (note == null) {
+            note = arrayOfNulls(MAX_POSIZIONI)
+            for (i in 0 until MAX_POSIZIONI) {
+                note[i] = StringUtils.EMPTY
+            }
+        }
+        note[posizione] = testoNota.trim()
+        return 0
+    }
+
+    //rimuove la nota alla posizione indicata
+    fun removeNota(posizione: Int): Int {
+        if (posizione < 0 || posizione >= MAX_POSIZIONI)
+            return -1
+        //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
+        @Suppress("SENSELESS_COMPARISON")
+        if (note == null) {
+            note = arrayOfNulls(MAX_POSIZIONI)
+            for (i in 0 until MAX_POSIZIONI) {
+                note[i] = StringUtils.EMPTY
+            }
+        }
+        note[posizione] = StringUtils.EMPTY
+        return 0
+    }
+
     override fun toString(): String {
         val mOutput = StringBuilder("CELEBRAZIONE\nTITOLO: $name\nPOSIZIONI:")
         for (i in 0 until numPosizioni) {
-            mOutput.append("\n $i) ${getNomePosizione(i)} / ${getCantoPosizione(i)} ")
+            mOutput.append(
+                "\n $i) ${getNomePosizione(i)} / ${getCantoPosizione(i)} / ${
+                    getNotaPosizione(
+                        i
+                    )
+                } "
+            )
         }
         return mOutput.toString()
     }

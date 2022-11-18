@@ -47,12 +47,11 @@
 
         <Button
             android:id="@+id/preview"
-            style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+            style="?attr/materialIconButtonFilledTonalStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:transitionName="shared_element_container"
             app:icon="@drawable/visibility_24px"
-            app:iconSize="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/text_title"

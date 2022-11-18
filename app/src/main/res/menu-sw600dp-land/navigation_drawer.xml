@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <group android:id="@+id/main_group">
+        <item
+            android:id="@+id/navigation_home"
+            android:checkable="true"
+            android:icon="@drawable/home_24px"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_indexes"
+            android:checkable="true"
+            android:icon="@drawable/format_list_bulleted_24px"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_lists"
+            android:checkable="true"
+            android:icon="@drawable/view_carousel_24px"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_favorites"
+            android:checkable="true"
+            android:icon="@drawable/bookmarks_24px"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_consegnati"
+            android:checkable="true"
+            android:icon="@drawable/fact_check_24px"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_history"
+            android:checkable="true"
+            android:icon="@drawable/history_24px"
+            tools:ignore="MenuTitle" />
+    </group>
+    <group android:id="@+id/others_groups">
+        <item
+            android:id="@+id/navigation_settings"
+            android:checkable="true"
+            android:icon="@drawable/settings_24px"
+            tools:ignore="MenuTitle" />
+        <item
+            android:id="@+id/navigation_changelog"
+            android:checkable="true"
+            android:icon="@drawable/info_24px"
+            tools:ignore="MenuTitle" />
+    </group>
+</menu>

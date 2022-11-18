@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="5031"
+    <release
+        versionCode="5111"
+        date="November 2022"
+        versionName="5.1.0">
+        <new>Added icons to dialogs</new>
+        <bugfix>Fixed background color in some views</bugfix>
+        <new>Implemented system of notifications from app developer</new>
+        <new>Added NOTES to custom lists elements</new>
+        <new>Added option to disable the song of peace for the Eucharist</new>
+        <new>Optimizations and compatibility for Android 13 OS</new>
+    </release>
+
+    <release
+        versionCode="5031"
         date="June 2022"
         versionName="5.0.2">
         <new>Material 3 style (removed app colors choosing options)</new>
-        <new>New songs colors, page numbers and texts (Italian only) based on "He rose from Death" book 2020 edition</new>
+        <new>New songs colors, page numbers and texts (Italian only) based on "He rose from Death"
+            book 2020 edition
+        </new>
         <new>Biblic index replaces Plsams index</new>
-        <new>New Liturical index (form the official book) replace the old one and the Arguments index</new>
+        <new>New Liturical index (form the official book) replace the old one and the Arguments
+            index
+        </new>
         <new>Merged SEARCH section into HOME</new>
         <bugfix>Fixed compatibility bug with Android 11 and 12</bugfix>
     </release>
