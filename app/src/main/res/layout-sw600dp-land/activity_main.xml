@@ -55,7 +55,7 @@
                         android:layout_height="?attr/actionBarSize" />
 
                     <com.ferfalk.simplesearchview.SimpleSearchView
-                        android:id="@+id/search_view"
+                        android:id="@+id/simple_search_view"
                         style="@style/SimpleSearchViewStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
