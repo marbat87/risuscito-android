@@ -295,8 +295,10 @@ class ConsegnatiFragment : AccountMenuFragment() {
         backCallback = object : OnBackPressedCallback(consegnatiViewModel.editMode.value == true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "handleOnBackPressed")
-                consegnatiViewModel.editMode.value = false
-                mMainActivity?.expandToolbar()
+                if (mMainActivity?.activitySearchView?.onBackPressed() == false) {
+                    consegnatiViewModel.editMode.value = false
+                    mMainActivity?.expandToolbar()
+                }
             }
         }
         // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
