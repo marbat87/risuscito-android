@@ -356,23 +356,23 @@ fun Activity.getVersionCode(): Int {
         getVersionCodeLegacy()
 }
 
-fun Activity.createTaskDescription(): ActivityManager.TaskDescription {
+fun Activity.createTaskDescription(tag: String?): ActivityManager.TaskDescription {
     return when (true) {
-        OSUtils.hasT() -> createTaskDescriptionTiramisu()
-        OSUtils.hasP() -> createTaskDescriptionP()
-        else -> createTaskDescriptionLegacy()
+        OSUtils.hasT() -> createTaskDescriptionTiramisu(tag)
+        OSUtils.hasP() -> createTaskDescriptionP(tag)
+        else -> createTaskDescriptionLegacy(tag)
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun Activity.createTaskDescriptionTiramisu(): ActivityManager.TaskDescription {
+private fun Activity.createTaskDescriptionTiramisu(tag: String?): ActivityManager.TaskDescription {
     val builder = ActivityManager.TaskDescription.Builder()
     builder.setIcon(R.mipmap.ic_launcher)
     builder.setPrimaryColor(
         MaterialColors.getColor(
             this,
             R.attr.colorPrimary,
-            ThemeableActivity.TAG
+            tag
         )
     )
     return builder.build()
@@ -380,19 +380,19 @@ private fun Activity.createTaskDescriptionTiramisu(): ActivityManager.TaskDescri
 
 @Suppress("DEPRECATION")
 @RequiresApi(Build.VERSION_CODES.P)
-private fun Activity.createTaskDescriptionP(): ActivityManager.TaskDescription {
+private fun Activity.createTaskDescriptionP(tag: String?): ActivityManager.TaskDescription {
     return ActivityManager.TaskDescription(
         null,
         R.mipmap.ic_launcher,
-        MaterialColors.getColor(this, R.attr.colorPrimary, ThemeableActivity.TAG)
+        MaterialColors.getColor(this, R.attr.colorPrimary, tag)
     )
 }
 
 @Suppress("DEPRECATION")
-private fun Activity.createTaskDescriptionLegacy(): ActivityManager.TaskDescription {
+private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.TaskDescription {
     return ActivityManager.TaskDescription(
         null,
         null,
-        MaterialColors.getColor(this, R.attr.colorPrimary, ThemeableActivity.TAG)
+        MaterialColors.getColor(this, R.attr.colorPrimary, tag)
     )
 }

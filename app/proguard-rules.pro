@@ -22,3 +22,6 @@
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+-keepclassmembers class * implements android.os.Parcelable {
+    static ** CREATOR;
+}

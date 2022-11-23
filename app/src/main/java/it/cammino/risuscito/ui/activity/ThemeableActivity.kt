@@ -74,7 +74,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         setupNavBarColor()
         updateStatusBarLightMode(true)
 
-        setTaskDescription(this.createTaskDescription())
+        setTaskDescription(this.createTaskDescription(TAG))
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.

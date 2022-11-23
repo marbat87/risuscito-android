@@ -131,8 +131,6 @@ class MainActivity : ThemeableActivity() {
 
         onBackPressedDispatcher.addCallback(this) {
             when {
-                binding.searchView.onBackPressed() -> {
-                }
                 binding.fabPager.isOpen -> binding.fabPager.close()
                 !isOnTablet && (binding.drawer as? DrawerLayout)?.isOpen == true -> (binding.drawer as? DrawerLayout)?.close()
                 else -> backToHome(true)
@@ -642,7 +640,7 @@ class MainActivity : ThemeableActivity() {
         get() = binding.bottomBar
 
     val activitySearchView: SimpleSearchView
-        get() = binding.searchView
+        get() = binding.simpleSearchView
 
     val activityMainContent: View
         get() = binding.mainContent
