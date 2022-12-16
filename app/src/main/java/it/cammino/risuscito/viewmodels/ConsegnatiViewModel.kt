@@ -8,6 +8,7 @@ import androidx.lifecycle.map
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.CheckableItem
+import it.cammino.risuscito.items.CheckablePassageItem
 import it.cammino.risuscito.items.NotableItem
 import it.cammino.risuscito.items.notableItem
 import it.cammino.risuscito.utils.Utility
@@ -20,6 +21,7 @@ class ConsegnatiViewModel(application: Application) : AndroidViewModel(applicati
     var titoliChooseFiltered: List<CheckableItem> = ArrayList()
 
     var titoli: List<NotableItem> = ArrayList()
+    var passaggi = ArrayList<CheckablePassageItem>()
 
     var mIndexResult: LiveData<List<NotableItem>>? = null
 

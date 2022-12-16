@@ -2,7 +2,7 @@ package it.cammino.risuscito.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.database.pojo.CantoCronologia
 
