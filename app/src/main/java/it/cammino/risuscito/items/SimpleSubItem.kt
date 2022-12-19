@@ -12,6 +12,7 @@ import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.utils.Utility.helperSetColor
 import it.cammino.risuscito.utils.Utility.helperSetString
+import it.cammino.risuscito.utils.extension.setSelectableRippleBackground
 
 fun simpleSubItem(block: SimpleSubItem.() -> Unit): SimpleSubItem = SimpleSubItem().apply(block)
 
@@ -67,6 +68,8 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(),
         StringHolder.applyTo(title, holder.mTitle)
         StringHolder.applyToOrHide(page, holder.mPage)
 
+        holder.mContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
+
         val bgShape = holder.mPage.background as? GradientDrawable
         bgShape?.setColor(color)
         holder.mPage.isVisible = true
@@ -91,6 +94,7 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(),
         var mPage: TextView = view.findViewById(R.id.text_page)
         var mPageSelected: View = view.findViewById(R.id.selected_mark)
         var mId: TextView = view.findViewById(R.id.text_id_canto)
+        var mContainer: View = view.findViewById(R.id.list_view_item_container)
     }
 
 }

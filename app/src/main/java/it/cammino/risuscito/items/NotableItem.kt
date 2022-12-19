@@ -8,9 +8,10 @@ import androidx.core.view.isGone
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
+import it.cammino.risuscito.databinding.RowItemNotableBinding
 import it.cammino.risuscito.utils.Utility.helperSetColor
 import it.cammino.risuscito.utils.Utility.helperSetString
-import it.cammino.risuscito.databinding.RowItemNotableBinding
+import it.cammino.risuscito.utils.extension.setSelectableRippleBackground
 
 fun notableItem(block: NotableItem.() -> Unit): NotableItem = NotableItem().apply(block)
 
@@ -69,6 +70,8 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
 
         val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color)
+
+        binding.listViewItemContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
 
         binding.editNote.isGone = (numPassaggio != -1)
         binding.editNoteFilled.isGone = (numPassaggio == -1)

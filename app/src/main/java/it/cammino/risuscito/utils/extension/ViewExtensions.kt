@@ -15,6 +15,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.mikepenz.fastadapter.ui.utils.FastAdapterUIUtils
+import it.cammino.risuscito.R
 
 // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout
 // enters
@@ -64,7 +65,14 @@ fun View.createSelectedList(selectedColorAttr: Int): ColorStateList {
 fun View.setSelectableRippleBackground(selectedColorResId: Int) {
     val shapeAppearanceModel = ShapeAppearanceModel()
         .toBuilder()
-        .setAllCorners(CornerFamily.ROUNDED, android.R.attr.radius.toFloat())
+        .setBottomLeftCorner(
+            CornerFamily.ROUNDED,
+            resources.getDimension(R.dimen.listItemBackgroundCornerSize)
+        )
+        .setTopLeftCorner(
+            CornerFamily.ROUNDED,
+            resources.getDimension(R.dimen.listItemBackgroundCornerSize)
+        )
         .build()
 
     val backgroundDrawable = MaterialShapeDrawable()
@@ -75,12 +83,10 @@ fun View.setSelectableRippleBackground(selectedColorResId: Int) {
     backgroundDrawable.fillColor = this.createSelectedList(
         selectedColorResId
     )
-    backgroundDrawable.setCornerSize(16F)
-    shapeMask.setCornerSize(16F)
 
     val rippleColor = ContextCompat.getColorStateList(
         this.context,
-        this.context.getTypedValueResId(it.cammino.risuscito.R.attr.colorControlHighlight)
+        R.color.material_ripple
     )
 
     rippleColor?.let {

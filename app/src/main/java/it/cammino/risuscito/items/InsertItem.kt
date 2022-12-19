@@ -12,6 +12,7 @@ import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.helperSetColor
 import it.cammino.risuscito.utils.Utility.helperSetString
+import it.cammino.risuscito.utils.extension.setSelectableRippleBackground
 import it.cammino.risuscito.utils.extension.spannedFromHtml
 import it.cammino.risuscito.utils.extension.systemLocale
 
@@ -65,6 +66,8 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
     override fun bindView(binding: RowItemToInsertBinding, payloads: List<Any>) {
         // get the context
         val ctx = binding.root.context
+
+        binding.listViewItemContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
 
         //set the text for the name
         filter?.let {

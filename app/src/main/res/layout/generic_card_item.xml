@@ -5,11 +5,11 @@
     android:id="@+id/canto_generico_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?attr/listPreferredItemHeightLarge"
-    android:paddingStart="?listPreferredItemPaddingStart"
-    android:paddingTop="12dp"
-    android:paddingEnd="?listPreferredItemPaddingEnd"
-    android:paddingBottom="12dp"
+    android:minHeight="@dimen/oneLineListPreferredItemHeight"
+    android:paddingStart="@dimen/noMarginlistLeadingItemPaddingStart"
+    android:paddingTop="@dimen/listItemPaddingTopBottom"
+    android:paddingEnd="@dimen/listTrailingItemPaddingEnd"
+    android:paddingBottom="@dimen/listItemPaddingTopBottom"
     android:transitionName="shared_element_container">
 
     <TextView
@@ -54,12 +54,12 @@
 
     <TextView
         android:id="@+id/text_page"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/listItemAvatarWidth"
+        android:layout_height="@dimen/listItemAvatarHeight"
         android:background="@drawable/page_oval_bkg"
         android:gravity="center"
-        android:textAppearance="?textAppearanceListItem"
-        android:textColor="@color/primary_text_default_material_light"
+        android:textAppearance="?textAppearanceTitleMedium"
+        android:textColor="?colorOnPrimaryContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -67,8 +67,8 @@
 
     <ImageView
         android:id="@+id/selected_mark"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/listItemAvatarWidth"
+        android:layout_height="@dimen/listItemAvatarHeight"
         android:background="@drawable/page_oval_bkg_selected"
         android:contentDescription="@null"
         android:gravity="center"
@@ -91,8 +91,10 @@
         android:id="@+id/text_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="?listPreferredItemPaddingStart"
-        android:textAppearance="?textAppearanceListItem"
+        android:layout_marginStart="@dimen/listItemHorizontalSpacing"
+        android:layout_marginEnd="@dimen/listItemHorizontalSpacing"
+        android:textAppearance="?textAppearanceBodyLarge"
+        android:textColor="?colorOnSurface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/edit_note_barrier"
         app:layout_constraintStart_toEndOf="@id/simple_item_barrier"
