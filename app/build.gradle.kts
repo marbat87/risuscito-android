@@ -56,17 +56,17 @@ android {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.5.0-rc01"
+val roomVersion = "2.5.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.material:material:1.8.0-beta01")
+    implementation("com.google.android.material:material:1.8.0-rc01")
     implementation("androidx.core:core-splashscreen:1.0.0")
     implementation("androidx.activity:activity-ktx:1.6.1")
-    implementation("androidx.appcompat:appcompat:1.5.1")
-    implementation("androidx.appcompat:appcompat-resources:1.5.1")
+    implementation("androidx.appcompat:appcompat:1.6.0")
+    implementation("androidx.appcompat:appcompat-resources:1.6.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.fragment:fragment-ktx:1.5.5")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
@@ -80,7 +80,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("com.google.android.gms:play-services-auth:20.4.0")
+    implementation("com.google.android.gms:play-services-auth:20.4.1")
     implementation(platform("com.google.firebase:firebase-bom:31.0.1"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
