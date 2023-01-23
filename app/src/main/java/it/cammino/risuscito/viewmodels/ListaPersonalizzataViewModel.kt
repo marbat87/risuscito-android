@@ -16,6 +16,7 @@ import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.map
+import it.cammino.risuscito.utils.extension.useOldIndex
 import it.cammino.risuscito.utils.extension.zipLiveDataNullable
 
 
@@ -34,6 +35,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
     init {
         listaPersonalizzataId = args.getInt(Utility.TIPO_LISTA)
         val mDb = RisuscitoDatabase.getInstance(getApplication())
+        val useOldIndex = application.useOldIndex()
         mDb.listePersDao().getLiveListById(listaPersonalizzataId)?.let { liveList ->
             listaPersonalizzataResult =
                 zipLiveDataNullable(liveList, mDb.cantoDao().liveAll).map { result ->
@@ -60,7 +62,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
                                             )
                                             withPage(
                                                 Utility.getResId(
-                                                    it.pagina,
+                                                    if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
                                                     R.string::class.java
                                                 )
                                             )

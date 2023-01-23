@@ -316,4 +316,6 @@
     <string name="edit_note_confirm_message">Nota salvata</string>
     <string name="show_eucarestia_pace_summary">Dodaje dodatkową pozycję w Eucharystii - pieśń na znak pokoju</string>
     <string name="show_eucarestia_pace_title">Eucharystia - Pieśń na znak pokoju</string>
+    <string name="old_index_title">Show old index</string>
+    <string name="old_index_summary">Show the index with the numbers used in old books prior to 2020 (only for Italian)</string>
 </resources>

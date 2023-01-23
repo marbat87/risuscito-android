@@ -44,10 +44,8 @@ import it.cammino.risuscito.ui.dialog.ListChoiceDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.getTypedValueResId
-import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.openCanto
-import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.utils.Utility.OLD_PAGE_SUFFIX
+import it.cammino.risuscito.utils.extension.*
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -530,6 +528,7 @@ class ConsegnatiFragment : AccountMenuFragment() {
 
     private suspend fun updateChooseList() {
         Log.i(TAG, "updateChooseList start")
+        val useOldIndex = requireContext().useOldIndex()
         val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
         val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.choosen }
         val newList = ArrayList<CheckableItem>()
@@ -538,7 +537,10 @@ class ConsegnatiFragment : AccountMenuFragment() {
                 checkableItem {
                     isSelected = canto.consegnato != -1
                     setTitle = Utility.getResId(canto.titolo, R.string::class.java)
-                    setPage = Utility.getResId(canto.pagina, R.string::class.java)
+                    setPage = Utility.getResId(
+                        if (useOldIndex) canto.pagina + OLD_PAGE_SUFFIX else canto.pagina,
+                        R.string::class.java
+                    )
                     setColor = canto.color
                     id = canto.id
                 }

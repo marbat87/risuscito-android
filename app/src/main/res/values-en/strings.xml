@@ -310,4 +310,6 @@
     <string name="edit_note_confirm_message">Note saved</string>
     <string name="show_eucarestia_pace_summary">Authorize the song of peace for the Eucharist</string>
     <string name="show_eucarestia_pace_title">Eucharist - Song of peace</string>
+    <string name="old_index_title">Show old index</string>
+    <string name="old_index_summary">Show the index with the numbers used in old books prior to 2020 (only for Italian)</string>
 </resources>
