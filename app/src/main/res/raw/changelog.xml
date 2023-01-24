@@ -2,8 +2,8 @@
 <changelog>
 
     <release
-        versionCode="5113"
-        date="November 2022"
+        versionCode="5114"
+        date="February 2023"
         versionName="5.1.0">
         <new>Added icons to dialogs</new>
         <bugfix>Fixed background color in some views</bugfix>

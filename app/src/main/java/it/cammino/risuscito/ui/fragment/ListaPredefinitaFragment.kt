@@ -44,6 +44,7 @@ import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.slideInRight
 import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.utils.extension.useOldIndex
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -123,7 +124,7 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun getCantofromPosition(
-        posizioni: List<Posizione>, title: String, position: Int, tag: Int
+        posizioni: List<Posizione>, title: String, position: Int, tag: Int, useOldIndex: Boolean
     ): ListaPersonalizzataItem {
         return listaPersonalizzataItem {
             posizioneTitleItem {
@@ -138,7 +139,12 @@ class ListaPredefinitaFragment : Fragment() {
             listItem = posizioni.filter { it.position == position }.map {
                 posizioneItem {
                     withTitle(Utility.getResId(it.titolo, R.string::class.java))
-                    withPage(Utility.getResId(it.pagina, R.string::class.java))
+                    withPage(
+                        Utility.getResId(
+                            if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
+                            R.string::class.java
+                        )
+                    )
                     withSource(Utility.getResId(it.source, R.string::class.java))
                     withNota(it.notaPosizione)
                     withColor(it.color ?: Canto.BIANCO)
@@ -273,6 +279,7 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun subscribeUiUpdate() {
+        val useOldIndex = requireContext().useOldIndex()
         mCantiViewModel.cantiResult?.observe(viewLifecycleOwner) { mCanti ->
             var progressiveTag = 0
             val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -285,7 +292,8 @@ class ListaPredefinitaFragment : Fragment() {
                             mCanti,
                             getString(R.string.canto_iniziale),
                             1,
-                            progressiveTag++
+                            progressiveTag++,
+                            useOldIndex
                         )
                     )
                     posizioniList.add(
@@ -293,7 +301,8 @@ class ListaPredefinitaFragment : Fragment() {
                             mCanti,
                             getString(R.string.prima_lettura),
                             2,
-                            progressiveTag++
+                            progressiveTag++,
+                            useOldIndex
                         )
                     )
                     posizioniList.add(
@@ -301,7 +310,8 @@ class ListaPredefinitaFragment : Fragment() {
                             mCanti,
                             getString(R.string.seconda_lettura),
                             3,
-                            progressiveTag++
+                            progressiveTag++,
+                            useOldIndex
                         )
                     )
                     posizioniList.add(
@@ -309,7 +319,8 @@ class ListaPredefinitaFragment : Fragment() {
                             mCanti,
                             getString(R.string.terza_lettura),
                             4,
-                            progressiveTag++
+                            progressiveTag++,
+                            useOldIndex
                         )
                     )
 
@@ -319,7 +330,8 @@ class ListaPredefinitaFragment : Fragment() {
                                 mCanti,
                                 getString(R.string.canto_pace),
                                 6,
-                                progressiveTag++
+                                progressiveTag++,
+                                useOldIndex
                             )
                         )
 
@@ -328,35 +340,52 @@ class ListaPredefinitaFragment : Fragment() {
                             mCanti,
                             getString(R.string.canto_fine),
                             5,
-                            progressiveTag
+                            progressiveTag,
+                            useOldIndex
                         )
                     )
                 }
                 2 -> {
                     posizioniList.add(
                         getCantofromPosition(
-                            mCanti, getString(R.string.canto_iniziale), 1, progressiveTag++
+                            mCanti,
+                            getString(R.string.canto_iniziale),
+                            1,
+                            progressiveTag++,
+                            useOldIndex
                         )
                     )
 
                     if (pref.getBoolean(Utility.SHOW_SECONDA, false))
                         posizioniList.add(
                             getCantofromPosition(
-                                mCanti, getString(R.string.seconda_lettura), 6, progressiveTag++
+                                mCanti,
+                                getString(R.string.seconda_lettura),
+                                6,
+                                progressiveTag++,
+                                useOldIndex
                             )
                         )
 
                     if (pref.getBoolean(Utility.SHOW_EUCARESTIA_PACE, true))
                         posizioniList.add(
                             getCantofromPosition(
-                                mCanti, getString(R.string.canto_pace), 2, progressiveTag++
+                                mCanti,
+                                getString(R.string.canto_pace),
+                                2,
+                                progressiveTag++,
+                                useOldIndex
                             )
                         )
 
                     if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false))
                         posizioniList.add(
                             getCantofromPosition(
-                                mCanti, getString(R.string.canto_offertorio), 8, progressiveTag++
+                                mCanti,
+                                getString(R.string.canto_offertorio),
+                                8,
+                                progressiveTag++,
+                                useOldIndex
                             )
                         )
 
@@ -366,18 +395,19 @@ class ListaPredefinitaFragment : Fragment() {
                                 mCanti,
                                 getString(R.string.santo),
                                 7,
-                                progressiveTag++
+                                progressiveTag++,
+                                useOldIndex
                             )
                         )
 
                     posizioniList.add(
                         getCantofromPosition(
-                            mCanti, getString(R.string.canto_pane), 3, progressiveTag++
+                            mCanti, getString(R.string.canto_pane), 3, progressiveTag++, useOldIndex
                         )
                     )
                     posizioniList.add(
                         getCantofromPosition(
-                            mCanti, getString(R.string.canto_vino), 4, progressiveTag++
+                            mCanti, getString(R.string.canto_vino), 4, progressiveTag++, useOldIndex
                         )
                     )
                     posizioniList.add(
@@ -385,7 +415,7 @@ class ListaPredefinitaFragment : Fragment() {
                             mCanti,
                             getString(R.string.canto_fine),
                             5,
-                            progressiveTag
+                            progressiveTag, useOldIndex
                         )
                     )
                 }
