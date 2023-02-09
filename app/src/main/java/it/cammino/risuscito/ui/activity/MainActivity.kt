@@ -31,7 +31,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
@@ -644,9 +643,6 @@ class MainActivity : ThemeableActivity() {
 
     val activityMainContent: View
         get() = binding.mainContent
-
-    val activityToolbar: MaterialToolbar
-        get() = binding.risuscitoToolbar
 
     fun enableBottombar(enabled: Boolean) {
         Log.d(TAG, "enableBottombar - enabled: $enabled")

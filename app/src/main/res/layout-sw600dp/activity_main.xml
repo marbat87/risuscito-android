@@ -61,8 +61,6 @@
             android:elevation="11dp"
             android:indeterminate="true"
             android:visibility="invisible"
-            app:indeterminateAnimationType="contiguous"
-            app:indicatorColor="@array/cat_custom_progress_colors"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <androidx.fragment.app.FragmentContainerView

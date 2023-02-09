@@ -13,7 +13,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.databinding.RowItemHistoryBinding
 import it.cammino.risuscito.utils.Utility.helperSetColor
 import it.cammino.risuscito.utils.Utility.helperSetString
-import it.cammino.risuscito.utils.extension.createCheckedList
+import it.cammino.risuscito.utils.extension.setSelectableRippleBackground
 import it.cammino.risuscito.utils.extension.systemLocale
 import java.sql.Date
 import java.text.DateFormat
@@ -80,15 +80,9 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
 
         StringHolder.applyTo(title, binding.textTitle)
         StringHolder.applyToOrHide(page, binding.textPage)
-        binding.listViewItemContainer.isChecked = isSelected
+        binding.listViewItemContainer.isSelected = isSelected
 
-        //Fix because setting attr on state list xml resource doesn't work correcly on older Android versions
-        binding.listViewItemContainer.setCardBackgroundColor(
-            binding.listViewItemContainer.createCheckedList(
-                R.attr.colorSurface,
-                R.attr.colorSecondaryContainer
-            )
-        )
+        binding.listViewItemContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
 
         val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color)

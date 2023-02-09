@@ -81,8 +81,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     val progress = state.bytesDownloaded()
                     Log.i(TAG, "DOWNLOADING LANGUAGE - progress: $progress su $totalBytes")
                     // Update progress bar.
-                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)
-                        ?.setProgress((100 * progress / totalBytes).toInt())
+                    if (totalBytes > 0)
+                        ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)
+                            ?.setProgress((100 * progress / totalBytes).toInt())
                 }
                 INSTALLED -> {
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()

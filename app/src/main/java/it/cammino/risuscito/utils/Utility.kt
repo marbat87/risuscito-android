@@ -25,6 +25,7 @@ object Utility {
 
     // Costanti per le impostazioni
     private val TAG = Utility::class.java.canonicalName
+    const val VECCHIO_INDICE = "vecchio_indice"
     const val SCREEN_ON = "sempre_acceso"
     const val SYSTEM_LANGUAGE = "lingua_sistema_new"
     const val CHANGE_LANGUAGE = "changed_language"
@@ -52,6 +53,7 @@ object Utility {
     internal const val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
     internal const val NIGHT_MODE = "night_mode"
     internal const val DYNAMIC_COLORS = "dynamic_colors"
+    internal const val OLD_PAGE_SUFFIX = "_old"
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"

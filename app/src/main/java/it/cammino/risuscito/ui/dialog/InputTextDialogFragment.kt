@@ -1,7 +1,6 @@
 package it.cammino.risuscito.ui.dialog
 
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
@@ -32,7 +31,6 @@ class InputTextDialogFragment : DialogFragment() {
             Builder::class.java
         ) as? Builder
 
-    @SuppressLint("CheckResult")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val mBuilder = builder
             ?: throw IllegalStateException("SimpleDialogFragment should be created using its Builder interface.")

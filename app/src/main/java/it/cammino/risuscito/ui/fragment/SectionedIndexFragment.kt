@@ -33,9 +33,11 @@ import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.Utility.OLD_PAGE_SUFFIX
 import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.utils.extension.useOldIndex
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -222,6 +224,7 @@ class SectionedIndexFragment : Fragment() {
 
     private suspend fun updateLists(savedInstanceState: Bundle?) {
         if (mCantiViewModel.tipoLista == 0) {
+            val useOldIndex = requireContext().useOldIndex()
             val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
             val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all }
             mCantiViewModel.titoliList.clear()
@@ -232,7 +235,14 @@ class SectionedIndexFragment : Fragment() {
                 mSubItems.add(
                     simpleSubItem {
                         setTitle = Utility.getResId(canti[i].titolo, R.string::class.java)
-                        setPage = Utility.getResId(canti[i].pagina, R.string::class.java)
+                        setPage = Utility.getResId(
+                            if (useOldIndex) canti[i].pagina + OLD_PAGE_SUFFIX else canti[i].pagina,
+                            R.string::class.java
+                        )
+                        setPage = Utility.getResId(
+                            if (useOldIndex) canti[i].pagina + OLD_PAGE_SUFFIX else canti[i].pagina,
+                            R.string::class.java
+                        )
                         setSource = Utility.getResId(canti[i].source, R.string::class.java)
                         setColor = canti[i].color
                         id = canti[i].id

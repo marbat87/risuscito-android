@@ -1,5 +1,6 @@
 package it.cammino.risuscito.utils.extension
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColorsOptions
 import it.cammino.risuscito.R
+import it.cammino.risuscito.utils.LocaleManager
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import java.io.BufferedReader
@@ -164,4 +166,20 @@ fun PackageManager.getPackageInfoTiramisu(packageName: String): PackageInfo {
 @Suppress("DEPRECATION")
 fun PackageManager.getPackageInfoLegacy(packageName: String): PackageInfo {
     return getPackageInfo(packageName, 0)
+}
+
+fun Application.useOldIndex(): Boolean {
+    return PreferenceManager.getDefaultSharedPreferences(this)
+        .getBoolean(
+            Utility.VECCHIO_INDICE,
+            false
+        ) && resources.systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
+}
+
+fun Context.useOldIndex(): Boolean {
+    return PreferenceManager.getDefaultSharedPreferences(this)
+        .getBoolean(
+            Utility.VECCHIO_INDICE,
+            false
+        ) && resources.systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
 }
