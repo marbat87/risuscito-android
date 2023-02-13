@@ -20,6 +20,7 @@
     <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
     <string name="material_drawer_open" translatable="false">Open</string>
     <string name="material_drawer_close" translatable="false">Close</string>
+    <string name="uri_play_store_app_website" translatable="false">https://play.google.com/store/apps/details?id=%s</string>
 
     <string name="litanie_penitenziali_brevi_page_old" translatable="false">1</string>
     <string name="preghiera_litanica_penitenziale_page_old" translatable="false">2</string>
@@ -578,5 +579,13 @@
     <string name="show_eucarestia_pace_title">Eucarestia - Canto alla pace</string>
     <string name="old_index_title">Usa vecchio indice</string>
     <string name="old_index_summary">Usa l\'indica con la vecchia numerazione precedente al 2020</string>
+    <string name="changelog">ChangeLog</string>
+    <string name="error">Errore</string>
+    <string name="email">Email</string>
+    <string name="version">Versione</string>
+    <string name="privacy">Politica sulla riservatezza</string>
+    <string name="rate_five_stars">Valuta questa app con 5 stelle</string>
+    <string name="share_app">Condividi app</string>
+    <string name="update_app">Aggiorna l\'app</string>
 </resources>
 

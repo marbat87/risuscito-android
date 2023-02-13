@@ -150,7 +150,7 @@ class HomeFragment : AccountMenuFragment() {
             binding.signInButton.isVisible = !it
         }
 
-        Log.d(TAG, "getVersionCodeWrapper(): ${requireActivity().getVersionCode()}")
+        Log.d(TAG, "getVersionCode(): ${requireActivity().getVersionCode()}")
 
         ChangelogBuilder()
             .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise

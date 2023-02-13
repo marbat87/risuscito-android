@@ -10,13 +10,13 @@ plugins {
 android {
 
     compileSdk = 33
-    buildToolsVersion = "33.0.1"
+    buildToolsVersion = "33.0.2"
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdk = 21
         targetSdk = 33
         multiDexEnabled = true
-        versionCode = 5114
+        versionCode = 5115
         versionName = "5.1.0"
         kapt {
             arguments {
@@ -57,6 +57,7 @@ android {
 
 val fastAdapterVersion = "5.7.0"
 val roomVersion = "2.5.0"
+val latestAboutLibsRelease = "10.5.2"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
@@ -90,7 +91,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.mikepenz:itemanimators:1.1.0")
-    implementation("com.github.jrvansuita:MaterialAbout:0.3.0")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
     implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-drag:$fastAdapterVersion")
@@ -104,4 +104,5 @@ dependencies {
     implementation("com.github.Ferfalk:SimpleSearchView:0.2.0")
     implementation("com.github.MFlisar:changelog:1.1.7")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+    implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
 }

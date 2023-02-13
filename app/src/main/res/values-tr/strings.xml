@@ -318,5 +318,13 @@
     <string name="show_eucarestia_pace_title">Efkaristiya - CSelamete İlahi</string>
     <string name="old_index_title">Show old index</string>
     <string name="old_index_summary">Show the index with the numbers used in old books prior to 2020 (only for Italian)</string>
+    <string name="changelog">Sürüm notları</string>
+    <string name="error">Hata</string>
+    <string name="email">E-posta</string>
+    <string name="version">Sürüm</string>
+    <string name="privacy">Gizlilik Politikası</string>
+    <string name="rate_five_stars">Bu uygulamaya 5 yıldız ver</string>
+    <string name="share_app">Uygulamayı paylaş</string>
+    <string name="update_app">Uygulamayı güncelle</string>
 </resources>
 
