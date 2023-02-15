@@ -10,13 +10,13 @@ plugins {
 android {
 
     compileSdk = 33
-    buildToolsVersion = "33.0.1"
+    buildToolsVersion = "33.0.2"
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdk = 21
         targetSdk = 33
         multiDexEnabled = true
-        versionCode = 5114
+        versionCode = 5115
         versionName = "5.1.0"
         kapt {
             arguments {
@@ -57,16 +57,17 @@ android {
 
 val fastAdapterVersion = "5.7.0"
 val roomVersion = "2.5.0"
+val latestAboutLibsRelease = "10.5.2"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.material:material:1.8.0-rc01")
+    implementation("com.google.android.material:material:1.8.0")
     implementation("androidx.core:core-splashscreen:1.0.0")
     implementation("androidx.activity:activity-ktx:1.6.1")
-    implementation("androidx.appcompat:appcompat:1.6.0")
-    implementation("androidx.appcompat:appcompat-resources:1.6.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.appcompat:appcompat-resources:1.6.1")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.fragment:fragment-ktx:1.5.5")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
@@ -76,7 +77,7 @@ dependencies {
     implementation("androidx.media:media:1.6.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.7.1")
+    implementation("androidx.work:work-runtime-ktx:2.8.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     implementation("androidx.preference:preference-ktx:1.2.0")
@@ -90,7 +91,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("com.mikepenz:itemanimators:1.1.0")
-    implementation("com.github.jrvansuita:MaterialAbout:0.3.0")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
     implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
     implementation("com.mikepenz:fastadapter-extensions-drag:$fastAdapterVersion")
@@ -104,4 +104,5 @@ dependencies {
     implementation("com.github.Ferfalk:SimpleSearchView:0.2.0")
     implementation("com.github.MFlisar:changelog:1.1.7")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+    implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
 }
