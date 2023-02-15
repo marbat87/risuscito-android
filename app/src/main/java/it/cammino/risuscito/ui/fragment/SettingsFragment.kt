@@ -96,12 +96,17 @@ class SettingsFragment : PreferenceFragmentCompat(),
                             requireContext(),
                             newLanguage
                         )
-                        val mIntent = Intent().apply {
-                            this.putExtra(CHANGE_LANGUAGE, true)
-                            this.putExtra(OLD_LANGUAGE, currentLang)
-                            this.putExtra(NEW_LANGUAGE, newLanguage)
+                        val mIntent =
+                            activity?.baseContext?.packageManager?.getLaunchIntentForPackage(
+                                requireActivity().baseContext.packageName
+                            )
+                        mIntent?.let {
+                            it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            it.putExtra(CHANGE_LANGUAGE, true)
+                            it.putExtra(OLD_LANGUAGE, currentLang)
+                            it.putExtra(NEW_LANGUAGE, newLanguage)
+                            ProcessPhoenix.triggerRebirth(context, it)
                         }
-                        ProcessPhoenix.triggerRebirth(context, mIntent)
                     } else {
                         Log.e(TAG, "Module install failed: empyt language list")
                         mMainActivity?.let {
@@ -142,7 +147,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
             val request = SplitInstallRequest.newBuilder()
                 .addLanguage(
                     if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
-                        Locale(LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES)
+                        Locale(
+                            LocaleManager.LANGUAGE_ENGLISH,
+                            LocaleManager.COUNTRY_PHILIPPINES
+                        )
                     else Locale(newLanguage)
                 )
                 .build()
@@ -154,7 +162,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 // processing the request.
                 ?.addOnFailureListener { exception ->
                     Log.e(TAG, "language download error", exception)
-                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
+                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)
+                        ?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
                             it.activityMainContent,
@@ -285,7 +294,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
         Log.d(TAG, "onSharedPreferenceChanged: $s")
         if (s == NIGHT_MODE) {
-            Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0"))
+            Log.d(
+                TAG,
+                "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0")
+            )
             context?.setDefaultNightMode()
         }
         if (s == SCREEN_ON) activity?.checkScreenAwake()
