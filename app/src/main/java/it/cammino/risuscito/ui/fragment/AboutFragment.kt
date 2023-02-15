@@ -1,152 +1,166 @@
 package it.cammino.risuscito.ui.fragment
 
-import android.app.ActivityOptions
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.SystemClock
-import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
+import android.widget.Toast
+import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
-import com.google.android.material.color.MaterialColors
-import com.vansuita.materialabout.builder.AboutBuilder
-import it.cammino.risuscito.BuildConfig
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
+import com.danielstone.materialaboutlibrary.ConvenienceBuilder
+import com.danielstone.materialaboutlibrary.MaterialAboutFragment
+import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
+import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
+import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
+import com.danielstone.materialaboutlibrary.model.MaterialAboutList
 import it.cammino.risuscito.R
-import it.cammino.risuscito.databinding.AboutLayoutBinding
 import it.cammino.risuscito.ui.activity.ChangelogActivity
-import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.Utility.CLICK_DELAY
-import it.cammino.risuscito.utils.extension.getTypedValueResId
+import it.cammino.risuscito.ui.activity.MainActivity
+import it.cammino.risuscito.utils.extension.shareThisApp
 import it.cammino.risuscito.utils.extension.slideInRight
 
 
-class AboutFragment : AccountMenuFragment() {
+class AboutFragment : MaterialAboutFragment() {
 
-    private var _binding: AboutLayoutBinding? = null
+    private var mMainActivity: MainActivity? = null
 
-    private var mLastClickTime: Long = 0
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        _binding = AboutLayoutBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mMainActivity = activity as? MainActivity
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onDestroy() {
+        super.onDestroy()
+        mMainActivity?.actionMode?.finish()
+        mMainActivity?.activitySearchView?.closeSearch()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mMainActivity?.let {
+            it.addMenuProvider(object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    it.updateProfileImage()
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return false
+                }
+            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        }
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_about)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
         mMainActivity?.enableBottombar(false)
-
-        val mChangeLogClickListener = View.OnClickListener {
-            if (SystemClock.elapsedRealtime() - mLastClickTime >= CLICK_DELAY) {
-                mLastClickTime = SystemClock.elapsedRealtime()
-                if (OSUtils.isObySamsung()) {
-                    startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
-                    mMainActivity?.slideInRight()
-                } else {
-                    it.transitionName = "shared_element_about"
-                    val options = ActivityOptions.makeSceneTransitionAnimation(
-                        mMainActivity,
-                        it,
-                        "shared_element_about" // The transition name to be matched in Activity B.
-                    )
-                    startActivity(
-                        Intent(mMainActivity, ChangelogActivity::class.java), options.toBundle()
-                    )
-                }
-            }
-        }
-
-        context?.let {
-
-            val builder = AboutBuilder.with(it).apply {
-                setAppIcon(R.drawable.ic_launcher_144dp)
-                setAppName(R.string.app_name)
-                setPhoto(R.drawable.ic_brand_icon)
-                setCover(R.mipmap.profile_cover)
-                linksColumnsCount = 1
-                addEmailLink("marbat87@outlook.it", getString(R.string.app_name), null)
-                addFiveStarsAction(BuildConfig.APPLICATION_ID)
-                setVersionNameAsAppSubTitle()
-                addShareAction(R.string.app_name)
-                addUpdateAction(BuildConfig.APPLICATION_ID)
-                actionsColumnsCount = 2
-                addChangeLogAction(mChangeLogClickListener)
-                addPrivacyPolicyAction("https://marbat87.altervista.org/privacy_policy.html")
-                isShowAsCard = false
-            }
-            val builderView = builder.build()
-
-            val bgColor = MaterialColors.getColor(
-                requireContext(), android.R.attr.colorBackground, TAG
-            )
-
-            builderView.holder.setBackgroundColor(bgColor)
-
-            builderView.findItem(builder.lastLink).apply {
-                background = ContextCompat.getDrawable(
-                    requireContext(),
-                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
-                )
-                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.mail_24px)
-            }
-            val actions = builder.actions
-            builderView.findItem(actions[0]).apply {
-                background = ContextCompat.getDrawable(
-                    requireContext(),
-                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
-                )
-                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.star_24px)
-            }
-            builderView.findItem(actions[1]).apply {
-                background = ContextCompat.getDrawable(
-                    requireContext(),
-                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
-                )
-                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.share_24px)
-            }
-            builderView.findItem(actions[2]).apply {
-                background = ContextCompat.getDrawable(
-                    requireContext(),
-                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
-                )
-                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.file_download_24px)
-            }
-            builderView.findItem(actions[3]).apply {
-                background = ContextCompat.getDrawable(
-                    requireContext(),
-                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
-                )
-                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.list_alt_24px)
-            }
-            builderView.findItem(actions[4]).apply {
-                background = ContextCompat.getDrawable(
-                    requireContext(),
-                    requireContext().getTypedValueResId(R.attr.selectableItemBackground)
-                )
-                findViewById<AppCompatImageView>(R.id.icon).setImageResource(R.drawable.policy_24px)
-            }
-
-            binding.about.addView(builderView)
-        }
     }
 
-    companion object {
-        private val TAG = AboutFragment::class.java.canonicalName
+    override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList? {
+        val builder = MaterialAboutList.Builder()
+
+        context?.let { ctx ->
+
+            val infoCard = MaterialAboutCard.Builder().outline(false)
+                .addItem(
+                    MaterialAboutTitleItem.Builder().text(getString(R.string.app_name))
+                        .icon(R.drawable.ic_launcher_144dp).build()
+                )
+                .addItem(
+                    ConvenienceBuilder.createVersionActionItem(
+                        ctx,
+                        ContextCompat.getDrawable(ctx, R.drawable.info_24px),
+                        getString(R.string.version),
+                        true
+                    )
+                )
+                .addItem(
+                    ConvenienceBuilder.createWebViewDialogItem(
+                        ctx,
+                        ContextCompat.getDrawable(ctx, R.drawable.policy_24px),
+                        getString(R.string.privacy),
+                        null,
+                        getString(R.string.privacy),
+                        "https://marbat87.altervista.org/privacy_policy.html",
+                        true,
+                        false
+                    )
+                )
+                .build()
+
+            val authorCard = MaterialAboutCard.Builder().outline(false).title("Author")
+                .addItem(
+                    MaterialAboutTitleItem.Builder().text("Marbat87").desc("Italy")
+                        .icon(R.drawable.ic_brand_icon).build()
+                )
+                .addItem(
+                    MaterialAboutActionItem.Builder().text(R.string.email)
+                        .subText("marbat87@outlook.it").icon(R.drawable.mail_24px)
+                        .setOnClickAction {
+                            try {
+                                ctx.startActivity(
+                                    ShareCompat.IntentBuilder(ctx).setType("text/html")
+
+                                        .setSubject(getString(R.string.app_name))
+                                        .addEmailTo("marbat87@outlook.it")
+                                        .intent
+                                )
+                            } catch (e: Exception) {
+                                // No activity to handle intent
+                                Toast.makeText(
+                                    ctx,
+                                    R.string.mal_activity_exception,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }.build()
+                ).build()
+
+            val miscCard = MaterialAboutCard.Builder().outline(false)
+                .addItem(
+                    MaterialAboutActionItem.Builder().text(R.string.changelog)
+                        .icon(R.drawable.list_alt_24px)
+                        .setOnClickAction {
+                            startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
+                            mMainActivity?.slideInRight()
+                        }.build()
+                )
+                .addItem(
+                    ConvenienceBuilder.createRateActionItem(
+                        ctx,
+                        ContextCompat.getDrawable(ctx, R.drawable.star_24px),
+                        getString(R.string.rate_five_stars),
+                        null
+                    )
+                )
+                .addItem(
+                    MaterialAboutActionItem.Builder().text(R.string.share_app)
+                        .icon(R.drawable.share_24px)
+                        .setOnClickAction {
+                            ctx.startActivity(
+                                ctx.shareThisApp(getString(R.string.app_name))
+                            )
+                        }.build()
+                )
+                .addItem(
+                    MaterialAboutActionItem.Builder().text(R.string.update_app)
+                        .icon(R.drawable.file_download_24px)
+                        .setOnClickAction(ConvenienceBuilder.createRateOnClickAction(ctx))
+                        .build()
+                )
+                .build()
+
+            builder.addCard(infoCard)
+            builder.addCard(authorCard)
+            builder.addCard(miscCard)
+
+        }
+
+        return builder.build()
     }
 
 }

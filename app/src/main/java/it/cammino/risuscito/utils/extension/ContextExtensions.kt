@@ -183,3 +183,11 @@ fun Context.useOldIndex(): Boolean {
             false
         ) && resources.systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
 }
+
+fun Context.shareThisApp(subject: String?): Intent {
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.type = "text/plain"
+    intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+    intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.uri_play_store_app_website, packageName))
+    return intent
+}
