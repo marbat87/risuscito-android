@@ -4,12 +4,18 @@
 
     <androidx.preference.PreferenceCategory android:title="@string/theme">
 
-        <ListPreference
+        <DropDownPreference
             android:entries="@array/themeListArray"
             android:entryValues="@array/themeEntryArray"
             android:key="night_mode"
             android:title="@string/night_theme_title"
             app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="dynamic_colors"
+            android:summary="@string/dynamic_colors_summary"
+            android:title="@string/dynamic_colors_title" />
 
     </androidx.preference.PreferenceCategory>
 
@@ -75,6 +81,12 @@
             android:summary="@string/show_audio_summary"
             android:title="@string/show_audio_title" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="vecchio_indice"
+            android:summary="@string/old_index_title"
+            android:title="@string/old_index_summary" />
+
         <DropDownPreference
             android:defaultValue="0"
             android:entries="@array/save_location_sd_entries"
@@ -82,7 +94,7 @@
             android:key="memoria_salvataggio_scelta"
             android:title="@string/save_location_title" />
 
-        <ListPreference
+        <DropDownPreference
             android:entries="@array/pref_languages_entries"
             android:entryValues="@array/pref_languages_values"
             android:key="lingua_sistema_new"

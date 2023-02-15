@@ -1,6 +1,5 @@
 package it.cammino.risuscito.ui.activity
 
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -44,6 +43,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
+import com.jakewharton.processphoenix.ProcessPhoenix
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.squareup.picasso.Picasso
@@ -137,6 +137,7 @@ class MainActivity : ThemeableActivity() {
         }
 
         setSupportActionBar(binding.risuscitoToolbar)
+
 
         if (intent.getBooleanExtra(CHANGE_LANGUAGE, false)) {
             lifecycleScope.launch { translate() }
@@ -245,13 +246,7 @@ class MainActivity : ThemeableActivity() {
                             }
                             RESTORE_DONE -> {
                                 simpleDialogViewModel.handled = true
-                                val i = baseContext
-                                    .packageManager
-                                    .getLaunchIntentForPackage(baseContext.packageName)
-                                i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                i?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                startActivity(i)
-                                finish()
+                                ProcessPhoenix.triggerRebirth(this)
                             }
                         }
                     }
@@ -900,6 +895,7 @@ class MainActivity : ThemeableActivity() {
     }
 
     private suspend fun translate() {
+        Log.d(TAG, "translate")
         ProgressDialogFragment.show(
             ProgressDialogFragment.Builder(TRANSLATION).apply {
                 content = R.string.translation_running
