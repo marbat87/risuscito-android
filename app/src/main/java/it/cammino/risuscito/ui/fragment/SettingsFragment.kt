@@ -15,6 +15,7 @@ import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
+import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.activity.MainActivity
@@ -95,17 +96,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
                             requireContext(),
                             newLanguage
                         )
-                        val mIntent =
-                            activity?.baseContext?.packageManager?.getLaunchIntentForPackage(
-                                requireActivity().baseContext.packageName
-                            )
-                        mIntent?.let {
-                            it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            it.putExtra(CHANGE_LANGUAGE, true)
-                            it.putExtra(OLD_LANGUAGE, currentLang)
-                            it.putExtra(NEW_LANGUAGE, newLanguage)
-                            startActivity(it)
+                        val mIntent = Intent().apply {
+                            this.putExtra(CHANGE_LANGUAGE, true)
+                            this.putExtra(OLD_LANGUAGE, currentLang)
+                            this.putExtra(NEW_LANGUAGE, newLanguage)
                         }
+                        ProcessPhoenix.triggerRebirth(context, mIntent)
                     } else {
                         Log.e(TAG, "Module install failed: empyt language list")
                         mMainActivity?.let {

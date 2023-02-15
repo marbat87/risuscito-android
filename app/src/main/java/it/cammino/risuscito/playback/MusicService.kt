@@ -456,6 +456,7 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun postNotification(): Notification? {
         val notification = MediaNotificationHelper.createNotification(this, mSession)
             ?: return null

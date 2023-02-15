@@ -565,7 +565,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     // Callback that ensures that we are showing the controls
     private val mMediaControllerCallback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            Log.d(TAG, "onPlaybackStateChanged: a " + state.state)
+            Log.d(TAG, "onPlaybackStateChanged: ${state.state}")
             mViewModel.lastPlaybackState.value = state
         }
 
