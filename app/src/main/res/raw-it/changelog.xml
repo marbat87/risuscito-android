@@ -2,7 +2,7 @@
 <changelog>
 
     <release
-        versionCode="5115"
+        versionCode="5117"
         date="Febbraio 2023"
         versionName="5.1.0">
         <new>Aggiunte le icone ai popup</new>

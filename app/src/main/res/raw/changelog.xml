@@ -2,7 +2,7 @@
 <changelog>
 
     <release
-        versionCode="5115"
+        versionCode="5117"
         date="February 2023"
         versionName="5.1.0">
         <new>Added icons to dialogs</new>

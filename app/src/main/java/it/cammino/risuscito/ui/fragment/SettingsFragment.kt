@@ -15,6 +15,7 @@ import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
+import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.activity.MainActivity
@@ -104,7 +105,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                             it.putExtra(CHANGE_LANGUAGE, true)
                             it.putExtra(OLD_LANGUAGE, currentLang)
                             it.putExtra(NEW_LANGUAGE, newLanguage)
-                            startActivity(it)
+                            ProcessPhoenix.triggerRebirth(context, it)
                         }
                     } else {
                         Log.e(TAG, "Module install failed: empyt language list")
@@ -146,7 +147,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
             val request = SplitInstallRequest.newBuilder()
                 .addLanguage(
                     if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
-                        Locale(LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES)
+                        Locale(
+                            LocaleManager.LANGUAGE_ENGLISH,
+                            LocaleManager.COUNTRY_PHILIPPINES
+                        )
                     else Locale(newLanguage)
                 )
                 .build()
@@ -158,7 +162,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 // processing the request.
                 ?.addOnFailureListener { exception ->
                     Log.e(TAG, "language download error", exception)
-                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
+                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)
+                        ?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
                             it.activityMainContent,
@@ -289,7 +294,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
         Log.d(TAG, "onSharedPreferenceChanged: $s")
         if (s == NIGHT_MODE) {
-            Log.d(TAG, "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0"))
+            Log.d(
+                TAG,
+                "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0")
+            )
             context?.setDefaultNightMode()
         }
         if (s == SCREEN_ON) activity?.checkScreenAwake()

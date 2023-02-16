@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 33
         multiDexEnabled = true
-        versionCode = 5115
+        versionCode = 5117
         versionName = "5.1.0"
         kapt {
             arguments {
@@ -105,4 +105,5 @@ dependencies {
     implementation("com.github.MFlisar:changelog:1.1.7")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
+    implementation("com.jakewharton:process-phoenix:2.1.2")
 }
