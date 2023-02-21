@@ -2,17 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/passaggi_filter_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="?listPreferredItemPaddingStart"
+        android:layout_marginStart="?listPreferredItemPaddingStart"
         android:layout_marginTop="@dimen/text_min_margin"
-        android:layout_marginRight="?listPreferredItemPaddingStart"
+        android:layout_marginEnd="?listPreferredItemPaddingEnd"
         android:text="@string/passage_filter"
-        android:textAppearance="?textAppearanceTitleSmall"
+        android:textAppearance="?textAppearanceTitleLarge"
         android:textColor="?android:textColorSecondary"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,6 +23,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/text_min_margin"
         android:scrollbarStyle="outsideOverlay"
+        tools:listitem="@layout/checkable_passage_item"
         android:scrollbars="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
