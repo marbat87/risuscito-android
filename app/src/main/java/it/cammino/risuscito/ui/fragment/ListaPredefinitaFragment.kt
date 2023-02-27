@@ -650,6 +650,7 @@ class ListaPredefinitaFragment : Fragment() {
                     } else {
                         //apri canto
                         mMainActivity?.openCanto(
+                            TAG,
                             v,
                             Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString()),
                             v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
