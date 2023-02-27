@@ -116,6 +116,7 @@ class HistoryFragment : AccountMenuFragment() {
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     mMainActivity?.openCanto(
+                        TAG,
                         mView,
                         item.id,
                         item.source?.getText(requireContext()),

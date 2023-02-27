@@ -143,7 +143,7 @@ class InsertActivity : ThemeableActivity() {
         cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { mView, _, _, item ->
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                openCanto(mView, item.id, item.source?.getText(this@InsertActivity), true)
+                openCanto(TAG, mView, item.id, item.source?.getText(this@InsertActivity), true)
             }
         }
 

@@ -31,6 +31,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.michaelflisar.changelog.ChangelogBuilder
@@ -206,6 +208,7 @@ class HomeFragment : AccountMenuFragment() {
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     mMainActivity?.openCanto(
+                        TAG,
                         mView,
                         item.id,
                         item.source?.getText(requireContext()),
@@ -327,6 +330,11 @@ class HomeFragment : AccountMenuFragment() {
                 binding.searchNoResults.isVisible = false
                 binding.searchProgress.isVisible = true
                 val titoliResult = ArrayList<SimpleItem>()
+
+                Firebase.analytics.logEvent("search_text") {
+                    param("search_string", s)
+                    param("advanced", mViewModel.advancedSearch.toString())
+                }
 
                 Log.d(TAG, "performSearch STRINGA: $s")
                 Log.d(TAG, "performSearch ADVANCED: ${mViewModel.advancedSearch}")

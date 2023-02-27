@@ -114,6 +114,7 @@ class FavoritesFragment : AccountMenuFragment() {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     // lancia l'activity che visualizza il canto passando il parametro creato
                     mMainActivity?.openCanto(
+                        TAG,
                         mView,
                         item.id,
                         item.source?.getText(requireContext()),

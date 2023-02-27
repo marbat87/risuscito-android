@@ -100,6 +100,7 @@ class SectionedIndexFragment : Fragment() {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                         mLastClickTime = SystemClock.elapsedRealtime()
                         mActivity?.openCanto(
+                            TAG,
                             mView,
                             item.id,
                             item.source?.getText(
