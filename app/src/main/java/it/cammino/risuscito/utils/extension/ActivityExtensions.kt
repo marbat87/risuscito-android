@@ -124,14 +124,6 @@ fun Activity.startActivityWithTransition(
         startActivity(intent, options.toBundle())
     }
 
-    val mDao = RisuscitoDatabase.getInstance(this).cronologiaDao()
-    val cronologia = Cronologia()
-    cronologia.idCanto = intent.extras?.getInt(CantoFragment.ARG_ID_CANTO) ?: 0
-    (this as? AppCompatActivity)?.lifecycleScope?.launch(Dispatchers.IO) {
-        mDao.insertCronologia(
-            cronologia
-        )
-    }
 }
 
 fun Activity.startActivityWithFadeIn(intent: Intent) {
@@ -333,6 +325,9 @@ fun ThemeableActivity.openCanto(
             )
         }
     }
+
+    (this as? AppCompatActivity)?.updateHistory(idCanto)
+
 }
 
 @TargetApi(Build.VERSION_CODES.P)
@@ -395,4 +390,15 @@ private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.
         null,
         MaterialColors.getColor(this, R.attr.colorPrimary, tag)
     )
+}
+
+private fun AppCompatActivity.updateHistory(idCanto: Int) {
+    val mDao = RisuscitoDatabase.getInstance(this).cronologiaDao()
+    val cronologia = Cronologia()
+    cronologia.idCanto = idCanto
+    this.lifecycleScope.launch(Dispatchers.IO) {
+        mDao.insertCronologia(
+            cronologia
+        )
+    }
 }

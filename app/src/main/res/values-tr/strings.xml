@@ -15,7 +15,7 @@
     <string name="search_hint">En az 3 karakter tıkla&#8230;</string>
     <string name="search_no_results">Arananla eşleşen yok.</string>
     <string name="title_activity_settings">Ayarlar</string>
-    <string name="title_activity_general_index">İlahilerin listeleri</string>
+    <string name="title_activity_general_index">Listeleri</string>
     <string name="default_index_title">Varsayılan liste</string>
     <string name="default_index_summary">Listelerin sayfası seçildiğinde hangisinin açılmasını istediğini belirt:</string>
     <string name="title_activity_canti_parola">Söz ayini</string>
@@ -31,7 +31,7 @@
     <string name="canto_pace">Selamette</string>
     <string name="canto_pane">Ekmeğin bölünmesinde</string>
     <string name="canto_vino">Şarapta</string>
-    <string name="title_activity_custom_lists">Kişiselleştirilmiş listeler</string>
+    <string name="title_activity_custom_lists">Listeler</string>
     <string name="copertina">Kapak</string>
     <string name="title_activity_inserisci_titolo">Eklenene göre ara</string>
     <string name="title_activity_about">Hakkında</string>
@@ -164,7 +164,7 @@
     <string name="translation_running">Çeviriliyor&#8230;</string>
     <string name="no_favourites_short">Hiçbir favori eklemedin.</string>
     <string name="no_consegnati">Hiçbir ilahiyi \"Teslim edildi\" diye işaretlemedin.</string>
-    <string name="title_activity_consegnati">Teslim edilmiş ilahiler</string>
+    <string name="title_activity_consegnati">Teslim edilmiş</string>
     <string name="showcase_consegnati_howto">Listeye girip ilahileri işaretlemek için bu düğmeye tıkla.</string>
     <string name="showcase_consegnati_confirm">Bitirdiğinde, kaydetmek için KABUL e tıkla.</string>
     <string name="showcase_consegnati_cancel">Onları silmek için &#8230; yada İPTAL e tıkla.</string>

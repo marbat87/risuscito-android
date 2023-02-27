@@ -31,7 +31,7 @@
     <string name="canto_pace">Na znak pokoju</string>
     <string name="canto_pane">Na łamanie chleba</string>
     <string name="canto_vino">Na roznoszenie wina</string>
-    <string name="title_activity_custom_lists">Spersonalizowane listy</string>
+    <string name="title_activity_custom_lists">Listy</string>
     <string name="copertina">pokrycie</string>
     <string name="title_activity_inserisci_titolo">Szukanie dla danych wejściowych</string>
     <string name="title_activity_about">Informacje</string>
@@ -163,7 +163,7 @@
     <string name="translation_running">Tłumaczenie w trakcie&#8230;</string>
     <string name="no_favourites_short">Nie masz żadnych ulubionych.</string>
     <string name="no_consegnati">Nie masz tutaj żadnych pieśni.</string>
-    <string name="title_activity_consegnati">Zmiany własne w pieśniach</string>
+    <string name="title_activity_consegnati">Dostarczone</string>
     <string name="showcase_consegnati_howto">Naciśnij na ten przycisk, aby uzyskać dostęp do listy i zaznaczyć pieśni.</string>
     <string name="showcase_consegnati_confirm">Gdy skończysz, naciśnij ENTER aby zapisać zmiany&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;lub wciśnij ANULUJ aby odrzucić je.</string>

@@ -7,13 +7,13 @@ import androidx.fragment.app.commit
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import it.cammino.risuscito.R
-import it.cammino.risuscito.databinding.ActivityCantoBinding
+import it.cammino.risuscito.databinding.ActivityFragmentHostBinding
 import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.utils.OSUtils
 
 class CantoHostActivity : ThemeableActivity() {
 
-    private lateinit var binding: ActivityCantoBinding
+    private lateinit var binding: ActivityFragmentHostBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!OSUtils.isObySamsung()) {
@@ -37,7 +37,7 @@ class CantoHostActivity : ThemeableActivity() {
         }
         super.onCreate(savedInstanceState)
 
-        binding = ActivityCantoBinding.inflate(layoutInflater)
+        binding = ActivityFragmentHostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         if (savedInstanceState == null) {

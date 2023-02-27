@@ -14,11 +14,12 @@ class MainActivityViewModel : ViewModel() {
 
     var isTabletWithFixedDrawer: Boolean = false
     var isTabletWithNoFixedDrawer: Boolean = false
-    var selectedMenuItemId: Int = R.id.navigation_home
+    var selectedMenuItemId: Int = R.id.navigation_indexes
     var catalogRefreshReady = MutableLiveData(true)
     var lastPlaybackState = MutableLiveData<PlaybackStateCompat>()
     var medatadaCompat = MutableLiveData<MediaMetadataCompat>()
     var playerConnected = MutableLiveData(false)
+//    var searchBarExpanded = false
 
     enum class BakupRestoreState {
         NONE,

@@ -23,7 +23,6 @@ open class AccountMenuFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         mMainActivity?.actionMode?.finish()
-        mMainActivity?.activitySearchView?.closeSearch()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

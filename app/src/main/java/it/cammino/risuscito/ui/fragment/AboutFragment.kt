@@ -37,7 +37,6 @@ class AboutFragment : MaterialAboutFragment() {
     override fun onDestroy() {
         super.onDestroy()
         mMainActivity?.actionMode?.finish()
-        mMainActivity?.activitySearchView?.closeSearch()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

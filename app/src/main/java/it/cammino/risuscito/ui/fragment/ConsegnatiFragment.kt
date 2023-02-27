@@ -20,7 +20,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ferfalk.simplesearchview.SimpleSearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -194,39 +193,39 @@ class ConsegnatiFragment : AccountMenuFragment() {
         binding.chooseRecycler.layoutManager = llm2
         binding.chooseRecycler.itemAnimator = SlideRightAlphaAnimator()
 
-        mMainActivity?.activitySearchView?.setOnQueryTextListener(object :
-            SimpleSearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                val simplifiedString =
-                    Utility.removeAccents(newText).lowercase(resources.systemLocale)
-                Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
-                if (simplifiedString.isNotEmpty()) {
-                    consegnatiViewModel.titoliChooseFiltered =
-                        consegnatiViewModel.titoliChoose.filter {
-                            Utility.removeAccents(
-                                it.title?.getText(requireContext()).orEmpty()
-                            ).lowercase(resources.systemLocale).contains(simplifiedString)
-                        }
-                    consegnatiViewModel.titoliChooseFiltered.forEach {
-                        it.filter = simplifiedString
-                    }
-                    selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
-                } else
-                    consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose
-                return true
-            }
-
-            override fun onQueryTextCleared(): Boolean {
-                consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose
-                selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
-                return true
-            }
-
-        })
+//        mMainActivity?.activitySearchView?.setOnQueryTextListener(object :
+//            SimpleSearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String): Boolean {
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                val simplifiedString =
+//                    Utility.removeAccents(newText).lowercase(resources.systemLocale)
+//                Log.d(TAG, "onQueryTextChange: simplifiedString $simplifiedString")
+//                if (simplifiedString.isNotEmpty()) {
+//                    consegnatiViewModel.titoliChooseFiltered =
+//                        consegnatiViewModel.titoliChoose.filter {
+//                            Utility.removeAccents(
+//                                it.title?.getText(requireContext()).orEmpty()
+//                            ).lowercase(resources.systemLocale).contains(simplifiedString)
+//                        }
+//                    consegnatiViewModel.titoliChooseFiltered.forEach {
+//                        it.filter = simplifiedString
+//                    }
+//                    selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
+//                } else
+//                    consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose
+//                return true
+//            }
+//
+//            override fun onQueryTextCleared(): Boolean {
+//                consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose
+//                selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
+//                return true
+//            }
+//
+//        })
 
         selectPassageExtension.isSelectable = true
         passaggiFilterAdapter.setHasStableIds(true)
@@ -272,8 +271,8 @@ class ConsegnatiFragment : AccountMenuFragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 if (consegnatiViewModel.editMode.value == true) {
                     menuInflater.inflate(R.menu.consegnati_menu_edit_mode, menu)
-                    val item = menu.findItem(R.id.action_search)
-                    mMainActivity?.activitySearchView?.setMenuItem(item)
+//                    val item = menu.findItem(R.id.action_search)
+//                    mMainActivity?.activitySearchView?.setMenuItem(item)
                 } else {
                     menuInflater.inflate(
                         if (selectPassageExtension.selectedItems.isNotEmpty()) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu,
@@ -316,10 +315,10 @@ class ConsegnatiFragment : AccountMenuFragment() {
         backCallback = object : OnBackPressedCallback(consegnatiViewModel.editMode.value == true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "handleOnBackPressed")
-                if (mMainActivity?.activitySearchView?.onBackPressed() == false) {
-                    consegnatiViewModel.editMode.value = false
-                    mMainActivity?.expandToolbar()
-                }
+//                if (mMainActivity?.activitySearchView?.onBackPressed() == false) {
+                consegnatiViewModel.editMode.value = false
+                mMainActivity?.expandToolbar()
+//                }
             }
         }
         // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
@@ -342,8 +341,8 @@ class ConsegnatiFragment : AccountMenuFragment() {
 
     private fun enableBottombar(enabled: Boolean) {
         mMainActivity?.enableBottombar(enabled)
-        if (!enabled)
-            mMainActivity?.activitySearchView?.closeSearch()
+//        if (!enabled)
+//            mMainActivity?.activitySearchView?.closeSearch()
         activity?.invalidateOptionsMenu()
     }
 

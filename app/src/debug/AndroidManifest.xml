@@ -68,6 +68,10 @@
             android:name="it.cammino.risuscito.ui.activity.ChangelogActivity"
             android:label="" />
 
+        <activity
+            android:name="it.cammino.risuscito.ui.activity.SettingsActivity"
+            android:label="" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="it.cammino.risuscito.fileprovider"
