@@ -115,7 +115,7 @@ class InsertActivity : ThemeableActivity() {
             Firebase.crashlytics.recordException(e)
         }
 
-        binding.searchLayout.textBoxRicerca.hint =
+        binding.textBoxRicerca.hint =
             if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
                 R.string.fast_search_subtitle
             )
@@ -149,54 +149,54 @@ class InsertActivity : ThemeableActivity() {
 
         cantoAdapter.setHasStableIds(true)
 
-        binding.searchLayout.matchedList.adapter = cantoAdapter
+        binding.matchedList.adapter = cantoAdapter
         val glm = GridLayoutManager(this, 2)
         val llm = LinearLayoutManager(this)
-        binding.searchLayout.matchedList.layoutManager = if (isGridLayout) glm else llm
+        binding.matchedList.layoutManager = if (isGridLayout) glm else llm
 
-        binding.searchLayout.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
+        binding.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
                 ContextCompat.getSystemService(this, InputMethodManager::class.java)
-                    ?.hideSoftInputFromWindow(binding.searchLayout.textFieldRicerca.windowToken, 0)
+                    ?.hideSoftInputFromWindow(binding.textFieldRicerca.windowToken, 0)
                 returnValue = true
             }
             returnValue
         }
 
-        binding.searchLayout.textFieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+        binding.textFieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
             job.cancel()
             ricercaStringa(s.toString())
         }
 
-        mPopupMenu = PopupMenu(this, binding.searchLayout.moreOptions, Gravity.END)
+        mPopupMenu = PopupMenu(this, binding.moreOptions, Gravity.END)
         mPopupMenu.inflate(R.menu.search_option_menu)
         mPopupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.advanced_search -> {
                     it.isChecked = !it.isChecked
                     simpleIndexViewModel.advancedSearch = it.isChecked
-                    binding.searchLayout.textBoxRicerca.hint =
+                    binding.textBoxRicerca.hint =
                         if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
                             R.string.fast_search_subtitle
                         )
                     job.cancel()
-                    ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
+                    ricercaStringa(binding.textFieldRicerca.text.toString())
                     true
                 }
                 R.id.consegnaty_only -> {
                     it.isChecked = !it.isChecked
                     simpleIndexViewModel.consegnatiOnly = it.isChecked
                     job.cancel()
-                    ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
+                    ricercaStringa(binding.textFieldRicerca.text.toString())
                     true
                 }
                 else -> false
             }
         }
 
-        binding.searchLayout.moreOptions.setOnClickListener {
+        binding.moreOptions.setOnClickListener {
             mPopupMenu.menu.findItem(R.id.advanced_search).isChecked =
                 simpleIndexViewModel.advancedSearch
             mPopupMenu.menu.findItem(R.id.consegnaty_only).isChecked =
@@ -232,8 +232,8 @@ class InsertActivity : ThemeableActivity() {
         job = lifecycleScope.launch {
             // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
             if (s.trim { it <= ' ' }.length >= 3) {
-                binding.searchLayout.searchNoResults.isVisible = false
-                binding.searchLayout.searchProgress.isVisible = true
+                binding.searchNoResults.isVisible = false
+                binding.searchProgress.isVisible = true
                 val titoliResult = ArrayList<InsertItem>()
 
                 Log.d(TAG, "performInsertSearch STRINGA: $s")
@@ -299,17 +299,17 @@ class InsertActivity : ThemeableActivity() {
                                 Collator.getInstance(resources.systemLocale)
                             ) { it.title?.getText(this@InsertActivity) })
                     )
-                    binding.searchLayout.searchProgress.isVisible = false
-                    binding.searchLayout.searchNoResults.isVisible =
+                    binding.searchProgress.isVisible = false
+                    binding.searchNoResults.isVisible =
                         cantoAdapter.adapterItemCount == 0
-                    binding.searchLayout.matchedList.isGone = cantoAdapter.adapterItemCount == 0
+                    binding.matchedList.isGone = cantoAdapter.adapterItemCount == 0
                 }
             } else {
                 if (s.isEmpty()) {
-                    binding.searchLayout.searchNoResults.isVisible = false
-                    binding.searchLayout.matchedList.isVisible = false
+                    binding.searchNoResults.isVisible = false
+                    binding.matchedList.isVisible = false
                     cantoAdapter.clear()
-                    binding.searchLayout.searchProgress.isVisible = false
+                    binding.searchProgress.isVisible = false
                     binding.appBarLayout.setExpanded(true, true)
                 }
             }

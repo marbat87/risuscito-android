@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,9 +10,10 @@
         android:id="@+id/navigation_rail"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:headerLayout="@layout/header_navigation_drawer"
+        app:headerLayout="@layout/header_navigation_rail"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_menu" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/navigation_rail_menu" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/half_guideline"
@@ -22,14 +22,15 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.45"
+        app:layout_constraintGuide_percent="0.4"
         app:layout_constraintStart_toEndOf="@id/navigation_rail"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
-        style="?attr/materialCardViewFilledStyle"
+        style="?attr/materialCardViewElevatedStyle"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/activity_min_top_margin"
         app:layout_constraintEnd_toStartOf="@id/half_guideline"
         app:layout_constraintStart_toEndOf="@id/navigation_rail">
 
@@ -46,8 +47,7 @@
                 android:elevation="11dp"
                 android:indeterminate="true"
                 android:visibility="invisible"
-                app:layout_behavior="@string/searchbar_scrolling_view_behavior"
-                tools:ignore="PrivateResource" />
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/content_frame"

@@ -5,12 +5,12 @@ import androidx.activity.addCallback
 import com.google.android.material.transition.platform.MaterialSharedAxis
 import it.cammino.risuscito.R
 import it.cammino.risuscito.databinding.SettingsActivityFragmentHostBinding
-import it.cammino.risuscito.ui.fragment.SettingsFragment
+import it.cammino.risuscito.ui.fragment.AboutFragment
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
 import it.cammino.risuscito.utils.extension.slideOutRight
 
-class SettingsActivity : ThemeableActivity() {
+class AboutActivity : ThemeableActivity() {
 
     private lateinit var binding: SettingsActivityFragmentHostBinding
 
@@ -25,6 +25,8 @@ class SettingsActivity : ThemeableActivity() {
             }
             window.enterTransition = enter
             window.returnTransition = exit
+            window.reenterTransition = exit
+            window.exitTransition = enter
 
             // Allow Activity A’s exit transition to play at the same time as this Activity’s
             // enter transition instead of playing them sequentially.
@@ -36,7 +38,7 @@ class SettingsActivity : ThemeableActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.risuscitoToolbar)
-        supportActionBar?.setTitle(R.string.title_activity_settings)
+        supportActionBar?.setTitle(R.string.title_activity_about)
 
         binding.risuscitoToolbar.setNavigationIcon(R.drawable.arrow_back_24px)
         binding.risuscitoToolbar.setNavigationOnClickListener {
@@ -49,9 +51,8 @@ class SettingsActivity : ThemeableActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.detail_fragment, SettingsFragment())
+            .replace(R.id.detail_fragment, AboutFragment())
             .commit()
-
     }
 
     private fun onBackPressedAction() {
@@ -61,5 +62,4 @@ class SettingsActivity : ThemeableActivity() {
         } else
             finishAfterTransitionWrapper()
     }
-
 }

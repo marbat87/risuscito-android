@@ -1,16 +1,19 @@
 package it.cammino.risuscito.ui.activity
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResult
@@ -21,6 +24,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.ActionMode
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -37,7 +41,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -50,6 +53,7 @@ import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -167,9 +171,27 @@ class MainActivity : ThemeableActivity() {
             window.sharedElementsUseOverlay = false
         }
 
+        val exit = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
+            addTarget(R.id.content_frame)
+            duration = 700L
+        }
+
+        val enter = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+            addTarget(R.id.content_frame)
+            duration = 700L
+        }
+        window.exitTransition = exit
+        window.reenterTransition = enter
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val outValue = TypedValue()
+        resources.getValue(R.dimen.horizontal_percentage_half_divider, outValue, true)
+        val percentage = outValue.float
+
+        binding.halfGuideline?.setGuidelinePercent(percentage)
 
         lifecycleScope.launch(Dispatchers.IO) {
             listePersonalizzate =
@@ -267,12 +289,15 @@ class MainActivity : ThemeableActivity() {
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
-                    openCanto(
-                        mView,
-                        item.id,
-                        item.source?.getText(this),
-                        false
-                    )
+                    mView?.let {
+                        openCanto(
+                            TAG,
+                            it,
+                            item.id,
+                            item.source?.getText(this),
+                            false
+                        )
+                    }
                     consume = true
                 }
                 consume
@@ -622,8 +647,7 @@ class MainActivity : ThemeableActivity() {
             }
         }
 
-        cantiViewModel.itemsResult?.observe(this)
-        { canti ->
+        cantiViewModel.itemsResult?.observe(this) { canti ->
             cantiViewModel.titoli =
                 canti.sortedWith(compareBy(
                     Collator.getInstance(resources.systemLocale)
@@ -642,7 +666,7 @@ class MainActivity : ThemeableActivity() {
 
         binding.bottomNavigation?.setOnItemSelectedListener(listener)
         binding.navigationView?.setNavigationItemSelectedListener {
-            onDrawerItemClick(it)
+            onMobileDrawerItemClick(it)
         }
         binding.navigationRail?.setOnItemSelectedListener(listener)
 
@@ -688,15 +712,36 @@ class MainActivity : ThemeableActivity() {
         if (myFragment == null || !myFragment.isVisible) {
             Timer("SettingUp", false).schedule(if (isOnTablet) 0 else 300) {
                 supportFragmentManager.commit {
-                    setCustomAnimations(
-                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
-                    )
+//                    setCustomAnimations(
+//                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
+//                    )
                     replace(R.id.content_frame, fragment, menuItem.itemId.toString())
                 }
             }
         }
 
+        return true
+    }
 
+    private fun onMobileDrawerItemClick(menuItem: MenuItem): Boolean {
+        expandToolbar()
+        (binding.drawer as? DrawerLayout)?.close()
+
+        val activityClass = when (menuItem.itemId) {
+            R.id.navigation_settings -> SettingsActivity::class.java
+            R.id.navigation_changelog -> AboutActivity::class.java
+            else -> SettingsActivity::class.java
+        }
+
+        val intent = Intent(this, activityClass)
+
+        if (OSUtils.isObySamsung()) {
+            startActivity(intent)
+            slideInRight()
+        } else {
+            val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+            startActivity(intent, bundle)
+        }
 
         return true
     }
@@ -945,9 +990,6 @@ class MainActivity : ThemeableActivity() {
         return binding.materialTabs
     }
 
-    val activityDrawer: DrawerLayout?
-        get() = binding.drawer as? DrawerLayout
-
     val activityBottomBar: BottomAppBar
         get() = binding.bottomBar
 
@@ -963,7 +1005,7 @@ class MainActivity : ThemeableActivity() {
     }
 
     // [START signIn]
-    fun signIn() {
+    private fun signIn() {
         val signInIntent = mSignInClient?.signInIntent
         startSignInForResult.launch(signInIntent)
     }
@@ -1068,7 +1110,6 @@ class MainActivity : ThemeableActivity() {
     }
 
     private fun updateUI(signedIn: Boolean) {
-        mViewModel.signedIn.value = signedIn
         PreferenceManager.getDefaultSharedPreferences(this)
             .edit { putBoolean(Utility.SIGNED_IN, signedIn) }
         if (signedIn)
@@ -1098,21 +1139,10 @@ class MainActivity : ThemeableActivity() {
 
     fun updateProfileImage() {
 
-        val listener = View.OnClickListener {
-            ProfileDialogFragment.show(
-                ProfileDialogFragment.Builder(
-                    PROFILE_DIALOG
-                ).apply {
-                    profileName = profileNameStr
-                    profileEmail = profileEmailStr
-                    profileImageSrc = profilePhotoUrl
-                },
-                supportFragmentManager
-            )
-        }
-
         val profileImage =
             profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
+        val signInButton =
+            profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
 
         if (profilePhotoUrl.isEmpty()) {
             profileImage?.setImageResource(R.drawable.account_circle_56px)
@@ -1134,15 +1164,29 @@ class MainActivity : ThemeableActivity() {
         }
 
         profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
-            ?.setOnClickListener(
-                if (PreferenceManager.getDefaultSharedPreferences(this)
-                        .getBoolean(Utility.SIGNED_IN, false)
-                ) listener else null
-            )
+            ?.setOnClickListener {
+                ProfileDialogFragment.show(
+                    ProfileDialogFragment.Builder(
+                        PROFILE_DIALOG
+                    ).apply {
+                        profileName = profileNameStr
+                        profileEmail = profileEmailStr
+                        profileImageSrc = profilePhotoUrl
+                    },
+                    supportFragmentManager
+                )
+            }
+
+        signInButton?.setOnClickListener {
+            PreferenceManager.getDefaultSharedPreferences(this)
+                .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
+            mViewModel.showSnackbar = true
+            signIn()
+        }
 
         profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
             .getBoolean(Utility.SIGNED_IN, false)
-        profileItem?.actionView?.findViewById<SignInButton>(R.id.sign_in_button)?.isGone =
+        signInButton?.isGone =
             PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Utility.SIGNED_IN, false)
 
@@ -1174,9 +1218,6 @@ class MainActivity : ThemeableActivity() {
         binding.navigationRail?.menu?.findItem(R.id.navigation_indexes)?.isChecked = true
 
         supportFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
-            )
             replace(R.id.content_frame, GeneralIndexFragment(), R.id.navigation_indexes.toString())
         }
 

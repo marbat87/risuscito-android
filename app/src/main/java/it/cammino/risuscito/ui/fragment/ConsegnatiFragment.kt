@@ -25,6 +25,7 @@ import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.sidesheet.SideSheetDialog
+import com.google.android.material.transition.MaterialSharedAxis
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.listeners.addClickListener
@@ -76,6 +77,12 @@ class ConsegnatiFragment : AccountMenuFragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -139,13 +146,15 @@ class ConsegnatiFragment : AccountMenuFragment() {
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
-                    mMainActivity?.openCanto(
-                        TAG,
-                        mView,
-                        item.id,
-                        item.source?.getText(requireContext()),
-                        false
-                    )
+                    mView?.let {
+                        mMainActivity?.openCanto(
+                            TAG,
+                            it,
+                            item.id,
+                            item.source?.getText(requireContext()),
+                            false
+                        )
+                    }
                     consume = true
                 }
                 consume

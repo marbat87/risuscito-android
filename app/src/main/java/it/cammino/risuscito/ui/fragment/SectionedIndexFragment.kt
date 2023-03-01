@@ -99,15 +99,17 @@ class SectionedIndexFragment : Fragment() {
                 if (item is SimpleSubItem) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                         mLastClickTime = SystemClock.elapsedRealtime()
-                        mActivity?.openCanto(
-                            TAG,
-                            mView,
-                            item.id,
-                            item.source?.getText(
-                                requireContext()
-                            ),
-                            false
-                        )
+                        mView?.let {
+                            mActivity?.openCanto(
+                                TAG,
+                                it,
+                                item.id,
+                                item.source?.getText(
+                                    requireContext()
+                                ),
+                                false
+                            )
+                        }
                         consume = true
                     }
                 }

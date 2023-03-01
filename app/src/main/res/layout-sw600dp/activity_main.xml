@@ -9,9 +9,9 @@
         android:id="@+id/navigation_rail"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:headerLayout="@layout/header_navigation_drawer"
+        app:headerLayout="@layout/header_navigation_rail"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_menu" />
+        app:menu="@menu/navigation_rail_menu" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
@@ -28,7 +28,7 @@
             android:elevation="11dp"
             android:indeterminate="true"
             android:visibility="invisible"
-            app:layout_behavior="@string/searchbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/content_frame"

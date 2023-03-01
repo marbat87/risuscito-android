@@ -72,6 +72,10 @@
             android:name="it.cammino.risuscito.ui.activity.SettingsActivity"
             android:label="" />
 
+        <activity
+            android:name="it.cammino.risuscito.ui.activity.AboutActivity"
+            android:label="" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="it.cammino.risuscito.fileprovider"

@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="?actionBarSize"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="?actionBarSize"
     android:clickable="true"
     android:clipToPadding="false"
     android:focusable="true"
-    android:paddingStart="@dimen/activity_min_margin"
-    android:paddingEnd="@dimen/myListPreferredItemMargin"
-    android:soundEffectsEnabled="true">
+    android:paddingEnd="@dimen/activity_min_margin"
+    android:soundEffectsEnabled="true"
+    tools:ignore="RtlSymmetry">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:src="@drawable/account_circle_56px"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/m3_btn_icon_only_default_padding"
+        android:layout_marginEnd="@dimen/m3_btn_icon_only_default_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
 
-    <com.google.android.gms.common.SignInButton
+    <Button
         android:id="@+id/sign_in_button"
+        style="@style/Widget.Material3.Button.IconButton.ColoredIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/activity_min_top_margin"
-        android:visibility="gone"
-        app:buttonSize="icon_only"
+        app:icon="@drawable/google_icon_56dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

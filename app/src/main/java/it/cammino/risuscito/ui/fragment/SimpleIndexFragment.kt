@@ -83,13 +83,15 @@ class SimpleIndexFragment : Fragment() {
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     // lancia l'activity che visualizza il canto passando il parametro creato
-                    mActivity?.openCanto(
-                        TAG,
-                        mView,
-                        item.id,
-                        item.source?.getText(requireContext()),
-                        false
-                    )
+                    mView?.let {
+                        mActivity?.openCanto(
+                            TAG,
+                            it,
+                            item.id,
+                            item.source?.getText(requireContext()),
+                            false
+                        )
+                    }
                     consume = true
                 }
                 consume

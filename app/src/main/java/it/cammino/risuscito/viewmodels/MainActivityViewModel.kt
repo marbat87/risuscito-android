@@ -9,7 +9,6 @@ import it.cammino.risuscito.R
 class MainActivityViewModel : ViewModel() {
 
     var showSnackbar = true
-    var signedIn = MutableLiveData<Boolean>()
     var backupRestoreState = MutableLiveData(BakupRestoreState.NONE)
 
     var isTabletWithFixedDrawer: Boolean = false
