@@ -78,20 +78,17 @@ class SimpleIndexFragment : Fragment() {
         subscribeUiChanges()
 
         mAdapter.onClickListener =
-            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     // lancia l'activity che visualizza il canto passando il parametro creato
-                    mView?.let {
-                        mActivity?.openCanto(
-                            TAG,
-                            it,
-                            item.id,
-                            item.source?.getText(requireContext()),
-                            false
-                        )
-                    }
+                    mActivity?.openCanto(
+                        TAG,
+                        item.id,
+                        item.source?.getText(requireContext()),
+                        false
+                    )
                     consume = true
                 }
                 consume

@@ -100,19 +100,13 @@ private fun Activity.setLighStatusBarFlagM(light: Boolean) {
     if (light) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 }
 
-fun Activity.startActivityWithTransition(
-    intent: Intent, startView: View
-) {
+fun Activity.startActivityWithTransition(intent: Intent) {
 
     if (OSUtils.isObySamsung()) {
         startActivity(intent)
         slideInRight()
     } else {
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-            this,
-            startView,
-            "shared_element_container" // The transition name to be matched in Activity B.
-        )
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
         startActivity(intent, options.toBundle())
     }
 
@@ -285,7 +279,6 @@ fun Activity.slideOutRight() {
 
 fun ThemeableActivity.openCanto(
     function: String?,
-    view: View,
     idCanto: Int,
     numPagina: String?,
     forceOpenActivity: Boolean = false
@@ -302,7 +295,7 @@ fun ThemeableActivity.openCanto(
     if (forceOpenActivity || isOnPhone) {
         val intent = Intent(this, CantoHostActivity::class.java)
         intent.putExtras(args)
-        startActivityWithTransition(intent, view)
+        startActivityWithTransition(intent)
     } else {
         stopMedia()
         val fragment: Fragment = CantoFragment()

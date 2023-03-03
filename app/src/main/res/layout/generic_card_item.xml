@@ -9,8 +9,7 @@
     android:paddingStart="@dimen/noMarginlistLeadingItemPaddingStart"
     android:paddingTop="@dimen/listItemPaddingTopBottom"
     android:paddingEnd="@dimen/listTrailingItemPaddingEnd"
-    android:paddingBottom="@dimen/listItemPaddingTopBottom"
-    android:transitionName="shared_element_container">
+    android:paddingBottom="@dimen/listItemPaddingTopBottom">
 
     <TextView
         android:id="@+id/text_id_canto_card"

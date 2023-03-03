@@ -289,12 +289,9 @@ class CustomListsFragment : AccountMenuFragment() {
                                         )
                                         act.slideInRight()
                                     } else {
-                                        act.getFab().transitionName = "shared_element_crealista"
                                         val options =
                                             ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                                act,
-                                                act.getFab(),
-                                                "shared_element_crealista" // The transition name to be matched in Activity B.
+                                                act
                                             )
                                         startListEditForResult.launch(
                                             Intent(
@@ -426,11 +423,8 @@ class CustomListsFragment : AccountMenuFragment() {
                             )
                             act.slideInRight()
                         } else {
-                            act.getFab().transitionName = "shared_element_crealista"
                             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                act,
-                                act.getFab(),
-                                "shared_element_crealista" // The transition name to be matched in Activity B.
+                                act
                             )
                             startListEditForResult.launch(
                                 Intent(

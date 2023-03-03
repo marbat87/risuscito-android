@@ -21,18 +21,20 @@ class ChangelogActivity : ThemeableActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-            duration = 700L
-        }
-        val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-            duration = 700L
-        }
-        window.enterTransition = enter
-        window.returnTransition = exit
+        if (!OSUtils.isObySamsung()) {
+            val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
+                duration = 700L
+            }
+            val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+                duration = 700L
+            }
+            window.enterTransition = enter
+            window.returnTransition = exit
 
-        // Allow Activity A’s exit transition to play at the same time as this Activity’s
-        // enter transition instead of playing them sequentially.
-        window.allowEnterTransitionOverlap = true
+            // Allow Activity A’s exit transition to play at the same time as this Activity’s
+            // enter transition instead of playing them sequentially.
+            window.allowEnterTransitionOverlap = true
+        }
 
         super.onCreate(savedInstanceState)
         binding = ChangelogLayoutBinding.inflate(layoutInflater)

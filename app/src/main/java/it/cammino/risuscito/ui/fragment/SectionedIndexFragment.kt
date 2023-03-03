@@ -94,22 +94,19 @@ class SectionedIndexFragment : Fragment() {
         itemExpandableExtension.isOnlyOneExpandedItem = true
 
         mAdapter.onClickListener =
-            { mView: View?, _: GenericAdapter, item: GenericItem, _: Int ->
+            { _: View?, _: GenericAdapter, item: GenericItem, _: Int ->
                 var consume = false
                 if (item is SimpleSubItem) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                         mLastClickTime = SystemClock.elapsedRealtime()
-                        mView?.let {
-                            mActivity?.openCanto(
-                                TAG,
-                                it,
-                                item.id,
-                                item.source?.getText(
-                                    requireContext()
-                                ),
-                                false
-                            )
-                        }
+                        mActivity?.openCanto(
+                            TAG,
+                            item.id,
+                            item.source?.getText(
+                                requireContext()
+                            ),
+                            false
+                        )
                         consume = true
                     }
                 }

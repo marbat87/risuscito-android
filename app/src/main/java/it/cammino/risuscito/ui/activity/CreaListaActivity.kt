@@ -28,8 +28,7 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.BindingViewHolder
 import com.mikepenz.fastadapter.binding.listeners.addLongClickListener
@@ -84,22 +83,18 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!OSUtils.isObySamsung()) {
-            // Set the transition name, which matches Activity A’s start view transition name, on
-            // the root view.
-            findViewById<View>(android.R.id.content).transitionName = "shared_element_crealista"
-
-            // Attach a callback used to receive the shared elements from Activity A to be
-            // used by the container transform transition.
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-
-            // Set this Activity’s enter and return transition to a MaterialContainerTransform
-            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-                addTarget(android.R.id.content)
+            val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
                 duration = 700L
             }
+            val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+                duration = 700L
+            }
+            window.enterTransition = enter
+            window.returnTransition = exit
 
-            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-            window.sharedElementsUseOverlay = false
+            // Allow Activity A’s exit transition to play at the same time as this Activity’s
+            // enter transition instead of playing them sequentially.
+            window.allowEnterTransitionOverlap = true
         }
 
         super.onCreate(savedInstanceState)

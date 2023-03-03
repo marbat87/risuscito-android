@@ -19,8 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
@@ -66,22 +65,20 @@ class InsertActivity : ThemeableActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!OSUtils.isObySamsung()) {
-            // Set the transition name, which matches Activity A’s start view transition name, on
-            // the root view.
-            findViewById<View>(android.R.id.content).transitionName = "shared_insert_container"
-
-            // Attach a callback used to receive the shared elements from Activity A to be
-            // used by the container transform transition.
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-
-            // Set this Activity’s enter and return transition to a MaterialContainerTransform
-            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-                addTarget(android.R.id.content)
+            val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
                 duration = 700L
             }
+            val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+                duration = 700L
+            }
+            window.enterTransition = enter
+            window.exitTransition = enter
+            window.returnTransition = exit
+            window.reenterTransition = exit
 
-            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-            window.sharedElementsUseOverlay = false
+            // Allow Activity A’s exit transition to play at the same time as this Activity’s
+            // enter transition instead of playing them sequentially.
+            window.allowEnterTransitionOverlap = true
         }
 
         super.onCreate(savedInstanceState)
@@ -140,10 +137,10 @@ class InsertActivity : ThemeableActivity() {
                 consume
             }
 
-        cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { mView, _, _, item ->
+        cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { _, _, _, item ->
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                openCanto(TAG, mView, item.id, item.source?.getText(this@InsertActivity), true)
+                openCanto(TAG, item.id, item.source?.getText(this@InsertActivity), true)
             }
         }
 

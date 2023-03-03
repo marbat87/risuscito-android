@@ -118,19 +118,16 @@ class HistoryFragment : AccountMenuFragment() {
             }
 
         cantoAdapter.onClickListener =
-            { mView: View?, _: IAdapter<SimpleHistoryItem>, item: SimpleHistoryItem, _: Int ->
+            { _: View?, _: IAdapter<SimpleHistoryItem>, item: SimpleHistoryItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
-                    mView?.let {
-                        mMainActivity?.openCanto(
-                            TAG,
-                            it,
-                            item.id,
-                            item.source?.getText(requireContext()),
-                            false
-                        )
-                    }
+                    mMainActivity?.openCanto(
+                        TAG,
+                        item.id,
+                        item.source?.getText(requireContext()),
+                        false
+                    )
                     consume = true
                 }
                 consume

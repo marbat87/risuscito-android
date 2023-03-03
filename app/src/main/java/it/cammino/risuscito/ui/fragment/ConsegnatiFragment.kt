@@ -142,19 +142,16 @@ class ConsegnatiFragment : AccountMenuFragment() {
         subscribeUiConsegnati()
 
         cantoAdapter.onClickListener =
-            { mView: View?, _: IAdapter<NotableItem>, item: NotableItem, _: Int ->
+            { _: View?, _: IAdapter<NotableItem>, item: NotableItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
-                    mView?.let {
-                        mMainActivity?.openCanto(
-                            TAG,
-                            it,
-                            item.id,
-                            item.source?.getText(requireContext()),
-                            false
-                        )
-                    }
+                    mMainActivity?.openCanto(
+                        TAG,
+                        item.id,
+                        item.source?.getText(requireContext()),
+                        false
+                    )
                     consume = true
                 }
                 consume

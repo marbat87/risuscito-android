@@ -625,11 +625,7 @@ class ListaPredefinitaFragment : Fragment() {
                                 startListInsertForResult.launch(intent)
                                 it.slideInRight()
                             } else {
-                                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                    it,
-                                    v,
-                                    "shared_insert_container" // The transition name to be matched in Activity B.
-                                )
+                                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(it)
                                 startListInsertForResult.launch(intent, options)
                             }
                         }
@@ -651,7 +647,6 @@ class ListaPredefinitaFragment : Fragment() {
                         //apri canto
                         mMainActivity?.openCanto(
                             TAG,
-                            v,
                             Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString()),
                             v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
                             false

@@ -52,7 +52,6 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
@@ -148,40 +147,18 @@ class MainActivity : ThemeableActivity() {
         installSplashScreen()
         DynamicColors.applyToActivityIfAvailable(this, dynamicColorOptions)
         if (!OSUtils.isObySamsung()) {
-            // Attach a callback used to capture the shared elements from this Activity to be used
-            // by the container transform transition
-            setExitSharedElementCallback(object :
-                MaterialContainerTransformSharedElementCallback() {
-                override fun onSharedElementEnd(
-                    sharedElementNames: MutableList<String>,
-                    sharedElements: MutableList<View>,
-                    sharedElementSnapshots: MutableList<View>
-                ) {
-                    super.onSharedElementEnd(
-                        sharedElementNames,
-                        sharedElements,
-                        sharedElementSnapshots
-                    )
-                    Log.d(TAG, "onTransitionEnd")
-                    if (!isOnTablet) updateStatusBarLightMode(true)
-                }
-            })
+            val exit = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
+                addTarget(R.id.content_frame)
+                duration = 700L
+            }
 
-            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-            window.sharedElementsUseOverlay = false
+            val enter = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+                addTarget(R.id.content_frame)
+                duration = 700L
+            }
+            window.exitTransition = exit
+            window.reenterTransition = enter
         }
-
-        val exit = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-            addTarget(R.id.content_frame)
-            duration = 700L
-        }
-
-        val enter = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-            addTarget(R.id.content_frame)
-            duration = 700L
-        }
-        window.exitTransition = exit
-        window.reenterTransition = enter
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -285,19 +262,16 @@ class MainActivity : ThemeableActivity() {
         auth = FirebaseAuth.getInstance()
 
         cantoAdapter.onClickListener =
-            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
-                    mView?.let {
-                        openCanto(
-                            TAG,
-                            it,
-                            item.id,
-                            item.source?.getText(this),
-                            false
-                        )
-                    }
+                    openCanto(
+                        TAG,
+                        item.id,
+                        item.source?.getText(this),
+                        false
+                    )
                     consume = true
                 }
                 consume
