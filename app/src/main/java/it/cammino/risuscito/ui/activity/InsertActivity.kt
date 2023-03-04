@@ -19,8 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
@@ -66,22 +65,20 @@ class InsertActivity : ThemeableActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!OSUtils.isObySamsung()) {
-            // Set the transition name, which matches Activity A’s start view transition name, on
-            // the root view.
-            findViewById<View>(android.R.id.content).transitionName = "shared_insert_container"
-
-            // Attach a callback used to receive the shared elements from Activity A to be
-            // used by the container transform transition.
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-
-            // Set this Activity’s enter and return transition to a MaterialContainerTransform
-            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-                addTarget(android.R.id.content)
+            val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
                 duration = 700L
             }
+            val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+                duration = 700L
+            }
+            window.enterTransition = enter
+            window.exitTransition = enter
+            window.returnTransition = exit
+            window.reenterTransition = exit
 
-            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-            window.sharedElementsUseOverlay = false
+            // Allow Activity A’s exit transition to play at the same time as this Activity’s
+            // enter transition instead of playing them sequentially.
+            window.allowEnterTransitionOverlap = true
         }
 
         super.onCreate(savedInstanceState)
@@ -115,7 +112,7 @@ class InsertActivity : ThemeableActivity() {
             Firebase.crashlytics.recordException(e)
         }
 
-        binding.searchLayout.textBoxRicerca.hint =
+        binding.textBoxRicerca.hint =
             if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
                 R.string.fast_search_subtitle
             )
@@ -140,63 +137,63 @@ class InsertActivity : ThemeableActivity() {
                 consume
             }
 
-        cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { mView, _, _, item ->
+        cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { _, _, _, item ->
             if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                 mLastClickTime = SystemClock.elapsedRealtime()
-                openCanto(mView, item.id, item.source?.getText(this@InsertActivity), true)
+                openCanto(TAG, item.id, item.source?.getText(this@InsertActivity), true)
             }
         }
 
         cantoAdapter.setHasStableIds(true)
 
-        binding.searchLayout.matchedList.adapter = cantoAdapter
+        binding.matchedList.adapter = cantoAdapter
         val glm = GridLayoutManager(this, 2)
         val llm = LinearLayoutManager(this)
-        binding.searchLayout.matchedList.layoutManager = if (isGridLayout) glm else llm
+        binding.matchedList.layoutManager = if (isGridLayout) glm else llm
 
-        binding.searchLayout.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
+        binding.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
             var returnValue = false
             if (keyCode == EditorInfo.IME_ACTION_DONE) {
                 // to hide soft keyboard
                 ContextCompat.getSystemService(this, InputMethodManager::class.java)
-                    ?.hideSoftInputFromWindow(binding.searchLayout.textFieldRicerca.windowToken, 0)
+                    ?.hideSoftInputFromWindow(binding.textFieldRicerca.windowToken, 0)
                 returnValue = true
             }
             returnValue
         }
 
-        binding.searchLayout.textFieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+        binding.textFieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
             job.cancel()
             ricercaStringa(s.toString())
         }
 
-        mPopupMenu = PopupMenu(this, binding.searchLayout.moreOptions, Gravity.END)
+        mPopupMenu = PopupMenu(this, binding.moreOptions, Gravity.END)
         mPopupMenu.inflate(R.menu.search_option_menu)
         mPopupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.advanced_search -> {
                     it.isChecked = !it.isChecked
                     simpleIndexViewModel.advancedSearch = it.isChecked
-                    binding.searchLayout.textBoxRicerca.hint =
+                    binding.textBoxRicerca.hint =
                         if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
                             R.string.fast_search_subtitle
                         )
                     job.cancel()
-                    ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
+                    ricercaStringa(binding.textFieldRicerca.text.toString())
                     true
                 }
                 R.id.consegnaty_only -> {
                     it.isChecked = !it.isChecked
                     simpleIndexViewModel.consegnatiOnly = it.isChecked
                     job.cancel()
-                    ricercaStringa(binding.searchLayout.textFieldRicerca.text.toString())
+                    ricercaStringa(binding.textFieldRicerca.text.toString())
                     true
                 }
                 else -> false
             }
         }
 
-        binding.searchLayout.moreOptions.setOnClickListener {
+        binding.moreOptions.setOnClickListener {
             mPopupMenu.menu.findItem(R.id.advanced_search).isChecked =
                 simpleIndexViewModel.advancedSearch
             mPopupMenu.menu.findItem(R.id.consegnaty_only).isChecked =
@@ -232,8 +229,8 @@ class InsertActivity : ThemeableActivity() {
         job = lifecycleScope.launch {
             // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
             if (s.trim { it <= ' ' }.length >= 3) {
-                binding.searchLayout.searchNoResults.isVisible = false
-                binding.searchLayout.searchProgress.isVisible = true
+                binding.searchNoResults.isVisible = false
+                binding.searchProgress.isVisible = true
                 val titoliResult = ArrayList<InsertItem>()
 
                 Log.d(TAG, "performInsertSearch STRINGA: $s")
@@ -299,17 +296,17 @@ class InsertActivity : ThemeableActivity() {
                                 Collator.getInstance(resources.systemLocale)
                             ) { it.title?.getText(this@InsertActivity) })
                     )
-                    binding.searchLayout.searchProgress.isVisible = false
-                    binding.searchLayout.searchNoResults.isVisible =
+                    binding.searchProgress.isVisible = false
+                    binding.searchNoResults.isVisible =
                         cantoAdapter.adapterItemCount == 0
-                    binding.searchLayout.matchedList.isGone = cantoAdapter.adapterItemCount == 0
+                    binding.matchedList.isGone = cantoAdapter.adapterItemCount == 0
                 }
             } else {
                 if (s.isEmpty()) {
-                    binding.searchLayout.searchNoResults.isVisible = false
-                    binding.searchLayout.matchedList.isVisible = false
+                    binding.searchNoResults.isVisible = false
+                    binding.matchedList.isVisible = false
                     cantoAdapter.clear()
-                    binding.searchLayout.searchProgress.isVisible = false
+                    binding.searchProgress.isVisible = false
                     binding.appBarLayout.setExpanded(true, true)
                 }
             }

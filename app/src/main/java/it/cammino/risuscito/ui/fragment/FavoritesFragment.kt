@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
@@ -53,6 +54,12 @@ class FavoritesFragment : AccountMenuFragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,13 +115,13 @@ class FavoritesFragment : AccountMenuFragment() {
             }
 
         cantoAdapter.onClickListener =
-            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     // lancia l'activity che visualizza il canto passando il parametro creato
                     mMainActivity?.openCanto(
-                        mView,
+                        TAG,
                         item.id,
                         item.source?.getText(requireContext()),
                         false

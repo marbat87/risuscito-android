@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
@@ -18,9 +19,11 @@ import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
 import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
+import com.google.android.material.transition.MaterialSharedAxis
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.activity.ChangelogActivity
 import it.cammino.risuscito.ui.activity.MainActivity
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.extension.shareThisApp
 import it.cammino.risuscito.utils.extension.slideInRight
 
@@ -28,6 +31,12 @@ import it.cammino.risuscito.utils.extension.slideInRight
 class AboutFragment : MaterialAboutFragment() {
 
     private var mMainActivity: MainActivity? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -37,7 +46,6 @@ class AboutFragment : MaterialAboutFragment() {
     override fun onDestroy() {
         super.onDestroy()
         mMainActivity?.actionMode?.finish()
-        mMainActivity?.activitySearchView?.closeSearch()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -125,8 +133,21 @@ class AboutFragment : MaterialAboutFragment() {
                     MaterialAboutActionItem.Builder().text(R.string.changelog)
                         .icon(R.drawable.list_alt_24px)
                         .setOnClickAction {
-                            startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
-                            mMainActivity?.slideInRight()
+                            activity?.let {
+                                val intent = Intent(it, ChangelogActivity::class.java)
+                                if (OSUtils.isObySamsung()) {
+                                    startActivity(intent)
+                                    it.slideInRight()
+                                } else {
+                                    val bundle =
+                                        ActivityOptionsCompat.makeSceneTransitionAnimation(it)
+                                            .toBundle()
+                                    startActivity(
+                                        intent,
+                                        bundle
+                                    )
+                                }
+                            }
                         }.build()
                 )
                 .addItem(

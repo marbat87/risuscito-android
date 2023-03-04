@@ -15,7 +15,7 @@
     <string name="search_hint">Введіть щонайменш 3 знаки&#8230;</string>
     <string name="search_no_results">Немає ніякого співпадіння з введеними знаками.</string>
     <string name="title_activity_settings">Налаштування</string>
-    <string name="title_activity_general_index">Зміст пісень</string>
+    <string name="title_activity_general_index">Індекси</string>
     <string name="default_index_title">Головний зміст</string>
     <string name="default_index_summary">Вказує на те, який зміст має відкриватись при виборі сторінки змістів:</string>
     <string name="title_activity_canti_parola">Літургія слова</string>
@@ -31,7 +31,7 @@
     <string name="canto_pace">На знак миру</string>
     <string name="canto_pane">На ламання хліба</string>
     <string name="canto_vino">На вино</string>
-    <string name="title_activity_custom_lists">Особисті списки</string>
+    <string name="title_activity_custom_lists">Списки</string>
     <string name="copertina">обкладинка</string>
     <string name="title_activity_inserisci_titolo">Пошук за ключевим словом</string>
     <string name="title_activity_about">Про</string>
@@ -163,7 +163,7 @@
     <string name="translation_running">Переклад&#8230;</string>
     <string name="no_favourites_short">Ви не додали жодної закладки.</string>
     <string name="no_consegnati">Ві не додали жодної пісні як \"вручену\".</string>
-    <string name="title_activity_consegnati">Вручені пісні</string>
+    <string name="title_activity_consegnati">Вручені</string>
     <string name="showcase_consegnati_howto">Натисніть цю кнопку, щоб відкрити список та позначити пісні.</string>
     <string name="showcase_consegnati_confirm">Коли закінчите, натисніть ПІДТВЕРДИТИ, щоб зберегти зміни&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;або натисніть СКАСУВАТИ, щоб скасувати.</string>

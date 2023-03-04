@@ -6,4 +6,5 @@
     <bool name="is_grid_layout">false</bool>
     <bool name="landscape">false</bool>
     <bool name="fab_orientation_left">false</bool>
+    <bool name="useDrawerArrowDrawable">true</bool>
 </resources>

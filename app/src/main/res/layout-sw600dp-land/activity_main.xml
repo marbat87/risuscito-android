@@ -6,13 +6,14 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_view"
-        android:layout_width="80dp"
+    <com.google.android.material.navigationrail.NavigationRailView
+        android:id="@+id/navigation_rail"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
+        app:headerLayout="@layout/header_navigation_rail"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/navigation_drawer" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/navigation_rail_menu" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/half_guideline"
@@ -21,55 +22,22 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.45"
-        app:layout_constraintStart_toEndOf="@id/navigation_view"
+        app:layout_constraintGuide_percent="0.4"
+        app:layout_constraintStart_toEndOf="@id/navigation_rail"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
-        style="?attr/materialCardViewFilledStyle"
+        style="?attr/materialCardViewElevatedStyle"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/activity_min_top_margin"
         app:layout_constraintEnd_toStartOf="@id/half_guideline"
-        app:layout_constraintStart_toEndOf="@id/navigation_view">
+        app:layout_constraintStart_toEndOf="@id/navigation_rail">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/app_bar_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:statusBarForeground="@android:color/transparent">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_scrollFlags="scroll|enterAlways">
-
-                    <com.google.android.material.appbar.MaterialToolbar
-                        android:id="@+id/risuscito_toolbar"
-                        style="@style/Widget.Material3.Toolbar.Surface"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize" />
-
-                    <com.ferfalk.simplesearchview.SimpleSearchView
-                        android:id="@+id/simple_search_view"
-                        style="@style/SimpleSearchViewStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone" />
-
-                </FrameLayout>
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/material_tabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-            </com.google.android.material.appbar.AppBarLayout>
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/loading_bar"
@@ -112,6 +80,30 @@
                 android:layout_gravity="bottom|end"
                 app:sdExpansionMode="top"
                 app:sdOverlayLayout="@id/overlay" />
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:statusBarForeground="@android:color/transparent">
+
+                <com.google.android.material.search.SearchBar
+                    android:id="@+id/risuscito_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/search_name_text" />
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/material_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <include
+                android:id="@+id/search_view_layout"
+                layout="@layout/search_view_layout" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

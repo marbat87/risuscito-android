@@ -2,8 +2,15 @@
 <changelog>
 
     <release
-        versionCode="5118"
-        date="Febbraio 2023"
+        versionCode="5120"
+        date="Settembre 2023"
+        versionName="5.1.1">
+        <new>Nuova interfaccia</new>
+    </release>
+
+    <release
+        versionCode="5119"
+        date="Marzo 2023"
         versionName="5.1.0">
         <new>Aggiunte le icone ai popup</new>
         <bugfix>Sistemato il colore di sfondo in alcune schermate</bugfix>

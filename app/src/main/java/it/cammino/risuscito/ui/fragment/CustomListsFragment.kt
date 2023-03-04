@@ -30,6 +30,7 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.transition.MaterialSharedAxis
 import com.leinardi.android.speeddial.SpeedDialView
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -86,6 +87,12 @@ class CustomListsFragment : AccountMenuFragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -282,12 +289,9 @@ class CustomListsFragment : AccountMenuFragment() {
                                         )
                                         act.slideInRight()
                                     } else {
-                                        act.getFab().transitionName = "shared_element_crealista"
                                         val options =
                                             ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                                act,
-                                                act.getFab(),
-                                                "shared_element_crealista" // The transition name to be matched in Activity B.
+                                                act
                                             )
                                         startListEditForResult.launch(
                                             Intent(
@@ -419,11 +423,8 @@ class CustomListsFragment : AccountMenuFragment() {
                             )
                             act.slideInRight()
                         } else {
-                            act.getFab().transitionName = "shared_element_crealista"
                             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                act,
-                                act.getFab(),
-                                "shared_element_crealista" // The transition name to be matched in Activity B.
+                                act
                             )
                             startListEditForResult.launch(
                                 Intent(
