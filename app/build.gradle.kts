@@ -16,8 +16,8 @@ android {
         minSdk = 21
         targetSdk = 33
         multiDexEnabled = true
-        versionCode = 5119
-        versionName = "5.1.0"
+        versionCode = 5120
+        versionName = "5.1.1"
         kapt {
             arguments {
                 arg("room.incremental", "true")

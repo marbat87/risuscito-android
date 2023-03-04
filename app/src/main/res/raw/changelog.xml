@@ -2,6 +2,13 @@
 <changelog>
 
     <release
+        versionCode="5120"
+        date="September 2023"
+        versionName="5.1.1">
+        <new>New UI</new>
+    </release>
+
+    <release
         versionCode="5119"
         date="March 2023"
         versionName="5.1.0">

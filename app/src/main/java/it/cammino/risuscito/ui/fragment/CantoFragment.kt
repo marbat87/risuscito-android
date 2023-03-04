@@ -185,7 +185,7 @@ open class CantoFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState == null) {
+        if (mCantiViewModel.idCanto == 0) {
             arguments?.let {
                 // Load the placeholder content specified by the fragment
                 // arguments. In a real-world scenario, use a Loader
