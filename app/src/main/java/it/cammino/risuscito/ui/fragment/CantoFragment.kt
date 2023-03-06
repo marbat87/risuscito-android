@@ -179,6 +179,7 @@ open class CantoFragment : Fragment() {
         Log.d(TAG, "onDestroyView()")
         stopSeekbarUpdate()
         mExecutorService.shutdown()
+        mHandler.removeCallbacks(mScrollDown)
         _binding = null
     }
 
