@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:risuscito="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/filter_list_24px"
-        android:orderInCategory="98"
-        android:title="@string/title_filter"
-        risuscito:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
+    xmlns:risuscito="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_help"

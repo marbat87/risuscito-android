@@ -69,6 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
+            app:liftOnScrollTargetViewId="@id/content_frame"
             app:statusBarForeground="?colorSurface">
 
             <com.google.android.material.search.SearchBar

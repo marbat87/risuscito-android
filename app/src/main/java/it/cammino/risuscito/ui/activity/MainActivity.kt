@@ -93,8 +93,6 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 import java.text.Collator
-import java.util.*
-import kotlin.concurrent.schedule
 
 
 class MainActivity : ThemeableActivity() {
@@ -387,6 +385,8 @@ class MainActivity : ThemeableActivity() {
                 binding.searchViewLayout.searchNoResults.isVisible = false
                 binding.searchViewLayout.searchProgress.isVisible = true
                 val titoliResult = ArrayList<SimpleItem>()
+
+                Firebase.crashlytics.log("function: search_text - search_string: $s - advanced: ${cantiViewModel.advancedSearch}")
 
                 Log.d(TAG, "performSearch STRINGA: $s")
                 Log.d(TAG, "performSearch ADVANCED: ${cantiViewModel.advancedSearch}")
@@ -684,13 +684,8 @@ class MainActivity : ThemeableActivity() {
         val myFragment = supportFragmentManager
             .findFragmentByTag(menuItem.itemId.toString())
         if (myFragment == null || !myFragment.isVisible) {
-            Timer("SettingUp", false).schedule(if (isOnTablet) 0 else 300) {
-                supportFragmentManager.commit {
-//                    setCustomAnimations(
-//                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
-//                    )
-                    replace(R.id.content_frame, fragment, menuItem.itemId.toString())
-                }
+            supportFragmentManager.commit {
+                replace(R.id.content_frame, fragment, menuItem.itemId.toString())
             }
         }
 

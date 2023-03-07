@@ -278,8 +278,6 @@ class ConsegnatiFragment : AccountMenuFragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 if (consegnatiViewModel.editMode.value == true) {
                     menuInflater.inflate(R.menu.consegnati_menu_edit_mode, menu)
-//                    val item = menu.findItem(R.id.action_search)
-//                    mMainActivity?.activitySearchView?.setMenuItem(item)
                 } else {
                     menuInflater.inflate(
                         if (selectPassageExtension.selectedItems.isNotEmpty()) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu,
@@ -322,10 +320,8 @@ class ConsegnatiFragment : AccountMenuFragment() {
         backCallback = object : OnBackPressedCallback(consegnatiViewModel.editMode.value == true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "handleOnBackPressed")
-//                if (mMainActivity?.activitySearchView?.onBackPressed() == false) {
                 consegnatiViewModel.editMode.value = false
                 mMainActivity?.expandToolbar()
-//                }
             }
         }
         // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
@@ -348,8 +344,6 @@ class ConsegnatiFragment : AccountMenuFragment() {
 
     private fun enableBottombar(enabled: Boolean) {
         mMainActivity?.enableBottombar(enabled)
-//        if (!enabled)
-//            mMainActivity?.activitySearchView?.closeSearch()
         activity?.invalidateOptionsMenu()
     }
 

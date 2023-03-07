@@ -85,6 +85,7 @@
                 android:id="@+id/app_bar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:liftOnScrollTargetViewId="@id/content_frame"
                 app:statusBarForeground="@android:color/transparent">
 
                 <com.google.android.material.search.SearchBar
