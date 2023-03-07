@@ -17,6 +17,7 @@
 package it.cammino.risuscito.playback
 
 import android.annotation.SuppressLint
+import android.app.ForegroundServiceStartNotAllowedException
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -443,8 +444,7 @@ class MusicService : MediaBrowserServiceCompat() {
             mMusicProvider?.updateMusic(mCurrentMedia?.description?.mediaId, newMetadataCompat)
             mSession?.setMetadata(newMetadataCompat)
             val notification = postNotification()
-            startForeground(NOTIFICATION_ID, notification)
-            mAudioBecomingNoisyReceiver?.register()
+            startForegroundWrapper(notification)
         } else {
             if (state == PlaybackStateCompat.STATE_PAUSED) {
                 postNotification()
@@ -496,6 +496,28 @@ class MusicService : MediaBrowserServiceCompat() {
         val intentBroadcast = Intent(BROADCAST_RETRIEVE_ASYNC)
         intentBroadcast.putExtra(MSG_RETRIEVE_DONE, done)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+    }
+
+    private fun startForegroundWrapper(notification: Notification?) {
+        if (OSUtils.hasS())
+            startForegroundS(notification)
+        else
+            startForegroundLegacy(notification)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun startForegroundS(notification: Notification?) {
+        try {
+            startForeground(NOTIFICATION_ID, notification)
+            mAudioBecomingNoisyReceiver?.register()
+        } catch (e: ForegroundServiceStartNotAllowedException) {
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH)
+        }
+    }
+
+    private fun startForegroundLegacy(notification: Notification?) {
+        startForeground(NOTIFICATION_ID, notification)
+        mAudioBecomingNoisyReceiver?.register()
     }
 
     companion object {
