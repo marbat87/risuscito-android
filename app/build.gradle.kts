@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 33
         multiDexEnabled = true
-        versionCode = 5119
+        versionCode = 5121
         versionName = "5.1.0"
         kapt {
             arguments {
@@ -60,7 +60,7 @@ val roomVersion = "2.5.0"
 val latestAboutLibsRelease = "10.5.2"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.8.0")
@@ -89,7 +89,7 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
     implementation("com.mikepenz:fastadapter:$fastAdapterVersion")

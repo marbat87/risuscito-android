@@ -29,8 +29,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.elevation.SurfaceColors
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.ListaPersonalizzata
@@ -315,12 +313,7 @@ fun ThemeableActivity.openCanto(
     forceOpenActivity: Boolean = false
 ) {
 
-    Firebase.analytics.logEvent("open_canto") {
-        param("function_open", function.orEmpty())
-        param("id_canto_open", idCanto.toString())
-        param("num_pagina_open", numPagina.orEmpty())
-        param("onActivity", (forceOpenActivity || isOnPhone).toString())
-    }
+    Firebase.crashlytics.log("open_canto - function_open: ${function.orEmpty()} - id_canto_open: $idCanto - num_pagina_open: ${numPagina.orEmpty()} - onActivity ${forceOpenActivity || isOnPhone}")
 
     val args = bundleOf(
         CantoFragment.ARG_NUM_PAGINA to numPagina,

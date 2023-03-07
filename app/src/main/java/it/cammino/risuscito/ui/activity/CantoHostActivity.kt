@@ -2,6 +2,7 @@ package it.cammino.risuscito.ui.activity
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.fragment.app.commit
 import com.google.android.material.transition.platform.MaterialContainerTransform
@@ -10,9 +11,11 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.databinding.ActivityCantoBinding
 import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 
 class CantoHostActivity : ThemeableActivity() {
 
+    private val viewModel: PaginaRenderViewModel by viewModels()
     private lateinit var binding: ActivityCantoBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,12 +45,17 @@ class CantoHostActivity : ThemeableActivity() {
 
         if (savedInstanceState == null) {
             val fragment = CantoFragment()
+            if (viewModel.idCanto == 0) {
+                viewModel.idCanto = this.intent.extras?.getInt(CantoFragment.ARG_ID_CANTO) ?: 0
+                viewModel.pagina =
+                    this.intent.extras?.getString(CantoFragment.ARG_NUM_PAGINA).orEmpty()
+                viewModel.inActivity = true
+            }
+
             fragment.arguments = bundleOf(
-                CantoFragment.ARG_ID_CANTO to (this.intent.extras?.getInt(CantoFragment.ARG_ID_CANTO)
-                    ?: 0),
-                CantoFragment.ARG_NUM_PAGINA to this.intent.extras?.getString(CantoFragment.ARG_NUM_PAGINA)
-                    .orEmpty(),
-                CantoFragment.ARG_ON_ACTIVITY to true
+                CantoFragment.ARG_ID_CANTO to viewModel.idCanto,
+                CantoFragment.ARG_NUM_PAGINA to viewModel.pagina,
+                CantoFragment.ARG_ON_ACTIVITY to viewModel.inActivity
             )
             supportFragmentManager.commit {
                 replace(
