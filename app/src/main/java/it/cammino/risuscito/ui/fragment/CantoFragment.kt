@@ -702,35 +702,42 @@ open class CantoFragment : Fragment() {
                                 localUrl?.let { url ->
                                     stopMedia()
                                     if ((activity?.isDefaultLocationPublic == true) && OSUtils.hasQ()) {
-                                        mCantiViewModel.toDelete = ContentUris.withAppendedId(
-                                            MediaStore.Audio.Media
-                                                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                                        val retrievedId =
                                             getExternalMediaIdByName(requireContext(), url)
-                                        )
-                                        Log.d(TAG, "DELETE_MP3 toDelete: $mCantiViewModel.toDelete")
-                                        try {
-                                            deleteAudio(mCantiViewModel.toDelete!!)
-                                            mCantiViewModel.toDelete = null
-                                        } catch (securityException: SecurityException) {
-                                            if (OSUtils.hasQ()) {
-                                                val recoverableSecurityException =
-                                                    securityException as?
-                                                            RecoverableSecurityException
-                                                        ?: throw RuntimeException(
-                                                            securityException.message,
-                                                            securityException
-                                                        )
-                                                val intentSender =
-                                                    recoverableSecurityException.userAction.actionIntent.intentSender
-                                                resolveDeleteAudioConsent?.launch(
-                                                    IntentSenderRequest.Builder(intentSender)
-                                                        .build()
-                                                )
-                                            } else {
-                                                throw RuntimeException(
-                                                    securityException.message,
-                                                    securityException
-                                                )
+                                        if (retrievedId > 0) {
+                                            mCantiViewModel.toDelete = ContentUris.withAppendedId(
+                                                MediaStore.Audio.Media
+                                                    .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                                                retrievedId
+                                            )
+                                            Log.d(
+                                                TAG,
+                                                "DELETE_MP3 toDelete: ${mCantiViewModel.toDelete.toString()}"
+                                            )
+                                            try {
+                                                deleteAudio(mCantiViewModel.toDelete!!)
+                                                mCantiViewModel.toDelete = null
+                                            } catch (securityException: SecurityException) {
+                                                if (OSUtils.hasQ()) {
+                                                    val recoverableSecurityException =
+                                                        securityException as?
+                                                                RecoverableSecurityException
+                                                            ?: throw RuntimeException(
+                                                                securityException.message,
+                                                                securityException
+                                                            )
+                                                    val intentSender =
+                                                        recoverableSecurityException.userAction.actionIntent.intentSender
+                                                    resolveDeleteAudioConsent?.launch(
+                                                        IntentSenderRequest.Builder(intentSender)
+                                                            .build()
+                                                    )
+                                                } else {
+                                                    throw RuntimeException(
+                                                        securityException.message,
+                                                        securityException
+                                                    )
+                                                }
                                             }
                                         }
                                     } else {
