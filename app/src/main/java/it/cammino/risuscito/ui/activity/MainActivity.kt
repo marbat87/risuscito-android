@@ -21,13 +21,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.view.ActionMode
+import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -76,6 +78,7 @@ import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.ui.fragment.*
+import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.utils.*
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
@@ -137,8 +140,11 @@ class MainActivity : ThemeableActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    var actionMode: ActionMode? = null
+    //    var actionMode: ActionMode? = null
+//        private set
+    var isActionMode: Boolean = false
         private set
+    private var actionModeFragment: ActionModeFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
@@ -167,6 +173,17 @@ class MainActivity : ThemeableActivity() {
         val percentage = outValue.float
 
         binding.halfGuideline?.setGuidelinePercent(percentage)
+
+        binding.contextualToolbar.setNavigationOnClickListener { destroyActionMode() }
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            binding.contextualToolbarContainer
+        ) { insetsView: View, insets: WindowInsetsCompat ->
+            val systemInsetTop =
+                insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            insetsView.setPadding(0, systemInsetTop, 0, 0)
+            insets
+        }
 
         lifecycleScope.launch(Dispatchers.IO) {
             listePersonalizzate =
@@ -227,6 +244,7 @@ class MainActivity : ThemeableActivity() {
                 binding.fabPager.isOpen -> binding.fabPager.close()
                 !isOnTablet && (binding.drawer as? DrawerLayout)?.isOpen == true
                 -> (binding.drawer as? DrawerLayout)?.close()
+                isActionMode -> destroyActionMode()
                 else -> backToHome(true)
             }
         }
@@ -1262,9 +1280,6 @@ class MainActivity : ThemeableActivity() {
                 backupDatabase(acct?.id)
             }
 
-//            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-//            intentBroadcast.putExtra(WHICH, "BACKUP")
-//            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2
 
@@ -1272,7 +1287,6 @@ class MainActivity : ThemeableActivity() {
                 backupSharedPreferences(acct?.id, acct?.email)
             }
 
-//            dismissProgressDialog(BACKUP_RUNNING)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED
             SimpleDialogFragment.show(
@@ -1303,9 +1317,6 @@ class MainActivity : ThemeableActivity() {
                 restoreDatabase(acct?.id)
             }
 
-//            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-//            intentBroadcast.putExtra(WHICH, RESTORE)
-//            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2
 
@@ -1313,7 +1324,6 @@ class MainActivity : ThemeableActivity() {
                 restoreSharedPreferences(acct?.id)
             }
 
-//            dismissProgressDialog(RESTORE_RUNNING)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED
             SimpleDialogFragment.show(
@@ -1331,19 +1341,32 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
-    fun createActionMode(callback: ActionMode.Callback) {
-        actionMode?.finish()
-        actionMode = startSupportActionMode(callback)
+    fun createActionMode(
+        resId: Int,
+        fragment: ActionModeFragment,
+        clickListener: Toolbar.OnMenuItemClickListener
+    ) {
+        isActionMode = true
+        actionModeFragment = fragment
+        binding.contextualToolbar.menu.clear()
+        binding.contextualToolbar.inflateMenu(resId)
+        binding.contextualToolbar.setOnMenuItemClickListener(clickListener)
         setTransparentStatusBar(false)
+        binding.risuscitoToolbar.expand(binding.contextualToolbarContainer, binding.appBarLayout)
     }
 
-    fun destroyActionMode() {
-        actionMode = null
+    fun destroyActionMode(): Boolean {
+        isActionMode = false
         setTransparentStatusBar(true)
+        actionModeFragment?.destroyActionMode()
+        return binding.risuscitoToolbar.collapse(
+            binding.contextualToolbarContainer,
+            binding.appBarLayout
+        )
     }
 
     fun updateActionModeTitle(title: String) {
-        actionMode?.title = title
+        binding.contextualToolbar.title = title
     }
 
     companion object {

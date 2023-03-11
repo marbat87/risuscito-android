@@ -22,7 +22,7 @@ open class AccountMenuFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mMainActivity?.actionMode?.finish()
+        mMainActivity?.destroyActionMode()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

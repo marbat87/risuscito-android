@@ -43,11 +43,6 @@ class AboutFragment : MaterialAboutFragment() {
         mMainActivity = activity as? MainActivity
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mMainActivity?.actionMode?.finish()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mMainActivity?.let {

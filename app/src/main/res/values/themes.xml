@@ -75,6 +75,10 @@
         <item name="textAppearanceLabelMedium">@style/TextAppearance.Risuscito.LabelMedium</item>
         <item name="preferenceTheme">@style/RisuscitoPreferenceThemeOverlay</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.Risuscito.LabelSmall</item>
+
+        <item name="risuscitoToolbarWithCloseButtonStyle">
+            @style/Widget.Risuscito.Toolbar.WithCloseButton
+        </item>
     </style>
 
     <style name="Risuscito.Theme" parent="Base.Risuscito.Theme">
@@ -88,6 +92,13 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="Widget.Risuscito.Toolbar" parent="Widget.Material3.Toolbar.OnSurface" />
+
+    <style name="Widget.Risuscito.Toolbar.WithCloseButton">
+        <item name="navigationContentDescription">@string/material_drawer_close</item>
+        <item name="navigationIcon">@drawable/close_24px</item>
     </style>
 
     <style name="Widget.Risuscito.TextView" parent="Widget.AppCompat.TextView">

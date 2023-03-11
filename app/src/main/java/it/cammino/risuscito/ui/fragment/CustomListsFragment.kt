@@ -76,7 +76,7 @@ class CustomListsFragment : AccountMenuFragment() {
                 )
                 if (mCustomListsViewModel.indexToShow != position) {
                     mCustomListsViewModel.indexToShow = position
-                    mMainActivity?.actionMode?.finish()
+                    mMainActivity?.destroyActionMode()
                 }
                 initFabOptions(position >= 2)
             }
@@ -459,7 +459,7 @@ class CustomListsFragment : AccountMenuFragment() {
         }
 
         val click = View.OnClickListener {
-            mMainActivity?.actionMode?.finish()
+            mMainActivity?.destroyActionMode()
             toggleFabMenu()
         }
 
