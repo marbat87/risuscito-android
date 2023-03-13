@@ -14,6 +14,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResult
@@ -676,6 +677,14 @@ class MainActivity : ThemeableActivity() {
             mActionBarDrawerToggle.syncState()
             (binding.drawer as? DrawerLayout)?.addDrawerListener(mActionBarDrawerToggle)
         }
+
+        binding.navigationView?.getHeaderView(0)?.findViewById<TextView>(R.id.drawer_header_title)
+            ?.setTextColor(
+                MaterialColors.harmonizeWithPrimary(
+                    this,
+                    ContextCompat.getColor(this, R.color.ic_launcher_background)
+                )
+            )
 
     }
 

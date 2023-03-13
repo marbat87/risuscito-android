@@ -9,7 +9,7 @@
         <item name="android:textAlignment">viewStart</item>
     </style>
 
-    <style name="TitoloSezione" parent="TextAppearance.Risuscito.TitleMedium">
+    <style name="TitoloSezione" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:paddingStart">@dimen/abc_action_bar_content_inset_material</item>
@@ -99,5 +99,8 @@
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textSize">@dimen/m3_toolbar_text_size_title</item>
     </style>
+
+    <macro name="m3_ref_typeface_brand_regular">@font/googlesans_regular</macro>
+    <macro name="m3_ref_typeface_plain_medium">@font/googlesans_medium</macro>
 
 </resources>
