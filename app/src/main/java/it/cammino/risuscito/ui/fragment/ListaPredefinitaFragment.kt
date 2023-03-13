@@ -70,7 +70,6 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
     private val cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
-    private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
 
@@ -196,6 +195,10 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
             Integer.valueOf(parent?.findViewById<TextView>(R.id.generic_tag)?.text.toString())
         longClickedChild =
             Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
+        Log.d(
+            TAG,
+            "snackBarRimuoviCanto - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId} / longCLickedChild: ${longClickedChild}"
+        )
         startCab()
     }
 
@@ -203,12 +206,10 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
         mSwhitchMode = false
         posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
         cantoAdapter.notifyItemChanged(longclickedPos)
-        actionModeOk = false
         mMainActivity?.createActionMode(R.menu.menu_actionmode_lists, this) { item ->
             Log.d(TAG, "MaterialCab onActionItemClicked")
             when (item?.itemId) {
                 R.id.action_remove_item -> {
-                    actionModeOk = true
                     mMainActivity?.destroyActionMode()
                     ListeUtils.removePositionWithUndo(
                         this@ListaPredefinitaFragment,
@@ -238,20 +239,17 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
     }
 
     override fun destroyActionMode() {
-        Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
         Log.d(
             TAG,
-            "MaterialCab onDestroy - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId}"
+            "MaterialCab onDestroy - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId} "
         )
         mSwhitchMode = false
-        if (!actionModeOk) {
-            try {
-                posizioniList[longclickedPos].listItem?.get(longClickedChild)
-                    ?.setmSelected(false)
-                cantoAdapter.notifyItemChanged(longclickedPos)
-            } catch (e: Exception) {
-                Firebase.crashlytics.recordException(e)
-            }
+        try {
+            posizioniList[longclickedPos].listItem?.get(longClickedChild)
+                ?.setmSelected(false)
+            cantoAdapter.notifyItemChanged(longclickedPos)
+        } catch (e: Exception) {
+            Firebase.crashlytics.recordException(e)
         }
     }
 
@@ -581,7 +579,6 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
             val parent = v.parent.parent as? View
             if (v.id == R.id.add_canto_generico) {
                 if (mSwhitchMode) {
-                    actionModeOk = true
                     mMainActivity?.destroyActionMode()
                     ListeUtils.scambioConVuoto(
                         this,
@@ -639,7 +636,6 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                         )
                     }
                 else {
-                    actionModeOk = true
                     mMainActivity?.destroyActionMode()
                     ListeUtils.scambioCanto(
                         this,
