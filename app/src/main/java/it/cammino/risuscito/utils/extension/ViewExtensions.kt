@@ -38,18 +38,6 @@ internal fun View.animateOut() {
         ).start()
 }
 
-fun View.createCheckedList(normalColorAttr: Int, checkedColorAttr: Int): ColorStateList {
-    return ColorStateList(
-        arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(
-            MaterialColors.getColor(
-                this,
-                checkedColorAttr
-            ),
-            MaterialColors.getColor(this, normalColorAttr)
-        )
-    )
-}
-
 fun View.createSelectedList(selectedColorAttr: Int): ColorStateList {
     return ColorStateList(
         arrayOf(intArrayOf(android.R.attr.state_selected), intArrayOf()), intArrayOf(

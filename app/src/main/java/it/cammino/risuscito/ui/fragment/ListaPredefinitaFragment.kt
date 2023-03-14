@@ -197,7 +197,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
             Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
         Log.d(
             TAG,
-            "snackBarRimuoviCanto - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId} / longCLickedChild: ${longClickedChild}"
+            "snackBarRimuoviCanto - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId} / longCLickedChild: $longClickedChild"
         )
         startCab()
     }

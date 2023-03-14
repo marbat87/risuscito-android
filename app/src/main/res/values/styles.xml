@@ -83,18 +83,6 @@
         <item name="sdMainFabOpenedSrc">@drawable/close_24px</item>
     </style>
 
-    <style name="SimpleSearchViewStyle">
-        <item name="cursorColor">?colorPrimary</item>
-        <item name="backIconTint">?colorOnSurfaceVariant</item>
-        <item name="iconsTint">?colorOnSurfaceVariant</item>
-        <item name="hintColor">?colorOnSurfaceVariant</item>
-        <item name="android:textColor">?colorOnSurface</item>
-        <item name="searchBackground">?colorSurfaceVariant</item>
-        <item name="iconsAlpha">1.0</item>
-        <item name="type">card</item>
-        <item name="android:hint">@string/title_filter</item>
-    </style>
-
     <style name="TextAppearance.Material3.Risuscito.Toolbar.Contextual.Title" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textSize">@dimen/m3_toolbar_text_size_title</item>

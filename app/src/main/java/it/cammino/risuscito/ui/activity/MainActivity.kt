@@ -53,6 +53,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationBarView
+import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.transition.platform.MaterialSharedAxis
@@ -246,6 +247,7 @@ class MainActivity : ThemeableActivity() {
                 !isOnTablet && (binding.drawer as? DrawerLayout)?.isOpen == true
                 -> (binding.drawer as? DrawerLayout)?.close()
                 isActionMode -> destroyActionMode()
+                binding.searchViewLayout.searchViewContainer.currentTransitionState == SearchView.TransitionState.SHOWN -> binding.searchViewLayout.searchViewContainer.hide()
                 else -> backToHome(true)
             }
         }
