@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
@@ -28,11 +27,11 @@ import it.cammino.risuscito.databinding.ActivityInsertSearchBinding
 import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.fragment.CustomListsFragment
-import it.cammino.risuscito.utils.*
-import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.openCanto
-import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.utils.CantiXmlParser
+import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.*
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -61,23 +60,7 @@ class InsertActivity : ThemeableActivity() {
     private lateinit var binding: ActivityInsertSearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!OSUtils.isObySamsung()) {
-            val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-                duration = 700L
-            }
-            val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                duration = 700L
-            }
-            window.enterTransition = enter
-            window.exitTransition = enter
-            window.returnTransition = exit
-            window.reenterTransition = exit
-
-            // Allow Activity A’s exit transition to play at the same time as this Activity’s
-            // enter transition instead of playing them sequentially.
-            window.allowEnterTransitionOverlap = true
-        }
-
+        setEnterTransition()
         super.onCreate(savedInstanceState)
         binding = ActivityInsertSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)

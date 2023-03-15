@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
@@ -29,6 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.elevation.SurfaceColors
+import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.ListaPersonalizzata
@@ -40,6 +42,7 @@ import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.Utility.SHARED_AXIS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.*
@@ -100,16 +103,49 @@ private fun Activity.setLighStatusBarFlagM(light: Boolean) {
     if (light) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 }
 
-fun Activity.startActivityWithTransition(intent: Intent) {
-
+fun Activity.startActivityWithTransition(intent: Intent, axis: Int) {
     if (OSUtils.isObySamsung()) {
         startActivity(intent)
         slideInRight()
     } else {
+        val exit = MaterialSharedAxis(axis, true).apply {
+            addTarget(R.id.content_frame)
+            duration = 700L
+        }
+
+        val enter = MaterialSharedAxis(axis, false).apply {
+            addTarget(R.id.content_frame)
+            duration = 700L
+        }
+        window.exitTransition = exit
+        window.reenterTransition = enter
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
-        startActivity(intent, options.toBundle())
+        startActivity(
+            intent.putExtras(
+                bundleOf(SHARED_AXIS to axis)
+            ), options.toBundle()
+        )
     }
 
+}
+
+
+fun Activity.setEnterTransition() {
+    if (!OSUtils.isObySamsung()) {
+        val axis = intent.getIntExtra(SHARED_AXIS, MaterialSharedAxis.X)
+        val enter = MaterialSharedAxis(axis, true).apply {
+            duration = 700L
+        }
+        val returnT = MaterialSharedAxis(axis, false).apply {
+            duration = 700L
+        }
+        window.enterTransition = enter
+        window.returnTransition = returnT
+
+        // Allow Activity A’s exit transition to play at the same time as this Activity’s
+        // enter transition instead of playing them sequentially.
+        window.allowEnterTransitionOverlap = true
+    }
 }
 
 fun Activity.startActivityWithFadeIn(intent: Intent) {
@@ -295,7 +331,7 @@ fun ThemeableActivity.openCanto(
     if (forceOpenActivity || isOnPhone) {
         val intent = Intent(this, CantoHostActivity::class.java)
         intent.putExtras(args)
-        startActivityWithTransition(intent)
+        startActivityWithTransition(intent, MaterialSharedAxis.X)
     } else {
         stopMedia()
         val fragment: Fragment = CantoFragment()
@@ -368,6 +404,36 @@ private fun AppCompatActivity.updateHistory(idCanto: Int) {
     this.lifecycleScope.launch(Dispatchers.IO) {
         mDao.insertCronologia(
             cronologia
+        )
+    }
+}
+
+fun AppCompatActivity.launchForResultWithAnimation(
+    resultLauncher: ActivityResultLauncher<Intent>,
+    intent: Intent,
+    axis: Int
+) {
+    if (OSUtils.isObySamsung()) {
+        resultLauncher.launch(intent)
+        slideInRight()
+    } else {
+        val exit = MaterialSharedAxis(axis, true).apply {
+            addTarget(R.id.content_frame)
+            duration = 700L
+        }
+
+        val enter = MaterialSharedAxis(axis, false).apply {
+            addTarget(R.id.content_frame)
+            duration = 700L
+        }
+        window.exitTransition = exit
+        window.reenterTransition = enter
+        resultLauncher.launch(
+            intent.putExtras(
+                bundleOf(SHARED_AXIS to axis)
+            ), ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this
+            )
         )
     }
 }

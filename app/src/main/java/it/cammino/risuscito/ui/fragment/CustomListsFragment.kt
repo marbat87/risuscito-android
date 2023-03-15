@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
@@ -12,10 +14,10 @@ import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -43,10 +45,9 @@ import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.getTypedValueResId
-import it.cammino.risuscito.utils.extension.slideInRight
+import it.cammino.risuscito.utils.extension.launchForResultWithAnimation
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -177,7 +178,7 @@ class CustomListsFragment : AccountMenuFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 Log.d(TAG, "mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
-                mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif
+                mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif + 2
                 movePage = true
             }
         }
@@ -257,11 +258,16 @@ class CustomListsFragment : AccountMenuFragment() {
                 idListe[i] = list[i].id
             }
             mSectionsPagerAdapter?.notifyDataSetChanged()
-            Log.d(TAG, "movePage: $movePage")
-            Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
-            if (movePage) {
-                binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
-                movePage = false
+            Handler(Looper.getMainLooper()).postDelayed(1000) {
+                Log.d(TAG, "movePage: $movePage")
+                Log.d(
+                    TAG,
+                    "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                )
+                if (movePage) {
+                    binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
+                    movePage = false
+                }
             }
         }
 
@@ -275,37 +281,19 @@ class CustomListsFragment : AccountMenuFragment() {
                                 inputdialogViewModel.handled = true
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
                                 mMainActivity?.let { act ->
-                                    if (OSUtils.isObySamsung()) {
-                                        startListEditForResult.launch(
-                                            Intent(
-                                                act,
-                                                CreaListaActivity::class.java
-                                            ).putExtras(
-                                                bundleOf(
-                                                    LIST_TITLE to inputdialogViewModel.outputText,
-                                                    EDIT_EXISTING_LIST to false
-                                                )
+                                    act.launchForResultWithAnimation(
+                                        startListEditForResult,
+                                        Intent(
+                                            act,
+                                            CreaListaActivity::class.java
+                                        ).putExtras(
+                                            bundleOf(
+                                                LIST_TITLE to inputdialogViewModel.outputText,
+                                                EDIT_EXISTING_LIST to false
                                             )
-                                        )
-                                        act.slideInRight()
-                                    } else {
-                                        val options =
-                                            ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                                act
-                                            )
-                                        startListEditForResult.launch(
-                                            Intent(
-                                                act,
-                                                CreaListaActivity::class.java
-                                            ).putExtras(
-                                                bundleOf(
-                                                    LIST_TITLE to inputdialogViewModel.outputText,
-                                                    EDIT_EXISTING_LIST to false
-                                                )
-                                            ),
-                                            options
-                                        )
-                                    }
+                                        ),
+                                        com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                                    )
                                 }
                             }
                         }
@@ -409,36 +397,17 @@ class CustomListsFragment : AccountMenuFragment() {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
                     mMainActivity?.let { act ->
-                        if (OSUtils.isObySamsung()) {
-                            startListEditForResult.launch(
-                                Intent(
-                                    act,
-                                    CreaListaActivity::class.java
-                                ).putExtras(
-                                    bundleOf(
-                                        ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                        EDIT_EXISTING_LIST to true
-                                    )
+                        act.launchForResultWithAnimation(
+                            startListEditForResult, Intent(
+                                act,
+                                CreaListaActivity::class.java
+                            ).putExtras(
+                                bundleOf(
+                                    ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                    EDIT_EXISTING_LIST to true
                                 )
-                            )
-                            act.slideInRight()
-                        } else {
-                            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                act
-                            )
-                            startListEditForResult.launch(
-                                Intent(
-                                    act,
-                                    CreaListaActivity::class.java
-                                ).putExtras(
-                                    bundleOf(
-                                        ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                        EDIT_EXISTING_LIST to true
-                                    )
-                                ),
-                                options
-                            )
-                        }
+                            ), com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                        )
                     }
                     true
                 }

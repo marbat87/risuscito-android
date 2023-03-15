@@ -25,7 +25,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -152,20 +151,6 @@ class MainActivity : ThemeableActivity() {
         // Handle the splash screen transition.
         installSplashScreen()
         DynamicColors.applyToActivityIfAvailable(this, dynamicColorOptions)
-        if (!OSUtils.isObySamsung()) {
-            val exit = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-                addTarget(R.id.content_frame)
-                duration = 700L
-            }
-
-            val enter = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                addTarget(R.id.content_frame)
-                duration = 700L
-            }
-            window.exitTransition = exit
-            window.reenterTransition = enter
-        }
-
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -732,14 +717,7 @@ class MainActivity : ThemeableActivity() {
         }
 
         val intent = Intent(this, activityClass)
-
-        if (OSUtils.isObySamsung()) {
-            startActivity(intent)
-            slideInRight()
-        } else {
-            val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
-            startActivity(intent, bundle)
-        }
+        startActivityWithTransition(intent, MaterialSharedAxis.Y)
 
         return true
     }

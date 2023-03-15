@@ -13,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -40,11 +39,10 @@ import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.launchForResultWithAnimation
 import it.cammino.risuscito.utils.extension.openCanto
-import it.cammino.risuscito.utils.extension.slideInRight
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.utils.extension.useOldIndex
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
@@ -590,27 +588,22 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                     )
                 } else {
                     if (mMainActivity?.isActionMode != true) {
-                        val intent = Intent(activity, InsertActivity::class.java)
-                        intent.putExtras(
-                            bundleOf(
-                                InsertActivity.FROM_ADD to 1,
-                                InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
-                                InsertActivity.POSITION to Integer.valueOf(
-                                    parent?.findViewById<TextView>(
-                                        R.id.text_id_posizione
-                                    )?.text.toString()
-                                )
-                            )
-                        )
-
                         mMainActivity?.let {
-                            if (OSUtils.isObySamsung()) {
-                                startListInsertForResult.launch(intent)
-                                it.slideInRight()
-                            } else {
-                                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(it)
-                                startListInsertForResult.launch(intent, options)
-                            }
+                            it.launchForResultWithAnimation(
+                                startListInsertForResult,
+                                Intent(it, InsertActivity::class.java).putExtras(
+                                    bundleOf(
+                                        InsertActivity.FROM_ADD to 1,
+                                        InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
+                                        InsertActivity.POSITION to Integer.valueOf(
+                                            parent?.findViewById<TextView>(
+                                                R.id.text_id_posizione
+                                            )?.text.toString()
+                                        )
+                                    )
+                                ),
+                                com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                            )
                         }
                     }
                 }
