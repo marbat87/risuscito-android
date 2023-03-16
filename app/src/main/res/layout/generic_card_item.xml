@@ -59,7 +59,7 @@
         android:background="@drawable/page_oval_bkg"
         android:gravity="center"
         android:textAppearance="?textAppearanceTitleMedium"
-        android:textColor="?colorOnPrimaryContainer"
+        android:textColor="@color/primary_text_default_material_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
