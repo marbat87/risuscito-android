@@ -71,7 +71,7 @@
     <string name="signore_mio_pastore_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/DX7cTeUE6dahDtho9cfcWF7qYsM8EqZ4</string>
     <string name="giunti_fiumi_babilonia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/jo8REAdQSZHtHiBNOrCxXXA3enNHuGK1</string>
     <string name="pieta_di_me_o_dio_link" formatted="false" />
-    <string name="misericordia_dio_misericordia_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/jo8REAdQSZHtHiBNOrCxXXA3enNHuGK1</string>
+    <string name="misericordia_dio_misericordia_link" formatted="false" tools:ignore="TypographyDashes,Typos" />
     <string name="inno_della_kenosis_link" formatted="false" tools:ignore="TypographyDashes,Typos">https://audio.jukehost.co.uk/FVCZiMTKE3ZqMUc4hyjitvcMQsZWNETd</string>
     <string name="ave_maria_link" formatted="false" tools:ignore="TypographyDashes,Typos">http://east-of-rhine.kaniol.org/neocat/MP3/Hail%20Mary.mp3</string>
     <string name="ave_maria_1984_link" formatted="false" />

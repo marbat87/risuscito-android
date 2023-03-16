@@ -73,12 +73,16 @@ class CustomListsFragment : AccountMenuFragment() {
                 Log.d(TAG, "onPageSelected: $position")
                 Log.d(
                     TAG,
-                    "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                    " BEFORE mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
                 )
                 if (mCustomListsViewModel.indexToShow != position) {
                     mCustomListsViewModel.indexToShow = position
                     mMainActivity?.destroyActionMode()
                 }
+                Log.d(
+                    TAG,
+                    " AFTER mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                )
                 initFabOptions(position >= 2)
             }
         }
@@ -178,7 +182,7 @@ class CustomListsFragment : AccountMenuFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 Log.d(TAG, "mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
-                mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif + 2
+                mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif
                 movePage = true
             }
         }
@@ -279,7 +283,12 @@ class CustomListsFragment : AccountMenuFragment() {
                         when (inputdialogViewModel.mTag) {
                             NEW_LIST -> {
                                 inputdialogViewModel.handled = true
+                                Log.d(TAG, "idListe.size ${idListe.size}")
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
+                                Log.d(
+                                    TAG,
+                                    "mCustomListsViewModel.indDaModif ${mCustomListsViewModel.indDaModif}"
+                                )
                                 mMainActivity?.let { act ->
                                     act.launchForResultWithAnimation(
                                         startListEditForResult,
