@@ -47,7 +47,8 @@
         <item name="risuscito_regular_font">@font/googlesans_regular</item>
         <item name="risuscito_medium_font">@font/googlesans_medium</item>
 
-        <item name="android:textViewStyle">@style/Widget.Risuscito.TextView</item>
+        <item name="android:textViewStyle">@style/Widget.AppCompat.TextView.Risuscito</item>
+        <item name="editTextStyle">@style/Widget.AppCompat.EditText.Risuscito</item>
 
         <item name="windowActionModeOverlay">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
@@ -101,7 +102,12 @@
         <item name="navigationIcon">@drawable/close_24px</item>
     </style>
 
-    <style name="Widget.Risuscito.TextView" parent="Widget.AppCompat.TextView">
+    <style name="Widget.AppCompat.TextView.Risuscito">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
+
+    <style name="Widget.AppCompat.EditText.Risuscito">
         <item name="fontFamily">?risuscito_regular_font</item>
         <item name="android:fontFamily">?risuscito_regular_font</item>
     </style>

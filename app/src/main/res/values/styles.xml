@@ -88,7 +88,9 @@
         <item name="android:textSize">@dimen/m3_toolbar_text_size_title</item>
     </style>
 
-    <macro name="m3_ref_typeface_brand_regular">@font/googlesans_regular</macro>
-    <macro name="m3_ref_typeface_plain_medium">@font/googlesans_medium</macro>
+    <macro name="m3_ref_typeface_brand_medium">?risuscito_medium_font</macro>
+    <macro name="m3_ref_typeface_brand_regular">?risuscito_regular_font</macro>
+    <macro name="m3_ref_typeface_plain_medium">?risuscito_medium_font</macro>
+    <macro name="m3_ref_typeface_plain_regular">?risuscito_regular_font</macro>
 
 </resources>
