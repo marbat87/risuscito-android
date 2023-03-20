@@ -157,12 +157,18 @@ class Playback internal constructor(
                         if (it.contains("com.android.providers.media"))
                             mMediaPlayer?.setDataSource(mService.applicationContext, Uri.parse(it))
                         else if (OSUtils.hasQ() && isExternalStorageReadable && mService.applicationContext.isDefaultLocationPublic) {
-                            val mUri = ContentUris.withAppendedId(
-                                MediaStore.Audio.Media
-                                    .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                            val externalMediaId =
                                 getExternalMediaIdByName(mService.applicationContext, it)
-                            )
-                            mMediaPlayer?.setDataSource(mService.applicationContext, mUri)
+                            if (externalMediaId > 0) {
+                                val mUri = ContentUris.withAppendedId(
+                                    MediaStore.Audio.Media
+                                        .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                                    externalMediaId
+                                )
+                                mMediaPlayer?.setDataSource(mService.applicationContext, mUri)
+                            } else {
+                                mCallback?.onError("THIS SAVED FILE CANNOT BE REPRODUCED")
+                            }
                         } else {
                             val fileInputStream = FileInputStream(it)
                             mMediaPlayer?.setDataSource(fileInputStream.fd)
