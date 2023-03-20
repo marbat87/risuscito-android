@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui.fragment
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -15,6 +16,8 @@ import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
@@ -179,6 +182,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 ?.addOnSuccessListener { id -> sessionId = id }
         }
         false
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d(TAG, "Fragment: ${this::class.java.canonicalName}")
+        Firebase.crashlytics.log("Fragment: ${this::class.java}")
     }
 
     override fun onCreateView(
