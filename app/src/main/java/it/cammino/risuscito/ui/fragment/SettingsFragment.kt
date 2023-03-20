@@ -296,7 +296,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         if (s == NIGHT_MODE) {
             Log.d(
                 TAG,
-                "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "2")
+                "onSharedPreferenceChanged: dark_mode: ${sharedPreferences.getString(s, "2")}"
             )
             context?.setDefaultNightMode()
         }
