@@ -2,9 +2,9 @@
 <changelog>
 
     <release
-        versionCode="5121"
+        versionCode="5122"
         date="March 2023"
-        versionName="5.1.0">
+        versionName="5.1.1">
         <new>Added icons to dialogs</new>
         <bugfix>Fixed background color in some views</bugfix>
         <bugfix>Fixed some typos in songs titles</bugfix>
