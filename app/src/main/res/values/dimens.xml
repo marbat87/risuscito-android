@@ -9,7 +9,6 @@
     <dimen name="max_bottomsheet_width">380dp</dimen>
 
     <dimen name="fab_margin_coord">16dp</dimen>
-    <dimen name="fab_margin_frame">16dp</dimen>
     <dimen name="recycler_fab_padding_bottom">88dp</dimen>
 
     <dimen name="text_min_margin">20dip</dimen>
@@ -31,5 +30,10 @@
     <dimen name="listItemHorizontalSpacing">16dp</dimen>
     <dimen name="listItemBackgroundCornerSize">12dp</dimen>
     <dimen name="noMarginlistLeadingItemPaddingStart">16dp</dimen>
+
+    <dimen name="modal_side_sheet_start_padding">16dp</dimen>
+    <dimen name="modal_side_sheet_end_padding">16dp</dimen>
+    <dimen name="modal_side_sheet_top_padding">24dp</dimen>
+    <dimen name="modal_side_close_padding">12dp</dimen>
 
 </resources>

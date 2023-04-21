@@ -56,26 +56,26 @@
         <item name="tabStyle">@style/Widget.Risuscito.TabLayout</item>
 
         <item name="actionModeCloseDrawable">@drawable/close_24px</item>
-        <!--        <item name="textAppearanceDisplayLarge">@style/TextAppearance.Risuscito.DisplayLarge</item>-->
-        <!--        <item name="textAppearanceDisplayMedium">@style/TextAppearance.Risuscito.DisplayMedium-->
-        <!--        </item>-->
-        <!--        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Risuscito.DisplaySmall</item>-->
-        <!--        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.Risuscito.HeadlineLarge-->
-        <!--        </item>-->
-        <!--        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Risuscito.HeadlineMedium-->
-        <!--        </item>-->
-        <!--        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Risuscito.HeadlineSmall-->
-        <!--        </item>-->
-        <!--        <item name="textAppearanceTitleLarge">@style/TextAppearance.Risuscito.TitleLarge</item>-->
-        <!--        <item name="textAppearanceTitleMedium">@style/TextAppearance.Risuscito.TitleMedium</item>-->
-        <!--        <item name="textAppearanceTitleSmall">@style/TextAppearance.Risuscito.TitleSmall</item>-->
-        <!--        <item name="textAppearanceBodyLarge">@style/TextAppearance.Risuscito.BodyLarge</item>-->
-        <!--        <item name="textAppearanceBodyMedium">@style/TextAppearance.Risuscito.BodyMedium</item>-->
-        <!--        <item name="textAppearanceBodySmall">@style/TextAppearance.Risuscito.BodySmall</item>-->
-        <!--        <item name="textAppearanceLabelLarge">@style/TextAppearance.Risuscito.LabelLarge</item>-->
-        <!--        <item name="textAppearanceLabelMedium">@style/TextAppearance.Risuscito.LabelMedium</item>-->
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.Risuscito.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.Risuscito.DisplayMedium
+        </item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Risuscito.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.Risuscito.HeadlineLarge
+        </item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Risuscito.HeadlineMedium
+        </item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Risuscito.HeadlineSmall
+        </item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Risuscito.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Risuscito.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.Risuscito.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Risuscito.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Risuscito.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Risuscito.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Risuscito.LabelLarge</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.Risuscito.LabelSmall</item>
+
         <item name="preferenceTheme">@style/RisuscitoPreferenceThemeOverlay</item>
-        <!--        <item name="textAppearanceLabelSmall">@style/TextAppearance.Risuscito.LabelSmall</item>-->
 
         <item name="risuscitoToolbarWithCloseButtonStyle">
             @style/Widget.Risuscito.Toolbar.WithCloseButton
@@ -112,80 +112,80 @@
         <item name="android:fontFamily">?risuscito_regular_font</item>
     </style>
 
-    <!--    <style name="TextAppearance.Risuscito.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.TitleLarge" parent="TextAppearance.Material3.TitleLarge">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.TitleMedium" parent="TextAppearance.Material3.TitleMedium">-->
-    <!--        <item name="fontFamily">?risuscito_medium_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_medium_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">?risuscito_medium_font</item>
+        <item name="android:fontFamily">?risuscito_medium_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.TitleSmall" parent="TextAppearance.Material3.TitleSmall">-->
-    <!--        <item name="fontFamily">?risuscito_medium_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_medium_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">?risuscito_medium_font</item>
+        <item name="android:fontFamily">?risuscito_medium_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.BodyLarge" parent="TextAppearance.Material3.BodyLarge">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.BodyMedium" parent="TextAppearance.Material3.BodyMedium">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.BodySmall" parent="TextAppearance.Material3.BodySmall">-->
-    <!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.LabelLarge" parent="TextAppearance.Material3.LabelLarge">-->
-    <!--        <item name="fontFamily">?risuscito_medium_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_medium_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">?risuscito_medium_font</item>
+        <item name="android:fontFamily">?risuscito_medium_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.LabelMedium" parent="TextAppearance.Material3.LabelMedium">-->
-    <!--        <item name="fontFamily">?risuscito_medium_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_medium_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">?risuscito_medium_font</item>
+        <item name="android:fontFamily">?risuscito_medium_font</item>
+    </style>
 
-    <!--    <style name="TextAppearance.Risuscito.LabelSmall" parent="TextAppearance.Material3.LabelSmall">-->
-    <!--        <item name="fontFamily">?risuscito_medium_font</item>-->
-    <!--        <item name="android:fontFamily">?risuscito_medium_font</item>-->
-    <!--    </style>-->
+    <style name="TextAppearance.Risuscito.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="fontFamily">?risuscito_medium_font</item>
+        <item name="android:fontFamily">?risuscito_medium_font</item>
+    </style>
 
     <style name="RisuscitoPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
         <item name="switchPreferenceCompatStyle">

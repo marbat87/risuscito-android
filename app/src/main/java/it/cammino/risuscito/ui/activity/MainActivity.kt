@@ -45,7 +45,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -78,21 +78,46 @@ import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.ui.fragment.*
+import it.cammino.risuscito.ui.fragment.AboutFragment
+import it.cammino.risuscito.ui.fragment.ConsegnatiFragment
+import it.cammino.risuscito.ui.fragment.CustomListsFragment
+import it.cammino.risuscito.ui.fragment.FavoritesFragment
+import it.cammino.risuscito.ui.fragment.GeneralIndexFragment
+import it.cammino.risuscito.ui.fragment.HistoryFragment
+import it.cammino.risuscito.ui.fragment.SettingsFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.utils.CambioAccordi
+import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
-import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.utils.extension.dynamicColorOptions
+import it.cammino.risuscito.utils.extension.getTypedValueResId
+import it.cammino.risuscito.utils.extension.getVersionCode
+import it.cammino.risuscito.utils.extension.isDarkMode
+import it.cammino.risuscito.utils.extension.isFabExpansionLeft
+import it.cammino.risuscito.utils.extension.isGridLayout
+import it.cammino.risuscito.utils.extension.isOnTablet
+import it.cammino.risuscito.utils.extension.openCanto
+import it.cammino.risuscito.utils.extension.startActivityWithTransition
+import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.utils.extension.updateListaPersonalizzata
+import it.cammino.risuscito.utils.extension.updatePosizione
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
@@ -966,19 +991,11 @@ class MainActivity : ThemeableActivity() {
         return binding.materialTabs
     }
 
-    val activityBottomBar: BottomAppBar
-        get() = binding.bottomBar
+    val activityContextualToolbar: MaterialToolbar
+        get() = binding.contextualToolbar
 
     val activityMainContent: View
         get() = binding.mainContent
-
-    fun enableBottombar(enabled: Boolean) {
-        Log.d(TAG, "enableBottombar - enabled: $enabled")
-        if (enabled)
-            binding.bottomBar.animateIn()
-        else
-            binding.bottomBar.animateOut()
-    }
 
     // [START signIn]
     private fun signIn() {

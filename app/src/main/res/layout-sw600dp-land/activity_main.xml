@@ -56,16 +56,6 @@
                 android:background="?android:colorBackground"
                 app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
-            <com.google.android.material.bottomappbar.BottomAppBar
-                android:id="@+id/bottom_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:visibility="invisible"
-                app:hideOnScroll="true"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:menu="@menu/consegnati" />
-
             <com.leinardi.android.speeddial.SpeedDialOverlayLayout
                 android:id="@+id/overlay"
                 android:layout_width="match_parent"

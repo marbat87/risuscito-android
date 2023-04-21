@@ -208,7 +208,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
-        mMainActivity?.enableBottombar(false)
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as? DropDownPreference
 

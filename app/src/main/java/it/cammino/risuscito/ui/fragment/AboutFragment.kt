@@ -63,7 +63,6 @@ class AboutFragment : MaterialAboutFragment() {
         mMainActivity?.setupToolbarTitle(R.string.title_activity_about)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
-        mMainActivity?.enableBottombar(false)
     }
 
     override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList? {

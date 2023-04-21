@@ -65,7 +65,6 @@ class GeneralIndexFragment : AccountMenuFragment() {
         mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
         mMainActivity?.setTabVisible(true)
         mMainActivity?.enableFab(false)
-        mMainActivity?.enableBottombar(false)
 
         binding.viewPager.adapter = IndexTabsAdapter(this)
         mMainActivity?.getMaterialTabs()?.let {

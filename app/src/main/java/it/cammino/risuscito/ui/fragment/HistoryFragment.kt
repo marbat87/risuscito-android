@@ -5,7 +5,12 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
@@ -80,7 +85,6 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
         super.onViewCreated(view, savedInstanceState)
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_history)
-        mMainActivity?.enableBottombar(false)
         mMainActivity?.enableFab(false)
         mMainActivity?.setTabVisible(false)
 

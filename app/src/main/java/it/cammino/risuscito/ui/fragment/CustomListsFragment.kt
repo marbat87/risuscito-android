@@ -128,7 +128,6 @@ class CustomListsFragment : AccountMenuFragment() {
         )
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
-        mMainActivity?.enableBottombar(false)
         mMainActivity?.setTabVisible(true)
         mMainActivity?.enableFab(true)
 
@@ -307,6 +306,7 @@ class CustomListsFragment : AccountMenuFragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         inputdialogViewModel.handled = true
                     }
@@ -325,6 +325,7 @@ class CustomListsFragment : AccountMenuFragment() {
                                 binding.viewPager.findViewById<Button>(R.id.button_pulisci)
                                     .performClick()
                             }
+
                             DELETE_LIST -> {
                                 simpleDialogViewModel.handled = true
                                 binding.viewPager.currentItem = binding.viewPager.currentItem - 1
@@ -332,6 +333,7 @@ class CustomListsFragment : AccountMenuFragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }
@@ -382,6 +384,7 @@ class CustomListsFragment : AccountMenuFragment() {
                     }
                     true
                 }
+
                 R.id.fab_add_lista -> {
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
@@ -397,11 +400,13 @@ class CustomListsFragment : AccountMenuFragment() {
                     }
                     true
                 }
+
                 R.id.fab_condividi -> {
                     closeFabMenu()
                     binding.viewPager.findViewById<Button>(R.id.button_condividi).performClick()
                     true
                 }
+
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
@@ -420,15 +425,18 @@ class CustomListsFragment : AccountMenuFragment() {
                     }
                     true
                 }
+
                 R.id.fab_delete_lista -> {
                     lifecycleScope.launch { deleteListDialog() }
                     true
                 }
+
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
                     binding.viewPager.findViewById<Button>(R.id.button_invia_file).performClick()
                     true
                 }
+
                 else -> {
                     closeFabMenu()
                     false
