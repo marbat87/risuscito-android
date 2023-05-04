@@ -256,6 +256,7 @@ class MainActivity : ThemeableActivity() {
                 binding.fabPager.isOpen -> binding.fabPager.close()
                 !isOnTablet && (binding.drawer as? DrawerLayout)?.isOpen == true
                 -> (binding.drawer as? DrawerLayout)?.close()
+
                 isActionMode -> destroyActionMode()
                 binding.searchViewLayout.searchViewContainer.currentTransitionState == SearchView.TransitionState.SHOWN -> binding.searchViewLayout.searchViewContainer.hide()
                 else -> backToHome(true)
@@ -499,6 +500,7 @@ class MainActivity : ThemeableActivity() {
             ) == PackageManager.PERMISSION_GRANTED -> {
                 Log.d(TAG, "permission granted")
             }
+
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -520,6 +522,7 @@ class MainActivity : ThemeableActivity() {
                     .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
                     .show()
             }
+
             else -> {
                 // You can directly ask for the permission.
                 // The registered ActivityResultCallback gets the result of this request.
@@ -542,23 +545,28 @@ class MainActivity : ThemeableActivity() {
                                 backToHome(false)
                                 lifecycleScope.launch { backupDbPrefs() }
                             }
+
                             RESTORE_ASK -> {
                                 simpleDialogViewModel.handled = true
                                 backToHome(false)
                                 lifecycleScope.launch { restoreDbPrefs() }
                             }
+
                             SIGNOUT -> {
                                 simpleDialogViewModel.handled = true
                                 signOut()
                             }
+
                             REVOKE -> {
                                 simpleDialogViewModel.handled = true
                                 revokeAccess()
                             }
+
                             RESTORE_DONE -> {
                                 simpleDialogViewModel.handled = true
                                 ProcessPhoenix.triggerRebirth(this)
                             }
+
                             SEARCH_REPLACE -> {
                                 simpleDialogViewModel.handled = true
                                 listePersonalizzate?.let { lista ->
@@ -570,6 +578,7 @@ class MainActivity : ThemeableActivity() {
                                     updateListaPersonalizzata(lista[cantiViewModel.idListaClick])
                                 }
                             }
+
                             SEARCH_REPLACE_2 -> {
                                 simpleDialogViewModel.handled = true
                                 updatePosizione(
@@ -580,6 +589,7 @@ class MainActivity : ThemeableActivity() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }
@@ -595,12 +605,15 @@ class MainActivity : ThemeableActivity() {
                         R.id.gdrive_backup -> {
                             showAccountRelatedDialog(BACKUP_ASK)
                         }
+
                         R.id.gdrive_restore -> {
                             showAccountRelatedDialog(RESTORE_ASK)
                         }
+
                         R.id.gplus_signout -> {
                             showAccountRelatedDialog(SIGNOUT)
                         }
+
                         R.id.gplus_revoke -> {
                             showAccountRelatedDialog(REVOKE)
                         }
@@ -623,13 +636,16 @@ class MainActivity : ThemeableActivity() {
                             },
                             supportFragmentManager
                         )
+
                     MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2 -> {
                         val sFragment =
                             ProgressDialogFragment.findVisible(this@MainActivity, RESTORE_RUNNING)
                         sFragment?.setContent(R.string.restoring_settings)
                     }
+
                     MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED ->
                         dismissProgressDialog(RESTORE_RUNNING)
+
                     MainActivityViewModel.BakupRestoreState.BACKUP_STARTED ->
                         ProgressDialogFragment.show(
                             ProgressDialogFragment.Builder(BACKUP_RUNNING).apply {
@@ -640,13 +656,16 @@ class MainActivity : ThemeableActivity() {
                             },
                             supportFragmentManager
                         )
+
                     MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2 -> {
                         val sFragment =
                             ProgressDialogFragment.findVisible(this@MainActivity, BACKUP_RUNNING)
                         sFragment?.setContent(R.string.backup_settings)
                     }
+
                     MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED ->
                         dismissProgressDialog(BACKUP_RUNNING)
+
                     MainActivityViewModel.BakupRestoreState.NONE -> {}
                 }
             }
@@ -1227,18 +1246,21 @@ class MainActivity : ThemeableActivity() {
                         content(R.string.gdrive_backup_content)
                         positiveButton(R.string.backup_confirm)
                     }
+
                     RESTORE_ASK -> {
                         title(R.string.gdrive_restore)
                         icon(R.drawable.cloud_download_24px)
                         content(R.string.gdrive_restore_content)
                         positiveButton(R.string.restore_confirm)
                     }
+
                     SIGNOUT -> {
                         title(R.string.gplus_signout)
                         icon(R.drawable.person_remove_24px)
                         content(R.string.dialog_acc_disconn_text)
                         positiveButton(R.string.disconnect_confirm)
                     }
+
                     REVOKE -> {
                         title(R.string.gplus_revoke)
                         icon(R.drawable.person_off_24px)
@@ -1350,8 +1372,14 @@ class MainActivity : ThemeableActivity() {
     fun createActionMode(
         resId: Int,
         fragment: ActionModeFragment,
+        hideNavigation: Boolean = false,
         clickListener: Toolbar.OnMenuItemClickListener
     ) {
+        binding.contextualToolbar.navigationIcon =
+            if (hideNavigation) null else AppCompatResources.getDrawable(
+                this,
+                R.drawable.close_24px
+            )
         isActionMode = true
         actionModeFragment = fragment
         binding.contextualToolbar.menu.clear()

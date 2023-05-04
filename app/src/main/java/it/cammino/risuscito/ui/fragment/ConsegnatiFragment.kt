@@ -286,7 +286,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
     }
 
     private fun startCab() {
-        mMainActivity?.createActionMode(R.menu.consegnati, this) { item ->
+        mMainActivity?.createActionMode(R.menu.consegnati, this, true) { item ->
             when (item.itemId) {
                 R.id.select_none -> {
                     selectExtension.deselect()

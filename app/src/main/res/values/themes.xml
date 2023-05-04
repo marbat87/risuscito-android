@@ -78,7 +78,7 @@
         <item name="preferenceTheme">@style/RisuscitoPreferenceThemeOverlay</item>
 
         <item name="risuscitoToolbarWithCloseButtonStyle">
-            @style/Widget.Risuscito.Toolbar.WithCloseButton
+            @style/Widget.Risuscito.Toolbar
         </item>
     </style>
 
