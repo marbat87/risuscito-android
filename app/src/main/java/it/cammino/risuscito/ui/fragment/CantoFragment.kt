@@ -179,6 +179,7 @@ open class CantoFragment : Fragment() {
         Log.d(TAG, "onDestroyView()")
         stopSeekbarUpdate()
         mExecutorService.shutdown()
+        mHandler.removeCallbacks(mScrollDown)
         _binding = null
     }
 
@@ -187,12 +188,11 @@ open class CantoFragment : Fragment() {
 
         if (mCantiViewModel.idCanto == 0) {
             arguments?.let {
-                // Load the placeholder content specified by the fragment
-                // arguments. In a real-world scenario, use a Loader
-                // to load content from a content provider.
-                mCantiViewModel.idCanto = it.getInt(ARG_ID_CANTO)
-                mCantiViewModel.pagina = it.getString(ARG_NUM_PAGINA)
-                mCantiViewModel.inActivity = it.getBoolean(ARG_ON_ACTIVITY)
+                if (mCantiViewModel.idCanto == 0) {
+                    mCantiViewModel.idCanto = it.getInt(ARG_ID_CANTO)
+                    mCantiViewModel.pagina = it.getString(ARG_NUM_PAGINA)
+                    mCantiViewModel.inActivity = it.getBoolean(ARG_ON_ACTIVITY)
+                }
             }
         }
     }
@@ -701,35 +701,42 @@ open class CantoFragment : Fragment() {
                                 localUrl?.let { url ->
                                     stopMedia()
                                     if ((activity?.isDefaultLocationPublic == true) && OSUtils.hasQ()) {
-                                        mCantiViewModel.toDelete = ContentUris.withAppendedId(
-                                            MediaStore.Audio.Media
-                                                .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                                        val retrievedId =
                                             getExternalMediaIdByName(requireContext(), url)
-                                        )
-                                        Log.d(TAG, "DELETE_MP3 toDelete: $mCantiViewModel.toDelete")
-                                        try {
-                                            deleteAudio(mCantiViewModel.toDelete!!)
-                                            mCantiViewModel.toDelete = null
-                                        } catch (securityException: SecurityException) {
-                                            if (OSUtils.hasQ()) {
-                                                val recoverableSecurityException =
-                                                    securityException as?
-                                                            RecoverableSecurityException
-                                                        ?: throw RuntimeException(
-                                                            securityException.message,
-                                                            securityException
-                                                        )
-                                                val intentSender =
-                                                    recoverableSecurityException.userAction.actionIntent.intentSender
-                                                resolveDeleteAudioConsent?.launch(
-                                                    IntentSenderRequest.Builder(intentSender)
-                                                        .build()
-                                                )
-                                            } else {
-                                                throw RuntimeException(
-                                                    securityException.message,
-                                                    securityException
-                                                )
+                                        if (retrievedId > 0) {
+                                            mCantiViewModel.toDelete = ContentUris.withAppendedId(
+                                                MediaStore.Audio.Media
+                                                    .getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                                                retrievedId
+                                            )
+                                            Log.d(
+                                                TAG,
+                                                "DELETE_MP3 toDelete: ${mCantiViewModel.toDelete.toString()}"
+                                            )
+                                            try {
+                                                deleteAudio(mCantiViewModel.toDelete!!)
+                                                mCantiViewModel.toDelete = null
+                                            } catch (securityException: SecurityException) {
+                                                if (OSUtils.hasQ()) {
+                                                    val recoverableSecurityException =
+                                                        securityException as?
+                                                                RecoverableSecurityException
+                                                            ?: throw RuntimeException(
+                                                                securityException.message,
+                                                                securityException
+                                                            )
+                                                    val intentSender =
+                                                        recoverableSecurityException.userAction.actionIntent.intentSender
+                                                    resolveDeleteAudioConsent?.launch(
+                                                        IntentSenderRequest.Builder(intentSender)
+                                                            .build()
+                                                    )
+                                                } else {
+                                                    throw RuntimeException(
+                                                        securityException.message,
+                                                        securityException
+                                                    )
+                                                }
                                             }
                                         }
                                     } else {
@@ -862,6 +869,7 @@ open class CantoFragment : Fragment() {
     }
 
     private fun updatePlayBackStatus(state: PlaybackStateCompat) {
+        Log.d(TAG, "updatePlayBackStatus - state: ${state.state}")
         when (state.state) {
             PlaybackStateCompat.STATE_PAUSED -> {
                 stopSeekbarUpdate()

@@ -2,9 +2,9 @@
 <changelog>
 
     <release
-        versionCode="5120"
+        versionCode="5200"
         date="Settembre 2023"
-        versionName="5.1.1">
+        versionName="5.2.0">
         <new>Nuova interfaccia</new>
     </release>
 

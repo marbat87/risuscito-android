@@ -53,7 +53,6 @@
     <string name="fast_search_title">Szybkie szukanie</string>
     <string name="advanced_search_title">Zaawansowane szukanie</string>
     <string name="advanced_search_subtitle">SZUKAJ W TYTULE I W TEKŚCIE</string>
-    <string name="fast_search_subtitle">SZUKAJ W TYTULE</string>
     <string name="show_seconda_title">Eucharystia - drugie czytanie</string>
     <string name="show_seconda_summary">Dodaj dodatkową pieśń w odpowiedzi na drugie czytanie (Eucharystia)</string>
     <string name="action_add_list">Nowa lista</string>
@@ -112,7 +111,6 @@
     <string name="no_pdf_reader">Nie znaleziono programu do obsługi PDF</string>
     <string name="export_running">Eksportowanie w trakcie&#8230;</string>
     <string name="open_pdf">Otwórz plik PDF</string>
-    <string name="activity_homepage">Ekran startowy</string>
     <string name="no_memory_writable">Pamięć niedostępna albo tylko do odczytu</string>
     <string name="salmi_musica_index">Psalmy</string>
     <string name="only_link">Czy chcesz powiązać plik mp3 z pamięci twojego urządzenia?</string>
@@ -279,7 +277,6 @@
     <string name="disconnect_confirm">wyloguj</string>
     <string name="unlink_confirm">wyloguj</string>
     <string name="create_confirm">stwórz</string>
-    <string name="title_filter">filtruj po tytule</string>
     <string name="cancel">Anuluj</string>
     <string name="ok">OK</string>
     <string name="import_confirm">importuj</string>

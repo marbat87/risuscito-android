@@ -8,11 +8,11 @@ import android.view.MenuItem
 import androidx.activity.addCallback
 import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.databinding.ChangelogLayoutBinding
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
+import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.slideOutRight
 
 class ChangelogActivity : ThemeableActivity() {
@@ -20,22 +20,7 @@ class ChangelogActivity : ThemeableActivity() {
     private lateinit var binding: ChangelogLayoutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        if (!OSUtils.isObySamsung()) {
-            val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-                duration = 700L
-            }
-            val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                duration = 700L
-            }
-            window.enterTransition = enter
-            window.returnTransition = exit
-
-            // Allow Activity A’s exit transition to play at the same time as this Activity’s
-            // enter transition instead of playing them sequentially.
-            window.allowEnterTransitionOverlap = true
-        }
-
+        setEnterTransition()
         super.onCreate(savedInstanceState)
         binding = ChangelogLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)

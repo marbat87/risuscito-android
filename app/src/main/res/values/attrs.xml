@@ -4,6 +4,7 @@
     <declare-styleable name="RisuscitoTextAppearance">
         <attr name="risuscito_regular_font" format="reference" />
         <attr name="risuscito_medium_font" format="reference" />
+        <attr name="risuscitoToolbarWithCloseButtonStyle" format="reference" />
     </declare-styleable>
 
 </resources>

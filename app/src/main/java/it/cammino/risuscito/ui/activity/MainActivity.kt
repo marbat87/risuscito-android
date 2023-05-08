@@ -14,6 +14,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResult
@@ -21,13 +22,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.view.ActionMode
+import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -43,13 +45,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationBarView
+import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.transition.platform.MaterialSharedAxis
@@ -75,26 +78,50 @@ import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.ui.fragment.*
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.ui.fragment.AboutFragment
+import it.cammino.risuscito.ui.fragment.ConsegnatiFragment
+import it.cammino.risuscito.ui.fragment.CustomListsFragment
+import it.cammino.risuscito.ui.fragment.FavoritesFragment
+import it.cammino.risuscito.ui.fragment.GeneralIndexFragment
+import it.cammino.risuscito.ui.fragment.HistoryFragment
+import it.cammino.risuscito.ui.fragment.SettingsFragment
+import it.cammino.risuscito.ui.interfaces.ActionModeFragment
+import it.cammino.risuscito.utils.CambioAccordi
+import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
-import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.utils.extension.dynamicColorOptions
+import it.cammino.risuscito.utils.extension.getTypedValueResId
+import it.cammino.risuscito.utils.extension.getVersionCode
+import it.cammino.risuscito.utils.extension.isDarkMode
+import it.cammino.risuscito.utils.extension.isFabExpansionLeft
+import it.cammino.risuscito.utils.extension.isGridLayout
+import it.cammino.risuscito.utils.extension.isOnTablet
+import it.cammino.risuscito.utils.extension.openCanto
+import it.cammino.risuscito.utils.extension.startActivityWithTransition
+import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.utils.extension.updateListaPersonalizzata
+import it.cammino.risuscito.utils.extension.updatePosizione
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
 import java.text.Collator
-import java.util.*
-import kotlin.concurrent.schedule
 
 
 class MainActivity : ThemeableActivity() {
@@ -139,27 +166,16 @@ class MainActivity : ThemeableActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    var actionMode: ActionMode? = null
+    //    var actionMode: ActionMode? = null
+//        private set
+    var isActionMode: Boolean = false
         private set
+    private var actionModeFragment: ActionModeFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
         installSplashScreen()
         DynamicColors.applyToActivityIfAvailable(this, dynamicColorOptions)
-        if (!OSUtils.isObySamsung()) {
-            val exit = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-                addTarget(R.id.content_frame)
-                duration = 700L
-            }
-
-            val enter = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                addTarget(R.id.content_frame)
-                duration = 700L
-            }
-            window.exitTransition = exit
-            window.reenterTransition = enter
-        }
-
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -169,6 +185,17 @@ class MainActivity : ThemeableActivity() {
         val percentage = outValue.float
 
         binding.halfGuideline?.setGuidelinePercent(percentage)
+
+        binding.contextualToolbar.setNavigationOnClickListener { destroyActionMode() }
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            binding.contextualToolbarContainer
+        ) { insetsView: View, insets: WindowInsetsCompat ->
+            val systemInsetTop =
+                insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            insetsView.setPadding(0, systemInsetTop, 0, 0)
+            insets
+        }
 
         lifecycleScope.launch(Dispatchers.IO) {
             listePersonalizzate =
@@ -229,6 +256,9 @@ class MainActivity : ThemeableActivity() {
                 binding.fabPager.isOpen -> binding.fabPager.close()
                 !isOnTablet && (binding.drawer as? DrawerLayout)?.isOpen == true
                 -> (binding.drawer as? DrawerLayout)?.close()
+
+                isActionMode -> destroyActionMode()
+                binding.searchViewLayout.searchViewContainer.currentTransitionState == SearchView.TransitionState.SHOWN -> binding.searchViewLayout.searchViewContainer.hide()
                 else -> backToHome(true)
             }
         }
@@ -388,6 +418,8 @@ class MainActivity : ThemeableActivity() {
                 binding.searchViewLayout.searchProgress.isVisible = true
                 val titoliResult = ArrayList<SimpleItem>()
 
+                Firebase.crashlytics.log("function: search_text - search_string: $s - advanced: ${cantiViewModel.advancedSearch}")
+
                 Log.d(TAG, "performSearch STRINGA: $s")
                 Log.d(TAG, "performSearch ADVANCED: ${cantiViewModel.advancedSearch}")
                 if (cantiViewModel.advancedSearch) {
@@ -468,6 +500,7 @@ class MainActivity : ThemeableActivity() {
             ) == PackageManager.PERMISSION_GRANTED -> {
                 Log.d(TAG, "permission granted")
             }
+
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -489,6 +522,7 @@ class MainActivity : ThemeableActivity() {
                     .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
                     .show()
             }
+
             else -> {
                 // You can directly ask for the permission.
                 // The registered ActivityResultCallback gets the result of this request.
@@ -511,23 +545,28 @@ class MainActivity : ThemeableActivity() {
                                 backToHome(false)
                                 lifecycleScope.launch { backupDbPrefs() }
                             }
+
                             RESTORE_ASK -> {
                                 simpleDialogViewModel.handled = true
                                 backToHome(false)
                                 lifecycleScope.launch { restoreDbPrefs() }
                             }
+
                             SIGNOUT -> {
                                 simpleDialogViewModel.handled = true
                                 signOut()
                             }
+
                             REVOKE -> {
                                 simpleDialogViewModel.handled = true
                                 revokeAccess()
                             }
+
                             RESTORE_DONE -> {
                                 simpleDialogViewModel.handled = true
                                 ProcessPhoenix.triggerRebirth(this)
                             }
+
                             SEARCH_REPLACE -> {
                                 simpleDialogViewModel.handled = true
                                 listePersonalizzate?.let { lista ->
@@ -539,6 +578,7 @@ class MainActivity : ThemeableActivity() {
                                     updateListaPersonalizzata(lista[cantiViewModel.idListaClick])
                                 }
                             }
+
                             SEARCH_REPLACE_2 -> {
                                 simpleDialogViewModel.handled = true
                                 updatePosizione(
@@ -549,6 +589,7 @@ class MainActivity : ThemeableActivity() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }
@@ -564,12 +605,15 @@ class MainActivity : ThemeableActivity() {
                         R.id.gdrive_backup -> {
                             showAccountRelatedDialog(BACKUP_ASK)
                         }
+
                         R.id.gdrive_restore -> {
                             showAccountRelatedDialog(RESTORE_ASK)
                         }
+
                         R.id.gplus_signout -> {
                             showAccountRelatedDialog(SIGNOUT)
                         }
+
                         R.id.gplus_revoke -> {
                             showAccountRelatedDialog(REVOKE)
                         }
@@ -592,13 +636,16 @@ class MainActivity : ThemeableActivity() {
                             },
                             supportFragmentManager
                         )
+
                     MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2 -> {
                         val sFragment =
                             ProgressDialogFragment.findVisible(this@MainActivity, RESTORE_RUNNING)
                         sFragment?.setContent(R.string.restoring_settings)
                     }
+
                     MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED ->
                         dismissProgressDialog(RESTORE_RUNNING)
+
                     MainActivityViewModel.BakupRestoreState.BACKUP_STARTED ->
                         ProgressDialogFragment.show(
                             ProgressDialogFragment.Builder(BACKUP_RUNNING).apply {
@@ -609,13 +656,16 @@ class MainActivity : ThemeableActivity() {
                             },
                             supportFragmentManager
                         )
+
                     MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2 -> {
                         val sFragment =
                             ProgressDialogFragment.findVisible(this@MainActivity, BACKUP_RUNNING)
                         sFragment?.setContent(R.string.backup_settings)
                     }
+
                     MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED ->
                         dismissProgressDialog(BACKUP_RUNNING)
+
                     MainActivityViewModel.BakupRestoreState.NONE -> {}
                 }
             }
@@ -659,6 +709,14 @@ class MainActivity : ThemeableActivity() {
             (binding.drawer as? DrawerLayout)?.addDrawerListener(mActionBarDrawerToggle)
         }
 
+        binding.navigationView?.getHeaderView(0)?.findViewById<TextView>(R.id.drawer_header_title)
+            ?.setTextColor(
+                MaterialColors.harmonizeWithPrimary(
+                    this,
+                    ContextCompat.getColor(this, R.color.ic_launcher_background)
+                )
+            )
+
     }
 
     private fun onDrawerItemClick(menuItem: MenuItem): Boolean {
@@ -684,13 +742,8 @@ class MainActivity : ThemeableActivity() {
         val myFragment = supportFragmentManager
             .findFragmentByTag(menuItem.itemId.toString())
         if (myFragment == null || !myFragment.isVisible) {
-            Timer("SettingUp", false).schedule(if (isOnTablet) 0 else 300) {
-                supportFragmentManager.commit {
-//                    setCustomAnimations(
-//                        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
-//                    )
-                    replace(R.id.content_frame, fragment, menuItem.itemId.toString())
-                }
+            supportFragmentManager.commit {
+                replace(R.id.content_frame, fragment, menuItem.itemId.toString())
             }
         }
 
@@ -708,14 +761,7 @@ class MainActivity : ThemeableActivity() {
         }
 
         val intent = Intent(this, activityClass)
-
-        if (OSUtils.isObySamsung()) {
-            startActivity(intent)
-            slideInRight()
-        } else {
-            val bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
-            startActivity(intent, bundle)
-        }
+        startActivityWithTransition(intent, MaterialSharedAxis.Y)
 
         return true
     }
@@ -964,19 +1010,11 @@ class MainActivity : ThemeableActivity() {
         return binding.materialTabs
     }
 
-    val activityBottomBar: BottomAppBar
-        get() = binding.bottomBar
+    val activityContextualToolbar: MaterialToolbar
+        get() = binding.contextualToolbar
 
     val activityMainContent: View
         get() = binding.mainContent
-
-    fun enableBottombar(enabled: Boolean) {
-        Log.d(TAG, "enableBottombar - enabled: $enabled")
-        if (enabled)
-            binding.bottomBar.animateIn()
-        else
-            binding.bottomBar.animateOut()
-    }
 
     // [START signIn]
     private fun signIn() {
@@ -1208,18 +1246,21 @@ class MainActivity : ThemeableActivity() {
                         content(R.string.gdrive_backup_content)
                         positiveButton(R.string.backup_confirm)
                     }
+
                     RESTORE_ASK -> {
                         title(R.string.gdrive_restore)
                         icon(R.drawable.cloud_download_24px)
                         content(R.string.gdrive_restore_content)
                         positiveButton(R.string.restore_confirm)
                     }
+
                     SIGNOUT -> {
                         title(R.string.gplus_signout)
                         icon(R.drawable.person_remove_24px)
                         content(R.string.dialog_acc_disconn_text)
                         positiveButton(R.string.disconnect_confirm)
                     }
+
                     REVOKE -> {
                         title(R.string.gplus_revoke)
                         icon(R.drawable.person_off_24px)
@@ -1267,9 +1308,6 @@ class MainActivity : ThemeableActivity() {
                 backupDatabase(acct?.id)
             }
 
-//            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-//            intentBroadcast.putExtra(WHICH, "BACKUP")
-//            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2
 
@@ -1277,7 +1315,6 @@ class MainActivity : ThemeableActivity() {
                 backupSharedPreferences(acct?.id, acct?.email)
             }
 
-//            dismissProgressDialog(BACKUP_RUNNING)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED
             SimpleDialogFragment.show(
@@ -1308,9 +1345,6 @@ class MainActivity : ThemeableActivity() {
                 restoreDatabase(acct?.id)
             }
 
-//            val intentBroadcast = Intent(BROADCAST_NEXT_STEP)
-//            intentBroadcast.putExtra(WHICH, RESTORE)
-//            LocalBroadcastManager.getInstance(this).sendBroadcast(intentBroadcast)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2
 
@@ -1318,7 +1352,6 @@ class MainActivity : ThemeableActivity() {
                 restoreSharedPreferences(acct?.id)
             }
 
-//            dismissProgressDialog(RESTORE_RUNNING)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED
             SimpleDialogFragment.show(
@@ -1336,19 +1369,38 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
-    fun createActionMode(callback: ActionMode.Callback) {
-        actionMode?.finish()
-        actionMode = startSupportActionMode(callback)
+    fun createActionMode(
+        resId: Int,
+        fragment: ActionModeFragment,
+        hideNavigation: Boolean = false,
+        clickListener: Toolbar.OnMenuItemClickListener
+    ) {
+        binding.contextualToolbar.navigationIcon =
+            if (hideNavigation) null else AppCompatResources.getDrawable(
+                this,
+                R.drawable.close_24px
+            )
+        isActionMode = true
+        actionModeFragment = fragment
+        binding.contextualToolbar.menu.clear()
+        binding.contextualToolbar.inflateMenu(resId)
+        binding.contextualToolbar.setOnMenuItemClickListener(clickListener)
         setTransparentStatusBar(false)
+        binding.risuscitoToolbar.expand(binding.contextualToolbarContainer, binding.appBarLayout)
     }
 
-    fun destroyActionMode() {
-        actionMode = null
+    fun destroyActionMode(): Boolean {
+        isActionMode = false
         setTransparentStatusBar(true)
+        actionModeFragment?.destroyActionMode()
+        return binding.risuscitoToolbar.collapse(
+            binding.contextualToolbarContainer,
+            binding.appBarLayout
+        )
     }
 
     fun updateActionModeTitle(title: String) {
-        actionMode?.title = title
+        binding.contextualToolbar.title = title
     }
 
     companion object {

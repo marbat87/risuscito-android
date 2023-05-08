@@ -3,14 +3,12 @@ package it.cammino.risuscito.ui.activity
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -19,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
@@ -30,11 +27,11 @@ import it.cammino.risuscito.databinding.ActivityInsertSearchBinding
 import it.cammino.risuscito.databinding.RowItemToInsertBinding
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.ui.fragment.CustomListsFragment
-import it.cammino.risuscito.utils.*
-import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.openCanto
-import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.utils.CantiXmlParser
+import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.*
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Job
@@ -53,7 +50,6 @@ class InsertActivity : ThemeableActivity() {
     private var listaPredefinita: Int = 0
     private var idLista: Int = 0
     private var listPosition: Int = 0
-    private lateinit var mPopupMenu: PopupMenu
 
     private var job: Job = Job()
 
@@ -64,23 +60,7 @@ class InsertActivity : ThemeableActivity() {
     private lateinit var binding: ActivityInsertSearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!OSUtils.isObySamsung()) {
-            val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-                duration = 700L
-            }
-            val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                duration = 700L
-            }
-            window.enterTransition = enter
-            window.exitTransition = enter
-            window.returnTransition = exit
-            window.reenterTransition = exit
-
-            // Allow Activity A’s exit transition to play at the same time as this Activity’s
-            // enter transition instead of playing them sequentially.
-            window.allowEnterTransitionOverlap = true
-        }
-
+        setEnterTransition()
         super.onCreate(savedInstanceState)
         binding = ActivityInsertSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -112,10 +92,10 @@ class InsertActivity : ThemeableActivity() {
             Firebase.crashlytics.recordException(e)
         }
 
-        binding.textBoxRicerca.hint =
-            if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
-                R.string.fast_search_subtitle
-            )
+//        binding.textBoxRicerca.hint =
+//            if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
+//                R.string.fast_search_subtitle
+//            )
 
         cantoAdapter.onClickListener =
             { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
@@ -151,57 +131,49 @@ class InsertActivity : ThemeableActivity() {
         val llm = LinearLayoutManager(this)
         binding.matchedList.layoutManager = if (isGridLayout) glm else llm
 
-        binding.textFieldRicerca.setOnKeyListener { _, keyCode, _ ->
-            var returnValue = false
-            if (keyCode == EditorInfo.IME_ACTION_DONE) {
-                // to hide soft keyboard
-                ContextCompat.getSystemService(this, InputMethodManager::class.java)
-                    ?.hideSoftInputFromWindow(binding.textFieldRicerca.windowToken, 0)
-                returnValue = true
-            }
-            returnValue
-        }
-
-        binding.textFieldRicerca.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
-            job.cancel()
-            ricercaStringa(s.toString())
-        }
-
-        mPopupMenu = PopupMenu(this, binding.moreOptions, Gravity.END)
-        mPopupMenu.inflate(R.menu.search_option_menu)
-        mPopupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.advanced_search -> {
-                    it.isChecked = !it.isChecked
-                    simpleIndexViewModel.advancedSearch = it.isChecked
-                    binding.textBoxRicerca.hint =
-                        if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
-                            R.string.fast_search_subtitle
+        binding.searchView
+            .editText
+            .setOnEditorActionListener { _, keyCode, _ ->
+                var returnValue = false
+                if (keyCode == EditorInfo.IME_ACTION_DONE) {
+                    // to hide soft keyboard
+                    ContextCompat.getSystemService(this, InputMethodManager::class.java)
+                        ?.hideSoftInputFromWindow(
+                            binding.searchView
+                                .editText.windowToken, 0
                         )
-                    job.cancel()
-                    ricercaStringa(binding.textFieldRicerca.text.toString())
-                    true
+                    returnValue = true
                 }
-                R.id.consegnaty_only -> {
-                    it.isChecked = !it.isChecked
-                    simpleIndexViewModel.consegnatiOnly = it.isChecked
-                    job.cancel()
-                    ricercaStringa(binding.textFieldRicerca.text.toString())
-                    true
-                }
-                else -> false
+                returnValue
             }
+
+        binding.searchView
+            .editText.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
+                job.cancel()
+                ricercaStringa(s.toString())
+            }
+
+        binding.advancedSearchChip.isChecked = simpleIndexViewModel.advancedSearch
+        binding.advancedSearchChip.setOnCheckedChangeListener { _, checked ->
+            simpleIndexViewModel.advancedSearch = checked
+            job.cancel()
+            ricercaStringa(binding.searchView.text.toString())
         }
 
-        binding.moreOptions.setOnClickListener {
-            mPopupMenu.menu.findItem(R.id.advanced_search).isChecked =
-                simpleIndexViewModel.advancedSearch
-            mPopupMenu.menu.findItem(R.id.consegnaty_only).isChecked =
-                simpleIndexViewModel.consegnatiOnly
-            mPopupMenu.show()
+        binding.consegnatiOnlySearchChip.isChecked =
+            simpleIndexViewModel.consegnatiOnly
+        binding.consegnatiOnlySearchChip.setOnCheckedChangeListener { _, checked ->
+            simpleIndexViewModel.consegnatiOnly = checked
+            job.cancel()
+            ricercaStringa(binding.searchView.text.toString())
         }
 
         onBackPressedDispatcher.addCallback(this) {
+            onBackPressedAction()
+        }
+
+        binding.searchView.show()
+        binding.searchView.toolbar.setNavigationOnClickListener {
             onBackPressedAction()
         }
 

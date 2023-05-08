@@ -4,11 +4,10 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.fragment.app.commit
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import it.cammino.risuscito.R
 import it.cammino.risuscito.databinding.ActivityFragmentHostBinding
 import it.cammino.risuscito.ui.fragment.CantoFragment
-import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 
 class CantoHostActivity : ThemeableActivity() {
@@ -17,20 +16,7 @@ class CantoHostActivity : ThemeableActivity() {
     private lateinit var binding: ActivityFragmentHostBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!OSUtils.isObySamsung()) {
-            val enter = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-                duration = 700L
-            }
-            val exit = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                duration = 700L
-            }
-            window.enterTransition = enter
-            window.returnTransition = exit
-
-            // Allow Activity A’s exit transition to play at the same time as this Activity’s
-            // enter transition instead of playing them sequentially.
-            window.allowEnterTransitionOverlap = true
-        }
+        setEnterTransition()
         super.onCreate(savedInstanceState)
 
         binding = ActivityFragmentHostBinding.inflate(layoutInflater)

@@ -5,6 +5,7 @@
     <androidx.preference.PreferenceCategory android:title="@string/theme">
 
         <DropDownPreference
+            android:defaultValue="default"
             android:entries="@array/themeListArray"
             android:entryValues="@array/themeEntryArray"
             android:key="night_mode"

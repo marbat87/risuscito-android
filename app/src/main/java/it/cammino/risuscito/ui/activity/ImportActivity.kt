@@ -8,7 +8,10 @@ import android.view.KeyEvent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.work.*
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.services.XmlImportService
@@ -72,7 +75,7 @@ class ImportActivity : AppCompatActivity() {
             // so that the entire process of displaying a WorkInfo is in one location.
 
             // If there are no matching work info, do nothing
-            if (listOfWorkInfo.isNullOrEmpty()) {
+            if (listOfWorkInfo.isEmpty()) {
                 return@Observer
             }
 

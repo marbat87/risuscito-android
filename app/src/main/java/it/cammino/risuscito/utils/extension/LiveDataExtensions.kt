@@ -4,7 +4,6 @@ package it.cammino.risuscito.utils.extension
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Transformations
 
 /**
  * This function creates a [LiveData] of a [Pair] of the two types provided. The resulting LiveData is updated whenever either input LiveData updates and both LiveData have updated to a non-null value at least once before.
@@ -73,69 +72,6 @@ fun <A, B> zipLiveDataNullable(a: LiveData<A>, b: LiveData<B>): LiveData<Pair<A?
         }
     }
 }
-
-/**
- * This is merely an extension function for [zipLiveData].
- *
- * @see zipLiveData
- * @since 0.1.0
- * @author Mitchell Skaggs
- */
-infix fun <A, B> LiveData<A>.zipTo(b: LiveData<B>): LiveData<Pair<A, B>> = zipLiveData(this, b)
-
-/**
- * This is merely an extension function for [zipLiveDataNullable].
- *
- * @see zipLiveData
- * @since 0.1.0
- * @author Mitchell Skaggs
- */
-infix fun <A, B> LiveData<A>.zipToNullable(b: LiveData<B>): LiveData<Pair<A?, B?>> =
-    zipLiveDataNullable(this, b)
-
-/**
- * This is an extension function that calls to [Transformations.map]. If null is received, null is returned instead of calling the provided function.
- *
- * @see Transformations.map
- * @since 0.1.0
- * @author Mitchell Skaggs
- */
-inline fun <A, B> LiveData<A>.map(crossinline function: (A) -> B): LiveData<B> =
-    Transformations.map(this) {
-        if (it == null) null else function(it)
-    }
-
-/**
- * This is an extension function that calls to [Transformations.map]. It exposes the possibilities of receiving and returning null.
- *
- * @see Transformations.map
- * @since 0.1.0
- * @author Mitchell Skaggs
- */
-fun <A, B> LiveData<A>.mapNullable(function: (A?) -> B?): LiveData<B> =
-    Transformations.map(this, function)
-
-/**
- * This is an extension function that calls to [Transformations.switchMap]. If null is received, null is returned instead of calling the provided function.
- *
- * @see Transformations.switchMap
- * @since 0.1.0
- * @author Mitchell Skaggs
- */
-fun <A, B> LiveData<A>.switchMap(function: (A) -> LiveData<B>): LiveData<B> =
-    Transformations.switchMap(this) {
-        if (it == null) null else function(it)
-    }
-
-/**
- * This is an extension function that calls to [Transformations.switchMap]. It exposes the possibilities of receiving and returning null.
- *
- * @see Transformations.switchMap
- * @since 0.1.0
- * @author Mitchell Skaggs
- */
-fun <A, B> LiveData<A>.switchMapNullable(function: (A?) -> LiveData<B>?): LiveData<B> =
-    Transformations.switchMap(this, function)
 
 /**
  * This is an extension function that links two [MediatorLiveData] instances using a function [apply] and its inverse, [unapply]. Changes made to either [MediatorLiveData] are reflected in the other based on the two functions.

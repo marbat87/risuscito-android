@@ -53,7 +53,6 @@
     <string name="fast_search_title">Швидкий пошук</string>
     <string name="advanced_search_title">Детальний пошук</string>
     <string name="advanced_search_subtitle">ПОШУК У ЗАГОЛОВКУ ТА В ТЕКСТІ</string>
-    <string name="fast_search_subtitle">ПОШУК ЗА НАЗВОЮ</string>
     <string name="show_seconda_title">Євхаристія - 2^ читання</string>
     <string name="show_seconda_summary">Включити пісню як відповідь на друге читання для Євхаристії</string>
     <string name="action_add_list">Новий список</string>
@@ -112,7 +111,6 @@
     <string name="no_pdf_reader">Не знайдено ніякого PDF Reader</string>
     <string name="export_running">Іде експорт&#8230;</string>
     <string name="open_pdf">Відкрити PDF</string>
-    <string name="activity_homepage">Домашня сторінка</string>
     <string name="no_memory_writable">Пам\'ять не доступна або в режимі тільки читання</string>
     <string name="salmi_musica_index">Зміст псалмів з мелодіями</string>
     <string name="only_link">Хочеш асоціювати існуючий файл mp3 з пам\'яті пристрою?</string>
@@ -279,7 +277,6 @@
     <string name="disconnect_confirm">роз\'єднати</string>
     <string name="unlink_confirm">від\'єднати</string>
     <string name="create_confirm">створити</string>
-    <string name="title_filter">фільтрувати за назвою</string>
     <string name="cancel">скасувати</string>
     <string name="ok">OK</string>
     <string name="import_confirm">Імпортувати</string>

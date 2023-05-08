@@ -5,9 +5,13 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.view.ActionMode
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
@@ -31,6 +35,7 @@ import it.cammino.risuscito.databinding.LayoutHistoryBinding
 import it.cammino.risuscito.items.SimpleHistoryItem
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.isGridLayout
@@ -39,7 +44,7 @@ import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class HistoryFragment : AccountMenuFragment() {
+class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
@@ -80,7 +85,6 @@ class HistoryFragment : AccountMenuFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_history)
-        mMainActivity?.enableBottombar(false)
         mMainActivity?.enableFab(false)
         mMainActivity?.setTabVisible(false)
 
@@ -100,7 +104,7 @@ class HistoryFragment : AccountMenuFragment() {
         cantoAdapter.onPreClickListener =
             { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
                 var consume = false
-                if (mMainActivity?.actionMode != null) {
+                if (mMainActivity?.isActionMode == true) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
                         mLastClickTime = SystemClock.elapsedRealtime()
                         cantoAdapter
@@ -108,7 +112,7 @@ class HistoryFragment : AccountMenuFragment() {
                             .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
                         cantoAdapter.notifyAdapterItemChanged(position)
                         if (selectExtension?.selectedItems?.size == 0)
-                            mMainActivity?.actionMode?.finish()
+                            mMainActivity?.destroyActionMode()
                         else
                             updateActionModeTitle()
                     }
@@ -135,7 +139,7 @@ class HistoryFragment : AccountMenuFragment() {
 
         cantoAdapter.onPreLongClickListener =
             { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
-                if (mMainActivity?.actionMode == null) {
+                if (mMainActivity?.isActionMode != true) {
                     cantoAdapter.getAdapterItem(position).isSelected = true
                     cantoAdapter.notifyAdapterItemChanged(position)
                     startCab()
@@ -200,46 +204,27 @@ class HistoryFragment : AccountMenuFragment() {
     }
 
     private fun startCab() {
-        val callback = object : ActionMode.Callback {
-
-            override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
-                requireActivity().menuInflater.inflate(R.menu.menu_delete, menu)
-                Log.d(TAG, "MaterialCab onCreate")
-                actionModeOk = false
-                return true
-            }
-
-            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                return false
-            }
-
-            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                Log.d(TAG, "MaterialCab onSelection: ${item?.itemId}")
-                return if (item?.itemId == R.id.action_remove_item) {
-                    removeHistories()
-                    actionModeOk = true
-                    mMainActivity?.actionMode?.finish()
-                    true
-                } else
-                    false
-            }
-
-            override fun onDestroyActionMode(mode: ActionMode?) {
-                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
-                if (!actionModeOk) {
-                    try {
-                        selectExtension?.deselect()
-                    } catch (e: Exception) {
-                        Firebase.crashlytics.recordException(e)
-                    }
-                }
+        actionModeOk = false
+        mMainActivity?.createActionMode(R.menu.menu_delete, this) { item ->
+            if (item?.itemId == R.id.action_remove_item) {
+                removeHistories()
+                actionModeOk = true
                 mMainActivity?.destroyActionMode()
-            }
-
+                true
+            } else
+                false
         }
-
-        mMainActivity?.createActionMode(callback)
         updateActionModeTitle()
+    }
+
+    override fun destroyActionMode() {
+        if (!actionModeOk) {
+            try {
+                selectExtension?.deselect()
+            } catch (e: Exception) {
+                Firebase.crashlytics.recordException(e)
+            }
+        }
     }
 
     private fun updateActionModeTitle() {

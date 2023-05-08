@@ -134,7 +134,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (isFinishing) stopMedia()
     }
 
-    fun updateStatusBarLightMode(auto: Boolean) {
+    private fun updateStatusBarLightMode(auto: Boolean) {
         setLigthStatusBar(if (auto) !isDarkMode else false)
     }
 
