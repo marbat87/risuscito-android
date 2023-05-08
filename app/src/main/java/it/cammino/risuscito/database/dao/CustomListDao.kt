@@ -15,7 +15,7 @@ interface CustomListDao {
     @Query("DELETE FROM customlist")
     fun truncateTable()
 
-    @Query("SELECT B.titolo, B.pagina, B.source, B.color, B.id, A.timestamp, A.position FROM customlist A, canto B WHERE A.id = :id AND A.idCanto = B.id ORDER BY A.timestamp ASC")
+    @Query("SELECT B.titolo, B.pagina, B.source, B.color, B.id, A.timestamp, A.position, A.notaPosizione FROM customlist A, canto B WHERE A.id = :id AND A.idCanto = B.id ORDER BY A.timestamp ASC")
     fun getList(id: Int): LiveData<List<Posizione>>
 
     @Query("SELECT B.titolo FROM customlist A , canto B WHERE A.id = :id AND A.position = :position AND A.idCanto = B.id")
@@ -33,8 +33,17 @@ interface CustomListDao {
     @Query("UPDATE customlist SET idCanto = :idCanto WHERE id = :id AND position = :position")
     fun updatePositionNoTimestamp(idCanto: Int, id: Int, position: Int)
 
-    @Query("UPDATE customlist SET idCanto = :idCantoNew WHERE id = :id AND position = :position AND idCanto = :idCantoOld")
-    fun updatePositionNoTimestamp(idCantoNew: Int, id: Int, position: Int, idCantoOld: Int)
+    @Query("UPDATE customlist SET notaPosizione = :notaCanto WHERE id = :id AND position = :position AND idCanto = :idCanto")
+    fun updateNotaPosition(notaCanto: String, id: Int, position: Int, idCanto: Int)
+
+    @Query("UPDATE customlist SET idCanto = :idCantoNew, notaPosizione = :notaCantoNew WHERE id = :id AND position = :position AND idCanto = :idCantoOld")
+    fun updatePositionNoTimestamp(
+        idCantoNew: Int,
+        notaCantoNew: String,
+        id: Int,
+        position: Int,
+        idCantoOld: Int
+    )
 
     @Update
     fun updatePosition(position: CustomList): Int
@@ -49,6 +58,6 @@ interface CustomListDao {
     fun deletePosition(position: CustomList)
 
     @Query("SELECT COUNT(*) FROM customlist WHERE id = :idLista AND position = :position AND idCanto = :idCanto")
-    fun checkExistsPosition(idLista : Int, position : Int, idCanto : Int): Int
+    fun checkExistsPosition(idLista: Int, position: Int, idCanto: Int): Int
 }
 

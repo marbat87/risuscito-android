@@ -3,14 +3,7 @@
 
     <color name="ic_launcher_background">#A24444</color>
 
-    <color name="risuscito_material_background">@color/md_theme_light_background</color>
     <color name="background_dim_overlay">#44000000</color>
-
-    <integer-array name="cat_custom_progress_colors">
-        <item>@color/md_theme_light_tertiary</item>
-        <item>@color/md_theme_light_primary</item>
-        <item>@color/md_theme_light_error</item>
-    </integer-array>
 
     <color name="md_theme_light_primary">#335BB1</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>

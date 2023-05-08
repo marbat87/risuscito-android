@@ -1,11 +1,7 @@
 package it.cammino.risuscito.database.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import it.cammino.risuscito.database.entities.Consegnato
 import it.cammino.risuscito.database.pojo.CantoConsegnato
 
@@ -37,10 +33,10 @@ interface ConsegnatiDao {
     @Query("DELETE FROM consegnato")
     fun emptyConsegnati()
 
-    @Insert(onConflict = REPLACE)
+    @Upsert
     fun insertConsegnati(consegnato: Consegnato)
 
-    @Insert(onConflict = REPLACE)
+    @Upsert
     fun insertConsegnati(consegnatoList: List<Consegnato>)
 
     @Update

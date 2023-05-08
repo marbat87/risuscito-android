@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
 
-    <release versionCode="5031"
+    <release
+        versionCode="5122"
+        date="Marzo 2023"
+        versionName="5.1.1">
+        <new>Aggiunte le icone ai popup</new>
+        <bugfix>Sistemato il colore di sfondo in alcune schermate</bugfix>
+        <bugfix>Corretti alcuni titoli errati</bugfix>
+        <new>Aggiunta opzione per utilizzare la VECCHIA NUMERAZIONE dei canti (cerca nelle
+            impostazioni)
+        </new>
+        <new>Implementato sistema di notifiche da parte dello sviluppatore</new>
+        <new>Aggiunte le NOTE agli elementi delle liste personalizzate</new>
+        <new>Aggiunta opzione per disabilitare il canto alla pace dall'Eucarestia</new>
+        <new>Ottimizzazioni e compatibilità con Android 13</new>
+    </release>
+
+    <release
+        versionCode="5031"
         date="Giugno 2022"
         versionName="5.0.2">
         <new>Stile Material 3 (rimossa l'opzione per scegliere i colori dell'app)</new>
-        <new>Nuovi color dei canti, numeri di pagina e testi basati sull'edizione 2020 del libro "Risuscitò"</new>
+        <new>Nuovi color dei canti, numeri di pagina e testi basati sull'edizione 2020 del libro
+            "Risuscitò"
+        </new>
         <new>L'indice biblico sostituisce l'indice dei Salmi cantati</new>
-        <new>Il nuovo indice liturgico (tratto dal libro ufficiale) sostituisce sia il vecchio che l'indice per argomento</new>
+        <new>Il nuovo indice liturgico (tratto dal libro ufficiale) sostituisce sia il vecchio che
+            l'indice per argomento
+        </new>
         <new>Integrata la funzione di RICERCA nella HOME</new>
         <bugfix>Sistemati problemi di compatibilità con Android 11 e 12</bugfix>
     </release>

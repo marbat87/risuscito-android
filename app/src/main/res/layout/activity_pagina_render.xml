@@ -15,7 +15,7 @@
         app:statusBarForeground="?colorSurface">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/risuscito_toolbar"
+            android:id="@+id/risuscito_toolbar_canto"
             style="@style/Widget.Material3.Toolbar.Surface"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -161,13 +161,12 @@
 
                 <Button
                     android:id="@+id/play_song"
-                    style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+                    style="?attr/materialIconButtonFilledTonalStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/activity_min_margin"
                     android:visibility="gone"
                     app:icon="@drawable/play_arrow_24px"
-                    app:iconSize="24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -202,9 +201,8 @@
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
-        style="@style/Widget.Material3.BottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:contentInsetStart="0dp"
         app:hideOnScroll="false">
@@ -246,12 +244,11 @@
 
             <Button
                 android:id="@+id/play_scroll"
-                style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/activity_min_margin"
                 app:icon="@drawable/play_circle_24px"
-                app:iconSize="24dp"
                 app:iconTint="?colorControlNormal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -264,19 +261,21 @@
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-        android:id="@+id/overlay"
+        android:id="@+id/overlay_canto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background_dim_overlay" />
 
     <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/fab_canti"
+        style="@style/Risuscito_SpeedDialMainFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="?actionBarSize"
+        android:layout_marginBottom="@dimen/m3_bottomappbar_height"
         app:sdExpansionMode="top"
         app:sdMainFabClosedSrc="@drawable/add_24px"
-        app:sdOverlayLayout="@id/overlay" />
+        app:sdOverlayLayout="@id/overlay_canto"
+        tools:ignore="PrivateResource" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

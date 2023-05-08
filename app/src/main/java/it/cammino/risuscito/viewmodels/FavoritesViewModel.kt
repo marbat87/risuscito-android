@@ -4,13 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.items.simpleItem
-import java.util.*
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.useOldIndex
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -19,17 +19,21 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
+        val useOldIndex = application.useOldIndex()
         mFavoritesResult = mDb.favoritesDao().liveFavorites.map { canti ->
             val newList = ArrayList<SimpleItem>()
             canti.forEach {
                 newList.add(
-                        simpleItem {
-                            setTitle = LUtils.getResId(it.titolo, R.string::class.java)
-                            setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                            setSource = LUtils.getResId(it.source, R.string::class.java)
-                            setColor = it.color ?: Canto.BIANCO
-                            id = it.id
-                        }
+                    simpleItem {
+                        setTitle = Utility.getResId(it.titolo, R.string::class.java)
+                        setPage = Utility.getResId(
+                            if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
+                            R.string::class.java
+                        )
+                        setSource = Utility.getResId(it.source, R.string::class.java)
+                        setColor = it.color ?: Canto.BIANCO
+                        id = it.id
+                    }
                 )
             }
             newList

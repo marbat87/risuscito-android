@@ -3,43 +3,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="?dialogPreferredPadding">
 
     <Button
         android:id="@+id/close_modal"
-        style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+        style="?attr/materialIconButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_min_margin"
-        android:layout_marginTop="@dimen/activity_min_top_margin"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="?dialogPreferredPadding"
+        app:icon="@drawable/close_24px"
         app:iconTint="?colorSecondary"
-        app:icon="@drawable/ic_close_black_24dp"
-        app:iconSize="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <TextView
+        android:id="@+id/profile_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textAppearance="?textAppearanceHeadlineSmall"
         android:textColor="?attr/colorOnSurface"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/close_modal"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/close_modal"
+        app:layout_constraintTop_toTopOf="@id/close_modal" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="?dialogPreferredPadding"
         android:layout_marginTop="20dp"
         android:src="@drawable/account_circle_56px"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/close_modal"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Risuscito.CornerSize50Percent" />
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
 
     <TextView
         android:id="@+id/profile_name"

@@ -1,24 +1,27 @@
 package it.cammino.risuscito.services
 
+import android.Manifest
 import android.app.Notification
 import android.content.ContentResolver
 import android.content.Context
-import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import android.util.Xml
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -59,7 +62,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
             .setContentText(appContext.getString(R.string.import_running))
             .build()
 
-        mNotificationManager.notify(NOTIFICATION_ID, mNotification)
+        notify(appContext, mNotificationManager, mNotification)
 
         if (ContentResolver.SCHEME_CONTENT == scheme) {
             try {
@@ -79,13 +82,9 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                     .setContentText(appContext.getString(R.string.import_done))
                     .build()
 
-                mNotificationManager.notify(NOTIFICATION_ID, mNotification)
+                notify(appContext, mNotificationManager, mNotification)
 
-                val i = appContext
-                    .packageManager
-                    .getLaunchIntentForPackage(appContext.packageName)
-                i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                appContext.startActivity(i)
+                ProcessPhoenix.triggerRebirth(appContext)
                 return Result.success()
             } catch (e: XmlPullParserException) {
                 Log.e(TAG, TAG_IMPORT_DATA, e)
@@ -97,7 +96,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                     .setTicker(appContext.getString(R.string.import_error))
                     .setContentText(appContext.getString(R.string.import_error))
                     .build()
-                mNotificationManager.notify(NOTIFICATION_ID, mNotification)
+                notify(appContext, mNotificationManager, mNotification)
 
                 return Result.failure()
             } catch (e: SecurityException) {
@@ -109,7 +108,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                     .setContentTitle(appContext.getString(R.string.app_name))
                     .setTicker(appContext.getString(R.string.import_error))
                     .setContentText(appContext.getString(R.string.import_error)).build()
-                mNotificationManager.notify(NOTIFICATION_ID, mNotification)
+                notify(appContext, mNotificationManager, mNotification)
 
                 return Result.failure()
             } catch (e: IOException) {
@@ -121,13 +120,29 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
                     .setContentTitle(appContext.getString(R.string.app_name))
                     .setTicker(appContext.getString(R.string.import_error))
                     .setContentText(appContext.getString(R.string.import_error)).build()
-                mNotificationManager.notify(NOTIFICATION_ID, mNotification)
+                notify(appContext, mNotificationManager, mNotification)
 
                 return Result.failure()
             }
 
         }
         return Result.success()
+    }
+
+    private fun notify(
+        context: Context,
+        notificationManager: NotificationManagerCompat,
+        notification: Notification
+    ) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.i(TAG, "notifications not permitted")
+            return
+        }
+        notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
     @Throws(XmlPullParserException::class, IOException::class)

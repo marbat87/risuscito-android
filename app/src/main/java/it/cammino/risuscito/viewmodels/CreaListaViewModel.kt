@@ -4,7 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import it.cammino.risuscito.CreaListaActivity
+import it.cammino.risuscito.ui.activity.CreaListaActivity
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.SwipeableItem

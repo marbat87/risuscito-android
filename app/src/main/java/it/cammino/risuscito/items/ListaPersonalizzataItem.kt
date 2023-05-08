@@ -4,7 +4,6 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
@@ -34,6 +33,7 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
         }
 
     var createClickListener: View.OnClickListener? = null
+    var editNoteClickListener: NoteClickListener? = null
     var createLongClickListener: View.OnLongClickListener? = null
 
     override val type: Int
@@ -70,35 +70,47 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
                     StringHolder.applyTo(canto.page, itemViewBinding.textPage)
                     StringHolder.applyTo(canto.source, itemViewBinding.textSourceCanto)
                     StringHolder.applyTo(canto.timestamp, itemViewBinding.textTimestamp)
+
+                    itemViewBinding.editNote.isVisible =
+                        canto.nota.isEmpty() && !canto.ismSelected()
+                    itemViewBinding.editNoteFilled.isVisible =
+                        canto.nota.isNotEmpty() && !canto.ismSelected()
+
                     itemViewBinding.textIdCantoCard.text = canto.idCanto.toString()
+                    itemViewBinding.textNotaCanto.text = canto.nota
                     itemViewBinding.itemTag.text = i.toString()
                     cantoView.background = FastAdapterUIUtils.getSelectableBackground(
                         context,
-                        ContextCompat.getColor(context, R.color.selected_bg_color),
+                        MaterialColors.getColor(context, R.attr.colorSecondaryContainer, TAG),
                         true
                     )
-                    if (canto.ismSelected()) {
-                        val bgShape = itemViewBinding.selectedMark.background as? GradientDrawable
-                        bgShape?.setColor(
+
+                    itemViewBinding.textPage.isVisible = !canto.ismSelected()
+                    itemViewBinding.selectedMark.isVisible = canto.ismSelected()
+                    cantoView.isSelected = canto.ismSelected()
+
+                    val bgShape =
+                        if (canto.ismSelected()) itemViewBinding.selectedMark.background as? GradientDrawable else itemViewBinding.textPage.background as? GradientDrawable
+                    bgShape?.setColor(
+                        if (canto.ismSelected())
                             MaterialColors.getColor(
                                 context,
                                 R.attr.colorPrimary,
                                 TAG
                             )
-                        )
-                        itemViewBinding.textPage.isVisible = false
-                        itemViewBinding.selectedMark.isVisible = true
-                        cantoView.isSelected = true
-                    } else {
-                        val bgShape = itemViewBinding.textPage.background as? GradientDrawable
-                        bgShape?.setColor(canto.color)
-                        itemViewBinding.textPage.isVisible = true
-                        itemViewBinding.selectedMark.isVisible = false
-                        cantoView.isSelected = false
-                    }
+                        else canto.color
+                    )
 
                     createClickListener?.let { cantoView.setOnClickListener(it) }
                     createLongClickListener?.let { cantoView.setOnLongClickListener(it) }
+                    editNoteClickListener?.let {
+                        itemViewBinding.editNote.setOnClickListener { _ ->
+                            it.onclick(titleItem?.idPosizione ?: 0, canto.nota, canto.idCanto)
+                        }
+                        itemViewBinding.editNoteFilled.setOnClickListener { _ ->
+                            it.onclick(titleItem?.idPosizione ?: 0, canto.nota, canto.idCanto)
+                        }
+                    }
                     binding.genericList.addView(itemViewBinding.root)
                 }
             } else {
@@ -120,6 +132,10 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
 
     companion object {
         private val TAG = ListaPersonalizzataItem::class.java.canonicalName
+    }
+
+    interface NoteClickListener {
+        fun onclick(idPosizione: Int, nota: String, idCanto: Int)
     }
 
 }

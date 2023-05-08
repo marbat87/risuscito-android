@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import androidx.media.session.MediaButtonReceiver
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
+import it.cammino.risuscito.utils.Utility
 
 /**
  * Helper class for building Media style Notifications from a

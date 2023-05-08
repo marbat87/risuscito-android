@@ -12,9 +12,9 @@ import com.mikepenz.fastadapter.swipe.ISwipeable
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import com.mikepenz.fastadapter.utils.DragDropUtil
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility.helperSetString
 import it.cammino.risuscito.databinding.SwipeableItemBinding
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility.helperSetString
 
 fun swipeableItem(block: SwipeableItem.() -> Unit): SwipeableItem = SwipeableItem().apply(block)
 
@@ -28,6 +28,7 @@ class SwipeableItem : AbstractBindingItem<SwipeableItemBinding>(), ISwipeable,
         }
 
     var idCanto: String = StringUtils.EMPTY
+    var nota: String = StringUtils.EMPTY
 
     var swipedDirection: Int = 0
 

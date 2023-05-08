@@ -17,6 +17,7 @@
 package it.cammino.risuscito.playback
 
 import android.annotation.SuppressLint
+import android.app.ForegroundServiceStartNotAllowedException
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -33,13 +34,16 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
-import it.cammino.risuscito.PaginaRenderActivity
 import it.cammino.risuscito.R
+import it.cammino.risuscito.ui.activity.CantoHostActivity
+import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.extension.isOnPhone
 import java.util.concurrent.TimeUnit
 
 class MusicService : MediaBrowserServiceCompat() {
@@ -101,7 +105,10 @@ class MusicService : MediaBrowserServiceCompat() {
         val context = applicationContext
 
         // This is an Intent to launch the app's UI, used primarily by the ongoing notification.
-        val intent = Intent(context, PaginaRenderActivity::class.java)
+        val intent = Intent(
+            context,
+            if (applicationContext.isOnPhone) CantoHostActivity::class.java else MainActivity::class.java
+        )
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val pi = getPendingIntent(intent, context)
         mSession?.setSessionActivity(pi)
@@ -265,7 +272,11 @@ class MusicService : MediaBrowserServiceCompat() {
         }
 
         override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-            val mKeyEvent = mediaButtonEvent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)
+            @Suppress("DEPRECATION") val mKeyEvent =
+                if (OSUtils.hasT()) mediaButtonEvent.getParcelableExtra(
+                    Intent.EXTRA_KEY_EVENT,
+                    KeyEvent::class.java
+                ) else mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT)
             Log.d(TAG, "onMediaButtonEvent keycode: ${mKeyEvent?.keyCode}")
             if (mKeyEvent?.keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS)
                 onSkipToPrevious()
@@ -433,19 +444,19 @@ class MusicService : MediaBrowserServiceCompat() {
             mMusicProvider?.updateMusic(mCurrentMedia?.description?.mediaId, newMetadataCompat)
             mSession?.setMetadata(newMetadataCompat)
             val notification = postNotification()
-            startForeground(NOTIFICATION_ID, notification)
-            mAudioBecomingNoisyReceiver?.register()
+            startForegroundWrapper(notification)
         } else {
             if (state == PlaybackStateCompat.STATE_PAUSED) {
                 postNotification()
             } else {
                 mNotificationManager.cancel(NOTIFICATION_ID)
             }
-            stopForeground(false)
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH)
             mAudioBecomingNoisyReceiver?.unregister()
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun postNotification(): Notification? {
         val notification = MediaNotificationHelper.createNotification(this, mSession)
             ?: return null
@@ -485,6 +496,28 @@ class MusicService : MediaBrowserServiceCompat() {
         val intentBroadcast = Intent(BROADCAST_RETRIEVE_ASYNC)
         intentBroadcast.putExtra(MSG_RETRIEVE_DONE, done)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intentBroadcast)
+    }
+
+    private fun startForegroundWrapper(notification: Notification?) {
+        if (OSUtils.hasS())
+            startForegroundS(notification)
+        else
+            startForegroundLegacy(notification)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun startForegroundS(notification: Notification?) {
+        try {
+            startForeground(NOTIFICATION_ID, notification)
+            mAudioBecomingNoisyReceiver?.register()
+        } catch (e: ForegroundServiceStartNotAllowedException) {
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH)
+        }
+    }
+
+    private fun startForegroundLegacy(notification: Notification?) {
+        startForeground(NOTIFICATION_ID, notification)
+        mAudioBecomingNoisyReceiver?.register()
     }
 
     companion object {

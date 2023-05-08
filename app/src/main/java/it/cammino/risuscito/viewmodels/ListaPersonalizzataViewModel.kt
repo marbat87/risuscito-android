@@ -4,10 +4,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.ListaPersonalizzataItem
@@ -16,8 +14,10 @@ import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.map
-import it.cammino.risuscito.utils.zipLiveDataNullable
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.map
+import it.cammino.risuscito.utils.extension.useOldIndex
+import it.cammino.risuscito.utils.extension.zipLiveDataNullable
 
 
 class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
@@ -27,6 +27,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
     var listaPersonalizzataId: Int = 0
     var listaPersonalizzata: ListaPersonalizzata? = null
     var listaPersonalizzataTitle: String? = null
+    var posizioneDaCanc: Int = 0
 
     var listaPersonalizzataResult: LiveData<List<ListaPersonalizzataItem>>? = null
         private set
@@ -34,6 +35,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
     init {
         listaPersonalizzataId = args.getInt(Utility.TIPO_LISTA)
         val mDb = RisuscitoDatabase.getInstance(getApplication())
+        val useOldIndex = application.useOldIndex()
         mDb.listePersDao().getLiveListById(listaPersonalizzataId)?.let { liveList ->
             listaPersonalizzataResult =
                 zipLiveDataNullable(liveList, mDb.cantoDao().liveAll).map { result ->
@@ -53,23 +55,24 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
                                     list.add(
                                         posizioneItem {
                                             withTitle(
-                                                LUtils.getResId(
+                                                Utility.getResId(
                                                     it.titolo,
                                                     R.string::class.java
                                                 )
                                             )
                                             withPage(
-                                                LUtils.getResId(
-                                                    it.pagina,
+                                                Utility.getResId(
+                                                    if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
                                                     R.string::class.java
                                                 )
                                             )
                                             withSource(
-                                                LUtils.getResId(
+                                                Utility.getResId(
                                                     it.source,
                                                     R.string::class.java
                                                 )
                                             )
+                                            withNota(lista.getNotaPosizione(cantoIndex))
                                             withColor(it.color ?: Canto.BIANCO)
                                             withId(it.id)
                                             withTimestamp(StringUtils.EMPTY)

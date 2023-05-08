@@ -30,7 +30,7 @@
                     android:layout_height="?attr/actionBarSize" />
 
                 <com.ferfalk.simplesearchview.SimpleSearchView
-                    android:id="@+id/search_view"
+                    android:id="@+id/simple_search_view"
                     style="@style/SimpleSearchViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -54,21 +54,19 @@
             android:elevation="11dp"
             android:indeterminate="true"
             android:visibility="invisible"
-            app:indeterminateAnimationType="contiguous"
-            app:indicatorColor="@array/cat_custom_progress_colors"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="?android:colorBackground"
             app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottom_bar"
-            style="@style/Widget.Material3.BottomAppBar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:visibility="invisible"
             app:hideOnScroll="true"
@@ -83,6 +81,7 @@
 
         <com.leinardi.android.speeddial.SpeedDialView
             android:id="@+id/fab_pager"
+            style="@style/Risuscito_SpeedDialMainFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

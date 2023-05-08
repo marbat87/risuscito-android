@@ -15,6 +15,7 @@
     <!--    <item name="gplus_revoke" type="id" />-->
     <item name="fastadapter_sub_item_id" type="id" />
     <item name="fastadapter_checkable_item_id" type="id" />
+    <item name="fastadapter_checkable_passage_item_id" type="id" />
     <item name="fastadapter_history_item_id" type="id" />
     <item name="fastadapter_listapers_item_id" type="id" />
     <item name="fastadapter_simple_item_id" type="id" />
@@ -36,4 +37,5 @@
     <item name="fab_edit_lista" type="id" />
     <item name="fab_delete_lista" type="id" />
     <item name="material_drawer_item_gmail_item" type="id" />
+    <item name="canto_fragment" type="id" />
 </resources>

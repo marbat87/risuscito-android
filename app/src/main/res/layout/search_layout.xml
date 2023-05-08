@@ -34,13 +34,12 @@
 
     <Button
         android:id="@+id/more_options"
-        style="@style/Widget.Risuscito.Button.TextButton.IconOnly"
+        style="?attr/materialIconButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_min_margin"
         android:layout_marginEnd="@dimen/activity_min_margin"
         app:icon="@drawable/more_vert_24px"
-        app:iconSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/text_box_ricerca"
         app:layout_constraintTop_toTopOf="parent"

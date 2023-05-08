@@ -5,14 +5,14 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.mikepenz.fastadapter.IItem
-import it.cammino.risuscito.LUtils
 import it.cammino.risuscito.R
-import it.cammino.risuscito.Utility
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.InsertItem
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.items.insertItem
 import it.cammino.risuscito.items.simpleItem
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.useOldIndex
 
 class SimpleIndexViewModel(application: Application, args: Bundle) :
     GenericIndexViewModel(application) {
@@ -32,6 +32,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
     init {
         tipoLista = args.getInt(Utility.TIPO_LISTA)
         val mDb = RisuscitoDatabase.getInstance(getApplication())
+        val useOldIndex = application.useOldIndex()
         when (tipoLista) {
             0, 1 ->
                 itemsResult = mDb.cantoDao().liveAll.map { canti ->
@@ -39,9 +40,12 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                     canti.forEach {
                         newList.add(
                             simpleItem {
-                                setTitle = LUtils.getResId(it.titolo, R.string::class.java)
-                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setTitle = Utility.getResId(it.titolo, R.string::class.java)
+                                setPage = Utility.getResId(
+                                    if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
+                                    R.string::class.java
+                                )
+                                setSource = Utility.getResId(it.source, R.string::class.java)
                                 setColor = it.color
                                 id = it.id
                                 undecodedSource = it.source
@@ -56,9 +60,12 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                     canti.forEach {
                         newList.add(
                             simpleItem {
-                                setTitle = LUtils.getResId(it.titoloIndice, R.string::class.java)
-                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setTitle = Utility.getResId(it.titoloIndice, R.string::class.java)
+                                setPage = Utility.getResId(
+                                    if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
+                                    R.string::class.java
+                                )
+                                setSource = Utility.getResId(it.source, R.string::class.java)
                                 setColor = it.color
                                 id = it.id
                             }
@@ -72,9 +79,12 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                     canti.forEach {
                         newList.add(
                             insertItem {
-                                setTitle = LUtils.getResId(it.titolo, R.string::class.java)
-                                setPage = LUtils.getResId(it.pagina, R.string::class.java)
-                                setSource = LUtils.getResId(it.source, R.string::class.java)
+                                setTitle = Utility.getResId(it.titolo, R.string::class.java)
+                                setPage = Utility.getResId(
+                                    if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
+                                    R.string::class.java
+                                )
+                                setSource = Utility.getResId(it.source, R.string::class.java)
                                 setColor = it.color
                                 id = it.id
                                 undecodedSource = it.source.orEmpty()

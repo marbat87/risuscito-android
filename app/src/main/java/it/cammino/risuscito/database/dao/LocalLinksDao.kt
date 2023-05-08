@@ -1,7 +1,6 @@
 package it.cammino.risuscito.database.dao
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
 import it.cammino.risuscito.database.entities.LocalLink
 
 @Suppress("unused")
@@ -20,7 +19,7 @@ interface LocalLinksDao {
     @Update
     fun updateLocalLink(localLink: LocalLink)
 
-    @Insert(onConflict = REPLACE)
+    @Upsert
     fun updateLocalLink(localLinkList: List<LocalLink>)
 
     @Delete

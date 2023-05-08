@@ -2,7 +2,6 @@ package it.cammino.risuscito.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.database.pojo.CantoCronologia
 
@@ -28,7 +27,7 @@ interface CronologiaDao {
     @Update
     fun updateCronologia(cronologia: Cronologia)
 
-    @Insert(onConflict = REPLACE)
+    @Upsert
     fun insertCronologia(cronologia: Cronologia)
 
     @Delete
