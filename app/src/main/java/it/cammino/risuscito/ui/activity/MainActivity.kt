@@ -28,8 +28,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -187,15 +185,6 @@ class MainActivity : ThemeableActivity() {
         binding.halfGuideline?.setGuidelinePercent(percentage)
 
         binding.contextualToolbar.setNavigationOnClickListener { destroyActionMode() }
-
-        ViewCompat.setOnApplyWindowInsetsListener(
-            binding.contextualToolbarContainer
-        ) { insetsView: View, insets: WindowInsetsCompat ->
-            val systemInsetTop =
-                insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
-            insetsView.setPadding(0, systemInsetTop, 0, 0)
-            insets
-        }
 
         lifecycleScope.launch(Dispatchers.IO) {
             listePersonalizzate =
