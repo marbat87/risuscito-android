@@ -78,7 +78,7 @@
         <item name="preferenceTheme">@style/RisuscitoPreferenceThemeOverlay</item>
 
         <item name="risuscitoToolbarWithCloseButtonStyle">
-            @style/Widget.Risuscito.Toolbar
+            @style/Widget.Risuscito.Toolbar.WithCloseButton
         </item>
     </style>
 
@@ -100,6 +100,8 @@
     <style name="Widget.Risuscito.Toolbar.WithCloseButton">
         <item name="navigationContentDescription">@string/material_drawer_close</item>
         <item name="navigationIcon">@drawable/close_24px</item>
+        <item name="minHeight">@dimen/m3_searchbar_height</item>
+        <item name="android:layout_marginTop">@dimen/m3_searchbar_margin_vertical</item>
     </style>
 
     <style name="Widget.AppCompat.TextView.Risuscito">
