@@ -4,15 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.view.ActionMode
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -37,12 +37,12 @@ import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.dialog.BottomSheetFragment
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
+import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.launchForResultWithAnimation
 import it.cammino.risuscito.utils.extension.openCanto
-import it.cammino.risuscito.utils.extension.slideInRight
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.utils.extension.useOldIndex
 import it.cammino.risuscito.viewmodels.DefaultListaViewModel
@@ -50,7 +50,7 @@ import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ListaPredefinitaFragment : Fragment() {
+class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
 
     private val mCantiViewModel: DefaultListaViewModel by viewModels {
         ViewModelWithArgumentsFactory(requireActivity().application, Bundle().apply {
@@ -68,7 +68,6 @@ class ListaPredefinitaFragment : Fragment() {
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
     private val cantoAdapter: FastItemAdapter<ListaPersonalizzataItem> = FastItemAdapter()
-    private var actionModeOk: Boolean = false
     private var mMainActivity: MainActivity? = null
     private var mLastClickTime: Long = 0
 
@@ -89,6 +88,7 @@ class ListaPredefinitaFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mMainActivity?.destroyActionMode()
         _binding = null
     }
 
@@ -187,86 +187,68 @@ class ListaPredefinitaFragment : Fragment() {
     }
 
     private fun snackBarRimuoviCanto(view: View) {
-        mMainActivity?.actionMode?.finish()
+        mMainActivity?.destroyActionMode()
         val parent = view.parent.parent as? View
         longclickedPos =
             Integer.valueOf(parent?.findViewById<TextView>(R.id.generic_tag)?.text.toString())
         longClickedChild =
             Integer.valueOf(view.findViewById<TextView>(R.id.item_tag).text.toString())
+        Log.d(
+            TAG,
+            "snackBarRimuoviCanto - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId} / longCLickedChild: $longClickedChild"
+        )
         startCab()
     }
 
     private fun startCab() {
         mSwhitchMode = false
-
-        val callback = object : ActionMode.Callback {
-
-            override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
-                activity?.menuInflater?.inflate(R.menu.menu_actionmode_lists, menu)
-                posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
-                cantoAdapter.notifyItemChanged(longclickedPos)
-                actionModeOk = false
-                return true
-            }
-
-            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                return false
-            }
-
-            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                Log.d(TAG, "MaterialCab onActionItemClicked")
-                return when (item?.itemId) {
-                    R.id.action_remove_item -> {
-                        actionModeOk = true
-                        mMainActivity?.actionMode?.finish()
-                        ListeUtils.removePositionWithUndo(
-                            this@ListaPredefinitaFragment,
-                            mCantiViewModel.defaultListaId,
-                            posizioneDaCanc,
-                            idDaCanc,
-                            timestampDaCanc.orEmpty(),
-                            notaDaCanc
-                        )
-                        true
-                    }
-                    R.id.action_switch_item -> {
-                        mSwhitchMode = true
-                        updateActionModeTitle(true)
-                        Toast.makeText(
-                            activity,
-                            resources.getString(R.string.switch_tooltip),
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        true
-                    }
-                    else -> false
+        posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
+        cantoAdapter.notifyItemChanged(longclickedPos)
+        mMainActivity?.createActionMode(R.menu.menu_actionmode_lists, this) { item ->
+            Log.d(TAG, "MaterialCab onActionItemClicked")
+            when (item?.itemId) {
+                R.id.action_remove_item -> {
+                    mMainActivity?.destroyActionMode()
+                    ListeUtils.removePositionWithUndo(
+                        this@ListaPredefinitaFragment,
+                        mCantiViewModel.defaultListaId,
+                        posizioneDaCanc,
+                        idDaCanc,
+                        timestampDaCanc.orEmpty(),
+                        notaDaCanc
+                    )
+                    true
                 }
-            }
-
-            override fun onDestroyActionMode(mode: ActionMode?) {
-                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
-                Log.d(
-                    TAG,
-                    "MaterialCab onDestroy - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId}"
-                )
-                mSwhitchMode = false
-                if (!actionModeOk) {
-                    try {
-                        posizioniList[longclickedPos].listItem?.get(longClickedChild)
-                            ?.setmSelected(false)
-                        cantoAdapter.notifyItemChanged(longclickedPos)
-                    } catch (e: Exception) {
-                        Firebase.crashlytics.recordException(e)
-                    }
+                R.id.action_switch_item -> {
+                    mSwhitchMode = true
+                    updateActionModeTitle(true)
+                    Toast.makeText(
+                        activity,
+                        resources.getString(R.string.switch_tooltip),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    true
                 }
-                mMainActivity?.destroyActionMode()
+                else -> false
             }
-
         }
-
-        mMainActivity?.createActionMode(callback)
         updateActionModeTitle(false)
+    }
+
+    override fun destroyActionMode() {
+        Log.d(
+            TAG,
+            "MaterialCab onDestroy - longclickedPos: $longclickedPos / defaultListaId: ${mCantiViewModel.defaultListaId} "
+        )
+        mSwhitchMode = false
+        try {
+            posizioniList[longclickedPos].listItem?.get(longClickedChild)
+                ?.setmSelected(false)
+            cantoAdapter.notifyItemChanged(longclickedPos)
+        } catch (e: Exception) {
+            Firebase.crashlytics.recordException(e)
+        }
     }
 
     private fun updateActionModeTitle(switchMode: Boolean) {
@@ -595,8 +577,7 @@ class ListaPredefinitaFragment : Fragment() {
             val parent = v.parent.parent as? View
             if (v.id == R.id.add_canto_generico) {
                 if (mSwhitchMode) {
-                    actionModeOk = true
-                    mMainActivity?.actionMode?.finish()
+                    mMainActivity?.destroyActionMode()
                     ListeUtils.scambioConVuoto(
                         this,
                         mCantiViewModel.defaultListaId,
@@ -606,38 +587,29 @@ class ListaPredefinitaFragment : Fragment() {
                         Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                     )
                 } else {
-                    if (mMainActivity?.actionMode == null) {
-                        val intent = Intent(activity, InsertActivity::class.java)
-                        intent.putExtras(
-                            bundleOf(
-                                InsertActivity.FROM_ADD to 1,
-                                InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
-                                InsertActivity.POSITION to Integer.valueOf(
-                                    parent?.findViewById<TextView>(
-                                        R.id.text_id_posizione
-                                    )?.text.toString()
-                                )
-                            )
-                        )
-
+                    if (mMainActivity?.isActionMode != true) {
                         mMainActivity?.let {
-                            if (OSUtils.isObySamsung()) {
-                                startListInsertForResult.launch(intent)
-                                it.slideInRight()
-                            } else {
-                                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                    it,
-                                    v,
-                                    "shared_insert_container" // The transition name to be matched in Activity B.
-                                )
-                                startListInsertForResult.launch(intent, options)
-                            }
+                            it.launchForResultWithAnimation(
+                                startListInsertForResult,
+                                Intent(it, InsertActivity::class.java).putExtras(
+                                    bundleOf(
+                                        InsertActivity.FROM_ADD to 1,
+                                        InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
+                                        InsertActivity.POSITION to Integer.valueOf(
+                                            parent?.findViewById<TextView>(
+                                                R.id.text_id_posizione
+                                            )?.text.toString()
+                                        )
+                                    )
+                                ),
+                                com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                            )
                         }
                     }
                 }
             } else {
                 if (!mSwhitchMode)
-                    if (mMainActivity?.actionMode != null) {
+                    if (mMainActivity?.isActionMode == true) {
                         posizioneDaCanc =
                             Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                         idDaCanc =
@@ -650,15 +622,14 @@ class ListaPredefinitaFragment : Fragment() {
                     } else {
                         //apri canto
                         mMainActivity?.openCanto(
-                            v,
+                            TAG,
                             Integer.valueOf(v.findViewById<TextView>(R.id.text_id_canto_card).text.toString()),
                             v.findViewById<TextView>(R.id.text_source_canto).text.toString(),
                             false
                         )
                     }
                 else {
-                    actionModeOk = true
-                    mMainActivity?.actionMode?.finish()
+                    mMainActivity?.destroyActionMode()
                     ListeUtils.scambioCanto(
                         this,
                         mCantiViewModel.defaultListaId,

@@ -5,9 +5,13 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.view.ActionMode
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
@@ -18,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.mikepenz.fastadapter.IAdapter
@@ -30,6 +35,7 @@ import it.cammino.risuscito.databinding.ActivityFavouritesBinding
 import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.isGridLayout
@@ -40,7 +46,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.Collator
 
-class FavoritesFragment : AccountMenuFragment() {
+class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
     private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
@@ -53,6 +59,12 @@ class FavoritesFragment : AccountMenuFragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,7 +85,6 @@ class FavoritesFragment : AccountMenuFragment() {
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_favourites)
         mMainActivity?.setTabVisible(false)
-        mMainActivity?.enableBottombar(false)
         mMainActivity?.enableFab(false)
 
         if (!PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -90,7 +101,7 @@ class FavoritesFragment : AccountMenuFragment() {
         cantoAdapter.onPreClickListener =
             { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
                 var consume = false
-                if (mMainActivity?.actionMode != null) {
+                if (mMainActivity?.isActionMode == true) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
                         mLastClickTime = SystemClock.elapsedRealtime()
                         cantoAdapter
@@ -98,7 +109,7 @@ class FavoritesFragment : AccountMenuFragment() {
                             .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
                         cantoAdapter.notifyAdapterItemChanged(position)
                         if (selectExtension?.selectedItems?.size == 0)
-                            mMainActivity?.actionMode?.finish()
+                            mMainActivity?.destroyActionMode()
                         else
                             updateActionModeTitle()
                     }
@@ -108,13 +119,13 @@ class FavoritesFragment : AccountMenuFragment() {
             }
 
         cantoAdapter.onClickListener =
-            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     // lancia l'activity che visualizza il canto passando il parametro creato
                     mMainActivity?.openCanto(
-                        mView,
+                        TAG,
                         item.id,
                         item.source?.getText(requireContext()),
                         false
@@ -126,7 +137,7 @@ class FavoritesFragment : AccountMenuFragment() {
 
         cantoAdapter.onPreLongClickListener =
             { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
-                if (mMainActivity?.actionMode == null) {
+                if (mMainActivity?.isActionMode != true) {
                     cantoAdapter.getAdapterItem(position).isSelected = true
                     cantoAdapter.notifyAdapterItemChanged(position)
                     startCab()
@@ -195,44 +206,16 @@ class FavoritesFragment : AccountMenuFragment() {
     }
 
     private fun startCab() {
-        val callback = object : ActionMode.Callback {
-
-            override fun onCreateActionMode(mode: ActionMode?, menu: Menu): Boolean {
-                requireActivity().menuInflater.inflate(R.menu.menu_delete, menu)
-                actionModeOk = false
-                return true
-            }
-
-            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                return false
-            }
-
-            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                Log.d(TAG, "MaterialCab onSelection: ${item?.itemId}")
-                return if (item?.itemId == R.id.action_remove_item) {
-                    removeFavorites()
-                    actionModeOk = true
-                    mMainActivity?.actionMode?.finish()
-                    true
-                } else
-                    false
-            }
-
-            override fun onDestroyActionMode(mode: ActionMode?) {
-                Log.d(TAG, "MaterialCab onDestroy: $actionModeOk")
-                if (!actionModeOk) {
-                    try {
-                        selectExtension?.deselect()
-                    } catch (e: Exception) {
-                        Firebase.crashlytics.recordException(e)
-                    }
-                }
+        actionModeOk = false
+        mMainActivity?.createActionMode(R.menu.menu_delete, this) { item ->
+            if (item?.itemId == R.id.action_remove_item) {
+                removeFavorites()
+                actionModeOk = true
                 mMainActivity?.destroyActionMode()
-            }
-
+                true
+            } else
+                false
         }
-
-        mMainActivity?.createActionMode(callback)
         updateActionModeTitle()
     }
 
@@ -247,6 +230,16 @@ class FavoritesFragment : AccountMenuFragment() {
         )
     }
 
+
+    override fun destroyActionMode() {
+        if (!actionModeOk) {
+            try {
+                selectExtension?.deselect()
+            } catch (e: Exception) {
+                Firebase.crashlytics.recordException(e)
+            }
+        }
+    }
 
     private fun subscribeUiChanges() {
         mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->

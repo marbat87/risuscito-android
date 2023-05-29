@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui.fragment
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -13,8 +14,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
@@ -181,6 +185,18 @@ class SettingsFragment : PreferenceFragmentCompat(),
         false
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d(TAG, "Fragment: ${this::class.java.canonicalName}")
+        Firebase.crashlytics.log("Fragment: ${this::class.java}")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -192,7 +208,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
-        mMainActivity?.enableBottombar(false)
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as? DropDownPreference
 
@@ -296,7 +311,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         if (s == NIGHT_MODE) {
             Log.d(
                 TAG,
-                "onSharedPreferenceChanged: dark_mode" + sharedPreferences.getString(s, "0")
+                "onSharedPreferenceChanged: dark_mode: ${sharedPreferences.getString(s, "2")}"
             )
             context?.setDefaultNightMode()
         }

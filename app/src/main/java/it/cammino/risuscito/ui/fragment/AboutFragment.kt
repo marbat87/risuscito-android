@@ -3,6 +3,7 @@ package it.cammino.risuscito.ui.fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -18,26 +19,31 @@ import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
 import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
+import com.google.android.material.transition.MaterialSharedAxis
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.activity.ChangelogActivity
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.utils.extension.shareThisApp
-import it.cammino.risuscito.utils.extension.slideInRight
+import it.cammino.risuscito.utils.extension.startActivityWithTransition
 
 
 class AboutFragment : MaterialAboutFragment() {
 
     private var mMainActivity: MainActivity? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mMainActivity = activity as? MainActivity
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mMainActivity?.actionMode?.finish()
-        mMainActivity?.activitySearchView?.closeSearch()
+        Log.d(TAG, "Fragment: ${this::class.java.canonicalName}")
+        Firebase.crashlytics.log("Fragment: ${this::class.java}")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,7 +63,6 @@ class AboutFragment : MaterialAboutFragment() {
         mMainActivity?.setupToolbarTitle(R.string.title_activity_about)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
-        mMainActivity?.enableBottombar(false)
     }
 
     override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList? {
@@ -125,8 +130,15 @@ class AboutFragment : MaterialAboutFragment() {
                     MaterialAboutActionItem.Builder().text(R.string.changelog)
                         .icon(R.drawable.list_alt_24px)
                         .setOnClickAction {
-                            startActivity(Intent(mMainActivity, ChangelogActivity::class.java))
-                            mMainActivity?.slideInRight()
+                            activity?.let {
+                                it.startActivityWithTransition(
+                                    Intent(
+                                        it,
+                                        ChangelogActivity::class.java
+                                    ),
+                                    com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                                )
+                            }
                         }.build()
                 )
                 .addItem(
@@ -161,6 +173,10 @@ class AboutFragment : MaterialAboutFragment() {
         }
 
         return builder.build()
+    }
+
+    companion object {
+        internal val TAG = AboutFragment::class.java.canonicalName
     }
 
 }

@@ -54,6 +54,7 @@ object Utility {
     internal const val NIGHT_MODE = "night_mode"
     internal const val DYNAMIC_COLORS = "dynamic_colors"
     internal const val OLD_PAGE_SUFFIX = "_old"
+    internal const val SHARED_AXIS = "shared_axis"
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"

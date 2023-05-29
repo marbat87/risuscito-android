@@ -9,7 +9,7 @@
         <item name="android:textAlignment">viewStart</item>
     </style>
 
-    <style name="TitoloSezione" parent="TextAppearance.Risuscito.TitleMedium">
+    <style name="TitoloSezione" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:paddingStart">@dimen/abc_action_bar_content_inset_material</item>
@@ -83,16 +83,14 @@
         <item name="sdMainFabOpenedSrc">@drawable/close_24px</item>
     </style>
 
-    <style name="SimpleSearchViewStyle">
-        <item name="cursorColor">?colorPrimary</item>
-        <item name="backIconTint">?colorOnSurfaceVariant</item>
-        <item name="iconsTint">?colorOnSurfaceVariant</item>
-        <item name="hintColor">?colorOnSurfaceVariant</item>
-        <item name="android:textColor">?colorOnSurface</item>
-        <item name="searchBackground">?colorSurfaceVariant</item>
-        <item name="iconsAlpha">1.0</item>
-        <item name="type">card</item>
-        <item name="android:hint">@string/title_filter</item>
+    <style name="TextAppearance.Material3.Risuscito.Toolbar.Contextual.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">@dimen/m3_toolbar_text_size_title</item>
     </style>
+
+    <macro name="m3_ref_typeface_brand_medium">?risuscito_medium_font</macro>
+    <macro name="m3_ref_typeface_brand_regular">?risuscito_regular_font</macro>
+    <macro name="m3_ref_typeface_plain_medium">?risuscito_medium_font</macro>
+    <macro name="m3_ref_typeface_plain_regular">?risuscito_regular_font</macro>
 
 </resources>

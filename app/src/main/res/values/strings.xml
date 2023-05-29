@@ -276,7 +276,7 @@
     <string name="search_hint">Digita almeno 3 caratteri&#8230;</string>
     <string name="search_no_results">Nessun risultato corrispondente ai criteri di ricerca digitati.</string>
     <string name="title_activity_settings">Impostazioni</string>
-    <string name="title_activity_general_index">Indici dei canti</string>
+    <string name="title_activity_general_index">Indici</string>
     <string name="default_index_title">Indice predefinito</string>
     <string name="default_index_summary">Indica quale indice deve aprirsi per default alla selezione della pagina degli indici:</string>
     <string name="title_activity_canti_parola">Celebrazione della parola</string>
@@ -292,7 +292,7 @@
     <string name="canto_pace">Alla pace</string>
     <string name="canto_pane">Alla frazione del pane</string>
     <string name="canto_vino">Al vino</string>
-    <string name="title_activity_custom_lists">Liste personalizzate</string>
+    <string name="title_activity_custom_lists">Liste</string>
     <string name="copertina">copertina</string>
     <string name="title_activity_inserisci_titolo">Ricerca per inserimento</string>
     <string name="title_activity_about">About</string>
@@ -314,7 +314,6 @@
     <string name="fast_search_title">Ricerca veloce</string>
     <string name="advanced_search_title">Ricerca avanzata</string>
     <string name="advanced_search_subtitle">CERCA NEL TITOLO E NEL TESTO</string>
-    <string name="fast_search_subtitle">CERCA PER TITOLO</string>
     <string name="show_seconda_title">Eucarestia - 2^ lettura</string>
     <string name="show_seconda_summary">Abilita il canto in risposta alla seconda lettura per l\'Eucarestia</string>
     <string name="action_add_list">Nuova lista</string>
@@ -374,7 +373,6 @@
     <string name="no_pdf_reader">Nessun PDF Reader trovato</string>
     <string name="export_running">Esportazione in corso&#8230;</string>
     <string name="open_pdf">Apri PDF</string>
-    <string name="activity_homepage">Home page</string>
     <string name="no_memory_writable">Memoria non disponibile o in modalità sola lettura</string>
     <string name="salmi_musica_index">Indice biblico</string>
     <string name="only_link">Vuoi associare un file mp3 presente nella memoria del tuo dispositivo?</string>
@@ -425,7 +423,7 @@
     <string name="translation_running">Traduzione in corso&#8230;</string>
     <string name="no_favourites_short">Non hai aggiunto nessun preferito.</string>
     <string name="no_consegnati">Non hai segnato nessun canto come \"consegnato\".</string>
-    <string name="title_activity_consegnati">Canti consegnati</string>
+    <string name="title_activity_consegnati">Consegnati</string>
     <string name="showcase_consegnati_howto">Premi questo pulsante per accedere alla lista e segnare i canti.</string>
     <string name="showcase_consegnati_confirm">Quando hai finito, premi CONFERMA per salvare le modifiche&#8230;</string>
     <string name="showcase_consegnati_cancel">&#8230;oppure premi ANNULLA per cancellarle.</string>
@@ -540,7 +538,6 @@
     <string name="disconnect_confirm">disconnetti</string>
     <string name="unlink_confirm">scollega</string>
     <string name="create_confirm">crea</string>
-    <string name="title_filter">filtra per titolo</string>
     <string name="cancel">annulla</string>
     <string name="ok">OK</string>
     <string name="import_confirm">importa</string>

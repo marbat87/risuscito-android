@@ -11,41 +11,6 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            app:statusBarForeground="?colorSurface">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|enterAlways">
-
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/risuscito_toolbar"
-                    style="@style/Widget.Material3.Toolbar.Surface"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize" />
-
-                <com.ferfalk.simplesearchview.SimpleSearchView
-                    android:id="@+id/simple_search_view"
-                    style="@style/SimpleSearchViewStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone" />
-
-            </FrameLayout>
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/material_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/loading_bar"
             android:layout_width="match_parent"
@@ -60,18 +25,9 @@
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/m3_bottom_nav_min_height"
             android:background="?android:colorBackground"
             app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
-
-        <com.google.android.material.bottomappbar.BottomAppBar
-            android:id="@+id/bottom_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:visibility="invisible"
-            app:hideOnScroll="true"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:menu="@menu/consegnati" />
 
         <com.leinardi.android.speeddial.SpeedDialOverlayLayout
             android:id="@+id/overlay"
@@ -85,8 +41,61 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
+            android:layout_marginBottom="@dimen/m3_bottom_nav_min_height"
             app:sdExpansionMode="top"
             app:sdOverlayLayout="@id/overlay" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:labelVisibilityMode="unlabeled"
+            app:menu="@menu/bottom_navigation_menu" />
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:liftOnScrollTargetViewId="@id/content_frame"
+            app:statusBarForeground="?colorSurface">
+
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/risuscito_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/search_name_text" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/material_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Elevation needs to be greater than AppBarLayout's elevation;
+       otherwise for some reason when the AppBarLayout's background
+       is not transparent, the elevation on this Toolbar doesn't show. -->
+        <FrameLayout
+            android:id="@+id/contextual_toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="5dp"
+            android:visibility="gone">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/contextual_toolbar"
+                style="?attr/risuscitoToolbarWithCloseButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleTextAppearance="@style/TextAppearance.Material3.Risuscito.Toolbar.Contextual.Title" />
+        </FrameLayout>
+
+        <include
+            android:id="@+id/search_view_layout"
+            layout="@layout/search_view_layout" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

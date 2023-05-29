@@ -2,6 +2,7 @@ package it.cammino.risuscito.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -9,6 +10,8 @@ import android.view.View
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.ui.activity.MainActivity
 
 open class AccountMenuFragment : Fragment() {
@@ -18,12 +21,13 @@ open class AccountMenuFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mMainActivity = activity as? MainActivity
+        Log.d(TAG, "Fragment: ${this::class.java.canonicalName}")
+        Firebase.crashlytics.log("Fragment: ${this::class.java}")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mMainActivity?.actionMode?.finish()
-        mMainActivity?.activitySearchView?.closeSearch()
+        mMainActivity?.destroyActionMode()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,5 +43,9 @@ open class AccountMenuFragment : Fragment() {
                 }
             }, viewLifecycleOwner, Lifecycle.State.RESUMED)
         }
+    }
+
+    companion object {
+        internal val TAG = AccountMenuFragment::class.java.canonicalName
     }
 }

@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
@@ -12,10 +14,10 @@ import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,6 +32,7 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.transition.MaterialSharedAxis
 import com.leinardi.android.speeddial.SpeedDialView
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -42,10 +45,9 @@ import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.getTypedValueResId
-import it.cammino.risuscito.utils.extension.slideInRight
+import it.cammino.risuscito.utils.extension.launchForResultWithAnimation
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -71,12 +73,16 @@ class CustomListsFragment : AccountMenuFragment() {
                 Log.d(TAG, "onPageSelected: $position")
                 Log.d(
                     TAG,
-                    "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                    " BEFORE mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
                 )
                 if (mCustomListsViewModel.indexToShow != position) {
                     mCustomListsViewModel.indexToShow = position
-                    mMainActivity?.actionMode?.finish()
+                    mMainActivity?.destroyActionMode()
                 }
+                Log.d(
+                    TAG,
+                    " AFTER mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                )
                 initFabOptions(position >= 2)
             }
         }
@@ -86,6 +92,12 @@ class CustomListsFragment : AccountMenuFragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -116,7 +128,6 @@ class CustomListsFragment : AccountMenuFragment() {
         )
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
-        mMainActivity?.enableBottombar(false)
         mMainActivity?.setTabVisible(true)
         mMainActivity?.enableFab(true)
 
@@ -250,11 +261,16 @@ class CustomListsFragment : AccountMenuFragment() {
                 idListe[i] = list[i].id
             }
             mSectionsPagerAdapter?.notifyDataSetChanged()
-            Log.d(TAG, "movePage: $movePage")
-            Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
-            if (movePage) {
-                binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
-                movePage = false
+            Handler(Looper.getMainLooper()).postDelayed(1000) {
+                Log.d(TAG, "movePage: $movePage")
+                Log.d(
+                    TAG,
+                    "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                )
+                if (movePage) {
+                    binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
+                    movePage = false
+                }
             }
         }
 
@@ -266,46 +282,31 @@ class CustomListsFragment : AccountMenuFragment() {
                         when (inputdialogViewModel.mTag) {
                             NEW_LIST -> {
                                 inputdialogViewModel.handled = true
+                                Log.d(TAG, "idListe.size ${idListe.size}")
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
+                                Log.d(
+                                    TAG,
+                                    "mCustomListsViewModel.indDaModif ${mCustomListsViewModel.indDaModif}"
+                                )
                                 mMainActivity?.let { act ->
-                                    if (OSUtils.isObySamsung()) {
-                                        startListEditForResult.launch(
-                                            Intent(
-                                                act,
-                                                CreaListaActivity::class.java
-                                            ).putExtras(
-                                                bundleOf(
-                                                    LIST_TITLE to inputdialogViewModel.outputText,
-                                                    EDIT_EXISTING_LIST to false
-                                                )
+                                    act.launchForResultWithAnimation(
+                                        startListEditForResult,
+                                        Intent(
+                                            act,
+                                            CreaListaActivity::class.java
+                                        ).putExtras(
+                                            bundleOf(
+                                                LIST_TITLE to inputdialogViewModel.outputText,
+                                                EDIT_EXISTING_LIST to false
                                             )
-                                        )
-                                        act.slideInRight()
-                                    } else {
-                                        act.getFab().transitionName = "shared_element_crealista"
-                                        val options =
-                                            ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                                act,
-                                                act.getFab(),
-                                                "shared_element_crealista" // The transition name to be matched in Activity B.
-                                            )
-                                        startListEditForResult.launch(
-                                            Intent(
-                                                act,
-                                                CreaListaActivity::class.java
-                                            ).putExtras(
-                                                bundleOf(
-                                                    LIST_TITLE to inputdialogViewModel.outputText,
-                                                    EDIT_EXISTING_LIST to false
-                                                )
-                                            ),
-                                            options
-                                        )
-                                    }
+                                        ),
+                                        com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                                    )
                                 }
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         inputdialogViewModel.handled = true
                     }
@@ -324,6 +325,7 @@ class CustomListsFragment : AccountMenuFragment() {
                                 binding.viewPager.findViewById<Button>(R.id.button_pulisci)
                                     .performClick()
                             }
+
                             DELETE_LIST -> {
                                 simpleDialogViewModel.handled = true
                                 binding.viewPager.currentItem = binding.viewPager.currentItem - 1
@@ -331,6 +333,7 @@ class CustomListsFragment : AccountMenuFragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }
@@ -381,6 +384,7 @@ class CustomListsFragment : AccountMenuFragment() {
                     }
                     true
                 }
+
                 R.id.fab_add_lista -> {
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
@@ -396,60 +400,43 @@ class CustomListsFragment : AccountMenuFragment() {
                     }
                     true
                 }
+
                 R.id.fab_condividi -> {
                     closeFabMenu()
                     binding.viewPager.findViewById<Button>(R.id.button_condividi).performClick()
                     true
                 }
+
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
                     mMainActivity?.let { act ->
-                        if (OSUtils.isObySamsung()) {
-                            startListEditForResult.launch(
-                                Intent(
-                                    act,
-                                    CreaListaActivity::class.java
-                                ).putExtras(
-                                    bundleOf(
-                                        ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                        EDIT_EXISTING_LIST to true
-                                    )
-                                )
-                            )
-                            act.slideInRight()
-                        } else {
-                            act.getFab().transitionName = "shared_element_crealista"
-                            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        act.launchForResultWithAnimation(
+                            startListEditForResult, Intent(
                                 act,
-                                act.getFab(),
-                                "shared_element_crealista" // The transition name to be matched in Activity B.
-                            )
-                            startListEditForResult.launch(
-                                Intent(
-                                    act,
-                                    CreaListaActivity::class.java
-                                ).putExtras(
-                                    bundleOf(
-                                        ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                        EDIT_EXISTING_LIST to true
-                                    )
-                                ),
-                                options
-                            )
-                        }
+                                CreaListaActivity::class.java
+                            ).putExtras(
+                                bundleOf(
+                                    ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                    EDIT_EXISTING_LIST to true
+                                )
+                            ), com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                        )
                     }
                     true
                 }
+
                 R.id.fab_delete_lista -> {
                     lifecycleScope.launch { deleteListDialog() }
                     true
                 }
+
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
                     binding.viewPager.findViewById<Button>(R.id.button_invia_file).performClick()
                     true
                 }
+
                 else -> {
                     closeFabMenu()
                     false
@@ -458,7 +445,7 @@ class CustomListsFragment : AccountMenuFragment() {
         }
 
         val click = View.OnClickListener {
-            mMainActivity?.actionMode?.finish()
+            mMainActivity?.destroyActionMode()
             toggleFabMenu()
         }
 

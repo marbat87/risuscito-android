@@ -9,8 +9,7 @@
     android:paddingStart="@dimen/noMarginlistLeadingItemPaddingStart"
     android:paddingTop="@dimen/listItemPaddingTopBottom"
     android:paddingEnd="@dimen/listTrailingItemPaddingEnd"
-    android:paddingBottom="@dimen/listItemPaddingTopBottom"
-    android:transitionName="shared_element_container">
+    android:paddingBottom="@dimen/listItemPaddingTopBottom">
 
     <TextView
         android:id="@+id/text_id_canto_card"
@@ -59,7 +58,7 @@
         android:background="@drawable/page_oval_bkg"
         android:gravity="center"
         android:textAppearance="?textAppearanceTitleMedium"
-        android:textColor="?colorOnPrimaryContainer"
+        android:textColor="@color/primary_text_default_material_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -15,7 +15,7 @@
     <string name="search_hint">En az 3 karakter tıkla&#8230;</string>
     <string name="search_no_results">Arananla eşleşen yok.</string>
     <string name="title_activity_settings">Ayarlar</string>
-    <string name="title_activity_general_index">İlahilerin listeleri</string>
+    <string name="title_activity_general_index">Listeleri</string>
     <string name="default_index_title">Varsayılan liste</string>
     <string name="default_index_summary">Listelerin sayfası seçildiğinde hangisinin açılmasını istediğini belirt:</string>
     <string name="title_activity_canti_parola">Söz ayini</string>
@@ -31,7 +31,7 @@
     <string name="canto_pace">Selamette</string>
     <string name="canto_pane">Ekmeğin bölünmesinde</string>
     <string name="canto_vino">Şarapta</string>
-    <string name="title_activity_custom_lists">Kişiselleştirilmiş listeler</string>
+    <string name="title_activity_custom_lists">Listeler</string>
     <string name="copertina">Kapak</string>
     <string name="title_activity_inserisci_titolo">Eklenene göre ara</string>
     <string name="title_activity_about">Hakkında</string>
@@ -53,7 +53,6 @@
     <string name="fast_search_title">Hızlı arama</string>
     <string name="advanced_search_title">Gelişmiş arama</string>
     <string name="advanced_search_subtitle">BAŞLIKTA VE METİNDE ARA</string>
-    <string name="fast_search_subtitle">BAŞLIĞA GÖRE ARA</string>
     <string name="show_seconda_title">Efkaristiya - 2^ Okuma</string>
     <string name="show_seconda_summary">Efkaristiya\'da 2. okumaya cevaben çalınabilecek ilahiler</string>
     <string name="action_add_list">Yeni liste</string>
@@ -113,7 +112,6 @@
     <string name="no_pdf_reader">Hiçbir PDF okuyucu bulunamadı</string>
     <string name="export_running">Taşınıyor&#8230;</string>
     <string name="open_pdf">PDF i Aç</string>
-    <string name="activity_homepage">Ana sayfa</string>
     <string name="no_memory_writable">Hafıza meşgul veya sadece okuma modunda</string>
     <string name="salmi_musica_index">Mezmurların listesi</string>
     <string name="only_link">Cihazında bulunan MP3 Dosyayı bağlamak ister misin?</string>
@@ -164,7 +162,7 @@
     <string name="translation_running">Çeviriliyor&#8230;</string>
     <string name="no_favourites_short">Hiçbir favori eklemedin.</string>
     <string name="no_consegnati">Hiçbir ilahiyi \"Teslim edildi\" diye işaretlemedin.</string>
-    <string name="title_activity_consegnati">Teslim edilmiş ilahiler</string>
+    <string name="title_activity_consegnati">Teslim edilmiş</string>
     <string name="showcase_consegnati_howto">Listeye girip ilahileri işaretlemek için bu düğmeye tıkla.</string>
     <string name="showcase_consegnati_confirm">Bitirdiğinde, kaydetmek için KABUL e tıkla.</string>
     <string name="showcase_consegnati_cancel">Onları silmek için &#8230; yada İPTAL e tıkla.</string>
@@ -279,7 +277,6 @@
     <string name="disconnect_confirm">Oturumu kapat</string>
     <string name="unlink_confirm">Bağlantıyı kes</string>
     <string name="create_confirm">Yarat</string>
-    <string name="title_filter">Başlığa göre filtrele</string>
     <string name="cancel">İptal et</string>
     <string name="ok">Tamam</string>
     <string name="import_confirm">Al</string>

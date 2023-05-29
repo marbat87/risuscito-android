@@ -47,7 +47,8 @@
         <item name="risuscito_regular_font">@font/googlesans_regular</item>
         <item name="risuscito_medium_font">@font/googlesans_medium</item>
 
-        <item name="android:textViewStyle">@style/Widget.Risuscito.TextView</item>
+        <item name="android:textViewStyle">@style/Widget.AppCompat.TextView.Risuscito</item>
+        <item name="editTextStyle">@style/Widget.AppCompat.EditText.Risuscito</item>
 
         <item name="windowActionModeOverlay">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
@@ -72,9 +73,13 @@
         <item name="textAppearanceBodyMedium">@style/TextAppearance.Risuscito.BodyMedium</item>
         <item name="textAppearanceBodySmall">@style/TextAppearance.Risuscito.BodySmall</item>
         <item name="textAppearanceLabelLarge">@style/TextAppearance.Risuscito.LabelLarge</item>
-        <item name="textAppearanceLabelMedium">@style/TextAppearance.Risuscito.LabelMedium</item>
-        <item name="preferenceTheme">@style/RisuscitoPreferenceThemeOverlay</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.Risuscito.LabelSmall</item>
+
+        <item name="preferenceTheme">@style/RisuscitoPreferenceThemeOverlay</item>
+
+        <item name="risuscitoToolbarWithCloseButtonStyle">
+            @style/Widget.Risuscito.Toolbar.WithCloseButton
+        </item>
     </style>
 
     <style name="Risuscito.Theme" parent="Base.Risuscito.Theme">
@@ -90,7 +95,21 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="Widget.Risuscito.TextView" parent="Widget.AppCompat.TextView">
+    <style name="Widget.Risuscito.Toolbar" parent="Widget.Material3.Toolbar.OnSurface" />
+
+    <style name="Widget.Risuscito.Toolbar.WithCloseButton">
+        <item name="navigationContentDescription">@string/material_drawer_close</item>
+        <item name="navigationIcon">@drawable/close_24px</item>
+        <item name="minHeight">@dimen/m3_searchbar_height</item>
+        <item name="android:layout_marginTop">@dimen/m3_searchbar_margin_vertical</item>
+    </style>
+
+    <style name="Widget.AppCompat.TextView.Risuscito">
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
+    </style>
+
+    <style name="Widget.AppCompat.EditText.Risuscito">
         <item name="fontFamily">?risuscito_regular_font</item>
         <item name="android:fontFamily">?risuscito_regular_font</item>
     </style>
@@ -178,6 +197,10 @@
 
     <style name="Preference.SwitchPreferenceCompat.Material.Risuscito">
         <item name="android:widgetLayout">@layout/preference_widget_material_switch</item>
+    </style>
+
+    <style name="Widget.Material3.Button.IconButton.ColoredIcon">
+        <item name="iconTint">@null</item>
     </style>
 
 </resources>

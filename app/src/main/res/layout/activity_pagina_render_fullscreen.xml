@@ -14,8 +14,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin_frame"
-        android:layout_marginBottom="@dimen/fab_margin_frame"
+        android:layout_marginEnd="@dimen/fab_margin_coord"
+        android:layout_marginBottom="@dimen/fab_margin_coord"
         android:src="@drawable/fullscreen_exit_24px"
         tools:ignore="ContentDescription" />
 

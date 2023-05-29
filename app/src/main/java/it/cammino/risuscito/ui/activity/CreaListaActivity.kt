@@ -28,8 +28,6 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.BindingViewHolder
 import com.mikepenz.fastadapter.binding.listeners.addLongClickListener
@@ -49,10 +47,10 @@ import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
 import it.cammino.risuscito.utils.extension.getTypedValueResId
+import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -83,25 +81,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!OSUtils.isObySamsung()) {
-            // Set the transition name, which matches Activity A’s start view transition name, on
-            // the root view.
-            findViewById<View>(android.R.id.content).transitionName = "shared_element_crealista"
-
-            // Attach a callback used to receive the shared elements from Activity A to be
-            // used by the container transform transition.
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-
-            // Set this Activity’s enter and return transition to a MaterialContainerTransform
-            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-                addTarget(android.R.id.content)
-                duration = 700L
-            }
-
-            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-            window.sharedElementsUseOverlay = false
-        }
-
+        setEnterTransition()
         super.onCreate(savedInstanceState)
         binding = ActivityCreaListaBinding.inflate(layoutInflater)
         val view = binding.root

@@ -4,9 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
+        android:id="@+id/cancel_change"
+        android:icon="@drawable/undo_24px"
+        android:orderInCategory="1"
+        android:title="@android:string/cancel"
+        risuscito:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
         android:id="@+id/select_none"
         android:icon="@drawable/filter_none_24px"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="select none"
         risuscito:showAsAction="always"
         tools:ignore="HardcodedText" />
@@ -14,17 +22,16 @@
     <item
         android:id="@+id/select_all"
         android:icon="@drawable/library_add_check_24px"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@android:string/selectAll"
         risuscito:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/cancel_change"
-        android:icon="@drawable/undo_24px"
+        android:id="@+id/action_help"
+        android:icon="@drawable/help_24px"
         android:orderInCategory="4"
-        android:title="@android:string/cancel"
-        risuscito:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
+        android:title="@string/action_help"
+        risuscito:showAsAction="always" />
 
 </menu>
