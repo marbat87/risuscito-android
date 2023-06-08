@@ -95,12 +95,18 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="ThemeOverlay.Material3.Risuscito.Toolbar.Contextual" parent="">
+        <item name="colorControlNormal">?colorPrimary</item>
+    </style>
+
     <style name="Widget.Risuscito.Toolbar" parent="Widget.Material3.Toolbar.OnSurface" />
 
     <style name="Widget.Risuscito.Toolbar.WithCloseButton">
         <item name="navigationContentDescription">@string/material_drawer_close</item>
-        <item name="navigationIcon">@drawable/close_24px</item>
+        <item name="navigationIcon">@drawable/arrow_back_24px</item>
+        <item name="navigationIconTint">?colorPrimary</item>
         <item name="minHeight">@dimen/m3_searchbar_height</item>
+        <item name="titleTextColor">?colorPrimary</item>
         <item name="android:layout_marginTop">@dimen/m3_searchbar_margin_vertical</item>
     </style>
 
@@ -185,6 +191,11 @@
     </style>
 
     <style name="TextAppearance.Risuscito.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="fontFamily">?risuscito_medium_font</item>
+        <item name="android:fontFamily">?risuscito_medium_font</item>
+    </style>
+
+    <style name="TextAppearance.Risuscito.ActionBar.Title" parent="TextAppearance.Material3.ActionBar.Title">
         <item name="fontFamily">?risuscito_medium_font</item>
         <item name="android:fontFamily">?risuscito_medium_font</item>
     </style>

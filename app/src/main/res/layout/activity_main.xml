@@ -90,7 +90,8 @@
                 style="?attr/risuscitoToolbarWithCloseButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:titleTextAppearance="@style/TextAppearance.Material3.Risuscito.Toolbar.Contextual.Title" />
+                android:theme="@style/ThemeOverlay.Material3.Risuscito.Toolbar.Contextual"
+                app:titleTextAppearance="@style/TextAppearance.Risuscito.ActionBar.Title" />
         </FrameLayout>
 
         <include
