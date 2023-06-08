@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
@@ -218,6 +219,8 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
                 }
             }
             passaggiFilterAdapter.set(consegnatiViewModel.passaggi)
+            sideSheetLayout.findViewById<Button>(R.id.close_modal)
+                ?.setOnClickListener { sideSheetDialog?.hide() }
 
         }
 

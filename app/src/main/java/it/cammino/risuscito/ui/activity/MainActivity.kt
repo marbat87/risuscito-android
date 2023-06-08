@@ -1367,7 +1367,7 @@ class MainActivity : ThemeableActivity() {
         binding.contextualToolbar.navigationIcon =
             if (hideNavigation) null else AppCompatResources.getDrawable(
                 this,
-                R.drawable.close_24px
+                R.drawable.arrow_back_24px
             )
         isActionMode = true
         actionModeFragment = fragment
