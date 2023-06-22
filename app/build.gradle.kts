@@ -56,7 +56,7 @@ android {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.5.1"
+val roomVersion = "2.5.2"
 val latestAboutLibsRelease = "10.5.2"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
