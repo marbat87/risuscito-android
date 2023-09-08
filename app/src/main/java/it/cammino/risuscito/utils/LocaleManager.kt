@@ -6,9 +6,7 @@ import android.content.res.Configuration
 import android.os.Build.VERSION_CODES.N
 import android.provider.Settings
 import android.util.Log
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import androidx.core.os.LocaleListCompat
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.utils.extension.systemLocale
 import java.util.*
@@ -88,11 +86,6 @@ class LocaleManager(context: Context) {
             LANGUAGE_ENGLISH,
             COUNTRY_PHILIPPINES
         ) else Locale(getLanguage(context))
-
-        val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags("xx-YY")
-// Call this on the main thread as it may require Activity.restart()
-        AppCompatDelegate.setApplicationLocales(appLocale)
-
         Log.d(TAG, "useCustomConfig language: ${locale.language}")
         Log.d(TAG, "useCustomConfig country: ${locale.country}")
         Locale.setDefault(locale)
