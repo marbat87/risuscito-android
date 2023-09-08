@@ -306,17 +306,22 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
-        Log.d(TAG, "onSharedPreferenceChanged: $s")
-        if (s == NIGHT_MODE) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        Log.d(TAG, "onSharedPreferenceChanged: $key")
+        if (key == NIGHT_MODE) {
             Log.d(
                 TAG,
-                "onSharedPreferenceChanged: dark_mode: ${sharedPreferences.getString(s, "2")}"
+                "onSharedPreferenceChanged: dark_mode: ${
+                    sharedPreferences?.getString(
+                        key,
+                        "2"
+                    ) ?: ""
+                }"
             )
             context?.setDefaultNightMode()
         }
-        if (s == SCREEN_ON) activity?.checkScreenAwake()
-        if (s == DYNAMIC_COLORS) activity?.recreate()
+        if (key == SCREEN_ON) activity?.checkScreenAwake()
+        if (key == DYNAMIC_COLORS) activity?.recreate()
     }
 
     private fun composeSummary(@StringRes id: Int, pref: DropDownPreference): String {
