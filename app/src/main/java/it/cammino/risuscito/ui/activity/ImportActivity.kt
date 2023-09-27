@@ -1,7 +1,5 @@
 package it.cammino.risuscito.ui.activity
 
-import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -15,7 +13,6 @@ import androidx.work.WorkInfo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.services.XmlImportService
-import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.utils.extension.capitalize
 import it.cammino.risuscito.viewmodels.ImportActivityViewModel
 
@@ -35,7 +32,7 @@ class ImportActivity : AppCompatActivity() {
             MaterialAlertDialogBuilder(this).apply {
                 setTitle(R.string.app_name)
                 setMessage(R.string.dialog_import)
-                setPositiveButton(getString(R.string.import_confirm).capitalize(context.resources)) { _, _ ->
+                setPositiveButton(getString(R.string.import_confirm).capitalize(context)) { _, _ ->
                     val builder = Data.Builder()
                     builder.putString(XmlImportService.TAG_IMPORT_DATA, data.toString())
                     val blurRequest = OneTimeWorkRequestBuilder<XmlImportService>()
@@ -48,7 +45,7 @@ class ImportActivity : AppCompatActivity() {
                         blurRequest
                     )
                 }
-                setNegativeButton(getString(R.string.cancel).capitalize(context.resources)) { _, _ ->
+                setNegativeButton(getString(R.string.cancel).capitalize(context)) { _, _ ->
                     finish()
                 }
                 setCancelable(false)
@@ -99,20 +96,20 @@ class ImportActivity : AppCompatActivity() {
         }
     }
 
-    override fun attachBaseContext(newBase: Context) {
-        Log.d(TAG, "attachBaseContext")
-        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
-    }
-
-    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-        Log.d(TAG, "applyOverrideConfiguration")
-        super.applyOverrideConfiguration(
-            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
-                this,
-                overrideConfiguration
-            )
-        )
-    }
+//    override fun attachBaseContext(newBase: Context) {
+//        Log.d(TAG, "attachBaseContext")
+//        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
+//    }
+//
+//    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+//        Log.d(TAG, "applyOverrideConfiguration")
+//        super.applyOverrideConfiguration(
+//            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
+//                this,
+//                overrideConfiguration
+//            )
+//        )
+//    }
 
     companion object {
         internal val TAG = ImportActivity::class.java.canonicalName

@@ -14,14 +14,17 @@ import android.os.Build
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColorsOptions
 import it.cammino.risuscito.R
+import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.utils.LocaleManager
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.Locale
 
 
 fun Context.getTypedValueResId(resId: Int): Int {
@@ -143,7 +146,6 @@ fun PackageManager.queryIntentActivitiesTiramisu(intent: Intent): MutableList<Re
     )
 }
 
-@Suppress("DEPRECATION")
 fun PackageManager.queryIntentActivitiesLegacy(intent: Intent): MutableList<ResolveInfo> {
     return queryIntentActivities(intent, 0)
 }
@@ -163,7 +165,6 @@ fun PackageManager.getPackageInfoTiramisu(packageName: String): PackageInfo {
     )
 }
 
-@Suppress("DEPRECATION")
 fun PackageManager.getPackageInfoLegacy(packageName: String): PackageInfo {
     return getPackageInfo(packageName, 0)
 }
@@ -173,7 +174,7 @@ fun Application.useOldIndex(): Boolean {
         .getBoolean(
             Utility.VECCHIO_INDICE,
             false
-        ) && resources.systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
+        ) && systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
 }
 
 fun Context.useOldIndex(): Boolean {
@@ -181,7 +182,7 @@ fun Context.useOldIndex(): Boolean {
         .getBoolean(
             Utility.VECCHIO_INDICE,
             false
-        ) && resources.systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
+        ) && systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
 }
 
 fun Context.shareThisApp(subject: String?): Intent {
@@ -191,3 +192,18 @@ fun Context.shareThisApp(subject: String?): Intent {
     intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.uri_play_store_app_website, packageName))
     return intent
 }
+
+val Context.systemLocale: Locale
+    get() {
+        return AppCompatDelegate.getApplicationLocales()[0] ?: run {
+            return if (RisuscitoApplication.localeManager.getLanguage(this) == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES) Locale(
+                LocaleManager.LANGUAGE_ENGLISH,
+                LocaleManager.COUNTRY_PHILIPPINES
+            ) else Locale(RisuscitoApplication.localeManager.getLanguage(this))
+        }
+    }
+
+val Fragment.systemLocale: Locale
+    get() {
+        return requireContext().systemLocale
+    }
