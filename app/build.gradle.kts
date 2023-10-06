@@ -9,14 +9,14 @@ plugins {
 
 android {
 
-    compileSdk = 33
-    buildToolsVersion = "33.0.2"
+    compileSdk = 34
+    buildToolsVersion = "34.0.0"
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         multiDexEnabled = true
-        versionCode = 5202
+        versionCode = 5204
         versionName = "5.2.0"
         kapt {
             arguments {
@@ -56,21 +56,20 @@ android {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.5.1"
-val latestAboutLibsRelease = "10.5.2"
+val roomVersion = "2.5.2"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.material:material:1.9.0")
+    implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.activity:activity-ktx:1.7.2")
+    implementation("androidx.activity:activity-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.appcompat:appcompat-resources:1.6.1")
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.fragment:fragment-ktx:1.6.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
+    implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -78,12 +77,12 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
-    implementation("com.google.android.gms:play-services-auth:20.5.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")

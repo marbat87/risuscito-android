@@ -44,7 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.Collator
-import java.util.*
+import java.util.LinkedList
 
 class SectionedIndexFragment : Fragment() {
 
@@ -191,6 +191,7 @@ class SectionedIndexFragment : Fragment() {
                                     )
                                 }
                             }
+
                             LITURGICO_REPLACE_2 + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
                                 ListeUtils.updatePosizione(
@@ -202,6 +203,7 @@ class SectionedIndexFragment : Fragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }
@@ -259,7 +261,7 @@ class SectionedIndexFragment : Fragment() {
                             totItems = totCanti
                             id = canti[i].idIndice
                             subItems = mSubItems
-                            subItems.sortWith(compareBy(Collator.getInstance(resources.systemLocale)) {
+                            subItems.sortWith(compareBy(Collator.getInstance(systemLocale)) {
                                 (it as? SimpleSubItem)?.title?.getText(
                                     requireContext()
                                 )

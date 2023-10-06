@@ -219,6 +219,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                     )
                     true
                 }
+
                 R.id.action_switch_item -> {
                     mSwhitchMode = true
                     updateActionModeTitle(true)
@@ -230,6 +231,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                         .show()
                     true
                 }
+
                 else -> false
             }
         }
@@ -327,6 +329,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                         )
                     )
                 }
+
                 2 -> {
                     posizioniList.add(
                         getCantofromPosition(
@@ -434,6 +437,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         inputdialogViewModel.handled = true
                     }
@@ -452,7 +456,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
 
     private val titlesList: String
         get() {
-            val l = resources.systemLocale
+            val l = systemLocale
             val result = StringBuilder()
             var progressivePos = 0
 
@@ -497,6 +501,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
 
                     result.append(getTitoloToSendFromPosition(progressivePos))
                 }
+
                 2 -> {
                     result
                         .append("-- ")

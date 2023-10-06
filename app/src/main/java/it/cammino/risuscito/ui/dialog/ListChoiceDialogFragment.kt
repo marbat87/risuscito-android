@@ -53,14 +53,14 @@ class ListChoiceDialogFragment : DialogFragment() {
         if (mBuilder.positiveButton != 0)
             context?.let {
                 dialog.setPositiveButton(
-                    it.resources.getText(mBuilder.positiveButton).capitalize(it.resources), null
+                    it.resources.getText(mBuilder.positiveButton).capitalize(it), null
                 )
             }
 
         if (mBuilder.negativeButton != 0)
             context?.let {
                 dialog.setNegativeButton(
-                    it.resources.getText(mBuilder.negativeButton).capitalize(it.resources)
+                    it.resources.getText(mBuilder.negativeButton).capitalize(it)
                 ) { _, _ ->
                     viewModel.handled = false
                     viewModel.state.value = DialogState.Negative(this)

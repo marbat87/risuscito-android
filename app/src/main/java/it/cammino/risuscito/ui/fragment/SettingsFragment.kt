@@ -12,6 +12,7 @@ import androidx.core.content.edit
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
@@ -19,21 +20,19 @@ import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
+import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
+import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.LocaleManager
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.DEFAULT_INDEX
 import it.cammino.risuscito.utils.Utility.DEFAULT_SEARCH
 import it.cammino.risuscito.utils.Utility.DYNAMIC_COLORS
-import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NIGHT_MODE
-import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.Utility.SAVE_LOCATION
 import it.cammino.risuscito.utils.Utility.SCREEN_ON
 import it.cammino.risuscito.utils.Utility.SYSTEM_LANGUAGE
@@ -42,6 +41,9 @@ import it.cammino.risuscito.utils.extension.hasStorageAccess
 import it.cammino.risuscito.utils.extension.setDefaultNightMode
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SettingsViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class SettingsFragment : PreferenceFragmentCompat(),
@@ -74,6 +76,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     }
 
                 }
+
                 REQUIRES_USER_CONFIRMATION -> {
                     splitInstallManager.startConfirmationDialogForResult(
                         state,
@@ -81,6 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         CONFIRMATION_REQUEST_CODE
                     )
                 }
+
                 DOWNLOADING -> {
                     val totalBytes = state.totalBytesToDownload()
                     val progress = state.bytesDownloaded()
@@ -90,27 +94,14 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)
                             ?.setProgress((100 * progress / totalBytes).toInt())
                 }
+
                 INSTALLED -> {
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     if (state.languages().isNotEmpty()) {
-                        val currentLang = resources.systemLocale.language
-                        Log.i(TAG, "Module installed: language $newLanguage")
+                        val currentLang = systemLocale.language
+                        Log.i(TAG, "Module installed: language $currentLang")
                         Log.i(TAG, "Module installed: newLanguage $newLanguage")
-                        RisuscitoApplication.localeManager.persistLanguage(
-                            requireContext(),
-                            newLanguage
-                        )
-                        val mIntent =
-                            activity?.baseContext?.packageManager?.getLaunchIntentForPackage(
-                                requireActivity().baseContext.packageName
-                            )
-                        mIntent?.let {
-                            it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            it.putExtra(CHANGE_LANGUAGE, true)
-                            it.putExtra(OLD_LANGUAGE, currentLang)
-                            it.putExtra(NEW_LANGUAGE, newLanguage)
-                            ProcessPhoenix.triggerRebirth(context, it)
-                        }
+                        lifecycleScope.launch { translate(currentLang, newLanguage) }
                     } else {
                         Log.e(TAG, "Module install failed: empyt language list")
                         mMainActivity?.let {
@@ -123,6 +114,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         }
                     }
                 }
+
                 else -> Log.i(TAG, "Status: ${state.status()}")
             }
         }
@@ -218,10 +210,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         var pref = findPreference(SYSTEM_LANGUAGE) as? ListPreference
         pref?.onPreferenceChangeListener = changeListener
         pref?.summaryProvider = Preference.SummaryProvider<ListPreference> {
-            composeSummary(
-                R.string.language_summary,
-                it
-            )
+            composeSummaryListPreference(it)
         }
 
         pref = findPreference(DEFAULT_INDEX) as? DropDownPreference
@@ -306,17 +295,22 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
-        Log.d(TAG, "onSharedPreferenceChanged: $s")
-        if (s == NIGHT_MODE) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        Log.d(TAG, "onSharedPreferenceChanged: $key")
+        if (key == NIGHT_MODE) {
             Log.d(
                 TAG,
-                "onSharedPreferenceChanged: dark_mode: ${sharedPreferences.getString(s, "2")}"
+                "onSharedPreferenceChanged: dark_mode: ${
+                    sharedPreferences?.getString(
+                        key,
+                        "2"
+                    ) ?: ""
+                }"
             )
             context?.setDefaultNightMode()
         }
-        if (s == SCREEN_ON) activity?.checkScreenAwake()
-        if (s == DYNAMIC_COLORS) activity?.recreate()
+        if (key == SCREEN_ON) activity?.checkScreenAwake()
+        if (key == DYNAMIC_COLORS) activity?.recreate()
     }
 
     private fun composeSummary(@StringRes id: Int, pref: DropDownPreference): String {
@@ -324,9 +318,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
         return "${getString(id)}${System.getProperty("line.separator")}$text"
     }
 
-    private fun composeSummary(@StringRes id: Int, pref: ListPreference): String {
+    private fun composeSummaryListPreference(pref: ListPreference): String {
         val text = pref.entry
-        return "${getString(id)}${System.getProperty("line.separator")}$text"
+        return "${getString(R.string.language_summary)}${System.getProperty("line.separator")}$text"
     }
 
     private fun loadStorageList(external: Boolean) {
@@ -348,10 +342,116 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
     }
 
+    private suspend fun translate(oldLanguage: String, newLanguage: String) {
+        Log.d(TAG, "translate")
+        mMainActivity?.let { activity ->
+            ProgressDialogFragment.show(
+                ProgressDialogFragment.Builder(TRANSLATION).apply {
+                    content = R.string.translation_running
+                    progressIndeterminate = true
+                },
+                activity.supportFragmentManager
+            )
+        }
+        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            convertTabs(oldLanguage, newLanguage)
+            convertiBarre(oldLanguage, newLanguage)
+        }
+        try {
+            ProgressDialogFragment.findVisible(mMainActivity, TRANSLATION)?.dismiss()
+            RisuscitoApplication.localeManager.updateLanguage(
+                requireContext(),
+                newLanguage
+            )
+        } catch (e: IllegalArgumentException) {
+            Log.e(javaClass.name, e.localizedMessage, e)
+        }
+    }
+
+    // converte gli accordi salvati dalla lingua vecchia alla nuova
+    private fun convertTabs(oldLanguage: String, newLanguage: String) {
+        var accordi1 = CambioAccordi.accordi_it
+        Log.d(TAG, "convertTabs - from: $oldLanguage")
+        when (oldLanguage) {
+            LocaleManager.LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
+            LocaleManager.LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
+            LocaleManager.LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
+            LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES -> accordi1 = CambioAccordi.accordi_en
+        }
+
+        var accordi2 = CambioAccordi.accordi_it
+        Log.d(TAG, "convertTabs - to: $newLanguage")
+        when (newLanguage) {
+            LocaleManager.LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
+            LocaleManager.LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
+            LocaleManager.LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
+            LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES -> accordi2 = CambioAccordi.accordi_en
+        }
+
+        val mappa = HashMap<String, String>()
+        for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
+
+        val mDao = RisuscitoDatabase.getInstance(requireContext()).cantoDao()
+        val canti = mDao.allByName
+        for (canto in canti) {
+            if (!canto.savedTab.isNullOrEmpty()) {
+                Log.d(
+                    TAG,
+                    "convertTabs: "
+                            + "ID "
+                            + canto.id
+                            + " -> CONVERTO DA "
+                            + canto.savedTab
+                            + " A "
+                            + mappa[canto.savedTab.orEmpty()]
+                )
+                canto.savedTab = mappa[canto.savedTab.orEmpty()]
+                mDao.updateCanto(canto)
+            }
+        }
+    }
+
+    // converte gli accordi salvati dalla lingua vecchia alla nuova
+    private fun convertiBarre(oldLanguage: String, newLanguage: String) {
+        var barre1 = CambioAccordi.barre_it
+        Log.d(TAG, "convertiBarre - from: $oldLanguage")
+        when (oldLanguage) {
+            LocaleManager.LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
+        }
+
+        var barre2 = CambioAccordi.barre_it
+        Log.d(TAG, "convertiBarre - to: $newLanguage")
+        when (newLanguage) {
+            LocaleManager.LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
+        }
+
+        val mappa = HashMap<String, String>()
+        for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
+
+        val mDao = RisuscitoDatabase.getInstance(requireContext()).cantoDao()
+        val canti = mDao.allByName
+        for (canto in canti) {
+            if (!canto.savedTab.isNullOrEmpty()) {
+                Log.d(
+                    TAG,
+                    "convertiBarre: "
+                            + "ID "
+                            + canto.id
+                            + " -> CONVERTO DA "
+                            + canto.savedBarre
+                            + " A "
+                            + mappa[canto.savedBarre]
+                )
+                canto.savedBarre = mappa[canto.savedBarre]
+                mDao.updateCanto(canto)
+            }
+        }
+    }
 
     companion object {
         private const val DOWNLOAD_LANGUAGE = "download_language"
         private const val CONFIRMATION_REQUEST_CODE = 1
+        private const val TRANSLATION = "TRANSLATION"
         private val TAG = SettingsFragment::class.java.canonicalName
     }
 

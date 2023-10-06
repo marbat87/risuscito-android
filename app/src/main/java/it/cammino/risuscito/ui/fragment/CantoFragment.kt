@@ -296,10 +296,10 @@ open class CantoFragment : Fragment() {
                         mCantiViewModel.notaCambio
                     )
                     var convMin: HashMap<String, String>? = null
-                    if (resources.systemLocale.language.equals(
+                    if (requireContext().systemLocale.language.equals(
                             LANGUAGE_UKRAINIAN,
                             ignoreCase = true
-                        ) || resources.systemLocale.language.equals(
+                        ) || requireContext().systemLocale.language.equals(
                             LANGUAGE_POLISH,
                             ignoreCase = true
                         )
@@ -356,10 +356,10 @@ open class CantoFragment : Fragment() {
                         mCantiViewModel.notaCambio
                     )
                     var convMin1: HashMap<String, String>? = null
-                    if (resources.systemLocale.language.equals(
+                    if (requireContext().systemLocale.language.equals(
                             LANGUAGE_UKRAINIAN,
                             ignoreCase = true
-                        ) || resources.systemLocale.language.equals(
+                        ) || requireContext().systemLocale.language.equals(
                             LANGUAGE_POLISH,
                             ignoreCase = true
                         )
@@ -398,10 +398,10 @@ open class CantoFragment : Fragment() {
                             mCantiViewModel.notaCambio
                         )
                         var convMin2: HashMap<String, String>? = null
-                        if (resources.systemLocale.language.equals(
+                        if (requireContext().systemLocale.language.equals(
                                 LANGUAGE_UKRAINIAN,
                                 ignoreCase = true
-                            ) || resources.systemLocale.language.equals(
+                            ) || requireContext().systemLocale.language.equals(
                                 LANGUAGE_POLISH,
                                 ignoreCase = true
                             )
@@ -439,10 +439,10 @@ open class CantoFragment : Fragment() {
                             mCantiViewModel.notaCambio
                         )
                         var convMin3: HashMap<String, String>? = null
-                        if (resources.systemLocale.language.equals(
+                        if (requireContext().systemLocale.language.equals(
                                 LANGUAGE_UKRAINIAN,
                                 ignoreCase = true
-                            ) || resources.systemLocale.language.equals(
+                            ) || requireContext().systemLocale.language.equals(
                                 LANGUAGE_POLISH,
                                 ignoreCase = true
                             )
@@ -478,14 +478,14 @@ open class CantoFragment : Fragment() {
             managed
         }
 
-        Log.d(TAG, "LINGUA CTX: ${resources.systemLocale.language}")
-        Log.d(TAG, "LINGUA BASE: ${requireActivity().baseContext.resources.systemLocale.language}")
+        Log.d(TAG, "LINGUA CTX: ${requireContext().systemLocale.language}")
+        Log.d(TAG, "LINGUA BASE: ${requireActivity().systemLocale.language}")
         cambioAccordi = CambioAccordi(requireContext())
 
         try {
             Firebase.crashlytics.setCustomKeys {
                 key("pagina_canto", mCantiViewModel.pagina ?: StringUtils.EMPTY)
-                key("lingua", resources.systemLocale.language)
+                key("lingua", requireContext().systemLocale.language)
             }
 
             mCantiViewModel.primaNota =
@@ -497,7 +497,7 @@ open class CantoFragment : Fragment() {
                                 R.raw::class.java
                             )
                         ),
-                        resources.systemLocale.language
+                        requireContext().systemLocale.language
                     )
                 }
             mCantiViewModel.primoBarre =
@@ -509,7 +509,7 @@ open class CantoFragment : Fragment() {
                                 R.raw::class.java
                             )
                         ),
-                        resources.systemLocale.language
+                        requireContext().systemLocale.language
                     )
                 }
         } catch (e: IOException) {
@@ -531,7 +531,7 @@ open class CantoFragment : Fragment() {
 
         binding.musicSeekbar.addOnChangeListener { _, value, _ ->
             val time = String.format(
-                resources.systemLocale,
+                systemLocale,
                 "%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(value.toLong()),
                 TimeUnit.MILLISECONDS.toSeconds(value.toLong()) - TimeUnit.MINUTES.toSeconds(
@@ -1013,7 +1013,7 @@ open class CantoFragment : Fragment() {
 
             var line: String? = br.readLine()
 
-            val language = resources.systemLocale.language
+            val language = requireContext().systemLocale.language
 
             val pattern: Pattern
             var patternMinore: Pattern? = null
@@ -1084,10 +1084,10 @@ open class CantoFragment : Fragment() {
                                 if (Utility.isLowerCase(mCantiViewModel.primaNota[0])) {
                                     var notaCambioMin = mCantiViewModel.notaCambio
                                     notaCambioMin = if (notaCambioMin.length == 1)
-                                        notaCambioMin.lowercase(resources.systemLocale)
+                                        notaCambioMin.lowercase(systemLocale)
                                     else
                                         notaCambioMin.substring(0, 1)
-                                            .lowercase(resources.systemLocale) + notaCambioMin.substring(
+                                            .lowercase(systemLocale) + notaCambioMin.substring(
                                             1
                                         )
                                     line = line.replaceFirst(
@@ -1500,10 +1500,10 @@ open class CantoFragment : Fragment() {
         val convMap =
             cambioAccordi.diffSemiToni(mCantiViewModel.primaNota, mCantiViewModel.notaCambio)
         var convMin: HashMap<String, String>? = null
-        if (resources.systemLocale.language.equals(
+        if (requireContext().systemLocale.language.equals(
                 LANGUAGE_UKRAINIAN,
                 ignoreCase = true
-            ) || resources.systemLocale.language.equals(LANGUAGE_POLISH, ignoreCase = true)
+            ) || requireContext().systemLocale.language.equals(LANGUAGE_POLISH, ignoreCase = true)
         )
             convMin =
                 cambioAccordi.diffSemiToniMin(mCantiViewModel.primaNota, mCantiViewModel.notaCambio)

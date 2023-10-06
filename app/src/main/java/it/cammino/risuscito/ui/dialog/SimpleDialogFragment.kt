@@ -55,7 +55,7 @@ class SimpleDialogFragment : DialogFragment() {
         if (mBuilder.positiveButton != 0)
             context?.let {
                 dialog.setPositiveButton(
-                    it.resources.getText(mBuilder.positiveButton).capitalize(it.resources)
+                    it.resources.getText(mBuilder.positiveButton).capitalize(it)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
                     viewModel.handled = false
@@ -66,7 +66,7 @@ class SimpleDialogFragment : DialogFragment() {
         if (mBuilder.negativeButton != 0)
             context?.let {
                 dialog.setNegativeButton(
-                    it.resources.getText(mBuilder.negativeButton).capitalize(it.resources)
+                    it.resources.getText(mBuilder.negativeButton).capitalize(it)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
                     viewModel.handled = false

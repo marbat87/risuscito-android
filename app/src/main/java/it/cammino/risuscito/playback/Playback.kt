@@ -20,7 +20,10 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.media.MediaPlayer.*
+import android.media.MediaPlayer.OnCompletionListener
+import android.media.MediaPlayer.OnErrorListener
+import android.media.MediaPlayer.OnPreparedListener
+import android.media.MediaPlayer.OnSeekCompleteListener
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Handler
@@ -39,6 +42,7 @@ import androidx.media.AudioManagerCompat
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.utils.Utility.isExternalStorageReadable
+import it.cammino.risuscito.utils.extension.createWifiLockRisuscito
 import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
 import java.io.FileInputStream
 import java.io.IOException
@@ -95,7 +99,7 @@ class Playback internal constructor(
 
         this.mWifiLock =
             (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
-                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "sample_lock")
+                .createWifiLockRisuscito()
     }
 
     internal fun stop() {

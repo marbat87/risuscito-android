@@ -1,21 +1,21 @@
 package it.cammino.risuscito.utils.extension
 
-import android.content.res.Resources
+import android.content.Context
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import androidx.annotation.RequiresApi
 import it.cammino.risuscito.utils.OSUtils
 
-fun String.capitalize(res: Resources): String {
+fun String.capitalize(context: Context): String {
     return this.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(res.systemLocale) else it.toString()
+        if (it.isLowerCase()) it.titlecase(context.systemLocale) else it.toString()
     }
 }
 
-fun CharSequence.capitalize(res: Resources): String {
+fun CharSequence.capitalize(context: Context): String {
     return this.toString().replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(res.systemLocale) else it.toString()
+        if (it.isLowerCase()) it.titlecase(context.systemLocale) else it.toString()
     }
 }
 
