@@ -24,6 +24,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.activity.MainActivity
+import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.LocaleManager
@@ -53,22 +54,20 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     private lateinit var mEntries: Array<String>
     private lateinit var mEntryValues: Array<String>
-    internal var mMainActivity: MainActivity? = null
+    internal var mMainActivity: ThemeableActivity? = null
 
     private lateinit var splitInstallManager: SplitInstallManager
     private var sessionId = 0
 
     private val listener = SplitInstallStateUpdatedListener { state ->
         if (state.sessionId() == sessionId) {
-            val newLanguage = mSettingsViewModel.persistingLanguage
-            mSettingsViewModel.persistingLanguage = StringUtils.EMPTY
             when (state.status()) {
                 FAILED -> {
                     Log.e(TAG, "Module install failed with ${state.errorCode()}")
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
-                            it.activityMainContent,
+                            it.findViewById(R.id.main_content),
                             "Module install failed with ${state.errorCode()}",
                             Snackbar.LENGTH_SHORT
                         )
@@ -96,6 +95,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 }
 
                 INSTALLED -> {
+                    val newLanguage = mSettingsViewModel.persistingLanguage
+                    mSettingsViewModel.persistingLanguage = StringUtils.EMPTY
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     if (state.languages().isNotEmpty()) {
                         val currentLang = systemLocale.language
@@ -106,7 +107,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         Log.e(TAG, "Module install failed: empyt language list")
                         mMainActivity?.let {
                             Snackbar.make(
-                                it.activityMainContent,
+                                it.findViewById(R.id.main_content),
                                 "Module install failed: no language installed!",
                                 Snackbar.LENGTH_SHORT
                             )
@@ -162,7 +163,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         ?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
-                            it.activityMainContent,
+                            it.findViewById(R.id.main_content),
                             "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
                             Snackbar.LENGTH_SHORT
                         )
@@ -192,14 +193,25 @@ class SettingsFragment : PreferenceFragmentCompat(),
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        mMainActivity = activity as? MainActivity
+        mMainActivity = activity as? ThemeableActivity
 
         splitInstallManager = SplitInstallManagerFactory.create(requireContext())
 
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_settings)
+        //usato solo in tablet
+        (mMainActivity as? MainActivity)?.let {
+            it.setupToolbarTitle(R.string.title_activity_settings)
+            it.setTabVisible(false)
+            it.enableFab(false)
+            it.addMenuProvider(object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    it.updateProfileImage()
+                }
 
-        mMainActivity?.setTabVisible(false)
-        mMainActivity?.enableFab(false)
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return false
+                }
+            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        }
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as? DropDownPreference
 
@@ -235,18 +247,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 R.string.save_location_summary,
                 it
             )
-        }
-
-        mMainActivity?.let {
-            it.addMenuProvider(object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    it.updateProfileImage()
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    return false
-                }
-            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
         }
 
         return super.onCreateView(inflater, container, savedInstanceState)
@@ -285,7 +285,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                 mMainActivity?.let {
                     Snackbar.make(
-                        it.activityMainContent,
+                        it.findViewById(R.id.main_content),
                         "download cancelled by user",
                         Snackbar.LENGTH_SHORT
                     )
