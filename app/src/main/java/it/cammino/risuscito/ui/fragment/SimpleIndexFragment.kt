@@ -136,7 +136,8 @@ class SimpleIndexFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
-            listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all
+            listePersonalizzate =
+                RisuscitoDatabase.getInstance(requireContext()).listePersDao().all()
         }
     }
 

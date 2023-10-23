@@ -132,7 +132,7 @@ class MusicProvider internal constructor(
             )
             val artSmall = BitmapFactory.decodeResource(mContext.resources, R.mipmap.ic_launcher)
 
-            val canti = mDao.allByWithLink
+            val canti = mDao.allByWithLink()
             Log.d(TAG, "$RETRIEVE_MEDIA: ${canti.size}")
 
             var temp: MediaMetadataCompat

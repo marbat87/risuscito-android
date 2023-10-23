@@ -392,7 +392,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
 
         val mDao = RisuscitoDatabase.getInstance(requireContext()).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
@@ -429,7 +429,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
 
         val mDao = RisuscitoDatabase.getInstance(requireContext()).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(

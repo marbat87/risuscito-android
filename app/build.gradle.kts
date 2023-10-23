@@ -2,8 +2,8 @@ plugins {
     id("com.android.application")
     id("com.google.firebase.crashlytics")
     kotlin("android")
-    kotlin("kapt")
     id("com.google.gms.google-services")
+    id("com.google.devtools.ksp")
 }
 
 
@@ -18,12 +18,11 @@ android {
         multiDexEnabled = true
         versionCode = 5205
         versionName = "5.2.0"
-        kapt {
-            arguments {
-                arg("room.incremental", "true")
-                arg("room.schemaLocation", "$projectDir/schemas")
-                arg("room.expandProjection", "true")
-            }
+        ksp {
+            arg("room.incremental", "true")
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.expandProjection", "true")
+            arg("room.generateKotlin", "true")
         }
     }
 
@@ -56,10 +55,10 @@ android {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.5.2"
+val roomVersion = "2.6.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.10.0")
@@ -69,13 +68,13 @@ dependencies {
     implementation("androidx.appcompat:appcompat-resources:1.6.1")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.fragment:fragment-ktx:1.6.1")
-    implementation("androidx.recyclerview:recyclerview:1.3.1")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.media:media:1.6.0")
     implementation("androidx.room:room-runtime:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")

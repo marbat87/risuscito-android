@@ -215,7 +215,8 @@ class SectionedIndexFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
-            listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all
+            listePersonalizzate =
+                RisuscitoDatabase.getInstance(requireContext()).listePersDao().all()
         }
     }
 
@@ -228,7 +229,7 @@ class SectionedIndexFragment : Fragment() {
         if (mCantiViewModel.tipoLista == 0) {
             val useOldIndex = requireContext().useOldIndex()
             val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
-            val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all }
+            val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all() }
             mCantiViewModel.titoliList.clear()
             var mSubItems = LinkedList<ISubItem<*>>()
             var totCanti = 0

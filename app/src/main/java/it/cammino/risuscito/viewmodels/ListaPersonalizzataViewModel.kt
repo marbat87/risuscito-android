@@ -38,7 +38,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
         val useOldIndex = application.useOldIndex()
         mDb.listePersDao().getLiveListById(listaPersonalizzataId)?.let { liveList ->
             listaPersonalizzataResult =
-                zipLiveDataNullable(liveList, mDb.cantoDao().liveAll).map { result ->
+                zipLiveDataNullable(liveList, mDb.cantoDao().liveAll()).map { result ->
                     val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
                     listaPersonalizzata = result.first?.lista
                     listaPersonalizzataTitle = result.first?.titolo

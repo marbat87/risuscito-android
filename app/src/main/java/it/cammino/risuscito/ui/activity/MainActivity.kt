@@ -188,7 +188,7 @@ class MainActivity : ThemeableActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             listePersonalizzate =
-                RisuscitoDatabase.getInstance(this@MainActivity).listePersDao().all
+                RisuscitoDatabase.getInstance(this@MainActivity).listePersDao().all()
         }
 
         Log.d(TAG, "getVersionCode(): ${getVersionCode()}")
@@ -783,7 +783,7 @@ class MainActivity : ThemeableActivity() {
         for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
 
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
@@ -823,7 +823,7 @@ class MainActivity : ThemeableActivity() {
         for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
 
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
@@ -1202,7 +1202,7 @@ class MainActivity : ThemeableActivity() {
         binding.loadingBar.isVisible = false
     }
 
-    fun dismissProgressDialog(tag: String) {
+    private fun dismissProgressDialog(tag: String) {
         val sFragment = ProgressDialogFragment.findVisible(this, tag)
         sFragment?.dismiss()
     }

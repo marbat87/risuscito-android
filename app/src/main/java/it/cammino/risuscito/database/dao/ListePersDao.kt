@@ -8,11 +8,11 @@ import it.cammino.risuscito.database.entities.ListaPers
 @Dao
 interface ListePersDao {
 
-    @get:Query("SELECT * FROM listapers ORDER BY id ASC")
-    val liveAll: LiveData<List<ListaPers>>
+    @Query("SELECT * FROM listapers ORDER BY id ASC")
+    fun liveAll(): LiveData<List<ListaPers>>
 
-    @get:Query("SELECT * FROM listapers ORDER BY id ASC")
-    val all: List<ListaPers>
+    @Query("SELECT * FROM listapers ORDER BY id ASC")
+    fun all(): List<ListaPers>
 
     @Query("DELETE FROM listapers")
     fun truncateTable()

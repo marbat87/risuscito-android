@@ -506,7 +506,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
         Log.i(TAG, "updateChooseList start")
         val useOldIndex = requireContext().useOldIndex()
         val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
-        val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.choosen }
+        val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.choosen() }
         val newList = ArrayList<CheckableItem>()
         for (canto in canti) {
             newList.add(
