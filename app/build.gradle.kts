@@ -67,7 +67,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.appcompat:appcompat-resources:1.6.1")
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.fragment:fragment-ktx:1.6.1")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
