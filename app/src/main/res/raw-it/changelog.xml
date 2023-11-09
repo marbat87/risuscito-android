@@ -8,6 +8,7 @@
         <new>Nuova interfaccia</new>
         <new>Ottimizzazioni e compatibilità con Android 14</new>
         <new>Nuovo engine per il cambio lingua</new>
+        <bugfix>Sistemato cambio accordi su "tu sei la mia speranza Signore"</bugfix>
     </release>
 
     <release

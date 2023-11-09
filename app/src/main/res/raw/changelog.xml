@@ -8,6 +8,7 @@
         <new>New UI</new>
         <new>Optimizations and compatibility for Android 14 OS</new>
         <new>New "under-the-hood" language change system</new>
+        <bugfix>Fixed tab change on song "you are my hope o lord"</bugfix>
     </release>
 
     <release
