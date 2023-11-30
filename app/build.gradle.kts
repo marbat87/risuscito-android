@@ -55,7 +55,7 @@ android {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.6.0"
+val roomVersion = "2.6.1"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
@@ -72,10 +72,10 @@ dependencies {
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.media:media:1.6.0")
+    implementation("androidx.media:media:1.7.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation("androidx.preference:preference-ktx:1.2.1")
