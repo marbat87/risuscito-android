@@ -1146,6 +1146,12 @@ class MainActivity : ThemeableActivity() {
         val signInButton =
             profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
 
+        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean(Utility.SIGNED_IN, false)
+        signInButton?.isGone =
+            PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Utility.SIGNED_IN, false)
+
         if (profilePhotoUrl.isEmpty()) {
             profileImage?.setImageResource(R.drawable.account_circle_56px)
             profileImage?.background =
@@ -1185,12 +1191,6 @@ class MainActivity : ThemeableActivity() {
             mViewModel.showSnackbar = true
             signIn()
         }
-
-        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(Utility.SIGNED_IN, false)
-        signInButton?.isGone =
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGNED_IN, false)
 
     }
 

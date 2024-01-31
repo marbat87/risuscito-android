@@ -2,8 +2,8 @@
 <changelog>
 
     <release
-        versionCode="5205"
-        date="November 2023"
+        versionCode="5206"
+        date="February 2024"
         versionName="5.2.0">
         <new>New UI</new>
         <new>Optimizations and compatibility for Android 14 OS</new>
