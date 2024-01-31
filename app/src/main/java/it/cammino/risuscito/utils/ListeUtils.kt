@@ -168,7 +168,7 @@ object ListeUtils {
                 )
                     .setAction(
                         fragment.getString(R.string.cancel)
-                            .uppercase(fragment.resources.systemLocale)
+                            .uppercase(fragment.systemLocale)
                     ) {
                         for (removedItem in removedItems)
                             addToFavorites(fragment, removedItem.id, false)
@@ -202,7 +202,7 @@ object ListeUtils {
                 )
                     .setAction(
                         fragment.getString(R.string.cancel)
-                            .uppercase(fragment.resources.systemLocale)
+                            .uppercase(fragment.systemLocale)
                     ) {
                         for (removedItem in removedItems) {
                             val cronTemp = Cronologia()
@@ -285,7 +285,7 @@ object ListeUtils {
             )
                 .setAction(
                     fragment.getString(R.string.cancel)
-                        .uppercase(fragment.resources.systemLocale)
+                        .uppercase(fragment.systemLocale)
                 ) {
                     val positionToInsert = CustomList()
                     positionToInsert.id = idLista

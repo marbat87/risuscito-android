@@ -44,7 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.Collator
-import java.util.*
+import java.util.LinkedList
 
 class SectionedIndexFragment : Fragment() {
 
@@ -191,6 +191,7 @@ class SectionedIndexFragment : Fragment() {
                                     )
                                 }
                             }
+
                             LITURGICO_REPLACE_2 + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
                                 ListeUtils.updatePosizione(
@@ -202,6 +203,7 @@ class SectionedIndexFragment : Fragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }
@@ -213,7 +215,8 @@ class SectionedIndexFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
-            listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all
+            listePersonalizzate =
+                RisuscitoDatabase.getInstance(requireContext()).listePersDao().all()
         }
     }
 
@@ -226,7 +229,7 @@ class SectionedIndexFragment : Fragment() {
         if (mCantiViewModel.tipoLista == 0) {
             val useOldIndex = requireContext().useOldIndex()
             val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
-            val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all }
+            val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all() }
             mCantiViewModel.titoliList.clear()
             var mSubItems = LinkedList<ISubItem<*>>()
             var totCanti = 0
@@ -259,7 +262,7 @@ class SectionedIndexFragment : Fragment() {
                             totItems = totCanti
                             id = canti[i].idIndice
                             subItems = mSubItems
-                            subItems.sortWith(compareBy(Collator.getInstance(resources.systemLocale)) {
+                            subItems.sortWith(compareBy(Collator.getInstance(systemLocale)) {
                                 (it as? SimpleSubItem)?.title?.getText(
                                     requireContext()
                                 )

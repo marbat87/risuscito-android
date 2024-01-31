@@ -221,6 +221,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                                 mElement.setName = inputdialogViewModel.outputText
                                 mAdapter.notifyAdapterItemChanged(mCreaListaViewModel.positionToRename)
                             }
+
                             ADD_POSITION -> {
                                 inputdialogViewModel.handled = true
                                 binding.recyclerContainer.noElementsAdded.isVisible = false
@@ -247,6 +248,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         inputdialogViewModel.handled = true
                     }
@@ -266,6 +268,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         when (simpleDialogViewModel.mTag) {
                             SAVE_LIST -> {
@@ -320,10 +323,12 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     mAdapter.adapterItems.isNotEmpty()
                 return true
             }
+
             R.id.action_save_list -> {
                 lifecycleScope.launch { saveList() }
                 return true
             }
+
             android.R.id.home -> {
                 if (mAdapter.adapterItems.isNotEmpty()) {
                     SimpleDialogFragment.show(
@@ -464,7 +469,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             getString(R.string.generic_removed, item.name?.getText(this@CreaListaActivity)),
             Snackbar.LENGTH_SHORT
         )
-            .setAction(getString(R.string.cancel).uppercase(resources.systemLocale)) {
+            .setAction(getString(R.string.cancel).uppercase(systemLocale)) {
                 item.swipedDirection = 0
                 mAdapter.add(position, item)
                 if (position != RecyclerView.NO_POSITION)

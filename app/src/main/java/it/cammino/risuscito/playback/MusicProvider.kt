@@ -21,16 +21,17 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
+import androidx.preference.PreferenceManager
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
-import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.decodeSampledBitmapFromResource
 import it.cammino.risuscito.utils.Utility.isExternalStorageReadable
 import it.cammino.risuscito.utils.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
+import it.cammino.risuscito.utils.extension.systemLocale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -113,21 +114,25 @@ class MusicProvider internal constructor(
         if (mCurrentState == State.NON_INITIALIZED) {
             mCurrentState = State.INITIALIZING
 
-//            Log.d(TAG, "LINGUA CONTEXT: " + ThemeableActivity.getSystemLocalWrapper(mContext.resources.configuration).language)
-//            Log.d(TAG, "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext).getString(Utility.SYSTEM_LANGUAGE, ""))
+            Log.d(TAG, "LINGUA CONTEXT: " + mContext.systemLocale.language)
+            Log.d(
+                TAG,
+                "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext)
+                    .getString(Utility.SYSTEM_LANGUAGE, "")
+            )
 
-            var mNewBase = mContext
-            mNewBase = RisuscitoApplication.localeManager.useCustomConfig(mNewBase)
+//            val mNewBase = mContext
+//            mNewBase = RisuscitoApplication.localeManager.useCustomConfig(mNewBase)
 
             val art = decodeSampledBitmapFromResource(
-                mNewBase.resources,
+                mContext.resources,
                 R.drawable.ic_launcher_144dp,
                 320,
                 320
             )
-            val artSmall = BitmapFactory.decodeResource(mNewBase.resources, R.mipmap.ic_launcher)
+            val artSmall = BitmapFactory.decodeResource(mContext.resources, R.mipmap.ic_launcher)
 
-            val canti = mDao.allByWithLink
+            val canti = mDao.allByWithLink()
             Log.d(TAG, "$RETRIEVE_MEDIA: ${canti.size}")
 
             var temp: MediaMetadataCompat
@@ -136,7 +141,7 @@ class MusicProvider internal constructor(
                 Log.d(
                     TAG,
                     "$RETRIEVE_MEDIA: ${canto.id} / ${
-                        mNewBase.resources.getString(
+                        mContext.resources.getString(
                             Utility.getResId(
                                 canto.titolo,
                                 R.string::class.java
@@ -147,7 +152,7 @@ class MusicProvider internal constructor(
                                 canto.link,
                                 R.string::class.java
                             ) != -1
-                        ) mNewBase.resources.getString(
+                        ) mContext.resources.getString(
                             Utility.getResId(
                                 canto.link,
                                 R.string::class.java
@@ -161,7 +166,7 @@ class MusicProvider internal constructor(
                         canto.link,
                         R.string::class.java
                     ) != -1
-                ) mNewBase.resources.getString(
+                ) mContext.resources.getString(
                     Utility.getResId(
                         canto.link,
                         R.string::class.java
@@ -170,7 +175,7 @@ class MusicProvider internal constructor(
                 ) else canto.link
 
                 //controllo se il file è scaricato
-                if (isExternalStorageReadable && mNewBase.isDefaultLocationPublic) {
+                if (isExternalStorageReadable && mContext.isDefaultLocationPublic) {
                     // ho il permesso di scrivere la memoria esterna, quindi cerco il file anche lì
                     if (retrieveMediaFileLink(mContext, url, true).isNotEmpty())
                         url = retrieveMediaFileLink(mContext, url, true)
@@ -182,7 +187,7 @@ class MusicProvider internal constructor(
                 Log.v(
                     TAG,
                     "$RETRIEVE_MEDIA: ${canto.id} / ${
-                        mNewBase.resources.getString(
+                        mContext.resources.getString(
                             Utility.getResId(
                                 canto.titolo,
                                 R.string::class.java
@@ -199,7 +204,7 @@ class MusicProvider internal constructor(
                         .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
                         .putString(
                             MediaMetadataCompat.METADATA_KEY_ALBUM,
-                            mNewBase.getString(R.string.app_name)
+                            mContext.getString(R.string.app_name)
                         )
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
@@ -210,7 +215,7 @@ class MusicProvider internal constructor(
                         )
                         .putString(
                             MediaMetadataCompat.METADATA_KEY_TITLE,
-                            mNewBase.resources.getString(
+                            mContext.resources.getString(
                                 Utility.getResId(
                                     canto.titolo,
                                     R.string::class.java

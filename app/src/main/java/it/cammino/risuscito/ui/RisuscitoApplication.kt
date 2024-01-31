@@ -21,7 +21,7 @@ class RisuscitoApplication : MultiDexApplication() {
 
     override fun attachBaseContext(base: Context) {
         localeManager = LocaleManager(base)
-        super.attachBaseContext(localeManager.useCustomConfig(base))
+        super.attachBaseContext(base)
     }
 
     companion object {

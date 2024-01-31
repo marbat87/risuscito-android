@@ -444,7 +444,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
     private fun subscribeUiConsegnati() {
         consegnatiViewModel.mIndexResult?.observe(viewLifecycleOwner) { cantos ->
             consegnatiViewModel.titoli =
-                cantos.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
+                cantos.sortedWith(compareBy(Collator.getInstance(systemLocale)) {
                     it.title?.getText(requireContext())
                 })
             cantoAdapter.set(consegnatiViewModel.titoli)
@@ -506,7 +506,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
         Log.i(TAG, "updateChooseList start")
         val useOldIndex = requireContext().useOldIndex()
         val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
-        val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.choosen }
+        val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.choosen() }
         val newList = ArrayList<CheckableItem>()
         for (canto in canti) {
             newList.add(
@@ -523,7 +523,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
             )
         }
         consegnatiViewModel.titoliChoose =
-            newList.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
+            newList.sortedWith(compareBy(Collator.getInstance(systemLocale)) {
                 it.title?.getText(requireContext())
             })
         consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose

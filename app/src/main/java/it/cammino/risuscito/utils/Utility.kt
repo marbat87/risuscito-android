@@ -27,7 +27,7 @@ object Utility {
     private val TAG = Utility::class.java.canonicalName
     const val VECCHIO_INDICE = "vecchio_indice"
     const val SCREEN_ON = "sempre_acceso"
-    const val SYSTEM_LANGUAGE = "lingua_sistema_new"
+    const val SYSTEM_LANGUAGE = "lingua_sistema_new_new"
     const val CHANGE_LANGUAGE = "changed_language"
     const val OLD_LANGUAGE = "old_language"
     const val NEW_LANGUAGE = "new_language"

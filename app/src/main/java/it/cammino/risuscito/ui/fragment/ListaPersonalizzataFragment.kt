@@ -244,7 +244,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
                             Snackbar.LENGTH_LONG
                         )
                             .setAction(
-                                getString(R.string.cancel).uppercase(resources.systemLocale)
+                                getString(R.string.cancel).uppercase(requireContext().systemLocale)
                             ) {
                                 mCantiViewModel.listaPersonalizzata?.addCanto(
                                     cantoDaCanc,
@@ -260,6 +260,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
                     }
                     true
                 }
+
                 R.id.action_switch_item -> {
                     cantoDaCanc =
                         mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
@@ -276,6 +277,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
                     ).show()
                     true
                 }
+
                 else -> false
             }
         }
@@ -363,6 +365,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         inputdialogViewModel.handled = true
                     }
@@ -378,7 +381,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
 
     private val titlesList: String
         get() {
-            val l = resources.systemLocale
+            val l = systemLocale
             val result = StringBuilder()
             result.append("-- ").append(mCantiViewModel.listaPersonalizzata?.name?.uppercase(l))
                 .append(" --\n")

@@ -14,6 +14,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
+import androidx.annotation.AnimRes
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
@@ -290,27 +291,19 @@ val Activity.hasStorageAccess: Boolean
     ) == PackageManager.PERMISSION_GRANTED
 
 fun Activity.enterZoom() {
-    overridePendingTransition(
-        R.anim.animate_shrink_enter, R.anim.animate_zoom_exit
-    )
+    overrideOpenTransition(R.anim.animate_shrink_enter, R.anim.animate_zoom_exit)
 }
 
 fun Activity.exitZoom() {
-    overridePendingTransition(
-        R.anim.animate_shrink_enter, R.anim.animate_zoom_exit
-    )
+    overrideCloseTransition(R.anim.animate_shrink_enter, R.anim.animate_zoom_exit)
 }
 
 fun Activity.slideInRight() {
-    overridePendingTransition(
-        R.anim.animate_slide_in_right, R.anim.animate_slide_out_left
-    )
+    overrideOpenTransition(R.anim.animate_slide_in_right, R.anim.animate_slide_out_left)
 }
 
 fun Activity.slideOutRight() {
-    overridePendingTransition(
-        R.anim.animate_slide_in_left, R.anim.animate_slide_out_right
-    )
+    overrideCloseTransition(R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
 }
 
 fun ThemeableActivity.openCanto(
@@ -360,6 +353,44 @@ fun Activity.getVersionCodeLegacy(): Int {
 fun Activity.getVersionCode(): Int {
     return if (OSUtils.hasP()) getVersionCodeP()
     else getVersionCodeLegacy()
+}
+
+fun Activity.overrideOpenTransition(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
+    if (OSUtils.hasU())
+        overrideOpenTransitionU(enterAnim, exitAnim)
+    else
+        overrideOpenTransitionLegacy(enterAnim, exitAnim)
+}
+
+@RequiresApi(34)
+fun Activity.overrideOpenTransitionU(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
+    overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim)
+}
+
+@Suppress("DEPRECATION")
+fun Activity.overrideOpenTransitionLegacy(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
+    overridePendingTransition(
+        enterAnim, exitAnim
+    )
+}
+
+fun Activity.overrideCloseTransition(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
+    if (OSUtils.hasU())
+        overrideCloseTransitionU(enterAnim, exitAnim)
+    else
+        overrideCloseTransitionLegacy(enterAnim, exitAnim)
+}
+
+@RequiresApi(34)
+fun Activity.overrideCloseTransitionU(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
+    overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, enterAnim, exitAnim)
+}
+
+@Suppress("DEPRECATION")
+fun Activity.overrideCloseTransitionLegacy(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
+    overridePendingTransition(
+        enterAnim, exitAnim
+    )
 }
 
 fun Activity.createTaskDescription(tag: String?): ActivityManager.TaskDescription {

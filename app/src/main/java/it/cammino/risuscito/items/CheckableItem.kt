@@ -71,7 +71,7 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
                     title?.getText(ctx).orEmpty()
                 )
                 val mPosition =
-                    normalizedTitle.lowercase(ctx.resources.systemLocale).indexOf(it)
+                    normalizedTitle.lowercase(ctx.systemLocale).indexOf(it)
                 if (mPosition >= 0) {
                     val stringTitle = title?.getText(ctx)
                     val highlighted = StringBuilder(

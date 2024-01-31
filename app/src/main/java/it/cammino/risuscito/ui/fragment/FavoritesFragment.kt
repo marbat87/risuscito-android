@@ -182,6 +182,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
                             )
                             return true
                         }
+
                         R.id.action_help -> {
                             Toast.makeText(
                                 activity,
@@ -246,7 +247,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
             cantoAdapter.set(
                 canti.sortedWith(
                     compareBy(
-                        Collator.getInstance(resources.systemLocale)
+                        Collator.getInstance(systemLocale)
                     ) { it.title?.getText(requireContext()) })
             )
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
@@ -270,6 +271,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }

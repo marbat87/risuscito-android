@@ -60,7 +60,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
-import com.jakewharton.processphoenix.ProcessPhoenix
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.michaelflisar.changelog.ChangelogBuilder
@@ -72,6 +71,7 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
@@ -188,7 +188,7 @@ class MainActivity : ThemeableActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             listePersonalizzate =
-                RisuscitoDatabase.getInstance(this@MainActivity).listePersDao().all
+                RisuscitoDatabase.getInstance(this@MainActivity).listePersDao().all()
         }
 
         Log.d(TAG, "getVersionCode(): ${getVersionCode()}")
@@ -426,7 +426,7 @@ class MainActivity : ThemeableActivity() {
 
                             if (word.trim { it <= ' ' }.length > 1) {
                                 var text = word.trim { it <= ' ' }
-                                text = text.lowercase(resources.systemLocale)
+                                text = text.lowercase(systemLocale)
                                 text = Utility.removeAccents(text)
 
                                 if (aText[1]?.contains(text) != true) found = false
@@ -444,13 +444,13 @@ class MainActivity : ThemeableActivity() {
                         }
                     }
                 } else {
-                    val stringa = Utility.removeAccents(s).lowercase(resources.systemLocale)
+                    val stringa = Utility.removeAccents(s).lowercase(systemLocale)
                     Log.d(TAG, "performSearch onTextChanged: stringa $stringa")
                     cantiViewModel.titoli
                         .filter {
                             Utility.removeAccents(
                                 it.title?.getText(this@MainActivity).orEmpty()
-                            ).lowercase(resources.systemLocale).contains(stringa)
+                            ).lowercase(systemLocale).contains(stringa)
                         }
                         .forEach {
                             if (!isActive) return@launch
@@ -461,7 +461,7 @@ class MainActivity : ThemeableActivity() {
                     cantoAdapter.set(
                         titoliResult.sortedWith(
                             compareBy(
-                                Collator.getInstance(resources.systemLocale)
+                                Collator.getInstance(systemLocale)
                             ) { it.title?.getText(this@MainActivity) })
                     )
                     binding.searchViewLayout.searchProgress.isVisible = false
@@ -553,7 +553,8 @@ class MainActivity : ThemeableActivity() {
 
                             RESTORE_DONE -> {
                                 simpleDialogViewModel.handled = true
-                                ProcessPhoenix.triggerRebirth(this)
+                                RisuscitoApplication.localeManager.updateLanguage(this)
+
                             }
 
                             SEARCH_REPLACE -> {
@@ -663,7 +664,7 @@ class MainActivity : ThemeableActivity() {
         cantiViewModel.itemsResult?.observe(this) { canti ->
             cantiViewModel.titoli =
                 canti.sortedWith(compareBy(
-                    Collator.getInstance(resources.systemLocale)
+                    Collator.getInstance(systemLocale)
                 ) {
                     it.title?.getText(this)
                 })
@@ -782,7 +783,7 @@ class MainActivity : ThemeableActivity() {
         for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
 
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
@@ -822,7 +823,7 @@ class MainActivity : ThemeableActivity() {
         for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
 
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
@@ -1145,6 +1146,12 @@ class MainActivity : ThemeableActivity() {
         val signInButton =
             profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
 
+        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean(Utility.SIGNED_IN, false)
+        signInButton?.isGone =
+            PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Utility.SIGNED_IN, false)
+
         if (profilePhotoUrl.isEmpty()) {
             profileImage?.setImageResource(R.drawable.account_circle_56px)
             profileImage?.background =
@@ -1184,12 +1191,6 @@ class MainActivity : ThemeableActivity() {
             mViewModel.showSnackbar = true
             signIn()
         }
-
-        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(Utility.SIGNED_IN, false)
-        signInButton?.isGone =
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGNED_IN, false)
 
     }
 

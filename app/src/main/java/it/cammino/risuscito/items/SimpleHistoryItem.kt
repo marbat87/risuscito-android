@@ -94,7 +94,7 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
             val df = DateFormat.getDateTimeInstance(
-                DateFormat.SHORT, DateFormat.MEDIUM, ctx.resources.systemLocale
+                DateFormat.SHORT, DateFormat.MEDIUM, ctx.systemLocale
             )
             val tempTimestamp: String
 

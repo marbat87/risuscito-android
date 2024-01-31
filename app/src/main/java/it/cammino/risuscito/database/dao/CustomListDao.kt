@@ -9,8 +9,8 @@ import it.cammino.risuscito.database.pojo.Posizione
 @Dao
 interface CustomListDao {
 
-    @get:Query("SELECT * FROM customlist")
-    val all: List<CustomList>
+    @Query("SELECT * FROM customlist")
+    fun all(): List<CustomList>
 
     @Query("DELETE FROM customlist")
     fun truncateTable()

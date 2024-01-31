@@ -9,8 +9,8 @@ import it.cammino.risuscito.database.entities.Canto
 @Dao
 interface FavoritesDao {
 
-    @get:Query("SELECT * FROM canto WHERE favorite = 1")
-    val liveFavorites: LiveData<List<Canto>>
+    @Query("SELECT * FROM canto WHERE favorite = 1")
+    fun liveFavorites(): LiveData<List<Canto>>
 
     @Query("UPDATE canto set favorite = 0")
     fun resetFavorites()

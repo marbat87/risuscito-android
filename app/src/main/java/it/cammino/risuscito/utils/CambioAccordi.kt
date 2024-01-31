@@ -72,8 +72,8 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         if (primaNota.isNullOrEmpty() || notaCambio.isNullOrEmpty())
             return null
 
-        val language = mContext.resources.systemLocale.language
-        val locale = mContext.resources.systemLocale
+        val language = mContext.systemLocale.language
+        val locale = mContext.systemLocale
 
         Log.v(TAG, "diffSemiToni: language $language")
 
@@ -135,8 +135,8 @@ class CambioAccordi internal constructor(private val mContext: Context) {
 
     fun diffSemiToniMin(primaNota: String?, notaCambio: String?): HashMap<String, String>? {
 
-        val language = mContext.resources.systemLocale.language
-        val locale = mContext.resources.systemLocale
+        val language = mContext.systemLocale.language
+        val locale = mContext.systemLocale
 
         Log.v(TAG, "diffSemiToniMin - language: $language")
 

@@ -493,7 +493,7 @@ class CustomListsFragment : AccountMenuFragment() {
                 Snackbar.LENGTH_LONG
             )
                 .setAction(
-                    getString(R.string.cancel).uppercase(resources.systemLocale)
+                    getString(R.string.cancel).uppercase(systemLocale)
                 ) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                         mLastClickTime = SystemClock.elapsedRealtime()

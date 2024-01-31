@@ -10,8 +10,8 @@ interface LocalLinksDao {
     @Query("DELETE FROM locallink")
     fun truncateTable()
 
-    @get:Query("SELECT * FROM locallink")
-    val all: List<LocalLink>
+    @Query("SELECT * FROM locallink")
+    fun all(): List<LocalLink>
 
     @Query("SELECT * FROM locallink WHERE idCanto = :id")
     fun getLocalLinkByCantoId(id: Int): LocalLink?

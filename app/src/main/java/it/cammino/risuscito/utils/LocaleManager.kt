@@ -6,7 +6,9 @@ import android.content.res.Configuration
 import android.os.Build.VERSION_CODES.N
 import android.provider.Settings
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.core.os.LocaleListCompat
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.utils.extension.systemLocale
 import java.util.*
@@ -53,6 +55,14 @@ class LocaleManager(context: Context) {
     }
 
     fun setDefaultSystemLanguage(context: Context) {
+        Log.d(
+            TAG,
+            "applicationLocale: ${AppCompatDelegate.getApplicationLocales()[0]?.language}"
+        )
+        Log.d(
+            TAG,
+            "systemLocale: ${context.resources.systemLocale.language}"
+        )
         val mLanguage = when (context.resources.systemLocale.language) {
             LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
             LANGUAGE_ENGLISH -> if (context.resources.systemLocale.country.isNotEmpty()
@@ -61,15 +71,31 @@ class LocaleManager(context: Context) {
                 LANGUAGE_ENGLISH_PHILIPPINES
             else
                 LANGUAGE_ENGLISH
+
             LANGUAGE_TURKISH -> LANGUAGE_TURKISH
             LANGUAGE_POLISH -> LANGUAGE_POLISH
             else -> LANGUAGE_ITALIAN
         }
         Log.d(TAG, "setDefaultSystemLanguage - default language set: $mLanguage")
         persistLanguage(context, mLanguage)
+        updateLanguage(context, mLanguage)
     }
 
-    fun persistLanguage(context: Context, language: String) {
+    fun updateLanguage(context: Context, language: String) {
+        persistLanguage(context, language)
+        val appLocale: LocaleListCompat =
+            LocaleListCompat.forLanguageTags(if (language == LANGUAGE_ENGLISH_PHILIPPINES) "$LANGUAGE_ENGLISH-$COUNTRY_PHILIPPINES" else language)
+        AppCompatDelegate.setApplicationLocales(appLocale)
+    }
+
+    fun updateLanguage(context: Context) {
+        val language = getLanguage(context)
+        val appLocale: LocaleListCompat =
+            LocaleListCompat.forLanguageTags(if (language == LANGUAGE_ENGLISH_PHILIPPINES) "$LANGUAGE_ENGLISH-$COUNTRY_PHILIPPINES" else language)
+        AppCompatDelegate.setApplicationLocales(appLocale)
+    }
+
+    private fun persistLanguage(context: Context, language: String) {
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putString(Utility.SYSTEM_LANGUAGE, language)
         }

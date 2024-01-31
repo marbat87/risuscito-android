@@ -59,7 +59,7 @@ class ProgressDialogFragment : DialogFragment() {
             context?.let {
                 dialog.setPositiveButton(
                     it.resources.getText(mBuilder.positiveButton)
-                        .capitalize(it.resources)
+                        .capitalize(it)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
                     viewModel.handled = false
@@ -72,7 +72,7 @@ class ProgressDialogFragment : DialogFragment() {
             context?.let {
                 dialog.setNegativeButton(
                     it.resources.getText(mBuilder.negativeButton)
-                        .capitalize(it.resources)
+                        .capitalize(it)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
                     viewModel.handled = false

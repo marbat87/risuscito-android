@@ -147,20 +147,21 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         Log.d(TAG, "attachBaseContext")
-        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
-        RisuscitoApplication.localeManager.useCustomConfig(this)
+        super.attachBaseContext(newBase);
+//        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
+//        RisuscitoApplication.localeManager.useCustomConfig(this)
         SplitCompat.install(this)
     }
 
-    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-        Log.d(TAG, "applyOverrideConfiguration")
-        super.applyOverrideConfiguration(
-            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
-                this,
-                overrideConfiguration
-            )
-        )
-    }
+//    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+//        Log.d(TAG, "applyOverrideConfiguration")
+//        super.applyOverrideConfiguration(
+//            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
+//                this,
+//                overrideConfiguration
+//            )
+//        )
+//    }
 
     class NoBackupException internal constructor(val resources: Resources) :
         Exception(resources.getString(R.string.no_restore_found))
@@ -259,37 +260,37 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         //BACKUP CANTI
         val cantoRef = deleteExistingFile(storageRef, CANTO_FILE_NAME, userId)
-        val backupList = risuscitoDb.cantoDao().backup
+        val backupList = risuscitoDb.cantoDao().backup()
         Log.d(TAG, "canto backup size ${backupList.size}")
         putFileToFirebase(cantoRef, backupList, CANTO_FILE_NAME)
 
         //BACKUP CUSTOM LISTS
         val customListRef = deleteExistingFile(storageRef, CUSTOM_LIST_FILE_NAME, userId)
-        val customLists = risuscitoDb.customListDao().all
+        val customLists = risuscitoDb.customListDao().all()
         Log.d(TAG, "custom list size ${customLists.size}")
         putFileToFirebase(customListRef, customLists, CUSTOM_LIST_FILE_NAME)
 
         //BACKUP LISTE PERS
         val listePersRef = deleteExistingFile(storageRef, LISTA_PERS_FILE_NAME, userId)
-        val listePers = risuscitoDb.listePersDao().all
+        val listePers = risuscitoDb.listePersDao().all()
         Log.d(TAG, "listePers size ${listePers.size}")
         putFileToFirebase(listePersRef, listePers, LISTA_PERS_FILE_NAME)
 
         //BACKUP LOCAL LINK
         val localLinkRef = deleteExistingFile(storageRef, LOCAL_LINK_FILE_NAME, userId)
-        val localLink = risuscitoDb.localLinksDao().all
+        val localLink = risuscitoDb.localLinksDao().all()
         Log.d(TAG, "localLink size ${localLink.size}")
         putFileToFirebase(localLinkRef, localLink, LOCAL_LINK_FILE_NAME)
 
         //BACKUP CONSEGNATI
         val consegnatiRef = deleteExistingFile(storageRef, CONSEGNATO_FILE_NAME, userId)
-        val consegnati = risuscitoDb.consegnatiDao().all
+        val consegnati = risuscitoDb.consegnatiDao().all()
         Log.d(TAG, "consegnati size ${consegnati.size}")
         putFileToFirebase(consegnatiRef, consegnati, CONSEGNATO_FILE_NAME)
 
         //BACKUP CRONOLOGIA
         val cronologiaRef = deleteExistingFile(storageRef, CRONOLOGIA_FILE_NAME, userId)
-        val cronologia = risuscitoDb.cronologiaDao().all
+        val cronologia = risuscitoDb.cronologiaDao().all()
         Log.d(TAG, "cronologia size ${cronologia.size}")
         putFileToFirebase(cronologiaRef, cronologia, CRONOLOGIA_FILE_NAME)
 
