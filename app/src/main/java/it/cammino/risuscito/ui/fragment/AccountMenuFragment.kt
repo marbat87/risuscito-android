@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.ui.activity.MainActivity
@@ -41,7 +40,7 @@ open class AccountMenuFragment : Fragment() {
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     return false
                 }
-            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+            }, viewLifecycleOwner)
         }
     }
 

@@ -21,7 +21,6 @@ import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -86,6 +85,7 @@ class CustomListsFragment : AccountMenuFragment() {
                 initFabOptions(position >= 2)
             }
         }
+    private var menuProvider: MenuProvider? = null
 
     private var _binding: TabsLayoutBinding? = null
 
@@ -108,6 +108,14 @@ class CustomListsFragment : AccountMenuFragment() {
         return binding.root
     }
 
+    override fun onStop() {
+        super.onStop()
+        menuProvider?.let {
+            Log.d(TAG, "removeMenu")
+            mMainActivity?.removeMenuProvider(it)
+        }
+    }
+
     override fun onDestroyView() {
         Log.d(TAG, "onDestroyView")
         binding.viewPager.unregisterOnPageChangeCallback(mPageChange)
@@ -117,6 +125,22 @@ class CustomListsFragment : AccountMenuFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        menuProvider = object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.help_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.action_help -> {
+                        playIntro()
+                        return true
+                    }
+                }
+                return false
+            }
+        }
 
         mRegularFont = ResourcesCompat.getFont(
             requireContext(),
@@ -158,21 +182,10 @@ class CustomListsFragment : AccountMenuFragment() {
         }
         binding.viewPager.registerOnPageChangeCallback(mPageChange)
 
-        mMainActivity?.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.help_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.action_help -> {
-                        playIntro()
-                        return true
-                    }
-                }
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        menuProvider?.let {
+            Log.d(TAG, "addMenu")
+            mMainActivity?.addMenuProvider(it)
+        }
 
         subscribeUiChanges()
     }

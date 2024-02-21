@@ -15,7 +15,6 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -73,6 +72,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
     private val passaggiValues: MutableMap<Int, Int> = mutableMapOf()
     private var backCallback: OnBackPressedCallback? = null
     private var sideSheetDialog: SideSheetDialog? = null
+    private var menuProvider: MenuProvider? = null
 
     private var _binding: LayoutConsegnatiBinding? = null
 
@@ -95,6 +95,14 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
         return binding.root
     }
 
+    override fun onStop() {
+        super.onStop()
+        menuProvider?.let {
+            Log.d(TAG, "removeMenu")
+            mMainActivity?.removeMenuProvider(it)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -103,6 +111,36 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
     @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        menuProvider = object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(
+                    if (selectPassageExtension.selectedItems.isNotEmpty()) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu,
+                    menu
+                )
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.action_filter -> {
+                        sideSheetDialog?.show()
+                        return true
+                    }
+
+                    R.id.action_filter_remove -> {
+                        selectPassageExtension.deselect()
+                        cantoAdapter.filter(StringUtils.EMPTY)
+                        activity?.invalidateOptionsMenu()
+                    }
+
+                    R.id.action_help -> {
+                        fabIntro()
+                        return true
+                    }
+                }
+                return false
+            }
+        }
 
         mRegularFont = ResourcesCompat.getFont(
             requireContext(),
@@ -224,35 +262,10 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
 
         }
 
-        mMainActivity?.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(
-                    if (selectPassageExtension.selectedItems.isNotEmpty()) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu,
-                    menu
-                )
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.action_filter -> {
-                        sideSheetDialog?.show()
-                        return true
-                    }
-
-                    R.id.action_filter_remove -> {
-                        selectPassageExtension.deselect()
-                        cantoAdapter.filter(StringUtils.EMPTY)
-                        activity?.invalidateOptionsMenu()
-                    }
-
-                    R.id.action_help -> {
-                        fabIntro()
-                        return true
-                    }
-                }
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        menuProvider?.let {
+            Log.d(TAG, "addMenu")
+            mMainActivity?.addMenuProvider(it)
+        }
 
         view.isFocusableInTouchMode = true
         view.requestFocus()
