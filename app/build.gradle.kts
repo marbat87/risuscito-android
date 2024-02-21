@@ -58,7 +58,7 @@ val fastAdapterVersion = "5.7.0"
 val roomVersion = "2.6.1"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.11.0")
