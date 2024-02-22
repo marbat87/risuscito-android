@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
-import androidx.lifecycle.Lifecycle
 import com.danielstone.materialaboutlibrary.ConvenienceBuilder
 import com.danielstone.materialaboutlibrary.MaterialAboutFragment
 import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
@@ -60,7 +59,7 @@ class AboutFragment : MaterialAboutFragment() {
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     return false
                 }
-            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+            }, viewLifecycleOwner)
             it.setupToolbarTitle(R.string.title_activity_about)
             it.setTabVisible(false)
             it.enableFab(false)
@@ -109,14 +108,14 @@ class AboutFragment : MaterialAboutFragment() {
                                     .setSubject(getString(R.string.app_name))
                                     .addEmailTo("marbat87@outlook.it").intent
                             )
-                            } catch (e: Exception) {
-                                // No activity to handle intent
-                                Toast.makeText(
-                                    ctx, R.string.mal_activity_exception, Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }.build()
-                ).build()
+                        } catch (e: Exception) {
+                            // No activity to handle intent
+                            Toast.makeText(
+                                ctx, R.string.mal_activity_exception, Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }.build()
+            ).build()
 
             val miscCard = MaterialAboutCard.Builder().outline(false).addItem(
                 MaterialAboutActionItem.Builder().text(R.string.changelog)

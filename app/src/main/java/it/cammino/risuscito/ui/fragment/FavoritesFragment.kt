@@ -17,7 +17,6 @@ import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
 import androidx.core.view.isInvisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -53,6 +52,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
     private var selectExtension: SelectExtension<SimpleItem>? = null
     private var actionModeOk: Boolean = false
     private var mLastClickTime: Long = 0
+    private var menuProvider: MenuProvider? = null
 
     private var _binding: ActivityFavouritesBinding? = null
 
@@ -75,6 +75,14 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         return binding.root
     }
 
+    override fun onStop() {
+        super.onStop()
+        menuProvider?.let {
+            Log.d(TAG, "removeMenu")
+            mMainActivity?.removeMenuProvider(it)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -82,6 +90,43 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mMainActivity?.let { act ->
+            menuProvider = object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.clean_list_menu, menu)
+                    menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    when (menuItem.itemId) {
+                        R.id.list_reset -> {
+                            SimpleDialogFragment.show(
+                                SimpleDialogFragment.Builder(FAVORITES_RESET)
+                                    .title(R.string.dialog_reset_favorites_title)
+                                    .icon(R.drawable.clear_all_24px)
+                                    .content(R.string.dialog_reset_favorites_desc)
+                                    .positiveButton(R.string.clear_confirm)
+                                    .negativeButton(R.string.cancel),
+                                act.supportFragmentManager
+                            )
+                            return true
+                        }
+
+                        R.id.action_help -> {
+                            Toast.makeText(
+                                activity,
+                                getString(R.string.new_hint_remove),
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            return true
+                        }
+                    }
+                    return false
+                }
+            }
+        }
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_favourites)
         mMainActivity?.setTabVisible(false)
@@ -161,41 +206,9 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         binding.favouritesList.layoutManager = llm
         binding.favouritesList.itemAnimator = SlideRightAlphaAnimator()
 
-        mMainActivity?.let { act ->
-            act.addMenuProvider(object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    menuInflater.inflate(R.menu.clean_list_menu, menu)
-                    menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    when (menuItem.itemId) {
-                        R.id.list_reset -> {
-                            SimpleDialogFragment.show(
-                                SimpleDialogFragment.Builder(FAVORITES_RESET)
-                                    .title(R.string.dialog_reset_favorites_title)
-                                    .icon(R.drawable.clear_all_24px)
-                                    .content(R.string.dialog_reset_favorites_desc)
-                                    .positiveButton(R.string.clear_confirm)
-                                    .negativeButton(R.string.cancel),
-                                act.supportFragmentManager
-                            )
-                            return true
-                        }
-
-                        R.id.action_help -> {
-                            Toast.makeText(
-                                activity,
-                                getString(R.string.new_hint_remove),
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                            return true
-                        }
-                    }
-                    return false
-                }
-            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        menuProvider?.let {
+            Log.d(TAG, "addMenu")
+            mMainActivity?.addMenuProvider(it)
         }
 
         subscribeUiChanges()
