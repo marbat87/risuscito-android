@@ -148,6 +148,7 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         Log.d(TAG, "onDestroy")
         // Service is being killed, so make sure we release our resources
         handleStopRequest()
