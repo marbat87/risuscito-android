@@ -35,6 +35,7 @@ import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.ui.RisuscitoApplication
@@ -52,8 +53,10 @@ import it.cammino.risuscito.utils.Utility.NIGHT_MODE
 import it.cammino.risuscito.utils.Utility.SAVE_LOCATION
 import it.cammino.risuscito.utils.Utility.SCREEN_ON
 import it.cammino.risuscito.utils.Utility.SYSTEM_LANGUAGE
+import it.cammino.risuscito.utils.Utility.VECCHIO_INDICE
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.hasStorageAccess
+import it.cammino.risuscito.utils.extension.isOnTablet
 import it.cammino.risuscito.utils.extension.setDefaultNightMode
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SettingsViewModel
@@ -326,7 +329,14 @@ class SettingsFragment : PreferenceFragmentCompat(),
             context?.setDefaultNightMode()
         }
         if (key == SCREEN_ON) activity?.checkScreenAwake()
-        if (key == DYNAMIC_COLORS) activity?.recreate()
+        if (key == DYNAMIC_COLORS || key == VECCHIO_INDICE || key == DEFAULT_SEARCH) mMainActivity?.let {
+            if (requireContext().isOnTablet) {
+                it.recreate()
+            } else
+                ProcessPhoenix.triggerRebirth(
+                    it.applicationContext
+                )
+        }
     }
 
     private fun composeSummary(@StringRes id: Int, pref: DropDownPreference): String {

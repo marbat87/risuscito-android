@@ -9,8 +9,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.2.2")
-        classpath("com.google.gms:google-services:4.4.0")
+        classpath("com.android.tools.build:gradle:8.3.0")
+        classpath("com.google.gms:google-services:4.4.1")
         classpath(kotlin("gradle-plugin", version = "1.9.22"))
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
         // NOTE: Do not place your application dependencies here; they belong
