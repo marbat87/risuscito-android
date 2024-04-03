@@ -2,7 +2,11 @@ package it.cammino.risuscito.ui.fragment
 
 import android.app.Activity
 import android.app.RecoverableSecurityException
-import android.content.*
+import android.content.ActivityNotFoundException
+import android.content.ContentUris
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -14,8 +18,6 @@ import android.provider.MediaStore
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.Base64.DEFAULT
-import android.util.Base64.encodeToString
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -44,9 +46,9 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.crashlytics.ktx.setCustomKeys
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.CustomKeysAndValues
+import com.google.firebase.crashlytics.crashlytics
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import it.cammino.risuscito.R
@@ -60,15 +62,29 @@ import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.*
+import it.cammino.risuscito.utils.CambioAccordi
+import it.cammino.risuscito.utils.DownloadState
+import it.cammino.risuscito.utils.Downloader
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
+import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.PdfExporter
+import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.getExternalLink
 import it.cammino.risuscito.utils.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.utils.Utility.mediaScan
 import it.cammino.risuscito.utils.Utility.retrieveMediaFileLink
-import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
+import it.cammino.risuscito.utils.extension.getTypedValueResId
+import it.cammino.risuscito.utils.extension.hasStorageAccess
+import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
+import it.cammino.risuscito.utils.extension.isFabExpansionLeft
+import it.cammino.risuscito.utils.extension.isOnline
+import it.cammino.risuscito.utils.extension.readTextFromResource
+import it.cammino.risuscito.utils.extension.startActivityWithFadeIn
+import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.Dispatchers
@@ -79,7 +95,6 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
-import java.nio.charset.Charset
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -267,10 +282,12 @@ open class CantoFragment : Fragment() {
                     lifecycleScope.launch { exportPdf() }
                     managed = true
                 }
+
                 R.id.action_help_canto -> {
                     playIntro(binding.musicButtons.isVisible)
                     managed = true
                 }
+
                 R.id.action_save_tab -> {
                     if (!mCantiViewModel.mCurrentCanto?.savedTab.equals(
                             mCantiViewModel.notaCambio,
@@ -289,6 +306,7 @@ open class CantoFragment : Fragment() {
                     }
                     managed = true
                 }
+
                 R.id.action_reset_tab -> {
                     mCantiViewModel.notaCambio = mCantiViewModel.primaNota
                     val convMap = cambioAccordi.diffSemiToni(
@@ -330,6 +348,7 @@ open class CantoFragment : Fragment() {
                     }
                     managed = true
                 }
+
                 R.id.action_save_barre -> {
                     if (!mCantiViewModel.mCurrentCanto?.savedBarre.equals(
                             mCantiViewModel.barreCambio,
@@ -349,6 +368,7 @@ open class CantoFragment : Fragment() {
                     }
                     managed = true
                 }
+
                 R.id.action_reset_barre -> {
                     mCantiViewModel.barreCambio = mCantiViewModel.primoBarre
                     val convMap1 = cambioAccordi.diffSemiToni(
@@ -390,6 +410,7 @@ open class CantoFragment : Fragment() {
                     }
                     managed = true
                 }
+
                 else -> {
                     if (item.groupId == R.id.menu_gruppo_note) {
                         mCantiViewModel.notaCambio = item.titleCondensed.toString()
@@ -483,10 +504,12 @@ open class CantoFragment : Fragment() {
         cambioAccordi = CambioAccordi(requireContext())
 
         try {
-            Firebase.crashlytics.setCustomKeys {
-                key("pagina_canto", mCantiViewModel.pagina ?: StringUtils.EMPTY)
-                key("lingua", requireContext().systemLocale.language)
-            }
+            Firebase.crashlytics.setCustomKeys(
+                CustomKeysAndValues.Builder().putString(
+                    "pagina_canto",
+                    mCantiViewModel.pagina ?: StringUtils.EMPTY
+                ).putString("lingua", requireContext().systemLocale.language).build()
+            )
 
             mCantiViewModel.primaNota =
                 mCantiViewModel.primaNota.ifEmpty {
@@ -561,9 +584,11 @@ open class CantoFragment : Fragment() {
                 PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.STATE_NONE -> {
                     playFromId(mCantiViewModel.idCanto.toString())
                 }
+
                 PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.STATE_CONNECTING -> {
                     pauseMedia()
                 }
+
                 PlaybackStateCompat.STATE_PAUSED -> {
                     playMedia()
                 }
@@ -672,6 +697,7 @@ open class CantoFragment : Fragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         progressDialogViewModel.handled = true
                     }
@@ -696,6 +722,7 @@ open class CantoFragment : Fragment() {
                                 stopMedia()
                                 lifecycleScope.launch { deleteLink() }
                             }
+
                             DELETE_MP3 -> {
                                 simpleDialogViewModel.handled = true
                                 localUrl?.let { url ->
@@ -770,6 +797,7 @@ open class CantoFragment : Fragment() {
                                 refreshCatalog()
                                 lifecycleScope.launch { checkRecordState() }
                             }
+
                             DOWNLINK_CHOOSE -> {
                                 simpleDialogViewModel.handled = true
                                 if (activity?.isDefaultLocationPublic == true) {
@@ -789,10 +817,12 @@ open class CantoFragment : Fragment() {
                                 } else
                                     startDownload(false)
                             }
+
                             ONLY_LINK -> {
                                 simpleDialogViewModel.handled = true
                                 pickAudio.launch(arrayOf(MP3_MIME_TYPE))
                             }
+
                             SAVE_TAB -> {
                                 simpleDialogViewModel.handled = true
                                 if (mCantiViewModel.scrollPlaying) {
@@ -804,6 +834,7 @@ open class CantoFragment : Fragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         when (simpleDialogViewModel.mTag) {
                             SAVE_TAB -> {
@@ -834,6 +865,7 @@ open class CantoFragment : Fragment() {
                         )
                         sFragment?.setProgress(it.progress)
                     }
+
                     is DownloadState.Completed -> {
                         Log.d(TAG, "DownloadListener onComplete")
                         downloaderViewModel.handled = true
@@ -852,6 +884,7 @@ open class CantoFragment : Fragment() {
                         refreshCatalog()
                         lifecycleScope.launch { checkRecordState() }
                     }
+
                     is DownloadState.Error -> {
                         Log.d(TAG, "DownloadListener onError: ${it.message}")
                         downloaderViewModel.handled = true
@@ -876,12 +909,14 @@ open class CantoFragment : Fragment() {
                 showPlaying(false)
                 binding.musicSeekbar.isEnabled = true
             }
+
             PlaybackStateCompat.STATE_STOPPED -> {
                 stopSeekbarUpdate()
                 updateSeekBarValue(0F)
                 binding.musicSeekbar.isEnabled = false
                 showPlaying(false)
             }
+
             PlaybackStateCompat.STATE_ERROR -> {
                 binding.musicSeekbar.isVisible = true
                 binding.musicLoadingbar.isVisible = false
@@ -897,6 +932,7 @@ open class CantoFragment : Fragment() {
                 )
                     .show()
             }
+
             PlaybackStateCompat.STATE_PLAYING -> {
                 binding.musicSeekbar.isVisible = true
                 binding.musicLoadingbar.isVisible = false
@@ -904,6 +940,7 @@ open class CantoFragment : Fragment() {
                 showPlaying(true)
                 binding.musicSeekbar.isEnabled = true
             }
+
             else -> {
                 Log.i(TAG, "Non gestito")
             }
@@ -1025,21 +1062,28 @@ open class CantoFragment : Fragment() {
                     // inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
                     patternMinore = Pattern.compile("cis|c|d|eb|e|fis|f|gis|g|a| b|h")
                 }
+
                 LANGUAGE_POLISH -> {
                     pattern = Pattern.compile("Cis|C|D|Dis|E|Fis|F|Gis|G|A|B|H")
                     // inserito spazio prima di "b" per evitare che venga confuso con "Eb" o "eb"
                     patternMinore = Pattern.compile("cis|c|d|dis|e|fis|f|gis|g|a| b|h")
                 }
+
                 LANGUAGE_ENGLISH -> pattern = Pattern.compile("C#|C|D|Eb|E|F#|F|G#|G|A|Bb|B")
                 else -> pattern = Pattern.compile("Do#|Do|Re|Mib|Mi|Fa#|Fa|Sol#|Sol|La|Sib|Si")
             }
 
             // serve per segnarsi se si è già evidenziato il primo accordo del testo
             var notaHighlighed = false
+            var insidePre = false
 
             while (line != null) {
                 Log.v(TAG, "RIGA DA ELAB: $line")
-                if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
+                if ((line.contains("A13F3C"))
+                    && !line.contains("<H2>")
+                    && !line.contains("<H4>")
+                    && insidePre
+                ) {
                     if (language.equals(LANGUAGE_UKRAINIAN, ignoreCase = true) || language.equals(
                             LANGUAGE_ENGLISH,
                             ignoreCase = true
@@ -1164,6 +1208,8 @@ open class CantoFragment : Fragment() {
                         }
                     }
                 }
+                if (line.contains(PRE_START)) insidePre = true
+                if (line.contains(PRE_END)) insidePre = false
                 line = br.readLine()
             }
             br.close()
@@ -1461,12 +1507,22 @@ open class CantoFragment : Fragment() {
     }
 
     private fun loadContentIntoWebView(content: String?) {
-        if (!content.isNullOrEmpty()) binding.cantoView.loadData(
-            encodeToString(
-                content.toByteArray(Charset.forName(ECONDING_UTF8)),
-                DEFAULT
-            ), DEFAULT_MIME_TYPE, ECONDING_BASE64
-        )
+        if (!content.isNullOrEmpty()) {
+//            binding.cantoView.loadData(
+//                encodeToString(
+//                    content.toByteArray(Charset.forName(ECONDING_UTF8)),
+//                    DEFAULT
+//                ), DEFAULT_MIME_TYPE, ECONDING_BASE64
+//            )
+            val newContent = content.replace(OLD_META, NEW_META)
+            binding.cantoView.loadDataWithBaseURL(
+                "",
+                newContent,
+                DEFAULT_MIME_TYPE,
+                ECONDING_UTF8,
+                ""
+            );
+        }
         htmlContent = content
     }
 
@@ -1739,6 +1795,7 @@ open class CantoFragment : Fragment() {
                     activity?.startActivityWithFadeIn(intent)
                     true
                 }
+
                 R.id.fab_sound_off -> {
                     binding.fabCanti.close()
                     mCantiViewModel.mostraAudio = !mCantiViewModel.mostraAudio
@@ -1746,6 +1803,7 @@ open class CantoFragment : Fragment() {
                     initFabOptions()
                     true
                 }
+
                 R.id.fab_delete_file -> {
                     binding.fabCanti.close()
                     if (!url.isNullOrEmpty() && personalUrl.isNullOrEmpty()) {
@@ -1775,6 +1833,7 @@ open class CantoFragment : Fragment() {
                     }
                     true
                 }
+
                 R.id.fab_save_file -> {
                     binding.fabCanti.close()
                     SimpleDialogFragment.show(
@@ -1790,6 +1849,7 @@ open class CantoFragment : Fragment() {
                     )
                     true
                 }
+
                 R.id.fab_link_file -> {
                     binding.fabCanti.close()
                     SimpleDialogFragment.show(
@@ -1805,11 +1865,13 @@ open class CantoFragment : Fragment() {
                     )
                     true
                 }
+
                 R.id.fab_favorite -> {
                     binding.fabCanti.close()
                     lifecycleScope.launch { updateFavorite() }
                     true
                 }
+
                 else -> {
                     false
                 }
@@ -1900,10 +1962,42 @@ open class CantoFragment : Fragment() {
         private const val SAVE_TAB = "SAVE_TAB"
 
         private const val ECONDING_UTF8 = "utf-8"
-        private const val ECONDING_BASE64 = "base64"
+
+        //        private const val ECONDING_BASE64 = "base64"
         private const val NO_CANTO = "no_canto"
         private const val DEFAULT_MIME_TYPE = "text/html; charset=utf-8"
         private const val MP3_MIME_TYPE = "audio/mpeg"
+        private const val PRE_START = "<H3><PRE>"
+        private const val PRE_END = "</PRE></H3>"
+        private const val OLD_META =
+            "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>"
+        private const val NEW_META =
+            "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n" +
+                    "<style type=\"text/css\">\n" +
+                    "   @font-face {\n" +
+                    "      font-family: 'MediumFont';\n" +
+                    "      src: url(\"file:///android_asset/fonts/DMSans_medium.ttf\")\n" +
+                    "   }\n" +
+                    "   @font-face {\n" +
+                    "         font-family: 'PreFont';\n" +
+                    "         src: url(\"file:///android_asset/fonts/ChivoMono_regular.ttf\")\n" +
+                    "      }\n" +
+                    "   h2 {\n" +
+                    "      font-family: 'MediumFont';\n" +
+                    "      text-align: center;\n" +
+                    "\n" +
+                    "   }\n" +
+                    "   h4 {\n" +
+                    "         font-family: 'MediumFont';\n" +
+                    "         text-align: left;\n" +
+                    "         margin-left: 50px;\n" +
+                    "\n" +
+                    "   }\n" +
+                    "   pre {\n" +
+                    "      font-family: 'PreFont';\n" +
+                    "      text-align: left;\n" +
+                    "   }\n" +
+                    "</style>"
 
     }
 }

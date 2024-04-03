@@ -18,7 +18,7 @@ import androidx.core.content.ContextCompat
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import java.io.File
 import java.text.Normalizer
-import java.util.*
+import java.util.Random
 import java.util.regex.Pattern
 
 object Utility {
@@ -88,17 +88,7 @@ object Utility {
             return if (it.isEmpty())
                 it
             else {
-                return when {
-                    it.indexOf("resuscicanti") > 0 -> {
-                        val start = it.indexOf(".com/")
-                        it.substring(start + 5).replace("%20".toRegex(), "_")
-                    }
-                    it.indexOf("marbat87") > 0 -> {
-                        val start = it.indexOf("audio/")
-                        it.substring(start + 6).replace("%20".toRegex(), "_")
-                    }
-                    else -> it
-                }
+                it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
         } ?: return StringUtils.EMPTY
     }
@@ -109,17 +99,7 @@ object Utility {
             return if (it.isEmpty())
                 it
             else {
-                when {
-                    it.indexOf("resuscicanti") > 0 -> {
-                        val start = it.indexOf(".com/")
-                        it.substring(start + 5)
-                    }
-                    it.indexOf("marbat87") > 0 -> {
-                        val start = it.indexOf("audio/")
-                        it.substring(start + 6)
-                    }
-                    else -> it
-                }
+                it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
         } ?: return StringUtils.EMPTY
     }

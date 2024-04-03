@@ -2,8 +2,8 @@
 <changelog>
 
     <release
-        versionCode="5207"
-        date="Marzo 2024"
+        versionCode="5209"
+        date="Maggio 2024"
         versionName="5.2.0">
         <new>Nuova interfaccia</new>
         <new>Ottimizzazioni e compatibilità con Android 14</new>

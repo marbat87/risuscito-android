@@ -16,7 +16,7 @@ android {
         minSdk = 21
         targetSdk = 34
         multiDexEnabled = true
-        versionCode = 5207
+        versionCode = 5209
         versionName = "5.2.0"
         ksp {
             arg("room.incremental", "true")
@@ -81,7 +81,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
