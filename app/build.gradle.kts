@@ -58,7 +58,7 @@ val fastAdapterVersion = "5.7.0"
 val roomVersion = "2.6.1"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.material:material:1.11.0")
@@ -103,5 +103,5 @@ dependencies {
     implementation("com.github.MFlisar:changelog:1.1.7")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
-    implementation("com.jakewharton:process-phoenix:2.1.2")
+    implementation("com.jakewharton:process-phoenix:3.0.0")
 }

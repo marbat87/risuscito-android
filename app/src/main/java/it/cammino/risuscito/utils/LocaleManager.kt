@@ -11,7 +11,6 @@ import androidx.core.content.edit
 import androidx.core.os.LocaleListCompat
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.utils.extension.systemLocale
-import java.util.*
 
 
 class LocaleManager(context: Context) {
@@ -104,40 +103,6 @@ class LocaleManager(context: Context) {
     fun getLanguage(context: Context): String {
         return PreferenceManager.getDefaultSharedPreferences(context)
             .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).orEmpty()
-    }
-
-    fun useCustomConfig(context: Context): Context {
-        Log.d(TAG, "useCustomConfig language: ${getLanguage(context)}")
-        val locale = if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(
-            LANGUAGE_ENGLISH,
-            COUNTRY_PHILIPPINES
-        ) else Locale(getLanguage(context))
-        Log.d(TAG, "useCustomConfig language: ${locale.language}")
-        Log.d(TAG, "useCustomConfig country: ${locale.country}")
-        Locale.setDefault(locale)
-        val config = Configuration()
-        if (customScale > 0F)
-            config.fontScale = customScale
-        config.setLocale(locale)
-        config.setLayoutDirection(locale)
-        return context.createConfigurationContext(config)
-    }
-
-    fun updateConfigurationIfSupported(
-        context: Context,
-        overrideConfiguration: Configuration?
-    ): Configuration? {
-        overrideConfiguration?.let { config ->
-            if (isLocaleNotEmpty(config))
-                return config
-            val locale = if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(
-                LANGUAGE_ENGLISH,
-                COUNTRY_PHILIPPINES
-            ) else Locale(getLanguage(context))
-            config.setLocale(locale)
-            config.setLayoutDirection(locale)
-        }
-        return overrideConfiguration
     }
 
     companion object {

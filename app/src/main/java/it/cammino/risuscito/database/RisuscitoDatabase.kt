@@ -4,11 +4,33 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import androidx.room.*
+import androidx.room.AutoMigration
+import androidx.room.Database
+import androidx.room.OnConflictStrategy
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import it.cammino.risuscito.database.dao.*
-import it.cammino.risuscito.database.entities.*
+import it.cammino.risuscito.database.dao.Backup
+import it.cammino.risuscito.database.dao.CantoDao
+import it.cammino.risuscito.database.dao.ConsegnatiDao
+import it.cammino.risuscito.database.dao.CronologiaDao
+import it.cammino.risuscito.database.dao.CustomListDao
+import it.cammino.risuscito.database.dao.FavoritesDao
+import it.cammino.risuscito.database.dao.IndiceBiblicoDao
+import it.cammino.risuscito.database.dao.IndiceLiturgicoDao
+import it.cammino.risuscito.database.dao.ListePersDao
+import it.cammino.risuscito.database.dao.LocalLinksDao
+import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.database.entities.Consegnato
+import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.database.entities.CustomList
+import it.cammino.risuscito.database.entities.IndiceBiblico
+import it.cammino.risuscito.database.entities.IndiceLiturgico
+import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.database.entities.LocalLink
+import it.cammino.risuscito.database.entities.NomeLiturgico
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,7 +67,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
         private const val TAG = "RisuscitoDatabase"
 
-        private const val dbName = "RisuscitoDB"
+        private const val DB_NAME = "RisuscitoDB"
 
         // For Singleton instantiation
         private val LOCK = Any()
@@ -284,7 +306,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                     sInstance = Room.databaseBuilder(
                         context.applicationContext,
                         RisuscitoDatabase::class.java,
-                        dbName
+                        DB_NAME
                     )
                         .addMigrations(
                             MIGRATION_1_3,

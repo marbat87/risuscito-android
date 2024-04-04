@@ -676,11 +676,13 @@ class MainActivity : ThemeableActivity() {
 
         val listener = NavigationBarView.OnItemSelectedListener { item ->
             onDrawerItemClick(item)
+            true
         }
 
         binding.bottomNavigation?.setOnItemSelectedListener(listener)
         binding.navigationView?.setNavigationItemSelectedListener {
             onMobileDrawerItemClick(it)
+            true
         }
         binding.navigationRail?.setOnItemSelectedListener(listener)
 
@@ -709,7 +711,7 @@ class MainActivity : ThemeableActivity() {
 
     }
 
-    private fun onDrawerItemClick(menuItem: MenuItem): Boolean {
+    private fun onDrawerItemClick(menuItem: MenuItem) {
         expandToolbar()
 
         val fragment = when (menuItem.itemId) {
@@ -736,11 +738,9 @@ class MainActivity : ThemeableActivity() {
                 replace(R.id.content_frame, fragment, menuItem.itemId.toString())
             }
         }
-
-        return true
     }
 
-    private fun onMobileDrawerItemClick(menuItem: MenuItem): Boolean {
+    private fun onMobileDrawerItemClick(menuItem: MenuItem) {
         expandToolbar()
         (binding.drawer as? DrawerLayout)?.close()
 
@@ -752,8 +752,6 @@ class MainActivity : ThemeableActivity() {
 
         val intent = Intent(this, activityClass)
         startActivityWithTransition(intent, MaterialSharedAxis.Y)
-
-        return true
     }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova

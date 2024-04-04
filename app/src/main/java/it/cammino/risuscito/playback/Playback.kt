@@ -76,8 +76,8 @@ class Playback internal constructor(
         .setOnAudioFocusChangeListener(this@Playback, Handler(Looper.getMainLooper()))
         .build()
 
-    internal val isConnected: Boolean
-        get() = true
+//    internal val isConnected
+//        get() = true
 
     internal val isPlaying: Boolean
         get() = mPlayOnFocusGain || (mMediaPlayer?.isPlaying == true)

@@ -37,7 +37,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-@Suppress("unused")
 /**
  * Utility class to get a list of MusicTrack's based on a server-side JSON configuration.
  *

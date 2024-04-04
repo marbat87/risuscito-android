@@ -1521,7 +1521,7 @@ open class CantoFragment : Fragment() {
                 DEFAULT_MIME_TYPE,
                 ECONDING_UTF8,
                 ""
-            );
+            )
         }
         htmlContent = content
     }

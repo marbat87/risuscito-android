@@ -26,7 +26,6 @@ import it.cammino.risuscito.utils.extension.getSerializableWrapper
 import java.io.Serializable
 import java.text.NumberFormat
 
-@Suppress("unused")
 class ProgressDialogFragment : DialogFragment() {
 
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })

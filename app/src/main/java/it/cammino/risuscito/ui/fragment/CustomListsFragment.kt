@@ -9,7 +9,12 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -341,7 +346,7 @@ class CustomListsFragment : AccountMenuFragment() {
 
                             DELETE_LIST -> {
                                 simpleDialogViewModel.handled = true
-                                binding.viewPager.currentItem = binding.viewPager.currentItem - 1
+                                binding.viewPager.currentItem -= 1
                                 lifecycleScope.launch { deleteList() }
                             }
                         }

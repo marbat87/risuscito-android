@@ -1,3 +1,5 @@
+@file:Suppress("SameParameterValue")
+
 package it.cammino.risuscito.utils.extension
 
 import android.Manifest
@@ -46,8 +48,12 @@ import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.SHARED_AXIS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.*
-import java.util.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.StringWriter
+import java.util.Locale
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.transform.TransformerConfigurationException

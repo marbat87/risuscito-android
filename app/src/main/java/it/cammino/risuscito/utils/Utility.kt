@@ -158,8 +158,7 @@ object Utility {
         return -1
     }
 
-    @Suppress("DEPRECATION")
-    fun retrieveMediaFileLinkLegacy(
+    private fun retrieveMediaFileLinkLegacy(
         activity: Context,
         link: String,
         cercaEsterno: Boolean
@@ -279,7 +278,6 @@ object Utility {
         return filterMediaLinkNew(link)
     }
 
-    @Suppress("DEPRECATION")
     private fun getExternalLinkLegacy(link: String): String {
         if (File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
@@ -296,7 +294,6 @@ object Utility {
                 + filterMediaLinkNew(link))
     }
 
-    @Suppress("DEPRECATION")
     fun mediaScan(context: Context, link: String) {
         MediaScannerConnection.scanFile(
             context,

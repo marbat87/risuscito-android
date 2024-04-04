@@ -1,7 +1,11 @@
 package it.cammino.risuscito.ui.activity
 
 import android.annotation.SuppressLint
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
@@ -31,7 +35,12 @@ import com.google.gson.reflect.TypeToken
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.Backup
-import it.cammino.risuscito.database.entities.*
+import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.database.entities.Consegnato
+import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.database.entities.CustomList
+import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.playback.MusicService
@@ -40,9 +49,21 @@ import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.utils.extension.checkScreenAwake
+import it.cammino.risuscito.utils.extension.convertIntPreferences
+import it.cammino.risuscito.utils.extension.createTaskDescription
+import it.cammino.risuscito.utils.extension.isDarkMode
+import it.cammino.risuscito.utils.extension.isGridLayout
+import it.cammino.risuscito.utils.extension.isLandscape
+import it.cammino.risuscito.utils.extension.isOnTablet
+import it.cammino.risuscito.utils.extension.setLigthStatusBar
+import it.cammino.risuscito.utils.extension.setupNavBarColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
-import java.io.*
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.sql.Date
 import java.util.concurrent.ExecutionException
 
@@ -72,7 +93,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
         setupNavBarColor()
-        updateStatusBarLightMode(true)
+        updateStatusBarLightMode()
 
         setTaskDescription(this.createTaskDescription(TAG))
 
@@ -109,7 +130,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        updateStatusBarLightMode(true)
+        updateStatusBarLightMode()
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
             showInfoBroadcastReceiver,
             IntentFilter(RisuscitoMessagingService.MESSAGE_RECEIVED_TAG)
@@ -134,8 +155,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (isFinishing) stopMedia()
     }
 
-    private fun updateStatusBarLightMode(auto: Boolean) {
-        setLigthStatusBar(if (auto) !isDarkMode else false)
+    private fun updateStatusBarLightMode() {
+        setLigthStatusBar(!isDarkMode)
     }
 
     fun setTransparentStatusBar(trasparent: Boolean) {
@@ -147,21 +168,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         Log.d(TAG, "attachBaseContext")
-        super.attachBaseContext(newBase);
-//        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
-//        RisuscitoApplication.localeManager.useCustomConfig(this)
+        super.attachBaseContext(newBase)
         SplitCompat.install(this)
     }
-
-//    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-//        Log.d(TAG, "applyOverrideConfiguration")
-//        super.applyOverrideConfiguration(
-//            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
-//                this,
-//                overrideConfiguration
-//            )
-//        )
-//    }
 
     class NoBackupException internal constructor(val resources: Resources) :
         Exception(resources.getString(R.string.no_restore_found))

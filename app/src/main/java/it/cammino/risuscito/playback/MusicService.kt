@@ -25,7 +25,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -215,8 +219,10 @@ class MusicService : MediaBrowserServiceCompat() {
                     MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
                 )
             }
+
             MusicProvider.MEDIA_ID_EMPTY_ROOT -> {
             }
+
             else -> Log.w(TAG, "Skipping unmatched parentMediaId: $parentMediaId")
         }// Since the client provided the empty root we'll just send back an
         // empty list
@@ -358,10 +364,10 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private fun updatePlaybackState(error: String?) {
         Log.d(TAG, "updatePlaybackState, playback mState=$${mPlayback?.state}")
-        var position = PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN
-        if (mPlayback?.isConnected == true) {
-            position = mPlayback?.currentStreamPosition?.toLong() ?: 0
-        }
+//        var position = PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN
+//        if (mPlayback?.isConnected == true) {
+        val position = mPlayback?.currentStreamPosition?.toLong() ?: 0
+//        }
 
         var playbackActions =
             PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
