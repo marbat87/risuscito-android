@@ -35,7 +35,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
         val useOldIndex = application.useOldIndex()
         when (tipoLista) {
             0, 1 ->
-                itemsResult = mDb.cantoDao().liveAll.map { canti ->
+                itemsResult = mDb.cantoDao().liveAll().map { canti ->
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
@@ -55,7 +55,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                     newList
                 }
             2 ->
-                itemsResult = mDb.indiceBiblicoDao().liveAll.map { canti ->
+                itemsResult = mDb.indiceBiblicoDao().liveAll().map { canti ->
                     val newList = ArrayList<SimpleItem>()
                     canti.forEach {
                         newList.add(
@@ -74,7 +74,7 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                     newList
                 }
             3 ->
-                insertItemsResult = mDb.consegnatiDao().liveChoosen.map { canti ->
+                insertItemsResult = mDb.consegnatiDao().liveChoosen().map { canti ->
                     val newList = ArrayList<InsertItem>()
                     canti.forEach {
                         newList.add(

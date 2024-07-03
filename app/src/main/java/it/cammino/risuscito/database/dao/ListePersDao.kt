@@ -1,18 +1,21 @@
 package it.cammino.risuscito.database.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import it.cammino.risuscito.database.entities.ListaPers
 
-@Suppress("unused")
 @Dao
 interface ListePersDao {
 
-    @get:Query("SELECT * FROM listapers ORDER BY id ASC")
-    val liveAll: LiveData<List<ListaPers>>
+    @Query("SELECT * FROM listapers ORDER BY id ASC")
+    fun liveAll(): LiveData<List<ListaPers>>
 
-    @get:Query("SELECT * FROM listapers ORDER BY id ASC")
-    val all: List<ListaPers>
+    @Query("SELECT * FROM listapers ORDER BY id ASC")
+    fun all(): List<ListaPers>
 
     @Query("DELETE FROM listapers")
     fun truncateTable()

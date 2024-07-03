@@ -17,7 +17,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -31,18 +30,24 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.CredentialOption
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
@@ -92,6 +97,7 @@ import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.utils.StringUtils.UNEXPECTED_CREDENTIAL
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
@@ -128,8 +134,9 @@ class MainActivity : ThemeableActivity() {
     private val cantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
-    private var acct: GoogleSignInAccount? = null
-    private var mSignInClient: GoogleSignInClient? = null
+
+    private lateinit var mCredentialManager: CredentialManager
+    private var mCredentialRequest: GetCredentialRequest? = null
     private lateinit var auth: FirebaseAuth
     private var profileItem: MenuItem? = null
     private var profilePhotoUrl: String = StringUtils.EMPTY
@@ -164,8 +171,6 @@ class MainActivity : ThemeableActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    //    var actionMode: ActionMode? = null
-//        private set
     var isActionMode: Boolean = false
         private set
     private var actionModeFragment: ActionModeFragment? = null
@@ -178,6 +183,8 @@ class MainActivity : ThemeableActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        mCredentialManager = CredentialManager.create(this)
+
         val outValue = TypedValue()
         resources.getValue(R.dimen.horizontal_percentage_half_divider, outValue, true)
         val percentage = outValue.float
@@ -188,7 +195,7 @@ class MainActivity : ThemeableActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             listePersonalizzate =
-                RisuscitoDatabase.getInstance(this@MainActivity).listePersDao().all
+                RisuscitoDatabase.getInstance(this@MainActivity).listePersDao().all()
         }
 
         Log.d(TAG, "getVersionCode(): ${getVersionCode()}")
@@ -261,19 +268,6 @@ class MainActivity : ThemeableActivity() {
         setupNavDrawer()
 
         binding.appBarLayout.setExpanded(true, false)
-
-        // [START configure_signin]
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        // [END configure_signin]
-
-        // [START build_client]
-        mSignInClient = GoogleSignIn.getClient(this, gso)
-        // [END build_client]
 
         FirebaseAnalytics.getInstance(this)
 
@@ -363,35 +357,59 @@ class MainActivity : ThemeableActivity() {
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        val task = mSignInClient?.silentSignIn()
-        task?.let {
-            if (it.isSuccessful) {
-                // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-                // and the GoogleSignInResult will be available instantly.
-                Log.d(TAG, "Got cached sign-in")
-                handleSignInResult(task)
-            } else {
-                // If the user has not previously signed in on this device or the sign-in has expired,
-                // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-                // single sign-on will occur in this branch.
-                showProgressDialog()
-
-                task.addOnCompleteListener { mTask: Task<GoogleSignInAccount> ->
-                    Log.d(TAG, "Reconnected")
-                    handleSignInResult(mTask)
-                }
+    private suspend fun login() {
+        mCredentialRequest?.let {
+            try {
+                handleSignInResult(
+                    mCredentialManager.getCredential(
+                        request = it,
+                        context = this
+                    )
+                )
+            } catch (e: GetCredentialException) {
+                Log.d(TAG, "login", e)
+                handleErrorResult(e.localizedMessage ?: "")
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "ONRESUME")
-        hideProgressDialog()
-
+    private suspend fun logout() {
+        mCredentialManager.clearCredentialState(ClearCredentialStateRequest())
+        updateUI(false)
+        Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
+            .show()
     }
+
+    override fun onStart() {
+        super.onStart()
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
+        ) {
+            if (mViewModel.acct != null) {
+                validaToken(true)
+            } else {
+                signInWithLastAccount()
+            }
+        }
+    }
+
+    private fun validaToken(retrieveLastAccount: Boolean) {
+        mViewModel.retrieveLastAccount = retrieveLastAccount
+        mViewModel.httpRequestState.value = MainActivityViewModel.ClientState.STARTED
+        lifecycleScope.launch(Dispatchers.IO) {
+            mViewModel.sub = Utility.validateToken(
+                mViewModel.acct?.idToken ?: ""
+            )
+            mViewModel.httpRequestState.postValue(MainActivityViewModel.ClientState.COMPLETED)
+        }
+    }
+
+//    override fun onResume() {
+//        super.onResume()
+//        Log.d(TAG, "ONRESUME")
+//        hideProgressDialog()
+//
+//    }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
@@ -553,7 +571,13 @@ class MainActivity : ThemeableActivity() {
 
                             RESTORE_DONE -> {
                                 simpleDialogViewModel.handled = true
-                                RisuscitoApplication.localeManager.updateLanguage(this)
+                                if (PreferenceManager.getDefaultSharedPreferences(this)
+                                        .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY)
+                                        .isNullOrEmpty()
+                                )
+                                    RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
+                                else
+                                    RisuscitoApplication.localeManager.updateLanguage(this)
 
                             }
 
@@ -661,6 +685,23 @@ class MainActivity : ThemeableActivity() {
             }
         }
 
+        mViewModel.httpRequestState.observe(this) { state ->
+            state?.let {
+                when (it) {
+                    MainActivityViewModel.ClientState.COMPLETED -> {
+                        if (mViewModel.sub.isNotEmpty()) {
+                            firebaseAuthWithGoogle()
+                        } else {
+                            if (mViewModel.retrieveLastAccount)
+                                signInWithLastAccount()
+                        }
+                    }
+
+                    MainActivityViewModel.ClientState.STARTED -> {}
+                }
+            }
+        }
+
         cantiViewModel.itemsResult?.observe(this) { canti ->
             cantiViewModel.titoli =
                 canti.sortedWith(compareBy(
@@ -676,11 +717,13 @@ class MainActivity : ThemeableActivity() {
 
         val listener = NavigationBarView.OnItemSelectedListener { item ->
             onDrawerItemClick(item)
+            true
         }
 
         binding.bottomNavigation?.setOnItemSelectedListener(listener)
         binding.navigationView?.setNavigationItemSelectedListener {
             onMobileDrawerItemClick(it)
+            true
         }
         binding.navigationRail?.setOnItemSelectedListener(listener)
 
@@ -709,7 +752,7 @@ class MainActivity : ThemeableActivity() {
 
     }
 
-    private fun onDrawerItemClick(menuItem: MenuItem): Boolean {
+    private fun onDrawerItemClick(menuItem: MenuItem) {
         expandToolbar()
 
         val fragment = when (menuItem.itemId) {
@@ -736,11 +779,9 @@ class MainActivity : ThemeableActivity() {
                 replace(R.id.content_frame, fragment, menuItem.itemId.toString())
             }
         }
-
-        return true
     }
 
-    private fun onMobileDrawerItemClick(menuItem: MenuItem): Boolean {
+    private fun onMobileDrawerItemClick(menuItem: MenuItem) {
         expandToolbar()
         (binding.drawer as? DrawerLayout)?.close()
 
@@ -752,8 +793,6 @@ class MainActivity : ThemeableActivity() {
 
         val intent = Intent(this, activityClass)
         startActivityWithTransition(intent, MaterialSharedAxis.Y)
-
-        return true
     }
 
     // converte gli accordi salvati dalla lingua vecchia alla nuova
@@ -783,7 +822,7 @@ class MainActivity : ThemeableActivity() {
         for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
 
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
@@ -823,7 +862,7 @@ class MainActivity : ThemeableActivity() {
         for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
 
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
@@ -1007,25 +1046,59 @@ class MainActivity : ThemeableActivity() {
         get() = binding.mainContent
 
     // [START signIn]
-    private fun signIn() {
-        val signInIntent = mSignInClient?.signInIntent
-        startSignInForResult.launch(signInIntent)
+
+    private fun signInWithLastAccount() {
+        // [START build_client]
+        mCredentialRequest = GetCredentialRequest.Builder()
+            .addCredentialOption(buildLastAccountCredentialOption())
+            .build()
+        // [END build_client]
+
+        mCredentialRequest?.let {
+            lifecycleScope.launch {
+                login()
+            }
+        }
     }
 
-    private val startSignInForResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(result.data))
+    private fun signInWithGoogle() {
+        // [START build_client]
+        buildCredentialRequest(buildGoogleCredentialOption())
+        // [END build_client]
+
+        mCredentialRequest?.let {
+            lifecycleScope.launch {
+                login()
+            }
         }
+    }
+
+    private fun buildLastAccountCredentialOption(): CredentialOption {
+        return GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(true)
+            .setServerClientId(getString(R.string.default_web_client_id))
+            .setAutoSelectEnabled(true)
+            .build()
+    }
+
+    private fun buildGoogleCredentialOption(): CredentialOption {
+        return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id))
+            .build()
+    }
+
+    private fun buildCredentialRequest(credOption: CredentialOption) {
+        mCredentialRequest = GetCredentialRequest.Builder()
+            .addCredentialOption(credOption)
+            .build()
+    }
 
     // [START signOut]
     private fun signOut() {
         PreferenceManager.getDefaultSharedPreferences(this)
             .edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
-        mSignInClient?.signOut()?.addOnCompleteListener {
-            updateUI(false)
-            Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
-                .show()
+        lifecycleScope.launch {
+            logout()
         }
     }
 
@@ -1040,44 +1113,66 @@ class MainActivity : ThemeableActivity() {
         PreferenceManager.getDefaultSharedPreferences(this)
             .edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
-        mSignInClient?.revokeAccess()?.addOnCompleteListener {
-            updateUI(false)
-            Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
-                .show()
-        }
+//        mSignInClient?.revokeAccess()?.addOnCompleteListener {
+//            updateUI(false)
+//            Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
+//                .show()
+//        }
     }
 
-    // [START handleSignInResult]
-    private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
-        //    Log.d(getClass().getName(), "handleSignInResult:" + result.isSuccess());
-        Log.d(TAG, "handleSignInResult:" + task.isSuccessful)
-        if (task.isSuccessful) {
-            // Signed in successfully, show authenticated UI.
-            acct = GoogleSignIn.getLastSignedInAccount(this)
-            firebaseAuthWithGoogle()
-        } else {
-            // Sign in failed, handle failure and update UI
-            Log.w(TAG, "handleSignInResult:failure", task.exception)
-            if (PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-            )
-                Toast.makeText(
-                    this, getString(
-                        R.string.login_failed,
-                        -1,
-                        task.exception?.localizedMessage
-                    ), Toast.LENGTH_SHORT
-                )
-                    .show()
-            acct = null
-            updateUI(false)
+    private fun handleSignInResult(result: GetCredentialResponse) {
+        // Handle the successfully returned credential.
+        when (val credential = result.credential) {
+            is CustomCredential -> {
+                Log.d(TAG, "handleSignInResult: isCustomCredential ${credential.type}")
+                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    try {
+                        // Use googleIdTokenCredential and extract id to validate and
+                        // authenticate on your server.
+                        mViewModel.acct = GoogleIdTokenCredential
+                            .createFrom(credential.data)
+                        validaToken(false)
+                    } catch (e: GoogleIdTokenParsingException) {
+                        Log.e(TAG, "Received an invalid google id token response", e)
+                        handleErrorResult(e.localizedMessage ?: "")
+                    }
+                } else {
+                    // Catch any unrecognized credential type here.
+                    Log.e(TAG, "handleSignInResult: $UNEXPECTED_CREDENTIAL")
+                    handleErrorResult(UNEXPECTED_CREDENTIAL)
+                }
+            }
+
+            else -> {
+                // Catch any unrecognized credential type here.
+                Log.e(TAG, "handleSignInResult: $UNEXPECTED_CREDENTIAL")
+                handleErrorResult(UNEXPECTED_CREDENTIAL)
+            }
         }
+
+    }
+
+    private fun handleErrorResult(message: String) {
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
+        )
+            Toast.makeText(
+                this, getString(
+                    R.string.login_failed,
+                    -1,
+                    message
+                ), Toast.LENGTH_SHORT
+            )
+                .show()
+        mViewModel.acct = null
+        mViewModel.sub = ""
+        updateUI(false)
     }
 
     private fun firebaseAuthWithGoogle() {
-        Log.d(TAG, "firebaseAuthWithGoogle: ${acct?.idToken}")
+        Log.d(TAG, "firebaseAuthWithGoogle: ${mViewModel.acct?.idToken}")
 
-        val credential = GoogleAuthProvider.getCredential(acct?.idToken, null)
+        val credential = GoogleAuthProvider.getCredential(mViewModel.acct?.idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -1086,7 +1181,7 @@ class MainActivity : ThemeableActivity() {
                     if (mViewModel.showSnackbar) {
                         Toast.makeText(
                             this,
-                            getString(R.string.connected_as, acct?.displayName),
+                            getString(R.string.connected_as, mViewModel.acct?.displayName),
                             Toast.LENGTH_SHORT
                         )
                             .show()
@@ -1096,6 +1191,7 @@ class MainActivity : ThemeableActivity() {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    updateUI(true)
                     if (PreferenceManager.getDefaultSharedPreferences(this)
                             .getBoolean(Utility.SIGN_IN_REQUESTED, false)
                     )
@@ -1118,9 +1214,11 @@ class MainActivity : ThemeableActivity() {
             PreferenceManager.getDefaultSharedPreferences(this)
                 .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
         if (signedIn) {
-            profileNameStr = acct?.displayName.orEmpty()
-            profileEmailStr = acct?.email.orEmpty()
-            val profilePhoto = acct?.photoUrl
+            profileNameStr = mViewModel.acct?.displayName.orEmpty()
+            Log.d(TAG, "LOGIN profileNameStr: $profileNameStr")
+            profileEmailStr = mViewModel.acct?.id.orEmpty()
+            Log.d(TAG, "LOGIN profileEmailStr: $profileEmailStr")
+            val profilePhoto = mViewModel.acct?.profilePictureUri
             if (profilePhoto != null) {
                 var personPhotoUrl = profilePhoto.toString()
                 Log.d(TAG, "personPhotoUrl BEFORE $personPhotoUrl")
@@ -1145,6 +1243,12 @@ class MainActivity : ThemeableActivity() {
             profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
         val signInButton =
             profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
+
+        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean(Utility.SIGNED_IN, false)
+        signInButton?.isGone =
+            PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Utility.SIGNED_IN, false)
 
         if (profilePhotoUrl.isEmpty()) {
             profileImage?.setImageResource(R.drawable.account_circle_56px)
@@ -1183,14 +1287,8 @@ class MainActivity : ThemeableActivity() {
             PreferenceManager.getDefaultSharedPreferences(this)
                 .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
             mViewModel.showSnackbar = true
-            signIn()
+            signInWithGoogle()
         }
-
-        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(Utility.SIGNED_IN, false)
-        signInButton?.isGone =
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGNED_IN, false)
 
     }
 
@@ -1202,7 +1300,7 @@ class MainActivity : ThemeableActivity() {
         binding.loadingBar.isVisible = false
     }
 
-    fun dismissProgressDialog(tag: String) {
+    private fun dismissProgressDialog(tag: String) {
         val sFragment = ProgressDialogFragment.findVisible(this, tag)
         sFragment?.dismiss()
     }
@@ -1295,14 +1393,14 @@ class MainActivity : ThemeableActivity() {
                 MainActivityViewModel.BakupRestoreState.BACKUP_STARTED
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
-                backupDatabase(acct?.id)
+                backupDatabase(mViewModel.sub)
             }
 
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
-                backupSharedPreferences(acct?.id, acct?.email)
+                backupSharedPreferences(mViewModel.sub, mViewModel.acct?.id)
             }
 
             mViewModel.backupRestoreState.value =
@@ -1332,14 +1430,14 @@ class MainActivity : ThemeableActivity() {
                 MainActivityViewModel.BakupRestoreState.RESTORE_STARTED
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
-                restoreDatabase(acct?.id)
+                restoreDatabase(mViewModel.sub)
             }
 
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
-                restoreSharedPreferences(acct?.id)
+                restoreSharedPreferences(mViewModel.sub)
             }
 
             mViewModel.backupRestoreState.value =
@@ -1354,6 +1452,8 @@ class MainActivity : ThemeableActivity() {
             )
         } catch (e: Exception) {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
+            mViewModel.backupRestoreState.value =
+                MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED
             Snackbar.make(binding.mainContent, "error: " + e.localizedMessage, Snackbar.LENGTH_LONG)
                 .show()
         }
@@ -1411,4 +1511,5 @@ class MainActivity : ThemeableActivity() {
         private val TAG = MainActivity::class.java.canonicalName
 
     }
+
 }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.ISubItem
 import com.mikepenz.fastadapter.expandable.ExpandableExtension
@@ -51,10 +50,10 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
             // Check if this was an expanding or collapsing action by checking the payload.
             // If it is we need to animate the changes
             if (p == ExpandableExtension.PAYLOAD_EXPAND) {
-                ViewCompat.animate(holder.mIndicator).rotation(0f).start()
+                holder.mIndicator.animate().rotation(0f).start()
                 return
             } else if (p == ExpandableExtension.PAYLOAD_COLLAPSE) {
-                ViewCompat.animate(holder.mIndicator).rotation(180f).start()
+                holder.mIndicator.animate().rotation(180f).start()
                 return
             }
         }

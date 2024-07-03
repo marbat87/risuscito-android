@@ -25,7 +25,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -110,7 +114,10 @@ class MusicService : MediaBrowserServiceCompat() {
             if (applicationContext.isOnPhone) CantoHostActivity::class.java else MainActivity::class.java
         )
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        val pi = getPendingIntent(intent, context)
+        val pi = PendingIntent.getActivity(
+            context, REQUEST_CODE, intent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         mSession?.setSessionActivity(pi)
 
         mNotificationManager = NotificationManagerCompat.from(this)
@@ -119,35 +126,13 @@ class MusicService : MediaBrowserServiceCompat() {
         updatePlaybackState(null)
     }
 
-    private fun getPendingIntent(intent: Intent, context: Context): PendingIntent {
-        return if (OSUtils.hasM()) getPendingIntentM(intent, context) else getPendingIntentLegacy(
-            intent,
-            context
-        )
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun getPendingIntentM(intent: Intent, context: Context): PendingIntent {
-        return PendingIntent.getActivity(
-            context, REQUEST_CODE, intent,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-    }
-
-    @SuppressLint("UnspecifiedImmutableFlag")
-    private fun getPendingIntentLegacy(intent: Intent, context: Context): PendingIntent {
-        return PendingIntent.getActivity(
-            context, REQUEST_CODE, intent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
-    }
-
     override fun onStartCommand(startIntent: Intent?, flags: Int, startId: Int): Int {
         MediaButtonReceiver.handleIntent(mSession, startIntent)
         return super.onStartCommand(startIntent, flags, startId)
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         Log.d(TAG, "onDestroy")
         // Service is being killed, so make sure we release our resources
         handleStopRequest()
@@ -214,8 +199,10 @@ class MusicService : MediaBrowserServiceCompat() {
                     MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
                 )
             }
+
             MusicProvider.MEDIA_ID_EMPTY_ROOT -> {
             }
+
             else -> Log.w(TAG, "Skipping unmatched parentMediaId: $parentMediaId")
         }// Since the client provided the empty root we'll just send back an
         // empty list
@@ -357,10 +344,10 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private fun updatePlaybackState(error: String?) {
         Log.d(TAG, "updatePlaybackState, playback mState=$${mPlayback?.state}")
-        var position = PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN
-        if (mPlayback?.isConnected == true) {
-            position = mPlayback?.currentStreamPosition?.toLong() ?: 0
-        }
+//        var position = PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN
+//        if (mPlayback?.isConnected == true) {
+        val position = mPlayback?.currentStreamPosition?.toLong() ?: 0
+//        }
 
         var playbackActions =
             PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID

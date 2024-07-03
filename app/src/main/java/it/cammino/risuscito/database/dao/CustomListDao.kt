@@ -1,16 +1,19 @@
 package it.cammino.risuscito.database.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.database.pojo.Posizione
 
-@Suppress("unused")
 @Dao
 interface CustomListDao {
 
-    @get:Query("SELECT * FROM customlist")
-    val all: List<CustomList>
+    @Query("SELECT * FROM customlist")
+    fun all(): List<CustomList>
 
     @Query("DELETE FROM customlist")
     fun truncateTable()

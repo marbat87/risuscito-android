@@ -6,20 +6,36 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.*
+import androidx.preference.DropDownPreference
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
-import com.google.android.play.core.splitinstall.*
-import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.*
+import com.google.android.play.core.splitinstall.SplitInstallException
+import com.google.android.play.core.splitinstall.SplitInstallManager
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallRequest
+import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener
+import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.DOWNLOADING
+import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.FAILED
+import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.INSTALLED
+import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.ui.RisuscitoApplication
@@ -37,15 +53,18 @@ import it.cammino.risuscito.utils.Utility.NIGHT_MODE
 import it.cammino.risuscito.utils.Utility.SAVE_LOCATION
 import it.cammino.risuscito.utils.Utility.SCREEN_ON
 import it.cammino.risuscito.utils.Utility.SYSTEM_LANGUAGE
+import it.cammino.risuscito.utils.Utility.VECCHIO_INDICE
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.hasStorageAccess
+import it.cammino.risuscito.utils.extension.isOnTablet
 import it.cammino.risuscito.utils.extension.setDefaultNightMode
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SettingsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.Locale
+import kotlin.collections.set
 
 class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -210,7 +229,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     return false
                 }
-            }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+            }, viewLifecycleOwner)
         }
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as? DropDownPreference
@@ -310,17 +329,24 @@ class SettingsFragment : PreferenceFragmentCompat(),
             context?.setDefaultNightMode()
         }
         if (key == SCREEN_ON) activity?.checkScreenAwake()
-        if (key == DYNAMIC_COLORS) activity?.recreate()
+        if (key == DYNAMIC_COLORS || key == VECCHIO_INDICE || key == DEFAULT_SEARCH) mMainActivity?.let {
+            if (requireContext().isOnTablet) {
+                it.recreate()
+            } else
+                ProcessPhoenix.triggerRebirth(
+                    it.applicationContext
+                )
+        }
     }
 
     private fun composeSummary(@StringRes id: Int, pref: DropDownPreference): String {
         val text = pref.entry
-        return "${getString(id)}${System.getProperty("line.separator")}$text"
+        return "${getString(id)}${System.lineSeparator()}$text"
     }
 
     private fun composeSummaryListPreference(pref: ListPreference): String {
         val text = pref.entry
-        return "${getString(R.string.language_summary)}${System.getProperty("line.separator")}$text"
+        return "${getString(R.string.language_summary)}${System.lineSeparator()}$text"
     }
 
     private fun loadStorageList(external: Boolean) {
@@ -392,7 +418,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
 
         val mDao = RisuscitoDatabase.getInstance(requireContext()).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(
@@ -429,7 +455,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
 
         val mDao = RisuscitoDatabase.getInstance(requireContext()).cantoDao()
-        val canti = mDao.allByName
+        val canti = mDao.allByName()
         for (canto in canti) {
             if (!canto.savedTab.isNullOrEmpty()) {
                 Log.d(

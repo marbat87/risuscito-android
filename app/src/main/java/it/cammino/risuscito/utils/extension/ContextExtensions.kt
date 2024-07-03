@@ -97,23 +97,9 @@ val Context.isOnline: Boolean
     get() {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-        return if (OSUtils.hasM())
-            connectivityManager?.isOnlineM == true
-        else connectivityManager?.isOnlineLegacy == true
-    }
-
-private val ConnectivityManager.isOnlineM: Boolean
-    @RequiresApi(Build.VERSION_CODES.M)
-    get() {
-        val network = activeNetwork
-        val capabilities = getNetworkCapabilities(network)
+        val network = connectivityManager?.activeNetwork
+        val capabilities = connectivityManager?.getNetworkCapabilities(network)
         return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-    }
-
-@Suppress("DEPRECATION")
-private val ConnectivityManager.isOnlineLegacy: Boolean
-    get() {
-        return activeNetworkInfo?.isConnected == true
     }
 
 val Context.isOnTablet: Boolean

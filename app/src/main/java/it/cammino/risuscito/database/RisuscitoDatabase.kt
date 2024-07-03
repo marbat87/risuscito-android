@@ -4,11 +4,33 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import androidx.room.*
+import androidx.room.AutoMigration
+import androidx.room.Database
+import androidx.room.OnConflictStrategy
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import it.cammino.risuscito.database.dao.*
-import it.cammino.risuscito.database.entities.*
+import it.cammino.risuscito.database.dao.Backup
+import it.cammino.risuscito.database.dao.CantoDao
+import it.cammino.risuscito.database.dao.ConsegnatiDao
+import it.cammino.risuscito.database.dao.CronologiaDao
+import it.cammino.risuscito.database.dao.CustomListDao
+import it.cammino.risuscito.database.dao.FavoritesDao
+import it.cammino.risuscito.database.dao.IndiceBiblicoDao
+import it.cammino.risuscito.database.dao.IndiceLiturgicoDao
+import it.cammino.risuscito.database.dao.ListePersDao
+import it.cammino.risuscito.database.dao.LocalLinksDao
+import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.database.entities.Consegnato
+import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.database.entities.CustomList
+import it.cammino.risuscito.database.entities.IndiceBiblico
+import it.cammino.risuscito.database.entities.IndiceLiturgico
+import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.database.entities.LocalLink
+import it.cammino.risuscito.database.entities.NomeLiturgico
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,7 +67,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
         private const val TAG = "RisuscitoDatabase"
 
-        private const val dbName = "RisuscitoDB"
+        private const val DB_NAME = "RisuscitoDB"
 
         // For Singleton instantiation
         private val LOCK = Any()
@@ -53,61 +75,61 @@ abstract class RisuscitoDatabase : RoomDatabase() {
         private val MIGRATION_2_3 = Migration2to3()
 
         class Migration2to3 : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 2 to 3")
-                reinsertDefault(database)
+                reinsertDefault(db)
             }
         }
 
         private val MIGRATION_1_3 = Migration1to3()
 
         class Migration1to3 : Migration(1, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 1 to 3")
-                reinsertDefault(database)
+                reinsertDefault(db)
             }
         }
 
         private val MIGRATION_3_4 = Migration3to4()
 
         class Migration3to4 : Migration(3, 4) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 3 to 4")
-                reinsertDefaultOnlyCanti(database)
+                reinsertDefaultOnlyCanti(db)
             }
         }
 
         private val MIGRATION_4_5 = Migration4to5()
 
         class Migration4to5 : Migration(4, 5) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 4 to 5")
-                reinsertDefaultOnlyCanti(database)
+                reinsertDefaultOnlyCanti(db)
             }
         }
 
         private val MIGRATION_5_6 = Migration5to6()
 
         class Migration5to6 : Migration(5, 6) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 5 to 6")
-                database.execSQL("ALTER TABLE Consegnato ADD COLUMN txtNota TEXT NOT NULL DEFAULT \"\"")
+                db.execSQL("ALTER TABLE Consegnato ADD COLUMN txtNota TEXT NOT NULL DEFAULT \"\"")
             }
         }
 
         private val MIGRATION_6_7 = Migration6to7()
 
         class Migration6to7 : Migration(6, 7) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 6 to 7")
-                database.execSQL("ALTER TABLE Consegnato ADD COLUMN numPassaggio INTEGER NOT NULL DEFAULT -1")
+                db.execSQL("ALTER TABLE Consegnato ADD COLUMN numPassaggio INTEGER NOT NULL DEFAULT -1")
             }
         }
 
         private val MIGRATION_7_8 = Migration7to8()
 
         class Migration7to8 : Migration(7, 8) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 7 to 8")
 //                reinsertDefaultOnlySalmi(database)
             }
@@ -116,22 +138,22 @@ abstract class RisuscitoDatabase : RoomDatabase() {
         private val MIGRATION_8_9 = Migration8to9()
 
         class Migration8to9 : Migration(8, 9) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 8 to 9")
-                database.execSQL("DROP TABLE IF EXISTS NomeArgomento")
-                database.execSQL("DROP TABLE IF EXISTS Argomento")
-                database.execSQL("DROP TABLE IF EXISTS salmo")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `IndiceBiblico` (`ordinamento` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, `titoloIndice` TEXT, PRIMARY KEY(`ordinamento`))")
-                reinsertDefault(database)
+                db.execSQL("DROP TABLE IF EXISTS NomeArgomento")
+                db.execSQL("DROP TABLE IF EXISTS Argomento")
+                db.execSQL("DROP TABLE IF EXISTS salmo")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `IndiceBiblico` (`ordinamento` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, `titoloIndice` TEXT, PRIMARY KEY(`ordinamento`))")
+                reinsertDefault(db)
             }
         }
 
         private val MIGRATION_9_10 = Migration9to10()
 
         class Migration9to10 : Migration(9, 10) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 Log.d(TAG, "migrate 9 to 10")
-                database.execSQL("DELETE FROM IndiceLiturgico")
+                db.execSQL("DELETE FROM IndiceLiturgico")
 
                 //8. Prepopulate new table NomeLiturgico
                 IndiceLiturgico.defaultData()
@@ -139,19 +161,19 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                         val insertValue = ContentValues()
                         insertValue.put("idIndice", it.idIndice)
                         insertValue.put("idCanto", it.idCanto)
-                        database.insert("IndiceLiturgico", OnConflictStrategy.REPLACE, insertValue)
+                        db.insert("IndiceLiturgico", OnConflictStrategy.REPLACE, insertValue)
                     }
             }
         }
 
-        private fun reinsertDefault(database: SupportSQLiteDatabase) {
+        private fun reinsertDefault(db: SupportSQLiteDatabase) {
             Log.d(TAG, "reinsertDefault")
 
             // 1. backup table
             val backup = ArrayList<Backup>()
             val sql =
                 "SELECT id, zoom, scrollX, scrollY, favorite, savedTab, savedBarre, savedSpeed FROM Canto"
-            val cursor = database.query(sql)
+            val cursor = db.query(sql)
             cursor.moveToFirst()
             while (!cursor.isAfterLast) {
                 backup.add(
@@ -171,12 +193,12 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             cursor.close()
 
             // 2. DROP table and RECREATE
-            database.execSQL("DROP TABLE Canto")
-            database.execSQL("CREATE TABLE Canto (id INTEGER NOT NULL DEFAULT 0, pagina TEXT, titolo TEXT, source TEXT, favorite INTEGER NOT NULL DEFAULT 0, color TEXT, link TEXT, zoom INTEGER NOT NULL DEFAULT 0, scrollX INTEGER NOT NULL DEFAULT 0, scrollY INTEGER NOT NULL DEFAULT 0, savedTab TEXT, savedBarre TEXT, savedSpeed TEXT, PRIMARY KEY(id))")
+            db.execSQL("DROP TABLE Canto")
+            db.execSQL("CREATE TABLE Canto (id INTEGER NOT NULL DEFAULT 0, pagina TEXT, titolo TEXT, source TEXT, favorite INTEGER NOT NULL DEFAULT 0, color TEXT, link TEXT, zoom INTEGER NOT NULL DEFAULT 0, scrollX INTEGER NOT NULL DEFAULT 0, scrollY INTEGER NOT NULL DEFAULT 0, savedTab TEXT, savedBarre TEXT, savedSpeed TEXT, PRIMARY KEY(id))")
 
             //3. Prepopulate new table
             Canto.defaultCantoData().forEach {
-                database.execSQL(
+                db.execSQL(
                     "INSERT INTO Canto (id, pagina, titolo, source, favorite, color, link, zoom, scrollX, scrollY, savedSpeed) " +
                             "VALUES(" + it.id + ",'" + it.pagina + "','" + it.titolo + "','" + it.source + "'," + it.favorite + ",'" + it.color + "','" + it.link + "'," + it.zoom + "," + it.scrollX + "," + it.scrollY + ",'" + it.savedSpeed + "')"
                 )
@@ -184,7 +206,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
             //4. Restore backup
             backup.forEach {
-                database.execSQL(
+                db.execSQL(
                     "UPDATE Canto set zoom=" + it.zoom + ", scrollX=" + it.scrollX + ", scrollY=" + it.scrollY + ", favorite=" + it.favorite +
                             ", savedTab=" + (if (it.savedTab != null) "'" + it.savedTab + "'" else "null") +
                             ", savedBarre=" + (if (it.savedBarre != null) "'" + it.savedBarre + "'" else "null") +
@@ -193,26 +215,26 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             }
 
             // 7. Empty table NomeLiturgico
-            database.execSQL("DELETE FROM NomeLiturgico")
+            db.execSQL("DELETE FROM NomeLiturgico")
 
             //8. Prepopulate new table NomeLiturgico
             NomeLiturgico.defaultData()
-                .forEach { database.execSQL("INSERT INTO NomeLiturgico VALUES(" + it.idIndice + ",'" + it.nome + "')") }
+                .forEach { db.execSQL("INSERT INTO NomeLiturgico VALUES(" + it.idIndice + ",'" + it.nome + "')") }
 
             //11. DROP table and RECREATE Cronologia
-            database.execSQL("CREATE TABLE Cronologia_new (idCanto INTEGER NOT NULL DEFAULT 0, ultimaVisita INTEGER NOT NULL, PRIMARY KEY(idCanto))")
-            database.execSQL("INSERT INTO Cronologia_new SELECT * from Cronologia")
-            database.execSQL("DROP TABLE Cronologia")
-            database.execSQL("ALTER TABLE Cronologia_new RENAME TO Cronologia")
+            db.execSQL("CREATE TABLE Cronologia_new (idCanto INTEGER NOT NULL DEFAULT 0, ultimaVisita INTEGER NOT NULL, PRIMARY KEY(idCanto))")
+            db.execSQL("INSERT INTO Cronologia_new SELECT * from Cronologia")
+            db.execSQL("DROP TABLE Cronologia")
+            db.execSQL("ALTER TABLE Cronologia_new RENAME TO Cronologia")
 
             // 7. Empty table NomeLiturgico
-            database.execSQL("DELETE FROM indicebiblico")
+            db.execSQL("DELETE FROM indicebiblico")
 
             //8. Prepopulate new table NomeLiturgico
             IndiceBiblico.defaultIndiceBiblicoData()
-                .forEach { database.execSQL("INSERT INTO indicebiblico VALUES(${it.ordinamento},${it.idCanto}, '${it.titoloIndice}')") }
+                .forEach { db.execSQL("INSERT INTO indicebiblico VALUES(${it.ordinamento},${it.idCanto}, '${it.titoloIndice}')") }
 
-            cleanNonExistentSongs(database)
+            cleanNonExistentSongs(db)
 
         }
 
@@ -284,7 +306,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                     sInstance = Room.databaseBuilder(
                         context.applicationContext,
                         RisuscitoDatabase::class.java,
-                        dbName
+                        DB_NAME
                     )
                         .addMigrations(
                             MIGRATION_1_3,

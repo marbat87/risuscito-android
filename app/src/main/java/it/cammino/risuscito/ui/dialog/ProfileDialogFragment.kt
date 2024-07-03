@@ -22,7 +22,6 @@ import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.extension.getSerializableWrapper
 import java.io.Serializable
 
-@Suppress("unused")
 class ProfileDialogFragment : DialogFragment() {
 
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })

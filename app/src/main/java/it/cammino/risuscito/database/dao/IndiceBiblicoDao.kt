@@ -8,15 +8,14 @@ import androidx.room.Update
 import it.cammino.risuscito.database.entities.IndiceBiblico
 import it.cammino.risuscito.database.pojo.CantoBiblico
 
-@Suppress("unused")
 @Dao
 interface IndiceBiblicoDao {
 
-    @get:Query("SELECT B.pagina, B.source, B.color, B.id, A.ordinamento, A.titoloIndice FROM indicebiblico A, canto B WHERE A.idCanto = B.id ORDER BY A.ordinamento ASC")
-    val liveAll: LiveData<List<CantoBiblico>>
+    @Query("SELECT B.pagina, B.source, B.color, B.id, A.ordinamento, A.titoloIndice FROM indicebiblico A, canto B WHERE A.idCanto = B.id ORDER BY A.ordinamento ASC")
+    fun liveAll(): LiveData<List<CantoBiblico>>
 
-    @get:Query("SELECT B.pagina, B.source, B.color, B.id, A.ordinamento, A.titoloIndice FROM indicebiblico A, canto B WHERE A.idCanto = B.id ORDER BY A.ordinamento ASC")
-    val all: List<CantoBiblico>
+    @Query("SELECT B.pagina, B.source, B.color, B.id, A.ordinamento, A.titoloIndice FROM indicebiblico A, canto B WHERE A.idCanto = B.id ORDER BY A.ordinamento ASC")
+    fun all(): List<CantoBiblico>
 
     @Query("DELETE FROM indicebiblico")
     fun truncateTable()

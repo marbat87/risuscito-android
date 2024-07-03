@@ -37,7 +37,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-@Suppress("unused")
 /**
  * Utility class to get a list of MusicTrack's based on a server-side JSON configuration.
  *
@@ -132,7 +131,7 @@ class MusicProvider internal constructor(
             )
             val artSmall = BitmapFactory.decodeResource(mContext.resources, R.mipmap.ic_launcher)
 
-            val canti = mDao.allByWithLink
+            val canti = mDao.allByWithLink()
             Log.d(TAG, "$RETRIEVE_MEDIA: ${canti.size}")
 
             var temp: MediaMetadataCompat

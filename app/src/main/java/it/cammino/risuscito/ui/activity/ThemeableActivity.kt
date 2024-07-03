@@ -1,7 +1,11 @@
 package it.cammino.risuscito.ui.activity
 
 import android.annotation.SuppressLint
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
@@ -31,18 +35,32 @@ import com.google.gson.reflect.TypeToken
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.Backup
-import it.cammino.risuscito.database.entities.*
+import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.database.entities.Consegnato
+import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.database.entities.CustomList
+import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
-import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.utils.extension.checkScreenAwake
+import it.cammino.risuscito.utils.extension.convertIntPreferences
+import it.cammino.risuscito.utils.extension.createTaskDescription
+import it.cammino.risuscito.utils.extension.isDarkMode
+import it.cammino.risuscito.utils.extension.isGridLayout
+import it.cammino.risuscito.utils.extension.isLandscape
+import it.cammino.risuscito.utils.extension.isOnTablet
+import it.cammino.risuscito.utils.extension.setLigthStatusBar
+import it.cammino.risuscito.utils.extension.setupNavBarColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
-import java.io.*
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.sql.Date
 import java.util.concurrent.ExecutionException
 
@@ -72,7 +90,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
         setupNavBarColor()
-        updateStatusBarLightMode(true)
+        updateStatusBarLightMode()
 
         setTaskDescription(this.createTaskDescription(TAG))
 
@@ -109,7 +127,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        updateStatusBarLightMode(true)
+        updateStatusBarLightMode()
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
             showInfoBroadcastReceiver,
             IntentFilter(RisuscitoMessagingService.MESSAGE_RECEIVED_TAG)
@@ -134,8 +152,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (isFinishing) stopMedia()
     }
 
-    private fun updateStatusBarLightMode(auto: Boolean) {
-        setLigthStatusBar(if (auto) !isDarkMode else false)
+    private fun updateStatusBarLightMode() {
+        setLigthStatusBar(!isDarkMode)
     }
 
     fun setTransparentStatusBar(trasparent: Boolean) {
@@ -147,21 +165,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         Log.d(TAG, "attachBaseContext")
-        super.attachBaseContext(newBase);
-//        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
-//        RisuscitoApplication.localeManager.useCustomConfig(this)
+        super.attachBaseContext(newBase)
         SplitCompat.install(this)
     }
-
-//    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-//        Log.d(TAG, "applyOverrideConfiguration")
-//        super.applyOverrideConfiguration(
-//            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
-//                this,
-//                overrideConfiguration
-//            )
-//        )
-//    }
 
     class NoBackupException internal constructor(val resources: Resources) :
         Exception(resources.getString(R.string.no_restore_found))
@@ -207,7 +213,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     fun restoreSharedPreferences(userId: String?) {
-        Log.d(TAG, "backupSharedPreferences $userId")
+        Log.d(TAG, "restoreSharedPreferences $userId")
 
         if (userId == null)
             throw NoIdException()
@@ -242,10 +248,10 @@ abstract class ThemeableActivity : AppCompatActivity() {
             }
         }
         prefEdit.apply()
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).isNullOrEmpty()
-        )
-            RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
+//        if (PreferenceManager.getDefaultSharedPreferences(this)
+//                .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).isNullOrEmpty()
+//        )
+//            RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
     }
 
     fun backupDatabase(userId: String?) {
@@ -260,37 +266,37 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         //BACKUP CANTI
         val cantoRef = deleteExistingFile(storageRef, CANTO_FILE_NAME, userId)
-        val backupList = risuscitoDb.cantoDao().backup
+        val backupList = risuscitoDb.cantoDao().backup()
         Log.d(TAG, "canto backup size ${backupList.size}")
         putFileToFirebase(cantoRef, backupList, CANTO_FILE_NAME)
 
         //BACKUP CUSTOM LISTS
         val customListRef = deleteExistingFile(storageRef, CUSTOM_LIST_FILE_NAME, userId)
-        val customLists = risuscitoDb.customListDao().all
+        val customLists = risuscitoDb.customListDao().all()
         Log.d(TAG, "custom list size ${customLists.size}")
         putFileToFirebase(customListRef, customLists, CUSTOM_LIST_FILE_NAME)
 
         //BACKUP LISTE PERS
         val listePersRef = deleteExistingFile(storageRef, LISTA_PERS_FILE_NAME, userId)
-        val listePers = risuscitoDb.listePersDao().all
+        val listePers = risuscitoDb.listePersDao().all()
         Log.d(TAG, "listePers size ${listePers.size}")
         putFileToFirebase(listePersRef, listePers, LISTA_PERS_FILE_NAME)
 
         //BACKUP LOCAL LINK
         val localLinkRef = deleteExistingFile(storageRef, LOCAL_LINK_FILE_NAME, userId)
-        val localLink = risuscitoDb.localLinksDao().all
+        val localLink = risuscitoDb.localLinksDao().all()
         Log.d(TAG, "localLink size ${localLink.size}")
         putFileToFirebase(localLinkRef, localLink, LOCAL_LINK_FILE_NAME)
 
         //BACKUP CONSEGNATI
         val consegnatiRef = deleteExistingFile(storageRef, CONSEGNATO_FILE_NAME, userId)
-        val consegnati = risuscitoDb.consegnatiDao().all
+        val consegnati = risuscitoDb.consegnatiDao().all()
         Log.d(TAG, "consegnati size ${consegnati.size}")
         putFileToFirebase(consegnatiRef, consegnati, CONSEGNATO_FILE_NAME)
 
         //BACKUP CRONOLOGIA
         val cronologiaRef = deleteExistingFile(storageRef, CRONOLOGIA_FILE_NAME, userId)
-        val cronologia = risuscitoDb.cronologiaDao().all
+        val cronologia = risuscitoDb.cronologiaDao().all()
         Log.d(TAG, "cronologia size ${cronologia.size}")
         putFileToFirebase(cronologiaRef, cronologia, CRONOLOGIA_FILE_NAME)
 
@@ -334,7 +340,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     fun restoreDatabase(userId: String?) {
-        Log.d(TAG, "backupDatabase $userId")
+        Log.d(TAG, "restoreDatabase $userId")
 
         if (userId == null)
             throw NoIdException()

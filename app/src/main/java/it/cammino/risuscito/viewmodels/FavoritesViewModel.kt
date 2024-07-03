@@ -20,7 +20,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
         val useOldIndex = application.useOldIndex()
-        mFavoritesResult = mDb.favoritesDao().liveFavorites.map { canti ->
+        mFavoritesResult = mDb.favoritesDao().liveFavorites().map { canti ->
             val newList = ArrayList<SimpleItem>()
             canti.forEach {
                 newList.add(

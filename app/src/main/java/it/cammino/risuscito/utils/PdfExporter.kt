@@ -21,7 +21,7 @@ class PdfExporter(context: Context) {
         Log.d(javaClass.toString(), "localPath:$localPDFPath")
         pdf = PDF(BufferedOutputStream(FileOutputStream(localPDFPath)))
         page = Page(pdf, A4.PORTRAIT)
-        val font = Font(pdf, context.resources.assets.open(mFont), Font.STREAM)
+        val font = Font(pdf, context.resources.assets.open(M_FONT), Font.STREAM)
         font.size = 14f
         text = TextLine(font)
         startingY = START_Y
@@ -110,7 +110,7 @@ class PdfExporter(context: Context) {
 
     companion object {
         internal val TAG = PdfExporter::class.java.canonicalName
-        private const val mFont = "fonts/DroidSansMono.ttf.stream"
+        private const val M_FONT = "fonts/DroidSansMono.ttf.stream"
         private const val GENERIC_ERROR = "Generic Export Error!"
         private const val EMPTY_INPUT = "Empty input html!"
         private const val START_X = 25f
