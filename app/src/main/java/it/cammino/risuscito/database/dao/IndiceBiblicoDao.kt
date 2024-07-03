@@ -8,7 +8,6 @@ import androidx.room.Update
 import it.cammino.risuscito.database.entities.IndiceBiblico
 import it.cammino.risuscito.database.pojo.CantoBiblico
 
-@Suppress("unused")
 @Dao
 interface IndiceBiblicoDao {
 

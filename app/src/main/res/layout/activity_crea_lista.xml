@@ -27,7 +27,7 @@
                 android:id="@+id/action_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="20dp"
+                android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax">
 
                 <TextView

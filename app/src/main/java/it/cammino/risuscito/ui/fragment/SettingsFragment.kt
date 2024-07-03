@@ -341,12 +341,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     private fun composeSummary(@StringRes id: Int, pref: DropDownPreference): String {
         val text = pref.entry
-        return "${getString(id)}${System.getProperty("line.separator")}$text"
+        return "${getString(id)}${System.lineSeparator()}$text"
     }
 
     private fun composeSummaryListPreference(pref: ListPreference): String {
         val text = pref.entry
-        return "${getString(R.string.language_summary)}${System.getProperty("line.separator")}$text"
+        return "${getString(R.string.language_summary)}${System.lineSeparator()}$text"
     }
 
     private fun loadStorageList(external: Boolean) {

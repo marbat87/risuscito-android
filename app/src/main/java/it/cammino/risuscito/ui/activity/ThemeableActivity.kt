@@ -45,10 +45,7 @@ import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
-import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
 import it.cammino.risuscito.utils.extension.createTaskDescription
@@ -216,7 +213,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     fun restoreSharedPreferences(userId: String?) {
-        Log.d(TAG, "backupSharedPreferences $userId")
+        Log.d(TAG, "restoreSharedPreferences $userId")
 
         if (userId == null)
             throw NoIdException()
@@ -251,10 +248,10 @@ abstract class ThemeableActivity : AppCompatActivity() {
             }
         }
         prefEdit.apply()
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).isNullOrEmpty()
-        )
-            RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
+//        if (PreferenceManager.getDefaultSharedPreferences(this)
+//                .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).isNullOrEmpty()
+//        )
+//            RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
     }
 
     fun backupDatabase(userId: String?) {
@@ -343,7 +340,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     fun restoreDatabase(userId: String?) {
-        Log.d(TAG, "backupDatabase $userId")
+        Log.d(TAG, "restoreDatabase $userId")
 
         if (userId == null)
             throw NoIdException()

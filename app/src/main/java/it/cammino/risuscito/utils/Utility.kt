@@ -15,7 +15,11 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.mikepenz.fastadapter.ui.utils.StringHolder
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
 import java.text.Normalizer
 import java.util.Random
@@ -55,6 +59,7 @@ object Utility {
     internal const val DYNAMIC_COLORS = "dynamic_colors"
     internal const val OLD_PAGE_SUFFIX = "_old"
     internal const val SHARED_AXIS = "shared_axis"
+    private const val TOKEN_VALIDATION_PATH = "https://oauth2.googleapis.com/tokeninfo?id_token="
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"
@@ -368,6 +373,38 @@ object Utility {
         }
         Log.e(TAG, "resName NULL")
         return -1
+    }
+
+    fun validateToken(
+        idToken: String
+    ): String {
+        if (idToken.isEmpty())
+            return StringUtils.EMPTY
+
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(TOKEN_VALIDATION_PATH + idToken)
+            .build()
+
+        try {
+            val response = client.newCall(request).execute()
+            Log.d(TAG, "validateToken statusCode: ${response.code}")
+            val res = response.body?.string()
+            Log.d(TAG, "validateToken response: $res")
+            if (response.code == 200 && res?.isNotEmpty() == true) {
+                val tokenInfo: TokenInfo = GsonBuilder().create().fromJson(
+                    res, object : TypeToken<TokenInfo>() {}.type
+                )
+                Log.d(TAG, "validateToken response sub: ${tokenInfo.sub}")
+                return tokenInfo.sub
+            } else {
+                return StringUtils.EMPTY
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "validateToken exception", e)
+            return StringUtils.EMPTY
+        }
+
     }
 
 }

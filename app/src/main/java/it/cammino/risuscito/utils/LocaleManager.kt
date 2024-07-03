@@ -1,9 +1,6 @@
 package it.cammino.risuscito.utils
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.content.res.Configuration
-import android.os.Build.VERSION_CODES.N
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
@@ -117,22 +114,22 @@ class LocaleManager(context: Context) {
 
         const val COUNTRY_PHILIPPINES = "PH"
 
-        @Suppress("DEPRECATION")
-        private fun isLocaleNotEmptyLegacy(config: Configuration): Boolean {
-            return config.locale != null
-        }
-
-        @TargetApi(N)
-        private fun isLocaleNotEmptyN(config: Configuration): Boolean {
-            return !config.locales.isEmpty
-        }
-
-        fun isLocaleNotEmpty(config: Configuration): Boolean {
-            return if (OSUtils.hasN())
-                isLocaleNotEmptyN(config)
-            else
-                isLocaleNotEmptyLegacy(config)
-        }
+//        @Suppress("DEPRECATION")
+//        private fun isLocaleNotEmptyLegacy(config: Configuration): Boolean {
+//            return config.locale != null
+//        }
+//
+//        @TargetApi(N)
+//        private fun isLocaleNotEmptyN(config: Configuration): Boolean {
+//            return !config.locales.isEmpty
+//        }
+//
+//        fun isLocaleNotEmpty(config: Configuration): Boolean {
+//            return if (OSUtils.hasN())
+//                isLocaleNotEmptyN(config)
+//            else
+//                isLocaleNotEmptyLegacy(config)
+//        }
 
     }
 }

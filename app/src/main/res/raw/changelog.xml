@@ -2,12 +2,14 @@
 <changelog>
 
     <release
-        versionCode="5209"
-        date="May 2024"
-        versionName="5.2.0">
+        versionCode="6000"
+        date="September 2024"
+        versionName="6.0.0">
         <new>New UI</new>
         <new>Optimizations and compatibility for Android 14 OS</new>
         <new>New "under-the-hood" language change system</new>
+        <new>Removed support for Android 5.0 and 5.1</new>
+        <new>Updated login system according to new google requirements</new>
         <bugfix>Fixed tab change on song "you are my hope o lord"</bugfix>
     </release>
 

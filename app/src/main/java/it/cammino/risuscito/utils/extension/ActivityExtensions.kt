@@ -97,17 +97,7 @@ fun Activity.setLigthStatusBar(light: Boolean) {
     WindowCompat.getInsetsController(
         window, window.decorView
     ).isAppearanceLightStatusBars = light
-    setLighStatusBarFlag(light)
-}
-
-private fun Activity.setLighStatusBarFlag(light: Boolean) {
-    if (OSUtils.hasM()) setLighStatusBarFlagM(light)
-}
-
-@Suppress("DEPRECATION")
-@RequiresApi(Build.VERSION_CODES.M)
-private fun Activity.setLighStatusBarFlagM(light: Boolean) {
-    if (light) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//    if (light) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 }
 
 fun Activity.startActivityWithTransition(intent: Intent, axis: Int) {
@@ -163,8 +153,7 @@ fun Activity.startActivityWithFadeIn(intent: Intent) {
 //ISSUE in API 21
 fun Activity.finishAfterTransitionWrapper() {
     closeKeyboard()
-    if (OSUtils.hasM()) finishAfterTransition()
-    else finish()
+    finishAfterTransition()
 }
 
 private fun Activity.closeKeyboard() {

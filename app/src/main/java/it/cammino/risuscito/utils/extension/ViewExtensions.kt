@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.RippleDrawable
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -54,6 +53,6 @@ fun View.setSelectableRippleBackground(selectedColorResId: Int) {
     rippleColor?.let {
         // Now we created a mask Drawable which will be used for touch feedback.
         val touchFeedbackShape = RippleDrawable(it, backgroundDrawable, shapeMask)
-        ViewCompat.setBackground(this, touchFeedbackShape)
+        background = touchFeedbackShape
     }
 }

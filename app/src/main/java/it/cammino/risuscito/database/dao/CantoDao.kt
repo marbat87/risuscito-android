@@ -8,7 +8,6 @@ import androidx.room.Update
 
 import it.cammino.risuscito.database.entities.Canto
 
-@Suppress("unused")
 @Dao
 interface CantoDao {
 
@@ -56,13 +55,14 @@ interface CantoDao {
 
     @Query("UPDATE canto set zoom = :zoom, scrollX = :scrollX, scrollY = :scrollY, favorite = :favorite, savedTab = :savedTab, savedBarre = :savedBarre, savedSpeed = :savedSpeed WHERE id = :id")
     fun setBackup(
-            id: Int,
-            zoom: Int,
-            scrollX: Int,
-            scrollY: Int,
-            favorite: Int,
-            savedTab: String?,
-            savedBarre: String?,
-            savedSpeed: String?)
+        id: Int,
+        zoom: Int,
+        scrollX: Int,
+        scrollY: Int,
+        favorite: Int,
+        savedTab: String?,
+        savedBarre: String?,
+        savedSpeed: String?
+    )
 
 }

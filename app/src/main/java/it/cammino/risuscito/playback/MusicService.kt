@@ -114,36 +114,16 @@ class MusicService : MediaBrowserServiceCompat() {
             if (applicationContext.isOnPhone) CantoHostActivity::class.java else MainActivity::class.java
         )
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        val pi = getPendingIntent(intent, context)
+        val pi = PendingIntent.getActivity(
+            context, REQUEST_CODE, intent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         mSession?.setSessionActivity(pi)
 
         mNotificationManager = NotificationManagerCompat.from(this)
         mAudioBecomingNoisyReceiver = AudioBecomingNoisyReceiver(this)
 
         updatePlaybackState(null)
-    }
-
-    private fun getPendingIntent(intent: Intent, context: Context): PendingIntent {
-        return if (OSUtils.hasM()) getPendingIntentM(intent, context) else getPendingIntentLegacy(
-            intent,
-            context
-        )
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun getPendingIntentM(intent: Intent, context: Context): PendingIntent {
-        return PendingIntent.getActivity(
-            context, REQUEST_CODE, intent,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-    }
-
-    @SuppressLint("UnspecifiedImmutableFlag")
-    private fun getPendingIntentLegacy(intent: Intent, context: Context): PendingIntent {
-        return PendingIntent.getActivity(
-            context, REQUEST_CODE, intent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
     }
 
     override fun onStartCommand(startIntent: Intent?, flags: Int, startId: Int): Int {

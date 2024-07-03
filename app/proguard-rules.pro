@@ -15,7 +15,7 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--dontwarn
+-dontwarn *
 -ignorewarnings
 #-keep class !android.support.v7.internal.view.menu.**,** {*;}
 -keep class * {*;}

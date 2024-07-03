@@ -105,7 +105,7 @@ fun AppCompatActivity.addToListaNoDup(
                 sb.append(" ")
                 sb.append(titoloPresente)
                 sb.append(".")
-                sb.append(System.getProperty("line.separator"))
+                sb.append(System.lineSeparator())
                 sb.append(getString(R.string.dialog_wonna_replace))
 
                 SimpleDialogFragment.show(
@@ -178,7 +178,7 @@ fun AppCompatActivity.manageReplaceDialog(idCanto: Int, replaceTag: String) {
             )
         )
         sb.append(".")
-        sb.append(System.getProperty("line.separator"))
+        sb.append(System.lineSeparator())
         sb.append(getString(R.string.dialog_wonna_replace))
 
         SimpleDialogFragment.show(

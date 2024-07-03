@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="litanie_penitenziali_brevi_link" formatted="false">http://www.resuscicanti.com/13Litaniepenitenzialibrevi%207,27.mp3</string>
     <string name="preghiera_litanica_penitenziale_link" formatted="false">http://www.resuscicanti.com/Preghiera%20Litanica%20penitenziale.mp3</string>
     <string name="celebrazione_penitenziale_link" formatted="false">http://www.resuscicanti.com/06Benedizioneperlacelebrazionepenitenziale%204,47.mp3</string>
@@ -113,7 +113,7 @@
     <string name="cerano_due_angeli_link" formatted="false">http://www.resuscicanti.com/cerano2angeli.mp3</string>
     <string name="amo_il_signore_link" formatted="false">http://www.resuscicanti.com/Amo%20il%20signore.mp3</string>
     <string name="venite_a_me_voi_tutti_link" formatted="false">http://www.resuscicanti.com/veniteamevoitutti.mp3</string>
-    <string name="a_te_si_deve_lode_in_sion_link" formatted="false">http://www.resuscicanti.com/A%20te%20signore%20si%20deve%20lode%20in%20Sion.mp3</string>
+    <string name="a_te_si_deve_lode_in_sion_link" formatted="false">https://www.cantineocatecumenale.it/wp-content/uploads/2023/10/A-te-Signore-si-deve-lode-in-Sion-Ita-1-Ok-19861114_16-TAPE-modificata.mp3</string>
     <string name="se_signore_sono_rifugiato_link" formatted="false">http://www.resuscicanti.com/senelsigmisonorifugiato.mp3</string>
     <string name="signore_annuncia_una_notizia_link" formatted="false">http://www.resuscicanti.com/ilsignoreannunciaunanotizia.mp3</string>
     <string name="benedite_il_signore_link" formatted="false">http://www.resuscicanti.com/Benedite%20il%20Signore%20(Filippucci).mp3</string>
@@ -137,11 +137,11 @@
     <string name="sorga_dio_link" formatted="false">http://www.resuscicanti.com/sorgadio.mp3</string>
     <string name="andiamo_gia_pastori_link" formatted="false">http://www.resuscicanti.com/andiamogiapastori.mp3</string>
     <string name="maria_di_jasna_gora_link" formatted="false">http://www.resuscicanti.com/mariadiyasnagora.mp3</string>
-    <string name="a_te_signore_con_la_mia_voce_link" formatted="false">http://www.resuscicanti.com/a%20te%20signore%20conlamiavoce.mp3</string>
+    <string name="a_te_signore_con_la_mia_voce_link" formatted="false">https://www.cantineocatecumenale.it/wp-content/uploads/2023/10/A-te-Signore-con-la-mia-voce-grido-aiuto-OK.mp3</string>
     <string name="un_germoglio_spunta_tronco_link" formatted="false">http://www.resuscicanti.com/b%20ungermogliospuntadaltroncodijesse.mp3</string>
-    <string name="a_te_signore_innalzo_la_mia_anima_link" formatted="false">http://www.resuscicanti.com/atesignoreinnalzolamiaanima.mp3</string>
+    <string name="a_te_signore_innalzo_la_mia_anima_link" formatted="false" tools:ignore="TypographyDashes">https://www.cantineocatecumenale.it/wp-content/uploads/2023/10/A-te-Signor-innalzo-la-mia-anima-OK-25-24-19920918-TAPE.mp3</string>
     <string name="ti_sto_chiamando_link" formatted="false">http://www.resuscicanti.com/tistochiamando.mp3</string>
-    <string name="a_te_levo_i_miei_occhi_link" formatted="false">http://www.resuscicanti.com/atelevoimieiocchi.mp3</string>
+    <string name="a_te_levo_i_miei_occhi_link" formatted="false" tools:ignore="TypographyDashes">https://www.cantineocatecumenale.it/wp-content/uploads/2023/10/A-te-levo-i-miei-occhi-Ita-1-Ok-1-1.mp3</string>
     <string name="signore_non_punirmi_nel_tuo_sdegno_link" formatted="false">http://www.resuscicanti.com/signorenonpunirmineltuosdegno.mp3</string>
     <string name="gloria_gloria_gloria_link" formatted="false">http://www.resuscicanti.com/gloria%20gloria%20gloria%20completo.mp3</string>
     <string name="esultate_giusti_nel_signore_link" formatted="false">http://www.resuscicanti.com/esultategiustinelsignore.mp3</string>

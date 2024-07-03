@@ -1,11 +1,14 @@
 package it.cammino.risuscito.database.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Query
+import androidx.room.Update
+import androidx.room.Upsert
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.database.pojo.CantoCronologia
 
-@Suppress("unused")
 @Dao
 interface CronologiaDao {
 

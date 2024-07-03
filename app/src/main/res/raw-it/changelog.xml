@@ -2,12 +2,14 @@
 <changelog>
 
     <release
-        versionCode="5209"
-        date="Maggio 2024"
-        versionName="5.2.0">
+        versionCode="6000"
+        date="Settembre 2024"
+        versionName="6.0.0">
         <new>Nuova interfaccia</new>
         <new>Ottimizzazioni e compatibilità con Android 14</new>
         <new>Nuovo engine per il cambio lingua</new>
+        <new>Rimosso il supporto per Android 5.0 e 5.1</new>
+        <new>Aggiornate le librerie di login secondo i nuovi requisiti Google</new>
         <bugfix>Sistemato cambio accordi su "tu sei la mia speranza Signore"</bugfix>
     </release>
 
