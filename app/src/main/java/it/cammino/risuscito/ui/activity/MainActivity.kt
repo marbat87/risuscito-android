@@ -44,8 +44,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.android.material.appbar.MaterialToolbar
@@ -102,6 +100,8 @@ import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
+import it.cammino.risuscito.utils.extension.buildGoogleCredentialOption
+import it.cammino.risuscito.utils.extension.buildLastAccountCredentialOption
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.getVersionCode
@@ -388,7 +388,7 @@ class MainActivity : ThemeableActivity() {
             if (mViewModel.acct != null) {
                 validaToken(true)
             } else {
-                signInWithLastAccount()
+                signIn(true)
             }
         }
     }
@@ -693,7 +693,7 @@ class MainActivity : ThemeableActivity() {
                             firebaseAuthWithGoogle()
                         } else {
                             if (mViewModel.retrieveLastAccount)
-                                signInWithLastAccount()
+                                signIn(true)
                         }
                     }
 
@@ -1046,12 +1046,9 @@ class MainActivity : ThemeableActivity() {
         get() = binding.mainContent
 
     // [START signIn]
-
-    private fun signInWithLastAccount() {
+    private fun signIn(lastAccount: Boolean) {
         // [START build_client]
-        mCredentialRequest = GetCredentialRequest.Builder()
-            .addCredentialOption(buildLastAccountCredentialOption())
-            .build()
+        buildCredentialRequest(if (lastAccount) buildLastAccountCredentialOption() else buildGoogleCredentialOption())
         // [END build_client]
 
         mCredentialRequest?.let {
@@ -1059,31 +1056,6 @@ class MainActivity : ThemeableActivity() {
                 login()
             }
         }
-    }
-
-    private fun signInWithGoogle() {
-        // [START build_client]
-        buildCredentialRequest(buildGoogleCredentialOption())
-        // [END build_client]
-
-        mCredentialRequest?.let {
-            lifecycleScope.launch {
-                login()
-            }
-        }
-    }
-
-    private fun buildLastAccountCredentialOption(): CredentialOption {
-        return GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(true)
-            .setServerClientId(getString(R.string.default_web_client_id))
-            .setAutoSelectEnabled(true)
-            .build()
-    }
-
-    private fun buildGoogleCredentialOption(): CredentialOption {
-        return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id))
-            .build()
     }
 
     private fun buildCredentialRequest(credOption: CredentialOption) {
@@ -1287,7 +1259,7 @@ class MainActivity : ThemeableActivity() {
             PreferenceManager.getDefaultSharedPreferences(this)
                 .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
             mViewModel.showSnackbar = true
-            signInWithGoogle()
+            signIn(false)
         }
 
     }
