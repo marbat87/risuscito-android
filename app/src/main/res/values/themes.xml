@@ -107,9 +107,9 @@
         <item name="navigationIconTint">?colorPrimary</item>
         <item name="minHeight" tools:ignore="PrivateResource">@dimen/m3_searchbar_height</item>
         <item name="titleTextColor">?colorPrimary</item>
-        <item name="android:layout_marginTop" tools:ignore="PrivateResource">
-            @dimen/m3_searchbar_margin_vertical
-        </item>
+<!--        <item name="android:layout_marginTop" tools:ignore="PrivateResource">-->
+<!--            @dimen/m3_searchbar_margin_vertical-->
+<!--        </item>-->
     </style>
 
     <style name="Widget.AppCompat.TextView.Risuscito">

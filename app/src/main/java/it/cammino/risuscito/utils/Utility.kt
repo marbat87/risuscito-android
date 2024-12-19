@@ -14,7 +14,6 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import androidx.core.content.ContextCompat
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.mikepenz.fastadapter.ui.utils.StringHolder
@@ -181,7 +180,7 @@ object Utility {
                 return fileExt.absolutePath
             } else {
                 // cerca file esterno con vecchi path e nome
-                val fileArray = ContextCompat.getExternalFilesDirs(activity, null)
+                val fileArray = activity.getExternalFilesDirs(null)
                 fileExt = File(fileArray[0], filterMediaLink(link))
                 if (fileExt.exists()) {
 //                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno2: " + fileExt.absolutePath)

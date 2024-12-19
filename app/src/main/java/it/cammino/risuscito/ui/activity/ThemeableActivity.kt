@@ -112,7 +112,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         try {
             mMediaBrowser?.connect()
         } catch (e: IllegalStateException) {
-            Log.e(TAG, "onStart: mMediaBrowser connecting")
+            Log.e(TAG, "onStart: mMediaBrowser connecting", e)
         }
     }
 
@@ -197,7 +197,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         usersPreferences[FIREBASE_FIELD_PREFERENCE] =
             PreferenceManager.getDefaultSharedPreferences(this).all
 
-        if (querySnapshot.documents.size > 0) {
+        if (querySnapshot.documents.isNotEmpty()) {
             Tasks.await(
                 db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI)
                     .document(querySnapshot.documents[0].id).delete()
@@ -228,7 +228,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         Log.d(TAG, "querySnapshot.documents.size ${querySnapshot.documents.size}")
 
-        if (querySnapshot.documents.size == 0)
+        if (querySnapshot.documents.isEmpty())
             throw NoBackupException(resources)
 
         val prefEdit = PreferenceManager.getDefaultSharedPreferences(this).edit()

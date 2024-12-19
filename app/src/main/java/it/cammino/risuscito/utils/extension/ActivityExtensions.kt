@@ -274,7 +274,7 @@ private fun Activity.convert(prefName: String) {
     try {
         pref.getString(prefName, "0")
         Log.d(TAG, "onCreateView: $prefName STRING")
-    } catch (e: ClassCastException) {
+    } catch (_: ClassCastException) {
         Log.d(TAG, "onCreateView: $prefName INTEGER >> CONVERTO")
         pref.edit { putString(prefName, pref.getInt(prefName, 0).toString()) }
     }
