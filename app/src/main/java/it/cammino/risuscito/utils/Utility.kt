@@ -14,11 +14,14 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import androidx.core.content.ContextCompat
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.mikepenz.fastadapter.ui.utils.StringHolder
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
 import java.text.Normalizer
-import java.util.*
+import java.util.Random
 import java.util.regex.Pattern
 
 object Utility {
@@ -55,6 +58,7 @@ object Utility {
     internal const val DYNAMIC_COLORS = "dynamic_colors"
     internal const val OLD_PAGE_SUFFIX = "_old"
     internal const val SHARED_AXIS = "shared_axis"
+    private const val TOKEN_VALIDATION_PATH = "https://oauth2.googleapis.com/tokeninfo?id_token="
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"
@@ -88,17 +92,7 @@ object Utility {
             return if (it.isEmpty())
                 it
             else {
-                return when {
-                    it.indexOf("resuscicanti") > 0 -> {
-                        val start = it.indexOf(".com/")
-                        it.substring(start + 5).replace("%20".toRegex(), "_")
-                    }
-                    it.indexOf("marbat87") > 0 -> {
-                        val start = it.indexOf("audio/")
-                        it.substring(start + 6).replace("%20".toRegex(), "_")
-                    }
-                    else -> it
-                }
+                it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
         } ?: return StringUtils.EMPTY
     }
@@ -109,17 +103,7 @@ object Utility {
             return if (it.isEmpty())
                 it
             else {
-                when {
-                    it.indexOf("resuscicanti") > 0 -> {
-                        val start = it.indexOf(".com/")
-                        it.substring(start + 5)
-                    }
-                    it.indexOf("marbat87") > 0 -> {
-                        val start = it.indexOf("audio/")
-                        it.substring(start + 6)
-                    }
-                    else -> it
-                }
+                it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
         } ?: return StringUtils.EMPTY
     }
@@ -178,8 +162,7 @@ object Utility {
         return -1
     }
 
-    @Suppress("DEPRECATION")
-    fun retrieveMediaFileLinkLegacy(
+    private fun retrieveMediaFileLinkLegacy(
         activity: Context,
         link: String,
         cercaEsterno: Boolean
@@ -197,7 +180,7 @@ object Utility {
                 return fileExt.absolutePath
             } else {
                 // cerca file esterno con vecchi path e nome
-                val fileArray = ContextCompat.getExternalFilesDirs(activity, null)
+                val fileArray = activity.getExternalFilesDirs(null)
                 fileExt = File(fileArray[0], filterMediaLink(link))
                 if (fileExt.exists()) {
 //                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno2: " + fileExt.absolutePath)
@@ -299,7 +282,6 @@ object Utility {
         return filterMediaLinkNew(link)
     }
 
-    @Suppress("DEPRECATION")
     private fun getExternalLinkLegacy(link: String): String {
         if (File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
@@ -316,7 +298,6 @@ object Utility {
                 + filterMediaLinkNew(link))
     }
 
-    @Suppress("DEPRECATION")
     fun mediaScan(context: Context, link: String) {
         MediaScannerConnection.scanFile(
             context,
@@ -391,6 +372,38 @@ object Utility {
         }
         Log.e(TAG, "resName NULL")
         return -1
+    }
+
+    fun validateToken(
+        idToken: String
+    ): String {
+        if (idToken.isEmpty())
+            return StringUtils.EMPTY
+
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(TOKEN_VALIDATION_PATH + idToken)
+            .build()
+
+        try {
+            val response = client.newCall(request).execute()
+            Log.d(TAG, "validateToken statusCode: ${response.code}")
+            val res = response.body?.string()
+            Log.d(TAG, "validateToken response: $res")
+            if (response.code == 200 && res?.isNotEmpty() == true) {
+                val tokenInfo: TokenInfo = GsonBuilder().create().fromJson(
+                    res, object : TypeToken<TokenInfo>() {}.type
+                )
+                Log.d(TAG, "validateToken response sub: ${tokenInfo.sub}")
+                return tokenInfo.sub
+            } else {
+                return StringUtils.EMPTY
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "validateToken exception", e)
+            return StringUtils.EMPTY
+        }
+
     }
 
 }

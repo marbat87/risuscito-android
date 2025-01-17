@@ -2,7 +2,12 @@ package it.cammino.risuscito
 
 import android.util.Log
 import it.cammino.risuscito.utils.StringUtils
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 
 @Suppress("unused")
 class ListaPersonalizzata : Serializable {
@@ -10,7 +15,7 @@ class ListaPersonalizzata : Serializable {
     var name: String = StringUtils.EMPTY
     private var posizioni: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
     var canti: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
-    var note: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
+    private var note: Array<String?> = arrayOfNulls(MAX_POSIZIONI)
     var numPosizioni: Int = 0
 
     init {
@@ -162,7 +167,9 @@ class ListaPersonalizzata : Serializable {
     companion object {
 
         private const val MAX_POSIZIONI = 30
-        internal const val serialVersionUID = 123456789L
+
+        @Suppress("ConstPropertyName")
+        private const val serialVersionUID = 123456789L
 
         fun serializeObject(o: Any): ByteArray? {
             val bos = ByteArrayOutputStream()

@@ -1,10 +1,13 @@
 package it.cammino.risuscito.database.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import it.cammino.risuscito.database.entities.ListaPers
 
-@Suppress("unused")
 @Dao
 interface ListePersDao {
 

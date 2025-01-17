@@ -156,7 +156,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         binding.textTitleDescription.requestFocus()
 
         binding.recyclerContainer.hintText.setText(R.string.showcase_rename_desc)
-        binding.recyclerContainer.hintText.append(System.getProperty("line.separator"))
+        binding.recyclerContainer.hintText.append(System.lineSeparator())
         binding.recyclerContainer.hintText.append(getString(R.string.showcase_delete_desc))
         ViewCompat.setElevation(binding.recyclerContainer.questionMark, 1f)
         binding.recyclerContainer.mainHintLayout.setOnTouchListener(

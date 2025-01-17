@@ -575,7 +575,7 @@
     <string name="show_eucarestia_pace_summary">Abilita il canto alla pace per l\'Eucarestia</string>
     <string name="show_eucarestia_pace_title">Eucarestia - Canto alla pace</string>
     <string name="old_index_title">Usa vecchio indice</string>
-    <string name="old_index_summary">Usa l\'indica con la vecchia numerazione precedente al 2020</string>
+    <string name="old_index_summary">Usa l\'indice con la vecchia numerazione precedente al 2020</string>
     <string name="changelog">ChangeLog</string>
     <string name="error">Errore</string>
     <string name="email">Email</string>

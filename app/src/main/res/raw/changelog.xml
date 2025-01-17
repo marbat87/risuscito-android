@@ -2,13 +2,16 @@
 <changelog>
 
     <release
-        versionCode="5207"
-        date="March 2024"
-        versionName="5.2.0">
+        versionCode="6001"
+        date="September 2024"
+        versionName="6.0.0">
         <new>New UI</new>
         <new>Optimizations and compatibility for Android 14 OS</new>
         <new>New "under-the-hood" language change system</new>
+        <new>Removed support for Android 5.0 and 5.1</new>
+        <new>Updated login system according to new google requirements</new>
         <bugfix>Fixed tab change on song "you are my hope o lord"</bugfix>
+        <bugfix>Changed Italian audio with those from the official website www.cantineocatecumenale.it</bugfix>
     </release>
 
     <release

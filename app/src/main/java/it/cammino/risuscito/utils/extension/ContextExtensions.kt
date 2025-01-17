@@ -14,8 +14,11 @@ import android.os.Build
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.credentials.CredentialOption
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.material.color.DynamicColorsOptions
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
@@ -97,23 +100,9 @@ val Context.isOnline: Boolean
     get() {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-        return if (OSUtils.hasM())
-            connectivityManager?.isOnlineM == true
-        else connectivityManager?.isOnlineLegacy == true
-    }
-
-private val ConnectivityManager.isOnlineM: Boolean
-    @RequiresApi(Build.VERSION_CODES.M)
-    get() {
-        val network = activeNetwork
-        val capabilities = getNetworkCapabilities(network)
+        val network = connectivityManager?.activeNetwork
+        val capabilities = connectivityManager?.getNetworkCapabilities(network)
         return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-    }
-
-@Suppress("DEPRECATION")
-private val ConnectivityManager.isOnlineLegacy: Boolean
-    get() {
-        return activeNetworkInfo?.isConnected == true
     }
 
 val Context.isOnTablet: Boolean
@@ -207,3 +196,16 @@ val Fragment.systemLocale: Locale
     get() {
         return requireContext().systemLocale
     }
+
+fun Context.buildLastAccountCredentialOption(): CredentialOption {
+    return GetGoogleIdOption.Builder()
+        .setFilterByAuthorizedAccounts(true)
+        .setServerClientId(getString(R.string.default_web_client_id))
+        .setAutoSelectEnabled(true)
+        .build()
+}
+
+fun Context.buildGoogleCredentialOption(): CredentialOption {
+    return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id))
+        .build()
+}

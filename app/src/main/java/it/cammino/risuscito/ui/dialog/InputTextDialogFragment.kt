@@ -20,7 +20,6 @@ import it.cammino.risuscito.utils.extension.capitalize
 import it.cammino.risuscito.utils.extension.getSerializableWrapper
 import java.io.Serializable
 
-@Suppress("unused")
 class InputTextDialogFragment : DialogFragment() {
 
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })

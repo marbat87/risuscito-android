@@ -1,3 +1,5 @@
+@file:Suppress("SameParameterValue")
+
 package it.cammino.risuscito.utils.extension
 
 import android.Manifest
@@ -46,8 +48,12 @@ import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.SHARED_AXIS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.*
-import java.util.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.StringWriter
+import java.util.Locale
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.transform.TransformerConfigurationException
@@ -73,6 +79,12 @@ val Resources.systemLocale: Locale
     }
 
 fun Activity.setupNavBarColor() {
+    if (!OSUtils.hasV())
+        setupNavBarColorLegacy()
+}
+
+@Suppress("DEPRECATION")
+fun Activity.setupNavBarColorLegacy() {
     if (OSUtils.hasO()) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         if (!isDarkMode) setLightNavigationBar()
@@ -91,17 +103,7 @@ fun Activity.setLigthStatusBar(light: Boolean) {
     WindowCompat.getInsetsController(
         window, window.decorView
     ).isAppearanceLightStatusBars = light
-    setLighStatusBarFlag(light)
-}
-
-private fun Activity.setLighStatusBarFlag(light: Boolean) {
-    if (OSUtils.hasM()) setLighStatusBarFlagM(light)
-}
-
-@Suppress("DEPRECATION")
-@RequiresApi(Build.VERSION_CODES.M)
-private fun Activity.setLighStatusBarFlagM(light: Boolean) {
-    if (light) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//    if (light) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 }
 
 fun Activity.startActivityWithTransition(intent: Intent, axis: Int) {
@@ -157,8 +159,7 @@ fun Activity.startActivityWithFadeIn(intent: Intent) {
 //ISSUE in API 21
 fun Activity.finishAfterTransitionWrapper() {
     closeKeyboard()
-    if (OSUtils.hasM()) finishAfterTransition()
-    else finish()
+    finishAfterTransition()
 }
 
 private fun Activity.closeKeyboard() {
@@ -279,7 +280,7 @@ private fun Activity.convert(prefName: String) {
     try {
         pref.getString(prefName, "0")
         Log.d(TAG, "onCreateView: $prefName STRING")
-    } catch (e: ClassCastException) {
+    } catch (_: ClassCastException) {
         Log.d(TAG, "onCreateView: $prefName INTEGER >> CONVERTO")
         pref.edit { putString(prefName, pref.getInt(prefName, 0).toString()) }
     }

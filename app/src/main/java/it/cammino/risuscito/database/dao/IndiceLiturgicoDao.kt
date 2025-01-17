@@ -8,7 +8,6 @@ import it.cammino.risuscito.database.entities.IndiceLiturgico
 import it.cammino.risuscito.database.entities.NomeLiturgico
 import it.cammino.risuscito.database.pojo.CantoLiturgico
 
-@Suppress("unused")
 @Dao
 interface IndiceLiturgicoDao {
 

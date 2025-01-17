@@ -95,7 +95,7 @@ object ListeUtils {
                     sb.append(" ")
                     sb.append(titoloPresente)
                     sb.append(".")
-                    sb.append(System.getProperty("line.separator"))
+                    sb.append(System.lineSeparator())
                     sb.append(fragment.getString(R.string.dialog_wonna_replace))
 
                     SimpleDialogFragment.show(
@@ -325,7 +325,7 @@ object ListeUtils {
                 )
             )
             sb.append(".")
-            sb.append(System.getProperty("line.separator"))
+            sb.append(System.lineSeparator())
             sb.append(fragment.getString(R.string.dialog_wonna_replace))
 
             SimpleDialogFragment.show(
