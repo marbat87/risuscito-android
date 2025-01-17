@@ -46,6 +46,7 @@ import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
 import it.cammino.risuscito.utils.extension.createTaskDescription
@@ -157,6 +158,12 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     fun setTransparentStatusBar(trasparent: Boolean) {
+        if (!OSUtils.hasV())
+            setTransparentStatusBarLegacy(trasparent)
+    }
+
+    @Suppress("DEPRECATION")
+    fun setTransparentStatusBarLegacy(trasparent: Boolean) {
         window.statusBarColor = if (trasparent) ContextCompat.getColor(
             this,
             android.R.color.transparent

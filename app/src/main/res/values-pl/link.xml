@@ -234,4 +234,5 @@
     <string name="salve_regina_link" formatted="false" />
     <string name="sequenza_corpus_domini_link" formatted="false" />
     <string name="un_angelo_venne_dal_cielo_link" formatted="false" />
+    <string name="vivete_allegri_link" />
 </resources>

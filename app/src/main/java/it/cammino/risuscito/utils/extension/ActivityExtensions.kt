@@ -79,6 +79,12 @@ val Resources.systemLocale: Locale
     }
 
 fun Activity.setupNavBarColor() {
+    if (!OSUtils.hasV())
+        setupNavBarColorLegacy()
+}
+
+@Suppress("DEPRECATION")
+fun Activity.setupNavBarColorLegacy() {
     if (OSUtils.hasO()) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         if (!isDarkMode) setLightNavigationBar()

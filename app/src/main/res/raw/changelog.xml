@@ -2,7 +2,7 @@
 <changelog>
 
     <release
-        versionCode="6000"
+        versionCode="6001"
         date="September 2024"
         versionName="6.0.0">
         <new>New UI</new>
@@ -11,6 +11,7 @@
         <new>Removed support for Android 5.0 and 5.1</new>
         <new>Updated login system according to new google requirements</new>
         <bugfix>Fixed tab change on song "you are my hope o lord"</bugfix>
+        <bugfix>Changed Italian audio with those from the official website www.cantineocatecumenale.it</bugfix>
     </release>
 
     <release

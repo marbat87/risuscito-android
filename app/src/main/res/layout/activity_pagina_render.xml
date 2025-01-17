@@ -204,8 +204,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:fitsSystemWindows="true"
         app:contentInsetStart="0dp"
+        app:paddingBottomSystemWindowInsets="false"
         app:hideOnScroll="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
