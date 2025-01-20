@@ -239,4 +239,14 @@
     <string name="salve_regina_source">no_canto</string>
     <string name="sequenza_corpus_domini_source">no_canto</string>
     <string name="un_angelo_venne_dal_cielo_source">no_canto</string>
+    <string name="vivete_allegri_source">no_canto</string>
+    <string name="spada_source">no_canto</string>
+    <string name="cristo_e_la_luce_source">no_canto</string>
+    <string name="rosario_cantato_source">no_canto</string>
+    <string name="salmodie_lodi_source">no_canto</string>
+    <string name="prefazio_avvento_source">no_canto</string>
+    <string name="litanie_dei_santi_source">no_canto</string>
+    <string name="dove_ti_sei_nascosto_source">no_canto</string>
+    <string name="vangelo_cantato_source">no_canto</string>
+    <string name="risposte_alle_preghiere_source">no_canto</string>
 </resources>

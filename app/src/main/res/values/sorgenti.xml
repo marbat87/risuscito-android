@@ -239,4 +239,14 @@
     <string name="salve_regina_source">salve_regina</string>
     <string name="sequenza_corpus_domini_source">sequenza_corpus_domini</string>
     <string name="un_angelo_venne_dal_cielo_source">un_angelo_venne_dal_cielo</string>
+    <string name="vivete_allegri_source">vivete_allegri</string>
+    <string name="spada_source">spada</string>
+    <string name="cristo_e_la_luce_source">cristo_e_la_luce</string>
+    <string name="rosario_cantato_source">rosario_cantato</string>
+    <string name="salmodie_lodi_source">salmodie_lodi</string>
+    <string name="prefazio_avvento_source">prefazio_avvento</string>
+    <string name="litanie_dei_santi_source">litanie_dei_santi</string>
+    <string name="dove_ti_sei_nascosto_source">dove_ti_sei_nascosto</string>
+    <string name="vangelo_cantato_source">vangelo_cantato</string>
+    <string name="risposte_alle_preghiere_source">risposte_alle_preghiere</string>
 </resources>

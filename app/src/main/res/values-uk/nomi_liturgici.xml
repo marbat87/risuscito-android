@@ -11,6 +11,6 @@
     <string name="canti_pace">ЗНАК МИРУ</string>
     <string name="canti_pane">ЛАМАННЯ ХЛІБУ</string>
     <string name="canti_fine">ПІСНІ НА ВИХІД</string>
-    <string name="canti_comunione">COMUNIONE</string>
-    <string name="canti_bambini">CANTI PER I BAMBINI</string>
+    <string name="canti_comunione">ПРИЧАСТЯ</string>
+    <string name="canti_bambini">ПІСНІ ДЛЯ ДІТЕЙ</string>
 </resources>

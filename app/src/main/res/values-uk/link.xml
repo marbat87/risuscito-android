@@ -234,5 +234,14 @@
     <string name="salve_regina_link" formatted="false" />
     <string name="sequenza_corpus_domini_link" formatted="false" />
     <string name="un_angelo_venne_dal_cielo_link" formatted="false" />
-    <string name="vivete_allegri_link" />
+    <string name="vivete_allegri_link" formatted="false" />
+    <string name="spada_link" formatted="false" />
+    <string name="cristo_e_la_luce_link" formatted="false" />
+    <string name="rosario_cantato_link" formatted="false" />
+    <string name="salmodie_lodi_link" formatted="false" />
+    <string name="prefazio_avvento_link" formatted="false" />
+    <string name="litanie_dei_santi_link" formatted="false" />
+    <string name="dove_ti_sei_nascosto_link" formatted="false" />
+    <string name="vangelo_cantato_link" formatted="false" />
+    <string name="risposte_alle_preghiere_link" formatted="false" />
 </resources>

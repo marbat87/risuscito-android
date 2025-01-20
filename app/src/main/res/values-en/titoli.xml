@@ -239,4 +239,14 @@
     <string name="salve_regina_title">Hail Queen</string>
     <string name="sequenza_corpus_domini_title">Sequence for Corpus Christi</string>
     <string name="un_angelo_venne_dal_cielo_title">An angel came from heaven - Rejoice, rejoice</string>
+    <string name="vivete_allegri_title">Vivete allegri</string>
+    <string name="spada_title">La espada</string>
+    <string name="cristo_e_la_luce_title">Cristo è la luce</string>
+    <string name="rosario_cantato_title">Rosario cantato</string>
+    <string name="salmodie_lodi_title">Salmodie per le Lodi</string>
+    <string name="prefazio_avvento_title">Prefazio di Avvento</string>
+    <string name="litanie_dei_santi_title">Litanie dei Santi</string>
+    <string name="dove_ti_sei_nascosto_title">Dove ti sei nascosto, Amato</string>
+    <string name="vangelo_cantato_title">Vangelo cantato</string>
+    <string name="risposte_alle_preghiere_title">Risposte alle preghiere</string>
 </resources>
