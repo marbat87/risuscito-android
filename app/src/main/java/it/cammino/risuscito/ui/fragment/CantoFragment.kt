@@ -607,6 +607,14 @@ open class CantoFragment : Fragment() {
             }
         }
 
+        Utility.fixSystemBarPadding(
+            binding.container
+        )
+
+        Utility.fixSystemBarPadding(
+            binding.fabCanti
+        )
+
         if (savedInstanceState == null)
             mCantiViewModel.mostraAudio = mSharedPrefs.getBoolean(Utility.SHOW_AUDIO, true)
 

@@ -24,7 +24,7 @@
             android:id="@+id/risuscito_toolbar"
             style="@style/Widget.Material3.Toolbar.Surface"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="?actionBarSize" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

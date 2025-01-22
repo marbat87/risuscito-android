@@ -239,4 +239,14 @@
     <string name="salve_regina_page">504</string>
     <string name="sequenza_corpus_domini_page">505</string>
     <string name="un_angelo_venne_dal_cielo_page">506</string>
+    <string name="prefazio_avvento_page">247</string>
+    <string name="rosario_cantato_page">248</string>
+    <string name="salmodie_lodi_page">249</string>
+    <string name="litanie_dei_santi_page">250</string>
+    <string name="vangelo_cantato_page">251</string>
+    <string name="risposte_alle_preghiere_page">252</string>
+    <string name="dove_ti_sei_nascosto_page">253</string>
+    <string name="spada_page">254</string>
+    <string name="vivete_allegri_page">255</string>
+    <string name="cristo_e_la_luce_page">256</string>
 </resources>

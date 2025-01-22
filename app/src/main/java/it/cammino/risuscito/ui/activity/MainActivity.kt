@@ -250,8 +250,8 @@ class MainActivity : ThemeableActivity() {
         onBackPressedDispatcher.addCallback(this) {
             when {
                 binding.fabPager.isOpen -> binding.fabPager.close()
-                !isOnTablet && (binding.drawer as? DrawerLayout)?.isOpen == true
-                -> (binding.drawer as? DrawerLayout)?.close()
+                !isOnTablet && binding.drawer?.isOpen == true
+                    -> binding.drawer?.close()
 
                 isActionMode -> destroyActionMode()
                 binding.searchViewLayout.searchViewContainer.currentTransitionState == SearchView.TransitionState.SHOWN -> binding.searchViewLayout.searchViewContainer.hide()
@@ -338,6 +338,10 @@ class MainActivity : ThemeableActivity() {
             job.cancel()
             ricercaStringa(binding.searchViewLayout.searchViewContainer.text.toString())
         }
+
+        Utility.fixSystemBarPadding(
+            binding.contentFrame
+        )
 
         subscribeUiChanges()
 
@@ -739,7 +743,7 @@ class MainActivity : ThemeableActivity() {
                 R.string.material_drawer_close
             )
             mActionBarDrawerToggle.syncState()
-            (binding.drawer as? DrawerLayout)?.addDrawerListener(mActionBarDrawerToggle)
+            binding.drawer?.addDrawerListener(mActionBarDrawerToggle)
         }
 
         binding.navigationView?.getHeaderView(0)?.findViewById<TextView>(R.id.drawer_header_title)
@@ -769,7 +773,7 @@ class MainActivity : ThemeableActivity() {
         mViewModel.selectedMenuItemId = menuItem.itemId
         menuItem.isChecked = true
 
-        (binding.drawer as? DrawerLayout)?.close()
+        binding.drawer?.close()
 
         // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
         val myFragment = supportFragmentManager
@@ -783,7 +787,7 @@ class MainActivity : ThemeableActivity() {
 
     private fun onMobileDrawerItemClick(menuItem: MenuItem) {
         expandToolbar()
-        (binding.drawer as? DrawerLayout)?.close()
+        binding.drawer?.close()
 
         val activityClass = when (menuItem.itemId) {
             R.id.navigation_settings -> SettingsActivity::class.java
@@ -1332,7 +1336,7 @@ class MainActivity : ThemeableActivity() {
             },
             supportFragmentManager
         )
-        (binding.drawer as? DrawerLayout)?.close()
+        binding.drawer?.close()
     }
 
     private suspend fun translate() {
@@ -1449,6 +1453,12 @@ class MainActivity : ThemeableActivity() {
         binding.contextualToolbar.setOnMenuItemClickListener(clickListener)
         setTransparentStatusBar(false)
         binding.risuscitoToolbar.expand(binding.contextualToolbarContainer, binding.appBarLayout)
+        binding.contextualToolbarContainer.setPadding(
+            binding.contextualToolbarContainer.paddingLeft,
+            binding.contextualToolbarContainer.paddingTop,
+            binding.contextualToolbarContainer.paddingRight,
+            0
+        )
     }
 
     fun destroyActionMode(): Boolean {

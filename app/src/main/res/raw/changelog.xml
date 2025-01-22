@@ -2,8 +2,8 @@
 <changelog>
 
     <release
-        versionCode="6001"
-        date="September 2024"
+        versionCode="6002"
+        date="February 2025"
         versionName="6.0.0">
         <new>New UI</new>
         <new>Optimizations and compatibility for Android 14 OS</new>
