@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -35,7 +35,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="?android:colorBackground"
-            app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior" />
+            app:layout_behavior="it.cammino.risuscito.ui.FABAwareScrollingViewBehavior"
+            android:name="it.cammino.risuscito.ui.fragment.GeneralIndexFragment"
+            tools:layout="@layout/tabs_layout" />
 
         <com.leinardi.android.speeddial.SpeedDialOverlayLayout
             android:id="@+id/overlay"
@@ -80,6 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="5dp"
+            android:fitsSystemWindows="true"
             android:visibility="gone">
 
             <com.google.android.material.appbar.MaterialToolbar
