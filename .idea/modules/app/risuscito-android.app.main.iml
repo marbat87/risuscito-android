@@ -13,7 +13,7 @@
           <option name="jvmDefault" value="all" />
           <option name="allowNoSourceFiles" value="true" />
           <option name="languageVersion" value="2.1" />
-          <option name="apiVersion" value="1.9" />
+          <option name="apiVersion" value="2.1" />
           <option name="pluginClasspaths">
             <array>
               <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.devtools.ksp/symbol-processing/2.1.0-1.0.29/d0702e9bcdf37a80e767d3a4da585ba6bee7e502/symbol-processing-2.1.0-1.0.29.jar" />
