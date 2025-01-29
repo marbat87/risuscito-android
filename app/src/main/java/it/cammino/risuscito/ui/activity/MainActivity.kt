@@ -37,6 +37,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
@@ -373,6 +374,9 @@ class MainActivity : ThemeableActivity() {
             } catch (e: GetCredentialException) {
                 Log.d(TAG, "login", e)
                 handleErrorResult(e.localizedMessage ?: "")
+            } catch (e: NoCredentialException) {
+                Log.d(TAG, "login", e)
+                handleErrorResult(e.localizedMessage ?: "")
             }
         }
     }
@@ -402,18 +406,12 @@ class MainActivity : ThemeableActivity() {
         mViewModel.httpRequestState.value = MainActivityViewModel.ClientState.STARTED
         lifecycleScope.launch(Dispatchers.IO) {
             mViewModel.sub = Utility.validateToken(
-                mViewModel.acct?.idToken ?: ""
+                mViewModel.acct?.idToken ?: "",
+                getString(R.string.default_web_client_id)
             )
             mViewModel.httpRequestState.postValue(MainActivityViewModel.ClientState.COMPLETED)
         }
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        Log.d(TAG, "ONRESUME")
-//        hideProgressDialog()
-//
-//    }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
@@ -939,8 +937,16 @@ class MainActivity : ThemeableActivity() {
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
         if (optionMenu) {
-            val iconColor = MaterialColors.getColor(this, R.attr.colorOnPrimaryContainer, TAG)
-            val backgroundColor = MaterialColors.getColor(this, R.attr.colorPrimaryContainer, TAG)
+            val iconColor = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOnPrimaryContainer,
+                TAG
+            )
+            val backgroundColor = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorPrimaryContainer,
+                TAG
+            )
 
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(
@@ -1238,7 +1244,7 @@ class MainActivity : ThemeableActivity() {
             }
             AppCompatResources.getDrawable(
                 this,
-                getTypedValueResId(R.attr.selectableItemBackgroundBorderless)
+                getTypedValueResId(androidx.appcompat.R.attr.selectableItemBackgroundBorderless)
             )?.let {
                 profileImage?.background =
                     it

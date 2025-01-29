@@ -1294,7 +1294,7 @@ open class CantoFragment : Fragment() {
 
     private fun playIntro(isFull: Boolean) {
         binding.musicControls.isVisible = true
-        val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
+        val colorOnPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
         var id = 1
         TapTargetSequence(requireActivity()).apply {
             continueOnCancel(true)
@@ -1312,6 +1312,7 @@ open class CantoFragment : Fragment() {
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(id++)
             )
             target(
@@ -1327,6 +1328,7 @@ open class CantoFragment : Fragment() {
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(id++)
             )
             if (isFull) {
@@ -1342,6 +1344,7 @@ open class CantoFragment : Fragment() {
                         .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
+                        .setForceCenteredTarget(true)
                         .id(id++)
                 )
             }
@@ -1357,6 +1360,7 @@ open class CantoFragment : Fragment() {
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(id++)
             )
             target(
@@ -1371,6 +1375,7 @@ open class CantoFragment : Fragment() {
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(id)
             )
             listener(
@@ -1682,9 +1687,9 @@ open class CantoFragment : Fragment() {
 
     private fun initFabOptions() {
         val iconColor =
-            MaterialColors.getColor(requireContext(), R.attr.colorOnPrimaryContainer, TAG)
+            MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimaryContainer, TAG)
         val backgroundColor =
-            MaterialColors.getColor(requireContext(), R.attr.colorPrimaryContainer, TAG)
+            MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorPrimaryContainer, TAG)
         binding.fabCanti.overlayLayout = binding.overlayCanto
         binding.fabCanti.mainFab.rippleColor =
             ContextCompat.getColor(requireContext(), android.R.color.transparent)

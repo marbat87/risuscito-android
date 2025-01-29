@@ -17,11 +17,10 @@ import android.util.Log
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
+import com.google.api.client.googleapis.util.Utils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import java.io.File
 import java.text.Normalizer
 import java.util.Random
@@ -61,7 +60,7 @@ object Utility {
     internal const val DYNAMIC_COLORS = "dynamic_colors"
     internal const val OLD_PAGE_SUFFIX = "_old"
     internal const val SHARED_AXIS = "shared_axis"
-    private const val TOKEN_VALIDATION_PATH = "https://oauth2.googleapis.com/tokeninfo?id_token="
+//    private const val TOKEN_VALIDATION_PATH = "https://oauth2.googleapis.com/tokeninfo?id_token="
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"
@@ -378,34 +377,52 @@ object Utility {
     }
 
     fun validateToken(
-        idToken: String
+        idToken: String,
+        clientId: String
     ): String {
+        Log.d(TAG, "IDTOKEN: $idToken")
         if (idToken.isEmpty())
             return StringUtils.EMPTY
 
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url(TOKEN_VALIDATION_PATH + idToken)
-            .build()
-
         try {
-            val response = client.newCall(request).execute()
-            Log.d(TAG, "validateToken statusCode: ${response.code}")
-            val res = response.body?.string()
-            Log.d(TAG, "validateToken response: $res")
-            if (response.code == 200 && res?.isNotEmpty() == true) {
-                val tokenInfo: TokenInfo = GsonBuilder().create().fromJson(
-                    res, object : TypeToken<TokenInfo>() {}.type
-                )
-                Log.d(TAG, "validateToken response sub: ${tokenInfo.sub}")
-                return tokenInfo.sub
-            } else {
-                return StringUtils.EMPTY
-            }
-        } catch (e: Exception) {
+            val verifier = GoogleIdTokenVerifier.Builder(
+                Utils.getDefaultTransport(),
+                Utils.getDefaultJsonFactory()
+            ) // Specify the CLIENT_ID of the app that accesses the backend:
+                .setAudience(listOf(clientId))
+                .build()
+            val googleIdToken: GoogleIdToken = verifier.verify(idToken)
+            Log.d(TAG, "IDTOKEN SUBJECT: ${googleIdToken.payload.subject}")
+            return googleIdToken.payload.subject
+        }
+        catch (e: Exception) {
             Log.e(TAG, "validateToken exception", e)
             return StringUtils.EMPTY
         }
+
+//        val client = OkHttpClient()
+//        val request = Request.Builder()
+//            .url(TOKEN_VALIDATION_PATH + idToken)
+//            .build()
+//
+//        try {
+//            val response = client.newCall(request).execute()
+//            Log.d(TAG, "validateToken statusCode: ${response.code}")
+//            val res = response.body?.string()
+//            Log.d(TAG, "validateToken response: $res")
+//            if (response.code == 200 && res?.isNotEmpty() == true) {
+//                val tokenInfo: TokenInfo = GsonBuilder().create().fromJson(
+//                    res, object : TypeToken<TokenInfo>() {}.type
+//                )
+//                Log.d(TAG, "validateToken response sub: ${tokenInfo.sub}")
+//                return tokenInfo.sub
+//            } else {
+//                return StringUtils.EMPTY
+//            }
+//        } catch (e: Exception) {
+//            Log.e(TAG, "validateToken exception", e)
+//            return StringUtils.EMPTY
+//        }
 
     }
 

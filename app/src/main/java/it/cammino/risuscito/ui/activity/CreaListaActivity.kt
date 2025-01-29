@@ -100,7 +100,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         AppCompatResources.getDrawable(this@CreaListaActivity, R.drawable.delete_sweep_24px)
             ?.let {
-                it.setTint(MaterialColors.getColor(view, R.attr.colorOnError))
+                it.setTint(MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnError))
                 val touchCallback = SimpleSwipeDragCallback(
                     this,
                     this,
@@ -108,14 +108,14 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     ItemTouchHelper.LEFT,
                     MaterialColors.harmonizeWithPrimary(
                         this,
-                        MaterialColors.getColor(this, R.attr.colorError, TAG)
+                        MaterialColors.getColor(this, androidx.appcompat.R.attr.colorError, TAG)
                     )
                 )
                     .withBackgroundSwipeRight(
                         MaterialColors.harmonizeWithPrimary(
                             this, MaterialColors.getColor(
                                 this,
-                                R.attr.colorError,
+                                androidx.appcompat.R.attr.colorError,
                                 TAG
                             )
                         )
@@ -482,7 +482,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     private fun playIntro() {
         binding.fabCreaLista.show()
-        val colorOnPrimary = MaterialColors.getColor(this, R.attr.colorOnPrimary, TAG)
+        val colorOnPrimary = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnPrimary, TAG)
         TapTargetSequence(this)
             .continueOnCancel(true)
             .targets(
@@ -498,6 +498,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .tintTarget(false)
+                    .setForceCenteredTarget(true)
                     .id(1),
                 TapTarget.forToolbarMenuItem(
                     binding.risuscitoToolbar,
@@ -511,6 +512,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(2),
                 TapTarget.forToolbarMenuItem(
                     binding.risuscitoToolbar,
@@ -524,6 +526,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(3)
             )
             .listener(

@@ -408,7 +408,7 @@ private fun Activity.createTaskDescriptionTiramisu(tag: String?): ActivityManage
     builder.setIcon(R.mipmap.ic_launcher)
     builder.setPrimaryColor(
         MaterialColors.getColor(
-            this, R.attr.colorPrimary, tag
+            this, androidx.appcompat.R.attr.colorPrimary, tag
         )
     )
     return builder.build()
@@ -418,14 +418,14 @@ private fun Activity.createTaskDescriptionTiramisu(tag: String?): ActivityManage
 @RequiresApi(Build.VERSION_CODES.P)
 private fun Activity.createTaskDescriptionP(tag: String?): ActivityManager.TaskDescription {
     return ActivityManager.TaskDescription(
-        null, R.mipmap.ic_launcher, MaterialColors.getColor(this, R.attr.colorPrimary, tag)
+        null, R.mipmap.ic_launcher, MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary, tag)
     )
 }
 
 @Suppress("DEPRECATION")
 private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.TaskDescription {
     return ActivityManager.TaskDescription(
-        null, null, MaterialColors.getColor(this, R.attr.colorPrimary, tag)
+        null, null, MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary, tag)
     )
 }
 
