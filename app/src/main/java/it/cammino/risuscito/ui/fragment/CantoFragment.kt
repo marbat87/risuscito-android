@@ -1087,7 +1087,7 @@ open class CantoFragment : Fragment() {
 
             while (line != null) {
                 Log.v(TAG, "RIGA DA ELAB: $line")
-                if ((line.contains("A13F3C"))
+                if ((line.startsWith("</FONT><FONT COLOR=\"#A13F3C\">"))
                     && !line.contains("<H2>")
                     && !line.contains("<H4>")
                     && insidePre
@@ -1210,7 +1210,7 @@ open class CantoFragment : Fragment() {
                         cantoTrasportato.append(line)
                         cantoTrasportato.append("\n")
                     } else {
-                        if (!line.contains(getString(R.string.barre_search_string))) {
+                        if (!line.contains(getString(R.string.barre_search_string)) || !line.contains("<H4>")) {
                             cantoTrasportato.append(line)
                             cantoTrasportato.append("\n")
                         }
@@ -1993,7 +1993,7 @@ open class CantoFragment : Fragment() {
                     "   }\n" +
                     "   @font-face {\n" +
                     "         font-family: 'PreFont';\n" +
-                    "         src: url(\"file:///android_asset/fonts/ChivoMono_regular.ttf\")\n" +
+                    "         src: url(\"file:///android_asset/fonts/FiraMono_regular.ttf\")\n" +
                     "      }\n" +
                     "   h2 {\n" +
                     "      font-family: 'MediumFont';\n" +

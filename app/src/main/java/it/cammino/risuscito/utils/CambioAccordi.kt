@@ -31,25 +31,28 @@ class CambioAccordi internal constructor(private val mContext: Context) {
             var found = false
 
             while (line != null && !found) {
-                var start = line.indexOf(mContext.resources.getString(R.string.barre_search_string))
-                if (start >= 0) {
-                    Log.v(TAG, "recuperaBarre - RIGA: $line")
-                    found = true
+                if (line.contains("<H4>")) {
+                    var start =
+                        line.indexOf(mContext.resources.getString(R.string.barre_search_string))
+                    if (start >= 0) {
+                        Log.v(TAG, "recuperaBarre - RIGA: $line")
+                        found = true
 
-                    start = when (language) {
-                        LANGUAGE_ENGLISH, LANGUAGE_TURKISH -> start + 5
-                        LANGUAGE_POLISH -> start + 6
-                        else -> line.indexOf(mContext.resources.getString(R.string.barre_add_al)) + 3
-                    }
+                        start = when (language) {
+                            LANGUAGE_ENGLISH, LANGUAGE_TURKISH -> start + 5
+                            LANGUAGE_POLISH -> start + 6
+                            else -> line.indexOf(mContext.resources.getString(R.string.barre_add_al)) + 3
+                        }
 
-                    val primoBarreBuilder = StringBuilder()
-                    for (i in start until line.length) {
-                        if (line[i] == ' ' || line[i] == '<')
-                            break
-                        else
-                            primoBarreBuilder.append(line[i])
+                        val primoBarreBuilder = StringBuilder()
+                        for (i in start until line.length) {
+                            if (line[i] == ' ' || line[i] == '<')
+                                break
+                            else
+                                primoBarreBuilder.append(line[i])
+                        }
+                        primoBarre = primoBarreBuilder.toString()
                     }
-                    primoBarre = primoBarreBuilder.toString()
                 }
                 line = br.readLine()
             }

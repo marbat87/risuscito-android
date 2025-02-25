@@ -35,10 +35,10 @@ open class Canto {
 
     companion object {
 
-        private const val GIALLO = "#EBD0A5"
+        private const val GIALLO = "#FEF9D7"
         const val BIANCO = "#FCFCFC"
-        private const val AZZURRO = "#6F949A"
-        private const val VERDE = "#8FC490"
+        private const val AZZURRO = "#C6EAFA"
+        private const val VERDE = "#C7E1AA"
 
         fun defaultCantoData(): ArrayList<Canto> {
             val cantiList = ArrayList<Canto>()
@@ -2764,7 +2764,7 @@ open class Canto {
             mCanto.titolo = "che_mi_baci_title"
             mCanto.source = "che_mi_baci_source"
             mCanto.favorite = 0
-            mCanto.color = AZZURRO
+            mCanto.color = BIANCO
             mCanto.link = "che_mi_baci_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -3382,6 +3382,34 @@ open class Canto {
             mCanto.favorite = 0
             mCanto.color = BIANCO
             mCanto.link = "un_angelo_venne_dal_cielo_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 244
+            mCanto.pagina = "cristo_e_la_luce_page"
+            mCanto.titolo = "cristo_e_la_luce_title"
+            mCanto.source = "cristo_e_la_luce_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "cristo_e_la_luce_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 245
+            mCanto.pagina = "dove_ti_sei_nascosto_page"
+            mCanto.titolo = "dove_ti_sei_nascosto_title"
+            mCanto.source = "dove_ti_sei_nascosto_source"
+            mCanto.favorite = 0
+            mCanto.color = VERDE
+            mCanto.link = "dove_ti_sei_nascosto_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
             mCanto.scrollY = 0

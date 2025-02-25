@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [(Canto::class), (ListaPers::class), (CustomList::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class), (IndiceBiblico::class)],
-    version = 11,
+    version = 12,
     autoMigrations = [
         AutoMigration(from = 10, to = 11)
     ]
@@ -163,6 +163,15 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                         insertValue.put("idCanto", it.idCanto)
                         db.insert("IndiceLiturgico", OnConflictStrategy.REPLACE, insertValue)
                     }
+            }
+        }
+
+        private val MIGRATION_11_12 = Migration11to12()
+
+        class Migration11to12 : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 11 to 12")
+                reinsertDefault(db)
             }
         }
 
@@ -317,7 +326,8 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                             MIGRATION_6_7,
                             MIGRATION_7_8,
                             MIGRATION_8_9,
-                            MIGRATION_9_10
+                            MIGRATION_9_10,
+                            MIGRATION_11_12
                         )
                         .addCallback(object : Callback() {
                             /**
