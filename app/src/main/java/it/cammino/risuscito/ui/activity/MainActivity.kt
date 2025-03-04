@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
@@ -52,7 +51,6 @@ import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
@@ -69,12 +67,12 @@ import com.leinardi.android.speeddial.SpeedDialView
 import com.michaelflisar.changelog.ChangelogBuilder
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.squareup.picasso.Picasso
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.ProfileUiManager
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
@@ -104,7 +102,6 @@ import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.extension.buildGoogleCredentialOption
 import it.cammino.risuscito.utils.extension.buildLastAccountCredentialOption
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
-import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.getVersionCode
 import it.cammino.risuscito.utils.extension.isDarkMode
 import it.cammino.risuscito.utils.extension.isFabExpansionLeft
@@ -140,6 +137,7 @@ class MainActivity : ThemeableActivity() {
     private var mCredentialRequest: GetCredentialRequest? = null
     private lateinit var auth: FirebaseAuth
     private var profileItem: MenuItem? = null
+    private var profileUiManager: ProfileUiManager? = null
     private var profilePhotoUrl: String = StringUtils.EMPTY
     private var profileNameStr: String = StringUtils.EMPTY
     private var profileEmailStr: String = StringUtils.EMPTY
@@ -1087,6 +1085,7 @@ class MainActivity : ThemeableActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         profileItem = menu.findItem(R.id.account_manager)
+        profileUiManager = ProfileUiManager(this, supportFragmentManager, profileItem?.actionView, mViewModel, ::signIn)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -1095,11 +1094,6 @@ class MainActivity : ThemeableActivity() {
         PreferenceManager.getDefaultSharedPreferences(this)
             .edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
-//        mSignInClient?.revokeAccess()?.addOnCompleteListener {
-//            updateUI(false)
-//            Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
-//                .show()
-//        }
     }
 
     private fun handleSignInResult(result: GetCredentialResponse) {
@@ -1190,89 +1184,116 @@ class MainActivity : ThemeableActivity() {
     }
 
     private fun updateUI(signedIn: Boolean) {
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .edit { putBoolean(Utility.SIGNED_IN, signedIn) }
-        if (signedIn)
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
-        if (signedIn) {
-            profileNameStr = mViewModel.acct?.displayName.orEmpty()
-            Log.d(TAG, "LOGIN profileNameStr: $profileNameStr")
-            profileEmailStr = mViewModel.acct?.id.orEmpty()
-            Log.d(TAG, "LOGIN profileEmailStr: $profileEmailStr")
-            val profilePhoto = mViewModel.acct?.profilePictureUri
-            if (profilePhoto != null) {
-                var personPhotoUrl = profilePhoto.toString()
-                Log.d(TAG, "personPhotoUrl BEFORE $personPhotoUrl")
-                personPhotoUrl = personPhotoUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
-                Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
-                profilePhotoUrl = personPhotoUrl
-            } else {
-                profilePhotoUrl = StringUtils.EMPTY
+        // Use a more descriptive name for the shared preferences
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        // Update sign-in status in shared preferences
+        sharedPreferences.edit {
+            putBoolean(Utility.SIGNED_IN, signedIn)
+            // Only set SIGN_IN_REQUESTED to true if signedIn is true
+            if (signedIn) {
+                putBoolean(Utility.SIGN_IN_REQUESTED, true)
             }
-        } else {
-            profileNameStr = StringUtils.EMPTY
-            profileEmailStr = StringUtils.EMPTY
-            profilePhotoUrl = StringUtils.EMPTY
         }
+        // Update profile information based on sign-in status
+        if (signedIn) {
+            updateProfileInfo(mViewModel.acct)
+        } else {
+            clearProfileInfo()
+        }
+
         updateProfileImage()
         hideProgressDialog()
     }
 
     fun updateProfileImage() {
-
-        val profileImage =
-            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
-        val signInButton =
-            profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
-
-        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(Utility.SIGNED_IN, false)
-        signInButton?.isGone =
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGNED_IN, false)
-
-        if (profilePhotoUrl.isEmpty()) {
-            profileImage?.setImageResource(R.drawable.account_circle_56px)
-            profileImage?.background =
-                null
-        } else {
-            AppCompatResources.getDrawable(this, R.drawable.account_circle_56px)?.let {
-                Picasso.get().load(profilePhotoUrl)
-                    .placeholder(it)
-                    .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon))
-            }
-            AppCompatResources.getDrawable(
-                this,
-                getTypedValueResId(androidx.appcompat.R.attr.selectableItemBackgroundBorderless)
-            )?.let {
-                profileImage?.background =
-                    it
-            }
-        }
-
-        profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
-            ?.setOnClickListener {
-                ProfileDialogFragment.show(
-                    ProfileDialogFragment.Builder(
-                        PROFILE_DIALOG
-                    ).apply {
-                        profileName = profileNameStr
-                        profileEmail = profileEmailStr
-                        profileImageSrc = profilePhotoUrl
-                    },
-                    supportFragmentManager
-                )
-            }
-
-        signInButton?.setOnClickListener {
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
-            mViewModel.showSnackbar = true
-            signIn(false)
-        }
-
+        profileUiManager?.updateProfileUi(profilePhotoUrl, profileNameStr, profileEmailStr)
     }
+
+    /**
+     * Updates the profile information (name, email, photo URL) based on the user's account.
+     *
+     * @param account The user's account information.
+     */
+    private fun updateProfileInfo(account: GoogleIdTokenCredential?) { // Replace YourAccountType with the actual type
+        profileNameStr = account?.displayName.orEmpty()
+        Log.d(TAG, "LOGIN profileName: $profileNameStr")
+
+        profileEmailStr = account?.id.orEmpty()
+        Log.d(TAG, "LOGIN profileEmail: $profileEmailStr")
+
+        profilePhotoUrl = account?.profilePictureUri?.let { uri ->
+            val originalUrl = uri.toString()
+            Log.d(TAG, "personPhotoUrl BEFORE: $originalUrl")
+            val modifiedUrl = originalUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
+            Log.d(TAG, "personPhotoUrl AFTER: $modifiedUrl")
+            modifiedUrl
+        } ?: StringUtils.EMPTY
+    }
+
+    /**
+     * Clears the profile information (name, email, photo URL).
+     */
+    private fun clearProfileInfo() {
+        profileNameStr = StringUtils.EMPTY
+        profileEmailStr = StringUtils.EMPTY
+        profilePhotoUrl = StringUtils.EMPTY
+    }
+
+//    fun updateProfileImage() {
+//
+//        val profileImage =
+//            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
+//        val signInButton =
+//            profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
+//
+//        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
+//            .getBoolean(Utility.SIGNED_IN, false)
+//        signInButton?.isGone =
+//            PreferenceManager.getDefaultSharedPreferences(this)
+//                .getBoolean(Utility.SIGNED_IN, false)
+//
+//        if (profilePhotoUrl.isEmpty()) {
+//            profileImage?.setImageResource(R.drawable.account_circle_56px)
+//            profileImage?.background =
+//                null
+//        } else {
+//            AppCompatResources.getDrawable(this, R.drawable.account_circle_56px)?.let {
+//                Picasso.get().load(profilePhotoUrl)
+//                    .placeholder(it)
+//                    .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon))
+//            }
+//            AppCompatResources.getDrawable(
+//                this,
+//                getTypedValueResId(androidx.appcompat.R.attr.selectableItemBackgroundBorderless)
+//            )?.let {
+//                profileImage?.background =
+//                    it
+//            }
+//        }
+//
+//        profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
+//            ?.setOnClickListener {
+//                ProfileDialogFragment.show(
+//                    ProfileDialogFragment.Builder(
+//                        PROFILE_DIALOG
+//                    ).apply {
+//                        profileName = profileNameStr
+//                        profileEmail = profileEmailStr
+//                        profileImageSrc = profilePhotoUrl
+//                    },
+//                    supportFragmentManager
+//                )
+//            }
+//
+//        signInButton?.setOnClickListener {
+//            PreferenceManager.getDefaultSharedPreferences(this)
+//                .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
+//            mViewModel.showSnackbar = true
+//            signIn(false)
+//        }
+//
+//    }
 
     fun showProgressDialog() {
         binding.loadingBar.isVisible = true
@@ -1482,7 +1503,7 @@ class MainActivity : ThemeableActivity() {
     }
 
     companion object {
-        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
+//        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val RESTORE_RUNNING = "RESTORE_RUNNING"
         private const val BACKUP_RUNNING = "BACKUP_RUNNING"
         private const val TRANSLATION = "TRANSLATION"

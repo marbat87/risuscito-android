@@ -163,7 +163,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     @Suppress("DEPRECATION")
-    fun setTransparentStatusBarLegacy(trasparent: Boolean) {
+    private fun setTransparentStatusBarLegacy(trasparent: Boolean) {
         window.statusBarColor = if (trasparent) ContextCompat.getColor(
             this,
             android.R.color.transparent

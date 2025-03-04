@@ -15,13 +15,10 @@
     <string name="benedizione_acqua_fonte_page">10</string>
     <string name="preconio_pasquale_page">12</string>
     <string name="prefazio_eucarestia_veglia_pasquale_page">14</string>
-    <string name="inno_lodi_avvento_fino16_page">15</string>
-    <string name="inno_lodi_avvento_dopo16_page">15</string>
     <string name="inno_lodi_pasqua_fino_ascensione_page">16</string>
     <string name="inno_vespri_pasqua_fino_ascensione_page">16</string>
     <string name="inno_lodi_pasqua_ascensione_pentecoste_page">17</string>
     <string name="inno_vespri_pasqua_ascensione_pentecoste_page">18</string>
-    <string name="inno_lodi_pentecoste_page">19</string>
     <string name="sequenza_di_pentecoste_page">20</string>
     <string name="preghiera_eucaristia_II_2_prefazio_page">21</string>
     <string name="preghiera_eucaristica_II_2_consacrazione_page">21</string>

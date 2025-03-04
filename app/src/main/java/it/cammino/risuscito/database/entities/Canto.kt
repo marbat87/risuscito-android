@@ -252,33 +252,33 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
-            mCanto = Canto()
-            mCanto.id = 18
-            mCanto.pagina = "inno_lodi_avvento_fino16_page"
-            mCanto.titolo = "inno_lodi_avvento_fino16_title"
-            mCanto.source = "inno_lodi_avvento_fino16_source"
-            mCanto.favorite = 0
-            mCanto.color = BIANCO
-            mCanto.link = "inno_lodi_avvento_fino16_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
-
-            mCanto = Canto()
-            mCanto.id = 19
-            mCanto.pagina = "inno_lodi_avvento_dopo16_page"
-            mCanto.titolo = "inno_lodi_avvento_dopo16_title"
-            mCanto.source = "inno_lodi_avvento_dopo16_source"
-            mCanto.favorite = 0
-            mCanto.color = BIANCO
-            mCanto.link = "inno_lodi_avvento_dopo16_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
+//            mCanto = Canto()
+//            mCanto.id = 18
+//            mCanto.pagina = "inno_lodi_avvento_fino16_page"
+//            mCanto.titolo = "inno_lodi_avvento_fino16_title"
+//            mCanto.source = "inno_lodi_avvento_fino16_source"
+//            mCanto.favorite = 0
+//            mCanto.color = BIANCO
+//            mCanto.link = "inno_lodi_avvento_fino16_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
+//
+//            mCanto = Canto()
+//            mCanto.id = 19
+//            mCanto.pagina = "inno_lodi_avvento_dopo16_page"
+//            mCanto.titolo = "inno_lodi_avvento_dopo16_title"
+//            mCanto.source = "inno_lodi_avvento_dopo16_source"
+//            mCanto.favorite = 0
+//            mCanto.color = BIANCO
+//            mCanto.link = "inno_lodi_avvento_dopo16_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
 
             mCanto = Canto()
             mCanto.id = 20
@@ -336,19 +336,19 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
-            mCanto = Canto()
-            mCanto.id = 24
-            mCanto.pagina = "inno_lodi_pentecoste_page"
-            mCanto.titolo = "inno_lodi_pentecoste_title"
-            mCanto.source = "inno_lodi_pentecoste_source"
-            mCanto.favorite = 0
-            mCanto.color = BIANCO
-            mCanto.link = "inno_lodi_pentecoste_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
+//            mCanto = Canto()
+//            mCanto.id = 24
+//            mCanto.pagina = "inno_lodi_pentecoste_page"
+//            mCanto.titolo = "inno_lodi_pentecoste_title"
+//            mCanto.source = "inno_lodi_pentecoste_source"
+//            mCanto.favorite = 0
+//            mCanto.color = BIANCO
+//            mCanto.link = "inno_lodi_pentecoste_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
 
             mCanto = Canto()
             mCanto.id = 25
@@ -3410,6 +3410,20 @@ open class Canto {
             mCanto.favorite = 0
             mCanto.color = VERDE
             mCanto.link = "dove_ti_sei_nascosto_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 246
+            mCanto.pagina = "litanie_dei_santi_page"
+            mCanto.titolo = "litanie_dei_santi_title"
+            mCanto.source = "litanie_dei_santi_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "litanie_dei_santi_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
             mCanto.scrollY = 0

@@ -90,26 +90,8 @@ class ImportActivity : AppCompatActivity() {
                     finish()
                 }
             }
-//            else {
-//                showWorkInProgress()
-//            }
         }
     }
-
-//    override fun attachBaseContext(newBase: Context) {
-//        Log.d(TAG, "attachBaseContext")
-//        super.attachBaseContext(RisuscitoApplication.localeManager.useCustomConfig(newBase))
-//    }
-//
-//    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-//        Log.d(TAG, "applyOverrideConfiguration")
-//        super.applyOverrideConfiguration(
-//            RisuscitoApplication.localeManager.updateConfigurationIfSupported(
-//                this,
-//                overrideConfiguration
-//            )
-//        )
-//    }
 
     companion object {
         internal val TAG = ImportActivity::class.java.canonicalName
