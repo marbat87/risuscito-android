@@ -229,7 +229,7 @@ class CambioAccordi internal constructor(private val mContext: Context) {
                 var found = false
 
                 while (line != null && !found) {
-                    if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
+                    if (line.startsWith("</FONT><FONT COLOR=\"#A13F3C\">") && !line.contains("<H2>") && !line.contains("<H4>")) {
                         Log.v(TAG, "recuperaPrimoAccordo - RIGA: $line")
                         val inizioRiga = line.indexOf("A13F3C") + 8
 

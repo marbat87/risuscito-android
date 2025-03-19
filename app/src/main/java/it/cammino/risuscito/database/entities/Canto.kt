@@ -3444,6 +3444,48 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
+            mCanto = Canto()
+            mCanto.id = 248
+            mCanto.pagina = "risposte_alle_preghiere_page"
+            mCanto.titolo = "risposte_alle_preghiere_title"
+            mCanto.source = "risposte_alle_preghiere_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "risposte_alle_preghiere_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 249
+            mCanto.pagina = "rosario_cantato_page"
+            mCanto.titolo = "rosario_cantato_title"
+            mCanto.source = "rosario_cantato_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "rosario_cantato_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 250
+            mCanto.pagina = "salmodie_lodi_page"
+            mCanto.titolo = "salmodie_lodi_title"
+            mCanto.source = "salmodie_lodi_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "salmodie_lodi_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
             return cantiList
         }
 
