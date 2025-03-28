@@ -221,7 +221,7 @@
     <string name="mi_rubasti_cuore_source">mi_rubasti_cuore</string>
     <string name="in_una_notte_oscura_source">in_una_notte_oscura</string>
     <string name="se_siete_risorti_source">se_siete_risorti</string>
-    <string name="una_gran_senal_source">no_canto</string>
+<!--    <string name="una_gran_senal_source">no_canto</string>-->
     <string name="resurrexit_source">resurrexit</string>
     <string name="ecco_il_mio_servo_source">no_canto</string>
     <string name="ave_maria_colomba_source">ave_maria_colomba</string>

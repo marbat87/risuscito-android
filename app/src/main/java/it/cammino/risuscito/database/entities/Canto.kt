@@ -3100,7 +3100,7 @@ open class Canto {
             mCanto.titolo = "tu_sei_bella_amica_mia_title"
             mCanto.source = "tu_sei_bella_amica_mia_source"
             mCanto.favorite = 0
-            mCanto.color = BIANCO
+            mCanto.color = VERDE
             mCanto.link = "tu_sei_bella_amica_mia_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -3178,19 +3178,19 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
-            mCanto = Canto()
-            mCanto.id = 229
-            mCanto.pagina = "una_gran_senal_page"
-            mCanto.titolo = "una_gran_senal_title"
-            mCanto.source = "una_gran_senal_source"
-            mCanto.favorite = 0
-            mCanto.color = BIANCO
-            mCanto.link = "una_gran_senal_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
+//            mCanto = Canto()
+//            mCanto.id = 229
+//            mCanto.pagina = "una_gran_senal_page"
+//            mCanto.titolo = "una_gran_senal_title"
+//            mCanto.source = "una_gran_senal_source"
+//            mCanto.favorite = 0
+//            mCanto.color = BIANCO
+//            mCanto.link = "una_gran_senal_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
 
             mCanto = Canto()
             mCanto.id = 230
@@ -3480,6 +3480,48 @@ open class Canto {
             mCanto.favorite = 0
             mCanto.color = GIALLO
             mCanto.link = "salmodie_lodi_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 251
+            mCanto.pagina = "spada_page"
+            mCanto.titolo = "spada_title"
+            mCanto.source = "spada_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "spada_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 252
+            mCanto.pagina = "vangelo_cantato_page"
+            mCanto.titolo = "vangelo_cantato_title"
+            mCanto.source = "vangelo_cantato_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "vangelo_cantato_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 253
+            mCanto.pagina = "vivete_allegri_page"
+            mCanto.titolo = "vivete_allegri_title"
+            mCanto.source = "vivete_allegri_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "vivete_allegri_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
             mCanto.scrollY = 0

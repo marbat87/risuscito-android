@@ -919,11 +919,11 @@ class IndiceBiblico {
             nBiblico.titoloIndice = "amen_amen_amen_biblico"
             indiceBiblico.add(nBiblico)
 
-            nBiblico = IndiceBiblico()
-            nBiblico.idCanto = 229
-            nBiblico.ordinamento = ++ordinamento
-            nBiblico.titoloIndice = "una_gran_senal_biblico"
-            indiceBiblico.add(nBiblico)
+//            nBiblico = IndiceBiblico()
+//            nBiblico.idCanto = 229
+//            nBiblico.ordinamento = ++ordinamento
+//            nBiblico.titoloIndice = "una_gran_senal_biblico"
+//            indiceBiblico.add(nBiblico)
 
             nBiblico = IndiceBiblico()
             nBiblico.idCanto = 214

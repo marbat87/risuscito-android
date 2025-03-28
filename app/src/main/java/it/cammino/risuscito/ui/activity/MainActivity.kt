@@ -1148,39 +1148,55 @@ class MainActivity : ThemeableActivity() {
     private fun firebaseAuthWithGoogle() {
         Log.d(TAG, "firebaseAuthWithGoogle: ${mViewModel.acct?.idToken}")
 
-        val credential = GoogleAuthProvider.getCredential(mViewModel.acct?.idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "firebaseAuthWithGoogle:success")
-                    if (mViewModel.showSnackbar) {
-                        Toast.makeText(
-                            this,
-                            getString(R.string.connected_as, mViewModel.acct?.displayName),
-                            Toast.LENGTH_SHORT
+        mViewModel.acct?.let { account ->
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "firebaseAuthWithGoogle:success")
+                        if (mViewModel.showSnackbar) {
+                            Toast.makeText(
+                                this,
+                                getString(R.string.connected_as, mViewModel.acct?.displayName),
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            mViewModel.showSnackbar = false
+                        }
+                        updateUI(true)
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCredential:failure", task.exception)
+                        updateUI(true)
+                        if (PreferenceManager.getDefaultSharedPreferences(this)
+                                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
                         )
-                            .show()
-                        mViewModel.showSnackbar = false
+                            Toast.makeText(
+                                this, getString(
+                                    R.string.login_failed,
+                                    -1,
+                                    task.exception?.localizedMessage
+                                ), Toast.LENGTH_SHORT
+                            )
+                                .show()
                     }
-                    updateUI(true)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    updateUI(true)
-                    if (PreferenceManager.getDefaultSharedPreferences(this)
-                            .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-                    )
-                        Toast.makeText(
-                            this, getString(
-                                R.string.login_failed,
-                                -1,
-                                task.exception?.localizedMessage
-                            ), Toast.LENGTH_SHORT
-                        )
-                            .show()
                 }
-            }
+        } ?: {
+            Log.w(TAG, "signInWithCredential:failure")
+            updateUI(true)
+            if (PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(Utility.SIGN_IN_REQUESTED, false)
+            )
+                Toast.makeText(
+                    this, getString(
+                        R.string.login_failed,
+                        -1,
+                        "null account"
+                    ), Toast.LENGTH_SHORT
+                )
+                    .show()
+        }
     }
 
     private fun updateUI(signedIn: Boolean) {
