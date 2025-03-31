@@ -1186,7 +1186,7 @@ open class CantoFragment : Fragment() {
                     cantoTrasportato.append(line)
                     cantoTrasportato.append("\n")
                 } else {
-                    if (line.contains("<H3>")) {
+                    if (line.contains(PRE_START)) {
                         if (barre != null && barre != "0") {
                             if (!barreScritto) {
                                 val oldLine: String = if (!barre.equals(
@@ -1194,11 +1194,11 @@ open class CantoFragment : Fragment() {
                                         ignoreCase = true
                                     )
                                 ) {
-                                    ("<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
+                                    ("<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#000000\"><I>"
                                             + getString(R.string.barre_al_tasto, barre)
                                             + "</I></FONT></SPAN></H4>")
                                 } else {
-                                    ("<H4><FONT COLOR=\"#A13F3C\"><I>"
+                                    ("<H4><FONT COLOR=\"#000000\"><I>"
                                             + getString(R.string.barre_al_tasto, barre)
                                             + "</I></FONT></H4>")
                                 }
@@ -1998,13 +1998,14 @@ open class CantoFragment : Fragment() {
                     "   h2 {\n" +
                     "      font-family: 'MediumFont';\n" +
                     "      text-align: center;\n" +
-                    "\n" +
+                    "   }\n" +
+                    "   h3 {\n" +
+                    "      text-align: center;\n" +
                     "   }\n" +
                     "   h4 {\n" +
                     "         font-family: 'MediumFont';\n" +
                     "         text-align: left;\n" +
                     "         margin-left: 50px;\n" +
-                    "\n" +
                     "   }\n" +
                     "   pre {\n" +
                     "      font-family: 'PreFont';\n" +
