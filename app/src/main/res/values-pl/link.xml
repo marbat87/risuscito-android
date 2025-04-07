@@ -11,7 +11,7 @@
     <string name="santo_1988_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/007a%20Swiety,%20Swiety,%20Swiety%20(1988).mp3</string>
     <string name="santo_1983_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/007b%20Swiety%20(1983).mp3</string>
     <string name="preghiera_eucarestica_II_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/008%20Modlitwa%20Eucharystyczna%20II%20(1)%20a.mp3</string>
-    <string name="preghiera_eucaristica_II_parte2_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/008%20Modlitwa%20Eucharystyczna%20II%20(1)%20b.mp3</string>
+<!--    <string name="preghiera_eucaristica_II_parte2_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/008%20Modlitwa%20Eucharystyczna%20II%20(1)%20b.mp3</string>-->
     <string name="benedizione_acqua_fonte_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/010%20011%20Blogoslawienie%20wody%20zrodla%20chrzcielnego.mp3</string>
     <string name="preconio_pasquale_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/012%20013%20Oredzie%20Paschalne.mp3</string>
     <string name="prefazio_eucarestia_veglia_pasquale_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/014%20Prefacja%20Eucharystii%20czuwania%20Paschalnego.mp3</string>
@@ -21,8 +21,8 @@
     <string name="inno_vespri_pasqua_ascensione_pentecoste_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/018%20Hymn%20na%20nieszpory%20od%20Wniebowstapienia%20do%20Pentecoste.mp3</string>
     <string name="sequenza_di_pentecoste_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/020%20Sekwencja%20na%20Pentecoste%20(Przybadz,%20o%20Duchu%20Swiety).mp3</string>
     <string name="preghiera_eucaristia_II_2_prefazio_link" formatted="false" />
-    <string name="preghiera_eucaristica_II_2_consacrazione_link" formatted="false" />
-    <string name="preghiera_eucaristica_II_2_offerta_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/023%20Modlitwa%20Eucharystyczna%20II%20(2).mp3</string>
+<!--    <string name="preghiera_eucaristica_II_2_consacrazione_link" formatted="false" />-->
+<!--    <string name="preghiera_eucaristica_II_2_offerta_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/023%20Modlitwa%20Eucharystyczna%20II%20(2).mp3</string>-->
     <string name="alleluja_pasquale_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/024a%20Alleluja%20Paschalne.mp3</string>
     <string name="acclamazioni_al_vangelo_link" formatted="false">http://www.neo.favourite.pl/Spiewnik/024b%20Alleluja%20na%20aklamacje%20do%20Ewangelii%20(1)%20a.mp3</string>
     <string name="acclamazioni_al_vangelo_quaresima_link" formatted="false" />
@@ -241,4 +241,5 @@
     <string name="dove_ti_sei_nascosto_link" formatted="false" />
     <string name="vangelo_cantato_link" formatted="false" />
     <string name="risposte_alle_preghiere_link" formatted="false" />
+    <string name="alla_tua_luce_link" formatted="false"/>
 </resources>

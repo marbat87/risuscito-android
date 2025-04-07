@@ -33,7 +33,7 @@
     <string name="santo_1988_page_old" translatable="false">7</string>
     <string name="santo_1983_page_old" translatable="false">7</string>
     <string name="preghiera_eucarestica_II_page_old" translatable="false">8</string>
-    <string name="preghiera_eucaristica_II_parte2_page_old" translatable="false">9</string>
+<!--    <string name="preghiera_eucaristica_II_parte2_page_old" translatable="false">9</string>-->
     <string name="benedizione_acqua_fonte_page_old" translatable="false">10</string>
     <string name="preconio_pasquale_page_old" translatable="false">12</string>
     <string name="prefazio_eucarestia_veglia_pasquale_page_old" translatable="false">14</string>
@@ -43,8 +43,8 @@
     <string name="inno_vespri_pasqua_ascensione_pentecoste_page_old" translatable="false">18</string>
     <string name="sequenza_di_pentecoste_page_old" translatable="false">20</string>
     <string name="preghiera_eucaristia_II_2_prefazio_page_old" translatable="false">21</string>
-    <string name="preghiera_eucaristica_II_2_consacrazione_page_old" translatable="false">22</string>
-    <string name="preghiera_eucaristica_II_2_offerta_page_old" translatable="false">23</string>
+<!--    <string name="preghiera_eucaristica_II_2_consacrazione_page_old" translatable="false">22</string>-->
+<!--    <string name="preghiera_eucaristica_II_2_offerta_page_old" translatable="false">23</string>-->
     <string name="alleluja_pasquale_page_old" translatable="false">24</string>
     <string name="acclamazioni_al_vangelo_page_old" translatable="false">24</string>
     <string name="acclamazioni_al_vangelo_quaresima_page_old" translatable="false">25</string>

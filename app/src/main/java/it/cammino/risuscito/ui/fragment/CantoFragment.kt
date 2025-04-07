@@ -1545,7 +1545,7 @@ open class CantoFragment : Fragment() {
             mCantiViewModel.mCurrentCanto = mDao.getCantoById(mCantiViewModel.idCanto)
             getRecordLink()
         }
-        if (mCantiViewModel.mCurrentCanto?.savedTab == null) {
+        if (mCantiViewModel.mCurrentCanto?.savedTab.isNullOrEmpty()) {
             if (mCantiViewModel.notaCambio.isEmpty()) {
                 mCantiViewModel.notaCambio = mCantiViewModel.primaNota
                 mCantiViewModel.mCurrentCanto?.savedTab = mCantiViewModel.notaCambio

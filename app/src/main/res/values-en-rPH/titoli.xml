@@ -11,10 +11,10 @@
     <string name="santo_1988_title">HOLY, HOLY, HOLY (1988)</string>
     <string name="santo_1983_title">HOLY, HOLY, HOLY (1983)</string>
     <string name="preghiera_eucarestica_II_title">EUCHARISTIC PRAYER II (Preface)</string>
-    <string name="preghiera_eucaristica_II_parte2_title">EUCHARISTIC PRAYER II (CONS. AND ACCL. - B: NEW MISSAL) </string>
-    <string name="preghiera_eucaristica_II_2_offerta_title">EUCHARISTIC PRAYER II (OFFERING, INTERCESSION, DOXOLOGY)</string>
+<!--    <string name="preghiera_eucaristica_II_parte2_title">EUCHARISTIC PRAYER II (CONS. AND ACCL. - B: NEW MISSAL) </string>-->
+<!--    <string name="preghiera_eucaristica_II_2_offerta_title">EUCHARISTIC PRAYER II (OFFERING, INTERCESSION, DOXOLOGY)</string>-->
     <string name="preghiera_eucaristia_II_2_prefazio_title">EUCHARISTIC PRAYER II (2): PREFACE</string>
-    <string name="preghiera_eucaristica_II_2_consacrazione_title">EUCHARISTIC PRAYER II (CONS. AND ACCL. - A: NEW MISSAL)</string>
+<!--    <string name="preghiera_eucaristica_II_2_consacrazione_title">EUCHARISTIC PRAYER II (CONS. AND ACCL. - A: NEW MISSAL)</string>-->
     <string name="prefazio_eucarestia_veglia_pasquale_title">PREFACE OF THE EUCHARISTIC PRAYER OF THE PASCHAL VIGIL</string>
     <string name="benedizione_acqua_fonte_title">BLESSING OF THE WATER OF THE BAPTISMAL FONT</string>
     <string name="preconio_pasquale_title">EXULTET (Paschal Preconium)</string>
@@ -247,4 +247,5 @@
     <string name="dove_ti_sei_nascosto_title">Dove ti sei nascosto, Amato</string>
     <string name="vangelo_cantato_title">Vangelo cantato</string>
     <string name="risposte_alle_preghiere_title">Risposte alle preghiere</string>
+    <string name="alla_tua_luce_title">Alla tua luce Signore vediamo la luce</string>
 </resources>

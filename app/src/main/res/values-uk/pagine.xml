@@ -11,7 +11,7 @@
     <string name="santo_1988_page">250</string>
     <string name="santo_1983_page">245</string>
     <string name="preghiera_eucarestica_II_page">221</string>
-    <string name="preghiera_eucaristica_II_parte2_page">224</string>
+<!--    <string name="preghiera_eucaristica_II_parte2_page">224</string>-->
     <string name="benedizione_acqua_fonte_page">216</string>
     <string name="preconio_pasquale_page">235</string>
     <string name="prefazio_eucarestia_veglia_pasquale_page">239</string>
@@ -21,8 +21,8 @@
     <string name="inno_vespri_pasqua_ascensione_pentecoste_page">118</string>
     <string name="sequenza_di_pentecoste_page">131</string>
     <string name="preghiera_eucaristia_II_2_prefazio_page">21</string>
-    <string name="preghiera_eucaristica_II_2_consacrazione_page">21</string>
-    <string name="preghiera_eucaristica_II_2_offerta_page">21</string>
+<!--    <string name="preghiera_eucaristica_II_2_consacrazione_page">21</string>-->
+<!--    <string name="preghiera_eucaristica_II_2_offerta_page">21</string>-->
     <string name="alleluja_pasquale_page">214</string>
     <string name="acclamazioni_al_vangelo_page">213</string>
     <string name="acclamazioni_al_vangelo_quaresima_page">212</string>
@@ -246,4 +246,5 @@
     <string name="spada_page">182</string>
     <string name="vivete_allegri_page">57</string>
     <string name="cristo_e_la_luce_page">154</string>
+    <string name="alla_tua_luce_page">257</string>
 </resources>
