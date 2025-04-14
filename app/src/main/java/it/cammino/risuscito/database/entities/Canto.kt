@@ -482,7 +482,7 @@ open class Canto {
             mCanto.titolo = "padre_nostro_title"
             mCanto.source = "padre_nostro_source"
             mCanto.favorite = 0
-            mCanto.color = AZZURRO
+            mCanto.color = GIALLO
             mCanto.link = "padre_nostro_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -496,7 +496,7 @@ open class Canto {
             mCanto.titolo = "credo_apostolico_title"
             mCanto.source = "credo_apostolico_source"
             mCanto.favorite = 0
-            mCanto.color = AZZURRO
+            mCanto.color = GIALLO
             mCanto.link = "credo_apostolico_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -3086,7 +3086,7 @@ open class Canto {
             mCanto.titolo = "amate_i_vostri_nemici_title"
             mCanto.source = "amate_i_vostri_nemici_source"
             mCanto.favorite = 0
-            mCanto.color = VERDE
+            mCanto.color = BIANCO
             mCanto.link = "amate_i_vostri_nemici_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
