@@ -256,6 +256,16 @@ class SectionedIndexFragment : Fragment() {
 
                 if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
                     // serve a non mettere il divisore sull'ultimo elemento della lista
+//                    mCantiViewModel.titoliList.add(
+////                        simpleItem {
+////                            setTitle = R.string.akeda_title
+////                            setPage = R.string.akeda_page
+////                            setSource = R.string.akeda_source
+////                            setColor = "#FCFCFC"
+////                            id = 192
+////                            undecodedSource = "akeda_source"
+////                        }
+////                    )
                     mCantiViewModel.titoliList.add(
                         simpleSubExpandableItem {
                             setTitle = Utility.getResId(canti[i].nome, R.string::class.java)

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">АДВЕНТ</string>
-    <string name="tempo_natale">РІЗДВО</string>
-    <string name="tempo_quaresima">ВЕЛИКИЙ ПІСТ</string>
-    <string name="tempo_pasqua">ПАСХА</string>
-    <string name="canti_pentecoste">П\'ЯТИДЕСЯТНИЦЯ</string>
-    <string name="canti_vergine">ПІСНІ ДО ДІВИ МАРІЇ</string>
-    <string name="lodi_vespri">УТРЕНЯ І ВЕЧІРНЯ</string>
-    <string name="canti_ingresso">ПІСНІ НА ВХІД</string>
-    <string name="canti_pace">ЗНАК МИРУ</string>
-    <string name="canti_pane">ЛАМАННЯ ХЛІБУ</string>
-    <string name="canti_fine">ПІСНІ НА ВИХІД</string>
-    <string name="canti_comunione">ПРИЧАСТЯ</string>
-    <string name="canti_bambini">ПІСНІ ДЛЯ ДІТЕЙ</string>
+    <string name="tempo_avvento">Адвент - Різдво</string>
+    <string name="tempo_quaresima">Великий Піст</string>
+    <string name="tempo_pasqua">Пасха - П\'ятидесятниця</string>
+    <string name="canti_vergine">Діва Марія</string>
+    <string name="lodi_vespri">Утреня</string>
+    <string name="canti_ingresso">Вхід</string>
+    <string name="canti_pace">Мир</string>
+    <string name="canti_pane">Хліб</string>
+    <string name="canti_fine">Вихід</string>
+    <string name="canti_comunione">Чаша</string>
+    <string name="canti_bambini">Дітей</string>
+    <string name="nomi_biblici">Біблійні імена</string>
+    <string name="triduo_pasqua_giovedi">Пасхальне тридення - Страсний четвер</string>
+    <string name="triduo_pasqua_venerdi">Пасхальне тридення - Страсний П\'ятниця</string>
+    <string name="triduo_pasqua_veglia">Пасхальне тридення - Вігілія</string>
 </resources>

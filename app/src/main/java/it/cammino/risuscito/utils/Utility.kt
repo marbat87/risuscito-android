@@ -1,6 +1,5 @@
 package it.cammino.risuscito.utils
 
-import android.annotation.TargetApi
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -15,6 +14,8 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
@@ -30,7 +31,8 @@ object Utility {
 
     // Costanti per le impostazioni
     private val TAG = Utility::class.java.canonicalName
-    const val VECCHIO_INDICE = "vecchio_indice"
+//    const val VECCHIO_INDICE = "vecchio_indice"
+    const val VECCHIO_INDICE = "vecchio_indice_new"
     const val SCREEN_ON = "sempre_acceso"
     const val SYSTEM_LANGUAGE = "lingua_sistema_new_new"
     const val CHANGE_LANGUAGE = "changed_language"
@@ -120,7 +122,7 @@ object Utility {
             retrieveMediaFileLinkLegacy(activity, link, cercaEsterno)
     }
 
-    @TargetApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.Q)
     fun retrieveMediaFileLinkQ(activity: Context, link: String, cercaEsterno: Boolean): String {
 
         if (isExternalStorageReadable && cercaEsterno) {
@@ -139,7 +141,7 @@ object Utility {
         return retrieveInternalLink(activity, link)
     }
 
-    @TargetApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.Q)
     internal fun getExternalMediaIdByName(context: Context, link: String): Long {
         val projection = arrayOf(MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID)
         val collection = MediaStore.Audio.Media
@@ -244,7 +246,7 @@ object Utility {
         )
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(
         applicationContext: Context,
         channelId: String,
@@ -271,7 +273,7 @@ object Utility {
         if (t.isNullOrEmpty())
             Color.WHITE
         else
-            Color.parseColor(t)
+            t.toColorInt()
 
     fun getExternalLink(link: String): String {
         return if (OSUtils.hasQ())

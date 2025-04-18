@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">ADVENT TIME</string>
-    <string name="tempo_natale">CHRISTMAS TIME</string>
-    <string name="tempo_quaresima">LENT TIME</string>
-    <string name="tempo_pasqua">EASTER TIME</string>
-    <string name="canti_pentecoste">PENTECOST</string>
-    <string name="canti_vergine">SONGS TO THE VIRGIN</string>
-    <string name="lodi_vespri">LAUDS AND VESPERS</string>
-    <string name="canti_ingresso">ENTRANCE</string>
-    <string name="canti_pace">PEACE</string>
-    <string name="canti_pane">BREAD</string>
-    <string name="canti_fine">FINAL</string>
-    <string name="canti_comunione">COMMUNION</string>
-    <string name="canti_bambini">SONG FOR THE CHILDREN</string>
+    <string name="tempo_avvento">Advent - Christmas</string>
+    <string name="tempo_quaresima">Lent</string>
+    <string name="tempo_pasqua">Easter - Pentecost</string>
+    <string name="canti_vergine">Virgin Mary</string>
+    <string name="lodi_vespri">Lauds</string>
+    <string name="canti_ingresso">Entrance</string>
+    <string name="canti_pace">Peace</string>
+    <string name="canti_pane">Bread</string>
+    <string name="canti_fine">Final</string>
+    <string name="canti_comunione">Chalice</string>
+    <string name="canti_bambini">Children</string>
+    <string name="nomi_biblici">Biblical Names</string>
+    <string name="triduo_pasqua_giovedi">Easter Triduum - Holy Thursday</string>
+    <string name="triduo_pasqua_venerdi">Easter Triduum - Holy Friday</string>
+    <string name="triduo_pasqua_veglia">Easter Triduum - Vigil</string>
 </resources>

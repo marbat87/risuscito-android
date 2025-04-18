@@ -5,12 +5,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.MaterialColors
 import com.mikepenz.fastadapter.ISubItem
 import com.mikepenz.fastadapter.expandable.ExpandableExtension
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.utils.Utility.helperSetString
+import it.cammino.risuscito.utils.extension.setSelectableRippleBackground
 
 fun simpleSubExpandableItem(block: SimpleSubExpandableItem.() -> Unit): SimpleSubExpandableItem =
     SimpleSubExpandableItem().apply(block)
@@ -45,27 +47,71 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
     override fun bindView(holder: ViewHolder, payloads: List<Any>) {
         super.bindView(holder, payloads)
 
+        //get the context
+        val ctx = holder.itemView.context
+
         val p = payloads.mapNotNull { it as? String }.lastOrNull()
         if (p != null) {
             // Check if this was an expanding or collapsing action by checking the payload.
             // If it is we need to animate the changes
             if (p == ExpandableExtension.PAYLOAD_EXPAND) {
                 holder.mIndicator.animate().rotation(0f).start()
+                holder.mIndicator.setColorFilter(
+                    MaterialColors.getColor(
+                        ctx,
+                        androidx.appcompat.R.attr.colorPrimary,
+                        TAG
+                    )
+                )
+                holder.mTitle.setTextColor(
+                    MaterialColors.getColor(
+                        ctx,
+                        androidx.appcompat.R.attr.colorPrimary,
+                        TAG
+                    )
+                )
                 return
             } else if (p == ExpandableExtension.PAYLOAD_COLLAPSE) {
                 holder.mIndicator.animate().rotation(180f).start()
+                holder.mIndicator.setColorFilter(
+                    MaterialColors.getColor(
+                        ctx,
+                        com.google.android.material.R.attr.colorOnSurface,
+                        TAG
+                    )
+                )
+                holder.mTitle.setTextColor(
+                    MaterialColors.getColor(
+                        ctx,
+                        com.google.android.material.R.attr.colorOnSurface,
+                        TAG
+                    )
+                )
                 return
             }
         }
 
-        //get the context
-        val ctx = holder.itemView.context
+        holder.mContainer.setSelectableRippleBackground(com.google.android.material.R.attr.colorSecondaryContainer)
 
         //set the background for the item
         holder.view.clearAnimation()
         holder.mTitle.text = "${title?.getText(ctx)} (${totItems})"
 
         holder.mIndicator.rotation = if (isExpanded) 0f else 180f
+        holder.mIndicator.setColorFilter(
+            MaterialColors.getColor(
+                ctx,
+                if (isExpanded) androidx.appcompat.R.attr.colorPrimary else com.google.android.material.R.attr.colorOnSurface,
+                TAG
+            )
+        )
+        holder.mTitle.setTextColor(
+            MaterialColors.getColor(
+                ctx,
+                if (isExpanded) androidx.appcompat.R.attr.colorPrimary else com.google.android.material.R.attr.colorOnSurface,
+                TAG
+            )
+        )
     }
 
     override fun unbindView(holder: ViewHolder) {
@@ -82,6 +128,11 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
         var mTitle: TextView = view.findViewById(R.id.group_title)
         var mIndicator: ImageView = view.findViewById(R.id.group_indicator)
+        var mContainer: View = view.findViewById(R.id.list_view_item_container)
+    }
+
+    companion object {
+        private val TAG = SimpleSubExpandableItem::class.java.canonicalName
     }
 
 }

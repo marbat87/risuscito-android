@@ -24,7 +24,6 @@ import android.media.MediaPlayer.OnCompletionListener
 import android.media.MediaPlayer.OnErrorListener
 import android.media.MediaPlayer.OnPreparedListener
 import android.media.MediaPlayer.OnSeekCompleteListener
-import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Handler
 import android.os.Looper
@@ -36,6 +35,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.text.TextUtils
 import android.util.Log
 import androidx.core.app.ServiceCompat
+import androidx.core.net.toUri
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
@@ -159,7 +159,7 @@ class Playback internal constructor(
                 else {
                     source?.let {
                         if (it.contains("com.android.providers.media"))
-                            mMediaPlayer?.setDataSource(mService.applicationContext, Uri.parse(it))
+                            mMediaPlayer?.setDataSource(mService.applicationContext, it.toUri())
                         else if (OSUtils.hasQ() && isExternalStorageReadable && mService.applicationContext.isDefaultLocationPublic) {
                             val externalMediaId =
                                 getExternalMediaIdByName(mService.applicationContext, it)

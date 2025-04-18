@@ -68,7 +68,7 @@ android {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.6.1"
+val roomVersion = "2.7.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10")
@@ -78,7 +78,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.appcompat:appcompat-resources:1.7.0")
-    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.fragment:fragment-ktx:1.8.6")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
@@ -96,7 +96,7 @@ dependencies {
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")

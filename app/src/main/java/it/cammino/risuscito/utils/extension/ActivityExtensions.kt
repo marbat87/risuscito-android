@@ -3,7 +3,6 @@
 package it.cammino.risuscito.utils.extension
 
 import android.Manifest
-import android.annotation.TargetApi
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Intent
@@ -67,7 +66,7 @@ private fun Resources.getSystemLocaleLegacy(): Locale {
     return configuration.locale
 }
 
-@TargetApi(Build.VERSION_CODES.N)
+@RequiresApi(Build.VERSION_CODES.N)
 private fun Resources.getSystemLocaleN(): Locale {
     return configuration.locales.get(0)
 }
@@ -341,7 +340,7 @@ fun ThemeableActivity.openCanto(
 
 }
 
-@TargetApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.P)
 fun Activity.getVersionCodeP(): Int {
     return packageManager.getPackageInfo(packageName).longVersionCode.toInt()
 }

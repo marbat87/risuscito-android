@@ -1,6 +1,5 @@
 package it.cammino.risuscito.utils
 
-import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
@@ -8,6 +7,7 @@ import android.os.Build
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -90,7 +90,7 @@ class Downloader(val activity: FragmentActivity) {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun startSavingO(input: InputStream?, mPath: String, fileLength: Int) {
         val resolver = activity.contentResolver
         val contentValues = ContentValues().apply {

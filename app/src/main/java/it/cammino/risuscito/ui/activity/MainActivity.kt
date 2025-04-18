@@ -44,6 +44,8 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.android.material.appbar.MaterialToolbar
@@ -99,8 +101,6 @@ import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
-import it.cammino.risuscito.utils.extension.buildGoogleCredentialOption
-import it.cammino.risuscito.utils.extension.buildLastAccountCredentialOption
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.getVersionCode
 import it.cammino.risuscito.utils.extension.isDarkMode
@@ -1069,6 +1069,19 @@ class MainActivity : ThemeableActivity() {
     private fun buildCredentialRequest(credOption: CredentialOption) {
         mCredentialRequest = GetCredentialRequest.Builder()
             .addCredentialOption(credOption)
+            .build()
+    }
+
+    private fun buildLastAccountCredentialOption(): CredentialOption {
+        return GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(true)
+            .setServerClientId(getString(R.string.default_web_client_id))
+            .setAutoSelectEnabled(true)
+            .build()
+    }
+
+    private fun buildGoogleCredentialOption(): CredentialOption {
+        return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id))
             .build()
     }
 

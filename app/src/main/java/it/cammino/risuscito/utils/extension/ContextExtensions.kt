@@ -14,11 +14,8 @@ import android.os.Build
 import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.credentials.CredentialOption
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.material.color.DynamicColorsOptions
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
@@ -196,16 +193,3 @@ val Fragment.systemLocale: Locale
     get() {
         return requireContext().systemLocale
     }
-
-fun Context.buildLastAccountCredentialOption(): CredentialOption {
-    return GetGoogleIdOption.Builder()
-        .setFilterByAuthorizedAccounts(true)
-        .setServerClientId(getString(R.string.default_web_client_id))
-        .setAutoSelectEnabled(true)
-        .build()
-}
-
-fun Context.buildGoogleCredentialOption(): CredentialOption {
-    return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id))
-        .build()
-}
