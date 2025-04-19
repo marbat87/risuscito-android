@@ -37,6 +37,8 @@ class SimpleSubExpandableItem : AbstractExpandableItem<SimpleSubExpandableItem.V
             field = value
         }
 
+    var group: Int = 0
+
     override val type: Int
         get() = R.id.fastadapter_expandable_item_id
 

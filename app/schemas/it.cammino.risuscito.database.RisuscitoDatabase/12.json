@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "152d9a5b4ad094706c2bd00bff98fc07",
+    "identityHash": "05a695e01dbb8208da6b9e9f161f0e74",
     "entities": [
       {
         "tableName": "Canto",
@@ -17,20 +17,17 @@
           {
             "fieldPath": "pagina",
             "columnName": "pagina",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "titolo",
             "columnName": "titolo",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "source",
             "columnName": "source",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "favorite",
@@ -41,14 +38,12 @@
           {
             "fieldPath": "color",
             "columnName": "color",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "link",
             "columnName": "link",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "zoom",
@@ -71,20 +66,17 @@
           {
             "fieldPath": "savedTab",
             "columnName": "savedTab",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "savedBarre",
             "columnName": "savedBarre",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "savedSpeed",
             "columnName": "savedSpeed",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -92,9 +84,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "ListaPers",
@@ -109,14 +99,12 @@
           {
             "fieldPath": "titolo",
             "columnName": "titolo",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "lista",
             "columnName": "lista",
-            "affinity": "BLOB",
-            "notNull": false
+            "affinity": "BLOB"
           }
         ],
         "primaryKey": {
@@ -124,9 +112,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "CustomList",
@@ -160,8 +146,7 @@
           {
             "fieldPath": "timestamp",
             "columnName": "timestamp",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -171,13 +156,11 @@
             "position",
             "idCanto"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "IndiceLiturgico",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idIndice` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, PRIMARY KEY(`idIndice`, `idCanto`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idIndice` INTEGER NOT NULL, `idCanto` INTEGER NOT NULL, `idGruppo` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`idIndice`, `idCanto`))",
         "fields": [
           {
             "fieldPath": "idIndice",
@@ -190,6 +173,13 @@
             "columnName": "idCanto",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "idGruppo",
+            "columnName": "idGruppo",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -198,9 +188,7 @@
             "idIndice",
             "idCanto"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "NomeLiturgico",
@@ -215,8 +203,7 @@
           {
             "fieldPath": "nome",
             "columnName": "nome",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -224,9 +211,7 @@
           "columnNames": [
             "idIndice"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "Cronologia",
@@ -250,9 +235,7 @@
           "columnNames": [
             "idCanto"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "Consegnato",
@@ -289,9 +272,7 @@
             "idConsegnato",
             "idCanto"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "LocalLink",
@@ -306,8 +287,7 @@
           {
             "fieldPath": "localPath",
             "columnName": "localPath",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -315,9 +295,7 @@
           "columnNames": [
             "idCanto"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "IndiceBiblico",
@@ -338,8 +316,7 @@
           {
             "fieldPath": "titoloIndice",
             "columnName": "titoloIndice",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -347,15 +324,35 @@
           "columnNames": [
             "ordinamento"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
+      },
+      {
+        "tableName": "NomeGruppoLiturgico",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idGruppo` INTEGER NOT NULL, `nomeGruppo` TEXT, PRIMARY KEY(`idGruppo`))",
+        "fields": [
+          {
+            "fieldPath": "idGruppo",
+            "columnName": "idGruppo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nomeGruppo",
+            "columnName": "nomeGruppo",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "idGruppo"
+          ]
+        }
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '152d9a5b4ad094706c2bd00bff98fc07')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '05a695e01dbb8208da6b9e9f161f0e74')"
     ]
   }
 }
