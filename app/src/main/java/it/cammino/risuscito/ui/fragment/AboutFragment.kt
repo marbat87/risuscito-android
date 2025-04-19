@@ -111,7 +111,7 @@ class AboutFragment : MaterialAboutFragment() {
                         } catch (e: Exception) {
                             // No activity to handle intent
                             Toast.makeText(
-                                ctx, R.string.mal_activity_exception, Toast.LENGTH_SHORT
+                                ctx, com.danielstone.materialaboutlibrary.R.string.mal_activity_exception, Toast.LENGTH_SHORT
                             ).show()
                         }
                     }.build()

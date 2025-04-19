@@ -46,6 +46,7 @@ import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
 import it.cammino.risuscito.utils.extension.createTaskDescription
@@ -63,6 +64,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.sql.Date
 import java.util.concurrent.ExecutionException
+import androidx.core.content.edit
 
 abstract class ThemeableActivity : AppCompatActivity() {
 
@@ -112,7 +114,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         try {
             mMediaBrowser?.connect()
         } catch (e: IllegalStateException) {
-            Log.e(TAG, "onStart: mMediaBrowser connecting")
+            Log.e(TAG, "onStart: mMediaBrowser connecting", e)
         }
     }
 
@@ -157,6 +159,12 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     fun setTransparentStatusBar(trasparent: Boolean) {
+        if (!OSUtils.hasV())
+            setTransparentStatusBarLegacy(trasparent)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setTransparentStatusBarLegacy(trasparent: Boolean) {
         window.statusBarColor = if (trasparent) ContextCompat.getColor(
             this,
             android.R.color.transparent
@@ -197,7 +205,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         usersPreferences[FIREBASE_FIELD_PREFERENCE] =
             PreferenceManager.getDefaultSharedPreferences(this).all
 
-        if (querySnapshot.documents.size > 0) {
+        if (querySnapshot.documents.isNotEmpty()) {
             Tasks.await(
                 db.collection(FIREBASE_COLLECTION_IMPOSTAZIONI)
                     .document(querySnapshot.documents[0].id).delete()
@@ -228,30 +236,27 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         Log.d(TAG, "querySnapshot.documents.size ${querySnapshot.documents.size}")
 
-        if (querySnapshot.documents.size == 0)
+        if (querySnapshot.documents.isEmpty())
             throw NoBackupException(resources)
 
-        val prefEdit = PreferenceManager.getDefaultSharedPreferences(this).edit()
-        prefEdit.clear()
+        PreferenceManager.getDefaultSharedPreferences(this).edit() {
+            clear()
 
-        val entries = querySnapshot.documents[0].get(FIREBASE_FIELD_PREFERENCE) as? HashMap<*, *>
-        entries?.let {
-            for ((key, v) in it) {
-                Log.d(TAG, "preference : $key / $v")
-                when (v) {
-                    is Boolean -> prefEdit.putBoolean(key as? String, v)
-                    is Float -> prefEdit.putFloat(key as? String, v)
-                    is Int -> prefEdit.putInt(key as? String, v)
-                    is Long -> prefEdit.putInt(key as? String, v.toInt())
-                    is String -> prefEdit.putString(key as? String, v)
+            val entries =
+                querySnapshot.documents[0].get(FIREBASE_FIELD_PREFERENCE) as? HashMap<*, *>
+            entries?.let {
+                for ((key, v) in it) {
+                    Log.d(TAG, "preference : $key / $v")
+                    when (v) {
+                        is Boolean -> putBoolean(key as? String, v)
+                        is Float -> putFloat(key as? String, v)
+                        is Int -> putInt(key as? String, v)
+                        is Long -> putInt(key as? String, v.toInt())
+                        is String -> putString(key as? String, v)
+                    }
                 }
             }
         }
-        prefEdit.apply()
-//        if (PreferenceManager.getDefaultSharedPreferences(this)
-//                .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).isNullOrEmpty()
-//        )
-//            RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
     }
 
     fun backupDatabase(userId: String?) {

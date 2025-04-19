@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -18,7 +17,7 @@
             android:id="@+id/risuscito_toolbar_canto"
             style="@style/Widget.Material3.Toolbar.Surface"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="?actionBarSize"
             app:title="@string/canto_title_activity" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -27,7 +26,7 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="?actionBarSize"
+        android:layout_marginBottom="@dimen/m3_bottom_nav_min_height"
         android:background="?android:colorBackground"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -204,12 +203,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        app:elevation="10dp"
         app:contentInsetStart="0dp"
+        app:paddingBottomSystemWindowInsets="true"
         app:hideOnScroll="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="@dimen/m3_bottom_nav_min_height">
 
             <TextView
                 android:id="@+id/slider_text"
@@ -272,10 +273,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/m3_bottomappbar_height"
+        android:layout_marginBottom="@dimen/m3_bottom_nav_min_height"
         app:sdExpansionMode="top"
         app:sdMainFabClosedSrc="@drawable/add_24px"
-        app:sdOverlayLayout="@id/overlay_canto"
-        tools:ignore="PrivateResource" />
+        app:sdOverlayLayout="@id/overlay_canto" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

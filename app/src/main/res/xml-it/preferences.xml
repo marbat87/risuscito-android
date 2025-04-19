@@ -76,11 +76,11 @@
             android:summary="@string/show_audio_summary"
             android:title="@string/show_audio_title" />
 
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="vecchio_indice"
-            android:summary="@string/old_index_title"
-            android:title="@string/old_index_summary" />
+<!--        <SwitchPreferenceCompat-->
+<!--            android:defaultValue="false"-->
+<!--            android:key="vecchio_indice"-->
+<!--            android:summary="@string/old_index_title"-->
+<!--            android:title="@string/old_index_summary" />-->
 
         <DropDownPreference
             android:defaultValue="0"

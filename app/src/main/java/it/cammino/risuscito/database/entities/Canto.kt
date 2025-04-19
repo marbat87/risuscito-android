@@ -35,10 +35,10 @@ open class Canto {
 
     companion object {
 
-        private const val GIALLO = "#EBD0A5"
+        private const val GIALLO = "#FEF9D7"
         const val BIANCO = "#FCFCFC"
-        private const val AZZURRO = "#6F949A"
-        private const val VERDE = "#8FC490"
+        private const val AZZURRO = "#C6EAFA"
+        private const val VERDE = "#C7E1AA"
 
         fun defaultCantoData(): ArrayList<Canto> {
             val cantiList = ArrayList<Canto>()
@@ -196,19 +196,19 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
-            mCanto = Canto()
-            mCanto.id = 12
-            mCanto.pagina = "preghiera_eucaristica_II_parte2_page"
-            mCanto.titolo = "preghiera_eucaristica_II_parte2_title"
-            mCanto.source = "preghiera_eucaristica_II_parte2_source"
-            mCanto.favorite = 0
-            mCanto.color = GIALLO
-            mCanto.link = "preghiera_eucaristica_II_parte2_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
+//            mCanto = Canto()
+//            mCanto.id = 12
+//            mCanto.pagina = "preghiera_eucaristica_II_parte2_page"
+//            mCanto.titolo = "preghiera_eucaristica_II_parte2_title"
+//            mCanto.source = "preghiera_eucaristica_II_parte2_source"
+//            mCanto.favorite = 0
+//            mCanto.color = GIALLO
+//            mCanto.link = "preghiera_eucaristica_II_parte2_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
 
             mCanto = Canto()
             mCanto.id = 13
@@ -252,33 +252,33 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
-            mCanto = Canto()
-            mCanto.id = 18
-            mCanto.pagina = "inno_lodi_avvento_fino16_page"
-            mCanto.titolo = "inno_lodi_avvento_fino16_title"
-            mCanto.source = "inno_lodi_avvento_fino16_source"
-            mCanto.favorite = 0
-            mCanto.color = BIANCO
-            mCanto.link = "inno_lodi_avvento_fino16_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
-
-            mCanto = Canto()
-            mCanto.id = 19
-            mCanto.pagina = "inno_lodi_avvento_dopo16_page"
-            mCanto.titolo = "inno_lodi_avvento_dopo16_title"
-            mCanto.source = "inno_lodi_avvento_dopo16_source"
-            mCanto.favorite = 0
-            mCanto.color = BIANCO
-            mCanto.link = "inno_lodi_avvento_dopo16_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
+//            mCanto = Canto()
+//            mCanto.id = 18
+//            mCanto.pagina = "inno_lodi_avvento_fino16_page"
+//            mCanto.titolo = "inno_lodi_avvento_fino16_title"
+//            mCanto.source = "inno_lodi_avvento_fino16_source"
+//            mCanto.favorite = 0
+//            mCanto.color = BIANCO
+//            mCanto.link = "inno_lodi_avvento_fino16_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
+//
+//            mCanto = Canto()
+//            mCanto.id = 19
+//            mCanto.pagina = "inno_lodi_avvento_dopo16_page"
+//            mCanto.titolo = "inno_lodi_avvento_dopo16_title"
+//            mCanto.source = "inno_lodi_avvento_dopo16_source"
+//            mCanto.favorite = 0
+//            mCanto.color = BIANCO
+//            mCanto.link = "inno_lodi_avvento_dopo16_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
 
             mCanto = Canto()
             mCanto.id = 20
@@ -336,19 +336,19 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
-            mCanto = Canto()
-            mCanto.id = 24
-            mCanto.pagina = "inno_lodi_pentecoste_page"
-            mCanto.titolo = "inno_lodi_pentecoste_title"
-            mCanto.source = "inno_lodi_pentecoste_source"
-            mCanto.favorite = 0
-            mCanto.color = BIANCO
-            mCanto.link = "inno_lodi_pentecoste_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
+//            mCanto = Canto()
+//            mCanto.id = 24
+//            mCanto.pagina = "inno_lodi_pentecoste_page"
+//            mCanto.titolo = "inno_lodi_pentecoste_title"
+//            mCanto.source = "inno_lodi_pentecoste_source"
+//            mCanto.favorite = 0
+//            mCanto.color = BIANCO
+//            mCanto.link = "inno_lodi_pentecoste_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
 
             mCanto = Canto()
             mCanto.id = 25
@@ -378,33 +378,33 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
-            mCanto = Canto()
-            mCanto.id = 27
-            mCanto.pagina = "preghiera_eucaristica_II_2_consacrazione_page"
-            mCanto.titolo = "preghiera_eucaristica_II_2_consacrazione_title"
-            mCanto.source = "preghiera_eucaristica_II_2_consacrazione_source"
-            mCanto.favorite = 0
-            mCanto.color = GIALLO
-            mCanto.link = "preghiera_eucaristica_II_2_consacrazione_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
-
-            mCanto = Canto()
-            mCanto.id = 28
-            mCanto.pagina = "preghiera_eucaristica_II_2_offerta_page"
-            mCanto.titolo = "preghiera_eucaristica_II_2_offerta_title"
-            mCanto.source = "preghiera_eucaristica_II_2_offerta_source"
-            mCanto.favorite = 0
-            mCanto.color = GIALLO
-            mCanto.link = "preghiera_eucaristica_II_2_offerta_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
+//            mCanto = Canto()
+//            mCanto.id = 27
+//            mCanto.pagina = "preghiera_eucaristica_II_2_consacrazione_page"
+//            mCanto.titolo = "preghiera_eucaristica_II_2_consacrazione_title"
+//            mCanto.source = "preghiera_eucaristica_II_2_consacrazione_source"
+//            mCanto.favorite = 0
+//            mCanto.color = GIALLO
+//            mCanto.link = "preghiera_eucaristica_II_2_consacrazione_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
+//
+//            mCanto = Canto()
+//            mCanto.id = 28
+//            mCanto.pagina = "preghiera_eucaristica_II_2_offerta_page"
+//            mCanto.titolo = "preghiera_eucaristica_II_2_offerta_title"
+//            mCanto.source = "preghiera_eucaristica_II_2_offerta_source"
+//            mCanto.favorite = 0
+//            mCanto.color = GIALLO
+//            mCanto.link = "preghiera_eucaristica_II_2_offerta_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
 
             mCanto = Canto()
             mCanto.id = 29
@@ -482,7 +482,7 @@ open class Canto {
             mCanto.titolo = "padre_nostro_title"
             mCanto.source = "padre_nostro_source"
             mCanto.favorite = 0
-            mCanto.color = AZZURRO
+            mCanto.color = GIALLO
             mCanto.link = "padre_nostro_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -496,7 +496,7 @@ open class Canto {
             mCanto.titolo = "credo_apostolico_title"
             mCanto.source = "credo_apostolico_source"
             mCanto.favorite = 0
-            mCanto.color = AZZURRO
+            mCanto.color = GIALLO
             mCanto.link = "credo_apostolico_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -2764,7 +2764,7 @@ open class Canto {
             mCanto.titolo = "che_mi_baci_title"
             mCanto.source = "che_mi_baci_source"
             mCanto.favorite = 0
-            mCanto.color = AZZURRO
+            mCanto.color = BIANCO
             mCanto.link = "che_mi_baci_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -3086,7 +3086,7 @@ open class Canto {
             mCanto.titolo = "amate_i_vostri_nemici_title"
             mCanto.source = "amate_i_vostri_nemici_source"
             mCanto.favorite = 0
-            mCanto.color = VERDE
+            mCanto.color = BIANCO
             mCanto.link = "amate_i_vostri_nemici_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -3100,7 +3100,7 @@ open class Canto {
             mCanto.titolo = "tu_sei_bella_amica_mia_title"
             mCanto.source = "tu_sei_bella_amica_mia_source"
             mCanto.favorite = 0
-            mCanto.color = BIANCO
+            mCanto.color = VERDE
             mCanto.link = "tu_sei_bella_amica_mia_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
@@ -3178,19 +3178,19 @@ open class Canto {
             mCanto.savedSpeed = "2"
             cantiList.add(mCanto)
 
-            mCanto = Canto()
-            mCanto.id = 229
-            mCanto.pagina = "una_gran_senal_page"
-            mCanto.titolo = "una_gran_senal_title"
-            mCanto.source = "una_gran_senal_source"
-            mCanto.favorite = 0
-            mCanto.color = BIANCO
-            mCanto.link = "una_gran_senal_link"
-            mCanto.zoom = 0
-            mCanto.scrollX = 0
-            mCanto.scrollY = 0
-            mCanto.savedSpeed = "2"
-            cantiList.add(mCanto)
+//            mCanto = Canto()
+//            mCanto.id = 229
+//            mCanto.pagina = "una_gran_senal_page"
+//            mCanto.titolo = "una_gran_senal_title"
+//            mCanto.source = "una_gran_senal_source"
+//            mCanto.favorite = 0
+//            mCanto.color = BIANCO
+//            mCanto.link = "una_gran_senal_link"
+//            mCanto.zoom = 0
+//            mCanto.scrollX = 0
+//            mCanto.scrollY = 0
+//            mCanto.savedSpeed = "2"
+//            cantiList.add(mCanto)
 
             mCanto = Canto()
             mCanto.id = 230
@@ -3382,6 +3382,160 @@ open class Canto {
             mCanto.favorite = 0
             mCanto.color = BIANCO
             mCanto.link = "un_angelo_venne_dal_cielo_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 244
+            mCanto.pagina = "cristo_e_la_luce_page"
+            mCanto.titolo = "cristo_e_la_luce_title"
+            mCanto.source = "cristo_e_la_luce_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "cristo_e_la_luce_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 245
+            mCanto.pagina = "dove_ti_sei_nascosto_page"
+            mCanto.titolo = "dove_ti_sei_nascosto_title"
+            mCanto.source = "dove_ti_sei_nascosto_source"
+            mCanto.favorite = 0
+            mCanto.color = VERDE
+            mCanto.link = "dove_ti_sei_nascosto_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 246
+            mCanto.pagina = "litanie_dei_santi_page"
+            mCanto.titolo = "litanie_dei_santi_title"
+            mCanto.source = "litanie_dei_santi_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "litanie_dei_santi_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 247
+            mCanto.pagina = "prefazio_avvento_page"
+            mCanto.titolo = "prefazio_avvento_title"
+            mCanto.source = "prefazio_avvento_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "prefazio_avvento_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 248
+            mCanto.pagina = "risposte_alle_preghiere_page"
+            mCanto.titolo = "risposte_alle_preghiere_title"
+            mCanto.source = "risposte_alle_preghiere_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "risposte_alle_preghiere_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 249
+            mCanto.pagina = "rosario_cantato_page"
+            mCanto.titolo = "rosario_cantato_title"
+            mCanto.source = "rosario_cantato_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "rosario_cantato_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 250
+            mCanto.pagina = "salmodie_lodi_page"
+            mCanto.titolo = "salmodie_lodi_title"
+            mCanto.source = "salmodie_lodi_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "salmodie_lodi_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 251
+            mCanto.pagina = "spada_page"
+            mCanto.titolo = "spada_title"
+            mCanto.source = "spada_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "spada_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 252
+            mCanto.pagina = "vangelo_cantato_page"
+            mCanto.titolo = "vangelo_cantato_title"
+            mCanto.source = "vangelo_cantato_source"
+            mCanto.favorite = 0
+            mCanto.color = GIALLO
+            mCanto.link = "vangelo_cantato_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 253
+            mCanto.pagina = "vivete_allegri_page"
+            mCanto.titolo = "vivete_allegri_title"
+            mCanto.source = "vivete_allegri_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "vivete_allegri_link"
+            mCanto.zoom = 0
+            mCanto.scrollX = 0
+            mCanto.scrollY = 0
+            mCanto.savedSpeed = "2"
+            cantiList.add(mCanto)
+
+            mCanto = Canto()
+            mCanto.id = 254
+            mCanto.pagina = "alla_tua_luce_page"
+            mCanto.titolo = "alla_tua_luce_title"
+            mCanto.source = "alla_tua_luce_source"
+            mCanto.favorite = 0
+            mCanto.color = BIANCO
+            mCanto.link = "alla_tua_luce_link"
             mCanto.zoom = 0
             mCanto.scrollX = 0
             mCanto.scrollY = 0

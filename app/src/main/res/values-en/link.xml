@@ -11,21 +11,18 @@
     <string name="santo_1988_link" formatted="false" />
     <string name="santo_1983_link" formatted="false" />
     <string name="preghiera_eucarestica_II_link" formatted="false" />
-    <string name="preghiera_eucaristica_II_parte2_link" formatted="false" />
+<!--    <string name="preghiera_eucaristica_II_parte2_link" formatted="false" />-->
     <string name="benedizione_acqua_fonte_link" formatted="false" />
     <string name="preconio_pasquale_link" formatted="false" />
     <string name="prefazio_eucarestia_veglia_pasquale_link" formatted="false" />
-    <string name="inno_lodi_avvento_fino16_link" formatted="false" />
-    <string name="inno_lodi_avvento_dopo16_link" formatted="false" />
     <string name="inno_lodi_pasqua_fino_ascensione_link" formatted="false" />
     <string name="inno_vespri_pasqua_fino_ascensione_link" formatted="false" />
     <string name="inno_lodi_pasqua_ascensione_pentecoste_link" formatted="false" />
     <string name="inno_vespri_pasqua_ascensione_pentecoste_link" formatted="false" />
-    <string name="inno_lodi_pentecoste_link" formatted="false" />
     <string name="sequenza_di_pentecoste_link" formatted="false" />
     <string name="preghiera_eucaristia_II_2_prefazio_link" formatted="false" />
-    <string name="preghiera_eucaristica_II_2_consacrazione_link" formatted="false" />
-    <string name="preghiera_eucaristica_II_2_offerta_link" formatted="false" />
+<!--    <string name="preghiera_eucaristica_II_2_consacrazione_link" formatted="false" />-->
+<!--    <string name="preghiera_eucaristica_II_2_offerta_link" formatted="false" />-->
     <string name="alleluja_pasquale_link" formatted="false" />
     <string name="acclamazioni_al_vangelo_link" formatted="false" />
     <string name="acclamazioni_al_vangelo_quaresima_link" formatted="false" />
@@ -219,7 +216,7 @@
     <string name="mi_rubasti_cuore_link" formatted="false" />
     <string name="in_una_notte_oscura_link" formatted="false" />
     <string name="se_siete_risorti_link" formatted="false" />
-    <string name="una_gran_senal_link" formatted="false" />
+<!--    <string name="una_gran_senal_link" formatted="false" />-->
     <string name="resurrexit_link" formatted="false" />
     <string name="ecco_il_mio_servo_link" formatted="false" />
     <string name="ave_maria_colomba_link" formatted="false" />
@@ -234,4 +231,15 @@
     <string name="salve_regina_link" formatted="false" />
     <string name="sequenza_corpus_domini_link" formatted="false" />
     <string name="un_angelo_venne_dal_cielo_link" formatted="false" />
+    <string name="vivete_allegri_link" />
+    <string name="spada_link" formatted="false" />
+    <string name="cristo_e_la_luce_link" formatted="false" />
+    <string name="rosario_cantato_link" formatted="false" />
+    <string name="salmodie_lodi_link" formatted="false" />
+    <string name="prefazio_avvento_link" formatted="false" />
+    <string name="litanie_dei_santi_link" formatted="false" />
+    <string name="dove_ti_sei_nascosto_link" formatted="false" />
+    <string name="vangelo_cantato_link" formatted="false" />
+    <string name="risposte_alle_preghiere_link" formatted="false" />
+    <string name="alla_tua_luce_link" formatted="false"/>
 </resources>

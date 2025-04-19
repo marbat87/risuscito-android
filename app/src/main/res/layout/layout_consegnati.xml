@@ -19,7 +19,6 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fadeScrollbars="true"
-        android:paddingBottom="@dimen/m3_bottomappbar_height"
         android:scrollbars="vertical"
         tools:ignore="PrivateResource" />
 
@@ -34,7 +33,6 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:fadeScrollbars="true"
-            android:paddingBottom="@dimen/m3_bottomappbar_height"
             android:scrollbars="vertical"
             tools:ignore="PrivateResource" />
 

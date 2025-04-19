@@ -81,7 +81,7 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
                     itemViewBinding.itemTag.text = i.toString()
                     cantoView.background = FastAdapterUIUtils.getSelectableBackground(
                         context,
-                        MaterialColors.getColor(context, R.attr.colorSecondaryContainer, TAG),
+                        MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, TAG),
                         true
                     )
 
@@ -95,7 +95,7 @@ class ListaPersonalizzataItem : AbstractBindingItem<GenericListItemBinding>() {
                         if (canto.ismSelected())
                             MaterialColors.getColor(
                                 context,
-                                R.attr.colorPrimary,
+                                androidx.appcompat.R.attr.colorPrimary,
                                 TAG
                             )
                         else canto.color

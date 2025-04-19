@@ -372,7 +372,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
     private fun fabIntro() {
         mMainActivity?.getFab()?.let { fab ->
             val colorOnPrimary =
-                MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
+                MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
             TapTargetView.showFor(
                 requireActivity(), // `this` is an Activity
                 TapTarget.forView(
@@ -386,6 +386,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .tintTarget(false) // Whether to tint the target view's color
+                    .setForceCenteredTarget(true)
                 ,
                 object :
                     TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
@@ -401,7 +402,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
     }
 
     private fun managerIntro() {
-        val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
+        val colorOnPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
         mMainActivity?.getFab()?.let { fab ->
             TapTargetSequence(requireActivity())
                 .continueOnCancel(true)
@@ -416,7 +417,8 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
                         .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
-                        .tintTarget(false),
+                        .tintTarget(false)
+                        .setForceCenteredTarget(true),
                     TapTarget.forToolbarMenuItem(
                         mMainActivity?.activityContextualToolbar,
                         R.id.cancel_change,
@@ -428,6 +430,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
                         .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
+                        .setForceCenteredTarget(true)
                 )
                 .listener(
                     object :

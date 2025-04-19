@@ -208,7 +208,7 @@ class CustomListsFragment : AccountMenuFragment() {
         mMainActivity?.enableFab(true)
         mMainActivity?.getFab()?.let { fab ->
             val colorOnPrimary =
-                MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
+                MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
             TapTargetSequence(requireActivity())
                 .continueOnCancel(true)
                 .targets(
@@ -224,6 +224,7 @@ class CustomListsFragment : AccountMenuFragment() {
                         .textColorInt(colorOnPrimary)
                         .descriptionTextSize(15)
                         .tintTarget(false) // Whether to tint the target view's color
+                        .setForceCenteredTarget(true)
                     ,
                     TapTarget.forView(
                         fab,
@@ -241,6 +242,7 @@ class CustomListsFragment : AccountMenuFragment() {
                         .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
+                        .setForceCenteredTarget(true)
                 )
                 .listener(
                     object :

@@ -28,6 +28,7 @@ import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
+import it.cammino.risuscito.items.titleItem
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
@@ -137,11 +138,11 @@ class SectionedIndexFragment : Fragment() {
                     if (!item.isExpanded) {
                         if (context?.isGridLayout == true)
                             glm?.scrollToPositionWithOffset(
-                                item.position, 0
+                                item.position + item.group, 0
                             )
                         else
                             llm?.scrollToPositionWithOffset(
-                                item.position, 0
+                                item.position + item.group, 0
                             )
                     }
                 }
@@ -233,8 +234,19 @@ class SectionedIndexFragment : Fragment() {
             mCantiViewModel.titoliList.clear()
             var mSubItems = LinkedList<ISubItem<*>>()
             var totCanti = 0
+            var ultimoGruppo = 0
 
             for (i in canti.indices) {
+//                AGGIUNTA RIGA DI GRUPPO
+                if (ultimoGruppo != canti[i].idGruppo) {
+                    ultimoGruppo = canti[i].idGruppo
+                    mCantiViewModel.titoliList.add(
+                        titleItem {
+                            setTitle = Utility.getResId(canti[i].nomeGruppo, R.string::class.java)
+                        }
+                    )
+                }
+
                 mSubItems.add(
                     simpleSubItem {
                         setTitle = Utility.getResId(canti[i].titolo, R.string::class.java)
@@ -260,13 +272,14 @@ class SectionedIndexFragment : Fragment() {
                         simpleSubExpandableItem {
                             setTitle = Utility.getResId(canti[i].nome, R.string::class.java)
                             totItems = totCanti
-                            id = canti[i].idIndice
+                            id = ("1000" + canti[i].idGruppo + canti[i].idIndice).toInt()
                             subItems = mSubItems
                             subItems.sortWith(compareBy(Collator.getInstance(systemLocale)) {
                                 (it as? SimpleSubItem)?.title?.getText(
                                     requireContext()
                                 )
                             })
+                            group = canti[i].idGruppo
                         }
                     )
                     mSubItems = LinkedList()
@@ -276,7 +289,6 @@ class SectionedIndexFragment : Fragment() {
         }
 
         var totListe = 0
-//        mCantiViewModel.titoliList.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) })
         mCantiViewModel.titoliList.forEach {
             (it as? SimpleSubExpandableItem)?.position = totListe++
         }

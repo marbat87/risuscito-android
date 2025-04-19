@@ -26,6 +26,7 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
+import androidx.core.net.toUri
 
 class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
@@ -33,7 +34,7 @@ class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
     override fun doWork(): Result {
         Log.d(TAG, "doWork: Starting")
         val resourceUri = inputData.getString(TAG_IMPORT_DATA)
-        return importData(Uri.parse(resourceUri))
+        return importData(resourceUri?.toUri() ?: Uri.EMPTY)
     }
 
     private fun importData(data: Uri): Result {

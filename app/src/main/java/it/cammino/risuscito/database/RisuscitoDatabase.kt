@@ -30,16 +30,18 @@ import it.cammino.risuscito.database.entities.IndiceBiblico
 import it.cammino.risuscito.database.entities.IndiceLiturgico
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.database.entities.LocalLink
+import it.cammino.risuscito.database.entities.NomeGruppoLiturgico
 import it.cammino.risuscito.database.entities.NomeLiturgico
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [(Canto::class), (ListaPers::class), (CustomList::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class), (IndiceBiblico::class)],
-    version = 11,
+    entities = [(Canto::class), (ListaPers::class), (CustomList::class), (IndiceLiturgico::class), (NomeLiturgico::class), (Cronologia::class), (Consegnato::class), (LocalLink::class), (IndiceBiblico::class), (NomeGruppoLiturgico::class)],
+    version = 13,
     autoMigrations = [
-        AutoMigration(from = 10, to = 11)
+        AutoMigration(from = 10, to = 11),
+        AutoMigration(from = 11, to = 12)
     ]
 )
 @TypeConverters(Converters::class)
@@ -166,6 +168,15 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_12_13 = Migration12to13()
+
+        class Migration12to13 : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate 12 to 13")
+                reinsertDefault(db)
+            }
+        }
+
         private fun reinsertDefault(db: SupportSQLiteDatabase) {
             Log.d(TAG, "reinsertDefault")
 
@@ -219,7 +230,21 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
             //8. Prepopulate new table NomeLiturgico
             NomeLiturgico.defaultData()
-                .forEach { db.execSQL("INSERT INTO NomeLiturgico VALUES(" + it.idIndice + ",'" + it.nome + "')") }
+                .forEach { db.execSQL("INSERT INTO NomeLiturgico VALUES(${it.idIndice},'${it.nome}')") }
+
+            // 8. Empty table NomeGruppoLiturgico
+            db.execSQL("DELETE FROM NomeGruppoLiturgico")
+
+            //9. Prepopulate new table NomeGruppoLiturgico
+            NomeGruppoLiturgico.defaultData()
+                .forEach { db.execSQL("INSERT INTO NomeGruppoLiturgico VALUES(${it.idGruppo},'${it.nomeGruppo}')") }
+
+            // 10. Empty table IndiceLiturgico
+            db.execSQL("DELETE FROM IndiceLiturgico")
+
+            //10a. Prepopulate new table IndiceLiturgico
+            IndiceLiturgico.defaultData()
+                .forEach { db.execSQL("INSERT INTO IndiceLiturgico VALUES(${it.idIndice},${it.idCanto}, ${it.idGruppo})") }
 
             //11. DROP table and RECREATE Cronologia
             db.execSQL("CREATE TABLE Cronologia_new (idCanto INTEGER NOT NULL DEFAULT 0, ultimaVisita INTEGER NOT NULL, PRIMARY KEY(idCanto))")
@@ -227,10 +252,10 @@ abstract class RisuscitoDatabase : RoomDatabase() {
             db.execSQL("DROP TABLE Cronologia")
             db.execSQL("ALTER TABLE Cronologia_new RENAME TO Cronologia")
 
-            // 7. Empty table NomeLiturgico
+            // 7. Empty table IndiceBiblico
             db.execSQL("DELETE FROM indicebiblico")
 
-            //8. Prepopulate new table NomeLiturgico
+            //8. Prepopulate new table IndiceBiblico
             IndiceBiblico.defaultIndiceBiblicoData()
                 .forEach { db.execSQL("INSERT INTO indicebiblico VALUES(${it.ordinamento},${it.idCanto}, '${it.titoloIndice}')") }
 
@@ -317,7 +342,8 @@ abstract class RisuscitoDatabase : RoomDatabase() {
                             MIGRATION_6_7,
                             MIGRATION_7_8,
                             MIGRATION_8_9,
-                            MIGRATION_9_10
+                            MIGRATION_9_10,
+                            MIGRATION_12_13
                         )
                         .addCallback(object : Callback() {
                             /**
@@ -349,6 +375,9 @@ abstract class RisuscitoDatabase : RoomDatabase() {
 
                 // INDICE_LIT_NAMES
                 mDb.indiceLiturgicoDao().insertNomeIndice(NomeLiturgico.defaultData())
+
+                // INDICE_LIT_GROUPS
+                mDb.indiceLiturgicoDao().insertNomeGruppoIndice(NomeGruppoLiturgico.defaultData())
 
                 mDb.indiceBiblicoDao().insertIndiceBiblico(IndiceBiblico.defaultIndiceBiblicoData())
             }

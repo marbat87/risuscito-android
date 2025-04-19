@@ -3,7 +3,6 @@
 package it.cammino.risuscito.utils.extension
 
 import android.Manifest
-import android.annotation.TargetApi
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Intent
@@ -67,7 +66,7 @@ private fun Resources.getSystemLocaleLegacy(): Locale {
     return configuration.locale
 }
 
-@TargetApi(Build.VERSION_CODES.N)
+@RequiresApi(Build.VERSION_CODES.N)
 private fun Resources.getSystemLocaleN(): Locale {
     return configuration.locales.get(0)
 }
@@ -79,6 +78,12 @@ val Resources.systemLocale: Locale
     }
 
 fun Activity.setupNavBarColor() {
+    if (!OSUtils.hasV())
+        setupNavBarColorLegacy()
+}
+
+@Suppress("DEPRECATION")
+fun Activity.setupNavBarColorLegacy() {
     if (OSUtils.hasO()) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         if (!isDarkMode) setLightNavigationBar()
@@ -274,7 +279,7 @@ private fun Activity.convert(prefName: String) {
     try {
         pref.getString(prefName, "0")
         Log.d(TAG, "onCreateView: $prefName STRING")
-    } catch (e: ClassCastException) {
+    } catch (_: ClassCastException) {
         Log.d(TAG, "onCreateView: $prefName INTEGER >> CONVERTO")
         pref.edit { putString(prefName, pref.getInt(prefName, 0).toString()) }
     }
@@ -335,7 +340,7 @@ fun ThemeableActivity.openCanto(
 
 }
 
-@TargetApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.P)
 fun Activity.getVersionCodeP(): Int {
     return packageManager.getPackageInfo(packageName).longVersionCode.toInt()
 }
@@ -402,7 +407,7 @@ private fun Activity.createTaskDescriptionTiramisu(tag: String?): ActivityManage
     builder.setIcon(R.mipmap.ic_launcher)
     builder.setPrimaryColor(
         MaterialColors.getColor(
-            this, R.attr.colorPrimary, tag
+            this, androidx.appcompat.R.attr.colorPrimary, tag
         )
     )
     return builder.build()
@@ -412,14 +417,14 @@ private fun Activity.createTaskDescriptionTiramisu(tag: String?): ActivityManage
 @RequiresApi(Build.VERSION_CODES.P)
 private fun Activity.createTaskDescriptionP(tag: String?): ActivityManager.TaskDescription {
     return ActivityManager.TaskDescription(
-        null, R.mipmap.ic_launcher, MaterialColors.getColor(this, R.attr.colorPrimary, tag)
+        null, R.mipmap.ic_launcher, MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary, tag)
     )
 }
 
 @Suppress("DEPRECATION")
 private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.TaskDescription {
     return ActivityManager.TaskDescription(
-        null, null, MaterialColors.getColor(this, R.attr.colorPrimary, tag)
+        null, null, MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary, tag)
     )
 }
 

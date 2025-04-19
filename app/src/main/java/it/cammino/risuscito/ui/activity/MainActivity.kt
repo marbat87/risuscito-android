@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
@@ -37,6 +36,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
@@ -53,7 +53,6 @@ import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
@@ -70,12 +69,12 @@ import com.leinardi.android.speeddial.SpeedDialView
 import com.michaelflisar.changelog.ChangelogBuilder
 import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.squareup.picasso.Picasso
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.ProfileUiManager
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
@@ -103,7 +102,6 @@ import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
-import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.getVersionCode
 import it.cammino.risuscito.utils.extension.isDarkMode
 import it.cammino.risuscito.utils.extension.isFabExpansionLeft
@@ -139,6 +137,7 @@ class MainActivity : ThemeableActivity() {
     private var mCredentialRequest: GetCredentialRequest? = null
     private lateinit var auth: FirebaseAuth
     private var profileItem: MenuItem? = null
+    private var profileUiManager: ProfileUiManager? = null
     private var profilePhotoUrl: String = StringUtils.EMPTY
     private var profileNameStr: String = StringUtils.EMPTY
     private var profileEmailStr: String = StringUtils.EMPTY
@@ -250,8 +249,8 @@ class MainActivity : ThemeableActivity() {
         onBackPressedDispatcher.addCallback(this) {
             when {
                 binding.fabPager.isOpen -> binding.fabPager.close()
-                !isOnTablet && (binding.drawer as? DrawerLayout)?.isOpen == true
-                -> (binding.drawer as? DrawerLayout)?.close()
+                !isOnTablet && binding.drawer?.isOpen == true
+                    -> binding.drawer?.close()
 
                 isActionMode -> destroyActionMode()
                 binding.searchViewLayout.searchViewContainer.currentTransitionState == SearchView.TransitionState.SHOWN -> binding.searchViewLayout.searchViewContainer.hide()
@@ -339,6 +338,10 @@ class MainActivity : ThemeableActivity() {
             ricercaStringa(binding.searchViewLayout.searchViewContainer.text.toString())
         }
 
+        Utility.fixSystemBarPadding(
+            binding.contentFrame
+        )
+
         subscribeUiChanges()
 
         Firebase.messaging.token.addOnCompleteListener(OnCompleteListener { task ->
@@ -369,6 +372,9 @@ class MainActivity : ThemeableActivity() {
             } catch (e: GetCredentialException) {
                 Log.d(TAG, "login", e)
                 handleErrorResult(e.localizedMessage ?: "")
+            } catch (e: NoCredentialException) {
+                Log.d(TAG, "login", e)
+                handleErrorResult(e.localizedMessage ?: "")
             }
         }
     }
@@ -388,7 +394,7 @@ class MainActivity : ThemeableActivity() {
             if (mViewModel.acct != null) {
                 validaToken(true)
             } else {
-                signInWithLastAccount()
+                signIn(true)
             }
         }
     }
@@ -398,18 +404,12 @@ class MainActivity : ThemeableActivity() {
         mViewModel.httpRequestState.value = MainActivityViewModel.ClientState.STARTED
         lifecycleScope.launch(Dispatchers.IO) {
             mViewModel.sub = Utility.validateToken(
-                mViewModel.acct?.idToken ?: ""
+                mViewModel.acct?.idToken ?: "",
+                getString(R.string.default_web_client_id)
             )
             mViewModel.httpRequestState.postValue(MainActivityViewModel.ClientState.COMPLETED)
         }
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        Log.d(TAG, "ONRESUME")
-//        hideProgressDialog()
-//
-//    }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
@@ -693,7 +693,7 @@ class MainActivity : ThemeableActivity() {
                             firebaseAuthWithGoogle()
                         } else {
                             if (mViewModel.retrieveLastAccount)
-                                signInWithLastAccount()
+                                signIn(true)
                         }
                     }
 
@@ -739,7 +739,7 @@ class MainActivity : ThemeableActivity() {
                 R.string.material_drawer_close
             )
             mActionBarDrawerToggle.syncState()
-            (binding.drawer as? DrawerLayout)?.addDrawerListener(mActionBarDrawerToggle)
+            binding.drawer?.addDrawerListener(mActionBarDrawerToggle)
         }
 
         binding.navigationView?.getHeaderView(0)?.findViewById<TextView>(R.id.drawer_header_title)
@@ -769,7 +769,7 @@ class MainActivity : ThemeableActivity() {
         mViewModel.selectedMenuItemId = menuItem.itemId
         menuItem.isChecked = true
 
-        (binding.drawer as? DrawerLayout)?.close()
+        binding.drawer?.close()
 
         // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
         val myFragment = supportFragmentManager
@@ -783,7 +783,7 @@ class MainActivity : ThemeableActivity() {
 
     private fun onMobileDrawerItemClick(menuItem: MenuItem) {
         expandToolbar()
-        (binding.drawer as? DrawerLayout)?.close()
+        binding.drawer?.close()
 
         val activityClass = when (menuItem.itemId) {
             R.id.navigation_settings -> SettingsActivity::class.java
@@ -935,8 +935,16 @@ class MainActivity : ThemeableActivity() {
         Log.d(TAG, "initFab optionMenu: $optionMenu")
 
         if (optionMenu) {
-            val iconColor = MaterialColors.getColor(this, R.attr.colorOnPrimaryContainer, TAG)
-            val backgroundColor = MaterialColors.getColor(this, R.attr.colorPrimaryContainer, TAG)
+            val iconColor = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOnPrimaryContainer,
+                TAG
+            )
+            val backgroundColor = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorPrimaryContainer,
+                TAG
+            )
 
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(
@@ -1046,12 +1054,9 @@ class MainActivity : ThemeableActivity() {
         get() = binding.mainContent
 
     // [START signIn]
-
-    private fun signInWithLastAccount() {
+    private fun signIn(lastAccount: Boolean) {
         // [START build_client]
-        mCredentialRequest = GetCredentialRequest.Builder()
-            .addCredentialOption(buildLastAccountCredentialOption())
-            .build()
+        buildCredentialRequest(if (lastAccount) buildLastAccountCredentialOption() else buildGoogleCredentialOption())
         // [END build_client]
 
         mCredentialRequest?.let {
@@ -1061,16 +1066,10 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
-    private fun signInWithGoogle() {
-        // [START build_client]
-        buildCredentialRequest(buildGoogleCredentialOption())
-        // [END build_client]
-
-        mCredentialRequest?.let {
-            lifecycleScope.launch {
-                login()
-            }
-        }
+    private fun buildCredentialRequest(credOption: CredentialOption) {
+        mCredentialRequest = GetCredentialRequest.Builder()
+            .addCredentialOption(credOption)
+            .build()
     }
 
     private fun buildLastAccountCredentialOption(): CredentialOption {
@@ -1083,12 +1082,6 @@ class MainActivity : ThemeableActivity() {
 
     private fun buildGoogleCredentialOption(): CredentialOption {
         return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id))
-            .build()
-    }
-
-    private fun buildCredentialRequest(credOption: CredentialOption) {
-        mCredentialRequest = GetCredentialRequest.Builder()
-            .addCredentialOption(credOption)
             .build()
     }
 
@@ -1105,6 +1098,7 @@ class MainActivity : ThemeableActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         profileItem = menu.findItem(R.id.account_manager)
+        profileUiManager = ProfileUiManager(this, supportFragmentManager, profileItem?.actionView, mViewModel, ::signIn)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -1113,11 +1107,6 @@ class MainActivity : ThemeableActivity() {
         PreferenceManager.getDefaultSharedPreferences(this)
             .edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
-//        mSignInClient?.revokeAccess()?.addOnCompleteListener {
-//            updateUI(false)
-//            Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
-//                .show()
-//        }
     }
 
     private fun handleSignInResult(result: GetCredentialResponse) {
@@ -1172,125 +1161,168 @@ class MainActivity : ThemeableActivity() {
     private fun firebaseAuthWithGoogle() {
         Log.d(TAG, "firebaseAuthWithGoogle: ${mViewModel.acct?.idToken}")
 
-        val credential = GoogleAuthProvider.getCredential(mViewModel.acct?.idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "firebaseAuthWithGoogle:success")
-                    if (mViewModel.showSnackbar) {
-                        Toast.makeText(
-                            this,
-                            getString(R.string.connected_as, mViewModel.acct?.displayName),
-                            Toast.LENGTH_SHORT
+        mViewModel.acct?.let { account ->
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "firebaseAuthWithGoogle:success")
+                        if (mViewModel.showSnackbar) {
+                            Toast.makeText(
+                                this,
+                                getString(R.string.connected_as, mViewModel.acct?.displayName),
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            mViewModel.showSnackbar = false
+                        }
+                        updateUI(true)
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCredential:failure", task.exception)
+                        updateUI(true)
+                        if (PreferenceManager.getDefaultSharedPreferences(this)
+                                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
                         )
-                            .show()
-                        mViewModel.showSnackbar = false
+                            Toast.makeText(
+                                this, getString(
+                                    R.string.login_failed,
+                                    -1,
+                                    task.exception?.localizedMessage
+                                ), Toast.LENGTH_SHORT
+                            )
+                                .show()
                     }
-                    updateUI(true)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    updateUI(true)
-                    if (PreferenceManager.getDefaultSharedPreferences(this)
-                            .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-                    )
-                        Toast.makeText(
-                            this, getString(
-                                R.string.login_failed,
-                                -1,
-                                task.exception?.localizedMessage
-                            ), Toast.LENGTH_SHORT
-                        )
-                            .show()
                 }
-            }
+        } ?: {
+            Log.w(TAG, "signInWithCredential:failure")
+            updateUI(true)
+            if (PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(Utility.SIGN_IN_REQUESTED, false)
+            )
+                Toast.makeText(
+                    this, getString(
+                        R.string.login_failed,
+                        -1,
+                        "null account"
+                    ), Toast.LENGTH_SHORT
+                )
+                    .show()
+        }
     }
 
     private fun updateUI(signedIn: Boolean) {
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .edit { putBoolean(Utility.SIGNED_IN, signedIn) }
-        if (signedIn)
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
-        if (signedIn) {
-            profileNameStr = mViewModel.acct?.displayName.orEmpty()
-            Log.d(TAG, "LOGIN profileNameStr: $profileNameStr")
-            profileEmailStr = mViewModel.acct?.id.orEmpty()
-            Log.d(TAG, "LOGIN profileEmailStr: $profileEmailStr")
-            val profilePhoto = mViewModel.acct?.profilePictureUri
-            if (profilePhoto != null) {
-                var personPhotoUrl = profilePhoto.toString()
-                Log.d(TAG, "personPhotoUrl BEFORE $personPhotoUrl")
-                personPhotoUrl = personPhotoUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
-                Log.d(TAG, "personPhotoUrl AFTER $personPhotoUrl")
-                profilePhotoUrl = personPhotoUrl
-            } else {
-                profilePhotoUrl = StringUtils.EMPTY
+        // Use a more descriptive name for the shared preferences
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        // Update sign-in status in shared preferences
+        sharedPreferences.edit {
+            putBoolean(Utility.SIGNED_IN, signedIn)
+            // Only set SIGN_IN_REQUESTED to true if signedIn is true
+            if (signedIn) {
+                putBoolean(Utility.SIGN_IN_REQUESTED, true)
             }
-        } else {
-            profileNameStr = StringUtils.EMPTY
-            profileEmailStr = StringUtils.EMPTY
-            profilePhotoUrl = StringUtils.EMPTY
         }
+        // Update profile information based on sign-in status
+        if (signedIn) {
+            updateProfileInfo(mViewModel.acct)
+        } else {
+            clearProfileInfo()
+        }
+
         updateProfileImage()
         hideProgressDialog()
     }
 
     fun updateProfileImage() {
-
-        val profileImage =
-            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
-        val signInButton =
-            profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
-
-        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(Utility.SIGNED_IN, false)
-        signInButton?.isGone =
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGNED_IN, false)
-
-        if (profilePhotoUrl.isEmpty()) {
-            profileImage?.setImageResource(R.drawable.account_circle_56px)
-            profileImage?.background =
-                null
-        } else {
-            AppCompatResources.getDrawable(this, R.drawable.account_circle_56px)?.let {
-                Picasso.get().load(profilePhotoUrl)
-                    .placeholder(it)
-                    .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon))
-            }
-            AppCompatResources.getDrawable(
-                this,
-                getTypedValueResId(R.attr.selectableItemBackgroundBorderless)
-            )?.let {
-                profileImage?.background =
-                    it
-            }
-        }
-
-        profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
-            ?.setOnClickListener {
-                ProfileDialogFragment.show(
-                    ProfileDialogFragment.Builder(
-                        PROFILE_DIALOG
-                    ).apply {
-                        profileName = profileNameStr
-                        profileEmail = profileEmailStr
-                        profileImageSrc = profilePhotoUrl
-                    },
-                    supportFragmentManager
-                )
-            }
-
-        signInButton?.setOnClickListener {
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
-            mViewModel.showSnackbar = true
-            signInWithGoogle()
-        }
-
+        profileUiManager?.updateProfileUi(profilePhotoUrl, profileNameStr, profileEmailStr)
     }
+
+    /**
+     * Updates the profile information (name, email, photo URL) based on the user's account.
+     *
+     * @param account The user's account information.
+     */
+    private fun updateProfileInfo(account: GoogleIdTokenCredential?) { // Replace YourAccountType with the actual type
+        profileNameStr = account?.displayName.orEmpty()
+        Log.d(TAG, "LOGIN profileName: $profileNameStr")
+
+        profileEmailStr = account?.id.orEmpty()
+        Log.d(TAG, "LOGIN profileEmail: $profileEmailStr")
+
+        profilePhotoUrl = account?.profilePictureUri?.let { uri ->
+            val originalUrl = uri.toString()
+            Log.d(TAG, "personPhotoUrl BEFORE: $originalUrl")
+            val modifiedUrl = originalUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
+            Log.d(TAG, "personPhotoUrl AFTER: $modifiedUrl")
+            modifiedUrl
+        } ?: StringUtils.EMPTY
+    }
+
+    /**
+     * Clears the profile information (name, email, photo URL).
+     */
+    private fun clearProfileInfo() {
+        profileNameStr = StringUtils.EMPTY
+        profileEmailStr = StringUtils.EMPTY
+        profilePhotoUrl = StringUtils.EMPTY
+    }
+
+//    fun updateProfileImage() {
+//
+//        val profileImage =
+//            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
+//        val signInButton =
+//            profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
+//
+//        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
+//            .getBoolean(Utility.SIGNED_IN, false)
+//        signInButton?.isGone =
+//            PreferenceManager.getDefaultSharedPreferences(this)
+//                .getBoolean(Utility.SIGNED_IN, false)
+//
+//        if (profilePhotoUrl.isEmpty()) {
+//            profileImage?.setImageResource(R.drawable.account_circle_56px)
+//            profileImage?.background =
+//                null
+//        } else {
+//            AppCompatResources.getDrawable(this, R.drawable.account_circle_56px)?.let {
+//                Picasso.get().load(profilePhotoUrl)
+//                    .placeholder(it)
+//                    .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon))
+//            }
+//            AppCompatResources.getDrawable(
+//                this,
+//                getTypedValueResId(androidx.appcompat.R.attr.selectableItemBackgroundBorderless)
+//            )?.let {
+//                profileImage?.background =
+//                    it
+//            }
+//        }
+//
+//        profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
+//            ?.setOnClickListener {
+//                ProfileDialogFragment.show(
+//                    ProfileDialogFragment.Builder(
+//                        PROFILE_DIALOG
+//                    ).apply {
+//                        profileName = profileNameStr
+//                        profileEmail = profileEmailStr
+//                        profileImageSrc = profilePhotoUrl
+//                    },
+//                    supportFragmentManager
+//                )
+//            }
+//
+//        signInButton?.setOnClickListener {
+//            PreferenceManager.getDefaultSharedPreferences(this)
+//                .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
+//            mViewModel.showSnackbar = true
+//            signIn(false)
+//        }
+//
+//    }
 
     fun showProgressDialog() {
         binding.loadingBar.isVisible = true
@@ -1360,7 +1392,7 @@ class MainActivity : ThemeableActivity() {
             },
             supportFragmentManager
         )
-        (binding.drawer as? DrawerLayout)?.close()
+        binding.drawer?.close()
     }
 
     private suspend fun translate() {
@@ -1477,6 +1509,12 @@ class MainActivity : ThemeableActivity() {
         binding.contextualToolbar.setOnMenuItemClickListener(clickListener)
         setTransparentStatusBar(false)
         binding.risuscitoToolbar.expand(binding.contextualToolbarContainer, binding.appBarLayout)
+        binding.contextualToolbarContainer.setPadding(
+            binding.contextualToolbarContainer.paddingLeft,
+            binding.contextualToolbarContainer.paddingTop,
+            binding.contextualToolbarContainer.paddingRight,
+            0
+        )
     }
 
     fun destroyActionMode(): Boolean {
@@ -1494,7 +1532,7 @@ class MainActivity : ThemeableActivity() {
     }
 
     companion object {
-        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
+//        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val RESTORE_RUNNING = "RESTORE_RUNNING"
         private const val BACKUP_RUNNING = "BACKUP_RUNNING"
         private const val TRANSLATION = "TRANSLATION"
