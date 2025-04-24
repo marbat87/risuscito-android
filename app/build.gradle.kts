@@ -68,7 +68,7 @@ android {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.7.0"
+val roomVersion = "2.7.1"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10")
@@ -87,7 +87,7 @@ dependencies {
     implementation("androidx.media:media:1.7.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.10.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
     implementation("androidx.preference:preference-ktx:1.2.1")
