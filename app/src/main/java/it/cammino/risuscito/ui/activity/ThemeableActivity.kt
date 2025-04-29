@@ -239,7 +239,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (querySnapshot.documents.isEmpty())
             throw NoBackupException(resources)
 
-        PreferenceManager.getDefaultSharedPreferences(this).edit() {
+        PreferenceManager.getDefaultSharedPreferences(this).edit {
             clear()
 
             val entries =

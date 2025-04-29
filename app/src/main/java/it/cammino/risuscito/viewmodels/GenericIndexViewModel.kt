@@ -161,7 +161,7 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
                             true
                         } else
                             false
-                    } ?: false
+                    } == true
                 }
             }
         }
@@ -301,7 +301,7 @@ open class GenericIndexViewModel(application: Application) : AndroidViewModel(ap
                             true
                         } else
                             false
-                    } ?: false
+                    } == true
                 }
             }
         }

@@ -32,6 +32,7 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.database.entities.NomeGruppoLiturgico
 import it.cammino.risuscito.database.entities.NomeLiturgico
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -322,6 +323,7 @@ abstract class RisuscitoDatabase : RoomDatabase() {
          * @param context The context.
          * @return The singleton instance of RisuscitoDatabase.
          */
+        @OptIn(DelicateCoroutinesApi::class)
         @Synchronized
         fun getInstance(context: Context): RisuscitoDatabase {
             Log.d(TAG, "getInstance()")

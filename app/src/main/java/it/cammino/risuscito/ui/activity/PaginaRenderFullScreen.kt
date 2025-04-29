@@ -33,7 +33,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         override fun run() {
             try {
                 binding.cantoView.scrollBy(0, speedValue)
-            } catch (e: NumberFormatException) {
+            } catch (_: NumberFormatException) {
                 binding.cantoView.scrollBy(0, 0)
             }
 
@@ -52,7 +52,7 @@ class PaginaRenderFullScreen : ThemeableActivity() {
         val bundle = this.intent.extras
         htmlContent = bundle?.getString(Utility.HTML_CONTENT).orEmpty()
         speedValue = bundle?.getInt(Utility.SPEED_VALUE) ?: 0
-        scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) ?: false
+        scrollPlaying = bundle?.getBoolean(Utility.SCROLL_PLAYING) == true
         idCanto = bundle?.getInt(CantoFragment.ARG_ID_CANTO) ?: 0
 
         binding.fabFullscreenOff.setOnClickListener { lifecycleScope.launch { saveZoom() } }

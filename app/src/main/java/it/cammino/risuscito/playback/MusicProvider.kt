@@ -33,6 +33,7 @@ import it.cammino.risuscito.utils.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
 import it.cammino.risuscito.utils.extension.systemLocale
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -44,7 +45,8 @@ import kotlinx.coroutines.launch
  * In a real application this class may pull data from a remote server, as we do here, or
  * potentially use [android.provider.MediaStore] to locate media files located on the device.
  */
-class MusicProvider internal constructor(
+class MusicProvider @OptIn(DelicateCoroutinesApi::class)
+internal constructor(
     private val mContext: Context,
     private val externalScope: CoroutineScope = GlobalScope
 ) {
