@@ -31,7 +31,7 @@
         android:layout_marginRight="@dimen/text_min_margin"
         android:gravity="center"
         android:text="@string/history_empty"
-        android:textAppearance="?textAppearanceBodyMedium"
+        style="?textAppearanceBodyMedium"
         android:textColor="?android:textColorSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -16,7 +16,7 @@
         android:id="@+id/group_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?textAppearanceBodyLarge"
+        style="?textAppearanceBodyLarge"
         android:textColor="?colorOnSurface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/group_indicator"
