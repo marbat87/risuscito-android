@@ -67,9 +67,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = ActivityFavouritesBinding.inflate(inflater, container, false)
         return binding.root
@@ -83,6 +81,46 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        menuProvider = object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.clean_list_menu, menu)
+                menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.list_reset -> {
+                        activity?.let { act ->
+                            SimpleDialogFragment.show(
+                                SimpleDialogFragment.Builder(FAVORITES_RESET)
+                                    .title(R.string.dialog_reset_favorites_title)
+                                    .icon(R.drawable.clear_all_24px)
+                                    .content(R.string.dialog_reset_favorites_desc)
+                                    .positiveButton(R.string.clear_confirm)
+                                    .negativeButton(R.string.cancel), act.supportFragmentManager
+                            )
+                        }
+                        return true
+                    }
+
+                    R.id.action_help -> {
+                        Toast.makeText(
+                            activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT
+                        ).show()
+                        return true
+                    }
+                }
+                return false
+            }
+        }
+        menuProvider?.let {
+            Log.d(TAG, "addMenu")
+            mMainActivity?.addMenuProvider(it)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -90,43 +128,6 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        mMainActivity?.let { act ->
-            menuProvider = object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    menuInflater.inflate(R.menu.clean_list_menu, menu)
-                    menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    when (menuItem.itemId) {
-                        R.id.list_reset -> {
-                            SimpleDialogFragment.show(
-                                SimpleDialogFragment.Builder(FAVORITES_RESET)
-                                    .title(R.string.dialog_reset_favorites_title)
-                                    .icon(R.drawable.clear_all_24px)
-                                    .content(R.string.dialog_reset_favorites_desc)
-                                    .positiveButton(R.string.clear_confirm)
-                                    .negativeButton(R.string.cancel),
-                                act.supportFragmentManager
-                            )
-                            return true
-                        }
-
-                        R.id.action_help -> {
-                            Toast.makeText(
-                                activity,
-                                getString(R.string.new_hint_remove),
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                            return true
-                        }
-                    }
-                    return false
-                }
-            }
-        }
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_favourites)
         mMainActivity?.setTabVisible(false)
@@ -149,14 +150,11 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
                 if (mMainActivity?.isActionMode == true) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
                         mLastClickTime = SystemClock.elapsedRealtime()
-                        cantoAdapter
-                            .getAdapterItem(position)
-                            .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
+                        cantoAdapter.getAdapterItem(position).isSelected =
+                            !cantoAdapter.getAdapterItem(position).isSelected
                         cantoAdapter.notifyAdapterItemChanged(position)
-                        if (selectExtension?.selectedItems?.size == 0)
-                            mMainActivity?.destroyActionMode()
-                        else
-                            updateActionModeTitle()
+                        if (selectExtension?.selectedItems?.size == 0) mMainActivity?.destroyActionMode()
+                        else updateActionModeTitle()
                     }
                     consume = true
                 }
@@ -170,10 +168,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     // lancia l'activity che visualizza il canto passando il parametro creato
                     mMainActivity?.openCanto(
-                        TAG,
-                        item.id,
-                        item.source?.getText(requireContext()),
-                        false
+                        TAG, item.id, item.source?.getText(requireContext()), false
                     )
                     consume = true
                 }
@@ -199,17 +194,10 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         cantoAdapter.setHasStableIds(true)
 
         binding.favouritesList.adapter = cantoAdapter
-        val llm = if (context?.isGridLayout == true)
-            GridLayoutManager(context, 2)
-        else
-            LinearLayoutManager(context)
+        val llm = if (context?.isGridLayout == true) GridLayoutManager(context, 2)
+        else LinearLayoutManager(context)
         binding.favouritesList.layoutManager = llm
         binding.favouritesList.itemAnimator = SlideRightAlphaAnimator()
-
-        menuProvider?.let {
-            Log.d(TAG, "addMenu")
-            mMainActivity?.addMenuProvider(it)
-        }
 
         subscribeUiChanges()
 
@@ -227,8 +215,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
                 actionModeOk = true
                 mMainActivity?.destroyActionMode()
                 true
-            } else
-                false
+            } else false
         }
         updateActionModeTitle()
     }
@@ -237,9 +224,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
         mMainActivity?.updateActionModeTitle(
             resources.getQuantityString(
-                R.plurals.item_selected,
-                itemSelectedCount,
-                itemSelectedCount
+                R.plurals.item_selected, itemSelectedCount, itemSelectedCount
             )
         )
     }
@@ -265,8 +250,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
             )
             binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
-            if (cantoAdapter.adapterItemCount == 0)
-                mMainActivity?.expandToolbar()
+            if (cantoAdapter.adapterItemCount == 0) mMainActivity?.expandToolbar()
             activity?.invalidateOptionsMenu()
         }
 

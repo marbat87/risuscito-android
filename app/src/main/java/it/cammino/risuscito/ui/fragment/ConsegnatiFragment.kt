@@ -103,15 +103,8 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    @SuppressLint("InflateParams")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onStart() {
+        super.onStart()
         menuProvider = object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(
@@ -141,6 +134,22 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
                 return false
             }
         }
+        menuProvider?.let {
+            Log.d(TAG, "addMenu")
+            mMainActivity?.addMenuProvider(it)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    @SuppressLint("InflateParams")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
 
         mRegularFont = ResourcesCompat.getFont(
             requireContext(),
@@ -262,10 +271,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
 
         }
 
-        menuProvider?.let {
-            Log.d(TAG, "addMenu")
-            mMainActivity?.addMenuProvider(it)
-        }
+
 
         view.isFocusableInTouchMode = true
         view.requestFocus()
