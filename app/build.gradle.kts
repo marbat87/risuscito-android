@@ -16,7 +16,7 @@ android {
         minSdk = 23
         targetSdk = 35
         multiDexEnabled = true
-        versionCode = 6003
+        versionCode = 6004
         versionName = "6.0.0"
         ksp {
             arg("room.incremental", "true")

@@ -12,7 +12,8 @@ class MainActivityViewModel : ViewModel() {
     var showSnackbar = true
     var backupRestoreState = MutableLiveData(BakupRestoreState.NONE)
     var httpRequestState = MutableLiveData(ClientState.STARTED)
-    var retrieveLastAccount = false
+    var loginState = MutableLiveData(LOGIN_STATE_STARTED)
+//    var retrieveLastAccount = false
 
     var isTabletWithFixedDrawer: Boolean = false
     var isTabletWithNoFixedDrawer: Boolean = false
@@ -40,5 +41,10 @@ class MainActivityViewModel : ViewModel() {
 
     var acct: GoogleIdTokenCredential? = null
     var sub: String = ""
+
+    companion object {
+        const val LOGIN_STATE_STARTED = "LoginStateStarted"
+        const val LOGIN_STATE_OK = "LoginStateOk"
+    }
 
 }
