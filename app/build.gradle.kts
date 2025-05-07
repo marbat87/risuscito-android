@@ -18,12 +18,7 @@ android {
         multiDexEnabled = true
         versionCode = 6004
         versionName = "6.0.0"
-        ksp {
-            arg("room.incremental", "true")
-            arg("room.schemaLocation", "$projectDir/schemas")
-            arg("room.expandProjection", "true")
-            arg("room.generateKotlin", "true")
-        }
+
     }
 
     compileOptions {
@@ -65,6 +60,13 @@ android {
         resources.excludes.add("META-INF/*.kotlin_module")
     }
 
+}
+
+ksp {
+    arg("room.incremental", "true")
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.expandProjection", "true")
+    arg("room.generateKotlin", "true")
 }
 
 val fastAdapterVersion = "5.7.0"
