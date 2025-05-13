@@ -69,9 +69,7 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = LayoutHistoryBinding.inflate(inflater, container, false)
         return binding.root
@@ -90,51 +88,53 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
         _binding = null
     }
 
+    override fun onStart() {
+        super.onStart()
+        menuProvider = object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.clean_list_menu, menu)
+                menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.list_reset -> {
+                        activity?.let { act ->
+                            SimpleDialogFragment.show(
+                                SimpleDialogFragment.Builder(
+                                    RESET_HISTORY
+                                ).title(R.string.dialog_reset_history_title)
+                                    .icon(R.drawable.clear_all_24px)
+                                    .content(R.string.dialog_reset_history_desc)
+                                    .positiveButton(R.string.clear_confirm)
+                                    .negativeButton(R.string.cancel), act.supportFragmentManager
+                            )
+                        }
+                        return true
+                    }
+
+                    R.id.action_help -> {
+                        Toast.makeText(
+                            activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT
+                        ).show()
+                        return true
+                    }
+                }
+                return false
+            }
+        }
+        menuProvider?.let {
+            Log.d(TAG, "addMenu")
+            mMainActivity?.addMenuProvider(it)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_history)
         mMainActivity?.enableFab(false)
         mMainActivity?.setTabVisible(false)
-
-        mMainActivity?.let { act ->
-            menuProvider = object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    menuInflater.inflate(R.menu.clean_list_menu, menu)
-                    menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    when (menuItem.itemId) {
-                        R.id.list_reset -> {
-                            SimpleDialogFragment.show(
-                                SimpleDialogFragment.Builder(
-                                    RESET_HISTORY
-                                )
-                                    .title(R.string.dialog_reset_history_title)
-                                    .icon(R.drawable.clear_all_24px)
-                                    .content(R.string.dialog_reset_history_desc)
-                                    .positiveButton(R.string.clear_confirm)
-                                    .negativeButton(R.string.cancel),
-                                act.supportFragmentManager
-                            )
-                            return true
-                        }
-
-                        R.id.action_help -> {
-                            Toast.makeText(
-                                activity,
-                                getString(R.string.new_hint_remove),
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                            return true
-                        }
-                    }
-                    return false
-                }
-            }
-        }
 
         if (!PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(Utility.HISTORY_OPEN, false)
@@ -155,14 +155,11 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
                 if (mMainActivity?.isActionMode == true) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
                         mLastClickTime = SystemClock.elapsedRealtime()
-                        cantoAdapter
-                            .getAdapterItem(position)
-                            .isSelected = !cantoAdapter.getAdapterItem(position).isSelected
+                        cantoAdapter.getAdapterItem(position).isSelected =
+                            !cantoAdapter.getAdapterItem(position).isSelected
                         cantoAdapter.notifyAdapterItemChanged(position)
-                        if (selectExtension?.selectedItems?.size == 0)
-                            mMainActivity?.destroyActionMode()
-                        else
-                            updateActionModeTitle()
+                        if (selectExtension?.selectedItems?.size == 0) mMainActivity?.destroyActionMode()
+                        else updateActionModeTitle()
                     }
                     consume = true
                 }
@@ -175,10 +172,7 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     mMainActivity?.openCanto(
-                        TAG,
-                        item.id,
-                        item.source?.getText(requireContext()),
-                        false
+                        TAG, item.id, item.source?.getText(requireContext()), false
                     )
                     consume = true
                 }
@@ -204,17 +198,10 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
         selectExtension?.deleteAllSelectedItems()
 
         binding.historyRecycler.adapter = cantoAdapter
-        val llm = if (context?.isGridLayout == true)
-            GridLayoutManager(context, 2)
-        else
-            LinearLayoutManager(context)
+        val llm = if (context?.isGridLayout == true) GridLayoutManager(context, 2)
+        else LinearLayoutManager(context)
         binding.historyRecycler.layoutManager = llm
         binding.historyRecycler.itemAnimator = SlideRightAlphaAnimator()
-
-        menuProvider?.let {
-            Log.d(TAG, "addMenu")
-            mMainActivity?.addMenuProvider(it)
-        }
 
     }
 
@@ -226,8 +213,7 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
                 actionModeOk = true
                 mMainActivity?.destroyActionMode()
                 true
-            } else
-                false
+            } else false
         }
         updateActionModeTitle()
     }
@@ -246,9 +232,7 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
         val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
         mMainActivity?.updateActionModeTitle(
             resources.getQuantityString(
-                R.plurals.item_selected,
-                itemSelectedCount,
-                itemSelectedCount
+                R.plurals.item_selected, itemSelectedCount, itemSelectedCount
             )
         )
     }
@@ -262,8 +246,7 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
             cantoAdapter.set(it)
             binding.noHistory.isInvisible = cantoAdapter.adapterItemCount > 0
             binding.historyRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
-            if (cantoAdapter.adapterItemCount == 0)
-                mMainActivity?.expandToolbar()
+            if (cantoAdapter.adapterItemCount == 0) mMainActivity?.expandToolbar()
             activity?.invalidateOptionsMenu()
         }
 

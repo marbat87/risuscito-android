@@ -105,9 +105,7 @@ class CustomListsFragment : AccountMenuFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = TabsLayoutBinding.inflate(inflater, container, false)
         return binding.root
@@ -121,16 +119,8 @@ class CustomListsFragment : AccountMenuFragment() {
         }
     }
 
-    override fun onDestroyView() {
-        Log.d(TAG, "onDestroyView")
-        binding.viewPager.unregisterOnPageChangeCallback(mPageChange)
-        _binding = null
-        super.onDestroyView()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onStart() {
+        super.onStart()
         menuProvider = object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.help_menu, menu)
@@ -146,14 +136,27 @@ class CustomListsFragment : AccountMenuFragment() {
                 return false
             }
         }
+        menuProvider?.let {
+            Log.d(TAG, "addMenu")
+            mMainActivity?.addMenuProvider(it)
+        }
+    }
+
+    override fun onDestroyView() {
+        Log.d(TAG, "onDestroyView")
+        binding.viewPager.unregisterOnPageChangeCallback(mPageChange)
+        _binding = null
+        super.onDestroyView()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         mRegularFont = ResourcesCompat.getFont(
-            requireContext(),
-            requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
+            requireContext(), requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
         )
         mMediumFont = ResourcesCompat.getFont(
-            requireContext(),
-            requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
+            requireContext(), requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
         )
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
@@ -164,10 +167,8 @@ class CustomListsFragment : AccountMenuFragment() {
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         Log.d(
-            TAG,
-            "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(
-                Utility.INTRO_CUSTOMLISTS,
-                false
+            TAG, "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(
+                Utility.INTRO_CUSTOMLISTS, false
             )
         )
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false)) playIntro()
@@ -187,11 +188,6 @@ class CustomListsFragment : AccountMenuFragment() {
         }
         binding.viewPager.registerOnPageChangeCallback(mPageChange)
 
-        menuProvider?.let {
-            Log.d(TAG, "addMenu")
-            mMainActivity?.addMenuProvider(it)
-        }
-
         subscribeUiChanges()
     }
 
@@ -207,65 +203,53 @@ class CustomListsFragment : AccountMenuFragment() {
     private fun playIntro() {
         mMainActivity?.enableFab(true)
         mMainActivity?.getFab()?.let { fab ->
-            val colorOnPrimary =
-                MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
-            TapTargetSequence(requireActivity())
-                .continueOnCancel(true)
-                .targets(
-                    TapTarget.forView(
-                        fab,
-                        getString(R.string.showcase_listepers_title),
-                        getString(R.string.showcase_listepers_desc1)
-                    )
-                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-                        .titleTextColorInt(colorOnPrimary)
-                        .textColorInt(colorOnPrimary)
-                        .descriptionTextSize(15)
-                        .tintTarget(false) // Whether to tint the target view's color
-                        .setForceCenteredTarget(true)
-                    ,
-                    TapTarget.forView(
-                        fab,
-                        getString(R.string.showcase_listepers_title),
-                        getString(R.string.showcase_listepers_desc3)
-                    )
-                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .icon(
-                            AppCompatResources.getDrawable(
-                                requireContext(),
-                                R.drawable.check_24px
-                            )
+            val colorOnPrimary = MaterialColors.getColor(
+                requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG
+            )
+            TapTargetSequence(requireActivity()).continueOnCancel(true).targets(
+                TapTarget.forView(
+                    fab,
+                    getString(R.string.showcase_listepers_title),
+                    getString(R.string.showcase_listepers_desc1)
+                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
+                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
+                    .descriptionTextSize(15)
+                    .tintTarget(false) // Whether to tint the target view's color
+                    .setForceCenteredTarget(true), TapTarget.forView(
+                    fab,
+                    getString(R.string.showcase_listepers_title),
+                    getString(R.string.showcase_listepers_desc3)
+                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                    .icon(
+                        AppCompatResources.getDrawable(
+                            requireContext(), R.drawable.check_24px
                         )
-                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-                        .titleTextColorInt(colorOnPrimary)
-                        .textColorInt(colorOnPrimary)
-                        .setForceCenteredTarget(true)
-                )
-                .listener(
-                    object :
-                        TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                        override fun onSequenceFinish() {
-                            context?.let {
-                                PreferenceManager.getDefaultSharedPreferences(it)
-                                    .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                            }
-                        }
+                    ).descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
+                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
+            ).listener(object :
+                TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+                override fun onSequenceFinish() {
+                    context?.let {
+                        PreferenceManager.getDefaultSharedPreferences(it)
+                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                    }
+                }
 
-                        override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-                            // no-op
-                        }
+                override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                    // no-op
+                }
 
-                        override fun onSequenceCanceled(tapTarget: TapTarget) {
-                            context?.let {
-                                PreferenceManager.getDefaultSharedPreferences(it)
-                                    .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                            }
-                        }
-                    })
-                .start()
+                override fun onSequenceCanceled(tapTarget: TapTarget) {
+                    context?.let {
+                        PreferenceManager.getDefaultSharedPreferences(it)
+                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                    }
+                }
+            }).start()
         }
     }
 
@@ -284,8 +268,7 @@ class CustomListsFragment : AccountMenuFragment() {
             Handler(Looper.getMainLooper()).postDelayed(1000) {
                 Log.d(TAG, "movePage: $movePage")
                 Log.d(
-                    TAG,
-                    "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                    TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
                 )
                 if (movePage) {
                     binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
@@ -312,8 +295,7 @@ class CustomListsFragment : AccountMenuFragment() {
                                     act.launchForResultWithAnimation(
                                         startListEditForResult,
                                         Intent(
-                                            act,
-                                            CreaListaActivity::class.java
+                                            act, CreaListaActivity::class.java
                                         ).putExtras(
                                             bundleOf(
                                                 LIST_TITLE to inputdialogViewModel.outputText,
@@ -364,12 +346,11 @@ class CustomListsFragment : AccountMenuFragment() {
 
     private inner class SectionsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-        override fun createFragment(position: Int): Fragment =
-            when (position) {
-                0 -> ListaPredefinitaFragment.newInstance(1)
-                1 -> ListaPredefinitaFragment.newInstance(2)
-                else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
-            }
+        override fun createFragment(position: Int): Fragment = when (position) {
+            0 -> ListaPredefinitaFragment.newInstance(1)
+            1 -> ListaPredefinitaFragment.newInstance(2)
+            else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
+        }
 
         override fun getItemCount(): Int = 2 + titoliListe.size
 
@@ -393,13 +374,11 @@ class CustomListsFragment : AccountMenuFragment() {
                         SimpleDialogFragment.show(
                             SimpleDialogFragment.Builder(
                                 RESET_LIST
-                            )
-                                .title(R.string.dialog_reset_list_title)
+                            ).title(R.string.dialog_reset_list_title)
                                 .icon(R.drawable.cleaning_services_24px)
                                 .content(R.string.reset_list_question)
                                 .positiveButton(R.string.reset_confirm)
-                                .negativeButton(R.string.cancel),
-                            mActivity.supportFragmentManager
+                                .negativeButton(R.string.cancel), mActivity.supportFragmentManager
                         )
                     }
                     true
@@ -433,8 +412,7 @@ class CustomListsFragment : AccountMenuFragment() {
                     mMainActivity?.let { act ->
                         act.launchForResultWithAnimation(
                             startListEditForResult, Intent(
-                                act,
-                                CreaListaActivity::class.java
+                                act, CreaListaActivity::class.java
                             ).putExtras(
                                 bundleOf(
                                     ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
@@ -488,13 +466,9 @@ class CustomListsFragment : AccountMenuFragment() {
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(
                     DELETE_LIST
-                )
-                    .title(R.string.action_remove_list)
-                    .icon(R.drawable.delete_24px)
-                    .content(R.string.delete_list_dialog)
-                    .positiveButton(R.string.delete_confirm)
-                    .negativeButton(R.string.cancel),
-                mActivity.supportFragmentManager
+                ).title(R.string.action_remove_list).icon(R.drawable.delete_24px)
+                    .content(R.string.delete_list_dialog).positiveButton(R.string.delete_confirm)
+                    .negativeButton(R.string.cancel), mActivity.supportFragmentManager
             )
         }
     }
@@ -507,31 +481,28 @@ class CustomListsFragment : AccountMenuFragment() {
         mMainActivity?.activityMainContent?.let { mainContent ->
             Snackbar.make(
                 mainContent,
-                getString(R.string.list_removed)
-                        + mCustomListsViewModel.titoloDaCanc
-                        + "'!",
+                getString(R.string.list_removed) + mCustomListsViewModel.titoloDaCanc + "'!",
                 Snackbar.LENGTH_LONG
-            )
-                .setAction(
-                    getString(R.string.cancel).uppercase(systemLocale)
-                ) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                        mLastClickTime = SystemClock.elapsedRealtime()
-                        mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
-                        movePage = true
-                        val mListePersDao =
-                            RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-                        val listaToRestore = ListaPers()
-                        listaToRestore.id = mCustomListsViewModel.idDaCanc
-                        listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
-                        listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            mListePersDao.insertLista(
-                                listaToRestore
-                            )
-                        }
+            ).setAction(
+                getString(R.string.cancel).uppercase(systemLocale)
+            ) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
+                    movePage = true
+                    val mListePersDao =
+                        RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+                    val listaToRestore = ListaPers()
+                    listaToRestore.id = mCustomListsViewModel.idDaCanc
+                    listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+                    listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        mListePersDao.insertLista(
+                            listaToRestore
+                        )
                     }
-                }.show()
+                }
+            }.show()
         }
     }
 

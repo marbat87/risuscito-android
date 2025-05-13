@@ -216,6 +216,7 @@
     <string name="backup_running">Backup in progress&#8230;</string>
     <string name="restore_running">Restore in progress&#8230;</string>
     <string name="gdrive_restore">Restore from the account</string>
+    <string name="gdrive_refresh">Update account info</string>
     <string name="gdrive_restore_success">Restoration has been done correctly, He Rose from Death will now be reactivated</string>
     <string name="gdrive_backup_success">Backup has been done effectively</string>
     <string name="no_restore_found">There is no backup saved in your account</string>

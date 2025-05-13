@@ -6,7 +6,6 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.edit
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
@@ -16,7 +15,6 @@ import com.squareup.picasso.Picasso
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.viewmodels.MainActivityViewModel
 
 /**
  * Manages the display of the user's profile picture and the sign-in button in the UI.
@@ -29,7 +27,7 @@ class ProfileUiManager(
     private val context: Context,
     private val supportFragmentManager: FragmentManager,
     private val profileItemActionView: View?, // Assuming this is the actionView from the profileItem
-    private val mViewModel: MainActivityViewModel, // Replace YourViewModel with your actual ViewModel
+//    private val mViewModel: MainActivityViewModel, // Replace YourViewModel with your actual ViewModel
     private val signIn: (Boolean) -> Unit // Function to initiate sign-in
 ) {
 
@@ -67,9 +65,7 @@ class ProfileUiManager(
      *     process and sets a shared preference to indicate a sign in is requested.
      */
     fun updateProfileUi(
-        newProfilePhotoUrl: String,
-        newProfileName: String,
-        newProfileEmail: String
+        newProfilePhotoUrl: String, newProfileName: String, newProfileEmail: String
     ) {
         profilePhotoUrl = newProfilePhotoUrl
         profileNameStr = newProfileName
@@ -128,24 +124,21 @@ class ProfileUiManager(
                 profileName = profileNameStr
                 profileEmail = profileEmailStr
                 profileImageSrc = profilePhotoUrl
-            },
-            supportFragmentManager
+            }, supportFragmentManager
         )
     }
 
     private fun handleSignInButtonClick() {
-        PreferenceManager.getDefaultSharedPreferences(context)
-            .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
-        mViewModel.showSnackbar = true
+//        PreferenceManager.getDefaultSharedPreferences(context)
+//            .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
+//        mViewModel.showSnackbar = true
         signIn(false)
     }
 
     private fun getSelectableItemBackgroundBorderless(): Drawable? {
         val typedValue = TypedValue()
         context.theme.resolveAttribute(
-            androidx.appcompat.R.attr.selectableItemBackgroundBorderless,
-            typedValue,
-            true
+            androidx.appcompat.R.attr.selectableItemBackgroundBorderless, typedValue, true
         )
         return AppCompatResources.getDrawable(context, typedValue.resourceId)
     }

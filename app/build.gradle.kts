@@ -16,14 +16,9 @@ android {
         minSdk = 23
         targetSdk = 35
         multiDexEnabled = true
-        versionCode = 6003
+        versionCode = 6005
         versionName = "6.0.0"
-        ksp {
-            arg("room.incremental", "true")
-            arg("room.schemaLocation", "$projectDir/schemas")
-            arg("room.expandProjection", "true")
-            arg("room.generateKotlin", "true")
-        }
+
     }
 
     compileOptions {
@@ -67,8 +62,15 @@ android {
 
 }
 
+ksp {
+    arg("room.incremental", "true")
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.expandProjection", "true")
+    arg("room.generateKotlin", "true")
+}
+
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.7.0"
+val roomVersion = "2.7.1"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10")
@@ -87,16 +89,16 @@ dependencies {
     implementation("androidx.media:media:1.7.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.10.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.work:work-runtime-ktx:2.10.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")

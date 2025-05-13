@@ -220,6 +220,7 @@
     <string name="backup_running">Здійснюється бекап&#8230;</string>
     <string name="restore_running">Видалення налаштувань&#8230;</string>
     <string name="gdrive_restore">Видалення налаштувань з аккаунту</string>
+    <string name="gdrive_refresh">Оновіть інформацію про обліковий запис</string>
     <string name="gdrive_restore_success">Видалення налаштувань здійснено успішно, Христос Воскрес буде перезапущено</string>
     <string name="gdrive_backup_success">Бекап здійснено успішно</string>
     <string name="no_restore_found">На твоєму аккаунті немає збережених бекапів</string>

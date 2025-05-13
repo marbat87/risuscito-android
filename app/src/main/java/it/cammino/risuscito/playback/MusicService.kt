@@ -498,6 +498,7 @@ class MusicService : MediaBrowserServiceCompat() {
             startForeground(NOTIFICATION_ID, notification)
             mAudioBecomingNoisyReceiver?.register()
         } catch (e: ForegroundServiceStartNotAllowedException) {
+            Log.e(TAG, "Error:", e)
             ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH)
         }
     }

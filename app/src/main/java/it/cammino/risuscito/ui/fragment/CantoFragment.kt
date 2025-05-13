@@ -138,6 +138,7 @@ open class CantoFragment : Fragment() {
                 try {
                     binding.cantoView.scrollBy(0, Integer.valueOf(it))
                 } catch (e: NumberFormatException) {
+                    Log.e(TAG, "Error:", e)
                     binding.cantoView.scrollBy(0, 0)
                 }
 
@@ -1931,6 +1932,7 @@ open class CantoFragment : Fragment() {
             try {
                 startActivity(intent2)
             } catch (e: ActivityNotFoundException) {
+                Log.e(TAG, "Error:", e)
                 Snackbar.make(
                     requireActivity().findViewById(android.R.id.content),
                     R.string.no_pdf_reader,

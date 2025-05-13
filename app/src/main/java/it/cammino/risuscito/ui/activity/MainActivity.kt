@@ -32,11 +32,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.CredentialOption
-import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
-import androidx.credentials.GetCredentialResponse
-import androidx.credentials.exceptions.GetCredentialException
-import androidx.credentials.exceptions.NoCredentialException
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
@@ -46,8 +42,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
@@ -74,6 +68,8 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.ui.CredendialObject
+import it.cammino.risuscito.ui.CredentialCacheManager
 import it.cammino.risuscito.ui.ProfileUiManager
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.DialogState
@@ -88,19 +84,15 @@ import it.cammino.risuscito.ui.fragment.GeneralIndexFragment
 import it.cammino.risuscito.ui.fragment.HistoryFragment
 import it.cammino.risuscito.ui.fragment.SettingsFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
-import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.CantiXmlParser
-import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
-import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
-import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
-import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
-import it.cammino.risuscito.utils.StringUtils.UNEXPECTED_CREDENTIAL
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
+import it.cammino.risuscito.utils.extension.convertTabs
+import it.cammino.risuscito.utils.extension.convertiBarre
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.getVersionCode
 import it.cammino.risuscito.utils.extension.isDarkMode
@@ -113,6 +105,7 @@ import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.utils.extension.updateListaPersonalizzata
 import it.cammino.risuscito.utils.extension.updatePosizione
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel.ProfileAction
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -133,6 +126,8 @@ class MainActivity : ThemeableActivity() {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
 
+    private lateinit var mCredentialCacheManager: CredentialCacheManager
+
     private lateinit var mCredentialManager: CredentialManager
     private var mCredentialRequest: GetCredentialRequest? = null
     private lateinit var auth: FirebaseAuth
@@ -147,9 +142,7 @@ class MainActivity : ThemeableActivity() {
     ) { isGranted ->
         if (isGranted) {
             Snackbar.make(
-                binding.mainContent,
-                getString(R.string.permission_ok),
-                Snackbar.LENGTH_SHORT
+                binding.mainContent, getString(R.string.permission_ok), Snackbar.LENGTH_SHORT
             ).show()
         } else {
             PreferenceManager.getDefaultSharedPreferences(this)
@@ -184,6 +177,8 @@ class MainActivity : ThemeableActivity() {
 
         mCredentialManager = CredentialManager.create(this)
 
+        mCredentialCacheManager = CredentialCacheManager(mViewModel, this, mCredentialManager)
+
         val outValue = TypedValue()
         resources.getValue(R.dimen.horizontal_percentage_half_divider, outValue, true)
         val percentage = outValue.float
@@ -199,31 +194,25 @@ class MainActivity : ThemeableActivity() {
 
         Log.d(TAG, "getVersionCode(): ${getVersionCode()}")
 
-        ChangelogBuilder()
-            .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
+        ChangelogBuilder().withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
             .withMinVersionToShow(getVersionCode())     // provide a number and the log will only show changelog rows for versions equal or higher than this number
             .withManagedShowOnStart(
                 getSharedPreferences(
-                    "com.michaelflisar.changelog",
-                    0
+                    "com.michaelflisar.changelog", 0
                 ).getInt("changelogVersion", -1) != -1
             )  // library will take care to show activity/dialog only if the changelog has new infos and will only show this new infos
             .withTitle(getString(R.string.dialog_change_title)) // provide a custom title if desired, default one is "Changelog <VERSION>"
             .withOkButtonLabel(getString(R.string.ok)) // provide a custom ok button text if desired, default one is "OK"
             .buildAndShowDialog(
-                this,
-                isDarkMode
+                this, isDarkMode
             ) // second parameter defines, if the dialog has a dark or light theme
 
-        if (!OSUtils.hasQ())
-            checkPermission()
+        if (!OSUtils.hasQ()) checkPermission()
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 replace(
-                    R.id.content_frame,
-                    GeneralIndexFragment(),
-                    R.id.navigation_indexes.toString()
+                    R.id.content_frame, GeneralIndexFragment(), R.id.navigation_indexes.toString()
                 )
             }
 
@@ -249,9 +238,7 @@ class MainActivity : ThemeableActivity() {
         onBackPressedDispatcher.addCallback(this) {
             when {
                 binding.fabPager.isOpen -> binding.fabPager.close()
-                !isOnTablet && binding.drawer?.isOpen == true
-                    -> binding.drawer?.close()
-
+                !isOnTablet && binding.drawer?.isOpen == true -> binding.drawer?.close()
                 isActionMode -> destroyActionMode()
                 binding.searchViewLayout.searchViewContainer.currentTransitionState == SearchView.TransitionState.SHOWN -> binding.searchViewLayout.searchViewContainer.hide()
                 else -> backToHome(true)
@@ -279,10 +266,7 @@ class MainActivity : ThemeableActivity() {
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     openCanto(
-                        TAG,
-                        item.id,
-                        item.source?.getText(this),
-                        false
+                        TAG, item.id, item.source?.getText(this), false
                     )
                     consume = true
                 }
@@ -293,9 +277,7 @@ class MainActivity : ThemeableActivity() {
             { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
                 cantiViewModel.idDaAgg = item.id
                 cantiViewModel.popupMenu(
-                    this, v,
-                    SEARCH_REPLACE,
-                    SEARCH_REPLACE_2, listePersonalizzate
+                    this, v, SEARCH_REPLACE, SEARCH_REPLACE_2, listePersonalizzate
                 )
                 true
             }
@@ -303,33 +285,27 @@ class MainActivity : ThemeableActivity() {
         cantoAdapter.setHasStableIds(true)
 
         binding.searchViewLayout.matchedList.adapter = cantoAdapter
-        val llm = if (isGridLayout)
-            GridLayoutManager(this, 2)
-        else
-            LinearLayoutManager(this)
+        val llm = if (isGridLayout) GridLayoutManager(this, 2)
+        else LinearLayoutManager(this)
         binding.searchViewLayout.matchedList.layoutManager = llm
 
-        binding.searchViewLayout.searchViewContainer
-            .editText
-            .setOnEditorActionListener { _, actionId, _ ->
-                var returnValue = false
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    // to hide soft keyboard
-                    ContextCompat.getSystemService(this, InputMethodManager::class.java)
-                        ?.hideSoftInputFromWindow(
-                            binding.searchViewLayout.searchViewContainer
-                                .editText.windowToken, 0
-                        )
-                    returnValue = true
-                }
-                returnValue
+        binding.searchViewLayout.searchViewContainer.editText.setOnEditorActionListener { _, actionId, _ ->
+            var returnValue = false
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                // to hide soft keyboard
+                ContextCompat.getSystemService(this, InputMethodManager::class.java)
+                    ?.hideSoftInputFromWindow(
+                        binding.searchViewLayout.searchViewContainer.editText.windowToken, 0
+                    )
+                returnValue = true
             }
+            returnValue
+        }
 
-        binding.searchViewLayout.searchViewContainer
-            .editText.doOnTextChanged { text, _, _, _ ->
-                job.cancel()
-                ricercaStringa(text.toString())
-            }
+        binding.searchViewLayout.searchViewContainer.editText.doOnTextChanged { text, _, _, _ ->
+            job.cancel()
+            ricercaStringa(text.toString())
+        }
 
         binding.searchViewLayout.advancedSearchChip.isChecked = cantiViewModel.advancedSearch
         binding.searchViewLayout.advancedSearchChip.setOnCheckedChangeListener { _, checked ->
@@ -355,59 +331,23 @@ class MainActivity : ThemeableActivity() {
 
             // Log and toast
             Log.d(TAG, "token ok $token")
-//            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
         })
 
     }
 
-    private suspend fun login() {
-        mCredentialRequest?.let {
-            try {
-                handleSignInResult(
-                    mCredentialManager.getCredential(
-                        request = it,
-                        context = this
-                    )
-                )
-            } catch (e: GetCredentialException) {
-                Log.d(TAG, "login", e)
-                handleErrorResult(e.localizedMessage ?: "")
-            } catch (e: NoCredentialException) {
-                Log.d(TAG, "login", e)
-                handleErrorResult(e.localizedMessage ?: "")
-            }
-        }
-    }
-
     private suspend fun logout() {
         mCredentialManager.clearCredentialState(ClearCredentialStateRequest())
+        mCredentialCacheManager.clearCache()
         updateUI(false)
-        Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT)
-            .show()
+        Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT).show()
     }
 
     override fun onStart() {
         super.onStart()
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
+                .getBoolean(Utility.SIGNED_IN, false)
         ) {
-            if (mViewModel.acct != null) {
-                validaToken(true)
-            } else {
-                signIn(true)
-            }
-        }
-    }
-
-    private fun validaToken(retrieveLastAccount: Boolean) {
-        mViewModel.retrieveLastAccount = retrieveLastAccount
-        mViewModel.httpRequestState.value = MainActivityViewModel.ClientState.STARTED
-        lifecycleScope.launch(Dispatchers.IO) {
-            mViewModel.sub = Utility.validateToken(
-                mViewModel.acct?.idToken ?: "",
-                getString(R.string.default_web_client_id)
-            )
-            mViewModel.httpRequestState.postValue(MainActivityViewModel.ClientState.COMPLETED)
+            signIn(lastAccount = true)
         }
     }
 
@@ -453,8 +393,7 @@ class MainActivity : ThemeableActivity() {
 
                         if (found) {
                             Log.d(TAG, "aText[0]: ${aText[0]}")
-                            cantiViewModel.titoli
-                                .filter { (aText[0].orEmpty()) == it.undecodedSource }
+                            cantiViewModel.titoli.filter { (aText[0].orEmpty()) == it.undecodedSource }
                                 .forEach {
                                     if (!isActive) return@launch
                                     titoliResult.add(it.apply { filter = StringUtils.EMPTY })
@@ -464,16 +403,14 @@ class MainActivity : ThemeableActivity() {
                 } else {
                     val stringa = Utility.removeAccents(s).lowercase(systemLocale)
                     Log.d(TAG, "performSearch onTextChanged: stringa $stringa")
-                    cantiViewModel.titoli
-                        .filter {
-                            Utility.removeAccents(
-                                it.title?.getText(this@MainActivity).orEmpty()
-                            ).lowercase(systemLocale).contains(stringa)
-                        }
-                        .forEach {
-                            if (!isActive) return@launch
-                            titoliResult.add(it.apply { filter = stringa })
-                        }
+                    cantiViewModel.titoli.filter {
+                        Utility.removeAccents(
+                            it.title?.getText(this@MainActivity).orEmpty()
+                        ).lowercase(systemLocale).contains(stringa)
+                    }.forEach {
+                        if (!isActive) return@launch
+                        titoliResult.add(it.apply { filter = stringa })
+                    }
                 }
                 if (isActive) {
                     cantoAdapter.set(
@@ -502,22 +439,19 @@ class MainActivity : ThemeableActivity() {
     private fun checkPermission() {
         when {
             ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                this, Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED -> {
                 Log.d(TAG, "permission granted")
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                this, Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) -> {
                 // In an educational UI, explain to the user why your app requires this
                 // permission for a specific feature to behave as expected. In this UI,
                 // include a "cancel" or "no thanks" button that allows the user to
                 // continue using your app without granting the permission.
-                MaterialAlertDialogBuilder(this)
-                    .setMessage(R.string.external_storage_pref_rationale)
+                MaterialAlertDialogBuilder(this).setMessage(R.string.external_storage_pref_rationale)
                     .setPositiveButton(android.R.string.ok) { dialog, _ ->
                         run {
                             dialog.cancel()
@@ -525,8 +459,7 @@ class MainActivity : ThemeableActivity() {
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                             )
                         }
-                    }
-                    .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+                    }.setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
                     .show()
             }
 
@@ -550,13 +483,15 @@ class MainActivity : ThemeableActivity() {
                             BACKUP_ASK -> {
                                 simpleDialogViewModel.handled = true
                                 backToHome(false)
-                                lifecycleScope.launch { backupDbPrefs() }
+                                mViewModel.profileAction = ProfileAction.BACKUP
+                                mCredentialCacheManager.validateToken()
                             }
 
                             RESTORE_ASK -> {
                                 simpleDialogViewModel.handled = true
                                 backToHome(false)
-                                lifecycleScope.launch { restoreDbPrefs() }
+                                mViewModel.profileAction = ProfileAction.RESTORE
+                                mCredentialCacheManager.validateToken()
                             }
 
                             SIGNOUT -> {
@@ -574,21 +509,18 @@ class MainActivity : ThemeableActivity() {
                                 if (PreferenceManager.getDefaultSharedPreferences(this)
                                         .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY)
                                         .isNullOrEmpty()
-                                )
-                                    RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
-                                else
-                                    RisuscitoApplication.localeManager.updateLanguage(this)
+                                ) RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
+                                else RisuscitoApplication.localeManager.updateLanguage(this)
 
                             }
 
                             SEARCH_REPLACE -> {
                                 simpleDialogViewModel.handled = true
                                 listePersonalizzate?.let { lista ->
-                                    lista[cantiViewModel.idListaClick]
-                                        .lista?.addCanto(
-                                            cantiViewModel.idDaAgg.toString(),
-                                            cantiViewModel.idPosizioneClick
-                                        )
+                                    lista[cantiViewModel.idListaClick].lista?.addCanto(
+                                        cantiViewModel.idDaAgg.toString(),
+                                        cantiViewModel.idPosizioneClick
+                                    )
                                     updateListaPersonalizzata(lista[cantiViewModel.idListaClick])
                                 }
                             }
@@ -624,6 +556,11 @@ class MainActivity : ThemeableActivity() {
                             showAccountRelatedDialog(RESTORE_ASK)
                         }
 
+                        R.id.gdrive_refresh -> {
+                            mViewModel.profileAction = ProfileAction.NONE
+                            signIn(lastAccount = true, forceRefresh = true)
+                        }
+
                         R.id.gplus_signout -> {
                             showAccountRelatedDialog(SIGNOUT)
                         }
@@ -640,16 +577,14 @@ class MainActivity : ThemeableActivity() {
         mViewModel.backupRestoreState.observe(this) { state ->
             state?.let {
                 when (it) {
-                    MainActivityViewModel.BakupRestoreState.RESTORE_STARTED ->
-                        ProgressDialogFragment.show(
-                            ProgressDialogFragment.Builder(RESTORE_RUNNING).apply {
-                                title = R.string.restore_running
-                                icon = R.drawable.cloud_download_24px
-                                content = R.string.restoring_database
-                                progressIndeterminate = true
-                            },
-                            supportFragmentManager
-                        )
+                    MainActivityViewModel.BakupRestoreState.RESTORE_STARTED -> ProgressDialogFragment.show(
+                        ProgressDialogFragment.Builder(RESTORE_RUNNING).apply {
+                            title = R.string.restore_running
+                            icon = R.drawable.cloud_download_24px
+                            content = R.string.restoring_database
+                            progressIndeterminate = true
+                        }, supportFragmentManager
+                    )
 
                     MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2 -> {
                         val sFragment =
@@ -657,19 +592,18 @@ class MainActivity : ThemeableActivity() {
                         sFragment?.setContent(R.string.restoring_settings)
                     }
 
-                    MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED ->
-                        dismissProgressDialog(RESTORE_RUNNING)
+                    MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED -> dismissProgressDialog(
+                        RESTORE_RUNNING
+                    )
 
-                    MainActivityViewModel.BakupRestoreState.BACKUP_STARTED ->
-                        ProgressDialogFragment.show(
-                            ProgressDialogFragment.Builder(BACKUP_RUNNING).apply {
-                                title = R.string.backup_running
-                                icon = R.drawable.cloud_upload_24px
-                                content = R.string.backup_database
-                                progressIndeterminate = true
-                            },
-                            supportFragmentManager
-                        )
+                    MainActivityViewModel.BakupRestoreState.BACKUP_STARTED -> ProgressDialogFragment.show(
+                        ProgressDialogFragment.Builder(BACKUP_RUNNING).apply {
+                            title = R.string.backup_running
+                            icon = R.drawable.cloud_upload_24px
+                            content = R.string.backup_database
+                            progressIndeterminate = true
+                        }, supportFragmentManager
+                    )
 
                     MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2 -> {
                         val sFragment =
@@ -677,8 +611,9 @@ class MainActivity : ThemeableActivity() {
                         sFragment?.setContent(R.string.backup_settings)
                     }
 
-                    MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED ->
-                        dismissProgressDialog(BACKUP_RUNNING)
+                    MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED -> dismissProgressDialog(
+                        BACKUP_RUNNING
+                    )
 
                     MainActivityViewModel.BakupRestoreState.NONE -> {}
                 }
@@ -686,14 +621,15 @@ class MainActivity : ThemeableActivity() {
         }
 
         mViewModel.httpRequestState.observe(this) { state ->
+            Log.d(TAG, "httpRequestState -> state:$state")
             state?.let {
                 when (it) {
                     MainActivityViewModel.ClientState.COMPLETED -> {
+                        Log.d(TAG, "httpRequestState -> mViewModel.sub:${mViewModel.sub}")
                         if (mViewModel.sub.isNotEmpty()) {
                             firebaseAuthWithGoogle()
                         } else {
-                            if (mViewModel.retrieveLastAccount)
-                                signIn(true)
+                            signIn(lastAccount = true, forceRefresh = true)
                         }
                     }
 
@@ -702,9 +638,26 @@ class MainActivity : ThemeableActivity() {
             }
         }
 
+        mViewModel.loginState.observe(this) { state ->
+            state?.let {
+                when (it) {
+                    MainActivityViewModel.LOGIN_STATE_STARTED -> {}
+                    MainActivityViewModel.LOGIN_STATE_OK_SILENT -> {
+                        updateUI(true)
+                    }
+
+                    MainActivityViewModel.LOGIN_STATE_OK -> {
+                        handleSignInResult()
+                    }
+
+                    else -> handleErrorResult(it)
+                }
+            }
+        }
+
         cantiViewModel.itemsResult?.observe(this) { canti ->
-            cantiViewModel.titoli =
-                canti.sortedWith(compareBy(
+            cantiViewModel.titoli = canti.sortedWith(
+                compareBy(
                     Collator.getInstance(systemLocale)
                 ) {
                     it.title?.getText(this)
@@ -745,8 +698,7 @@ class MainActivity : ThemeableActivity() {
         binding.navigationView?.getHeaderView(0)?.findViewById<TextView>(R.id.drawer_header_title)
             ?.setTextColor(
                 MaterialColors.harmonizeWithPrimary(
-                    this,
-                    ContextCompat.getColor(this, R.color.ic_launcher_background)
+                    this, ContextCompat.getColor(this, R.color.ic_launcher_background)
                 )
             )
 
@@ -772,8 +724,7 @@ class MainActivity : ThemeableActivity() {
         binding.drawer?.close()
 
         // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-        val myFragment = supportFragmentManager
-            .findFragmentByTag(menuItem.itemId.toString())
+        val myFragment = supportFragmentManager.findFragmentByTag(menuItem.itemId.toString())
         if (myFragment == null || !myFragment.isVisible) {
             supportFragmentManager.commit {
                 replace(R.id.content_frame, fragment, menuItem.itemId.toString())
@@ -795,99 +746,12 @@ class MainActivity : ThemeableActivity() {
         startActivityWithTransition(intent, MaterialSharedAxis.Y)
     }
 
-    // converte gli accordi salvati dalla lingua vecchia alla nuova
-    private fun convertTabs() {
-        val oldLanguage = intent.getStringExtra(OLD_LANGUAGE)
-        val newLanguage = intent.getStringExtra(NEW_LANGUAGE)
-
-        var accordi1 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - from: $oldLanguage")
-        when (oldLanguage) {
-            LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
-            LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
-            LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
-            LANGUAGE_ENGLISH_PHILIPPINES -> accordi1 = CambioAccordi.accordi_en
-        }
-
-        var accordi2 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - to: $newLanguage")
-        when (newLanguage) {
-            LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
-            LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
-            LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
-            LANGUAGE_ENGLISH_PHILIPPINES -> accordi2 = CambioAccordi.accordi_en
-        }
-
-        val mappa = HashMap<String, String>()
-        for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
-
-        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName()
-        for (canto in canti) {
-            if (!canto.savedTab.isNullOrEmpty()) {
-                Log.d(
-                    TAG,
-                    "convertTabs: "
-                            + "ID "
-                            + canto.id
-                            + " -> CONVERTO DA "
-                            + canto.savedTab
-                            + " A "
-                            + mappa[canto.savedTab.orEmpty()]
-                )
-                canto.savedTab = mappa[canto.savedTab.orEmpty()]
-                mDao.updateCanto(canto)
-            }
-        }
-    }
-
-    // converte gli accordi salvati dalla lingua vecchia alla nuova
-    private fun convertiBarre() {
-        val oldLanguage = intent.getStringExtra(OLD_LANGUAGE)
-        val newLanguage = intent.getStringExtra(NEW_LANGUAGE)
-
-        var barre1 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - from: $oldLanguage")
-        when (oldLanguage) {
-            LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
-        }
-
-        var barre2 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - to: $newLanguage")
-        when (newLanguage) {
-            LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
-        }
-
-        val mappa = HashMap<String, String>()
-        for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
-
-        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName()
-        for (canto in canti) {
-            if (!canto.savedTab.isNullOrEmpty()) {
-                Log.d(
-                    TAG,
-                    "convertiBarre: "
-                            + "ID "
-                            + canto.id
-                            + " -> CONVERTO DA "
-                            + canto.savedBarre
-                            + " A "
-                            + mappa[canto.savedBarre]
-                )
-                canto.savedBarre = mappa[canto.savedBarre]
-                mDao.updateCanto(canto)
-            }
-        }
-    }
-
     fun setupToolbarTitle(titleResId: Int) {
         supportActionBar?.setTitle(titleResId)
     }
 
     fun closeFabMenu() {
-        if (binding.fabPager.isOpen)
-            binding.fabPager.close()
+        if (binding.fabPager.isOpen) binding.fabPager.close()
     }
 
     fun toggleFabMenu() {
@@ -897,8 +761,7 @@ class MainActivity : ThemeableActivity() {
     fun enableFab(enable: Boolean, autoHide: Boolean = true) {
         Log.d(TAG, "enableFab: $enable")
         if (enable) {
-            if (binding.fabPager.isOpen)
-                binding.fabPager.close()
+            if (binding.fabPager.isOpen) binding.fabPager.close()
             else {
                 val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
                 params?.behavior =
@@ -907,8 +770,7 @@ class MainActivity : ThemeableActivity() {
                 binding.fabPager.show()
             }
         } else {
-            if (binding.fabPager.isOpen)
-                binding.fabPager.close()
+            if (binding.fabPager.isOpen) binding.fabPager.close()
             binding.fabPager.hide()
             val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
             params?.behavior = SpeedDialView.NoBehavior()
@@ -936,53 +798,38 @@ class MainActivity : ThemeableActivity() {
 
         if (optionMenu) {
             val iconColor = MaterialColors.getColor(
-                this,
-                com.google.android.material.R.attr.colorOnPrimaryContainer,
-                TAG
+                this, com.google.android.material.R.attr.colorOnPrimaryContainer, TAG
             )
             val backgroundColor = MaterialColors.getColor(
-                this,
-                com.google.android.material.R.attr.colorPrimaryContainer,
-                TAG
+                this, com.google.android.material.R.attr.colorPrimaryContainer, TAG
             )
 
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(
                     R.id.fab_pulisci,
                     AppCompatResources.getDrawable(this, R.drawable.cleaning_services_24px)
-                )
-                    .setTheme(R.style.Risuscito_SpeedDialActionItem)
+                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.dialog_reset_list_title))
-                    .setFabBackgroundColor(backgroundColor)
-                    .setLabelBackgroundColor(backgroundColor)
-                    .setLabelColor(iconColor)
-                    .create()
+                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
+                    .setLabelColor(iconColor).create()
             )
 
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(
-                    R.id.fab_add_lista,
-                    AppCompatResources.getDrawable(this, R.drawable.add_24px)
-                )
-                    .setTheme(R.style.Risuscito_SpeedDialActionItem)
+                    R.id.fab_add_lista, AppCompatResources.getDrawable(this, R.drawable.add_24px)
+                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.action_add_list))
-                    .setFabBackgroundColor(backgroundColor)
-                    .setLabelBackgroundColor(backgroundColor)
-                    .setLabelColor(iconColor)
-                    .create()
+                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
+                    .setLabelColor(iconColor).create()
             )
 
             binding.fabPager.addActionItem(
                 SpeedDialActionItem.Builder(
-                    R.id.fab_condividi,
-                    AppCompatResources.getDrawable(this, R.drawable.share_24px)
-                )
-                    .setTheme(R.style.Risuscito_SpeedDialActionItem)
+                    R.id.fab_condividi, AppCompatResources.getDrawable(this, R.drawable.share_24px)
+                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
                     .setLabel(getString(R.string.action_share))
-                    .setFabBackgroundColor(backgroundColor)
-                    .setLabelBackgroundColor(backgroundColor)
-                    .setLabelColor(iconColor)
-                    .create()
+                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
+                    .setLabelColor(iconColor).create()
             )
 
             if (customList) {
@@ -990,39 +837,30 @@ class MainActivity : ThemeableActivity() {
                     SpeedDialActionItem.Builder(
                         R.id.fab_condividi_file,
                         AppCompatResources.getDrawable(this, R.drawable.attachment_24px)
-                    )
-                        .setTheme(R.style.Risuscito_SpeedDialActionItem)
+                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_share_file))
                         .setFabBackgroundColor(backgroundColor)
-                        .setLabelBackgroundColor(backgroundColor)
-                        .setLabelColor(iconColor)
-                        .create()
+                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
                 )
 
                 binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(
                         R.id.fab_edit_lista,
                         AppCompatResources.getDrawable(this, R.drawable.edit_24px)
-                    )
-                        .setTheme(R.style.Risuscito_SpeedDialActionItem)
+                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_edit_list))
                         .setFabBackgroundColor(backgroundColor)
-                        .setLabelBackgroundColor(backgroundColor)
-                        .setLabelColor(iconColor)
-                        .create()
+                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
                 )
 
                 binding.fabPager.addActionItem(
                     SpeedDialActionItem.Builder(
                         R.id.fab_delete_lista,
                         AppCompatResources.getDrawable(this, R.drawable.delete_24px)
-                    )
-                        .setTheme(R.style.Risuscito_SpeedDialActionItem)
+                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
                         .setLabel(getString(R.string.action_remove_list))
                         .setFabBackgroundColor(backgroundColor)
-                        .setLabelBackgroundColor(backgroundColor)
-                        .setLabelColor(iconColor)
-                        .create()
+                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
                 )
             }
             binding.fabPager.setOnActionSelectedListener(action)
@@ -1054,41 +892,39 @@ class MainActivity : ThemeableActivity() {
         get() = binding.mainContent
 
     // [START signIn]
-    private fun signIn(lastAccount: Boolean) {
+    private fun signIn(
+        lastAccount: Boolean, forceRefresh: Boolean = false
+    ) {
+        Log.d(TAG, "signIn -> lastAccount: $lastAccount / forceRefresh: $forceRefresh")
         // [START build_client]
         buildCredentialRequest(if (lastAccount) buildLastAccountCredentialOption() else buildGoogleCredentialOption())
         // [END build_client]
 
         mCredentialRequest?.let {
             lifecycleScope.launch {
-                login()
+                mCredentialRequest?.let {
+                    mCredentialCacheManager.getCredential(it, forceRefresh)
+                }
             }
         }
     }
 
     private fun buildCredentialRequest(credOption: CredentialOption) {
-        mCredentialRequest = GetCredentialRequest.Builder()
-            .addCredentialOption(credOption)
-            .build()
+        mCredentialRequest = GetCredentialRequest.Builder().addCredentialOption(credOption).build()
     }
 
     private fun buildLastAccountCredentialOption(): CredentialOption {
-        return GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(true)
-            .setServerClientId(getString(R.string.default_web_client_id))
-            .setAutoSelectEnabled(true)
+        return GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(true)
+            .setServerClientId(getString(R.string.default_web_client_id)).setAutoSelectEnabled(true)
             .build()
     }
 
     private fun buildGoogleCredentialOption(): CredentialOption {
-        return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id))
-            .build()
+        return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id)).build()
     }
 
     // [START signOut]
     private fun signOut() {
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
         lifecycleScope.launch {
             logout()
@@ -1098,135 +934,97 @@ class MainActivity : ThemeableActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         profileItem = menu.findItem(R.id.account_manager)
-        profileUiManager = ProfileUiManager(this, supportFragmentManager, profileItem?.actionView, mViewModel, ::signIn)
+        profileUiManager = ProfileUiManager(
+            this, supportFragmentManager, profileItem?.actionView, ::signIn
+        )
         return super.onCreateOptionsMenu(menu)
     }
 
     // [START revokeAccess]
     private fun revokeAccess() {
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
     }
 
-    private fun handleSignInResult(result: GetCredentialResponse) {
+    private fun handleSignInResult() {
         // Handle the successfully returned credential.
-        when (val credential = result.credential) {
-            is CustomCredential -> {
-                Log.d(TAG, "handleSignInResult: isCustomCredential ${credential.type}")
-                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                    try {
-                        // Use googleIdTokenCredential and extract id to validate and
-                        // authenticate on your server.
-                        mViewModel.acct = GoogleIdTokenCredential
-                            .createFrom(credential.data)
-                        validaToken(false)
-                    } catch (e: GoogleIdTokenParsingException) {
-                        Log.e(TAG, "Received an invalid google id token response", e)
-                        handleErrorResult(e.localizedMessage ?: "")
-                    }
-                } else {
-                    // Catch any unrecognized credential type here.
-                    Log.e(TAG, "handleSignInResult: $UNEXPECTED_CREDENTIAL")
-                    handleErrorResult(UNEXPECTED_CREDENTIAL)
-                }
-            }
-
-            else -> {
-                // Catch any unrecognized credential type here.
-                Log.e(TAG, "handleSignInResult: $UNEXPECTED_CREDENTIAL")
-                handleErrorResult(UNEXPECTED_CREDENTIAL)
-            }
-        }
-
+        Toast.makeText(
+            this, getString(
+                R.string.connected_as,
+                mCredentialCacheManager.getCachedCredential()?.getDisplayName()
+            ), Toast.LENGTH_SHORT
+        ).show()
+        mCredentialCacheManager.validateToken()
     }
 
     private fun handleErrorResult(message: String) {
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-        )
-            Toast.makeText(
-                this, getString(
-                    R.string.login_failed,
-                    -1,
-                    message
-                ), Toast.LENGTH_SHORT
-            )
-                .show()
-        mViewModel.acct = null
+        Toast.makeText(
+            this, getString(
+                R.string.login_failed, -1, message
+            ), Toast.LENGTH_SHORT
+        ).show()
         mViewModel.sub = ""
         updateUI(false)
     }
 
     private fun firebaseAuthWithGoogle() {
-        Log.d(TAG, "firebaseAuthWithGoogle: ${mViewModel.acct?.idToken}")
-
-        mViewModel.acct?.let { account ->
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            auth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "firebaseAuthWithGoogle:success")
-                        if (mViewModel.showSnackbar) {
-                            Toast.makeText(
-                                this,
-                                getString(R.string.connected_as, mViewModel.acct?.displayName),
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                            mViewModel.showSnackbar = false
+        Log.d(
+            TAG, "firebaseAuthWithGoogle: ${
+                mCredentialCacheManager.getCachedCredential()?.getAccountIdToken()
+            }"
+        )
+        mCredentialCacheManager.getCachedCredential()?.let { account ->
+            val credential = GoogleAuthProvider.getCredential(account.getAccountIdToken(), null)
+            auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "firebaseAuthWithGoogle:success")
+                    updateUI(true)
+                    when (mViewModel.profileAction) {
+                        ProfileAction.BACKUP -> {
+                            lifecycleScope.launch { backupDbPrefs() }
+                            mViewModel.profileAction = ProfileAction.NONE
                         }
-                        updateUI(true)
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.exception)
-                        updateUI(true)
-                        if (PreferenceManager.getDefaultSharedPreferences(this)
-                                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-                        )
-                            Toast.makeText(
-                                this, getString(
-                                    R.string.login_failed,
-                                    -1,
-                                    task.exception?.localizedMessage
-                                ), Toast.LENGTH_SHORT
-                            )
-                                .show()
+
+                        ProfileAction.RESTORE -> {
+                            lifecycleScope.launch { restoreDbPrefs() }
+                            mViewModel.profileAction = ProfileAction.NONE
+                        }
+
+                        ProfileAction.NONE -> {}
                     }
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    updateUI(false)
+                    Toast.makeText(
+                        this, getString(
+                            R.string.login_failed, -1, task.exception?.localizedMessage
+                        ), Toast.LENGTH_SHORT
+                    ).show()
                 }
+            }
         } ?: {
             Log.w(TAG, "signInWithCredential:failure")
-            updateUI(true)
-            if (PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-            )
-                Toast.makeText(
-                    this, getString(
-                        R.string.login_failed,
-                        -1,
-                        "null account"
-                    ), Toast.LENGTH_SHORT
-                )
-                    .show()
+            updateUI(false)
+            Toast.makeText(
+                this, getString(
+                    R.string.login_failed, -1, "null account"
+                ), Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     private fun updateUI(signedIn: Boolean) {
+        Log.d(TAG, "updateUI:signedIn = $signedIn")
         // Use a more descriptive name for the shared preferences
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         // Update sign-in status in shared preferences
         sharedPreferences.edit {
             putBoolean(Utility.SIGNED_IN, signedIn)
-            // Only set SIGN_IN_REQUESTED to true if signedIn is true
-            if (signedIn) {
-                putBoolean(Utility.SIGN_IN_REQUESTED, true)
-            }
         }
-        // Update profile information based on sign-in status
         if (signedIn) {
-            updateProfileInfo(mViewModel.acct)
+            updateProfileInfo(mCredentialCacheManager.getCachedCredential())
         } else {
             clearProfileInfo()
         }
@@ -1244,17 +1042,16 @@ class MainActivity : ThemeableActivity() {
      *
      * @param account The user's account information.
      */
-    private fun updateProfileInfo(account: GoogleIdTokenCredential?) { // Replace YourAccountType with the actual type
-        profileNameStr = account?.displayName.orEmpty()
+    private fun updateProfileInfo(account: CredendialObject?) { // Replace YourAccountType with the actual type
+        profileNameStr = account?.getDisplayName().orEmpty()
         Log.d(TAG, "LOGIN profileName: $profileNameStr")
 
-        profileEmailStr = account?.id.orEmpty()
+        profileEmailStr = account?.getAccountId().orEmpty()
         Log.d(TAG, "LOGIN profileEmail: $profileEmailStr")
 
-        profilePhotoUrl = account?.profilePictureUri?.let { uri ->
-            val originalUrl = uri.toString()
-            Log.d(TAG, "personPhotoUrl BEFORE: $originalUrl")
-            val modifiedUrl = originalUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
+        profilePhotoUrl = account?.getProfilePictureUri()?.let { uri ->
+            Log.d(TAG, "personPhotoUrl BEFORE: $uri")
+            val modifiedUrl = uri.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
             Log.d(TAG, "personPhotoUrl AFTER: $modifiedUrl")
             modifiedUrl
         } ?: StringUtils.EMPTY
@@ -1268,61 +1065,6 @@ class MainActivity : ThemeableActivity() {
         profileEmailStr = StringUtils.EMPTY
         profilePhotoUrl = StringUtils.EMPTY
     }
-
-//    fun updateProfileImage() {
-//
-//        val profileImage =
-//            profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
-//        val signInButton =
-//            profileItem?.actionView?.findViewById<Button>(R.id.sign_in_button)
-//
-//        profileImage?.isVisible = PreferenceManager.getDefaultSharedPreferences(this)
-//            .getBoolean(Utility.SIGNED_IN, false)
-//        signInButton?.isGone =
-//            PreferenceManager.getDefaultSharedPreferences(this)
-//                .getBoolean(Utility.SIGNED_IN, false)
-//
-//        if (profilePhotoUrl.isEmpty()) {
-//            profileImage?.setImageResource(R.drawable.account_circle_56px)
-//            profileImage?.background =
-//                null
-//        } else {
-//            AppCompatResources.getDrawable(this, R.drawable.account_circle_56px)?.let {
-//                Picasso.get().load(profilePhotoUrl)
-//                    .placeholder(it)
-//                    .into(profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon))
-//            }
-//            AppCompatResources.getDrawable(
-//                this,
-//                getTypedValueResId(androidx.appcompat.R.attr.selectableItemBackgroundBorderless)
-//            )?.let {
-//                profileImage?.background =
-//                    it
-//            }
-//        }
-//
-//        profileItem?.actionView?.findViewById<ShapeableImageView>(R.id.profile_icon)
-//            ?.setOnClickListener {
-//                ProfileDialogFragment.show(
-//                    ProfileDialogFragment.Builder(
-//                        PROFILE_DIALOG
-//                    ).apply {
-//                        profileName = profileNameStr
-//                        profileEmail = profileEmailStr
-//                        profileImageSrc = profilePhotoUrl
-//                    },
-//                    supportFragmentManager
-//                )
-//            }
-//
-//        signInButton?.setOnClickListener {
-//            PreferenceManager.getDefaultSharedPreferences(this)
-//                .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
-//            mViewModel.showSnackbar = true
-//            signIn(false)
-//        }
-//
-//    }
 
     fun showProgressDialog() {
         binding.loadingBar.isVisible = true
@@ -1341,8 +1083,7 @@ class MainActivity : ThemeableActivity() {
         val myFragment =
             supportFragmentManager.findFragmentByTag(R.id.navigation_indexes.toString())
         if (myFragment != null && myFragment.isVisible) {
-            if (exitAlso)
-                finish()
+            if (exitAlso) finish()
             return
         }
 
@@ -1389,8 +1130,7 @@ class MainActivity : ThemeableActivity() {
                     }
                 }
                 negativeButton(android.R.string.cancel)
-            },
-            supportFragmentManager
+            }, supportFragmentManager
         )
         binding.drawer?.close()
     }
@@ -1401,8 +1141,7 @@ class MainActivity : ThemeableActivity() {
             ProgressDialogFragment.Builder(TRANSLATION).apply {
                 content = R.string.translation_running
                 progressIndeterminate = true
-            },
-            supportFragmentManager
+            }, supportFragmentManager
         )
         intent.removeExtra(CHANGE_LANGUAGE)
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
@@ -1432,25 +1171,22 @@ class MainActivity : ThemeableActivity() {
                 MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
-                backupSharedPreferences(mViewModel.sub, mViewModel.acct?.id)
+                backupSharedPreferences(
+                    mViewModel.sub, mCredentialCacheManager.getCachedCredential()?.getAccountId()
+                )
             }
 
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED
             SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(BACKUP_DONE)
-                    .title(R.string.general_message)
-                    .icon(R.drawable.cloud_done_24px)
-                    .content(R.string.gdrive_backup_success)
-                    .positiveButton(R.string.ok),
-                supportFragmentManager
+                SimpleDialogFragment.Builder(BACKUP_DONE).title(R.string.general_message)
+                    .icon(R.drawable.cloud_done_24px).content(R.string.gdrive_backup_success)
+                    .positiveButton(R.string.ok), supportFragmentManager
             )
         } catch (e: Exception) {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
             Snackbar.make(
-                binding.mainContent,
-                "error: " + e.localizedMessage,
-                Snackbar.LENGTH_SHORT
+                binding.mainContent, "error: " + e.localizedMessage, Snackbar.LENGTH_SHORT
             ).show()
         }
     }
@@ -1475,12 +1211,9 @@ class MainActivity : ThemeableActivity() {
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED
             SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(RESTORE_DONE)
-                    .title(R.string.general_message)
-                    .icon(R.drawable.cloud_done_24px)
-                    .content(R.string.gdrive_restore_success)
-                    .positiveButton(R.string.ok),
-                supportFragmentManager
+                SimpleDialogFragment.Builder(RESTORE_DONE).title(R.string.general_message)
+                    .icon(R.drawable.cloud_done_24px).content(R.string.gdrive_restore_success)
+                    .positiveButton(R.string.ok), supportFragmentManager
             )
         } catch (e: Exception) {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
@@ -1499,8 +1232,7 @@ class MainActivity : ThemeableActivity() {
     ) {
         binding.contextualToolbar.navigationIcon =
             if (hideNavigation) null else AppCompatResources.getDrawable(
-                this,
-                R.drawable.arrow_back_24px
+                this, R.drawable.arrow_back_24px
             )
         isActionMode = true
         actionModeFragment = fragment
@@ -1522,8 +1254,7 @@ class MainActivity : ThemeableActivity() {
         setTransparentStatusBar(true)
         actionModeFragment?.destroyActionMode()
         return binding.risuscitoToolbar.collapse(
-            binding.contextualToolbarContainer,
-            binding.appBarLayout
+            binding.contextualToolbarContainer, binding.appBarLayout
         )
     }
 
@@ -1532,7 +1263,6 @@ class MainActivity : ThemeableActivity() {
     }
 
     companion object {
-//        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val RESTORE_RUNNING = "RESTORE_RUNNING"
         private const val BACKUP_RUNNING = "BACKUP_RUNNING"
         private const val TRANSLATION = "TRANSLATION"
