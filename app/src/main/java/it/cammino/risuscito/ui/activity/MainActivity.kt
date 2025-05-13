@@ -42,7 +42,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.MaterialColors
@@ -69,7 +68,8 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.databinding.ActivityMainBinding
 import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.CredentialCache
+import it.cammino.risuscito.ui.CredendialObject
+import it.cammino.risuscito.ui.CredentialCacheManager
 import it.cammino.risuscito.ui.ProfileUiManager
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.dialog.DialogState
@@ -84,18 +84,15 @@ import it.cammino.risuscito.ui.fragment.GeneralIndexFragment
 import it.cammino.risuscito.ui.fragment.HistoryFragment
 import it.cammino.risuscito.ui.fragment.SettingsFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
-import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.CantiXmlParser
-import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
-import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
-import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
-import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.CHANGE_LANGUAGE
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
+import it.cammino.risuscito.utils.extension.convertTabs
+import it.cammino.risuscito.utils.extension.convertiBarre
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.getVersionCode
 import it.cammino.risuscito.utils.extension.isDarkMode
@@ -108,6 +105,7 @@ import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.utils.extension.updateListaPersonalizzata
 import it.cammino.risuscito.utils.extension.updatePosizione
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
+import it.cammino.risuscito.viewmodels.MainActivityViewModel.ProfileAction
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -128,7 +126,7 @@ class MainActivity : ThemeableActivity() {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
 
-    private lateinit var mCredentialCache: CredentialCache
+    private lateinit var mCredentialCacheManager: CredentialCacheManager
 
     private lateinit var mCredentialManager: CredentialManager
     private var mCredentialRequest: GetCredentialRequest? = null
@@ -179,7 +177,7 @@ class MainActivity : ThemeableActivity() {
 
         mCredentialManager = CredentialManager.create(this)
 
-        mCredentialCache = CredentialCache(mViewModel, this, mCredentialManager)
+        mCredentialCacheManager = CredentialCacheManager(mViewModel, this, mCredentialManager)
 
         val outValue = TypedValue()
         resources.getValue(R.dimen.horizontal_percentage_half_divider, outValue, true)
@@ -337,21 +335,9 @@ class MainActivity : ThemeableActivity() {
 
     }
 
-    private suspend fun login(forceRefresh: Boolean = false) {
-        Log.d(TAG, "signIn -> forceRefresh: $forceRefresh / mCredentialRequest != null ? : ${mCredentialRequest != null}")
-        mCredentialRequest?.let {
-            val credential = mCredentialCache.getCredential(it, forceRefresh)
-            if (credential != null) {
-                handleSignInResult(credential)
-            } else {
-                handleErrorResult(CredentialCache.UNEXPECTED_CREDENTIAL)
-            }
-        }
-    }
-
     private suspend fun logout() {
         mCredentialManager.clearCredentialState(ClearCredentialStateRequest())
-        mCredentialCache.clearCache()
+        mCredentialCacheManager.clearCache()
         updateUI(false)
         Toast.makeText(this, R.string.disconnected, Toast.LENGTH_SHORT).show()
     }
@@ -359,13 +345,9 @@ class MainActivity : ThemeableActivity() {
     override fun onStart() {
         super.onStart()
         if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
+                .getBoolean(Utility.SIGNED_IN, false)
         ) {
-            if (mViewModel.acct != null) {
-                mCredentialCache.validateToken()
-            } else {
-                signIn(true)
-            }
+            signIn(lastAccount = true)
         }
     }
 
@@ -501,13 +483,15 @@ class MainActivity : ThemeableActivity() {
                             BACKUP_ASK -> {
                                 simpleDialogViewModel.handled = true
                                 backToHome(false)
-                                lifecycleScope.launch { backupDbPrefs() }
+                                mViewModel.profileAction = ProfileAction.BACKUP
+                                mCredentialCacheManager.validateToken()
                             }
 
                             RESTORE_ASK -> {
                                 simpleDialogViewModel.handled = true
                                 backToHome(false)
-                                lifecycleScope.launch { restoreDbPrefs() }
+                                mViewModel.profileAction = ProfileAction.RESTORE
+                                mCredentialCacheManager.validateToken()
                             }
 
                             SIGNOUT -> {
@@ -570,6 +554,11 @@ class MainActivity : ThemeableActivity() {
 
                         R.id.gdrive_restore -> {
                             showAccountRelatedDialog(RESTORE_ASK)
+                        }
+
+                        R.id.gdrive_refresh -> {
+                            mViewModel.profileAction = ProfileAction.NONE
+                            signIn(lastAccount = true, forceRefresh = true)
                         }
 
                         R.id.gplus_signout -> {
@@ -640,8 +629,7 @@ class MainActivity : ThemeableActivity() {
                         if (mViewModel.sub.isNotEmpty()) {
                             firebaseAuthWithGoogle()
                         } else {
-//                            if (mViewModel.retrieveLastAccount) signIn(true, true)
-                            if (mCredentialCache.getCachedCredential() != null) signIn(true, true)
+                            signIn(lastAccount = true, forceRefresh = true)
                         }
                     }
 
@@ -654,7 +642,14 @@ class MainActivity : ThemeableActivity() {
             state?.let {
                 when (it) {
                     MainActivityViewModel.LOGIN_STATE_STARTED -> {}
-                    MainActivityViewModel.LOGIN_STATE_OK -> {}
+                    MainActivityViewModel.LOGIN_STATE_OK_SILENT -> {
+                        updateUI(true)
+                    }
+
+                    MainActivityViewModel.LOGIN_STATE_OK -> {
+                        handleSignInResult()
+                    }
+
                     else -> handleErrorResult(it)
                 }
             }
@@ -749,80 +744,6 @@ class MainActivity : ThemeableActivity() {
 
         val intent = Intent(this, activityClass)
         startActivityWithTransition(intent, MaterialSharedAxis.Y)
-    }
-
-    // converte gli accordi salvati dalla lingua vecchia alla nuova
-    private fun convertTabs() {
-        val oldLanguage = intent.getStringExtra(OLD_LANGUAGE)
-        val newLanguage = intent.getStringExtra(NEW_LANGUAGE)
-
-        var accordi1 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - from: $oldLanguage")
-        when (oldLanguage) {
-            LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
-            LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
-            LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
-            LANGUAGE_ENGLISH_PHILIPPINES -> accordi1 = CambioAccordi.accordi_en
-        }
-
-        var accordi2 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - to: $newLanguage")
-        when (newLanguage) {
-            LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
-            LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
-            LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
-            LANGUAGE_ENGLISH_PHILIPPINES -> accordi2 = CambioAccordi.accordi_en
-        }
-
-        val mappa = HashMap<String, String>()
-        for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
-
-        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName()
-        for (canto in canti) {
-            if (!canto.savedTab.isNullOrEmpty()) {
-                Log.d(
-                    TAG,
-                    "convertTabs: " + "ID " + canto.id + " -> CONVERTO DA " + canto.savedTab + " A " + mappa[canto.savedTab.orEmpty()]
-                )
-                canto.savedTab = mappa[canto.savedTab.orEmpty()]
-                mDao.updateCanto(canto)
-            }
-        }
-    }
-
-    // converte gli accordi salvati dalla lingua vecchia alla nuova
-    private fun convertiBarre() {
-        val oldLanguage = intent.getStringExtra(OLD_LANGUAGE)
-        val newLanguage = intent.getStringExtra(NEW_LANGUAGE)
-
-        var barre1 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - from: $oldLanguage")
-        when (oldLanguage) {
-            LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
-        }
-
-        var barre2 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - to: $newLanguage")
-        when (newLanguage) {
-            LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
-        }
-
-        val mappa = HashMap<String, String>()
-        for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
-
-        val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
-        val canti = mDao.allByName()
-        for (canto in canti) {
-            if (!canto.savedTab.isNullOrEmpty()) {
-                Log.d(
-                    TAG,
-                    "convertiBarre: " + "ID " + canto.id + " -> CONVERTO DA " + canto.savedBarre + " A " + mappa[canto.savedBarre]
-                )
-                canto.savedBarre = mappa[canto.savedBarre]
-                mDao.updateCanto(canto)
-            }
-        }
     }
 
     fun setupToolbarTitle(titleResId: Int) {
@@ -971,7 +892,9 @@ class MainActivity : ThemeableActivity() {
         get() = binding.mainContent
 
     // [START signIn]
-    private fun signIn(lastAccount: Boolean, forceRefresh: Boolean = false) {
+    private fun signIn(
+        lastAccount: Boolean, forceRefresh: Boolean = false
+    ) {
         Log.d(TAG, "signIn -> lastAccount: $lastAccount / forceRefresh: $forceRefresh")
         // [START build_client]
         buildCredentialRequest(if (lastAccount) buildLastAccountCredentialOption() else buildGoogleCredentialOption())
@@ -979,7 +902,9 @@ class MainActivity : ThemeableActivity() {
 
         mCredentialRequest?.let {
             lifecycleScope.launch {
-                login(forceRefresh)
+                mCredentialRequest?.let {
+                    mCredentialCacheManager.getCredential(it, forceRefresh)
+                }
             }
         }
     }
@@ -1000,8 +925,6 @@ class MainActivity : ThemeableActivity() {
 
     // [START signOut]
     private fun signOut() {
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
         lifecycleScope.launch {
             logout()
@@ -1012,62 +935,68 @@ class MainActivity : ThemeableActivity() {
         menuInflater.inflate(R.menu.main_menu, menu)
         profileItem = menu.findItem(R.id.account_manager)
         profileUiManager = ProfileUiManager(
-            this, supportFragmentManager, profileItem?.actionView, mViewModel, ::signIn
+            this, supportFragmentManager, profileItem?.actionView, ::signIn
         )
         return super.onCreateOptionsMenu(menu)
     }
 
     // [START revokeAccess]
     private fun revokeAccess() {
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .edit { putBoolean(Utility.SIGN_IN_REQUESTED, false) }
         FirebaseAuth.getInstance().signOut()
     }
 
-    private fun handleSignInResult(result: GoogleIdTokenCredential) {
+    private fun handleSignInResult() {
         // Handle the successfully returned credential.
-        mViewModel.acct = result
-        mCredentialCache.validateToken()
+        Toast.makeText(
+            this, getString(
+                R.string.connected_as,
+                mCredentialCacheManager.getCachedCredential()?.getDisplayName()
+            ), Toast.LENGTH_SHORT
+        ).show()
+        mCredentialCacheManager.validateToken()
     }
 
     private fun handleErrorResult(message: String) {
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-        ) Toast.makeText(
+        Toast.makeText(
             this, getString(
                 R.string.login_failed, -1, message
             ), Toast.LENGTH_SHORT
         ).show()
-        mViewModel.acct = null
         mViewModel.sub = ""
         updateUI(false)
     }
 
     private fun firebaseAuthWithGoogle() {
-        Log.d(TAG, "firebaseAuthWithGoogle: ${mViewModel.acct?.idToken}")
-
-        mViewModel.acct?.let { account ->
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        Log.d(
+            TAG, "firebaseAuthWithGoogle: ${
+                mCredentialCacheManager.getCachedCredential()?.getAccountIdToken()
+            }"
+        )
+        mCredentialCacheManager.getCachedCredential()?.let { account ->
+            val credential = GoogleAuthProvider.getCredential(account.getAccountIdToken(), null)
             auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "firebaseAuthWithGoogle:success")
-                    if (mViewModel.showSnackbar) {
-                        Toast.makeText(
-                            this,
-                            getString(R.string.connected_as, mViewModel.acct?.displayName),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        mViewModel.showSnackbar = false
-                    }
                     updateUI(true)
+                    when (mViewModel.profileAction) {
+                        ProfileAction.BACKUP -> {
+                            lifecycleScope.launch { backupDbPrefs() }
+                            mViewModel.profileAction = ProfileAction.NONE
+                        }
+
+                        ProfileAction.RESTORE -> {
+                            lifecycleScope.launch { restoreDbPrefs() }
+                            mViewModel.profileAction = ProfileAction.NONE
+                        }
+
+                        ProfileAction.NONE -> {}
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    updateUI(true)
-                    if (PreferenceManager.getDefaultSharedPreferences(this)
-                            .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-                    ) Toast.makeText(
+                    updateUI(false)
+                    Toast.makeText(
                         this, getString(
                             R.string.login_failed, -1, task.exception?.localizedMessage
                         ), Toast.LENGTH_SHORT
@@ -1076,10 +1005,8 @@ class MainActivity : ThemeableActivity() {
             }
         } ?: {
             Log.w(TAG, "signInWithCredential:failure")
-            updateUI(true)
-            if (PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(Utility.SIGN_IN_REQUESTED, false)
-            ) Toast.makeText(
+            updateUI(false)
+            Toast.makeText(
                 this, getString(
                     R.string.login_failed, -1, "null account"
                 ), Toast.LENGTH_SHORT
@@ -1088,20 +1015,16 @@ class MainActivity : ThemeableActivity() {
     }
 
     private fun updateUI(signedIn: Boolean) {
+        Log.d(TAG, "updateUI:signedIn = $signedIn")
         // Use a more descriptive name for the shared preferences
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         // Update sign-in status in shared preferences
         sharedPreferences.edit {
             putBoolean(Utility.SIGNED_IN, signedIn)
-            // Only set SIGN_IN_REQUESTED to true if signedIn is true
-            if (signedIn) {
-                putBoolean(Utility.SIGN_IN_REQUESTED, true)
-            }
         }
-        // Update profile information based on sign-in status
         if (signedIn) {
-            updateProfileInfo(mViewModel.acct)
+            updateProfileInfo(mCredentialCacheManager.getCachedCredential())
         } else {
             clearProfileInfo()
         }
@@ -1119,17 +1042,16 @@ class MainActivity : ThemeableActivity() {
      *
      * @param account The user's account information.
      */
-    private fun updateProfileInfo(account: GoogleIdTokenCredential?) { // Replace YourAccountType with the actual type
-        profileNameStr = account?.displayName.orEmpty()
+    private fun updateProfileInfo(account: CredendialObject?) { // Replace YourAccountType with the actual type
+        profileNameStr = account?.getDisplayName().orEmpty()
         Log.d(TAG, "LOGIN profileName: $profileNameStr")
 
-        profileEmailStr = account?.id.orEmpty()
+        profileEmailStr = account?.getAccountId().orEmpty()
         Log.d(TAG, "LOGIN profileEmail: $profileEmailStr")
 
-        profilePhotoUrl = account?.profilePictureUri?.let { uri ->
-            val originalUrl = uri.toString()
-            Log.d(TAG, "personPhotoUrl BEFORE: $originalUrl")
-            val modifiedUrl = originalUrl.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
+        profilePhotoUrl = account?.getProfilePictureUri()?.let { uri ->
+            Log.d(TAG, "personPhotoUrl BEFORE: $uri")
+            val modifiedUrl = uri.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
             Log.d(TAG, "personPhotoUrl AFTER: $modifiedUrl")
             modifiedUrl
         } ?: StringUtils.EMPTY
@@ -1249,7 +1171,9 @@ class MainActivity : ThemeableActivity() {
                 MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
-                backupSharedPreferences(mViewModel.sub, mViewModel.acct?.id)
+                backupSharedPreferences(
+                    mViewModel.sub, mCredentialCacheManager.getCachedCredential()?.getAccountId()
+                )
             }
 
             mViewModel.backupRestoreState.value =
@@ -1339,7 +1263,6 @@ class MainActivity : ThemeableActivity() {
     }
 
     companion object {
-        //        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val RESTORE_RUNNING = "RESTORE_RUNNING"
         private const val BACKUP_RUNNING = "BACKUP_RUNNING"
         private const val TRANSLATION = "TRANSLATION"

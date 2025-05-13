@@ -220,6 +220,7 @@
     <string name="backup_running">Tworzenie kopii zapasowej w trakcie&#8230;</string>
     <string name="restore_running">Przywracanie w trakcie&#8230;</string>
     <string name="gdrive_restore">Przywracanie ustawień z kopii zapasowej konta</string>
+    <string name="gdrive_refresh">Zaktualizuj informacje o koncie</string>
     <string name="gdrive_restore_success">Przywracanie zakończyło się sukcesem. Aplikacja zostanie zrestartowana</string>
     <string name="gdrive_backup_success">Kopia zapasowa ukończona</string>
     <string name="no_restore_found">Nie ma kopii zapasowej zapisanej na tym koncie</string>

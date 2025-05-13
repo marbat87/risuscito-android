@@ -2,7 +2,6 @@ package it.cammino.risuscito.ui
 
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.net.Uri
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -17,28 +16,27 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.gson.GsonBuilder
 import it.cammino.risuscito.R
-import it.cammino.risuscito.database.serializer.UriJsonAdapter
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CredentialCache(
+class CredentialCacheManager(
     private val viewModel: MainActivityViewModel,
     private val context: AppCompatActivity,
-    private val credentialManager: CredentialManager) {
+    private val credentialManager: CredentialManager
+) {
 
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("credential_cache", MODE_PRIVATE)
 
     // In-memory cache
-    private var cachedCredentialResponse: GoogleIdTokenCredential? = null
-    private var currentIdToken: String? = null
+    private var cachedCredential: CredendialObject? = null
 
     suspend fun getCredential(
-        request: GetCredentialRequest,
-        forceRefresh: Boolean = false
-    ): GoogleIdTokenCredential? {
+        request: GetCredentialRequest, forceRefresh: Boolean = false
+    ): CredendialObject? {
+        viewModel.loginState.postValue(MainActivityViewModel.LOGIN_STATE_STARTED)
         //check if the idToken is still valid
 //        if (!forceRefresh) {
 //            return cachedCredentialResponse ?: let {
@@ -50,15 +48,13 @@ class CredentialCache(
         //check if we have the cached credentials
         if (!forceRefresh && isCredentialCached() && getCachedCredential() != null) {
             Log.d(TAG, "Retrieving credential from in-memory cache.")
-            viewModel.showSnackbar = false
-            return cachedCredentialResponse
+            viewModel.loginState.postValue(MainActivityViewModel.LOGIN_STATE_OK_SILENT)
+            return cachedCredential
         }
 
         // Retrieve credentials from the credential manager.
         return try {
             Log.d(TAG, "Retrieving credentials...")
-            viewModel.loginState.postValue(MainActivityViewModel.LOGIN_STATE_STARTED)
-            viewModel.showSnackbar = true
             val result = credentialManager.getCredential(request = request, context = context)
 
             // Cache the result in memory.
@@ -68,12 +64,19 @@ class CredentialCache(
                     if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                         try {
                             // Cache the fact that credentials were obtained in sharedPreferences
-                            cachedCredentialResponse = GoogleIdTokenCredential.createFrom(credential.data)
+                            val credentialResponse =
+                                GoogleIdTokenCredential.createFrom(credential.data)
+                            cachedCredential =
+                                CredendialObject.generateFromCredentials(credentialResponse)
                             cacheCredentials()
                             viewModel.loginState.postValue(MainActivityViewModel.LOGIN_STATE_OK)
-                            cachedCredentialResponse
+                            cachedCredential
                         } catch (e: GoogleIdTokenParsingException) {
-                            Log.e(TAG, "getCredential: Received an invalid google id token response", e)
+                            Log.e(
+                                TAG,
+                                "getCredential: Received an invalid google id token response",
+                                e
+                            )
                             viewModel.loginState.postValue(e.localizedMessage ?: "")
                             null
                         }
@@ -84,6 +87,7 @@ class CredentialCache(
                         null
                     }
                 }
+
                 else -> {
                     // Catch any unrecognized credential type here.
                     Log.e(TAG, "getCredential: $UNEXPECTED_CREDENTIAL")
@@ -110,67 +114,62 @@ class CredentialCache(
     }
 
     fun clearCache() {
-        cachedCredentialResponse = null
-        currentIdToken = null
+        cachedCredential = null
         sharedPreferences.edit {
-            remove(CREDENTIALS_CACHED_KEY) // remove if present
             remove(CREDENTIAL_RESPONSE) // remove if present
             apply()
         }
     }
 
     private fun cacheCredentials() {
-        val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriJsonAdapter()).create()
         sharedPreferences.edit {
-            putBoolean(CREDENTIALS_CACHED_KEY, true)
-            val credentialResponse = gson.toJson(cachedCredentialResponse)
+            val credentialResponse = GsonBuilder().create().toJson(cachedCredential)
             putString(CREDENTIAL_RESPONSE, credentialResponse)
             apply()
         }
     }
 
     private fun isCredentialCached(): Boolean {
-        return sharedPreferences.contains(CREDENTIALS_CACHED_KEY)
+        return sharedPreferences.contains(CREDENTIAL_RESPONSE)
     }
 
-    fun getCachedCredential(): GoogleIdTokenCredential? { //retrieve object from shared preferences
-        if (cachedCredentialResponse == null) {
-            val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriJsonAdapter()).create()
+    fun getCachedCredential(): CredendialObject? { //retrieve object from shared preferences
+        if (cachedCredential == null) {
             val json = sharedPreferences.getString(CREDENTIAL_RESPONSE, "")
-            cachedCredentialResponse = gson.fromJson(json, GoogleIdTokenCredential::class.java)
-            if(cachedCredentialResponse == null) {
+            cachedCredential = GsonBuilder().create().fromJson(json, CredendialObject::class.java)
+            if (cachedCredential == null) {
                 Log.w(TAG, "Error retrieving GetCredentialResponse from cache")
             } else {
                 Log.d(TAG, "GetCredentialResponse correctly retrieved from cache")
             }
         }
-        return cachedCredentialResponse
+        return cachedCredential
     }
 
-//    fun validateToken(retrieveLastAccount: Boolean) {
+    //    fun validateToken(retrieveLastAccount: Boolean) {
     fun validateToken() {
+        Log.d(TAG, "validateToken")
         // Verify if token is valid, if it's expired, or if is revoked.
-        if (getCachedCredential()?.idToken.isNullOrEmpty()) {
+        if (getCachedCredential()?.getAccountIdToken().isNullOrEmpty()) {
             Log.e(TAG, "Token cannot be empty!")
             return
         }
 
         //check token signature
         //check if the user is blacklisted
-//        viewModel.retrieveLastAccount = retrieveLastAccount
         viewModel.httpRequestState.value = MainActivityViewModel.ClientState.STARTED
         context.lifecycleScope.launch(Dispatchers.IO) {
             viewModel.sub = Utility.validateToken(
-                getCachedCredential()?.idToken ?: "", context.getString(R.string.default_web_client_id)
+                getCachedCredential()?.getAccountIdToken() ?: "",
+                context.getString(R.string.default_web_client_id)
             )
             viewModel.httpRequestState.postValue(MainActivityViewModel.ClientState.COMPLETED)
         }
     }
 
     companion object {
-        private val TAG = CredentialCache::class.java.canonicalName
-        private const val CREDENTIALS_CACHED_KEY = "credentials_cached"
-        private const val CREDENTIAL_RESPONSE = "credential_response"
+        private val TAG = CredentialCacheManager::class.java.canonicalName
+        private const val CREDENTIAL_RESPONSE = "credential_response_cache"
         const val UNEXPECTED_CREDENTIAL = "Unexpected type of credential"
     }
 }

@@ -480,6 +480,7 @@
     <string name="backup_running">Backup in corso&#8230;</string>
     <string name="restore_running">Ripristino in corso&#8230;</string>
     <string name="gdrive_restore">Ripristina da account</string>
+    <string name="gdrive_refresh">Aggiorna info account</string>
     <string name="gdrive_restore_success">Ripristino effettuato correttamente, Risuscit&#242; sar&#224; ora riavviato</string>
     <string name="gdrive_backup_success">Backup effettuato correttamente</string>
     <string name="no_restore_found">Non hai backup salvati sul tuo account</string>

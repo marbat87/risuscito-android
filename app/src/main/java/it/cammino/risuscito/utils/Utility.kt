@@ -47,7 +47,7 @@ object Utility {
     internal const val SHOW_SANTO = "mostra_santo"
     internal const val SHOW_AUDIO = "mostra_audio"
     internal const val SIGNED_IN = "signed_id"
-    internal const val SIGN_IN_REQUESTED = "sign_id_requested"
+//    internal const val SIGN_IN_REQUESTED = "sign_id_requested"
     internal const val SHOW_OFFERTORIO = "mostra_canto_offertorio"
     internal const val SHOW_EUCARESTIA_PACE = "mostra_eucarestia_pace"
     internal const val PREFERITI_OPEN = "preferiti_open"

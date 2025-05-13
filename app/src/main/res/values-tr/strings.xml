@@ -222,6 +222,7 @@
     <string name="backup_running">Yedekleme yapılıyor&#8230;</string>
     <string name="restore_running">Geri alınıyor&#8230;</string>
     <string name="gdrive_restore">Hesaptan geri al</string>
+    <string name="gdrive_refresh">Hesap bilgilerini güncelle</string>
     <string name="gdrive_restore_success">Geri alma basarıyla gerçekleşti. Dirildi kendini yeniden başlatacaktır.</string>
     <string name="gdrive_backup_success">Yedekleme başarıyla gerçekleşti.</string>
     <string name="no_restore_found">Hesabında önceden yapılmış Yedekleme bulunmuyor.</string>
