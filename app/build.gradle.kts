@@ -16,7 +16,7 @@ android {
         minSdk = 23
         targetSdk = 35
         multiDexEnabled = true
-        versionCode = 6006
+        versionCode = 6007
         versionName = "6.0.0"
 
     }
@@ -35,6 +35,9 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
         getByName("debug") {
             isMinifyEnabled = false
