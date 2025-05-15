@@ -129,9 +129,6 @@ class ProfileUiManager(
     }
 
     private fun handleSignInButtonClick() {
-//        PreferenceManager.getDefaultSharedPreferences(context)
-//            .edit { putBoolean(Utility.SIGN_IN_REQUESTED, true) }
-//        mViewModel.showSnackbar = true
         signIn(false)
     }
 

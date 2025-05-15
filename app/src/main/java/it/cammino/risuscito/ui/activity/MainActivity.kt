@@ -1030,7 +1030,7 @@ class MainActivity : ThemeableActivity() {
         }
 
         updateProfileImage()
-        hideProgressDialog()
+//        hideProgressDialog()
     }
 
     fun updateProfileImage() {
@@ -1185,6 +1185,8 @@ class MainActivity : ThemeableActivity() {
             )
         } catch (e: Exception) {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
+            mViewModel.backupRestoreState.value =
+                MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED
             Snackbar.make(
                 binding.mainContent, "error: " + e.localizedMessage, Snackbar.LENGTH_SHORT
             ).show()
