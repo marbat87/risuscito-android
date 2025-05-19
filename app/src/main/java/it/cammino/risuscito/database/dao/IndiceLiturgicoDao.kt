@@ -5,16 +5,17 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import it.cammino.risuscito.database.entities.IndiceLiturgico
+import it.cammino.risuscito.database.entities.NomeGruppoLiturgico
 import it.cammino.risuscito.database.entities.NomeLiturgico
 import it.cammino.risuscito.database.pojo.CantoLiturgico
 
 @Dao
 interface IndiceLiturgicoDao {
 
-    @Query("SELECT C.titolo, C.pagina, C.source, C.color, C.id, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.idIndice ASC, C.titolo ASC")
+    @Query("SELECT C.titolo, C.pagina, C.source, C.color, C.id, A.idIndice, A.nome, d.idGruppo, d.nomeGruppo FROM nomeliturgico A, indiceliturgico B, canto c, nomegruppoliturgico d WHERE A.idIndice = B.idIndice AND b.idCanto = c.id AND b.idGruppo = d.idGruppo ORDER BY d.idGruppo ASC, A.idIndice ASC, C.titolo ASC")
     fun liveAll(): LiveData<List<CantoLiturgico>>
 
-    @Query("SELECT C.titolo, C.pagina, C.source, C.color, C.id, A.idIndice, A.nome FROM nomeliturgico A, indiceliturgico B, canto c WHERE A.idIndice = B.idIndice AND b.idCanto = c.id ORDER BY A.idIndice ASC, C.titolo ASC")
+    @Query("SELECT C.titolo, C.pagina, C.source, C.color, C.id, A.idIndice, A.nome, d.idGruppo, d.nomeGruppo FROM nomeliturgico A, indiceliturgico B, canto c, nomegruppoliturgico d WHERE A.idIndice = B.idIndice AND b.idCanto = c.id AND b.idGruppo = d.idGruppo ORDER BY d.idGruppo ASC, A.idIndice ASC, C.titolo ASC")
     fun all(): List<CantoLiturgico>
 
     @Query("DELETE FROM indiceliturgico")
@@ -34,4 +35,10 @@ interface IndiceLiturgicoDao {
 
     @Insert
     fun insertNomeIndice(nomeIndiceList: List<NomeLiturgico>)
+
+    @Insert
+    fun insertNomeGruppoIndice(nomeIndice: NomeGruppoLiturgico)
+
+    @Insert
+    fun insertNomeGruppoIndice(nomeIndiceList: List<NomeGruppoLiturgico>)
 }

@@ -5,7 +5,9 @@ import android.util.Log
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.R
+import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ITALIAN
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_TURKISH
@@ -31,25 +33,26 @@ class CambioAccordi internal constructor(private val mContext: Context) {
             var found = false
 
             while (line != null && !found) {
-                var start = line.indexOf(mContext.resources.getString(R.string.barre_search_string))
-                if (start >= 0) {
-                    Log.v(TAG, "recuperaBarre - RIGA: $line")
-                    found = true
+                if (line.contains("<H4>")) {
+                    var start =
+                        line.indexOf(mContext.resources.getString(R.string.barre_search_string))
+                    if (start >= 0) {
+                        Log.v(TAG, "recuperaBarre - RIGA: $line")
+                        found = true
 
-                    start = when (language) {
-                        LANGUAGE_ENGLISH, LANGUAGE_TURKISH -> start + 5
-                        LANGUAGE_POLISH -> start + 6
-                        else -> line.indexOf(mContext.resources.getString(R.string.barre_add_al)) + 3
-                    }
+                        start = when (language) {
+                            LANGUAGE_ENGLISH, LANGUAGE_TURKISH -> start + 5
+                            LANGUAGE_POLISH -> start + 6
+                            else -> line.indexOf(mContext.resources.getString(R.string.barre_add_al)) + 3
+                        }
 
-                    val primoBarreBuilder = StringBuilder()
-                    for (i in start until line.length) {
-                        if (line[i] == ' ' || line[i] == '<')
-                            break
-                        else
-                            primoBarreBuilder.append(line[i])
+                        val primoBarreBuilder = StringBuilder()
+                        for (i in start until line.length) {
+                            if (line[i] == ' ' || line[i] == '<') break
+                            else primoBarreBuilder.append(line[i])
+                        }
+                        primoBarre = primoBarreBuilder.toString()
                     }
-                    primoBarre = primoBarreBuilder.toString()
                 }
                 line = br.readLine()
             }
@@ -69,8 +72,7 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         Log.v(TAG, "diffSemiToni - primaNota: $primaNota")
         Log.v(TAG, "diffSemiToni - notaCambio: $notaCambio")
 
-        if (primaNota.isNullOrEmpty() || notaCambio.isNullOrEmpty())
-            return null
+        if (primaNota.isNullOrEmpty() || notaCambio.isNullOrEmpty()) return null
 
         val language = mContext.systemLocale.language
         val locale = mContext.systemLocale
@@ -80,25 +82,20 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         var primoAccordo: String = primaNota
         var cambioAccordo: String = notaCambio
 
-        val accordi: Array<String> =
-            when (language) {
-                LANGUAGE_ITALIAN, LANGUAGE_TURKISH -> accordi_it
-                LANGUAGE_UKRAINIAN -> accordi_uk
-                LANGUAGE_POLISH -> accordi_pl
-                LANGUAGE_ENGLISH -> accordi_en
+        val accordi: Array<String> = when (language) {
+            LANGUAGE_ITALIAN, LANGUAGE_TURKISH -> accordi_it
+            LANGUAGE_UKRAINIAN -> accordi_uk
+            LANGUAGE_POLISH -> accordi_pl
+            LANGUAGE_ENGLISH -> accordi_en
 //            LANGUAGE_TURKISH -> accordi = accordi_tr
-                else -> accordi_it
-            }
+            else -> accordi_it
+        }
 
         if (language == LANGUAGE_UKRAINIAN || language == LANGUAGE_POLISH) {
-            primoAccordo = if (primoAccordo.length == 1)
-                primoAccordo.uppercase(locale)
-            else
-                primoAccordo.substring(0, 1).uppercase(locale) + primoAccordo.substring(1)
-            cambioAccordo = if (cambioAccordo.length == 1)
-                cambioAccordo.uppercase(locale)
-            else
-                cambioAccordo.substring(0, 1).uppercase(locale) + cambioAccordo.substring(1)
+            primoAccordo = if (primoAccordo.length == 1) primoAccordo.uppercase(locale)
+            else primoAccordo.substring(0, 1).uppercase(locale) + primoAccordo.substring(1)
+            cambioAccordo = if (cambioAccordo.length == 1) cambioAccordo.uppercase(locale)
+            else cambioAccordo.substring(0, 1).uppercase(locale) + cambioAccordo.substring(1)
         }
 
         var start = 0
@@ -116,17 +113,14 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         if (end == accordi.size) return null
         Log.v(TAG, "diffSemiToni - posizioneNotaCambio: $end")
 
-        val differenza = if (end > start)
-            end - start
-        else
-            end + 12 - start
+        val differenza = if (end > start) end - start
+        else end + 12 - start
 
         val mappa = HashMap<String, String>()
         for (i in accordi.indices) {
             Log.v(TAG, "diffSemiToni - NUOVO: " + (i + differenza) % 12)
             Log.v(
-                TAG,
-                "diffSemiToni - CONVE: " + accordi[i] + " in " + accordi[(i + differenza) % 12]
+                TAG, "diffSemiToni - CONVE: " + accordi[i] + " in " + accordi[(i + differenza) % 12]
             )
             mappa[accordi[i]] = accordi[(i + differenza) % 12]
         }
@@ -140,26 +134,20 @@ class CambioAccordi internal constructor(private val mContext: Context) {
 
         Log.v(TAG, "diffSemiToniMin - language: $language")
 
-        if (primaNota.isNullOrEmpty() || notaCambio.isNullOrEmpty())
-            return null
+        if (primaNota.isNullOrEmpty() || notaCambio.isNullOrEmpty()) return null
 
         var primoAccordo: String = primaNota
-        primoAccordo = if (primoAccordo.length == 1)
-            primoAccordo.lowercase(locale)
-        else
-            primoAccordo.substring(0, 1).lowercase(locale) + primoAccordo.substring(1)
+        primoAccordo = if (primoAccordo.length == 1) primoAccordo.lowercase(locale)
+        else primoAccordo.substring(0, 1).lowercase(locale) + primoAccordo.substring(1)
         var cambioAccordo: String = notaCambio
-        cambioAccordo = if (cambioAccordo.length == 1)
-            cambioAccordo.lowercase(locale)
-        else
-            cambioAccordo.substring(0, 1).lowercase(locale) + cambioAccordo.substring(1)
+        cambioAccordo = if (cambioAccordo.length == 1) cambioAccordo.lowercase(locale)
+        else cambioAccordo.substring(0, 1).lowercase(locale) + cambioAccordo.substring(1)
 
-        val accordiMin: Array<String> =
-            when (language) {
-                LANGUAGE_UKRAINIAN -> accordi_uk_lower
-                LANGUAGE_POLISH -> accordi_pl_lower
-                else -> accordi_uk_lower
-            }
+        val accordiMin: Array<String> = when (language) {
+            LANGUAGE_UKRAINIAN -> accordi_uk_lower
+            LANGUAGE_POLISH -> accordi_pl_lower
+            else -> accordi_uk_lower
+        }
 
         var start = 0
         while (start < accordiMin.size) {
@@ -175,24 +163,87 @@ class CambioAccordi internal constructor(private val mContext: Context) {
         }
         if (end == accordiMin.size) return null
         Log.v(TAG, "diffSemiToniMin - posizioneNotaCambio: $end")
-        val differenza = if (end > start)
-            end - start
-        else
-            end + 12 - start
+        val differenza = if (end > start) end - start
+        else end + 12 - start
 
         val mappa = HashMap<String, String>()
         for (i in accordiMin.indices) {
             Log.v(TAG, "diffSemiToniMin - NUOVO: " + (i + differenza) % 12)
             Log.v(
                 TAG,
-                "diffSemiToniMin - CONVE: "
-                        + accordiMin[i]
-                        + " in "
-                        + accordiMin[(i + differenza) % 12]
+                "diffSemiToniMin - CONVE: " + accordiMin[i] + " in " + accordiMin[(i + differenza) % 12]
             )
             mappa[accordiMin[i]] = accordiMin[(i + differenza) % 12]
         }
         return mappa
+    }
+
+    // converte gli accordi salvati dalla lingua vecchia alla nuova
+    fun convertiBarre(oldLanguage: String, newLanguage: String) {
+        var barre1 = barre_it
+        Log.d(TAG, "convertiBarre - from: $oldLanguage")
+        when (oldLanguage) {
+            LANGUAGE_ENGLISH -> barre1 = barre_en
+        }
+
+        var barre2 = barre_it
+        Log.d(TAG, "convertiBarre - to: $newLanguage")
+        when (newLanguage) {
+            LANGUAGE_ENGLISH -> barre2 = barre_en
+        }
+
+        val mappa = HashMap<String, String>()
+        for (i in barre_it.indices) mappa[barre1[i]] = barre2[i]
+
+        val mDao = RisuscitoDatabase.getInstance(mContext).cantoDao()
+        val canti = mDao.allByName()
+        for (canto in canti) {
+            if (!canto.savedTab.isNullOrEmpty()) {
+                Log.d(
+                    TAG,
+                    "convertiBarre: " + "ID " + canto.id + " -> CONVERTO DA " + canto.savedBarre + " A " + mappa[canto.savedBarre]
+                )
+                canto.savedBarre = mappa[canto.savedBarre]
+                mDao.updateCanto(canto)
+            }
+        }
+    }
+
+    // converte gli accordi salvati dalla lingua vecchia alla nuova
+    fun convertTabs(oldLanguage: String, newLanguage: String) {
+        var accordi1 = accordi_it
+        Log.d(TAG, "convertTabs - from: $oldLanguage")
+        when (oldLanguage) {
+            LANGUAGE_UKRAINIAN -> accordi1 = accordi_uk
+            LANGUAGE_POLISH -> accordi1 = accordi_pl
+            LANGUAGE_ENGLISH -> accordi1 = accordi_en
+            LANGUAGE_ENGLISH_PHILIPPINES -> accordi1 = accordi_en
+        }
+
+        var accordi2 = accordi_it
+        Log.d(TAG, "convertTabs - to: $newLanguage")
+        when (newLanguage) {
+            LANGUAGE_UKRAINIAN -> accordi2 = accordi_uk
+            LANGUAGE_POLISH -> accordi2 = accordi_pl
+            LANGUAGE_ENGLISH -> accordi2 = accordi_en
+            LANGUAGE_ENGLISH_PHILIPPINES -> accordi2 = accordi_en
+        }
+
+        val mappa = HashMap<String, String>()
+        for (i in accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
+
+        val mDao = RisuscitoDatabase.getInstance(mContext).cantoDao()
+        val canti = mDao.allByName()
+        for (canto in canti) {
+            if (!canto.savedTab.isNullOrEmpty()) {
+                Log.d(
+                    TAG,
+                    "convertTabs: " + "ID " + canto.id + " -> CONVERTO DA " + canto.savedTab + " A " + mappa[canto.savedTab.orEmpty()]
+                )
+                canto.savedTab = mappa[canto.savedTab.orEmpty()]
+                mDao.updateCanto(canto)
+            }
+        }
     }
 
     companion object {
@@ -226,7 +277,10 @@ class CambioAccordi internal constructor(private val mContext: Context) {
                 var found = false
 
                 while (line != null && !found) {
-                    if (line.contains("A13F3C") && !line.contains("<H2>") && !line.contains("<H4>")) {
+                    if (line.startsWith("</FONT><FONT COLOR=\"#A13F3C\">") && !line.contains("<H2>") && !line.contains(
+                            "<H4>"
+                        )
+                    ) {
                         Log.v(TAG, "recuperaPrimoAccordo - RIGA: $line")
                         val inizioRiga = line.indexOf("A13F3C") + 8
 
@@ -251,13 +305,13 @@ class CambioAccordi internal constructor(private val mContext: Context) {
                                 val myMatcher = when (language) {
                                     LANGUAGE_ENGLISH -> Pattern.compile("[^m][a-z]|#")
                                         .matcher(line[j].toString())
+
                                     else -> Pattern.compile("[a-z]|#").matcher(line[j].toString())
                                 }
                                 if (myMatcher.find()) {
                                     Log.v(TAG, "recuperaPrimoAccordo - matchato OK")
                                     primaNota.append(line[j])
-                                } else
-                                    break
+                                } else break
                             }
                         }
                     }

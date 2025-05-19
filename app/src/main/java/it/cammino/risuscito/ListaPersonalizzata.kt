@@ -168,7 +168,6 @@ class ListaPersonalizzata : Serializable {
 
         private const val MAX_POSIZIONI = 30
 
-        @Suppress("ConstPropertyName")
         private const val serialVersionUID = 123456789L
 
         fun serializeObject(o: Any): ByteArray? {

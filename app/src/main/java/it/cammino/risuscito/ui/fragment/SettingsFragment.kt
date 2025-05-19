@@ -37,7 +37,6 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
-import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.activity.ThemeableActivity
@@ -64,7 +63,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
-import kotlin.collections.set
 
 class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -89,17 +87,14 @@ class SettingsFragment : PreferenceFragmentCompat(),
                             it.findViewById(R.id.main_content),
                             "Module install failed with ${state.errorCode()}",
                             Snackbar.LENGTH_SHORT
-                        )
-                            .show()
+                        ).show()
                     }
 
                 }
 
                 REQUIRES_USER_CONFIRMATION -> {
                     splitInstallManager.startConfirmationDialogForResult(
-                        state,
-                        requireActivity(),
-                        CONFIRMATION_REQUEST_CODE
+                        state, requireActivity(), CONFIRMATION_REQUEST_CODE
                     )
                 }
 
@@ -108,9 +103,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     val progress = state.bytesDownloaded()
                     Log.i(TAG, "DOWNLOADING LANGUAGE - progress: $progress su $totalBytes")
                     // Update progress bar.
-                    if (totalBytes > 0)
-                        ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)
-                            ?.setProgress((100 * progress / totalBytes).toInt())
+                    if (totalBytes > 0) ProgressDialogFragment.findVisible(
+                        mMainActivity,
+                        DOWNLOAD_LANGUAGE
+                    )?.setProgress((100 * progress / totalBytes).toInt())
                 }
 
                 INSTALLED -> {
@@ -129,8 +125,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                                 it.findViewById(R.id.main_content),
                                 "Module install failed: no language installed!",
                                 Snackbar.LENGTH_SHORT
-                            )
-                                .show()
+                            ).show()
                         }
                     }
                 }
@@ -155,21 +150,16 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         icon = R.drawable.file_download_24px
                         progressIndeterminate = false
                         progressMax = 100
-                    },
-                    activity.supportFragmentManager
+                    }, activity.supportFragmentManager
                 )
             }
             // Creates a request to download and install additional language resources.
-            val request = SplitInstallRequest.newBuilder()
-                .addLanguage(
-                    if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
-                        Locale(
-                            LocaleManager.LANGUAGE_ENGLISH,
-                            LocaleManager.COUNTRY_PHILIPPINES
-                        )
+            val request = SplitInstallRequest.newBuilder().addLanguage(
+                    if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES) Locale(
+                        LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES
+                    )
                     else Locale(newLanguage)
-                )
-                .build()
+                ).build()
 
             // Submits the request to install the additional language resources.
             mSettingsViewModel.persistingLanguage = newLanguage
@@ -178,15 +168,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 // processing the request.
                 ?.addOnFailureListener { exception ->
                     Log.e(TAG, "language download error", exception)
-                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)
-                        ?.dismiss()
+                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
                             it.findViewById(R.id.main_content),
                             "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
                             Snackbar.LENGTH_SHORT
-                        )
-                            .show()
+                        ).show()
                     }
                 }
                 // When the platform accepts your request to download
@@ -247,24 +235,21 @@ class SettingsFragment : PreferenceFragmentCompat(),
         pref = findPreference(DEFAULT_INDEX) as? DropDownPreference
         pref?.summaryProvider = Preference.SummaryProvider<DropDownPreference> {
             composeSummary(
-                R.string.default_index_summary,
-                it
+                R.string.default_index_summary, it
             )
         }
 
         pref = findPreference(DEFAULT_SEARCH) as? DropDownPreference
         pref?.summaryProvider = Preference.SummaryProvider<DropDownPreference> {
             composeSummary(
-                R.string.default_search_summary,
-                it
+                R.string.default_search_summary, it
             )
         }
 
         pref = findPreference(SAVE_LOCATION) as? DropDownPreference
         pref?.summaryProvider = Preference.SummaryProvider<DropDownPreference> {
             composeSummary(
-                R.string.save_location_summary,
-                it
+                R.string.save_location_summary, it
             )
         }
 
@@ -307,8 +292,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         it.findViewById(R.id.main_content),
                         "download cancelled by user",
                         Snackbar.LENGTH_SHORT
-                    )
-                        .show()
+                    ).show()
                 }
             }
         }
@@ -318,11 +302,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
         Log.d(TAG, "onSharedPreferenceChanged: $key")
         if (key == NIGHT_MODE) {
             Log.d(
-                TAG,
-                "onSharedPreferenceChanged: dark_mode: ${
+                TAG, "onSharedPreferenceChanged: dark_mode: ${
                     sharedPreferences?.getString(
-                        key,
-                        "2"
+                        key, "2"
                     ) ?: ""
                 }"
             )
@@ -332,10 +314,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
         if (key == DYNAMIC_COLORS || key == VECCHIO_INDICE || key == DEFAULT_SEARCH) mMainActivity?.let {
             if (requireContext().isOnTablet) {
                 it.recreate()
-            } else
-                ProcessPhoenix.triggerRebirth(
-                    it.applicationContext
-                )
+            } else ProcessPhoenix.triggerRebirth(
+                it.applicationContext
+            )
         }
     }
 
@@ -352,10 +333,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     private fun loadStorageList(external: Boolean) {
         Log.d(
             TAG,
-            "loadStorageList: WRITE_EXTERNAL_STORAGE "
-                    + Utility.isExternalStorageWritable
-                    + " / "
-                    + external
+            "loadStorageList: WRITE_EXTERNAL_STORAGE " + Utility.isExternalStorageWritable + " / " + external
         )
         if (Utility.isExternalStorageWritable && external) {
             mEntries = resources.getStringArray(R.array.save_location_sd_entries)
@@ -375,102 +353,21 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 ProgressDialogFragment.Builder(TRANSLATION).apply {
                     content = R.string.translation_running
                     progressIndeterminate = true
-                },
-                activity.supportFragmentManager
+                }, activity.supportFragmentManager
             )
         }
+        val cambioAccordi = CambioAccordi(requireContext())
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
-            convertTabs(oldLanguage, newLanguage)
-            convertiBarre(oldLanguage, newLanguage)
+            cambioAccordi.convertTabs(oldLanguage, newLanguage)
+            cambioAccordi.convertiBarre(oldLanguage, newLanguage)
         }
         try {
             ProgressDialogFragment.findVisible(mMainActivity, TRANSLATION)?.dismiss()
             RisuscitoApplication.localeManager.updateLanguage(
-                requireContext(),
-                newLanguage
+                requireContext(), newLanguage
             )
         } catch (e: IllegalArgumentException) {
             Log.e(javaClass.name, e.localizedMessage, e)
-        }
-    }
-
-    // converte gli accordi salvati dalla lingua vecchia alla nuova
-    private fun convertTabs(oldLanguage: String, newLanguage: String) {
-        var accordi1 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - from: $oldLanguage")
-        when (oldLanguage) {
-            LocaleManager.LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
-            LocaleManager.LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
-            LocaleManager.LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
-            LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES -> accordi1 = CambioAccordi.accordi_en
-        }
-
-        var accordi2 = CambioAccordi.accordi_it
-        Log.d(TAG, "convertTabs - to: $newLanguage")
-        when (newLanguage) {
-            LocaleManager.LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
-            LocaleManager.LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
-            LocaleManager.LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
-            LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES -> accordi2 = CambioAccordi.accordi_en
-        }
-
-        val mappa = HashMap<String, String>()
-        for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
-
-        val mDao = RisuscitoDatabase.getInstance(requireContext()).cantoDao()
-        val canti = mDao.allByName()
-        for (canto in canti) {
-            if (!canto.savedTab.isNullOrEmpty()) {
-                Log.d(
-                    TAG,
-                    "convertTabs: "
-                            + "ID "
-                            + canto.id
-                            + " -> CONVERTO DA "
-                            + canto.savedTab
-                            + " A "
-                            + mappa[canto.savedTab.orEmpty()]
-                )
-                canto.savedTab = mappa[canto.savedTab.orEmpty()]
-                mDao.updateCanto(canto)
-            }
-        }
-    }
-
-    // converte gli accordi salvati dalla lingua vecchia alla nuova
-    private fun convertiBarre(oldLanguage: String, newLanguage: String) {
-        var barre1 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - from: $oldLanguage")
-        when (oldLanguage) {
-            LocaleManager.LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
-        }
-
-        var barre2 = CambioAccordi.barre_it
-        Log.d(TAG, "convertiBarre - to: $newLanguage")
-        when (newLanguage) {
-            LocaleManager.LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
-        }
-
-        val mappa = HashMap<String, String>()
-        for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
-
-        val mDao = RisuscitoDatabase.getInstance(requireContext()).cantoDao()
-        val canti = mDao.allByName()
-        for (canto in canti) {
-            if (!canto.savedTab.isNullOrEmpty()) {
-                Log.d(
-                    TAG,
-                    "convertiBarre: "
-                            + "ID "
-                            + canto.id
-                            + " -> CONVERTO DA "
-                            + canto.savedBarre
-                            + " A "
-                            + mappa[canto.savedBarre]
-                )
-                canto.savedBarre = mappa[canto.savedBarre]
-                mDao.updateCanto(canto)
-            }
         }
     }
 

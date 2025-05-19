@@ -1,6 +1,7 @@
 package it.cammino.risuscito.utils.extension
 
 import android.database.SQLException
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
@@ -50,6 +51,7 @@ fun AppCompatActivity.addToListaDup(
                 )
             }
         } catch (e: SQLException) {
+            Log.e(TAG, "Error:", e)
             Snackbar.make(
                 findViewById(R.id.main_content),
                 R.string.present_yet,

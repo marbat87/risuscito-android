@@ -3,7 +3,6 @@
 package it.cammino.risuscito.utils.extension
 
 import android.Manifest
-import android.annotation.TargetApi
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Intent
@@ -43,8 +42,15 @@ import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.ui.activity.CantoHostActivity
 import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.fragment.CantoFragment
+import it.cammino.risuscito.utils.CambioAccordi
+import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
+import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
+import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_POLISH
+import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_UKRAINIAN
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
+import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.Utility.SHARED_AXIS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,7 +73,7 @@ private fun Resources.getSystemLocaleLegacy(): Locale {
     return configuration.locale
 }
 
-@TargetApi(Build.VERSION_CODES.N)
+@RequiresApi(Build.VERSION_CODES.N)
 private fun Resources.getSystemLocaleN(): Locale {
     return configuration.locales.get(0)
 }
@@ -79,8 +85,7 @@ val Resources.systemLocale: Locale
     }
 
 fun Activity.setupNavBarColor() {
-    if (!OSUtils.hasV())
-        setupNavBarColorLegacy()
+    if (!OSUtils.hasV()) setupNavBarColorLegacy()
 }
 
 @Suppress("DEPRECATION")
@@ -308,10 +313,7 @@ fun Activity.slideOutRight() {
 }
 
 fun ThemeableActivity.openCanto(
-    function: String?,
-    idCanto: Int,
-    numPagina: String?,
-    forceOpenActivity: Boolean = false
+    function: String?, idCanto: Int, numPagina: String?, forceOpenActivity: Boolean = false
 ) {
 
     Firebase.crashlytics.log("open_canto - function: ${function.orEmpty()} - idCanto: $idCanto - numPagina: ${numPagina.orEmpty()} - onActivity: ${forceOpenActivity || isOnPhone}")
@@ -341,7 +343,7 @@ fun ThemeableActivity.openCanto(
 
 }
 
-@TargetApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.P)
 fun Activity.getVersionCodeP(): Int {
     return packageManager.getPackageInfo(packageName).longVersionCode.toInt()
 }
@@ -357,10 +359,8 @@ fun Activity.getVersionCode(): Int {
 }
 
 fun Activity.overrideOpenTransition(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
-    if (OSUtils.hasU())
-        overrideOpenTransitionU(enterAnim, exitAnim)
-    else
-        overrideOpenTransitionLegacy(enterAnim, exitAnim)
+    if (OSUtils.hasU()) overrideOpenTransitionU(enterAnim, exitAnim)
+    else overrideOpenTransitionLegacy(enterAnim, exitAnim)
 }
 
 @RequiresApi(34)
@@ -376,10 +376,8 @@ fun Activity.overrideOpenTransitionLegacy(@AnimRes enterAnim: Int, @AnimRes exit
 }
 
 fun Activity.overrideCloseTransition(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
-    if (OSUtils.hasU())
-        overrideCloseTransitionU(enterAnim, exitAnim)
-    else
-        overrideCloseTransitionLegacy(enterAnim, exitAnim)
+    if (OSUtils.hasU()) overrideCloseTransitionU(enterAnim, exitAnim)
+    else overrideCloseTransitionLegacy(enterAnim, exitAnim)
 }
 
 @RequiresApi(34)
@@ -408,7 +406,7 @@ private fun Activity.createTaskDescriptionTiramisu(tag: String?): ActivityManage
     builder.setIcon(R.mipmap.ic_launcher)
     builder.setPrimaryColor(
         MaterialColors.getColor(
-            this, R.attr.colorPrimary, tag
+            this, androidx.appcompat.R.attr.colorPrimary, tag
         )
     )
     return builder.build()
@@ -418,14 +416,16 @@ private fun Activity.createTaskDescriptionTiramisu(tag: String?): ActivityManage
 @RequiresApi(Build.VERSION_CODES.P)
 private fun Activity.createTaskDescriptionP(tag: String?): ActivityManager.TaskDescription {
     return ActivityManager.TaskDescription(
-        null, R.mipmap.ic_launcher, MaterialColors.getColor(this, R.attr.colorPrimary, tag)
+        null,
+        R.mipmap.ic_launcher,
+        MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary, tag)
     )
 }
 
 @Suppress("DEPRECATION")
 private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.TaskDescription {
     return ActivityManager.TaskDescription(
-        null, null, MaterialColors.getColor(this, R.attr.colorPrimary, tag)
+        null, null, MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary, tag)
     )
 }
 
@@ -441,9 +441,7 @@ private fun AppCompatActivity.updateHistory(idCanto: Int) {
 }
 
 fun AppCompatActivity.launchForResultWithAnimation(
-    resultLauncher: ActivityResultLauncher<Intent>,
-    intent: Intent,
-    axis: Int
+    resultLauncher: ActivityResultLauncher<Intent>, intent: Intent, axis: Int
 ) {
     if (OSUtils.isObySamsung()) {
         resultLauncher.launch(intent)
@@ -467,5 +465,79 @@ fun AppCompatActivity.launchForResultWithAnimation(
                 this
             )
         )
+    }
+}
+
+// converte gli accordi salvati dalla lingua vecchia alla nuova
+fun Activity.convertTabs() {
+    val oldLanguage = intent.getStringExtra(OLD_LANGUAGE)
+    val newLanguage = intent.getStringExtra(NEW_LANGUAGE)
+
+    var accordi1 = CambioAccordi.accordi_it
+    Log.d(TAG, "convertTabs - from: $oldLanguage")
+    when (oldLanguage) {
+        LANGUAGE_UKRAINIAN -> accordi1 = CambioAccordi.accordi_uk
+        LANGUAGE_POLISH -> accordi1 = CambioAccordi.accordi_pl
+        LANGUAGE_ENGLISH -> accordi1 = CambioAccordi.accordi_en
+        LANGUAGE_ENGLISH_PHILIPPINES -> accordi1 = CambioAccordi.accordi_en
+    }
+
+    var accordi2 = CambioAccordi.accordi_it
+    Log.d(TAG, "convertTabs - to: $newLanguage")
+    when (newLanguage) {
+        LANGUAGE_UKRAINIAN -> accordi2 = CambioAccordi.accordi_uk
+        LANGUAGE_POLISH -> accordi2 = CambioAccordi.accordi_pl
+        LANGUAGE_ENGLISH -> accordi2 = CambioAccordi.accordi_en
+        LANGUAGE_ENGLISH_PHILIPPINES -> accordi2 = CambioAccordi.accordi_en
+    }
+
+    val mappa = HashMap<String, String>()
+    for (i in CambioAccordi.accordi_it.indices) mappa[accordi1[i]] = accordi2[i]
+
+    val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
+    val canti = mDao.allByName()
+    for (canto in canti) {
+        if (!canto.savedTab.isNullOrEmpty()) {
+            Log.d(
+                TAG,
+                "convertTabs: " + "ID " + canto.id + " -> CONVERTO DA " + canto.savedTab + " A " + mappa[canto.savedTab.orEmpty()]
+            )
+            canto.savedTab = mappa[canto.savedTab.orEmpty()]
+            mDao.updateCanto(canto)
+        }
+    }
+}
+
+// converte gli accordi salvati dalla lingua vecchia alla nuova
+fun Activity.convertiBarre() {
+    val oldLanguage = intent.getStringExtra(OLD_LANGUAGE)
+    val newLanguage = intent.getStringExtra(NEW_LANGUAGE)
+
+    var barre1 = CambioAccordi.barre_it
+    Log.d(TAG, "convertiBarre - from: $oldLanguage")
+    when (oldLanguage) {
+        LANGUAGE_ENGLISH -> barre1 = CambioAccordi.barre_en
+    }
+
+    var barre2 = CambioAccordi.barre_it
+    Log.d(TAG, "convertiBarre - to: $newLanguage")
+    when (newLanguage) {
+        LANGUAGE_ENGLISH -> barre2 = CambioAccordi.barre_en
+    }
+
+    val mappa = HashMap<String, String>()
+    for (i in CambioAccordi.barre_it.indices) mappa[barre1[i]] = barre2[i]
+
+    val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
+    val canti = mDao.allByName()
+    for (canto in canti) {
+        if (!canto.savedTab.isNullOrEmpty()) {
+            Log.d(
+                TAG,
+                "convertiBarre: " + "ID " + canto.id + " -> CONVERTO DA " + canto.savedBarre + " A " + mappa[canto.savedBarre]
+            )
+            canto.savedBarre = mappa[canto.savedBarre]
+            mDao.updateCanto(canto)
+        }
     }
 }

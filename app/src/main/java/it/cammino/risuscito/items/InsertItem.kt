@@ -67,7 +67,7 @@ class InsertItem : AbstractBindingItem<RowItemToInsertBinding>() {
         // get the context
         val ctx = binding.root.context
 
-        binding.listViewItemContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
+        binding.listViewItemContainer.setSelectableRippleBackground(com.google.android.material.R.attr.colorSecondaryContainer)
 
         //set the text for the name
         filter?.let {

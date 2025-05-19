@@ -13,7 +13,7 @@
         android:layout_marginTop="@dimen/modal_side_sheet_top_padding"
         android:layout_marginEnd="@dimen/modal_side_close_padding"
         android:text="@string/passage_filter"
-        android:textAppearance="?textAppearanceTitleSmall"
+        style="?textAppearanceTitleSmall"
         android:textColor="?android:textColorSecondary"
         app:layout_constraintEnd_toStartOf="@id/close_modal"
         app:layout_constraintStart_toStartOf="parent"

@@ -60,7 +60,7 @@ class CheckableItem : AbstractBindingItem<CheckableRowItemBinding>() {
         // get the context
         val ctx = binding.root.context
 
-        binding.listViewItemContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
+        binding.listViewItemContainer.setSelectableRippleBackground(com.google.android.material.R.attr.colorSecondaryContainer)
 
         binding.checkBox.isChecked = isSelected
         binding.listViewItemContainer.isSelected = isSelected

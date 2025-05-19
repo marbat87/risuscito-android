@@ -4,15 +4,14 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import it.cammino.risuscito.R
 
 class MainActivityViewModel : ViewModel() {
 
-    var showSnackbar = true
     var backupRestoreState = MutableLiveData(BakupRestoreState.NONE)
     var httpRequestState = MutableLiveData(ClientState.STARTED)
-    var retrieveLastAccount = false
+    var loginState = MutableLiveData(LOGIN_STATE_STARTED)
+    var profileAction = ProfileAction.NONE
 
     var isTabletWithFixedDrawer: Boolean = false
     var isTabletWithNoFixedDrawer: Boolean = false
@@ -33,12 +32,23 @@ class MainActivityViewModel : ViewModel() {
 
     }
 
+    enum class ProfileAction {
+        BACKUP,
+        RESTORE,
+        NONE
+    }
+
     enum class ClientState {
         STARTED,
         COMPLETED
     }
 
-    var acct: GoogleIdTokenCredential? = null
     var sub: String = ""
+
+    companion object {
+        const val LOGIN_STATE_STARTED = "LoginStateStarted"
+        const val LOGIN_STATE_OK = "LoginStateOk"
+        const val LOGIN_STATE_OK_SILENT = "LoginStateOkSilent"
+    }
 
 }

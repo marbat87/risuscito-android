@@ -11,21 +11,18 @@
     <string name="santo_1988_title">Święty, święty, święty (1988)</string>
     <string name="santo_1983_title">Święty (1983)</string>
     <string name="preghiera_eucarestica_II_title">Modlitwa eucharystyczna II (1a)</string>
-    <string name="preghiera_eucaristica_II_parte2_title">Modlitwa eucharystyczna II (1b)</string>
+<!--    <string name="preghiera_eucaristica_II_parte2_title">Modlitwa eucharystyczna II (1b)</string>-->
     <string name="benedizione_acqua_fonte_title">Błogosławienie wody źródła chrzcielnego</string>
     <string name="preconio_pasquale_title">Orędzie paschalne</string>
     <string name="prefazio_eucarestia_veglia_pasquale_title">Prefacja Eucharystii czuwania paschalnego</string>
-    <string name="inno_lodi_avvento_fino16_title">Hymn na Jutrznię w okresie Adwentu do 16 grudnia</string>
-    <string name="inno_lodi_avvento_dopo16_title">Hymn na Jutrznię w okresie Adwentu po 16 grudnia</string>
     <string name="inno_lodi_pasqua_fino_ascensione_title">Hymn na Jutrznię od Paschy do Wniebowstąpienia</string>
     <string name="inno_vespri_pasqua_fino_ascensione_title">Hymn na Nieszpory od Paschy do Wniebowstąpienia</string>
     <string name="inno_lodi_pasqua_ascensione_pentecoste_title">Hymn na Nieszpory Wniebowstąpnienia Pańskiego i na Jutrznię od Wniebowstąpienia do Pentecoste</string>
     <string name="inno_vespri_pasqua_ascensione_pentecoste_title">Hymn na Nieszpory od Wniebowstąpienia do Pentecoste</string>
-    <string name="inno_lodi_pentecoste_title">Hymn na Jutrznię Pentecoste</string>
     <string name="sequenza_di_pentecoste_title">Sekwencja na Pentecoste (Przybądź, o Duchu Święty)</string>
-    <string name="preghiera_eucaristia_II_2_prefazio_title">Modlitwa eucharystyczna II (2): Prefacja</string>
-    <string name="preghiera_eucaristica_II_2_consacrazione_title">Modlitwa eucharystyczna II (2): Konsekracja i Aklamacja</string>
-    <string name="preghiera_eucaristica_II_2_offerta_title">Modlitwa eucharystyczna II (2): Słowa po Konsekracji</string>
+    <string name="preghiera_eucaristia_II_2_prefazio_title">Modlitwa eucharystyczna II (2)</string>
+<!--    <string name="preghiera_eucaristica_II_2_consacrazione_title">Modlitwa eucharystyczna II (2): Konsekracja i Aklamacja</string>-->
+<!--    <string name="preghiera_eucaristica_II_2_offerta_title">Modlitwa eucharystyczna II (2): Słowa po Konsekracji</string>-->
     <string name="alleluja_pasquale_title">Alleluja paschalne</string>
     <string name="acclamazioni_al_vangelo_title">Alleluja na Aklamację do Ewangelii</string>
     <string name="acclamazioni_al_vangelo_quaresima_title">Aklamacja do Ewangelii w Wielkim Poście</string>
@@ -224,7 +221,7 @@
     <string name="mi_rubasti_cuore_title">Skradłaś mi serce (Pnp 4, 9 – 5, 1)</string>
     <string name="in_una_notte_oscura_title">W noc pełną ciemności (św. Jan od Krzyża)</string>
     <string name="se_siete_risorti_title">Jeśli zmartwychwstaliście z Chrystusem (Kol 3, 1–4)</string>
-    <string name="una_gran_senal_title">Una gran señal aparecio en el cielo (Ap 12)</string>
+<!--    <string name="una_gran_senal_title">Una gran señal aparecio en el cielo (Ap 12)</string>-->
     <string name="resurrexit_title">Resurrexit (J 11, 25–27)</string>
     <string name="ecco_il_mio_servo_title">Oto mój Sługa, którego wybrałem – I pieśń Sługi Jahwe (Iz 42, 1–4.6–7)</string>
     <string name="ave_maria_colomba_title">Maryjo, Gołębico nieskalana</string>
@@ -249,4 +246,5 @@
     <string name="dove_ti_sei_nascosto_title">Dove ti sei nascosto, Amato</string>
     <string name="vangelo_cantato_title">Vangelo cantato</string>
     <string name="risposte_alle_preghiere_title">Risposte alle preghiere</string>
+    <string name="alla_tua_luce_title">Alla tua luce Signore vediamo la luce</string>
 </resources>

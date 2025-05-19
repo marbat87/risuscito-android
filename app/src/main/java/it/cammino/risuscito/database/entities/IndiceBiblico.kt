@@ -548,6 +548,12 @@ class IndiceBiblico {
             indiceBiblico.add(nBiblico)
 
             nBiblico = IndiceBiblico()
+            nBiblico.idCanto = 251
+            nBiblico.ordinamento = ++ordinamento
+            nBiblico.titoloIndice = "spada_biblico"
+            indiceBiblico.add(nBiblico)
+
+            nBiblico = IndiceBiblico()
             nBiblico.idCanto = 164
             nBiblico.ordinamento = ++ordinamento
             nBiblico.titoloIndice = "vi_prendero_dalle_genti_biblico"
@@ -782,6 +788,12 @@ class IndiceBiblico {
             indiceBiblico.add(nBiblico)
 
             nBiblico = IndiceBiblico()
+            nBiblico.idCanto = 135
+            nBiblico.ordinamento = ++ordinamento
+            nBiblico.titoloIndice = "maria_casa_di_benedizione_biblico"
+            indiceBiblico.add(nBiblico)
+
+            nBiblico = IndiceBiblico()
             nBiblico.idCanto = 137
             nBiblico.ordinamento = ++ordinamento
             nBiblico.titoloIndice = "mietitura_delle_nazioni_biblico"
@@ -890,6 +902,12 @@ class IndiceBiblico {
             indiceBiblico.add(nBiblico)
 
             nBiblico = IndiceBiblico()
+            nBiblico.idCanto = 253
+            nBiblico.ordinamento = ++ordinamento
+            nBiblico.titoloIndice = "vivete_allegri_biblico"
+            indiceBiblico.add(nBiblico)
+
+            nBiblico = IndiceBiblico()
             nBiblico.idCanto = 228
             nBiblico.ordinamento = ++ordinamento
             nBiblico.titoloIndice = "se_siete_risorti_biblico"
@@ -919,11 +937,11 @@ class IndiceBiblico {
             nBiblico.titoloIndice = "amen_amen_amen_biblico"
             indiceBiblico.add(nBiblico)
 
-            nBiblico = IndiceBiblico()
-            nBiblico.idCanto = 229
-            nBiblico.ordinamento = ++ordinamento
-            nBiblico.titoloIndice = "una_gran_senal_biblico"
-            indiceBiblico.add(nBiblico)
+//            nBiblico = IndiceBiblico()
+//            nBiblico.idCanto = 229
+//            nBiblico.ordinamento = ++ordinamento
+//            nBiblico.titoloIndice = "una_gran_senal_biblico"
+//            indiceBiblico.add(nBiblico)
 
             nBiblico = IndiceBiblico()
             nBiblico.idCanto = 214

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">ADVENT DÖNEMI</string>
-    <string name="tempo_natale">NOEL DEVRESI</string>
-    <string name="tempo_quaresima">KAREM DÖNEMI</string>
-    <string name="tempo_pasqua">PASKALYA DEVRESI</string>
-    <string name="canti_pentecoste">PENTEKOST</string>
-    <string name="canti_vergine">MERYEM\'E ILAHILER</string>
-    <string name="lodi_vespri">SABAH VE AKŞAM ÖVGÜSÜ</string>
-    <string name="canti_ingresso">GIRIŞ</string>
-    <string name="canti_pace">SELAMET</string>
-    <string name="canti_pane">EKMEK</string>
-    <string name="canti_fine">KAPANIŞ</string>
-    <string name="canti_comunione">COMUNIONE</string>
-    <string name="canti_bambini">CANTI PER I BAMBINI</string>
+    <string name="tempo_avvento">Advent - Noel</string>
+    <string name="tempo_quaresima">Karem</string>
+    <string name="tempo_pasqua">Paskalya - Pentekost</string>
+    <string name="canti_vergine">Meryemana</string>
+    <string name="lodi_vespri">Sabah Övgüsü</string>
+    <string name="canti_ingresso">Giriş</string>
+    <string name="canti_pace">Selamet</string>
+    <string name="canti_pane">Ekmek</string>
+    <string name="canti_fine">Kapaniş</string>
+    <string name="canti_comunione">Kadeh</string>
+    <string name="canti_bambini">Çocuklar</string>
+    <string name="nomi_biblici">İncil İsimleri</string>
+    <string name="triduo_pasqua_giovedi">Paskalya Üçlüsü - Kutsal Perşembe</string>
+    <string name="triduo_pasqua_venerdi">Paskalya Üçlüsü - Kutsal Cuma</string>
+    <string name="triduo_pasqua_veglia">Paskalya Üçlüsü - Nöbet</string>
 </resources>

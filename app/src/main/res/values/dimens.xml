@@ -17,6 +17,8 @@
 
     <dimen name="m3_btn_icon_only_default_size" tools:override="true">24dp</dimen>
 
+    <dimen name="SmallListPreferredItemHeight">32dp</dimen>
+
     <dimen name="oneLineListPreferredItemHeight">56dp</dimen>
     <dimen name="twoLineListPreferredItemHeight">72dp</dimen>
 <!--    <dimen name="threeLineListPreferredItemHeight">88dp</dimen>-->

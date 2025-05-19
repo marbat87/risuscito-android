@@ -82,14 +82,14 @@ class SimpleHistoryItem : AbstractBindingItem<RowItemHistoryBinding>() {
         StringHolder.applyToOrHide(page, binding.textPage)
         binding.listViewItemContainer.isSelected = isSelected
 
-        binding.listViewItemContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
+        binding.listViewItemContainer.setSelectableRippleBackground(com.google.android.material.R.attr.colorSecondaryContainer)
 
         val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color)
         binding.textPage.isInvisible = isSelected
         binding.selectedMark.isVisible = isSelected
         val bgShapeSelected = binding.selectedMark.background as? GradientDrawable
-        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, R.attr.colorPrimary, TAG))
+        bgShapeSelected?.setColor(MaterialColors.getColor(ctx, androidx.appcompat.R.attr.colorPrimary, TAG))
 
         if (timestamp != null) {
             // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE

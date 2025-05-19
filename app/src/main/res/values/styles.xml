@@ -37,6 +37,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">?textAppearanceTitleMedium</item>
+        <item name="fontFamily">?risuscito_medium_font</item>
+        <item name="android:fontFamily">?risuscito_medium_font</item>
         <item name="android:textColor">?android:textColorSecondary</item>
         <item name="android:gravity">center_vertical</item>
     </style>
@@ -52,6 +54,8 @@
         <item name="android:height">16dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:textAppearance">?textAppearanceBodySmall</item>
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
         <item name="android:textColor">?android:textColorHint</item>
         <item name="android:padding">0dp</item>
     </style>

@@ -79,7 +79,7 @@
             android:layout_marginEnd="@dimen/text_min_margin"
             android:gravity="center"
             android:text="@string/search_no_results"
-            android:textAppearance="?textAppearanceBodyMedium"
+            style="?textAppearanceBodyMedium"
             android:textColor="?android:textColorSecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

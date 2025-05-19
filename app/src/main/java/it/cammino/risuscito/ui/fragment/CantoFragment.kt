@@ -138,6 +138,7 @@ open class CantoFragment : Fragment() {
                 try {
                     binding.cantoView.scrollBy(0, Integer.valueOf(it))
                 } catch (e: NumberFormatException) {
+                    Log.e(TAG, "Error:", e)
                     binding.cantoView.scrollBy(0, 0)
                 }
 
@@ -1087,7 +1088,7 @@ open class CantoFragment : Fragment() {
 
             while (line != null) {
                 Log.v(TAG, "RIGA DA ELAB: $line")
-                if ((line.contains("A13F3C"))
+                if ((line.startsWith("</FONT><FONT COLOR=\"#A13F3C\">"))
                     && !line.contains("<H2>")
                     && !line.contains("<H4>")
                     && insidePre
@@ -1186,7 +1187,7 @@ open class CantoFragment : Fragment() {
                     cantoTrasportato.append(line)
                     cantoTrasportato.append("\n")
                 } else {
-                    if (line.contains("<H3>")) {
+                    if (line.contains(PRE_START)) {
                         if (barre != null && barre != "0") {
                             if (!barreScritto) {
                                 val oldLine: String = if (!barre.equals(
@@ -1194,11 +1195,11 @@ open class CantoFragment : Fragment() {
                                         ignoreCase = true
                                     )
                                 ) {
-                                    ("<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#A13F3C\"><I>"
+                                    ("<H4><SPAN STYLE=\"BACKGROUND-COLOR:#FFFF00\"><FONT COLOR=\"#000000\"><I>"
                                             + getString(R.string.barre_al_tasto, barre)
                                             + "</I></FONT></SPAN></H4>")
                                 } else {
-                                    ("<H4><FONT COLOR=\"#A13F3C\"><I>"
+                                    ("<H4><FONT COLOR=\"#000000\"><I>"
                                             + getString(R.string.barre_al_tasto, barre)
                                             + "</I></FONT></H4>")
                                 }
@@ -1210,7 +1211,7 @@ open class CantoFragment : Fragment() {
                         cantoTrasportato.append(line)
                         cantoTrasportato.append("\n")
                     } else {
-                        if (!line.contains(getString(R.string.barre_search_string))) {
+                        if (!line.contains(getString(R.string.barre_search_string)) || !line.contains("<H4>")) {
                             cantoTrasportato.append(line)
                             cantoTrasportato.append("\n")
                         }
@@ -1294,7 +1295,7 @@ open class CantoFragment : Fragment() {
 
     private fun playIntro(isFull: Boolean) {
         binding.musicControls.isVisible = true
-        val colorOnPrimary = MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
+        val colorOnPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
         var id = 1
         TapTargetSequence(requireActivity()).apply {
             continueOnCancel(true)
@@ -1312,6 +1313,7 @@ open class CantoFragment : Fragment() {
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(id++)
             )
             target(
@@ -1327,6 +1329,7 @@ open class CantoFragment : Fragment() {
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(id++)
             )
             if (isFull) {
@@ -1342,6 +1345,7 @@ open class CantoFragment : Fragment() {
                         .titleTypeface(mMediumFont) // Specify a typeface for the text
                         .titleTextColorInt(colorOnPrimary)
                         .textColorInt(colorOnPrimary)
+                        .setForceCenteredTarget(true)
                         .id(id++)
                 )
             }
@@ -1357,6 +1361,7 @@ open class CantoFragment : Fragment() {
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(id++)
             )
             target(
@@ -1371,6 +1376,7 @@ open class CantoFragment : Fragment() {
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(id)
             )
             listener(
@@ -1540,7 +1546,7 @@ open class CantoFragment : Fragment() {
             mCantiViewModel.mCurrentCanto = mDao.getCantoById(mCantiViewModel.idCanto)
             getRecordLink()
         }
-        if (mCantiViewModel.mCurrentCanto?.savedTab == null) {
+        if (mCantiViewModel.mCurrentCanto?.savedTab.isNullOrEmpty()) {
             if (mCantiViewModel.notaCambio.isEmpty()) {
                 mCantiViewModel.notaCambio = mCantiViewModel.primaNota
                 mCantiViewModel.mCurrentCanto?.savedTab = mCantiViewModel.notaCambio
@@ -1682,9 +1688,9 @@ open class CantoFragment : Fragment() {
 
     private fun initFabOptions() {
         val iconColor =
-            MaterialColors.getColor(requireContext(), R.attr.colorOnPrimaryContainer, TAG)
+            MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimaryContainer, TAG)
         val backgroundColor =
-            MaterialColors.getColor(requireContext(), R.attr.colorPrimaryContainer, TAG)
+            MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorPrimaryContainer, TAG)
         binding.fabCanti.overlayLayout = binding.overlayCanto
         binding.fabCanti.mainFab.rippleColor =
             ContextCompat.getColor(requireContext(), android.R.color.transparent)
@@ -1926,6 +1932,7 @@ open class CantoFragment : Fragment() {
             try {
                 startActivity(intent2)
             } catch (e: ActivityNotFoundException) {
+                Log.e(TAG, "Error:", e)
                 Snackbar.make(
                     requireActivity().findViewById(android.R.id.content),
                     R.string.no_pdf_reader,
@@ -1988,18 +1995,19 @@ open class CantoFragment : Fragment() {
                     "   }\n" +
                     "   @font-face {\n" +
                     "         font-family: 'PreFont';\n" +
-                    "         src: url(\"file:///android_asset/fonts/ChivoMono_regular.ttf\")\n" +
+                    "         src: url(\"file:///android_asset/fonts/FiraMono_regular.ttf\")\n" +
                     "      }\n" +
                     "   h2 {\n" +
                     "      font-family: 'MediumFont';\n" +
                     "      text-align: center;\n" +
-                    "\n" +
+                    "   }\n" +
+                    "   h3 {\n" +
+                    "      text-align: center;\n" +
                     "   }\n" +
                     "   h4 {\n" +
                     "         font-family: 'MediumFont';\n" +
                     "         text-align: left;\n" +
                     "         margin-left: 50px;\n" +
-                    "\n" +
                     "   }\n" +
                     "   pre {\n" +
                     "      font-family: 'PreFont';\n" +

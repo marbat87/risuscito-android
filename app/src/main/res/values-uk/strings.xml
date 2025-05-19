@@ -220,6 +220,7 @@
     <string name="backup_running">Здійснюється бекап&#8230;</string>
     <string name="restore_running">Видалення налаштувань&#8230;</string>
     <string name="gdrive_restore">Видалення налаштувань з аккаунту</string>
+    <string name="gdrive_refresh">Оновіть інформацію про обліковий запис</string>
     <string name="gdrive_restore_success">Видалення налаштувань здійснено успішно, Христос Воскрес буде перезапущено</string>
     <string name="gdrive_backup_success">Бекап здійснено успішно</string>
     <string name="no_restore_found">На твоєму аккаунті немає збережених бекапів</string>
@@ -313,8 +314,8 @@
     <string name="edit_note_confirm_message">Примітку збережено</string>
     <string name="show_eucarestia_pace_summary">Додати пісню на мир для Євхаристії</string>
     <string name="show_eucarestia_pace_title">Євхаристія - Пісня на мир</string>
-    <string name="old_index_title">Показувати старий зміст</string>
-    <string name="old_index_summary">Показувати зміст з номерами, які використовувалися в старих пісенниках до 2020 року (тільки для італійської мови)</string>
+<!--    <string name="old_index_title">Показувати старий зміст</string>-->
+<!--    <string name="old_index_summary">Показувати зміст з номерами, які використовувалися в старих пісенниках до 2020 року (тільки для італійської мови)</string>-->
     <string name="changelog">Список змін</string>
     <string name="error">Помилка</string>
     <string name="email">Е-скринька</string>

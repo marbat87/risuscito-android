@@ -64,6 +64,7 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.sql.Date
 import java.util.concurrent.ExecutionException
+import androidx.core.content.edit
 
 abstract class ThemeableActivity : AppCompatActivity() {
 
@@ -163,7 +164,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     @Suppress("DEPRECATION")
-    fun setTransparentStatusBarLegacy(trasparent: Boolean) {
+    private fun setTransparentStatusBarLegacy(trasparent: Boolean) {
         window.statusBarColor = if (trasparent) ContextCompat.getColor(
             this,
             android.R.color.transparent
@@ -238,27 +239,24 @@ abstract class ThemeableActivity : AppCompatActivity() {
         if (querySnapshot.documents.isEmpty())
             throw NoBackupException(resources)
 
-        val prefEdit = PreferenceManager.getDefaultSharedPreferences(this).edit()
-        prefEdit.clear()
+        PreferenceManager.getDefaultSharedPreferences(this).edit {
+            clear()
 
-        val entries = querySnapshot.documents[0].get(FIREBASE_FIELD_PREFERENCE) as? HashMap<*, *>
-        entries?.let {
-            for ((key, v) in it) {
-                Log.d(TAG, "preference : $key / $v")
-                when (v) {
-                    is Boolean -> prefEdit.putBoolean(key as? String, v)
-                    is Float -> prefEdit.putFloat(key as? String, v)
-                    is Int -> prefEdit.putInt(key as? String, v)
-                    is Long -> prefEdit.putInt(key as? String, v.toInt())
-                    is String -> prefEdit.putString(key as? String, v)
+            val entries =
+                querySnapshot.documents[0].get(FIREBASE_FIELD_PREFERENCE) as? HashMap<*, *>
+            entries?.let {
+                for ((key, v) in it) {
+                    Log.d(TAG, "preference : $key / $v")
+                    when (v) {
+                        is Boolean -> putBoolean(key as? String, v)
+                        is Float -> putFloat(key as? String, v)
+                        is Int -> putInt(key as? String, v)
+                        is Long -> putInt(key as? String, v.toInt())
+                        is String -> putString(key as? String, v)
+                    }
                 }
             }
         }
-        prefEdit.apply()
-//        if (PreferenceManager.getDefaultSharedPreferences(this)
-//                .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).isNullOrEmpty()
-//        )
-//            RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
     }
 
     fun backupDatabase(userId: String?) {
