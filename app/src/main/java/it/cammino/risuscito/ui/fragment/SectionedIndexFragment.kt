@@ -156,6 +156,7 @@ class SectionedIndexFragment : Fragment() {
                     return when (mAdapter.getItemViewType(position)) {
                         R.id.fastadapter_expandable_item_id -> 2
                         R.id.fastadapter_sub_item_id -> 1
+                        R.id.fastadapter_title_item_id -> 1
                         else -> -1
                     }
                 }
