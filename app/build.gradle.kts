@@ -73,7 +73,7 @@ ksp {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.7.1"
+val roomVersion = "2.7.2"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10")
@@ -92,7 +92,7 @@ dependencies {
     implementation("androidx.media:media:1.7.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.10.1")
+    implementation("androidx.work:work-runtime-ktx:2.10.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
@@ -101,7 +101,7 @@ dependencies {
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
