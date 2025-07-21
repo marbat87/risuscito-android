@@ -16,7 +16,7 @@ android {
         minSdk = 23
         targetSdk = 35
         multiDexEnabled = true
-        versionCode = 6009
+        versionCode = 6010
         versionName = "6.0.0"
 
     }
@@ -93,8 +93,8 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.10.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.2")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation("com.google.android.gms:play-services-auth:21.3.0")
