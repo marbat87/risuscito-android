@@ -24,12 +24,12 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.elevation.SurfaceColors
 import com.google.android.play.core.splitcompat.SplitCompat
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.storage
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import it.cammino.risuscito.R

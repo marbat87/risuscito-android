@@ -19,8 +19,8 @@ import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
 import com.google.android.material.transition.MaterialSharedAxis
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.Firebase
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.activity.ChangelogActivity
 import it.cammino.risuscito.ui.activity.MainActivity

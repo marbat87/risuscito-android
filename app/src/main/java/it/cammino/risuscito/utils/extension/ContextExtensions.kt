@@ -182,10 +182,15 @@ fun Context.shareThisApp(subject: String?): Intent {
 val Context.systemLocale: Locale
     get() {
         return AppCompatDelegate.getApplicationLocales()[0] ?: run {
-            return if (RisuscitoApplication.localeManager.getLanguage(this) == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES) Locale(
-                LocaleManager.LANGUAGE_ENGLISH,
-                LocaleManager.COUNTRY_PHILIPPINES
-            ) else Locale(RisuscitoApplication.localeManager.getLanguage(this))
+            return if (RisuscitoApplication.localeManager.getLanguage(this) == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
+                Locale.Builder()
+                    .setLanguage(LocaleManager.LANGUAGE_ENGLISH)
+                    .setRegion(LocaleManager.COUNTRY_PHILIPPINES) // Usa setRegion per il paese
+                    .build()
+            else
+                Locale.Builder()
+                    .setLanguage(RisuscitoApplication.localeManager.getLanguage(this))
+                    .build()
         }
     }
 

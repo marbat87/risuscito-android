@@ -11,10 +11,11 @@ import android.util.Xml
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
@@ -26,7 +27,6 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
-import androidx.core.net.toUri
 
 class XmlImportService(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {

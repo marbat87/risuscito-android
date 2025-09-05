@@ -2,8 +2,8 @@ package it.cammino.risuscito.utils
 
 import android.content.Context
 import android.util.Log
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.Firebase
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH

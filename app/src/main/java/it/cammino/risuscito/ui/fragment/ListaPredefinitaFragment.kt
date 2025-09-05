@@ -20,8 +20,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.Firebase
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase

@@ -33,8 +33,8 @@ import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.FAILED
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.INSTALLED
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
@@ -155,11 +155,15 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             // Creates a request to download and install additional language resources.
             val request = SplitInstallRequest.newBuilder().addLanguage(
-                    if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES) Locale(
-                        LocaleManager.LANGUAGE_ENGLISH, LocaleManager.COUNTRY_PHILIPPINES
-                    )
-                    else Locale(newLanguage)
-                ).build()
+                if (newLanguage == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
+                    Locale.Builder()
+                        .setLanguage(LocaleManager.LANGUAGE_ENGLISH)
+                        .setRegion(LocaleManager.COUNTRY_PHILIPPINES) // Usa setRegion per il paese
+                        .build()
+                else Locale.Builder()
+                    .setLanguage(newLanguage)
+                    .build()
+            ).build()
 
             // Submits the request to install the additional language resources.
             mSettingsViewModel.persistingLanguage = newLanguage
