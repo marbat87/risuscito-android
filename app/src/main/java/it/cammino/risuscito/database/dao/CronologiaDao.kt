@@ -36,6 +36,10 @@ interface CronologiaDao {
     @Delete
     fun deleteCronologia(cronologia: Cronologia)
 
+    @Query("DELETE FROM cronologia WHERE idCanto = :id")
+    fun deleteCronologiaById(id: Int)
+
+
     @Delete
     fun deleteCronologia(cronologiaList: List<Cronologia>)
 }

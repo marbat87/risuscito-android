@@ -5,85 +5,77 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.SystemClock
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.CredentialOption
 import androidx.credentials.GetCredentialRequest
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.commit
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.color.DynamicColors
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.navigation.NavigationBarView
-import com.google.android.material.search.SearchView
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.transition.platform.MaterialSharedAxis
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.crashlytics.crashlytics
-import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
-import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.michaelflisar.changelog.ChangelogBuilder
-import com.mikepenz.fastadapter.IAdapter
-import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
-import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.databinding.ActivityMainBinding
-import it.cammino.risuscito.items.SimpleItem
 import it.cammino.risuscito.ui.CredendialObject
 import it.cammino.risuscito.ui.CredentialCacheManager
 import it.cammino.risuscito.ui.ProfileUiManager
 import it.cammino.risuscito.ui.RisuscitoApplication
+import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.Destination
+import it.cammino.risuscito.ui.composable.main.Drawer
+import it.cammino.risuscito.ui.composable.main.MainScreen
+import it.cammino.risuscito.ui.composable.main.NavigationScreen
+import it.cammino.risuscito.ui.composable.main.RisuscitoSnackBar
+import it.cammino.risuscito.ui.composable.main.StatusBarProtection
+import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.ui.fragment.AboutFragment
-import it.cammino.risuscito.ui.fragment.ConsegnatiFragment
-import it.cammino.risuscito.ui.fragment.CustomListsFragment
-import it.cammino.risuscito.ui.fragment.FavoritesFragment
-import it.cammino.risuscito.ui.fragment.GeneralIndexFragment
-import it.cammino.risuscito.ui.fragment.HistoryFragment
-import it.cammino.risuscito.ui.fragment.SettingsFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
+import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
@@ -96,21 +88,16 @@ import it.cammino.risuscito.utils.extension.convertiBarre
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.getVersionCode
 import it.cammino.risuscito.utils.extension.isDarkMode
-import it.cammino.risuscito.utils.extension.isFabExpansionLeft
-import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.isOnTablet
-import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
-import it.cammino.risuscito.utils.extension.updateListaPersonalizzata
-import it.cammino.risuscito.utils.extension.updatePosizione
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel.ProfileAction
+import it.cammino.risuscito.viewmodels.SharedScrollViewModel
+import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParserException
@@ -125,6 +112,10 @@ class MainActivity : ThemeableActivity() {
     private val cantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
+
+    private val scrollViewModel: SharedScrollViewModel by viewModels()
+
+    private val sharedSearchViewModel: SharedSearchViewModel by viewModels()
 
     private lateinit var mCredentialCacheManager: CredentialCacheManager
 
@@ -141,56 +132,132 @@ class MainActivity : ThemeableActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            Snackbar.make(
-                binding.mainContent, getString(R.string.permission_ok), Snackbar.LENGTH_SHORT
-            ).show()
+            showSnackBar(getString(R.string.permission_ok))
         } else {
             PreferenceManager.getDefaultSharedPreferences(this)
                 .edit { putString(Utility.SAVE_LOCATION, "0") }
-            Snackbar.make(
-                binding.mainContent,
-                getString(R.string.external_storage_denied),
-                Snackbar.LENGTH_SHORT
-            ).show()
+            showSnackBar(getString(R.string.external_storage_denied))
         }
     }
 
-    //search proprerties
-    private var job: Job = Job()
-    private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
-    private var listePersonalizzate: List<ListaPers>? = null
-    private var mLastClickTime: Long = 0
-
-    private lateinit var binding: ActivityMainBinding
-
-    var isActionMode: Boolean = false
-        private set
+    var showProgressBar = mutableStateOf(false)
+    var isActionMode = mutableStateOf(false)
     private var actionModeFragment: ActionModeFragment? = null
+    private var actionModeTitle = mutableStateOf("")
+    private var hideNavigationIcon = mutableStateOf(false)
+    private var actionModeMenuList = mutableListOf<ActionModeItem>()
+    private var onActionModeClickItem: (String) -> Unit = {}
+    private var navHostController = mutableStateOf(NavHostController(this))
+    private val drawerState = mutableStateOf(DrawerState(initialValue = DrawerValue.Closed))
+    private val tabsDestinationList = MutableLiveData(ArrayList<Destination>())
+    private val tabsSelectedIndex = mutableIntStateOf(0)
+    private val tabsVisible = mutableStateOf(false)
+    private val showSnackbar = mutableStateOf(false)
+    private val snackbarMessage = mutableStateOf("")
+    private val actionLabel = mutableStateOf("")
+    private var snackBarFragment: SnackBarFragment? = null
 
+    private val showFab = mutableStateOf(false)
+
+    private lateinit var pagerState: PagerState
+
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
         installSplashScreen()
         DynamicColors.applyToActivityIfAvailable(this, dynamicColorOptions)
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+        try {
+            val inputStream: InputStream = resources.openRawResource(R.raw.fileout)
+            sharedSearchViewModel.aTexts = CantiXmlParser().parse(inputStream)
+            inputStream.close()
+        } catch (e: XmlPullParserException) {
+            Log.e(TAG, "Error:", e)
+            Firebase.crashlytics.recordException(e)
+        } catch (e: IOException) {
+            Log.e(TAG, "Error:", e)
+            Firebase.crashlytics.recordException(e)
+        }
+
+        // enableEdgeToEdge sets window.isNavigationBarContrastEnforced = true
+        // which is used to add a translucent scrim to three-button navigation
+        enableEdgeToEdge()
+
+        setContent {
+
+            val scope = rememberCoroutineScope()
+            val searchBarState = rememberSearchBarState()
+
+            RisuscitoTheme {
+
+                val sharedScrollVM: SharedScrollViewModel = viewModel()
+
+                val localTabsList = tabsDestinationList.observeAsState()
+
+                pagerState = rememberPagerState(pageCount = {
+                    localTabsList.value?.size ?: 0
+                })
+
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                val navControllerInstance = rememberNavController() // Create NavController here
+                navHostController.value = navControllerInstance
+
+                MainScreen(
+                    sharedScrollViewModel = sharedScrollVM,
+                    navController = navHostController.value,
+                    drawerState = drawerState.value,
+                    onDrawerItemClick = { onMobileDrawerItemClick(it) },
+                    isActionMode = isActionMode.value,
+                    actionModeMenu = actionModeMenuList,
+                    hideNavigation = hideNavigationIcon.value,
+                    onActionModeClick = onActionModeClickItem,
+                    contextualTitle = actionModeTitle.value,
+                    searchBarState = searchBarState,
+                    showLoadingBar = showProgressBar.value,
+                    showTabs = tabsVisible.value,
+                    tabsList = localTabsList.value,
+                    selectedTabIndex = tabsSelectedIndex,
+                    pagerState = pagerState,
+                    snackbarHostState = snackbarHostState,
+                    showFab = showFab.value,
+                    sharedSearchViewModel = sharedSearchViewModel
+                )
+
+                RisuscitoSnackBar(
+                    snackbarHostState = snackbarHostState,
+                    callBack = snackBarFragment,
+                    message = snackbarMessage.value,
+                    actionLabel = actionLabel.value,
+                    showSnackBar = showSnackbar
+                )
+
+                // After drawing main content, draw status bar protection
+                StatusBarProtection()
+            }
+
+            onBackPressedDispatcher.addCallback(this) {
+                when {
+//                binding.fabPager.isOpen -> binding.fabPager.close()
+                    !isOnTablet && drawerState.value.isOpen -> scope.launch { drawerState.value.close() }
+                    isActionMode.value -> destroyActionMode()
+                    searchBarState.currentValue == SearchBarValue.Expanded -> scope.launch { searchBarState.animateToCollapsed() }
+                    else -> backToHome(true)
+                }
+            }
+        }
 
         mCredentialManager = CredentialManager.create(this)
 
         mCredentialCacheManager = CredentialCacheManager(mViewModel, this, mCredentialManager)
 
+        //TODO
         val outValue = TypedValue()
         resources.getValue(R.dimen.horizontal_percentage_half_divider, outValue, true)
         val percentage = outValue.float
 
-        binding.halfGuideline?.setGuidelinePercent(percentage)
-
-        binding.contextualToolbar.setNavigationOnClickListener { destroyActionMode() }
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            listePersonalizzate =
-                RisuscitoDatabase.getInstance(this@MainActivity).listePersDao().all()
-        }
+//        binding.halfGuideline?.setGuidelinePercent(percentage)
 
         Log.d(TAG, "getVersionCode(): ${getVersionCode()}")
 
@@ -210,113 +277,18 @@ class MainActivity : ThemeableActivity() {
         if (!OSUtils.hasQ()) checkPermission()
 
         if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                replace(
-                    R.id.content_frame, GeneralIndexFragment(), R.id.navigation_indexes.toString()
-                )
-            }
-
             val currentItem = Integer.parseInt(
                 PreferenceManager.getDefaultSharedPreferences(this)
                     .getString(Utility.DEFAULT_SEARCH, "0") ?: "0"
             )
-            cantiViewModel.advancedSearch = currentItem != 0
+            sharedSearchViewModel.advancedSearchFilter.value = currentItem != 0
         }
-
-        try {
-            val inputStream: InputStream = resources.openRawResource(R.raw.fileout)
-            cantiViewModel.aTexts = CantiXmlParser().parse(inputStream)
-            inputStream.close()
-        } catch (e: XmlPullParserException) {
-            Log.e(TAG, "Error:", e)
-            Firebase.crashlytics.recordException(e)
-        } catch (e: IOException) {
-            Log.e(TAG, "Error:", e)
-            Firebase.crashlytics.recordException(e)
-        }
-
-        onBackPressedDispatcher.addCallback(this) {
-            when {
-                binding.fabPager.isOpen -> binding.fabPager.close()
-                !isOnTablet && binding.drawer?.isOpen == true -> binding.drawer?.close()
-                isActionMode -> destroyActionMode()
-                binding.searchViewLayout.searchViewContainer.currentTransitionState == SearchView.TransitionState.SHOWN -> binding.searchViewLayout.searchViewContainer.hide()
-                else -> backToHome(true)
-            }
-        }
-
-        setSupportActionBar(binding.risuscitoToolbar)
 
         if (intent.getBooleanExtra(CHANGE_LANGUAGE, false)) {
             lifecycleScope.launch { translate() }
         }
 
-        setupNavDrawer()
-
-        binding.appBarLayout.setExpanded(true, false)
-
         FirebaseAnalytics.getInstance(this)
-
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance()
-
-        cantoAdapter.onClickListener =
-            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-                var consume = false
-                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                    mLastClickTime = SystemClock.elapsedRealtime()
-                    openCanto(
-                        TAG, item.id, item.source?.getText(this), false
-                    )
-                    consume = true
-                }
-                consume
-            }
-
-        cantoAdapter.onLongClickListener =
-            { v: View, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-                cantiViewModel.idDaAgg = item.id
-                cantiViewModel.popupMenu(
-                    this, v, SEARCH_REPLACE, SEARCH_REPLACE_2, listePersonalizzate
-                )
-                true
-            }
-
-        cantoAdapter.setHasStableIds(true)
-
-        binding.searchViewLayout.matchedList.adapter = cantoAdapter
-        val llm = if (isGridLayout) GridLayoutManager(this, 2)
-        else LinearLayoutManager(this)
-        binding.searchViewLayout.matchedList.layoutManager = llm
-
-        binding.searchViewLayout.searchViewContainer.editText.setOnEditorActionListener { _, actionId, _ ->
-            var returnValue = false
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // to hide soft keyboard
-                ContextCompat.getSystemService(this, InputMethodManager::class.java)
-                    ?.hideSoftInputFromWindow(
-                        binding.searchViewLayout.searchViewContainer.editText.windowToken, 0
-                    )
-                returnValue = true
-            }
-            returnValue
-        }
-
-        binding.searchViewLayout.searchViewContainer.editText.doOnTextChanged { text, _, _, _ ->
-            job.cancel()
-            ricercaStringa(text.toString())
-        }
-
-        binding.searchViewLayout.advancedSearchChip.isChecked = cantiViewModel.advancedSearch
-        binding.searchViewLayout.advancedSearchChip.setOnCheckedChangeListener { _, checked ->
-            cantiViewModel.advancedSearch = checked
-            job.cancel()
-            ricercaStringa(binding.searchViewLayout.searchViewContainer.text.toString())
-        }
-
-        Utility.fixSystemBarPadding(
-            binding.contentFrame
-        )
 
         subscribeUiChanges()
 
@@ -335,6 +307,7 @@ class MainActivity : ThemeableActivity() {
 
     }
 
+
     private suspend fun logout() {
         mCredentialManager.clearCredentialState(ClearCredentialStateRequest())
         mCredentialCacheManager.clearCache()
@@ -348,91 +321,6 @@ class MainActivity : ThemeableActivity() {
                 .getBoolean(Utility.SIGNED_IN, false)
         ) {
             signIn(lastAccount = true)
-        }
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        binding.fabPager.expansionMode =
-            if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
-    }
-
-    private fun ricercaStringa(s: String) {
-        job = lifecycleScope.launch {
-            // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
-            if (s.trim { it <= ' ' }.length >= 3) {
-                binding.searchViewLayout.searchNoResults.isVisible = false
-                binding.searchViewLayout.searchProgress.isVisible = true
-                val titoliResult = ArrayList<SimpleItem>()
-
-                Firebase.crashlytics.log("function: search_text - search_string: $s - advanced: ${cantiViewModel.advancedSearch}")
-
-                Log.d(TAG, "performSearch STRINGA: $s")
-                Log.d(TAG, "performSearch ADVANCED: ${cantiViewModel.advancedSearch}")
-                if (cantiViewModel.advancedSearch) {
-                    val words =
-                        s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-                    for (aText in cantiViewModel.aTexts) {
-                        if (!isActive) return@launch
-
-                        if (aText[0] == null || aText[0].isNullOrEmpty()) break
-
-                        var found = true
-                        for (word in words) {
-                            if (!isActive) return@launch
-
-                            if (word.trim { it <= ' ' }.length > 1) {
-                                var text = word.trim { it <= ' ' }
-                                text = text.lowercase(systemLocale)
-                                text = Utility.removeAccents(text)
-
-                                if (aText[1]?.contains(text) != true) found = false
-                            }
-                        }
-
-                        if (found) {
-                            Log.d(TAG, "aText[0]: ${aText[0]}")
-                            cantiViewModel.titoli.filter { (aText[0].orEmpty()) == it.undecodedSource }
-                                .forEach {
-                                    if (!isActive) return@launch
-                                    titoliResult.add(it.apply { filter = StringUtils.EMPTY })
-                                }
-                        }
-                    }
-                } else {
-                    val stringa = Utility.removeAccents(s).lowercase(systemLocale)
-                    Log.d(TAG, "performSearch onTextChanged: stringa $stringa")
-                    cantiViewModel.titoli.filter {
-                        Utility.removeAccents(
-                            it.title?.getText(this@MainActivity).orEmpty()
-                        ).lowercase(systemLocale).contains(stringa)
-                    }.forEach {
-                        if (!isActive) return@launch
-                        titoliResult.add(it.apply { filter = stringa })
-                    }
-                }
-                if (isActive) {
-                    cantoAdapter.set(
-                        titoliResult.sortedWith(
-                            compareBy(
-                                Collator.getInstance(systemLocale)
-                            ) { it.title?.getText(this@MainActivity) })
-                    )
-                    binding.searchViewLayout.searchProgress.isVisible = false
-                    binding.searchViewLayout.searchNoResults.isVisible =
-                        cantoAdapter.adapterItemCount == 0
-                    binding.searchViewLayout.matchedList.isGone = cantoAdapter.adapterItemCount == 0
-                }
-            } else {
-                if (s.isEmpty()) {
-                    binding.searchViewLayout.searchNoResults.isVisible = false
-                    binding.searchViewLayout.matchedList.isVisible = false
-                    cantoAdapter.clear()
-                    binding.searchViewLayout.searchProgress.isVisible = false
-                    expandToolbar()
-                }
-            }
         }
     }
 
@@ -512,26 +400,6 @@ class MainActivity : ThemeableActivity() {
                                 ) RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
                                 else RisuscitoApplication.localeManager.updateLanguage(this)
 
-                            }
-
-                            SEARCH_REPLACE -> {
-                                simpleDialogViewModel.handled = true
-                                listePersonalizzate?.let { lista ->
-                                    lista[cantiViewModel.idListaClick].lista?.addCanto(
-                                        cantiViewModel.idDaAgg.toString(),
-                                        cantiViewModel.idPosizioneClick
-                                    )
-                                    updateListaPersonalizzata(lista[cantiViewModel.idListaClick])
-                                }
-                            }
-
-                            SEARCH_REPLACE_2 -> {
-                                simpleDialogViewModel.handled = true
-                                updatePosizione(
-                                    cantiViewModel.idDaAgg,
-                                    cantiViewModel.idListaDaAgg,
-                                    cantiViewModel.posizioneDaAgg
-                                )
                             }
                         }
                     }
@@ -656,89 +524,20 @@ class MainActivity : ThemeableActivity() {
         }
 
         cantiViewModel.itemsResult?.observe(this) { canti ->
-            cantiViewModel.titoli = canti.sortedWith(
+            sharedSearchViewModel.titoli = canti.sortedWith(
                 compareBy(
                     Collator.getInstance(systemLocale)
-                ) {
-                    it.title?.getText(this)
-                })
+                ) { getString(it.titleRes) })
         }
 
     }
 
-    private fun setupNavDrawer() {
-
-        val listener = NavigationBarView.OnItemSelectedListener { item ->
-            onDrawerItemClick(item)
-            true
-        }
-
-        binding.bottomNavigation?.setOnItemSelectedListener(listener)
-        binding.navigationView?.setNavigationItemSelectedListener {
-            onMobileDrawerItemClick(it)
-            true
-        }
-        binding.navigationRail?.setOnItemSelectedListener(listener)
-
-        binding.bottomNavigation?.menu?.findItem(mViewModel.selectedMenuItemId)?.isChecked = true
-        binding.navigationRail?.menu?.findItem(mViewModel.selectedMenuItemId)?.isChecked = true
-
-        if (!isOnTablet) {
-            val mActionBarDrawerToggle = ActionBarDrawerToggle(
-                this,
-                binding.drawer as DrawerLayout,
-                binding.risuscitoToolbar,
-                R.string.material_drawer_open,
-                R.string.material_drawer_close
-            )
-            mActionBarDrawerToggle.syncState()
-            binding.drawer?.addDrawerListener(mActionBarDrawerToggle)
-        }
-
-        binding.navigationView?.getHeaderView(0)?.findViewById<TextView>(R.id.drawer_header_title)
-            ?.setTextColor(
-                MaterialColors.harmonizeWithPrimary(
-                    this, ContextCompat.getColor(this, R.color.ic_launcher_background)
-                )
-            )
-
-    }
-
-    private fun onDrawerItemClick(menuItem: MenuItem) {
+    private fun onMobileDrawerItemClick(itemRoute: String) {
         expandToolbar()
 
-        val fragment = when (menuItem.itemId) {
-            R.id.navigation_indexes -> GeneralIndexFragment()
-            R.id.navigation_lists -> CustomListsFragment()
-            R.id.navigation_favorites -> FavoritesFragment()
-            R.id.navigation_settings -> SettingsFragment()
-            R.id.navigation_changelog -> AboutFragment()
-            R.id.navigation_consegnati -> ConsegnatiFragment()
-            R.id.navigation_history -> HistoryFragment()
-            else -> GeneralIndexFragment()
-        }
-
-        mViewModel.selectedMenuItemId = menuItem.itemId
-        menuItem.isChecked = true
-
-        binding.drawer?.close()
-
-        // creo il nuovo fragment solo se non è lo stesso che sto già visualizzando
-        val myFragment = supportFragmentManager.findFragmentByTag(menuItem.itemId.toString())
-        if (myFragment == null || !myFragment.isVisible) {
-            supportFragmentManager.commit {
-                replace(R.id.content_frame, fragment, menuItem.itemId.toString())
-            }
-        }
-    }
-
-    private fun onMobileDrawerItemClick(menuItem: MenuItem) {
-        expandToolbar()
-        binding.drawer?.close()
-
-        val activityClass = when (menuItem.itemId) {
-            R.id.navigation_settings -> SettingsActivity::class.java
-            R.id.navigation_changelog -> AboutActivity::class.java
+        val activityClass = when (itemRoute) {
+            Drawer.SETTINGS.route -> SettingsActivity::class.java
+            Drawer.INFO.route -> AboutActivity::class.java
             else -> SettingsActivity::class.java
         }
 
@@ -751,31 +550,35 @@ class MainActivity : ThemeableActivity() {
     }
 
     fun closeFabMenu() {
-        if (binding.fabPager.isOpen) binding.fabPager.close()
+        //TODO
+//        if (binding.fabPager.isOpen) binding.fabPager.close()
     }
 
     fun toggleFabMenu() {
-        binding.fabPager.toggle()
+        //TODO
+//        binding.fabPager.toggle()
     }
 
     fun enableFab(enable: Boolean, autoHide: Boolean = true) {
         Log.d(TAG, "enableFab: $enable")
-        if (enable) {
-            if (binding.fabPager.isOpen) binding.fabPager.close()
-            else {
-                val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
-                params?.behavior =
-                    if (autoHide) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
-                binding.fabPager.requestLayout()
-                binding.fabPager.show()
-            }
-        } else {
-            if (binding.fabPager.isOpen) binding.fabPager.close()
-            binding.fabPager.hide()
-            val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
-            params?.behavior = SpeedDialView.NoBehavior()
-            binding.fabPager.requestLayout()
-        }
+        //TODO
+//        if (enable) {
+//            if (binding.fabPager.isOpen) binding.fabPager.close()
+//            else {
+//                val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
+//                params?.behavior =
+//                    if (autoHide) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
+//                binding.fabPager.requestLayout()
+//                binding.fabPager.show()
+//            }
+//        } else {
+//            if (binding.fabPager.isOpen) binding.fabPager.close()
+//            binding.fabPager.hide()
+//            val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
+//            params?.behavior = SpeedDialView.NoBehavior()
+//            binding.fabPager.requestLayout()
+//        }
+        showFab.value = enable
     }
 
     fun initFab(
@@ -786,110 +589,119 @@ class MainActivity : ThemeableActivity() {
         customList: Boolean
     ) {
         Log.d(TAG, "initFab()")
-        enableFab(false)
-        binding.fabPager.setMainFabClosedDrawable(icon)
-        binding.fabPager.mainFab.rippleColor =
-            ContextCompat.getColor(this, android.R.color.transparent)
-        binding.fabPager.clearActionItems()
-        binding.fabPager.expansionMode =
-            if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
-        enableFab(true)
-        Log.d(TAG, "initFab optionMenu: $optionMenu")
-
-        if (optionMenu) {
-            val iconColor = MaterialColors.getColor(
-                this, com.google.android.material.R.attr.colorOnPrimaryContainer, TAG
-            )
-            val backgroundColor = MaterialColors.getColor(
-                this, com.google.android.material.R.attr.colorPrimaryContainer, TAG
-            )
-
-            binding.fabPager.addActionItem(
-                SpeedDialActionItem.Builder(
-                    R.id.fab_pulisci,
-                    AppCompatResources.getDrawable(this, R.drawable.cleaning_services_24px)
-                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-                    .setLabel(getString(R.string.dialog_reset_list_title))
-                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
-                    .setLabelColor(iconColor).create()
-            )
-
-            binding.fabPager.addActionItem(
-                SpeedDialActionItem.Builder(
-                    R.id.fab_add_lista, AppCompatResources.getDrawable(this, R.drawable.add_24px)
-                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-                    .setLabel(getString(R.string.action_add_list))
-                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
-                    .setLabelColor(iconColor).create()
-            )
-
-            binding.fabPager.addActionItem(
-                SpeedDialActionItem.Builder(
-                    R.id.fab_condividi, AppCompatResources.getDrawable(this, R.drawable.share_24px)
-                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-                    .setLabel(getString(R.string.action_share))
-                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
-                    .setLabelColor(iconColor).create()
-            )
-
-            if (customList) {
-                binding.fabPager.addActionItem(
-                    SpeedDialActionItem.Builder(
-                        R.id.fab_condividi_file,
-                        AppCompatResources.getDrawable(this, R.drawable.attachment_24px)
-                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-                        .setLabel(getString(R.string.action_share_file))
-                        .setFabBackgroundColor(backgroundColor)
-                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
-                )
-
-                binding.fabPager.addActionItem(
-                    SpeedDialActionItem.Builder(
-                        R.id.fab_edit_lista,
-                        AppCompatResources.getDrawable(this, R.drawable.edit_24px)
-                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-                        .setLabel(getString(R.string.action_edit_list))
-                        .setFabBackgroundColor(backgroundColor)
-                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
-                )
-
-                binding.fabPager.addActionItem(
-                    SpeedDialActionItem.Builder(
-                        R.id.fab_delete_lista,
-                        AppCompatResources.getDrawable(this, R.drawable.delete_24px)
-                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-                        .setLabel(getString(R.string.action_remove_list))
-                        .setFabBackgroundColor(backgroundColor)
-                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
-                )
-            }
-            binding.fabPager.setOnActionSelectedListener(action)
-
-        }
-        binding.fabPager.mainFab.setOnClickListener(click)
+        //TODO
+//        enableFab(false)
+//        binding.fabPager.setMainFabClosedDrawable(icon)
+//        binding.fabPager.mainFab.rippleColor =
+//            ContextCompat.getColor(this, android.R.color.transparent)
+//        binding.fabPager.clearActionItems()
+//        binding.fabPager.expansionMode =
+//            if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
+//        enableFab(true)
+//        Log.d(TAG, "initFab optionMenu: $optionMenu")
+//
+//        if (optionMenu) {
+//            val iconColor = MaterialColors.getColor(
+//                this, com.google.android.material.R.attr.colorOnPrimaryContainer, TAG
+//            )
+//            val backgroundColor = MaterialColors.getColor(
+//                this, com.google.android.material.R.attr.colorPrimaryContainer, TAG
+//            )
+//
+//            binding.fabPager.addActionItem(
+//                SpeedDialActionItem.Builder(
+//                    R.id.fab_pulisci,
+//                    AppCompatResources.getDrawable(this, R.drawable.cleaning_services_24px)
+//                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
+//                    .setLabel(getString(R.string.dialog_reset_list_title))
+//                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
+//                    .setLabelColor(iconColor).create()
+//            )
+//
+//            binding.fabPager.addActionItem(
+//                SpeedDialActionItem.Builder(
+//                    R.id.fab_add_lista, AppCompatResources.getDrawable(this, R.drawable.add_24px)
+//                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
+//                    .setLabel(getString(R.string.action_add_list))
+//                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
+//                    .setLabelColor(iconColor).create()
+//            )
+//
+//            binding.fabPager.addActionItem(
+//                SpeedDialActionItem.Builder(
+//                    R.id.fab_condividi, AppCompatResources.getDrawable(this, R.drawable.share_24px)
+//                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
+//                    .setLabel(getString(R.string.action_share))
+//                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
+//                    .setLabelColor(iconColor).create()
+//            )
+//
+//            if (customList) {
+//                binding.fabPager.addActionItem(
+//                    SpeedDialActionItem.Builder(
+//                        R.id.fab_condividi_file,
+//                        AppCompatResources.getDrawable(this, R.drawable.attachment_24px)
+//                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
+//                        .setLabel(getString(R.string.action_share_file))
+//                        .setFabBackgroundColor(backgroundColor)
+//                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
+//                )
+//
+//                binding.fabPager.addActionItem(
+//                    SpeedDialActionItem.Builder(
+//                        R.id.fab_edit_lista,
+//                        AppCompatResources.getDrawable(this, R.drawable.edit_24px)
+//                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
+//                        .setLabel(getString(R.string.action_edit_list))
+//                        .setFabBackgroundColor(backgroundColor)
+//                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
+//                )
+//
+//                binding.fabPager.addActionItem(
+//                    SpeedDialActionItem.Builder(
+//                        R.id.fab_delete_lista,
+//                        AppCompatResources.getDrawable(this, R.drawable.delete_24px)
+//                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
+//                        .setLabel(getString(R.string.action_remove_list))
+//                        .setFabBackgroundColor(backgroundColor)
+//                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
+//                )
+//            }
+//            binding.fabPager.setOnActionSelectedListener(action)
+//
+//        }
+//        binding.fabPager.mainFab.setOnClickListener(click)
     }
 
-    fun getFab(): FloatingActionButton {
-        return binding.fabPager.mainFab
+//    fun getFab(): FloatingActionButton {
+//        return binding.fabPager.mainFab
+//    }
+
+    fun getPagerState(): PagerState {
+        return pagerState
     }
 
     fun setTabVisible(visible: Boolean) {
-        binding.materialTabs.isVisible = visible
+        tabsVisible.value = visible
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     fun expandToolbar() {
-        binding.appBarLayout.setExpanded(true, true)
+        scrollViewModel.scrollBehavior.value?.state?.heightOffset = 0F
     }
 
-    fun getMaterialTabs(): TabLayout {
-        return binding.materialTabs
+    fun setupMaterialTab(tabsList: List<Destination>) {
+        val newList = ArrayList(tabsList) // Crea una nuova lista
+        tabsDestinationList.value = newList
+        tabsSelectedIndex.intValue = 0
     }
 
-    val activityContextualToolbar: MaterialToolbar
-        get() = binding.contextualToolbar
+    fun changeMaterialTabPage(selectedIndex: Int) {
+        tabsSelectedIndex.intValue = selectedIndex
+    }
 
     val activityMainContent: View
-        get() = binding.mainContent
+        get() = window.decorView.findViewById(android.R.id.content)
 
     // [START signIn]
     private fun signIn(
@@ -1067,11 +879,11 @@ class MainActivity : ThemeableActivity() {
     }
 
     fun showProgressDialog() {
-        binding.loadingBar.isVisible = true
+        showProgressBar.value = true
     }
 
     fun hideProgressDialog() {
-        binding.loadingBar.isVisible = false
+        showProgressBar.value = false
     }
 
     private fun dismissProgressDialog(tag: String) {
@@ -1087,12 +899,7 @@ class MainActivity : ThemeableActivity() {
             return
         }
 
-        binding.bottomNavigation?.menu?.findItem(R.id.navigation_indexes)?.isChecked = true
-        binding.navigationRail?.menu?.findItem(R.id.navigation_indexes)?.isChecked = true
-
-        supportFragmentManager.commit {
-            replace(R.id.content_frame, GeneralIndexFragment(), R.id.navigation_indexes.toString())
-        }
+        navHostController.value.navigate(NavigationScreen.GeneralIndex.route)
 
         expandToolbar()
     }
@@ -1132,7 +939,7 @@ class MainActivity : ThemeableActivity() {
                 negativeButton(android.R.string.cancel)
             }, supportFragmentManager
         )
-        binding.drawer?.close()
+        lifecycleScope.launch { drawerState.value.close() }
     }
 
     private suspend fun translate() {
@@ -1187,9 +994,7 @@ class MainActivity : ThemeableActivity() {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED
-            Snackbar.make(
-                binding.mainContent, "error: " + e.localizedMessage, Snackbar.LENGTH_SHORT
-            ).show()
+            showSnackBar("error: " + e.localizedMessage)
         }
     }
 
@@ -1221,47 +1026,46 @@ class MainActivity : ThemeableActivity() {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED
-            Snackbar.make(binding.mainContent, "error: " + e.localizedMessage, Snackbar.LENGTH_LONG)
-                .show()
+            showSnackBar("error: " + e.localizedMessage)
         }
     }
 
     fun createActionMode(
-        resId: Int,
+        actionModeMenu: List<ActionModeItem>,
         fragment: ActionModeFragment,
         hideNavigation: Boolean = false,
-        clickListener: Toolbar.OnMenuItemClickListener
+        onActionModeClick: (String) -> Unit = {}
     ) {
-        binding.contextualToolbar.navigationIcon =
-            if (hideNavigation) null else AppCompatResources.getDrawable(
-                this, R.drawable.arrow_back_24px
-            )
-        isActionMode = true
+        hideNavigationIcon.value = hideNavigation
         actionModeFragment = fragment
-        binding.contextualToolbar.menu.clear()
-        binding.contextualToolbar.inflateMenu(resId)
-        binding.contextualToolbar.setOnMenuItemClickListener(clickListener)
+        actionModeMenuList.clear()
+        actionModeMenuList.addAll(actionModeMenu)
+        onActionModeClickItem = onActionModeClick
         setTransparentStatusBar(false)
-        binding.risuscitoToolbar.expand(binding.contextualToolbarContainer, binding.appBarLayout)
-        binding.contextualToolbarContainer.setPadding(
-            binding.contextualToolbarContainer.paddingLeft,
-            binding.contextualToolbarContainer.paddingTop,
-            binding.contextualToolbarContainer.paddingRight,
-            0
-        )
+//        binding.risuscitoToolbar.expand(binding.contextualToolbarContainer, binding.appBarLayout)
+        expandToolbar()
+        isActionMode.value = true
     }
 
     fun destroyActionMode(): Boolean {
-        isActionMode = false
+        isActionMode.value = false
         setTransparentStatusBar(true)
         actionModeFragment?.destroyActionMode()
-        return binding.risuscitoToolbar.collapse(
-            binding.contextualToolbarContainer, binding.appBarLayout
-        )
+//        return binding.risuscitoToolbar.collapse(
+//            binding.contextualToolbarContainer, binding.appBarLayout
+//        )
+        return true
+    }
+
+    fun showSnackBar(message: String, callback: SnackBarFragment? = null, label: String? = null) {
+        snackBarFragment = callback
+        snackbarMessage.value = message
+        actionLabel.value = label ?: StringUtils.EMPTY
+        showSnackbar.value = true
     }
 
     fun updateActionModeTitle(title: String) {
-        binding.contextualToolbar.title = title
+        actionModeTitle.value = title
     }
 
     companion object {
@@ -1276,8 +1080,6 @@ class MainActivity : ThemeableActivity() {
         private const val RESTORE_DONE = "RESTORE_DONE"
         private const val OLD_PHOTO_RES = "s96-c"
         private const val NEW_PHOTO_RES = "s400-c"
-        private const val SEARCH_REPLACE = "SEARCH_REPLACE"
-        private const val SEARCH_REPLACE_2 = "SEARCH_REPLACE_2"
         private val TAG = MainActivity::class.java.canonicalName
 
     }

@@ -19,7 +19,6 @@ import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
@@ -30,12 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetSequence
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
 import com.leinardi.android.speeddial.SpeedDialView
 import it.cammino.risuscito.R
@@ -46,6 +40,7 @@ import it.cammino.risuscito.ui.activity.CreaListaActivity
 import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.EDIT_EXISTING_LIST
 import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.ID_DA_MODIF
 import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.LIST_TITLE
+import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
@@ -69,7 +64,7 @@ class CustomListsFragment : AccountMenuFragment() {
     private var movePage: Boolean = false
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
-    private var tabs: TabLayout? = null
+//    private var tabs: TabLayout? = null
     private var mLastClickTime: Long = 0
     private val mPageChange: ViewPager2.OnPageChangeCallback =
         object : ViewPager2.OnPageChangeCallback() {
@@ -160,7 +155,7 @@ class CustomListsFragment : AccountMenuFragment() {
         )
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
-        mMainActivity?.setTabVisible(true)
+
         mMainActivity?.enableFab(true)
 
         movePage = savedInstanceState != null
@@ -175,17 +170,7 @@ class CustomListsFragment : AccountMenuFragment() {
 
         mSectionsPagerAdapter = SectionsPagerAdapter(this)
 
-        tabs = mMainActivity?.getMaterialTabs()
         binding.viewPager.adapter = mSectionsPagerAdapter
-        tabs?.let {
-            TabLayoutMediator(it, binding.viewPager) { tab, position ->
-                tab.text = when (position) {
-                    0 -> getString(R.string.title_activity_canti_parola)
-                    1 -> getString(R.string.title_activity_canti_eucarestia)
-                    else -> titoliListe[position - 2]
-                }
-            }.attach()
-        }
         binding.viewPager.registerOnPageChangeCallback(mPageChange)
 
         subscribeUiChanges()
@@ -202,55 +187,56 @@ class CustomListsFragment : AccountMenuFragment() {
 
     private fun playIntro() {
         mMainActivity?.enableFab(true)
-        mMainActivity?.getFab()?.let { fab ->
-            val colorOnPrimary = MaterialColors.getColor(
-                requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG
-            )
-            TapTargetSequence(requireActivity()).continueOnCancel(true).targets(
-                TapTarget.forView(
-                    fab,
-                    getString(R.string.showcase_listepers_title),
-                    getString(R.string.showcase_listepers_desc1)
-                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
-                    .descriptionTextSize(15)
-                    .tintTarget(false) // Whether to tint the target view's color
-                    .setForceCenteredTarget(true), TapTarget.forView(
-                    fab,
-                    getString(R.string.showcase_listepers_title),
-                    getString(R.string.showcase_listepers_desc3)
-                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .icon(
-                        AppCompatResources.getDrawable(
-                            requireContext(), R.drawable.check_24px
-                        )
-                    ).descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
-                    .setForceCenteredTarget(true)
-            ).listener(object :
-                TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                override fun onSequenceFinish() {
-                    context?.let {
-                        PreferenceManager.getDefaultSharedPreferences(it)
-                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                    }
-                }
-
-                override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-                    // no-op
-                }
-
-                override fun onSequenceCanceled(tapTarget: TapTarget) {
-                    context?.let {
-                        PreferenceManager.getDefaultSharedPreferences(it)
-                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                    }
-                }
-            }).start()
-        }
+        //TODO
+//        mMainActivity?.getFab()?.let { fab ->
+//            val colorOnPrimary = MaterialColors.getColor(
+//                requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG
+//            )
+//            TapTargetSequence(requireActivity()).continueOnCancel(true).targets(
+//                TapTarget.forView(
+//                    fab,
+//                    getString(R.string.showcase_listepers_title),
+//                    getString(R.string.showcase_listepers_desc1)
+//                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+//                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
+//                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
+//                    .descriptionTextSize(15)
+//                    .tintTarget(false) // Whether to tint the target view's color
+//                    .setForceCenteredTarget(true), TapTarget.forView(
+//                    fab,
+//                    getString(R.string.showcase_listepers_title),
+//                    getString(R.string.showcase_listepers_desc3)
+//                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+//                    .icon(
+//                        AppCompatResources.getDrawable(
+//                            requireContext(), R.drawable.check_24px
+//                        )
+//                    ).descriptionTypeface(mRegularFont) // Specify a typeface for the text
+//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
+//                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
+//                    .setForceCenteredTarget(true)
+//            ).listener(object :
+//                TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+//                override fun onSequenceFinish() {
+//                    context?.let {
+//                        PreferenceManager.getDefaultSharedPreferences(it)
+//                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+//                    }
+//                }
+//
+//                override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+//                    // no-op
+//                }
+//
+//                override fun onSequenceCanceled(tapTarget: TapTarget) {
+//                    context?.let {
+//                        PreferenceManager.getDefaultSharedPreferences(it)
+//                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+//                    }
+//                }
+//            }).start()
+//        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -275,6 +261,15 @@ class CustomListsFragment : AccountMenuFragment() {
                     movePage = false
                 }
             }
+            val destinationList = ArrayList<Destination>()
+            destinationList.add(Destination.CantiParola)
+            destinationList.add(Destination.CantiEucarestia)
+            list.forEach {
+                destinationList.add(Destination("LISTA_PERS_${it.id}", 0, it.titolo ?: ""))
+            }
+            mMainActivity?.setupMaterialTab(destinationList)
+            mMainActivity?.changeMaterialTabPage(mCustomListsViewModel.indexToShow)
+            mMainActivity?.setTabVisible(true)
         }
 
         inputdialogViewModel.state.observe(viewLifecycleOwner) {

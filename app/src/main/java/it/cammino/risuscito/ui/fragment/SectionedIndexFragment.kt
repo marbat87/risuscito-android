@@ -301,7 +301,7 @@ class SectionedIndexFragment : Fragment() {
         private val TAG = SectionedIndexFragment::class.java.canonicalName
         private const val LITURGICO_REPLACE = "LITURGICO_REPLACE"
         private const val LITURGICO_REPLACE_2 = "LITURGICO_REPLACE_2"
-        private const val INDICE_LISTA = "indiceLista"
+        const val INDICE_LISTA = "indiceLista"
 
         fun newInstance(tipoLista: Int): SectionedIndexFragment {
             val f = SectionedIndexFragment()

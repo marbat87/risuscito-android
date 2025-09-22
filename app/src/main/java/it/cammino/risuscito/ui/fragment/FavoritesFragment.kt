@@ -3,7 +3,6 @@ package it.cammino.risuscito.ui.fragment
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,53 +11,75 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
-import androidx.core.view.isInvisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.transition.MaterialSharedAxis
-import com.google.firebase.crashlytics.crashlytics
-import com.google.firebase.Firebase
-import com.mikepenz.fastadapter.IAdapter
-import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.databinding.ActivityFavouritesBinding
-import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.ui.composable.SimpleListItem
+import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.deleteMenu
+import it.cammino.risuscito.ui.composable.risuscito_medium_font
+import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
+import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
+import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.Collator
 
-class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
+class FavoritesFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragment {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
-    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
-    private val cantoAdapter: FastItemAdapter<SimpleItem> = FastItemAdapter()
-    private var selectExtension: SelectExtension<SimpleItem>? = null
+    private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
     private var actionModeOk: Boolean = false
-    private var mLastClickTime: Long = 0
     private var menuProvider: MenuProvider? = null
 
-    private var _binding: ActivityFavouritesBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private val selectedItems = MutableLiveData(ArrayList<Int>())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,11 +87,194 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = ActivityFavouritesBinding.inflate(inflater, container, false)
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                val state = rememberLazyListState()
+                val coroutineScope = rememberCoroutineScope()
+                val localItems = mFavoritesViewModel.mFavoritesSortedResult.observeAsState()
+                val localSelectedItems = selectedItems.observeAsState()
+
+                val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
+
+                RisuscitoTheme {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (localItems.value?.isNotEmpty() == true) {
+                            val listModifier = Modifier
+                                .fillMaxSize()
+                                .then(
+                                    scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
+                                        ?: Modifier
+                                )
+
+                            if (context?.isGridLayout == true) {
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(2),
+                                    modifier = listModifier
+                                ) {
+                                    items(
+                                        localItems.value ?: emptyList(),
+                                        key = { it.id }) { simpleItem ->
+                                        val isItemSelected =
+                                            localSelectedItems.value!!.contains(simpleItem.id)
+                                        val source = stringResource(simpleItem.sourceRes)
+                                        SimpleListItem(
+                                            requireContext(),
+                                            simpleItem,
+                                            onItemClick = { item ->
+                                                if (mMainActivity?.isActionMode?.value == true) {
+                                                    if (isItemSelected) {
+                                                        deselectItem(item.id)
+                                                    } else {
+                                                        selectItem(item.id)
+                                                    }
+                                                    if (localSelectedItems.value!!.isEmpty()) {
+                                                        mMainActivity?.destroyActionMode()
+                                                    } else updateActionModeTitle()
+                                                } else {
+                                                    mMainActivity?.openCanto(
+                                                        TAG,
+                                                        item.id,
+                                                        source,
+                                                        false
+                                                    )
+                                                }
+                                            },
+                                            onItemLongClick = { item ->
+                                                if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
+                                                    selectItem(item.id)
+                                                    startCab()
+                                                }
+                                            },
+                                            selected = isItemSelected,
+                                            modifier = Modifier.animateItem()
+                                        )
+                                    }
+                                }
+                            } else {
+                                LazyColumn(
+                                    state = state,
+                                    modifier = listModifier
+                                ) {
+                                    items(
+                                        localItems.value ?: emptyList(),
+                                        key = { it.id }) { simpleItem ->
+                                        val isItemSelected =
+                                            localSelectedItems.value!!.contains(simpleItem.id)
+                                        val source = stringResource(simpleItem.sourceRes)
+                                        SimpleListItem(
+                                            requireContext(),
+                                            simpleItem,
+                                            onItemClick = { item ->
+                                                if (mMainActivity?.isActionMode?.value == true) {
+                                                    if (isItemSelected) {
+                                                        deselectItem(item.id)
+                                                    } else {
+                                                        selectItem(item.id)
+                                                    }
+                                                    if (localSelectedItems.value!!.isEmpty()) {
+                                                        mMainActivity?.destroyActionMode()
+                                                    } else updateActionModeTitle()
+                                                } else {
+                                                    mMainActivity?.openCanto(
+                                                        TAG,
+                                                        item.id,
+                                                        source,
+                                                        false
+                                                    )
+                                                }
+                                            },
+                                            onItemLongClick = { item ->
+                                                if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
+                                                    selectItem(item.id)
+                                                    startCab()
+                                                }
+                                            },
+                                            selected = isItemSelected,
+                                            modifier = Modifier.animateItem(tween())
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(), // Occupa solo l'altezza necessaria
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.ic_sunglassed_star),
+                                    contentDescription = stringResource(id = R.string.no_favourites_short),
+                                    modifier = Modifier
+                                        .size(120.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
+                                Text(
+                                    text = stringResource(R.string.no_favourites_short),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
+                                    fontFamily = risuscito_medium_font,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
+                                )
+                            }
+                        }
+                    }
+                    if (mFavoritesViewModel.showAlertDialog.observeAsState().value == true) {
+                        SimpleAlertDialog(
+                            onDismissRequest = {
+                                mFavoritesViewModel.showAlertDialog.postValue(false)
+                            },
+                            onConfirmation = {
+                                mFavoritesViewModel.showAlertDialog.postValue(false)
+                                val mDao =
+                                    RisuscitoDatabase.getInstance(requireContext())
+                                        .favoritesDao()
+                                coroutineScope.launch(Dispatchers.IO) { mDao.resetFavorites() }
+                            },
+                            dialogTitle = stringResource(R.string.dialog_reset_favorites_title),
+                            dialogText = stringResource(R.string.dialog_reset_favorites_desc),
+                            icon = painterResource(R.drawable.clear_all_24px),
+                            confirmButtonText = stringResource(R.string.clear_confirm),
+                            dismissButtonText = stringResource(R.string.cancel)
+                        )
+                    }
+                }
+
+                mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
+                    mFavoritesViewModel.mFavoritesSortedResult.postValue(
+                        canti.sortedWith(
+                            compareBy(
+                                Collator.getInstance(systemLocale)
+                            ) { getString(it.titleRes) })
+                    )
+                }
+                if (mFavoritesViewModel.mFavoritesSortedResult.value!!.count() == 0) mMainActivity?.expandToolbar()
+                activity?.invalidateOptionsMenu()
+            }
+        }
+    }
+
+    private fun selectItem(id: Int) {
+        val currentSelected = selectedItems.value ?: ArrayList()
+        val newSelected = ArrayList(currentSelected) // Crea una nuova lista
+        newSelected.add(id)
+        selectedItems.value = newSelected // Assegna la nuova lista
+    }
+
+    private fun deselectItem(id: Int) {
+        val currentSelected = selectedItems.value ?: ArrayList()
+        val newSelected = ArrayList(currentSelected) // Crea una nuova lista
+        newSelected.remove(id)
+        selectedItems.value = newSelected // Assegna la nuova lista
     }
 
     override fun onStop() {
@@ -86,22 +290,14 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         menuProvider = object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.clean_list_menu, menu)
-                menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
+                menu.findItem(R.id.list_reset).isVisible =
+                    mFavoritesViewModel.mFavoritesSortedResult.value!!.count() > 0
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
                     R.id.list_reset -> {
-                        activity?.let { act ->
-                            SimpleDialogFragment.show(
-                                SimpleDialogFragment.Builder(FAVORITES_RESET)
-                                    .title(R.string.dialog_reset_favorites_title)
-                                    .icon(R.drawable.clear_all_24px)
-                                    .content(R.string.dialog_reset_favorites_desc)
-                                    .positiveButton(R.string.clear_confirm)
-                                    .negativeButton(R.string.cancel), act.supportFragmentManager
-                            )
-                        }
+                        mFavoritesViewModel.showAlertDialog.postValue(true)
                         return true
                     }
 
@@ -121,15 +317,9 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_favourites)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.enableFab(false)
 
@@ -144,84 +334,31 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
             }
         }
 
-        cantoAdapter.onPreClickListener =
-            { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
-                var consume = false
-                if (mMainActivity?.isActionMode == true) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
-                        mLastClickTime = SystemClock.elapsedRealtime()
-                        cantoAdapter.getAdapterItem(position).isSelected =
-                            !cantoAdapter.getAdapterItem(position).isSelected
-                        cantoAdapter.notifyAdapterItemChanged(position)
-                        if (selectExtension?.selectedItems?.size == 0) mMainActivity?.destroyActionMode()
-                        else updateActionModeTitle()
-                    }
-                    consume = true
-                }
-                consume
-            }
-
-        cantoAdapter.onClickListener =
-            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
-                var consume = false
-                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                    mLastClickTime = SystemClock.elapsedRealtime()
-                    // lancia l'activity che visualizza il canto passando il parametro creato
-                    mMainActivity?.openCanto(
-                        TAG, item.id, item.source?.getText(requireContext()), false
-                    )
-                    consume = true
-                }
-                consume
-            }
-
-        cantoAdapter.onPreLongClickListener =
-            { _: View?, _: IAdapter<SimpleItem>, _: SimpleItem, position: Int ->
-                if (mMainActivity?.isActionMode != true) {
-                    cantoAdapter.getAdapterItem(position).isSelected = true
-                    cantoAdapter.notifyAdapterItemChanged(position)
-                    startCab()
-                }
-                true
-            }
-
-        selectExtension = SelectExtension(cantoAdapter)
-        selectExtension?.isSelectable = true
-        selectExtension?.multiSelect = true
-        selectExtension?.selectOnLongClick = true
-        selectExtension?.deleteAllSelectedItems()
-
-        cantoAdapter.setHasStableIds(true)
-
-        binding.favouritesList.adapter = cantoAdapter
-        val llm = if (context?.isGridLayout == true) GridLayoutManager(context, 2)
-        else LinearLayoutManager(context)
-        binding.favouritesList.layoutManager = llm
-        binding.favouritesList.itemAnimator = SlideRightAlphaAnimator()
-
-        subscribeUiChanges()
-
-    }
-
-    private fun removeFavorites() {
-        ListeUtils.removeFavoritesWithUndo(this, selectExtension?.selectedItems)
     }
 
     private fun startCab() {
         actionModeOk = false
-        mMainActivity?.createActionMode(R.menu.menu_delete, this) { item ->
-            if (item?.itemId == R.id.action_remove_item) {
-                removeFavorites()
-                actionModeOk = true
-                mMainActivity?.destroyActionMode()
-                true
-            } else false
+        mMainActivity?.createActionMode(deleteMenu, this) { itemRoute ->
+            when (itemRoute) {
+                ActionModeItem.Delete.route -> {
+                    removeFavoritesWithUndo()
+                    actionModeOk = true
+                    mMainActivity?.destroyActionMode()
+                    true
+                }
+
+                ActionModeItem.Close.route -> {
+                    actionModeOk = false
+                    mMainActivity?.destroyActionMode()
+                    true
+                }
+            }
         }
         updateActionModeTitle()
     }
 
     private fun updateActionModeTitle() {
-        val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
+        val itemSelectedCount = selectedItems.value?.count() ?: 0
         mMainActivity?.updateActionModeTitle(
             resources.getQuantityString(
                 R.plurals.item_selected, itemSelectedCount, itemSelectedCount
@@ -229,57 +366,56 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment {
         )
     }
 
-
     override fun destroyActionMode() {
-        if (!actionModeOk) {
-            try {
-                selectExtension?.deselect()
-            } catch (e: Exception) {
-                Firebase.crashlytics.recordException(e)
+        if (!actionModeOk)
+            selectedItems.value = ArrayList()
+    }
+
+    fun removeFavoritesWithUndo() {
+        lifecycleScope.launch {
+            val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
+            selectedItems.value?.let { removedItems ->
+                withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    for (removedItem in removedItems)
+                        mDao.removeFavorite(removedItem)
+                }
+                showSnackBar(
+                    message = resources.getQuantityString(
+                        R.plurals.favorites_removed,
+                        selectedItems.value!!.count(),
+                        selectedItems.value!!.count()
+                    ),
+                    label = getString(R.string.cancel)
+                        .uppercase(systemLocale)
+                )
             }
         }
     }
 
-    private fun subscribeUiChanges() {
-        mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
-            cantoAdapter.set(
-                canti.sortedWith(
-                    compareBy(
-                        Collator.getInstance(systemLocale)
-                    ) { it.title?.getText(requireContext()) })
+    override fun showSnackBar(message: String, label: String?) {
+        mMainActivity?.showSnackBar(
+            message = message,
+            callback = this,
+            label = label
+        )
+    }
+
+    override fun onActionPerformed() {
+        for (removedItem in selectedItems.value!!)
+            ListeUtils.addToFavorites(
+                this@FavoritesFragment,
+                removedItem,
+                false
             )
-            binding.noFavourites.isInvisible = cantoAdapter.adapterItemCount > 0
-            binding.favouritesList.isInvisible = cantoAdapter.adapterItemCount == 0
-            if (cantoAdapter.adapterItemCount == 0) mMainActivity?.expandToolbar()
-            activity?.invalidateOptionsMenu()
-        }
+        selectedItems.value = ArrayList()
+    }
 
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
-            Log.d(TAG, "simpleDialogViewModel state $it")
-            if (!simpleDialogViewModel.handled) {
-                when (it) {
-                    is DialogState.Positive -> {
-                        when (simpleDialogViewModel.mTag) {
-                            FAVORITES_RESET -> {
-                                simpleDialogViewModel.handled = true
-                                val mDao =
-                                    RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
-                                lifecycleScope.launch(Dispatchers.IO) { mDao.resetFavorites() }
-                            }
-                        }
-                    }
-
-                    is DialogState.Negative -> {
-                        simpleDialogViewModel.handled = true
-                    }
-                }
-            }
-        }
+    override fun onDismissed() {
+        selectedItems.value = ArrayList()
     }
 
     companion object {
         private val TAG = FavoritesFragment::class.java.canonicalName
-        private const val FAVORITES_RESET = "FAVORITES_RESET"
     }
 
 }

@@ -5,11 +5,15 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.isInvisible
@@ -20,10 +24,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetSequence
-import com.getkeepsafe.taptargetview.TapTargetView
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.sidesheet.SideSheetDialog
 import com.google.android.material.transition.MaterialSharedAxis
 import com.mikepenz.fastadapter.IAdapter
@@ -38,7 +38,13 @@ import it.cammino.risuscito.databinding.CheckablePassageItemBinding
 import it.cammino.risuscito.databinding.CheckableRowItemBinding
 import it.cammino.risuscito.databinding.LayoutConsegnatiBinding
 import it.cammino.risuscito.databinding.RowItemNotableBinding
-import it.cammino.risuscito.items.*
+import it.cammino.risuscito.items.CheckableItem
+import it.cammino.risuscito.items.CheckablePassageItem
+import it.cammino.risuscito.items.NotableItem
+import it.cammino.risuscito.items.checkableItem
+import it.cammino.risuscito.items.checkablePassageItem
+import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.consegnatiMenu
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ListChoiceDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
@@ -46,7 +52,11 @@ import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.OLD_PAGE_SUFFIX
-import it.cammino.risuscito.utils.extension.*
+import it.cammino.risuscito.utils.extension.getTypedValueResId
+import it.cammino.risuscito.utils.extension.isGridLayout
+import it.cammino.risuscito.utils.extension.openCanto
+import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.utils.extension.useOldIndex
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -308,29 +318,52 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
     }
 
     private fun startCab() {
-        mMainActivity?.createActionMode(R.menu.consegnati, this, true) { item ->
-            when (item.itemId) {
-                R.id.select_none -> {
+//        mMainActivity?.createActionMode(R.menu.consegnati, this, true) { item ->
+//            when (item.itemId) {
+//                R.id.select_none -> {
+//                    selectExtension.deselect()
+//                    true
+//                }
+//
+//                R.id.select_all -> {
+//                    selectExtension.select()
+//                    true
+//                }
+//
+//                R.id.cancel_change -> {
+//                    mMainActivity?.destroyActionMode()
+//                    true
+//                }
+//
+//                R.id.action_help -> {
+//                    managerIntro()
+//                    true
+//                }
+//
+//                else -> false
+//            }
+//        }
+        mMainActivity?.createActionMode(consegnatiMenu, this, true) { itemRoute ->
+            when (itemRoute) {
+                ActionModeItem.SelectNone.route -> {
                     selectExtension.deselect()
                     true
                 }
 
-                R.id.select_all -> {
+                ActionModeItem.SelectAll.route -> {
                     selectExtension.select()
                     true
                 }
 
-                R.id.cancel_change -> {
+                ActionModeItem.Undo.route -> {
                     mMainActivity?.destroyActionMode()
                     true
                 }
 
-                R.id.action_help -> {
+                ActionModeItem.Help.route -> {
                     managerIntro()
                     true
                 }
-
-                else -> false
             }
         }
         mMainActivity?.updateActionModeTitle("")
@@ -376,91 +409,95 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
     }
 
     private fun fabIntro() {
-        mMainActivity?.getFab()?.let { fab ->
-            val colorOnPrimary =
-                MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
-            TapTargetView.showFor(
-                requireActivity(), // `this` is an Activity
-                TapTarget.forView(
-                    fab,
-                    getString(R.string.title_activity_consegnati),
-                    getString(R.string.showcase_consegnati_howto)
-                )
-                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-                    .titleTextColorInt(colorOnPrimary)
-                    .textColorInt(colorOnPrimary)
-                    .tintTarget(false) // Whether to tint the target view's color
-                    .setForceCenteredTarget(true)
-                ,
-                object :
-                    TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
-                    override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
-                        super.onTargetDismissed(view, userInitiated)
-                        context?.let {
-                            PreferenceManager.getDefaultSharedPreferences(it)
-                                .edit { putBoolean(Utility.INTRO_CONSEGNATI, true) }
-                        }
-                    }
-                })
-        }
+        //TODO
+//        mMainActivity?.getFab()?.let { fab ->
+//            val colorOnPrimary =
+//                MaterialColors.getColor(
+//                    requireContext(),
+//                    com.google.android.material.R.attr.colorOnPrimary,
+//                    TAG
+//                )
+//            TapTargetView.showFor(
+//                requireActivity(), // `this` is an Activity
+//                TapTarget.forView(
+//                    fab,
+//                    getString(R.string.title_activity_consegnati),
+//                    getString(R.string.showcase_consegnati_howto)
+//                )
+//                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+//                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
+//                    .titleTextColorInt(colorOnPrimary)
+//                    .textColorInt(colorOnPrimary)
+//                    .tintTarget(false) // Whether to tint the target view's color
+//                    .setForceCenteredTarget(true),
+//                object :
+//                    TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
+//                    override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
+//                        super.onTargetDismissed(view, userInitiated)
+//                        context?.let {
+//                            PreferenceManager.getDefaultSharedPreferences(it)
+//                                .edit { putBoolean(Utility.INTRO_CONSEGNATI, true) }
+//                        }
+//                    }
+//                })
+//        }
     }
 
     private fun managerIntro() {
-        val colorOnPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
-        mMainActivity?.getFab()?.let { fab ->
-            TapTargetSequence(requireActivity())
-                .continueOnCancel(true)
-                .targets(
-                    TapTarget.forView(
-                        fab,
-                        getString(R.string.title_activity_consegnati),
-                        getString(R.string.showcase_consegnati_confirm)
-                    )
-                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-                        .titleTextColorInt(colorOnPrimary)
-                        .textColorInt(colorOnPrimary)
-                        .tintTarget(false)
-                        .setForceCenteredTarget(true),
-                    TapTarget.forToolbarMenuItem(
-                        mMainActivity?.activityContextualToolbar,
-                        R.id.cancel_change,
-                        getString(R.string.title_activity_consegnati),
-                        getString(R.string.showcase_consegnati_cancel)
-                    )
-                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-                        .titleTextColorInt(colorOnPrimary)
-                        .textColorInt(colorOnPrimary)
-                        .setForceCenteredTarget(true)
-                )
-                .listener(
-                    object :
-                        TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                        override fun onSequenceFinish() {
-                            context?.let {
-                                PreferenceManager.getDefaultSharedPreferences(it)
-                                    .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
-                            }
-                        }
-
-                        override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-                            // no-op
-                        }
-
-                        override fun onSequenceCanceled(tapTarget: TapTarget) {
-                            context?.let {
-                                PreferenceManager.getDefaultSharedPreferences(it)
-                                    .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
-                            }
-                        }
-                    })
-                .start()
-        }
+//        val colorOnPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
+//        mMainActivity?.getFab()?.let { fab ->
+//            TapTargetSequence(requireActivity())
+//                .continueOnCancel(true)
+//                .targets(
+//                    TapTarget.forView(
+//                        fab,
+//                        getString(R.string.title_activity_consegnati),
+//                        getString(R.string.showcase_consegnati_confirm)
+//                    )
+//                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+//                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+//                        .titleTypeface(mMediumFont) // Specify a typeface for the text
+//                        .titleTextColorInt(colorOnPrimary)
+//                        .textColorInt(colorOnPrimary)
+//                        .tintTarget(false)
+//                        .setForceCenteredTarget(true),
+//                    TapTarget.forToolbarMenuItem(
+//                        mMainActivity?.activityContextualToolbar,
+//                        R.id.cancel_change,
+//                        getString(R.string.title_activity_consegnati),
+//                        getString(R.string.showcase_consegnati_cancel)
+//                    )
+//                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+//                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+//                        .titleTypeface(mMediumFont) // Specify a typeface for the text
+//                        .titleTextColorInt(colorOnPrimary)
+//                        .textColorInt(colorOnPrimary)
+//                        .setForceCenteredTarget(true)
+//                )
+//                .listener(
+//                    object :
+//                        TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+//                        override fun onSequenceFinish() {
+//                            context?.let {
+//                                PreferenceManager.getDefaultSharedPreferences(it)
+//                                    .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
+//                            }
+//                        }
+//
+//                        override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+//                            // no-op
+//                        }
+//
+//                        override fun onSequenceCanceled(tapTarget: TapTarget) {
+//                            context?.let {
+//                                PreferenceManager.getDefaultSharedPreferences(it)
+//                                    .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
+//                            }
+//                        }
+//                    })
+//                .start()
+//        }
     }
 
     private fun subscribeUiConsegnati() {

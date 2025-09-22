@@ -5,17 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.database.entities.CustomList
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.items.SimpleHistoryItem
-import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.ui.fragment.CustomListsFragment
+import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
 import it.cammino.risuscito.utils.extension.systemLocale
 import kotlinx.coroutines.Dispatchers
@@ -40,97 +37,10 @@ object ListeUtils {
                         position
                     )
                 }
-            } catch (e: SQLException) {
-                Firebase.crashlytics.recordException(e)
-                Snackbar.make(
-                    fragment.requireActivity().findViewById(R.id.main_content),
-                    R.string.present_yet,
-                    Snackbar.LENGTH_SHORT
-                ).show()
+            } catch (_: SQLException) {
+                (fragment as? SnackBarFragment)?.showSnackBar(message = fragment.getString(R.string.present_yet))
             }
-            Snackbar.make(
-                fragment.requireActivity().findViewById(R.id.main_content),
-                R.string.list_added,
-                Snackbar.LENGTH_SHORT
-            ).show()
-        }
-    }
-
-    fun addToListaNoDup(
-        fragment: Fragment,
-        idLista: Int,
-        listPosition: Int,
-        idDaAgg: Int,
-        replaceTag: String
-    ) {
-        fragment.lifecycleScope.launch {
-            val db = RisuscitoDatabase.getInstance(fragment.requireContext())
-            val listeDao = db.customListDao()
-            val cantoDao = db.cantoDao()
-            val idPresente =
-                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                    listeDao.getIdByPosition(
-                        idLista,
-                        listPosition
-                    )
-                }
-            idPresente?.let {
-                if (idDaAgg == it) {
-                    Snackbar.make(
-                        fragment.requireActivity().findViewById(R.id.main_content),
-                        R.string.present_yet,
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                    return@launch
-                } else {
-                    val titoloPresente =
-                        withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                            fragment.resources.getString(
-                                Utility.getResId(
-                                    cantoDao.getCantoById(it)?.titolo.orEmpty(),
-                                    R.string::class.java
-                                )
-                            )
-                        }
-
-                    val sb = StringBuilder()
-                    sb.append(fragment.getString(R.string.dialog_present_yet))
-                    sb.append(" ")
-                    sb.append(titoloPresente)
-                    sb.append(".")
-                    sb.append(System.lineSeparator())
-                    sb.append(fragment.getString(R.string.dialog_wonna_replace))
-
-                    SimpleDialogFragment.show(
-                        SimpleDialogFragment.Builder(
-                            replaceTag
-                        )
-                            .title(R.string.dialog_replace_title)
-                            .icon(R.drawable.find_replace_24px)
-                            .content(sb.toString())
-                            .positiveButton(R.string.replace_confirm)
-                            .negativeButton(R.string.cancel),
-                        fragment.requireActivity().supportFragmentManager
-                    )
-                    return@launch
-                }
-            }
-
-            val position = CustomList()
-            position.id = idLista
-            position.position = listPosition
-            position.idCanto = idDaAgg
-            position.timestamp = Date(System.currentTimeMillis())
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                listeDao.insertPosition(
-                    position
-                )
-            }
-            Snackbar.make(
-                fragment.requireActivity().findViewById(R.id.main_content),
-                R.string.list_added,
-                Snackbar.LENGTH_SHORT
-            ).show()
+            (fragment as? SnackBarFragment)?.showSnackBar(message = fragment.getString(R.string.list_added))
         }
     }
 
@@ -144,86 +54,7 @@ object ListeUtils {
                 )
             }
             if (showSnackbar)
-                Snackbar.make(
-                    fragment.requireActivity().findViewById(R.id.main_content),
-                    R.string.favorite_added,
-                    Snackbar.LENGTH_SHORT
-                ).show()
-        }
-    }
-
-    fun removeFavoritesWithUndo(fragment: Fragment, mRemovedItems: Set<SimpleItem>?) {
-        fragment.lifecycleScope.launch {
-            val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).favoritesDao()
-            mRemovedItems?.let { removedItems ->
-                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                    for (removedItem in removedItems)
-                        mDao.removeFavorite(removedItem.id)
-                }
-                Snackbar.make(
-                    fragment.requireActivity().findViewById(R.id.main_content),
-                    fragment.resources.getQuantityString(
-                        R.plurals.favorites_removed,
-                        removedItems.size,
-                        removedItems.size
-                    ),
-                    Snackbar.LENGTH_SHORT
-                )
-                    .setAction(
-                        fragment.getString(R.string.cancel)
-                            .uppercase(fragment.systemLocale)
-                    ) {
-                        for (removedItem in removedItems)
-                            addToFavorites(fragment, removedItem.id, false)
-                    }.show()
-            }
-
-        }
-    }
-
-    fun removeHistoriesWithUndo(fragment: Fragment, mRemovedItems: Set<SimpleHistoryItem>?) {
-        fragment.lifecycleScope.launch {
-            mRemovedItems?.let { removedItems ->
-                val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cronologiaDao()
-                for (removedItem in removedItems) {
-                    val cronTemp = Cronologia()
-                    cronTemp.idCanto = removedItem.id
-                    withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                        mDao.deleteCronologia(
-                            cronTemp
-                        )
-                    }
-                }
-                Snackbar.make(
-                    fragment.requireActivity().findViewById(R.id.main_content),
-                    fragment.resources.getQuantityString(
-                        R.plurals.histories_removed,
-                        removedItems.size,
-                        removedItems.size
-                    ),
-                    Snackbar.LENGTH_SHORT
-                )
-                    .setAction(
-                        fragment.getString(R.string.cancel)
-                            .uppercase(fragment.systemLocale)
-                    ) {
-                        for (removedItem in removedItems) {
-                            val cronTemp = Cronologia()
-                            cronTemp.idCanto = removedItem.id
-                            cronTemp.ultimaVisita = Date(
-                                java.lang.Long.parseLong(
-                                    removedItem.timestamp?.getText(fragment.requireContext())
-                                        .toString()
-                                )
-                            )
-                            fragment.lifecycleScope.launch(Dispatchers.IO) {
-                                mDao.insertCronologia(
-                                    cronTemp
-                                )
-                            }
-                        }
-                    }.show()
-            }
+                (fragment as? SnackBarFragment)?.showSnackBar(message = fragment.getString(R.string.favorite_added))
         }
     }
 
@@ -235,11 +66,7 @@ object ListeUtils {
                     listaUpd
                 )
             }
-            Snackbar.make(
-                fragment.requireActivity().findViewById(R.id.main_content),
-                R.string.list_added,
-                Snackbar.LENGTH_SHORT
-            ).show()
+            (fragment as? SnackBarFragment)?.showSnackBar(message = fragment.getString(R.string.list_added))
         }
     }
 
@@ -254,11 +81,7 @@ object ListeUtils {
                     posizioneDaAgg
                 )
             }
-            Snackbar.make(
-                fragment.requireActivity().findViewById(R.id.main_content),
-                R.string.list_added,
-                Snackbar.LENGTH_SHORT
-            ).show()
+            (fragment as? SnackBarFragment)?.showSnackBar(message = fragment.getString(R.string.list_added))
         }
     }
 
@@ -282,7 +105,7 @@ object ListeUtils {
                 )
             }
             Snackbar.make(
-                fragment.requireActivity().findViewById(R.id.main_content),
+                fragment.requireActivity().findViewById(android.R.id.content),
                 R.string.song_removed,
                 Snackbar.LENGTH_LONG
             )
@@ -308,42 +131,42 @@ object ListeUtils {
         }
     }
 
-    fun manageReplaceDialog(fragment: Fragment, idCanto: Int, replaceTag: String) {
-        fragment.lifecycleScope.launch {
-            val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cantoDao()
-            val existingTitle =
-                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
-                    mDao.getCantoById(idCanto)?.titolo.orEmpty()
-                }
-
-            val sb = StringBuilder()
-            sb.append(fragment.getString(R.string.dialog_present_yet))
-            sb.append(" ")
-            sb.append(
-                fragment.resources.getString(
-                    Utility.getResId(
-                        existingTitle,
-                        R.string::class.java
-                    )
-                )
-            )
-            sb.append(".")
-            sb.append(System.lineSeparator())
-            sb.append(fragment.getString(R.string.dialog_wonna_replace))
-
-            SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(
-                    replaceTag
-                )
-                    .title(R.string.dialog_replace_title)
-                    .icon(R.drawable.find_replace_24px)
-                    .content(sb.toString())
-                    .positiveButton(R.string.replace_confirm)
-                    .negativeButton(R.string.cancel),
-                fragment.requireActivity().supportFragmentManager
-            )
-        }
-    }
+//    fun manageReplaceDialog(fragment: Fragment, idCanto: Int, replaceTag: String) {
+//        fragment.lifecycleScope.launch {
+//            val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cantoDao()
+//            val existingTitle =
+//                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+//                    mDao.getCantoById(idCanto)?.titolo.orEmpty()
+//                }
+//
+//            val sb = StringBuilder()
+//            sb.append(fragment.getString(R.string.dialog_present_yet))
+//            sb.append(" ")
+//            sb.append(
+//                fragment.resources.getString(
+//                    Utility.getResId(
+//                        existingTitle,
+//                        R.string::class.java
+//                    )
+//                )
+//            )
+//            sb.append(".")
+//            sb.append(System.lineSeparator())
+//            sb.append(fragment.getString(R.string.dialog_wonna_replace))
+//
+//            SimpleDialogFragment.show(
+//                SimpleDialogFragment.Builder(
+//                    replaceTag
+//                )
+//                    .title(R.string.dialog_replace_title)
+//                    .icon(R.drawable.find_replace_24px)
+//                    .content(sb.toString())
+//                    .positiveButton(R.string.replace_confirm)
+//                    .negativeButton(R.string.cancel),
+//                fragment.requireActivity().supportFragmentManager
+//            )
+//        }
+//    }
 
     fun scambioConVuoto(
         fragment: Fragment,
@@ -361,7 +184,7 @@ object ListeUtils {
                 }
             if (existingTitle > 0)
                 Snackbar.make(
-                    fragment.requireActivity().findViewById(R.id.main_content),
+                    fragment.requireActivity().findViewById(android.R.id.content),
                     R.string.present_yet,
                     Snackbar.LENGTH_SHORT
                 ).show()
@@ -379,7 +202,7 @@ object ListeUtils {
                     mDao.insertPosition(positionToInsert)
                 }
                 Snackbar.make(
-                    fragment.requireActivity().findViewById(R.id.main_content),
+                    fragment.requireActivity().findViewById(android.R.id.content),
                     R.string.switch_done,
                     Snackbar.LENGTH_SHORT
                 ).show()
@@ -411,7 +234,7 @@ object ListeUtils {
                     && newPosition != posizioneDaCanc
                 ) {
                     Snackbar.make(
-                        fragment.requireActivity().findViewById(R.id.main_content),
+                        fragment.requireActivity().findViewById(android.R.id.content),
                         R.string.present_yet,
                         Snackbar.LENGTH_SHORT
                     ).show()
@@ -452,14 +275,14 @@ object ListeUtils {
                         )
                     }
                     Snackbar.make(
-                        fragment.requireActivity().findViewById(R.id.main_content),
+                        fragment.requireActivity().findViewById(android.R.id.content),
                         R.string.switch_done,
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
             } else
                 Snackbar.make(
-                    fragment.requireActivity().findViewById(R.id.main_content),
+                    fragment.requireActivity().findViewById(android.R.id.content),
                     R.string.switch_impossible,
                     Snackbar.LENGTH_SHORT
                 ).show()

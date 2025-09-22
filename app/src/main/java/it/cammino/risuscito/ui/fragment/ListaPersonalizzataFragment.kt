@@ -21,8 +21,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -31,6 +31,8 @@ import it.cammino.risuscito.databinding.ActivityListaPersonalizzataBinding
 import it.cammino.risuscito.items.ListaPersonalizzataItem
 import it.cammino.risuscito.ui.activity.InsertActivity
 import it.cammino.risuscito.ui.activity.MainActivity
+import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.customListsMenu
 import it.cammino.risuscito.ui.dialog.BottomSheetFragment
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
@@ -222,10 +224,68 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
             ?.setmSelected(true)
         cantoAdapter.notifyItemChanged(longclickedPos)
         actionModeOk = false
-        mMainActivity?.createActionMode(R.menu.menu_actionmode_lists, this) { item ->
-            Log.d(TAG, "MaterialCab onActionItemClicked")
-            when (item?.itemId) {
-                R.id.action_remove_item -> {
+//        mMainActivity?.createActionMode(R.menu.menu_actionmode_lists, this) { item ->
+//            Log.d(TAG, "MaterialCab onActionItemClicked")
+//            when (item?.itemId) {
+//                R.id.action_remove_item -> {
+//                    cantoDaCanc =
+//                        mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
+//                            .orEmpty()
+//                    notaDaCanc =
+//                        mCantiViewModel.listaPersonalizzata?.getNotaPosizione(mCantiViewModel.posizioneDaCanc)
+//                            .orEmpty()
+//                    mCantiViewModel.listaPersonalizzata?.removeCanto(mCantiViewModel.posizioneDaCanc)
+//                    mCantiViewModel.listaPersonalizzata?.removeNota(mCantiViewModel.posizioneDaCanc)
+//                    runUpdate()
+//                    actionModeOk = true
+//                    mMainActivity?.destroyActionMode()
+//                    mMainActivity?.let {
+//                        Snackbar.make(
+//                            it.activityMainContent,
+//                            R.string.song_removed,
+//                            Snackbar.LENGTH_LONG
+//                        )
+//                            .setAction(
+//                                getString(R.string.cancel).uppercase(requireContext().systemLocale)
+//                            ) {
+//                                mCantiViewModel.listaPersonalizzata?.addCanto(
+//                                    cantoDaCanc,
+//                                    mCantiViewModel.posizioneDaCanc
+//                                )
+//                                mCantiViewModel.listaPersonalizzata?.addNota(
+//                                    notaDaCanc,
+//                                    mCantiViewModel.posizioneDaCanc
+//                                )
+//                                runUpdate()
+//                            }
+//                            .show()
+//                    }
+//                    true
+//                }
+//
+//                R.id.action_switch_item -> {
+//                    cantoDaCanc =
+//                        mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
+//                            .orEmpty()
+//                    notaDaCanc =
+//                        mCantiViewModel.listaPersonalizzata?.getNotaPosizione(mCantiViewModel.posizioneDaCanc)
+//                            .orEmpty()
+//                    mSwhitchMode = true
+//                    updateActionModeTitle(true)
+//                    Toast.makeText(
+//                        activity,
+//                        resources.getString(R.string.switch_tooltip),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    true
+//                }
+//
+//                else -> false
+//            }
+//        }
+        mMainActivity?.createActionMode(customListsMenu, this) { itemRoute ->
+            when (itemRoute) {
+                ActionModeItem.Delete.route -> {
                     cantoDaCanc =
                         mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
                             .orEmpty()
@@ -261,7 +321,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
                     true
                 }
 
-                R.id.action_switch_item -> {
+                ActionModeItem.Swap.route -> {
                     cantoDaCanc =
                         mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
                             .orEmpty()
@@ -278,7 +338,11 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
                     true
                 }
 
-                else -> false
+                ActionModeItem.Close.route -> {
+                    actionModeOk = false
+                    mMainActivity?.destroyActionMode()
+                    true
+                }
             }
         }
         updateActionModeTitle(false)
@@ -438,7 +502,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
                         Integer.valueOf(parent.findViewById<TextView>(R.id.text_id_posizione).text.toString())
                     )
                 } else {
-                    if (mMainActivity?.isActionMode != true) {
+                    if (mMainActivity?.isActionMode?.value != true) {
                         mMainActivity?.let {
                             it.launchForResultWithAnimation(
                                 startListInsertForResult,
@@ -460,7 +524,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment {
                 }
             } else {
                 if (!mSwhitchMode)
-                    if (mMainActivity?.isActionMode == true) {
+                    if (mMainActivity?.isActionMode?.value == true) {
                         mCantiViewModel.posizioneDaCanc =
                             Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                         snackBarRimuoviCanto(v)

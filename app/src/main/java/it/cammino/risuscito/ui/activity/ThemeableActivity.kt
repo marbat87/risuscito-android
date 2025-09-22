@@ -18,14 +18,15 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
-import com.google.android.material.elevation.SurfaceColors
+import com.google.android.material.color.MaterialColors
 import com.google.android.play.core.splitcompat.SplitCompat
-import com.google.firebase.firestore.firestore
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
@@ -64,7 +65,6 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.sql.Date
 import java.util.concurrent.ExecutionException
-import androidx.core.content.edit
 
 abstract class ThemeableActivity : AppCompatActivity() {
 
@@ -168,7 +168,11 @@ abstract class ThemeableActivity : AppCompatActivity() {
         window.statusBarColor = if (trasparent) ContextCompat.getColor(
             this,
             android.R.color.transparent
-        ) else SurfaceColors.SURFACE_2.getColor(this)
+        ) else MaterialColors.getColor(
+            this,
+            com.google.android.material.R.attr.colorSurfaceContainer,
+            TAG
+        )
     }
 
     override fun attachBaseContext(newBase: Context) {

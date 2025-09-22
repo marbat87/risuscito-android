@@ -8,16 +8,16 @@ import com.mikepenz.fastadapter.IItem
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.items.InsertItem
-import it.cammino.risuscito.items.SimpleItem
+import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.insertItem
-import it.cammino.risuscito.items.simpleItem
+import it.cammino.risuscito.items.risuscitoListItem
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.useOldIndex
 
 class SimpleIndexViewModel(application: Application, args: Bundle) :
     GenericIndexViewModel(application) {
 
-    var itemsResult: LiveData<List<SimpleItem>>? = null
+    var itemsResult: LiveData<List<RisuscitoListItem>>? = null
         private set
     var titoliList: ArrayList<IItem<*>> = ArrayList()
 
@@ -36,16 +36,16 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
         when (tipoLista) {
             0, 1 ->
                 itemsResult = mDb.cantoDao().liveAll().map { canti ->
-                    val newList = ArrayList<SimpleItem>()
+                    val newList = ArrayList<RisuscitoListItem>()
                     canti.forEach {
                         newList.add(
-                            simpleItem {
-                                setTitle = Utility.getResId(it.titolo, R.string::class.java)
-                                setPage = Utility.getResId(
+                            risuscitoListItem {
+                                titleRes = Utility.getResId(it.titolo, R.string::class.java)
+                                pageRes = Utility.getResId(
                                     if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
                                     R.string::class.java
                                 )
-                                setSource = Utility.getResId(it.source, R.string::class.java)
+                                sourceRes = Utility.getResId(it.source, R.string::class.java)
                                 setColor = it.color
                                 id = it.id
                                 undecodedSource = it.source
@@ -56,16 +56,16 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                 }
             2 ->
                 itemsResult = mDb.indiceBiblicoDao().liveAll().map { canti ->
-                    val newList = ArrayList<SimpleItem>()
+                    val newList = ArrayList<RisuscitoListItem>()
                     canti.forEach {
                         newList.add(
-                            simpleItem {
-                                setTitle = Utility.getResId(it.titoloIndice, R.string::class.java)
-                                setPage = Utility.getResId(
+                            risuscitoListItem {
+                                titleRes = Utility.getResId(it.titoloIndice, R.string::class.java)
+                                pageRes = Utility.getResId(
                                     if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
                                     R.string::class.java
                                 )
-                                setSource = Utility.getResId(it.source, R.string::class.java)
+                                sourceRes = Utility.getResId(it.source, R.string::class.java)
                                 setColor = it.color
                                 id = it.id
                             }

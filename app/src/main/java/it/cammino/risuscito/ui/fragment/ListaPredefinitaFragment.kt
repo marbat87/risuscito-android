@@ -20,8 +20,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -34,6 +34,8 @@ import it.cammino.risuscito.items.posizioneTitleItem
 import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.ui.activity.InsertActivity
 import it.cammino.risuscito.ui.activity.MainActivity
+import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.customListsMenu
 import it.cammino.risuscito.ui.dialog.BottomSheetFragment
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
@@ -204,10 +206,40 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
         mSwhitchMode = false
         posizioniList[longclickedPos].listItem?.get(longClickedChild)?.setmSelected(true)
         cantoAdapter.notifyItemChanged(longclickedPos)
-        mMainActivity?.createActionMode(R.menu.menu_actionmode_lists, this) { item ->
-            Log.d(TAG, "MaterialCab onActionItemClicked")
-            when (item?.itemId) {
-                R.id.action_remove_item -> {
+//        mMainActivity?.createActionMode(R.menu.menu_actionmode_lists, this) { item ->
+//            Log.d(TAG, "MaterialCab onActionItemClicked")
+//            when (item?.itemId) {
+//                R.id.action_remove_item -> {
+//                    mMainActivity?.destroyActionMode()
+//                    ListeUtils.removePositionWithUndo(
+//                        this@ListaPredefinitaFragment,
+//                        mCantiViewModel.defaultListaId,
+//                        posizioneDaCanc,
+//                        idDaCanc,
+//                        timestampDaCanc.orEmpty(),
+//                        notaDaCanc
+//                    )
+//                    true
+//                }
+//
+//                R.id.action_switch_item -> {
+//                    mSwhitchMode = true
+//                    updateActionModeTitle(true)
+//                    Toast.makeText(
+//                        activity,
+//                        resources.getString(R.string.switch_tooltip),
+//                        Toast.LENGTH_SHORT
+//                    )
+//                        .show()
+//                    true
+//                }
+//
+//                else -> false
+//            }
+//        }
+        mMainActivity?.createActionMode(customListsMenu, this) { itemRoute ->
+            when (itemRoute) {
+                ActionModeItem.Delete.route -> {
                     mMainActivity?.destroyActionMode()
                     ListeUtils.removePositionWithUndo(
                         this@ListaPredefinitaFragment,
@@ -220,7 +252,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                     true
                 }
 
-                R.id.action_switch_item -> {
+                ActionModeItem.Swap.route -> {
                     mSwhitchMode = true
                     updateActionModeTitle(true)
                     Toast.makeText(
@@ -232,7 +264,10 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                     true
                 }
 
-                else -> false
+                ActionModeItem.Close.route -> {
+                    mMainActivity?.destroyActionMode()
+                    true
+                }
             }
         }
         updateActionModeTitle(false)
@@ -592,7 +627,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                         Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                     )
                 } else {
-                    if (mMainActivity?.isActionMode != true) {
+                    if (mMainActivity?.isActionMode?.value != true) {
                         mMainActivity?.let {
                             it.launchForResultWithAnimation(
                                 startListInsertForResult,
@@ -614,7 +649,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment {
                 }
             } else {
                 if (!mSwhitchMode)
-                    if (mMainActivity?.isActionMode == true) {
+                    if (mMainActivity?.isActionMode?.value == true) {
                         posizioneDaCanc =
                             Integer.valueOf(parent?.findViewById<TextView>(R.id.text_id_posizione)?.text.toString())
                         idDaCanc =

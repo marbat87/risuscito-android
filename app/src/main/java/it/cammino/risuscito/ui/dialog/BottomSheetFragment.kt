@@ -8,16 +8,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.mikepenz.fastadapter.IAdapter
-import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import it.cammino.risuscito.R
-import it.cammino.risuscito.databinding.BottomSheetBinding
-import it.cammino.risuscito.items.BottomSheetItem
+import it.cammino.risuscito.ui.composable.BottomSheetItem
+import it.cammino.risuscito.ui.composable.BottomSheetTitle
+import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
@@ -25,36 +36,85 @@ import it.cammino.risuscito.utils.extension.queryIntentActivities
 
 class BottomSheetFragment : BottomSheetDialogFragment() {
 
-    private var _binding: BottomSheetBinding? = null
+    private var titleText: String = "prova"
+    private var showTitle: Boolean = false
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private var appList: List<ResolveInfo> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = BottomSheetBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        return ComposeView(requireContext()).apply {
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+            setContent {
+                RisuscitoTheme {
+                    Column(Modifier.fillMaxSize()) {
+                        if (showTitle) {
+                            BottomSheetTitle(titleText)
+                            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp, 0.dp, 24.dp, 24.dp),
+                        ) {
+                            items(appList) { app ->
+                                BottomSheetItem(
+                                    app,
+                                    requireActivity().packageManager,
+                                    onItemClick = { selectedProduct ->
+                                        // Handle item click
+                                        // You can navigate to a detail screen, show a dialog, etc.
+                                        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                                            .edit {
+                                                putString(
+                                                    Utility.ULTIMA_APP_USATA,
+                                                    selectedProduct.activityInfo?.packageName
+                                                )
+                                            }
+
+                                        val name = ComponentName(
+                                            selectedProduct.activityInfo?.packageName.orEmpty(),
+                                            selectedProduct.activityInfo?.name.orEmpty()
+                                        )
+
+                                        @Suppress("DEPRECATION") val mIntent =
+                                            if (OSUtils.hasT()) arguments?.getParcelable(
+                                                "intent",
+                                                Intent::class.java
+                                            ) else arguments?.getParcelable("intent")
+
+                                        val newIntent = mIntent?.clone() as? Intent
+                                        newIntent?.component = name
+                                        activity?.startActivity(newIntent)
+                                        dialog?.dismiss()
+                                        true
+                                    })
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val showTitle = arguments?.getBoolean("showTitle") == true
+        showTitle = arguments?.getBoolean("showTitle") == true
 
-        if (showTitle)
-            binding.sheetTitle.setText(arguments?.getInt("title") ?: 0)
-        else
-            binding.sheetTitle.text = StringUtils.EMPTY
-        binding.sheetTitleArea.isVisible = showTitle
+        titleText =
+            if (showTitle)
+                ContextCompat.getString(requireContext(), arguments?.getInt("title") ?: 0)
+            else
+                StringUtils.EMPTY
 
         @Suppress("DEPRECATION") val intent = if (OSUtils.hasT()) arguments?.getParcelable(
             "intent",
@@ -74,33 +134,8 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
             lastAppInfo?.let { list.add(it) }
 
-            val mList = list.map { BottomSheetItem().withItem(it) }
+            appList = list
 
-            val mOnClickListener =
-                { _: View?, _: IAdapter<BottomSheetItem>, item: BottomSheetItem, _: Int ->
-                    PreferenceManager.getDefaultSharedPreferences(requireContext()).edit {
-                        putString(
-                            Utility.ULTIMA_APP_USATA,
-                            item.infoItem?.activityInfo?.packageName
-                        )
-                    }
-
-                    val name = ComponentName(
-                        item.infoItem?.activityInfo?.packageName.orEmpty(),
-                        item.infoItem?.activityInfo?.name.orEmpty()
-                    )
-                    val newIntent = mIntent.clone() as? Intent
-                    newIntent?.component = name
-                    activity?.startActivity(newIntent)
-                    dialog?.dismiss()
-                    true
-                }
-
-            val adapter = FastItemAdapter<BottomSheetItem>()
-            adapter.add(mList)
-            adapter.onClickListener = mOnClickListener
-            binding.shareList.adapter = adapter
-            binding.shareList.layoutManager = GridLayoutManager(activity, 3)
         }
     }
 

@@ -84,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
-                            it.findViewById(R.id.main_content),
+                            it.findViewById(android.R.id.content),
                             "Module install failed with ${state.errorCode()}",
                             Snackbar.LENGTH_SHORT
                         ).show()
@@ -122,7 +122,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         Log.e(TAG, "Module install failed: empyt language list")
                         mMainActivity?.let {
                             Snackbar.make(
-                                it.findViewById(R.id.main_content),
+                                it.findViewById(android.R.id.content),
                                 "Module install failed: no language installed!",
                                 Snackbar.LENGTH_SHORT
                             ).show()
@@ -175,7 +175,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                     mMainActivity?.let {
                         Snackbar.make(
-                            it.findViewById(R.id.main_content),
+                            it.findViewById(android.R.id.content),
                             "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
                             Snackbar.LENGTH_SHORT
                         ).show()
@@ -293,7 +293,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
                 mMainActivity?.let {
                     Snackbar.make(
-                        it.findViewById(R.id.main_content),
+                        it.findViewById(android.R.id.content),
                         "download cancelled by user",
                         Snackbar.LENGTH_SHORT
                     ).show()
