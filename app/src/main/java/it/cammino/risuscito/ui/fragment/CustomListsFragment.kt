@@ -10,17 +10,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,16 +36,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.transition.platform.MaterialSharedAxis
-import com.leinardi.android.speeddial.SpeedDialView
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.ui.activity.CreaListaActivity
 import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.EDIT_EXISTING_LIST
-import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.ID_DA_MODIF
 import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.ui.composable.dialogs.InputDialog
-import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.helpOptionMenu
@@ -177,37 +171,37 @@ class CustomListsFragment : AccountMenuFragment(), OptionMenuFragment, SnackBarF
                         null
                     )
 
-                    if (mCustomListsViewModel.showAlertDialog.observeAsState().value == true) {
-                        SimpleAlertDialog(
-                            onDismissRequest = {
-                                mCustomListsViewModel.showAlertDialog.postValue(false)
-                            },
-                            onConfirmation = {
-                                when (it) {
-                                    RESET_LIST -> {
-                                        mCustomListsViewModel.showAlertDialog.postValue(false)
-                                        activity?.findViewById<Button>(R.id.button_pulisci)
-                                            ?.performClick()
-                                    }
-
-                                    DELETE_LIST -> {
-                                        mCustomListsViewModel.showAlertDialog.postValue(false)
-                                        sharedTabViewModel.tabsSelectedIndex.intValue--
-                                        lifecycleScope.launch { deleteList() }
-
-                                    }
-
-                                    else -> {}
-                                }
-                            },
-                            dialogTitle = mCustomListsViewModel.dialogTitle.value.orEmpty(),
-                            dialogText = mCustomListsViewModel.content.value.orEmpty(),
-                            icon = mCustomListsViewModel.icon.value!!,
-                            confirmButtonText = mCustomListsViewModel.positiveButton.value.orEmpty(),
-                            dismissButtonText = mCustomListsViewModel.negativeButton.value.orEmpty(),
-                            dialogTag = mCustomListsViewModel.dialogTag
-                        )
-                    }
+//                    if (mCustomListsViewModel.showAlertDialog.observeAsState().value == true) {
+//                        SimpleAlertDialog(
+//                            onDismissRequest = {
+//                                mCustomListsViewModel.showAlertDialog.postValue(false)
+//                            },
+//                            onConfirmation = {
+//                                when (it) {
+//                                    RESET_LIST -> {
+//                                        mCustomListsViewModel.showAlertDialog.postValue(false)
+//                                        activity?.findViewById<Button>(R.id.button_pulisci)
+//                                            ?.performClick()
+//                                    }
+//
+//                                    DELETE_LIST -> {
+//                                        mCustomListsViewModel.showAlertDialog.postValue(false)
+//                                        sharedTabViewModel.tabsSelectedIndex.intValue--
+//                                        lifecycleScope.launch { deleteList() }
+//
+//                                    }
+//
+//                                    else -> {}
+//                                }
+//                            },
+//                            dialogTitle = mCustomListsViewModel.dialogTitle.value.orEmpty(),
+//                            dialogText = mCustomListsViewModel.content.value.orEmpty(),
+//                            icon = mCustomListsViewModel.icon.value!!,
+//                            confirmButtonText = mCustomListsViewModel.positiveButton.value.orEmpty(),
+//                            dismissButtonText = mCustomListsViewModel.negativeButton.value.orEmpty(),
+//                            dialogTag = mCustomListsViewModel.dialogTag
+//                        )
+//                    }
 
                     if (showInputDialog == true) {
                         InputDialog(
@@ -360,70 +354,69 @@ class CustomListsFragment : AccountMenuFragment(), OptionMenuFragment, SnackBarF
     }
 
     fun initFabOptions(customList: Boolean) {
-        val icon = AppCompatResources.getDrawable(requireContext(), R.drawable.add_24px)
-        val actionListener = SpeedDialView.OnActionSelectedListener {
-            when (it.id) {
-                R.id.fab_pulisci -> {
-                    mMainActivity?.let { mActivity ->
-                        closeFabMenu()
-                        mCustomListsViewModel.dialogTag = RESET_LIST
-                        mCustomListsViewModel.dialogTitle.postValue(getString(R.string.dialog_reset_list_title))
-                        mCustomListsViewModel.content.postValue(getString(R.string.reset_list_question))
-                        mCustomListsViewModel.icon.postValue(Icons.Filled.CleaningServices)
-                        mCustomListsViewModel.positiveButton.postValue(getString(R.string.reset_confirm))
-                        mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
-                        mCustomListsViewModel.showAlertDialog.postValue(true)
-                    }
-                    true
-                }
-
-                R.id.fab_condividi -> {
-                    closeFabMenu()
-                    activity?.findViewById<Button>(R.id.button_condividi)?.performClick()
-                    true
-                }
-
-                R.id.fab_edit_lista -> {
-                    closeFabMenu()
-                    mCustomListsViewModel.indDaModif =
-                        sharedTabViewModel.tabsSelectedIndex.intValue - 2
-                    mMainActivity?.let { act ->
-                        act.launchForResultWithAnimation(
-                            startListEditForResult, Intent(
-                                act, CreaListaActivity::class.java
-                            ).putExtras(
-                                bundleOf(
-                                    ID_DA_MODIF to idListe[sharedTabViewModel.tabsSelectedIndex.intValue - 2 - 2],
-                                    EDIT_EXISTING_LIST to true
-                                )
-                            ), MaterialSharedAxis.Y
-                        )
-                    }
-                    true
-                }
-
-                R.id.fab_delete_lista -> {
-                    lifecycleScope.launch { deleteListDialog() }
-                    true
-                }
-
-                R.id.fab_condividi_file -> {
-                    closeFabMenu()
-                    activity?.findViewById<Button>(R.id.button_invia_file)?.performClick()
-                    true
-                }
-
-                else -> {
-                    closeFabMenu()
-                    false
-                }
-            }
-        }
-
-        val click = View.OnClickListener {
-            mMainActivity?.destroyActionMode()
-            toggleFabMenu()
-        }
+//        val actionListener = SpeedDialView.OnActionSelectedListener {
+//            when (it.id) {
+//                R.id.fab_pulisci -> {
+//                    mMainActivity?.let { mActivity ->
+//                        closeFabMenu()
+//                        mCustomListsViewModel.dialogTag = RESET_LIST
+//                        mCustomListsViewModel.dialogTitle.postValue(getString(R.string.dialog_reset_list_title))
+//                        mCustomListsViewModel.content.postValue(getString(R.string.reset_list_question))
+//                        mCustomListsViewModel.icon.postValue(Icons.Filled.CleaningServices)
+//                        mCustomListsViewModel.positiveButton.postValue(getString(R.string.reset_confirm))
+//                        mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
+//                        mCustomListsViewModel.showAlertDialog.postValue(true)
+//                    }
+//                    true
+//                }
+//
+//                R.id.fab_condividi -> {
+//                    closeFabMenu()
+//                    activity?.findViewById<Button>(R.id.button_condividi)?.performClick()
+//                    true
+//                }
+//
+//                R.id.fab_edit_lista -> {
+//                    closeFabMenu()
+//                    mCustomListsViewModel.indDaModif =
+//                        sharedTabViewModel.tabsSelectedIndex.intValue - 2
+//                    mMainActivity?.let { act ->
+//                        act.launchForResultWithAnimation(
+//                            startListEditForResult, Intent(
+//                                act, CreaListaActivity::class.java
+//                            ).putExtras(
+//                                bundleOf(
+//                                    ID_DA_MODIF to idListe[sharedTabViewModel.tabsSelectedIndex.intValue - 2 - 2],
+//                                    EDIT_EXISTING_LIST to true
+//                                )
+//                            ), MaterialSharedAxis.Y
+//                        )
+//                    }
+//                    true
+//                }
+//
+//                R.id.fab_delete_lista -> {
+//                    lifecycleScope.launch { deleteListDialog() }
+//                    true
+//                }
+//
+//                R.id.fab_condividi_file -> {
+//                    closeFabMenu()
+//                    activity?.findViewById<Button>(R.id.button_invia_file)?.performClick()
+//                    true
+//                }
+//
+//                else -> {
+//                    closeFabMenu()
+//                    false
+//                }
+//            }
+//        }
+//
+//        val click = View.OnClickListener {
+//            mMainActivity?.destroyActionMode()
+//            toggleFabMenu()
+//        }
 
         mMainActivity?.initFab(this, Icons.Default.Add)
     }

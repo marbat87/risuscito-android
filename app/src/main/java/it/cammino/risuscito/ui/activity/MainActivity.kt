@@ -1039,11 +1039,10 @@ class MainActivity : ThemeableActivity() {
         isActionMode.value = true
     }
 
-    fun destroyActionMode(): Boolean {
+    fun destroyActionMode() {
         isActionMode.value = false
         setTransparentStatusBar(true)
         actionModeFragment?.destroyActionMode()
-        return true
     }
 
     fun createOptionsMenu(
