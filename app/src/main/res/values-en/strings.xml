@@ -65,7 +65,7 @@
     <string name="posizione_add_desc">Title of the new element</string>
     <string name="lista_pers_piena">The maximum number of allowed elements is 30</string>
     <string name="lista_pers_vuota">The list is empty</string>
-    <string name="lista_add_desc">Title of the new list:</string>
+    <string name="lista_add_desc">Title of the new list</string>
     <string name="save_list_question">You are exiting from the creation of the personalized list. Do you want to save the modifications?</string>
     <string name="action_help">Help</string>
     <string name="dialog_change_title">News</string>

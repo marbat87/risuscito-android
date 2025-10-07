@@ -65,7 +65,7 @@
     <string name="posizione_add_desc">Назва нового елементу</string>
     <string name="lista_pers_piena">Максимальна кількість допустимих елементів - 30</string>
     <string name="lista_pers_vuota">Список порожній</string>
-    <string name="lista_add_desc">Назва нового списку:</string>
+    <string name="lista_add_desc">Назва нового списку</string>
     <string name="save_list_question">Ви залишаєте створення персоналізованого списку. Бажаєте зберегти зміни?</string>
     <string name="action_help">Допомога</string>
     <string name="dialog_change_title">Новини</string>

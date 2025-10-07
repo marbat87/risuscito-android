@@ -323,7 +323,7 @@
     <string name="posizione_add_desc">Titolo del nuovo elemento</string>
     <string name="lista_pers_piena">Il numero massimo di elementi consentito è di 30</string>
     <string name="lista_pers_vuota">La lista è vuota</string>
-    <string name="lista_add_desc">Titolo della nuova lista:</string>
+    <string name="lista_add_desc">Titolo della nuova lista</string>
     <string name="save_list_question">Stai per uscire dalla creazione della lista personalizzata. Vuoi salvare le modifiche?</string>
     <string name="action_help">Aiuto</string>
     <string name="dialog_change_title">Novit&#224;</string>

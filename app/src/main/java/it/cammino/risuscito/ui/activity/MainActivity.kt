@@ -3,21 +3,19 @@ package it.cammino.risuscito.ui.activity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,10 +23,10 @@ import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -55,7 +53,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.messaging.messaging
-import com.leinardi.android.speeddial.SpeedDialView
 import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.CredendialObject
@@ -67,6 +64,7 @@ import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.Drawer
 import it.cammino.risuscito.ui.composable.main.MainScreen
 import it.cammino.risuscito.ui.composable.main.NavigationScreen
+import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.RisuscitoSnackBar
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
@@ -75,6 +73,9 @@ import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
+import it.cammino.risuscito.ui.interfaces.FabActionsFragment
+import it.cammino.risuscito.ui.interfaces.FabFragment
+import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.OSUtils
@@ -95,6 +96,7 @@ import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel.ProfileAction
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
+import it.cammino.risuscito.viewmodels.SharedTabViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
@@ -116,6 +118,8 @@ class MainActivity : ThemeableActivity() {
     private val scrollViewModel: SharedScrollViewModel by viewModels()
 
     private val sharedSearchViewModel: SharedSearchViewModel by viewModels()
+
+    private val sharedTabViewModel: SharedTabViewModel by viewModels()
 
     private lateinit var mCredentialCacheManager: CredentialCacheManager
 
@@ -150,16 +154,23 @@ class MainActivity : ThemeableActivity() {
     private var navHostController = mutableStateOf(NavHostController(this))
     private val drawerState = mutableStateOf(DrawerState(initialValue = DrawerValue.Closed))
     private val tabsDestinationList = MutableLiveData(ArrayList<Destination>())
-    private val tabsSelectedIndex = mutableIntStateOf(0)
     private val tabsVisible = mutableStateOf(false)
     private val showSnackbar = mutableStateOf(false)
     private val snackbarMessage = mutableStateOf("")
     private val actionLabel = mutableStateOf("")
     private var snackBarFragment: SnackBarFragment? = null
+    private var optionMenuFragment: OptionMenuFragment? = null
+    private val optionMenuList = MutableLiveData(ArrayList<OptionMenuItem>())
+
+    private var fabFragment: FabFragment? = null
+
+    private var fabActionsFragment: FabActionsFragment? = null
+
+    private val fabIcon = mutableStateOf(Icons.Outlined.Edit)
 
     private val showFab = mutableStateOf(false)
 
-    private lateinit var pagerState: PagerState
+    private val signedId = mutableStateOf(false)
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -195,14 +206,13 @@ class MainActivity : ThemeableActivity() {
 
                 val localTabsList = tabsDestinationList.observeAsState()
 
-                pagerState = rememberPagerState(pageCount = {
-                    localTabsList.value?.size ?: 0
-                })
+                val localOptionMenu = optionMenuList.observeAsState()
 
                 val snackbarHostState = remember { SnackbarHostState() }
 
                 val navControllerInstance = rememberNavController() // Create NavController here
                 navHostController.value = navControllerInstance
+
 
                 MainScreen(
                     sharedScrollViewModel = sharedScrollVM,
@@ -218,11 +228,19 @@ class MainActivity : ThemeableActivity() {
                     showLoadingBar = showProgressBar.value,
                     showTabs = tabsVisible.value,
                     tabsList = localTabsList.value,
-                    selectedTabIndex = tabsSelectedIndex,
-                    pagerState = pagerState,
+                    resetTab = sharedTabViewModel.resetTab,
+                    selectedTabIndex = sharedTabViewModel.tabsSelectedIndex,
                     snackbarHostState = snackbarHostState,
                     showFab = showFab.value,
-                    sharedSearchViewModel = sharedSearchViewModel
+                    sharedSearchViewModel = sharedSearchViewModel,
+                    optionMenu = localOptionMenu.value,
+                    onOptionMenuClick = { optionMenuFragment?.onItemClick(it) },
+                    fabIcon = fabIcon.value,
+                    onFabClick = { fabFragment?.onFabClick(it) },
+                    loggedIn = signedId.value,
+                    profilePhotoUrl = profilePhotoUrl,
+                    onLoginClick = { signIn(false) },
+                    onProfileClick = { showProfileDialog() }
                 )
 
                 RisuscitoSnackBar(
@@ -545,10 +563,6 @@ class MainActivity : ThemeableActivity() {
         startActivityWithTransition(intent, MaterialSharedAxis.Y)
     }
 
-    fun setupToolbarTitle(titleResId: Int) {
-        supportActionBar?.setTitle(titleResId)
-    }
-
     fun closeFabMenu() {
         //TODO
 //        if (binding.fabPager.isOpen) binding.fabPager.close()
@@ -561,35 +575,27 @@ class MainActivity : ThemeableActivity() {
 
     fun enableFab(enable: Boolean, autoHide: Boolean = true) {
         Log.d(TAG, "enableFab: $enable")
-        //TODO
-//        if (enable) {
-//            if (binding.fabPager.isOpen) binding.fabPager.close()
-//            else {
-//                val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
-//                params?.behavior =
-//                    if (autoHide) SpeedDialView.ScrollingViewSnackbarBehavior() else SpeedDialView.NoBehavior()
-//                binding.fabPager.requestLayout()
-//                binding.fabPager.show()
-//            }
-//        } else {
-//            if (binding.fabPager.isOpen) binding.fabPager.close()
-//            binding.fabPager.hide()
-//            val params = binding.fabPager.layoutParams as? CoordinatorLayout.LayoutParams
-//            params?.behavior = SpeedDialView.NoBehavior()
-//            binding.fabPager.requestLayout()
-//        }
         showFab.value = enable
     }
 
     fun initFab(
-        optionMenu: Boolean,
-        icon: Drawable,
-        click: View.OnClickListener,
-        action: SpeedDialView.OnActionSelectedListener?,
-        customList: Boolean
+        fragment: FabFragment,
+        icon: ImageVector
     ) {
-        Log.d(TAG, "initFab()")
-        //TODO
+        fabFragment = fragment
+        fabIcon.value = icon
+        showFab.value = true
+    }
+
+//    fun initFab(
+//        optionMenu: Boolean,
+//        icon: Drawable,
+//        click: View.OnClickListener,
+//        action: SpeedDialView.OnActionSelectedListener?,
+//        customList: Boolean
+//    ) {
+//        Log.d(TAG, "initFab()")
+    //TODO
 //        enableFab(false)
 //        binding.fabPager.setMainFabClosedDrawable(icon)
 //        binding.fabPager.mainFab.rippleColor =
@@ -671,15 +677,7 @@ class MainActivity : ThemeableActivity() {
 //
 //        }
 //        binding.fabPager.mainFab.setOnClickListener(click)
-    }
-
-//    fun getFab(): FloatingActionButton {
-//        return binding.fabPager.mainFab
 //    }
-
-    fun getPagerState(): PagerState {
-        return pagerState
-    }
 
     fun setTabVisible(visible: Boolean) {
         tabsVisible.value = visible
@@ -690,18 +688,12 @@ class MainActivity : ThemeableActivity() {
         scrollViewModel.scrollBehavior.value?.state?.heightOffset = 0F
     }
 
-    fun setupMaterialTab(tabsList: List<Destination>) {
+    fun setupMaterialTab(tabsList: List<Destination>, selectedIndex: Int = 0) {
+        Log.d(TAG, "setupMaterialTab() - selectedIndex:$selectedIndex")
         val newList = ArrayList(tabsList) // Crea una nuova lista
         tabsDestinationList.value = newList
-        tabsSelectedIndex.intValue = 0
+        sharedTabViewModel.tabsSelectedIndex.intValue = selectedIndex
     }
-
-    fun changeMaterialTabPage(selectedIndex: Int) {
-        tabsSelectedIndex.intValue = selectedIndex
-    }
-
-    val activityMainContent: View
-        get() = window.decorView.findViewById(android.R.id.content)
 
     // [START signIn]
     private fun signIn(
@@ -841,6 +833,7 @@ class MainActivity : ThemeableActivity() {
             clearProfileInfo()
         }
 
+        signedId.value = signedIn
         updateProfileImage()
 //        hideProgressDialog()
     }
@@ -866,7 +859,7 @@ class MainActivity : ThemeableActivity() {
             val modifiedUrl = uri.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
             Log.d(TAG, "personPhotoUrl AFTER: $modifiedUrl")
             modifiedUrl
-        } ?: StringUtils.EMPTY
+        }.orEmpty()
     }
 
     /**
@@ -1042,7 +1035,6 @@ class MainActivity : ThemeableActivity() {
         actionModeMenuList.addAll(actionModeMenu)
         onActionModeClickItem = onActionModeClick
         setTransparentStatusBar(false)
-//        binding.risuscitoToolbar.expand(binding.contextualToolbarContainer, binding.appBarLayout)
         expandToolbar()
         isActionMode.value = true
     }
@@ -1051,21 +1043,42 @@ class MainActivity : ThemeableActivity() {
         isActionMode.value = false
         setTransparentStatusBar(true)
         actionModeFragment?.destroyActionMode()
-//        return binding.risuscitoToolbar.collapse(
-//            binding.contextualToolbarContainer, binding.appBarLayout
-//        )
         return true
+    }
+
+    fun createOptionsMenu(
+        optionMenu: List<OptionMenuItem>,
+        fragment: OptionMenuFragment?
+    ) {
+        Log.d(TAG, "createOptionsMenu")
+        val newList = ArrayList(optionMenu) // Crea una nuova lista
+        optionMenuList.value = newList
+        optionMenuFragment = fragment
     }
 
     fun showSnackBar(message: String, callback: SnackBarFragment? = null, label: String? = null) {
         snackBarFragment = callback
         snackbarMessage.value = message
-        actionLabel.value = label ?: StringUtils.EMPTY
+        actionLabel.value = label.orEmpty()
         showSnackbar.value = true
+    }
+
+    fun setFabActionsFragment(fragment: FabActionsFragment) {
+        fabActionsFragment = fragment
     }
 
     fun updateActionModeTitle(title: String) {
         actionModeTitle.value = title
+    }
+
+    fun showProfileDialog() {
+        ProfileDialogFragment.show(
+            ProfileDialogFragment.Builder(PROFILE_DIALOG).apply {
+                profileName = profileNameStr
+                profileEmail = profileEmailStr
+                profileImageSrc = profilePhotoUrl
+            }, supportFragmentManager
+        )
     }
 
     companion object {
@@ -1078,6 +1091,8 @@ class MainActivity : ThemeableActivity() {
         private const val REVOKE = "REVOKE"
         private const val BACKUP_DONE = "BACKUP_DONE"
         private const val RESTORE_DONE = "RESTORE_DONE"
+
+        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val OLD_PHOTO_RES = "s96-c"
         private const val NEW_PHOTO_RES = "s400-c"
         private val TAG = MainActivity::class.java.canonicalName

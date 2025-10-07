@@ -80,7 +80,7 @@ ksp {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.8.0"
+val roomVersion = "2.8.1"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0")
@@ -98,12 +98,10 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.media:media:1.7.1")
     implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.9.4")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.9.5")
     implementation("androidx.fragment:fragment-compose:1.8.9")
-    implementation("androidx.compose.foundation:foundation:1.9.1")
-    implementation("androidx.compose.animation:animation:1.9.1")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.10.4")
+    implementation("androidx.work:work-runtime-ktx:2.10.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
     implementation("androidx.preference:preference-ktx:1.2.1")
@@ -137,17 +135,21 @@ dependencies {
     implementation("com.jakewharton:process-phoenix:3.0.0")
     implementation("com.google.android.play:feature-delivery-ktx:2.1.0")
     implementation("com.google.api-client:google-api-client:2.8.1")
+    implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 
-    val composeBom = platform("androidx.compose:compose-bom:2025.09.00")
-    implementation(composeBom)
+    implementation(platform("androidx.compose:compose-bom:2025.09.01"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.4.0-rc01")
+    implementation("androidx.compose.material3:material3")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.ui:ui")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.37.3")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.runtime:runtime:")
     implementation("androidx.navigation:navigation-compose")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.compose.foundation:foundation")
 }

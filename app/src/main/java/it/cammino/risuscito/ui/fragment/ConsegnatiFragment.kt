@@ -3,163 +3,410 @@ package it.cammino.risuscito.ui.fragment
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells.Fixed
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.integerArrayResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.MenuProvider
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.sidesheet.SideSheetDialog
-import com.google.android.material.transition.MaterialSharedAxis
-import com.mikepenz.fastadapter.IAdapter
-import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.binding.listeners.addClickListener
-import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
-import it.cammino.risuscito.databinding.CheckablePassageItemBinding
-import it.cammino.risuscito.databinding.CheckableRowItemBinding
-import it.cammino.risuscito.databinding.LayoutConsegnatiBinding
-import it.cammino.risuscito.databinding.RowItemNotableBinding
-import it.cammino.risuscito.items.CheckableItem
-import it.cammino.risuscito.items.CheckablePassageItem
-import it.cammino.risuscito.items.NotableItem
-import it.cammino.risuscito.items.checkableItem
-import it.cammino.risuscito.items.checkablePassageItem
+import it.cammino.risuscito.items.RisuscitoListItem
+import it.cammino.risuscito.items.risuscitoListItem
+import it.cammino.risuscito.ui.composable.CheckableListItem
+import it.cammino.risuscito.ui.composable.PassageListItem
+import it.cammino.risuscito.ui.composable.dialogs.ListChoiceAlertDialog
+import it.cammino.risuscito.ui.composable.dialogs.PassaggesDropDownMenu
+import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.consegnatiMenu
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.ListChoiceDialogFragment
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.ui.composable.main.consegnatiOptionMenu
+import it.cammino.risuscito.ui.composable.main.consegnatiResetOptionMenu
+import it.cammino.risuscito.ui.composable.risuscito_medium_font
+import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
-import it.cammino.risuscito.utils.StringUtils
+import it.cammino.risuscito.ui.interfaces.FabFragment
+import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.Utility.OLD_PAGE_SUFFIX
 import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
-import it.cammino.risuscito.utils.extension.useOldIndex
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
+import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.Collator
 
-class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
-
-    private var cantoAdapter: FastItemAdapter<NotableItem> = FastItemAdapter()
-    private var passaggiFilterAdapter: FastItemAdapter<CheckablePassageItem> = FastItemAdapter()
+class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment, OptionMenuFragment,
+    FabFragment {
 
     private val consegnatiViewModel: ConsegnatiViewModel by viewModels()
-    private val dialogViewModel: ListChoiceDialogFragment.DialogViewModel by viewModels({ requireActivity() })
-    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
-    private val selectableAdapter: FastItemAdapter<CheckableItem> = FastItemAdapter()
-    private val selectExtension: SelectExtension<CheckableItem> = SelectExtension(selectableAdapter)
-    private val selectPassageExtension: SelectExtension<CheckablePassageItem> =
-        SelectExtension(passaggiFilterAdapter)
-    private var mLastClickTime: Long = 0
+
+    private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
+
+    private val contextMenuExpanded = mutableStateOf(false)
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
-    private lateinit var passaggiArray: IntArray
-    private val passaggiValues: MutableMap<Int, Int> = mutableMapOf()
     private var backCallback: OnBackPressedCallback? = null
-    private var sideSheetDialog: SideSheetDialog? = null
-    private var menuProvider: MenuProvider? = null
 
-    private var _binding: LayoutConsegnatiBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
-
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = LayoutConsegnatiBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onStop() {
-        super.onStop()
-        menuProvider?.let {
-            Log.d(TAG, "removeMenu")
-            mMainActivity?.removeMenuProvider(it)
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        menuProvider = object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(
-                    if (selectPassageExtension.selectedItems.isNotEmpty()) R.menu.consegnati_menu_reset_filter else R.menu.consegnati_menu,
-                    menu
-                )
+        backCallback = object :
+            OnBackPressedCallback(consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) {
+            override fun handleOnBackPressed() {
+                Log.d(TAG, "handleOnBackPressed")
+                mMainActivity?.destroyActionMode()
+                mMainActivity?.expandToolbar()
+                initFab()
             }
+        }
+        // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
+        backCallback?.let {
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it)
+        }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.action_filter -> {
-                        sideSheetDialog?.show()
-                        return true
+        return ComposeView(requireContext()).apply {
+            setContent {
+                val consegnatiItems by consegnatiViewModel.consegnatiSortedList.observeAsState()
+                val consegnatiSelectableItems by consegnatiViewModel.consegnatiFullList.observeAsState()
+                val consegnatiSelectedItems by consegnatiViewModel.consegnatiSelectedList.observeAsState()
+                val passaggiSelectedListState by consegnatiViewModel.passaggiSelectedList.observeAsState()
+                val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
+
+                val viewMode by remember { consegnatiViewModel.viewMode }
+
+                RisuscitoTheme {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        // In SectionedIndexFragment, dentro setContent
+                        val rememberedOnItemClick = remember<(RisuscitoListItem) -> Unit> {
+                            { item ->
+                                mMainActivity?.openCanto(
+                                    TAG,
+                                    item.id,
+                                    getString(item.sourceRes),
+                                    false
+                                )
+                            }
+                        }
+
+                        AnimatedContent(
+                            viewMode,
+                            transitionSpec = {
+                                fadeIn(
+                                    animationSpec = tween(1000)
+                                ) togetherWith fadeOut(animationSpec = tween(1000))
+                            },
+                            label = "Animated Content"
+                        )
+                        { targetState ->
+                            when (targetState) {
+                                ConsegnatiViewModel.ViewMode.LOADING -> {
+                                    CircularProgressIndicator()
+                                }
+
+                                ConsegnatiViewModel.ViewMode.VIEW -> {
+                                    val simpleListState = rememberLazyListState()
+                                    backCallback?.isEnabled = false
+                                    val listModifier = Modifier
+                                        .fillMaxSize()
+                                        .then(
+                                            scrollBehaviorFromSharedVM?.let {
+                                                Modifier.nestedScroll(
+                                                    it.nestedScrollConnection
+                                                )
+                                            }
+                                                ?: Modifier
+                                        )
+                                    if (context?.isGridLayout == true) {
+                                        LazyVerticalGrid(
+                                            columns = Fixed(2),
+                                            modifier = listModifier
+                                        ) {
+                                            items(
+                                                consegnatiItems ?: emptyList(),
+                                                key = { it.id }) { simpleItem ->
+                                                PassageListItem(
+                                                    simpleItem,
+                                                    onItemClick = rememberedOnItemClick,
+                                                    onIconClick = { openPassageModal(it) },
+                                                    modifier = Modifier.animateItem()
+                                                )
+                                            }
+                                            item {
+                                                Spacer(Modifier.height(86.dp))
+                                            }
+                                        }
+                                    } else {
+                                        LazyColumn(
+                                            state = simpleListState,
+                                            modifier = listModifier
+                                        ) {
+                                            items(
+                                                consegnatiItems ?: emptyList(),
+                                                key = { it.id }) { simpleItem ->
+                                                PassageListItem(
+                                                    simpleItem,
+                                                    onItemClick = rememberedOnItemClick,
+                                                    onIconClick = { openPassageModal(it) },
+                                                    modifier = Modifier.animateItem()
+                                                )
+                                            }
+                                            item {
+                                                Spacer(Modifier.height(86.dp))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                ConsegnatiViewModel.ViewMode.EDIT -> {
+                                    backCallback?.isEnabled = true
+                                    val checkableListState = rememberLazyListState()
+                                    val listModifier = Modifier
+                                        .fillMaxSize()
+                                    if (context?.isGridLayout == true) {
+                                        LazyVerticalGrid(
+                                            columns = Fixed(2),
+                                            modifier = listModifier
+                                        ) {
+                                            items(
+                                                consegnatiSelectableItems ?: emptyList(),
+                                                key = { it.id }) { simpleItem ->
+                                                CheckableListItem(
+                                                    simpleItem,
+                                                    modifier = Modifier.animateItem(),
+                                                    onSelect = {
+                                                        if (it) selectItem(simpleItem.id)
+                                                        else deselectItem(simpleItem.id)
+                                                    },
+                                                    selected = consegnatiSelectedItems?.contains(
+                                                        simpleItem.id
+                                                    ) ?: false
+                                                )
+                                            }
+                                            item {
+                                                Spacer(Modifier.height(86.dp))
+                                            }
+                                        }
+                                    } else {
+                                        LazyColumn(
+                                            state = checkableListState,
+                                            modifier = listModifier
+                                        ) {
+                                            items(
+                                                consegnatiSelectableItems ?: emptyList(),
+                                                key = { it.id }) { simpleItem ->
+                                                CheckableListItem(
+                                                    simpleItem,
+                                                    modifier = Modifier.animateItem(),
+                                                    onSelect = {
+                                                        if (it) selectItem(simpleItem.id)
+                                                        else deselectItem(simpleItem.id)
+                                                    },
+                                                    selected = consegnatiSelectedItems?.contains(
+                                                        simpleItem.id
+                                                    ) ?: false
+                                                )
+                                            }
+                                            item {
+                                                Spacer(Modifier.height(86.dp))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                ConsegnatiViewModel.ViewMode.EMPTY -> {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentHeight(), // Occupa solo l'altezza necessaria
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Image(
+                                            painter = painterResource(R.drawable.ic_sleeping_checklist),
+                                            contentDescription = stringResource(id = R.string.no_consegnati),
+                                            modifier = Modifier
+                                                .size(120.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
+                                        Text(
+                                            text = stringResource(R.string.no_consegnati),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
+                                            fontFamily = risuscito_medium_font,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    R.id.action_filter_remove -> {
-                        selectPassageExtension.deselect()
-                        cantoAdapter.filter(StringUtils.EMPTY)
-                        activity?.invalidateOptionsMenu()
+                    val passaggiArray = integerArrayResource(R.array.passaggi_values)
+                    val passaggiTitle = stringArrayResource(R.array.passaggi_entries)
+
+                    if (consegnatiViewModel.showAlertDialog.observeAsState().value == true) {
+                        when (consegnatiViewModel.dialogTag) {
+                            SAVE_CONSEGNATI_DIALOG -> {
+                                SimpleAlertDialog(
+                                    onDismissRequest = {
+                                        consegnatiViewModel.showAlertDialog.postValue(false)
+                                    },
+                                    onConfirmation = {
+                                        consegnatiViewModel.showAlertDialog.postValue(false)
+                                        mMainActivity?.destroyActionMode()
+                                        lifecycleScope.launch { saveConsegnati() }
+                                    },
+                                    dialogTitle = stringResource(R.string.dialog_save_consegnati_title),
+                                    dialogText = stringResource(R.string.dialog_save_consegnati_desc),
+                                    icon = Icons.Outlined.Save,
+                                    confirmButtonText = stringResource(R.string.action_salva),
+                                    dismissButtonText = stringResource(R.string.cancel)
+                                )
+                            }
+
+                            ADD_PASSAGE_DIALOG -> {
+                                ListChoiceAlertDialog(
+                                    onDismissRequest = {
+                                        consegnatiViewModel.showAlertDialog.postValue(false)
+                                    },
+                                    onConfirmation = { passaggio ->
+                                        consegnatiViewModel.showAlertDialog.postValue(false)
+                                        val consegnato = Consegnato().apply {
+                                            idConsegnato =
+                                                consegnatiViewModel.mIdConsegnatoSelected
+                                            idCanto = consegnatiViewModel.mIdCantoSelected
+                                            numPassaggio = passaggio
+                                        }
+                                        val mDao =
+                                            RisuscitoDatabase.getInstance(requireContext())
+                                                .consegnatiDao()
+                                        lifecycleScope.launch(Dispatchers.IO) {
+                                            mDao.updateConsegnato(
+                                                consegnato
+                                            )
+                                        }
+                                    },
+                                    nomiPassaggi = passaggiTitle,
+                                    indiciPassaggi = passaggiArray,
+                                    passaggioSelezionato = consegnatiViewModel.dialogPrefill
+                                )
+                            }
+                        }
                     }
 
-                    R.id.action_help -> {
-                        fabIntro()
-                        return true
+                    PassaggesDropDownMenu(
+                        contextMenuExpanded.value,
+                        passaggiTitle,
+                        passaggiArray,
+                        consegnatiViewModel.passaggiSelectedList,
+                        { contextMenuExpanded.value = false }
+                    ) { item, selected ->
+                        if (selected) selectPassaggiItem(item) else deselectPassaggiItem(
+                            item
+                        )
                     }
+
                 }
-                return false
+
+                consegnatiViewModel.consegnatiList?.observe(viewLifecycleOwner) { canti ->
+                    consegnatiViewModel.consegnatiSortedList.value = canti.sortedWith(
+                        compareBy(
+                            Collator.getInstance(systemLocale)
+                        ) { getString(it.titleRes) }).filter { consegnato ->
+                        consegnatiViewModel.passaggiSelectedList.value?.isEmpty() == true
+                                || consegnatiViewModel.passaggiSelectedList.value?.any { it == consegnato.numPassaggio } == true
+                    }
+                    consegnatiViewModel.viewMode.value =
+                        if (canti.isNotEmpty()) ConsegnatiViewModel.ViewMode.VIEW else ConsegnatiViewModel.ViewMode.EMPTY
+
+                    if (canti.isEmpty())
+                        mMainActivity?.expandToolbar()
+                }
+
+                LaunchedEffect(passaggiSelectedListState) {
+                    consegnatiViewModel.consegnatiSortedList.value =
+                        consegnatiViewModel.consegnatiList?.value?.sortedWith(
+                            compareBy(
+                                Collator.getInstance(systemLocale)
+                            ) { getString(it.titleRes) })?.filter { consegnato ->
+                            passaggiSelectedListState?.isEmpty() == true ||
+                                    passaggiSelectedListState?.any { it == consegnato.numPassaggio }
+                                    ?: false
+                        }
+                    mMainActivity?.createOptionsMenu(
+                        if (passaggiSelectedListState?.isEmpty() == true) consegnatiOptionMenu else consegnatiResetOptionMenu,
+                        this@ConsegnatiFragment
+                    )
+                }
             }
         }
-        menuProvider?.let {
-            Log.d(TAG, "addMenu")
-            mMainActivity?.addMenuProvider(it)
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
 
         mRegularFont = ResourcesCompat.getFont(
             requireContext(),
@@ -170,118 +417,8 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
             requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
         )
 
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_consegnati)
         mMainActivity?.setTabVisible(false)
         initFab()
-
-        passaggiArray = resources.getIntArray(R.array.passaggi_values)
-        for (i in passaggiArray.indices)
-            passaggiValues[passaggiArray[i]] = i
-
-        subscribeUiConsegnati()
-
-        cantoAdapter.onClickListener =
-            { _: View?, _: IAdapter<NotableItem>, item: NotableItem, _: Int ->
-                var consume = false
-                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                    mLastClickTime = SystemClock.elapsedRealtime()
-                    mMainActivity?.openCanto(
-                        TAG,
-                        item.id,
-                        item.source?.getText(requireContext()),
-                        false
-                    )
-                    consume = true
-                }
-                consume
-            }
-
-        cantoAdapter.addClickListener<RowItemNotableBinding, NotableItem>({ binding -> binding.editNote }) { _, _, _, item ->
-            openPassageModal(item)
-        }
-
-        cantoAdapter.addClickListener<RowItemNotableBinding, NotableItem>({ binding -> binding.editNoteFilled }) { _, _, _, item ->
-            openPassageModal(item)
-        }
-
-        cantoAdapter.set(consegnatiViewModel.titoli)
-        cantoAdapter.itemFilter.filterPredicate = { item: NotableItem, constraint: CharSequence? ->
-            val found = constraint?.split("|")?.filter { it.toInt() == item.numPassaggio }
-            !found.isNullOrEmpty()
-        }
-        binding.cantiRecycler.adapter = cantoAdapter
-        val glm = GridLayoutManager(context, 2)
-        val llm = LinearLayoutManager(context)
-        binding.cantiRecycler.layoutManager = if (context?.isGridLayout == true) glm else llm
-        binding.cantiRecycler.itemAnimator = SlideRightAlphaAnimator()
-
-        // Creating new adapter object
-        selectExtension.isSelectable = true
-        selectableAdapter.setHasStableIds(true)
-
-        selectableAdapter.onPreClickListener =
-            { _: View?, _: IAdapter<CheckableItem>, _: CheckableItem, position: Int ->
-                selectExtension.toggleSelection(position)
-                true
-            }
-
-        selectableAdapter.addClickListener<CheckableRowItemBinding, CheckableItem>({ binding -> binding.checkBox }) { _, position, _, _ ->
-            selectExtension.toggleSelection(position)
-        }
-
-        selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
-
-        binding.chooseRecycler.adapter = selectableAdapter
-        val llm2 = if (context?.isGridLayout == true)
-            GridLayoutManager(context, 2)
-        else
-            LinearLayoutManager(context)
-        binding.chooseRecycler.layoutManager = llm2
-        binding.chooseRecycler.itemAnimator = SlideRightAlphaAnimator()
-
-        selectPassageExtension.isSelectable = true
-        passaggiFilterAdapter.setHasStableIds(true)
-
-        passaggiFilterAdapter.onPreClickListener =
-            { _: View?, _: IAdapter<CheckablePassageItem>, _: CheckablePassageItem, position: Int ->
-                selectPassageExtension.toggleSelection(position)
-                cantoAdapter.filter(selectPassageExtension.selectedItems.map { it.id }
-                    .joinToString("|"))
-                activity?.invalidateOptionsMenu()
-                true
-            }
-
-        passaggiFilterAdapter.addClickListener<CheckablePassageItemBinding, CheckablePassageItem>({ binding -> binding.checkBox }) { _, position, _, _ ->
-            selectPassageExtension.toggleSelection(position)
-            cantoAdapter.filter(selectPassageExtension.selectedItems.map { it.id }
-                .joinToString("|"))
-            activity?.invalidateOptionsMenu()
-        }
-
-        sideSheetDialog = SideSheetDialog(requireContext())
-        sideSheetDialog?.let {
-            val sideSheetLayout =
-                layoutInflater.inflate(R.layout.layout_passaggi_recycler, null, false)
-            it.setContentView(sideSheetLayout)
-            sideSheetLayout.findViewById<RecyclerView>(R.id.passaggi_recycler_view)?.adapter =
-                passaggiFilterAdapter
-            val passaggiNameArray = resources.getStringArray(R.array.passaggi_entries)
-
-            if (consegnatiViewModel.passaggi.isEmpty()) {
-                for (i in passaggiNameArray.indices) {
-                    consegnatiViewModel.passaggi.add(checkablePassageItem {
-                        setTitle = passaggiNameArray[i]
-                        id = passaggiArray[i]
-                    })
-                }
-            }
-            passaggiFilterAdapter.set(consegnatiViewModel.passaggi)
-            sideSheetLayout.findViewById<Button>(R.id.close_modal)
-                ?.setOnClickListener { sideSheetDialog?.hide() }
-
-        }
-
-
 
         view.isFocusableInTouchMode = true
         view.requestFocus()
@@ -289,74 +426,44 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
 
     override fun onResume() {
         super.onResume()
-
-        updateEditMode(consegnatiViewModel.editMode.value == true)
-        backCallback = object : OnBackPressedCallback(consegnatiViewModel.editMode.value == true) {
-            override fun handleOnBackPressed() {
-                Log.d(TAG, "handleOnBackPressed")
-                mMainActivity?.destroyActionMode()
-                mMainActivity?.expandToolbar()
-            }
-        }
-        // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
-        backCallback?.let {
-            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it)
-        }
+//        backCallback = object :
+//            OnBackPressedCallback(consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) {
+//            override fun handleOnBackPressed() {
+//                Log.d(TAG, "handleOnBackPressed")
+//                mMainActivity?.destroyActionMode()
+//                mMainActivity?.expandToolbar()
+//            }
+//        }
+//        // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
+//        backCallback?.let {
+//            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it)
+//        }
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
             fabIntro()
         }
     }
 
-    private fun updateEditMode(editMode: Boolean) {
-        binding.chooseRecycler.isVisible = editMode
-        if (editMode)
-            startCab()
-        initFab()
-        binding.selectedView.isVisible = !editMode
-        backCallback?.isEnabled = editMode
-    }
-
     private fun startCab() {
-//        mMainActivity?.createActionMode(R.menu.consegnati, this, true) { item ->
-//            when (item.itemId) {
-//                R.id.select_none -> {
-//                    selectExtension.deselect()
-//                    true
-//                }
-//
-//                R.id.select_all -> {
-//                    selectExtension.select()
-//                    true
-//                }
-//
-//                R.id.cancel_change -> {
-//                    mMainActivity?.destroyActionMode()
-//                    true
-//                }
-//
-//                R.id.action_help -> {
-//                    managerIntro()
-//                    true
-//                }
-//
-//                else -> false
-//            }
-//        }
+        mMainActivity?.updateActionModeTitle("")
         mMainActivity?.createActionMode(consegnatiMenu, this, true) { itemRoute ->
             when (itemRoute) {
                 ActionModeItem.SelectNone.route -> {
-                    selectExtension.deselect()
+                    consegnatiViewModel.consegnatiSelectedList.value = emptyList()
                     true
                 }
 
                 ActionModeItem.SelectAll.route -> {
-                    selectExtension.select()
+                    consegnatiViewModel.consegnatiFullList.value?.let { consegnati ->
+                        consegnatiViewModel.consegnatiSelectedList.value =
+                            (consegnati.map { it.id })
+                    }
                     true
                 }
 
                 ActionModeItem.Undo.route -> {
                     mMainActivity?.destroyActionMode()
+                    initFab()
                     true
                 }
 
@@ -366,46 +473,18 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
                 }
             }
         }
-        mMainActivity?.updateActionModeTitle("")
     }
 
     override fun destroyActionMode() {
-        consegnatiViewModel.editMode.value = false
+        consegnatiViewModel.viewMode.value =
+            if (consegnatiViewModel.consegnatiList?.value?.isNotEmpty() == true) ConsegnatiViewModel.ViewMode.VIEW else ConsegnatiViewModel.ViewMode.EMPTY
     }
 
     private fun initFab() {
-        val icon = AppCompatResources.getDrawable(
-            requireContext(),
-            if (consegnatiViewModel.editMode.value == true) R.drawable.save_24px else R.drawable.edit_24px
+        mMainActivity?.initFab(
+            this,
+            if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) Icons.Default.Save else Icons.Default.Edit
         )
-        val onClick = View.OnClickListener {
-            if (consegnatiViewModel.editMode.value == true) {
-                mMainActivity?.let { mainActivity ->
-                    SimpleDialogFragment.show(
-                        SimpleDialogFragment.Builder(
-                            CONFIRM_SAVE
-                        )
-                            .title(R.string.dialog_save_consegnati_title)
-                            .icon(R.drawable.save_24px)
-                            .content(R.string.dialog_save_consegnati_desc)
-                            .positiveButton(R.string.action_salva)
-                            .negativeButton(R.string.cancel),
-                        mainActivity.supportFragmentManager
-                    )
-                }
-            } else {
-                consegnatiViewModel.editMode.value = true
-                lifecycleScope.launch { updateChooseList() }
-                val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
-                    managerIntro()
-                }
-            }
-        }
-        icon?.let {
-            mMainActivity?.initFab(false, it, onClick, null, false)
-        }
-        mMainActivity?.enableFab(enable = true, autoHide = true)
     }
 
     private fun fabIntro() {
@@ -500,119 +579,45 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
 //        }
     }
 
-    private fun subscribeUiConsegnati() {
-        consegnatiViewModel.mIndexResult?.observe(viewLifecycleOwner) { cantos ->
-            consegnatiViewModel.titoli =
-                cantos.sortedWith(compareBy(Collator.getInstance(systemLocale)) {
-                    it.title?.getText(requireContext())
-                })
-            cantoAdapter.set(consegnatiViewModel.titoli)
-            cantoAdapter.filter(selectPassageExtension.selectedItems.map { it.id }
-                .joinToString("|"))
-            binding.noConsegnati.isInvisible = cantoAdapter.adapterItemCount > 0
-            binding.cantiRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
-        }
-
-        dialogViewModel.state.observe(viewLifecycleOwner) {
-            Log.d(TAG, "dialogViewModel state $it")
-            if (!dialogViewModel.handled) {
-                when (it) {
-                    is DialogState.Positive -> {
-                        dialogViewModel.handled = true
-                        val consegnato = Consegnato().apply {
-                            idConsegnato = consegnatiViewModel.mIdConsegnatoSelected
-                            idCanto = consegnatiViewModel.mIdCantoSelected
-                            numPassaggio = passaggiArray[dialogViewModel.index]
-                        }
-                        val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
-                        lifecycleScope.launch(Dispatchers.IO) { mDao.updateConsegnato(consegnato) }
-                    }
-
-                    is DialogState.Negative -> {
-                        dialogViewModel.handled = true
-                    }
-                }
-            }
-        }
-
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
-            Log.d(TAG, "simpleDialogViewModel state $it")
-            if (!simpleDialogViewModel.handled) {
-                when (it) {
-                    is DialogState.Positive -> {
-                        when (simpleDialogViewModel.mTag) {
-                            CONFIRM_SAVE -> {
-                                simpleDialogViewModel.handled = true
-                                mMainActivity?.destroyActionMode()
-                                lifecycleScope.launch { saveConsegnati() }
-                            }
-                        }
-                    }
-
-                    is DialogState.Negative -> {
-                        simpleDialogViewModel.handled = true
-                    }
-                }
-            }
-        }
-
-        consegnatiViewModel.editMode.observe(viewLifecycleOwner) {
-            updateEditMode(it)
-        }
-    }
-
     private suspend fun updateChooseList() {
         Log.i(TAG, "updateChooseList start")
-        val useOldIndex = requireContext().useOldIndex()
         val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
         val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.choosen() }
-        val newList = ArrayList<CheckableItem>()
-        for (canto in canti) {
-            newList.add(
-                checkableItem {
-                    isSelected = canto.consegnato != -1
-                    setTitle = Utility.getResId(canto.titolo, R.string::class.java)
-                    setPage = Utility.getResId(
-                        if (useOldIndex) canto.pagina + OLD_PAGE_SUFFIX else canto.pagina,
-                        R.string::class.java
-                    )
-                    setColor = canto.color
-                    id = canto.id
-                }
-            )
-        }
-        consegnatiViewModel.titoliChoose =
-            newList.sortedWith(compareBy(Collator.getInstance(systemLocale)) {
-                it.title?.getText(requireContext())
-            })
-        consegnatiViewModel.titoliChooseFiltered = consegnatiViewModel.titoliChoose
-        selectableAdapter.set(consegnatiViewModel.titoliChooseFiltered)
-    }
-
-    private fun showProgress(show: Boolean) {
-        binding.consegnatiOverlay.isVisible = show
-        if (show)
-            mMainActivity?.showProgressDialog()
-        else
-            mMainActivity?.hideProgressDialog()
+        consegnatiViewModel.consegnatiFullList.value = canti.map { canto ->
+            risuscitoListItem(
+                titleRes = Utility.getResId(canto.titolo, R.string::class.java)
+            ) {
+                pageRes = Utility.getResId(
+                    canto.pagina,
+                    R.string::class.java
+                )
+                setColor = canto.color
+                id = canto.id
+            }
+        }.sortedWith(
+            compareBy(
+                Collator.getInstance(systemLocale)
+            ) { getString(it.titleRes) })
+        consegnatiViewModel.consegnatiSelectedList.value =
+            canti.filter { it.consegnato != -1 }.map { it.id }
     }
 
     private suspend fun saveConsegnati() {
-        showProgress(true)
+        consegnatiViewModel.viewMode.value = ConsegnatiViewModel.ViewMode.LOADING
 
-        val mSelected = selectExtension.selectedItems
-        val mSelectedId = mSelected.mapTo(ArrayList()) { item -> item.id }
-
-        //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
-        consegnatiViewModel.titoliChoose.forEach { item ->
-            if (item.isSelected)
-                if (!mSelectedId.any { i -> i == item.id })
-                    mSelectedId.add(item.id)
-        }
+//        val mSelected = selectExtension.selectedItems
+//        val mSelectedId = mSelected.mapTo(ArrayList()) { item -> item.id }
+//
+//        //IMPORTANTE PER AGGIUNGERE ALLA LISTA DEGLI ID SELEZIONATI (FILTRATI) ANCHCE QUELLI CHE AL MOMENTO NON SONO VISIBILI (MA SELEZIONATI COMUNQUE)
+//        consegnatiViewModel.titoliChoose.forEach { item ->
+//            if (item.isSelected)
+//                if (!mSelectedId.any { i -> i == item.id })
+//                    mSelectedId.add(item.id)
+//        }
 
         val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
         val consegnati = ArrayList<Consegnato>()
-        for ((i, id) in mSelectedId.withIndex()) {
+        for ((i, id) in consegnatiViewModel.consegnatiSelectedList.value?.withIndex()!!) {
             val tempConsegnato = Consegnato()
             tempConsegnato.idConsegnato = i
             tempConsegnato.idCanto = id
@@ -626,31 +631,83 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment {
             mDao.emptyConsegnati()
             mDao.insertConsegnati(consegnati)
         }
-        showProgress(false)
+        initFab()
     }
 
-    private fun openPassageModal(item: NotableItem) {
+    private fun openPassageModal(item: RisuscitoListItem) {
         mMainActivity?.let { activity ->
             consegnatiViewModel.mIdConsegnatoSelected = item.idConsegnato
             consegnatiViewModel.mIdCantoSelected = item.id
-            val prefill = passaggiValues[item.numPassaggio] ?: -1
-            ListChoiceDialogFragment.show(
-                ListChoiceDialogFragment.Builder(
-                    ADD_PASSAGE
-                ).apply {
-                    title = R.string.passage_title
-                    listArrayId = R.array.passaggi_entries
-                    initialSelection = prefill
-                    positiveButton = R.string.action_salva
-                    negativeButton = R.string.cancel
-                }, activity.supportFragmentManager
-            )
+            consegnatiViewModel.dialogPrefill = item.numPassaggio
+            consegnatiViewModel.dialogTag = ADD_PASSAGE_DIALOG
+            consegnatiViewModel.showAlertDialog.value = true
         }
+    }
+
+    override fun onItemClick(route: String) {
+        when (route) {
+            OptionMenuItem.Filter.route -> {
+                contextMenuExpanded.value = true
+            }
+
+            OptionMenuItem.FilterRemove.route -> {
+                consegnatiViewModel.passaggiSelectedList.value = emptyList()
+            }
+
+            OptionMenuItem.Help.route -> {
+                fabIntro()
+            }
+        }
+    }
+
+    override fun onFabClick(item: FabFragment.FabItem) {
+        if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) {
+            consegnatiViewModel.dialogTag = SAVE_CONSEGNATI_DIALOG
+            consegnatiViewModel.showAlertDialog.value = true
+        } else {
+            consegnatiViewModel.viewMode.value = ConsegnatiViewModel.ViewMode.EDIT
+            mMainActivity?.expandToolbar()
+            startCab()
+            initFab()
+            lifecycleScope.launch { updateChooseList() }
+            val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
+                managerIntro()
+            }
+        }
+    }
+
+    private fun selectItem(id: Int) {
+        val currentSelected = consegnatiViewModel.consegnatiSelectedList.value ?: ArrayList()
+        val newSelected = ArrayList(currentSelected) // Crea una nuova lista
+        newSelected.add(id)
+        consegnatiViewModel.consegnatiSelectedList.value = newSelected // Assegna la nuova lista
+    }
+
+    private fun deselectItem(id: Int) {
+        val currentSelected = consegnatiViewModel.consegnatiSelectedList.value ?: ArrayList()
+        val newSelected = ArrayList(currentSelected) // Crea una nuova lista
+        newSelected.remove(id)
+        consegnatiViewModel.consegnatiSelectedList.value = newSelected // Assegna la nuova lista
+    }
+
+    private fun selectPassaggiItem(id: Int) {
+        val currentSelected = consegnatiViewModel.passaggiSelectedList.value ?: ArrayList()
+        val newSelected = ArrayList(currentSelected) // Crea una nuova lista
+        newSelected.add(id)
+        consegnatiViewModel.passaggiSelectedList.value = newSelected // Assegna la nuova lista
+    }
+
+    private fun deselectPassaggiItem(id: Int) {
+        val currentSelected = consegnatiViewModel.passaggiSelectedList.value ?: ArrayList()
+        val newSelected = ArrayList(currentSelected) // Crea una nuova lista
+        newSelected.remove(id)
+        consegnatiViewModel.passaggiSelectedList.value = newSelected // Assegna la nuova lista
     }
 
     companion object {
         private val TAG = ConsegnatiFragment::class.java.canonicalName
-        private const val ADD_PASSAGE = "ADD_PASSAGE"
-        private const val CONFIRM_SAVE = "CONFIRM_SAVE"
+        private const val ADD_PASSAGE_DIALOG = "ADD_PASSAGE"
+        private const val SAVE_CONSEGNATI_DIALOG = "SAVE_CONSEGNATI"
     }
 }

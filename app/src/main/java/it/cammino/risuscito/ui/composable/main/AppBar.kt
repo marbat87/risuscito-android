@@ -1,12 +1,12 @@
 package it.cammino.risuscito.ui.composable.main
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +24,10 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Shuffle
+import androidx.compose.material.icons.outlined.ClearAll
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material.icons.outlined.FilterListOff
 import androidx.compose.material.icons.outlined.FilterNone
 import androidx.compose.material.icons.outlined.LibraryAddCheck
 import androidx.compose.material3.ExpandedFullScreenSearchBar
@@ -58,11 +61,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import androidx.fragment.compose.AndroidFragment
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.ContextualToolbarTitle
+import it.cammino.risuscito.ui.composable.dialogs.AccountMenuImage
 import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import kotlinx.coroutines.launch
@@ -137,18 +142,70 @@ val customListsMenu =
     listOf(ActionModeItem.Swap, ActionModeItem.Delete)
 
 
+sealed class OptionMenuItem(
+    val route: String,
+    val label: Int,
+    val icon: ImageVector,
+) {
+    object ClearAll :
+        OptionMenuItem(
+            "list_reset",
+            R.string.dialog_reset_favorites_title,
+            Icons.Outlined.ClearAll
+        )
+
+    object Help :
+        OptionMenuItem(
+            "action_help",
+            R.string.action_help,
+            Icons.AutoMirrored.Outlined.Help
+        )
+
+    object FilterRemove :
+        OptionMenuItem(
+            "action_filter_remove",
+            R.string.filters_remove,
+            Icons.Outlined.FilterListOff
+        )
+
+    object Filter :
+        OptionMenuItem(
+            "action_filter",
+            R.string.passage_filter,
+            Icons.Outlined.FilterList
+        )
+}
+
+val helpOptionMenu =
+    listOf(OptionMenuItem.Help)
+
+val cleanListOptionMenu =
+    listOf(OptionMenuItem.ClearAll, OptionMenuItem.Help)
+
+val consegnatiOptionMenu =
+    listOf(OptionMenuItem.Filter, OptionMenuItem.Help)
+
+val consegnatiResetOptionMenu =
+    listOf(OptionMenuItem.FilterRemove, OptionMenuItem.Filter, OptionMenuItem.Help)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarWithSearch(
     searchBarState: SearchBarState = rememberSearchBarState(),
-    onMenuClick: () -> Unit,
+    onMenuClick: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior,
     isActionMode: Boolean = false,
     actionModeMenu: List<ActionModeItem> = emptyList(),
     hideNavigation: Boolean = false,
     onActionModeClick: (String) -> Unit = {},
     contextualTitle: String = "",
-    sharedSearchViewModel: SharedSearchViewModel
+    sharedSearchViewModel: SharedSearchViewModel,
+    optionMenu: List<OptionMenuItem>? = emptyList(),
+    onOptionMenuClick: (String) -> Unit = {},
+    loggedIn: Boolean = false,
+    profilePhotoUrl: String = "",
+    onProfileClick: () -> Unit = {},
+    onLoginClick: () -> Unit = {}
 ) {
 
     TopAppBar(
@@ -157,7 +214,6 @@ fun TopAppBarWithSearch(
                 val textFieldState = rememberTextFieldState()
 
                 LaunchedEffect(searchBarState.currentValue) {
-                    Log.d("APPBAR", "searchBarState1: $searchBarState")
                     textFieldState.edit { replace(0, length, "") }
                     sharedSearchViewModel.searchFilter.value = ""
                 }
@@ -185,7 +241,9 @@ fun TopAppBarWithSearch(
                                         R.string.search_hint
                                     ) else stringResource(R.string.search_name_text),
                                     textAlign = if (searchBarState.currentValue == SearchBarValue.Expanded) TextAlign.Start else TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             },
                             leadingIcon = {
@@ -211,6 +269,19 @@ fun TopAppBarWithSearch(
                                             contentDescription = "Cancella"
                                         )
                                     }
+                                } else {
+                                    if (searchBarState.currentValue == SearchBarValue.Collapsed) {
+                                        Row {
+                                            optionMenu?.forEach {
+                                                IconButton(onClick = { onOptionMenuClick(it.route) }) {
+                                                    Icon(
+                                                        imageVector = it.icon,
+                                                        contentDescription = stringResource(it.label)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         )
@@ -220,7 +291,7 @@ fun TopAppBarWithSearch(
                     inputField = inputField,
                     modifier =
                         Modifier
-                            .padding(top = 8.dp, bottom = 8.dp, start = 0.dp, end = 16.dp)
+                            .padding(vertical = 8.dp, horizontal = 4.dp)
                             .fillMaxWidth()
                 )
                 ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
@@ -278,7 +349,9 @@ fun TopAppBarWithSearch(
         navigationIcon = {
             if (isActionMode) {
                 if (!hideNavigation) { // Mostra l'icona del menu solo se la barra di ricerca non è espansa
-                    IconButton(onClick = { onActionModeClick(ActionModeItem.Close.route) }) {
+                    IconButton(
+                        onClick = { onActionModeClick(ActionModeItem.Close.route) }
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.material_drawer_close),
@@ -287,7 +360,9 @@ fun TopAppBarWithSearch(
                     }
                 }
             } else {
-                IconButton(onClick = onMenuClick) {
+                IconButton(
+                    onClick = onMenuClick
+                ) {
                     Icon(
                         Icons.Filled.Menu,
                         contentDescription = stringResource(R.string.material_drawer_open)
@@ -308,8 +383,16 @@ fun TopAppBarWithSearch(
                         )
                     }
                 }
+            } else {
+                AccountMenuImage(
+                    onProfileClick = onProfileClick,
+                    onLoginClick = onLoginClick,
+                    loggedIn = loggedIn,
+                    profilePhotoUrl = profilePhotoUrl
+                )
             }
         },
+
         scrollBehavior = scrollBehavior,
     )
 }

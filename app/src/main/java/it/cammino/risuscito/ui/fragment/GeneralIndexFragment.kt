@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,27 +11,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.compose.AndroidFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.google.android.material.transition.MaterialSharedAxis
-import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.main.generalIndexesList
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
+import it.cammino.risuscito.viewmodels.SharedTabViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class GeneralIndexFragment : AccountMenuFragment() {
 
-    private val mViewModel: GeneralIndexViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
+    private val sharedTabViewModel: SharedTabViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,13 +33,13 @@ class GeneralIndexFragment : AccountMenuFragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                val localPagerState = mMainActivity?.getPagerState() ?: rememberPagerState(
-                    pageCount = {
-                        3
-                    })
+
+                val localPagerState = rememberPagerState(pageCount = {
+                    4
+                })
+
                 HorizontalPager(
-                    state = localPagerState,
-                    beyondViewportPageCount = 1
+                    state = localPagerState
                 ) { page ->
                     // Our page content
                     when (page) {
@@ -54,13 +48,12 @@ class GeneralIndexFragment : AccountMenuFragment() {
                                 arguments = bundleOf(SimpleIndexFragment.INDICE_LISTA to page)
                             )
 
-//                        2 ->
-//                            AndroidFragment<SectionedIndexFragment>(
-//                                arguments = bundleOf(SectionedIndexFragment.INDICE_LISTA to 0),
-//                                fragmentState = fragmentState
-//                            )
-
                         2 ->
+                            AndroidFragment<SectionedIndexFragment>(
+                                arguments = bundleOf(SectionedIndexFragment.INDICE_LISTA to 0)
+                            )
+
+                        3 ->
                             AndroidFragment<SimpleIndexFragment>(
                                 arguments = bundleOf(SimpleIndexFragment.INDICE_LISTA to 2)
                             )
@@ -70,11 +63,36 @@ class GeneralIndexFragment : AccountMenuFragment() {
                 mMainActivity?.setTabVisible(true)
 
                 LaunchedEffect(localPagerState) {
-                    snapshotFlow { localPagerState.currentPage }.collect { page ->
-                        mViewModel.pageViewed = page
-                        mMainActivity?.changeMaterialTabPage(mViewModel.pageViewed)
-                    }
+                    snapshotFlow { localPagerState.currentPage }
+                        .distinctUntilChanged()
+                        .collect { page ->
+                            Log.d(
+                                TAG,
+                                "localPagerState.currentPage CHANGED (from snapshotFlow): $page"
+                            )
+                            if (sharedTabViewModel.tabsSelectedIndex.intValue != page)
+                                sharedTabViewModel.tabsSelectedIndex.intValue = page
+                        }
                 }
+
+                LaunchedEffect(Unit) { // Esegui una volta e colleziona il flow
+                    snapshotFlow { sharedTabViewModel.tabsSelectedIndex.intValue }
+                        .collect { selectedIndex ->
+                            Log.d(
+                                TAG,
+                                "Tabs selected index CHANGED (from snapshotFlow): $selectedIndex"
+                            )
+                            if (localPagerState.currentPage != selectedIndex) {
+                                Log.d(TAG, "Animating pager to page: $selectedIndex")
+                                localPagerState.scrollToPage(selectedIndex)
+                            }
+                        }
+                }
+
+                mMainActivity?.createOptionsMenu(
+                    emptyList(),
+                    null
+                )
             }
         }
     }
@@ -82,18 +100,18 @@ class GeneralIndexFragment : AccountMenuFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
         mMainActivity?.enableFab(false)
 
         lifecycleScope.launch {
             delay(500)
-            if (savedInstanceState == null) {
+            if (sharedTabViewModel.resetTab.value) {
+                Log.d(TAG, "GeneralIndexFragment newINSTANCE")
+                sharedTabViewModel.resetTab.value = false
                 val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                mViewModel.pageViewed = Integer.parseInt(
+                sharedTabViewModel.tabsSelectedIndex.intValue = Integer.parseInt(
                     pref.getString(Utility.DEFAULT_INDEX, "0")
                         ?: "0"
                 )
-                mMainActivity?.changeMaterialTabPage(mViewModel.pageViewed)
                 mMainActivity?.setTabVisible(true)
             }
 

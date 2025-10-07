@@ -1,6 +1,7 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
@@ -10,9 +11,10 @@ import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.risuscitoListItem
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.useOldIndex
 
 class FavoritesViewModel(application: Application) : DialogManagerViewModel(application) {
+
+    val viewMode = mutableStateOf(ViewMode.VIEW)
 
     var mFavoritesResult: LiveData<List<RisuscitoListItem>>? = null
         private set
@@ -21,15 +23,15 @@ class FavoritesViewModel(application: Application) : DialogManagerViewModel(appl
 
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
-        val useOldIndex = application.useOldIndex()
         mFavoritesResult = mDb.favoritesDao().liveFavorites().map { canti ->
             val newList = ArrayList<RisuscitoListItem>()
             canti.forEach {
                 newList.add(
-                    risuscitoListItem {
+                    risuscitoListItem(
                         titleRes = Utility.getResId(it.titolo, R.string::class.java)
+                    ) {
                         pageRes = Utility.getResId(
-                            if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
+                            it.pagina,
                             R.string::class.java
                         )
                         sourceRes = Utility.getResId(it.source, R.string::class.java)
@@ -40,6 +42,11 @@ class FavoritesViewModel(application: Application) : DialogManagerViewModel(appl
             }
             newList
         }
+    }
+
+    enum class ViewMode {
+        VIEW,
+        EMPTY
     }
 
 }

@@ -65,7 +65,7 @@
     <string name="posizione_add_desc">Tytuł nowej pozycji</string>
     <string name="lista_pers_piena">Maksymalna liczba pozycji wynosi 30</string>
     <string name="lista_pers_vuota">Lista jest pusta</string>
-    <string name="lista_add_desc">Tytuł nowej listy:</string>
+    <string name="lista_add_desc">Tytuł nowej listy</string>
     <string name="save_list_question">Opuszczasz tworzenie spersonalizowanej listy. Czy chcesz zapisać zmiany?</string>
     <string name="action_help">Pomoc</string>
     <string name="dialog_change_title">Aktualności</string>

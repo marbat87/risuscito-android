@@ -1,6 +1,5 @@
 package it.cammino.risuscito.utils.extension
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -153,22 +152,6 @@ fun PackageManager.getPackageInfoTiramisu(packageName: String): PackageInfo {
 
 fun PackageManager.getPackageInfoLegacy(packageName: String): PackageInfo {
     return getPackageInfo(packageName, 0)
-}
-
-fun Application.useOldIndex(): Boolean {
-    return PreferenceManager.getDefaultSharedPreferences(this)
-        .getBoolean(
-            Utility.VECCHIO_INDICE,
-            false
-        ) && systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
-}
-
-fun Context.useOldIndex(): Boolean {
-    return PreferenceManager.getDefaultSharedPreferences(this)
-        .getBoolean(
-            Utility.VECCHIO_INDICE,
-            false
-        ) && systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
 }
 
 fun Context.shareThisApp(subject: String?): Intent {

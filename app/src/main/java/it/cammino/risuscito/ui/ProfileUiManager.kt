@@ -118,7 +118,7 @@ class ProfileUiManager(
         }
     }
 
-    private fun showProfileDialog() {
+    fun showProfileDialog() {
         ProfileDialogFragment.show(
             ProfileDialogFragment.Builder(PROFILE_DIALOG).apply {
                 profileName = profileNameStr

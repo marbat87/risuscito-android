@@ -60,7 +60,6 @@ class AboutFragment : MaterialAboutFragment() {
                     return false
                 }
             }, viewLifecycleOwner)
-            it.setupToolbarTitle(R.string.title_activity_about)
             it.setTabVisible(false)
             it.enableFab(false)
         }

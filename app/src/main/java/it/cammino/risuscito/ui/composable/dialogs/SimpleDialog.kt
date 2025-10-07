@@ -5,23 +5,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import it.cammino.risuscito.utils.extension.capitalize
 
 @Composable
 fun SimpleAlertDialog(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
+    onDismissRequest: (String?) -> Unit,
+    onConfirmation: (String?) -> Unit,
     dialogTitle: String,
     dialogText: String,
-    icon: Painter,
+    icon: ImageVector,
     confirmButtonText: CharSequence,
-    dismissButtonText: CharSequence
+    dismissButtonText: CharSequence,
+    dialogTag: String = ""
 ) {
     AlertDialog(
         icon = {
-            Icon(icon, contentDescription = "Dialog Icon")
+            Icon(imageVector = icon, contentDescription = "Dialog Icon")
         },
         title = {
             Text(text = dialogTitle)
@@ -30,13 +31,13 @@ fun SimpleAlertDialog(
             Text(text = dialogText)
         },
         onDismissRequest = {
-            onDismissRequest()
+            onDismissRequest(dialogTag)
         },
         confirmButton = {
             if (confirmButtonText.isNotEmpty()) {
                 TextButton(
                     onClick = {
-                        onConfirmation()
+                        onConfirmation(dialogTag)
                     }
                 ) {
                     Text(confirmButtonText.capitalize(LocalContext.current))
@@ -47,7 +48,7 @@ fun SimpleAlertDialog(
             if (dismissButtonText.isNotEmpty()) {
                 TextButton(
                     onClick = {
-                        onDismissRequest()
+                        onDismissRequest(dialogTag)
                     }
                 ) {
                     Text(dismissButtonText.capitalize(LocalContext.current))
@@ -55,4 +56,10 @@ fun SimpleAlertDialog(
             }
         }
     )
+}
+
+enum class SimpleDialogTag {
+    DEFAULT,
+    RESET_LIST,
+    DELETE_LIST
 }

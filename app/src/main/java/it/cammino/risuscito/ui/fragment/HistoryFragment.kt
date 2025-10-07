@@ -3,15 +3,15 @@ package it.cammino.risuscito.ui.fragment
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,12 +27,15 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ClearAll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,13 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.google.android.material.transition.MaterialSharedAxis
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
@@ -59,11 +60,15 @@ import it.cammino.risuscito.items.risuscitoListItem
 import it.cammino.risuscito.ui.composable.HistoryListItem
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.OptionMenuItem
+import it.cammino.risuscito.ui.composable.main.cleanListOptionMenu
 import it.cammino.risuscito.ui.composable.main.deleteMenu
+import it.cammino.risuscito.ui.composable.main.helpOptionMenu
 import it.cammino.risuscito.ui.composable.risuscito_medium_font
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
+import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.isGridLayout
@@ -75,9 +80,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.sql.Date
-import java.text.Collator
 
-class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragment {
+class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragment,
+    OptionMenuFragment {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
 
@@ -86,15 +91,7 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
 
     private var actionModeOk: Boolean = false
 
-    private var menuProvider: MenuProvider? = null
-
     private val selectedItems = MutableLiveData(ArrayList<RisuscitoListItem>())
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
@@ -104,8 +101,10 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
             setContent {
                 val state = rememberLazyListState()
                 val coroutineScope = rememberCoroutineScope()
-                val localItems = mCronologiaViewModel.historySortedResult.observeAsState()
-                val localSelectedItems = selectedItems.observeAsState()
+                val localItems by mCronologiaViewModel.historySortedResult.observeAsState()
+                val localSelectedItems by selectedItems.observeAsState()
+
+                val viewMode by remember { mCronologiaViewModel.viewMode }
 
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
@@ -115,125 +114,149 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
                             .fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (localItems.value?.isNotEmpty() == true) {
-                            val listModifier = Modifier
-                                .fillMaxSize()
-                                .then(
-                                    scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
-                                        ?: Modifier
-                                )
+                        AnimatedContent(
+                            viewMode,
+                            transitionSpec = {
+                                fadeIn(
+                                    animationSpec = tween(1000)
+                                ) togetherWith fadeOut(animationSpec = tween(1000))
+                            },
+                            label = "Animated Content"
+                        )
+                        { targetState ->
+                            when (targetState) {
+                                CronologiaViewModel.ViewMode.VIEW -> {
+                                    val listModifier = Modifier
+                                        .fillMaxSize()
+                                        .then(
+                                            scrollBehaviorFromSharedVM?.let {
+                                                Modifier.nestedScroll(
+                                                    it.nestedScrollConnection
+                                                )
+                                            }
+                                                ?: Modifier
+                                        )
 
-                            if (context?.isGridLayout == true) {
-                                LazyVerticalGrid(
-                                    columns = GridCells.Fixed(2),
-                                    modifier = listModifier
-                                ) {
-                                    items(
-                                        localItems.value ?: emptyList(),
-                                        key = { it.id }) { simpleItem ->
-                                        val isItemSelected =
-                                            localSelectedItems.value!!.any { it.id == simpleItem.id }
-                                        val source = stringResource(simpleItem.sourceRes)
-                                        HistoryListItem(
-                                            requireContext(),
-                                            simpleItem,
-                                            onItemClick = { item ->
-                                                if (mMainActivity?.isActionMode?.value == true) {
-                                                    if (isItemSelected) {
-                                                        deselectItem(item.id)
+                                    if (context?.isGridLayout == true) {
+                                        LazyVerticalGrid(
+                                            columns = GridCells.Fixed(2),
+                                            modifier = listModifier
+                                        ) {
+                                            items(
+                                                localItems.orEmpty(),
+                                                key = { it.id }) { simpleItem ->
+                                                val isItemSelected =
+                                                    localSelectedItems.orEmpty()
+                                                        .any { it.id == simpleItem.id }
+                                                val source = stringResource(simpleItem.sourceRes)
+                                                HistoryListItem(
+                                                    requireContext(),
+                                                    simpleItem,
+                                                    onItemClick = { item ->
+                                                        if (mMainActivity?.isActionMode?.value == true) {
+                                                            if (isItemSelected) {
+                                                                deselectItem(item.id)
+                                                            } else {
+                                                                selectItem(item.id, item.timestamp)
+                                                            }
+                                                            if (localSelectedItems.orEmpty()
+                                                                    .isEmpty()
+                                                            ) {
+                                                                mMainActivity?.destroyActionMode()
+                                                            } else updateActionModeTitle()
+                                                        } else {
+                                                            mMainActivity?.openCanto(
+                                                                TAG,
+                                                                item.id,
+                                                                source,
+                                                                false
+                                                            )
+                                                        }
+                                                    },
+                                                    onItemLongClick = { item ->
+                                                        if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
+                                                            selectItem(item.id, item.timestamp)
+                                                            startCab()
+                                                        }
+                                                    },
+                                                    selected = isItemSelected,
+                                                    modifier = Modifier.animateItem()
+                                                )
+                                            }
+                                        }
+                                    }
+                                    LazyColumn(
+                                        state = state,
+                                        modifier = listModifier
+                                    ) {
+                                        items(
+                                            localItems.orEmpty(),
+                                            key = { it.id }) { simpleItem ->
+                                            val isItemSelected =
+                                                localSelectedItems.orEmpty()
+                                                    .any { it.id == simpleItem.id }
+                                            val source = stringResource(simpleItem.sourceRes)
+                                            HistoryListItem(
+                                                requireContext(),
+                                                simpleItem,
+                                                onItemClick = { item ->
+                                                    if (mMainActivity?.isActionMode?.value == true) {
+                                                        if (isItemSelected) {
+                                                            deselectItem(item.id)
+                                                        } else {
+                                                            selectItem(item.id, item.timestamp)
+                                                        }
+                                                        if (localSelectedItems.orEmpty()
+                                                                .isEmpty()
+                                                        ) {
+                                                            mMainActivity?.destroyActionMode()
+                                                        } else updateActionModeTitle()
                                                     } else {
-                                                        selectItem(item.id, item.timestamp)
+                                                        mMainActivity?.openCanto(
+                                                            TAG,
+                                                            item.id,
+                                                            source,
+                                                            false
+                                                        )
                                                     }
-                                                    if (localSelectedItems.value!!.isEmpty()) {
-                                                        mMainActivity?.destroyActionMode()
-                                                    } else updateActionModeTitle()
-                                                } else {
-                                                    mMainActivity?.openCanto(
-                                                        TAG,
-                                                        item.id,
-                                                        source,
-                                                        false
-                                                    )
-                                                }
-                                            },
-                                            onItemLongClick = { item ->
-                                                if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
-                                                    selectItem(item.id, item.timestamp)
-                                                    startCab()
-                                                }
-                                            },
-                                            selected = isItemSelected,
-                                            modifier = Modifier.animateItem()
+                                                },
+                                                onItemLongClick = { item ->
+                                                    if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
+                                                        selectItem(item.id, item.timestamp)
+                                                        startCab()
+                                                    }
+                                                },
+                                                selected = isItemSelected,
+                                                modifier = Modifier.animateItem(tween())
+                                            )
+                                        }
+                                    }
+                                }
+
+                                CronologiaViewModel.ViewMode.EMPTY -> {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentHeight(), // Occupa solo l'altezza necessaria
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Image(
+                                            painter = painterResource(R.drawable.ic_history_clock),
+                                            contentDescription = stringResource(id = R.string.history_empty),
+                                            modifier = Modifier
+                                                .size(120.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
+                                        Text(
+                                            text = stringResource(R.string.history_empty),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
+                                            fontFamily = risuscito_medium_font,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
                                         )
                                     }
                                 }
-                            } else {
-                                LazyColumn(
-                                    state = state,
-                                    modifier = listModifier
-                                ) {
-                                    items(
-                                        localItems.value ?: emptyList(),
-                                        key = { it.id }) { simpleItem ->
-                                        val isItemSelected =
-                                            localSelectedItems.value!!.any { it.id == simpleItem.id }
-                                        val source = stringResource(simpleItem.sourceRes)
-                                        HistoryListItem(
-                                            requireContext(),
-                                            simpleItem,
-                                            onItemClick = { item ->
-                                                if (mMainActivity?.isActionMode?.value == true) {
-                                                    if (isItemSelected) {
-                                                        deselectItem(item.id)
-                                                    } else {
-                                                        selectItem(item.id, item.timestamp)
-                                                    }
-                                                    if (localSelectedItems.value!!.isEmpty()) {
-                                                        mMainActivity?.destroyActionMode()
-                                                    } else updateActionModeTitle()
-                                                } else {
-                                                    mMainActivity?.openCanto(
-                                                        TAG,
-                                                        item.id,
-                                                        source,
-                                                        false
-                                                    )
-                                                }
-                                            },
-                                            onItemLongClick = { item ->
-                                                if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
-                                                    selectItem(item.id, item.timestamp)
-                                                    startCab()
-                                                }
-                                            },
-                                            selected = isItemSelected,
-                                            modifier = Modifier.animateItem(tween())
-                                        )
-                                    }
-                                }
-                            }
-                        } else {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(), // Occupa solo l'altezza necessaria
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable.ic_history_clock),
-                                    contentDescription = stringResource(id = R.string.history_empty),
-                                    modifier = Modifier
-                                        .size(120.dp)
-                                )
-                                Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
-                                Text(
-                                    text = stringResource(R.string.history_empty),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
-                                    fontFamily = risuscito_medium_font,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
-                                )
                             }
                         }
                     }
@@ -246,12 +269,13 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
                                 mCronologiaViewModel.showAlertDialog.postValue(false)
                                 simpleDialogViewModel.handled = true
                                 val mDao =
-                                    RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
+                                    RisuscitoDatabase.getInstance(requireContext())
+                                        .cronologiaDao()
                                 coroutineScope.launch(Dispatchers.IO) { mDao.emptyCronologia() }
                             },
                             dialogTitle = stringResource(R.string.dialog_reset_favorites_title),
                             dialogText = stringResource(R.string.dialog_reset_favorites_desc),
-                            icon = painterResource(R.drawable.clear_all_24px),
+                            icon = Icons.Outlined.ClearAll,
                             confirmButtonText = stringResource(R.string.clear_confirm),
                             dismissButtonText = stringResource(R.string.cancel)
                         )
@@ -259,73 +283,38 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
                 }
 
                 mCronologiaViewModel.cronologiaCanti?.observe(viewLifecycleOwner) { canti ->
-                    mCronologiaViewModel.historySortedResult.postValue(
-                        canti.sortedWith(
-                            compareBy(
-                                Collator.getInstance(systemLocale)
-                            ) { getString(it.titleRes) })
+                    mCronologiaViewModel.historySortedResult.postValue(canti)
+                    mMainActivity?.createOptionsMenu(
+                        if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
+                        this@HistoryFragment
                     )
+                    mCronologiaViewModel.viewMode.value =
+                        if (canti.isEmpty()) CronologiaViewModel.ViewMode.EMPTY else CronologiaViewModel.ViewMode.VIEW
+                    if (canti.isEmpty())
+                        mMainActivity?.expandToolbar()
                 }
-                if (mCronologiaViewModel.historySortedResult.value!!.count() == 0) mMainActivity?.expandToolbar()
-                activity?.invalidateOptionsMenu()
+
             }
         }
     }
 
     private fun selectItem(idCanto: Int, timestampCanto: String) {
-        val currentSelected = selectedItems.value ?: ArrayList()
+        val currentSelected = selectedItems.value.orEmpty()
         val newSelected = ArrayList(currentSelected) // Crea una nuova lista
-        newSelected.add(risuscitoListItem {
-            id = idCanto
-            timestamp = timestampCanto
-        })
+        newSelected.add(
+            risuscitoListItem(
+                timestamp = timestampCanto
+            ) {
+                id = idCanto
+            })
         selectedItems.value = newSelected // Assegna la nuova lista
     }
 
     private fun deselectItem(id: Int) {
-        val currentSelected = selectedItems.value ?: ArrayList()
-        val newSelected = ArrayList(currentSelected.filter { it.id != id }) // Crea una nuova lista
+        val currentSelected = selectedItems.value.orEmpty()
+        val newSelected =
+            ArrayList(currentSelected.filter { it.id != id }) // Crea una nuova lista
         selectedItems.value = newSelected // Assegna la nuova lista
-    }
-
-    override fun onStop() {
-        super.onStop()
-        menuProvider?.let {
-            Log.d(TAG, "removeMenu")
-            mMainActivity?.removeMenuProvider(it)
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        menuProvider = object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.clean_list_menu, menu)
-                menu.findItem(R.id.list_reset).isVisible =
-                    mCronologiaViewModel.historySortedResult.value!!.count() > 0
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.list_reset -> {
-                        mCronologiaViewModel.showAlertDialog.postValue(true)
-                        return true
-                    }
-
-                    R.id.action_help -> {
-                        Toast.makeText(
-                            activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT
-                        ).show()
-                        return true
-                    }
-                }
-                return false
-            }
-        }
-        menuProvider?.let {
-            Log.d(TAG, "addMenu")
-            mMainActivity?.addMenuProvider(it)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -340,7 +329,11 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
             PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .edit { putBoolean(Utility.HISTORY_OPEN, true) }
             Handler(Looper.getMainLooper()).postDelayed(250) {
-                Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    activity,
+                    getString(R.string.new_hint_remove),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
         }
@@ -374,7 +367,7 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
     }
 
     private fun updateActionModeTitle() {
-        val itemSelectedCount = selectedItems.value?.count() ?: 0
+        val itemSelectedCount = selectedItems.value.orEmpty().count()
         mMainActivity?.updateActionModeTitle(
             resources.getQuantityString(
                 R.plurals.item_selected, itemSelectedCount, itemSelectedCount
@@ -395,8 +388,8 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
                 showSnackBar(
                     message = resources.getQuantityString(
                         R.plurals.histories_removed,
-                        selectedItems.value!!.count(),
-                        selectedItems.value!!.count()
+                        selectedItems.value.orEmpty().count(),
+                        selectedItems.value.orEmpty().count()
                     ),
                     label = getString(R.string.cancel)
                         .uppercase(systemLocale)
@@ -407,7 +400,7 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
 
     override fun onActionPerformed() {
         val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
-        for (removedItem in selectedItems.value!!) {
+        for (removedItem in selectedItems.value.orEmpty()) {
             val cronTemp = Cronologia()
             cronTemp.idCanto = removedItem.id
             cronTemp.ultimaVisita = Date(
@@ -434,6 +427,20 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragm
             callback = this,
             label = label
         )
+    }
+
+    override fun onItemClick(route: String) {
+        when (route) {
+            OptionMenuItem.ClearAll.route -> {
+                mCronologiaViewModel.showAlertDialog.postValue(true)
+            }
+
+            OptionMenuItem.Help.route -> {
+                Toast.makeText(
+                    activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     companion object {

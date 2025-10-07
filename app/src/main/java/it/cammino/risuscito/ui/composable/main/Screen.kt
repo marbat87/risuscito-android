@@ -5,14 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalNavigationDrawer
@@ -20,22 +17,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import it.cammino.risuscito.ui.interfaces.FabFragment.FabItem
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import kotlinx.coroutines.launch
@@ -55,12 +53,20 @@ fun MainScreen(
     searchBarState: SearchBarState = rememberSearchBarState(),
     showLoadingBar: Boolean = false,
     showTabs: Boolean = false,
-    selectedTabIndex: MutableIntState = mutableIntStateOf(0),
+    selectedTabIndex: MutableIntState,
     tabsList: List<Destination>? = emptyList(),
-    pagerState: PagerState,
+    resetTab: MutableState<Boolean>,
     snackbarHostState: SnackbarHostState,
     showFab: Boolean = false,
-    sharedSearchViewModel: SharedSearchViewModel
+    sharedSearchViewModel: SharedSearchViewModel,
+    optionMenu: List<OptionMenuItem>? = emptyList(),
+    onOptionMenuClick: (String) -> Unit = {},
+    fabIcon: ImageVector,
+    onFabClick: (FabItem) -> Unit = {},
+    loggedIn: Boolean = false,
+    profilePhotoUrl: String = "",
+    onProfileClick: () -> Unit = {},
+    onLoginClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
 
@@ -87,7 +93,8 @@ fun MainScreen(
                     scope.launch { drawerState.close() }
                     onDrawerItemClick(route)
                 },
-                onCloseDrawer = { scope.launch { drawerState.close() } }
+                onCloseDrawer = { scope.launch { drawerState.close() } },
+                drawerState = drawerState
             )
         }
     ) {
@@ -106,7 +113,13 @@ fun MainScreen(
                     hideNavigation = hideNavigation,
                     onActionModeClick = onActionModeClick,
                     contextualTitle = contextualTitle,
-                    sharedSearchViewModel = sharedSearchViewModel
+                    sharedSearchViewModel = sharedSearchViewModel,
+                    optionMenu = optionMenu,
+                    onOptionMenuClick = onOptionMenuClick,
+                    loggedIn = loggedIn,
+                    profilePhotoUrl = profilePhotoUrl,
+                    onProfileClick = onProfileClick,
+                    onLoginClick = onLoginClick
                 )
                 // Se hai anche i TabLayout, la loro gestione andrà qui,
                 // probabilmente sotto la SearchBar o come parte di essa se integrati.
@@ -116,24 +129,24 @@ fun MainScreen(
                 RisuscitoBottomNavigationBar(
                     currentRoute = currentRoute,
                     onNavigate = { route ->
+                        scrollBehavior.state.heightOffset = 0F
                         navController.navigate(route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
-                            restoreState = true
+//                            restoreState = true
                         }
-                    }
+                    },
+                    resetTab = resetTab
                 )
             },
             floatingActionButton = {
-                // Sostituisci con la tua implementazione di SpeedDialView
-                // Potrebbe essere necessario un Composable personalizzato o una libreria Compose.
-                // Per ora, un FAB standard come placeholder.
+                //TODO
                 if (showFab) {
-                    ExtendedFloatingActionButton(
-                        text = { Text("Azione") },
-                        icon = { Icon(Icons.Filled.Add, contentDescription = "Azione") },
-                        onClick = { /* Logica FAB principale */ }
-                    )
+                    FloatingActionButton(
+                        onClick = { onFabClick(FabItem.MAIN) },
+                    ) {
+                        Icon(fabIcon, "Floating action button.")
+                    }
                 }
             },
             floatingActionButtonPosition = FabPosition.End,
@@ -149,8 +162,7 @@ fun MainScreen(
                 if (showTabs) {
                     RisuscitoTabs(
                         selectedTabIndex = selectedTabIndex,
-                        tabsList = tabsList,
-                        pagerState = pagerState
+                        tabsList = tabsList
                     )
                 }
                 Box {

@@ -4,12 +4,31 @@ import android.graphics.Color
 import it.cammino.risuscito.database.entities.Canto
 import it.cammino.risuscito.utils.Utility.helperSetColor
 
-fun risuscitoListItem(block: RisuscitoListItem.() -> Unit): RisuscitoListItem =
-    RisuscitoListItem().apply(block)
+fun risuscitoListItem(
+    titleRes: Int = 0, // Parametro con lo stesso valore di default del costruttore
+    itemType: ExpandableItemType = ExpandableItemType.SUBITEM, // Parametro con lo stesso valore di default
+    numPassaggio: Int = -1,
+    timestamp: String = "",
+    block: RisuscitoListItem.() -> Unit = {} // Mantieni il blocco opzionale per ulteriori configurazioni
+): RisuscitoListItem {
+    // Crea l'istanza usando i parametri passati (o i loro default se non forniti)
+    val listItem = RisuscitoListItem(
+        titleRes = titleRes,
+        itemType = itemType,
+        numPassaggio = numPassaggio,
+        timestamp = timestamp
+    )
+    // Applica il blocco di configurazione
+    listItem.apply(block)
+    return listItem
+}
 
-class RisuscitoListItem {
-
-    var titleRes = 0
+data class RisuscitoListItem(
+    val titleRes: Int = 0,
+    val itemType: ExpandableItemType = ExpandableItemType.SUBITEM,
+    val numPassaggio: Int = -1,
+    val timestamp: String = ""
+) {
 
     var pageRes = 0
 
@@ -31,8 +50,20 @@ class RisuscitoListItem {
 
     var filter: String? = null
 
-    var timestamp = ""
+    var idConsegnato: Int = 0
 
-    var consegnato: Int = 0
+    var identifier = 0
 
+    var subCantiCounter = 0
+
+    var groupIndex = 0
+
+    var consegnato = 0
+
+}
+
+enum class ExpandableItemType {
+    TITLE,
+    EXPANDABLE,
+    SUBITEM,
 }

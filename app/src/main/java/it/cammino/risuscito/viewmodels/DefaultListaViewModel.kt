@@ -2,18 +2,21 @@ package it.cammino.risuscito.viewmodels
 
 import android.app.Application
 import android.os.Bundle
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import it.cammino.risuscito.utils.Utility
+import androidx.lifecycle.MutableLiveData
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.pojo.Posizione
+import it.cammino.risuscito.items.ListaPersonalizzataPositionListItem
+import it.cammino.risuscito.utils.Utility
 
 
-class DefaultListaViewModel(application: Application, args: Bundle) : AndroidViewModel(application) {
+class DefaultListaViewModel(application: Application, args: Bundle) : DialogManagerViewModel(application) {
 
     var cantiResult: LiveData<List<Posizione>>? = null
         private set
     var defaultListaId: Int = -1
+
+    var posizioniList = MutableLiveData(emptyList<ListaPersonalizzataPositionListItem>())
 
     init {
         defaultListaId = args.getInt(Utility.TIPO_LISTA)

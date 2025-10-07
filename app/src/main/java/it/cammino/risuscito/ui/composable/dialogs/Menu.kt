@@ -1,21 +1,37 @@
 package it.cammino.risuscito.ui.composable.dialogs
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.entities.ListaPers
+import it.cammino.risuscito.ui.composable.SideMenuTitle
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -286,4 +302,56 @@ fun AddToDropDownMenu(
             }
         }
     }
+}
+
+@Composable
+fun PassaggesDropDownMenu(
+    menuExpanded: Boolean,
+    nomiPassaggi: Array<String>,
+    indiciPassaggi: IntArray,
+    passaggiSelezionati: MutableLiveData<List<Int>>,
+    onDismissRequest: () -> Unit,
+    onSelect: (Int, Boolean) -> Unit,
+) {
+
+    val passaggiSelectedItems = passaggiSelezionati.observeAsState()
+
+    DropdownMenu(
+        expanded = menuExpanded,
+        onDismissRequest = { onDismissRequest() }
+    ) {
+
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(start = 16.dp, end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SideMenuTitle(stringResource(R.string.passage_filter))
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = { onDismissRequest() }) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Close"
+                    )
+                }
+            }
+
+            indiciPassaggi.forEachIndexed { i, item ->
+                MenuSelectabletem(
+                    text = nomiPassaggi[i],
+                    onSelect = {
+                        onSelect(item, it)
+                    },
+                    selected = passaggiSelectedItems.value?.contains(item) ?: false
+                )
+            }
+
+        }
+
+    }
+
 }

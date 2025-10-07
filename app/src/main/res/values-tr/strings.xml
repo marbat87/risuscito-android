@@ -65,7 +65,7 @@
     <string name="posizione_add_desc">Yeni öğenin başlığı</string>
     <string name="lista_pers_piena">Maksimum eklenebilir öğe sayısı 30 </string>
     <string name="lista_pers_vuota">Bu liste boş</string>
-    <string name="lista_add_desc">Yeni listenin başlığı:</string>
+    <string name="lista_add_desc">Yeni listenin başlığı</string>
     <string name="save_list_question">Kişiselleştirilmiş liste yaratmadan çıkmak üzeresin. Değişiklikler kaydedilsin mi?</string>
     <string name="action_help">Yardım</string>
     <string name="dialog_change_title">Yenilik</string>

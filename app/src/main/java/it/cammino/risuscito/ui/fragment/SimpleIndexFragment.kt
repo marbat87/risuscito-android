@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FindReplace
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -54,6 +55,7 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.ui.activity.MainActivity
+import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
@@ -93,10 +95,12 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
 
     private var job: Job = Job()
     private var mActivity: MainActivity? = null
+    private var mThemeableActivity: ThemeableActivity? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mActivity = activity as? MainActivity
+        mThemeableActivity = activity as? ThemeableActivity
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -116,6 +120,45 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
                 val isSearch = arguments?.getBoolean(IS_SEARCH, false) == true
+
+                val isInsert = arguments?.getBoolean(IS_INSERT, false) == true
+
+                val rememberItemClick = remember<(RisuscitoListItem) -> Unit> {
+                    { item ->
+                        if (isInsert) {
+                            sharedSearchViewModel.insertItemId = item.id
+                            sharedSearchViewModel.done.value = true
+                        } else {
+                            mThemeableActivity?.openCanto(
+                                TAG,
+                                item.id,
+                                getString(item.sourceRes),
+                                false
+                            )
+                        }
+                    }
+                }
+
+                val rememberIconClick = remember<(RisuscitoListItem) -> Unit> {
+                    { item ->
+                        Log.d(TAG, "rememberIconClick: ${item.id}")
+                        mThemeableActivity?.openCanto(
+                            TAG,
+                            item.id,
+                            getString(item.sourceRes),
+                            false
+                        )
+                    }
+                }
+
+                val rememberItemLongClick = remember<(RisuscitoListItem) -> Unit> {
+                    { item ->
+                        if (!isInsert) {
+                            mCantiViewModel.idDaAgg = item.id
+                            contextMenuExpanded.value = true
+                        }
+                    }
+                }
 
                 RisuscitoTheme {
                     if (isSearch) {
@@ -146,11 +189,13 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                         }
                     }
                     if (showSearchProgress.value) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) { CircularProgressIndicator(
-                            modifier = Modifier.width(64.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        ) }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.width(64.dp),
+                                color = MaterialTheme.colorScheme.secondary,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            )
+                        }
                     }
                     Box(
                         modifier = Modifier.pointerInteropFilter {
@@ -170,24 +215,15 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                                 modifier = listModifier
                             ) {
                                 items(localItems.value) { simpleItem ->
-                                    val source = stringResource(simpleItem.sourceRes)
                                     SimpleListItem(
                                         requireContext(),
                                         simpleItem,
-                                        onItemClick = { item ->
-                                            mActivity?.openCanto(
-                                                TAG,
-                                                item.id,
-                                                source,
-                                                false
-                                            )
-                                        },
-                                        onItemLongClick = { item ->
-                                            mCantiViewModel.idDaAgg = item.id
-                                            contextMenuExpanded.value = true
-                                        },
+                                        onItemClick = { rememberItemClick(it) },
+                                        onItemLongClick = { rememberItemLongClick(it) },
                                         selected = false,
-                                        modifier = Modifier.animateItem()
+                                        modifier = Modifier.animateItem(),
+                                        isInsert = isInsert,
+                                        onIconClick = { rememberIconClick(it) }
                                     )
                                 }
                             }
@@ -197,24 +233,15 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                                 modifier = listModifier
                             ) {
                                 items(localItems.value) { simpleItem ->
-                                    val source = stringResource(simpleItem.sourceRes)
                                     SimpleListItem(
                                         requireContext(),
                                         simpleItem,
-                                        onItemClick = { item ->
-                                            mActivity?.openCanto(
-                                                TAG,
-                                                item.id,
-                                                source,
-                                                false
-                                            )
-                                        },
-                                        onItemLongClick = { item ->
-                                            mCantiViewModel.idDaAgg = item.id
-                                            contextMenuExpanded.value = true
-                                        },
+                                        onItemClick = { rememberItemClick(it) },
+                                        onItemLongClick = { rememberItemLongClick(it) },
                                         selected = false,
-                                        modifier = Modifier.animateItem()
+                                        modifier = Modifier.animateItem(),
+                                        isInsert = isInsert,
+                                        onIconClick = { rememberIconClick(it) }
                                     )
                                 }
                             }
@@ -257,10 +284,10 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                             onConfirmation = {
                                 Log.d(
                                     TAG,
-                                    "mCantiViewModel.shownDialogTag ${mCantiViewModel.shownDialogTag}"
+                                    "mCantiViewModel.shownDialogTag ${mCantiViewModel.dialogTag}"
                                 )
                                 mCantiViewModel.showAlertDialog.postValue(false)
-                                when (mCantiViewModel.shownDialogTag) {
+                                when (mCantiViewModel.dialogTag) {
                                     ALPHA_REPLACE, NUMERIC_REPLACE, SALMI_REPLACE -> {
                                         listePersonalizzate?.let { lista ->
                                             lista[mCantiViewModel.idListaClick]
@@ -286,8 +313,8 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                                 }
                             },
                             dialogTitle = stringResource(R.string.dialog_replace_title),
-                            dialogText = mCantiViewModel.alertDialogContent,
-                            icon = painterResource(R.drawable.find_replace_24px),
+                            dialogText = mCantiViewModel.content.value.orEmpty(),
+                            icon = Icons.Outlined.FindReplace,
                             confirmButtonText = stringResource(R.string.replace_confirm),
                             dismissButtonText = stringResource(R.string.cancel)
                         )
@@ -297,6 +324,11 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 Log.d(TAG, "onCreateView: IS_SEARCH ${arguments?.getBoolean(IS_SEARCH, false)}")
                 if (arguments?.getBoolean(IS_SEARCH, false) == true) {
                     sharedSearchViewModel.advancedSearchFilter.observe(viewLifecycleOwner) {
+                        job.cancel()
+                        ricercaStringa()
+                    }
+
+                    sharedSearchViewModel.consegnatiOnlyFilter.observe(viewLifecycleOwner) {
                         job.cancel()
                         ricercaStringa()
                     }
@@ -321,7 +353,6 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                                 })
 
                                 1 -> canti.sortedBy { getString(it.pageRes).toInt() }
-                                2 -> canti
                                 else -> canti
                             }
                     }
@@ -348,7 +379,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
     }
 
     private fun ricercaStringa() {
-        val s = sharedSearchViewModel.searchFilter.value ?: StringUtils.EMPTY
+        val s = sharedSearchViewModel.searchFilter.value.orEmpty()
         Log.d(TAG, "performSearch STRINGA: $s")
         job = lifecycleScope.launch {
             // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
@@ -359,7 +390,14 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 Firebase.crashlytics.log("function: search_text - search_string: $s - advanced: ${sharedSearchViewModel.advancedSearchFilter.value}")
 
                 Log.d(TAG, "performSearch STRINGA: $s")
-                Log.d(TAG, "performSearch ADVANCED: ${sharedSearchViewModel.advancedSearchFilter.value}")
+                Log.d(
+                    TAG,
+                    "performSearch ADVANCED: ${sharedSearchViewModel.advancedSearchFilter.value}"
+                )
+                Log.d(
+                    TAG,
+                    "performSearch CONSEGNATI ONLY: ${sharedSearchViewModel.consegnatiOnlyFilter.value}"
+                )
                 if (sharedSearchViewModel.advancedSearchFilter.value == true) {
                     val words =
                         s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -384,7 +422,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
 
                         if (found) {
                             Log.d(TAG, "aText[0]: ${aText[0]}")
-                            sharedSearchViewModel.titoli.filter { (aText[0].orEmpty()) == it.undecodedSource }
+                            sharedSearchViewModel.titoli.filter { (aText[0].orEmpty()) == it.undecodedSource && (sharedSearchViewModel.consegnatiOnlyFilter.value != true || it.consegnato != -1) }
                                 .forEach {
                                     if (!isActive) return@launch
                                     titoliResult.add(it.apply { filter = StringUtils.EMPTY })
@@ -397,7 +435,8 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     sharedSearchViewModel.titoli.filter {
                         Utility.removeAccents(
                             getString(it.titleRes)
-                        ).lowercase(systemLocale).contains(stringa)
+                        ).lowercase(systemLocale)
+                            .contains(stringa) && (sharedSearchViewModel.consegnatiOnlyFilter.value != true || it.consegnato != -1)
                     }.forEach {
                         if (!isActive) return@launch
                         titoliResult.add(it.apply { filter = stringa })
@@ -413,7 +452,6 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 }
             } else {
                 if (s.isEmpty()) {
-//                    binding.searchViewLayout.matchedList.isVisible = false
                     sharedSearchViewModel.itemsResultFiltered.value = sharedSearchViewModel.titoli
                     showSearchProgress.value = false
 //                    expandToolbar()
@@ -432,14 +470,10 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
         private const val SALMI_REPLACE_2 = "SALMI_REPLACE_2"
         const val INDICE_LISTA = "indiceLista"
 
+        const val IS_INSERT = "isInsert"
+
         const val IS_SEARCH = "isSearch"
 
-        fun newInstance(tipoLista: Int, isSearch: Boolean = false): SimpleIndexFragment {
-            val f = SimpleIndexFragment()
-            f.arguments = bundleOf(INDICE_LISTA to tipoLista)
-            f.arguments = bundleOf(IS_SEARCH to isSearch)
-            return f
-        }
     }
 
 }

@@ -508,7 +508,7 @@ open class CantoFragment : Fragment() {
             Firebase.crashlytics.setCustomKeys(
                 CustomKeysAndValues.Builder().putString(
                     "pagina_canto",
-                    mCantiViewModel.pagina ?: StringUtils.EMPTY
+                    mCantiViewModel.pagina.orEmpty()
                 ).putString("lingua", requireContext().systemLocale.language).build()
             )
 

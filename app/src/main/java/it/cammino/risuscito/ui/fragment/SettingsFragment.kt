@@ -210,7 +210,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
         //usato solo in tablet
         (mMainActivity as? MainActivity)?.let {
-            it.setupToolbarTitle(R.string.title_activity_settings)
             it.setTabVisible(false)
             it.enableFab(false)
             it.addMenuProvider(object : MenuProvider {

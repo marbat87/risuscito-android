@@ -10,9 +10,15 @@ class SharedSearchViewModel : ViewModel() {
 
     var advancedSearchFilter: MutableLiveData<Boolean> = MutableLiveData(false)
 
+    var consegnatiOnlyFilter: MutableLiveData<Boolean> = MutableLiveData(false)
+
     var searchFilter: MutableLiveData<String> = MutableLiveData("")
 
     lateinit var aTexts: Array<Array<String?>>
 
     var titoli: List<RisuscitoListItem> = ArrayList()
+
+    var insertItemId = 0
+
+    val done: MutableLiveData<Boolean> = MutableLiveData(false)
 }

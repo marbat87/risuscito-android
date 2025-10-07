@@ -38,7 +38,6 @@ object Utility {
     const val CHANGE_LANGUAGE = "changed_language"
     const val OLD_LANGUAGE = "old_language"
     const val NEW_LANGUAGE = "new_language"
-    const val CLICK_DELAY: Long = 2000
     internal const val SHOW_SECONDA = "mostra_seconda_lettura"
     internal const val SHOW_PACE = "mostra_canto_pace"
     internal const val SAVE_LOCATION = "memoria_salvataggio_scelta"
@@ -60,14 +59,12 @@ object Utility {
     internal const val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
     internal const val NIGHT_MODE = "night_mode"
     internal const val DYNAMIC_COLORS = "dynamic_colors"
-    internal const val OLD_PAGE_SUFFIX = "_old"
     internal const val SHARED_AXIS = "shared_axis"
 //    private const val TOKEN_VALIDATION_PATH = "https://oauth2.googleapis.com/tokeninfo?id_token="
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"
     internal const val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
-    internal const val CLICK_DELAY_SELECTION: Long = 300
 
     // Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     internal const val HTML_CONTENT = "htmlContent"
@@ -92,24 +89,24 @@ object Utility {
 
     /* Filtra il link di input per tenere solo il nome del file */
     private fun filterMediaLinkNew(link: String?): String {
-        link?.let {
-            return if (it.isEmpty())
+        return link?.let {
+            if (it.isEmpty())
                 it
             else {
                 it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
-        } ?: return StringUtils.EMPTY
+        }.orEmpty()
     }
 
     /* Filtra il link di input per tenere solo il nome del file */
     internal fun filterMediaLink(link: String?): String {
-        link?.let {
-            return if (it.isEmpty())
+        return link?.let {
+            if (it.isEmpty())
                 it
             else {
                 it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
-        } ?: return StringUtils.EMPTY
+        }.orEmpty()
     }
 
     fun retrieveMediaFileLink(activity: Context, link: String?, cercaEsterno: Boolean): String {

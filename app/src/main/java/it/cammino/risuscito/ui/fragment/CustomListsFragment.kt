@@ -1,147 +1,229 @@
 package it.cammino.risuscito.ui.fragment
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CleaningServices
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
-import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.fragment.compose.AndroidFragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.MaterialSharedAxis
+import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.leinardi.android.speeddial.SpeedDialView
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.databinding.TabsLayoutBinding
 import it.cammino.risuscito.ui.activity.CreaListaActivity
 import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.EDIT_EXISTING_LIST
 import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.ID_DA_MODIF
 import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.LIST_TITLE
+import it.cammino.risuscito.ui.composable.dialogs.InputDialog
+import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.main.Destination
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.ui.composable.main.OptionMenuItem
+import it.cammino.risuscito.ui.composable.main.helpOptionMenu
+import it.cammino.risuscito.ui.interfaces.FabFragment
+import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
+import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.launchForResultWithAnimation
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
+import it.cammino.risuscito.viewmodels.InputDialogManagerViewModel
+import it.cammino.risuscito.viewmodels.SharedTabViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CustomListsFragment : AccountMenuFragment() {
+class CustomListsFragment : AccountMenuFragment(), OptionMenuFragment, SnackBarFragment,
+    FabFragment {
 
     private val mCustomListsViewModel: CustomListsViewModel by viewModels()
-    private val inputdialogViewModel: InputTextDialogFragment.DialogViewModel by viewModels({ requireActivity() })
-    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
-    private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
-    private var titoliListe: Array<String?> = arrayOfNulls(0)
+    private val inputdialogViewModel: InputDialogManagerViewModel by viewModels()
+
+    private val sharedTabViewModel: SharedTabViewModel by activityViewModels()
+
+    val titoliListe = MutableLiveData(emptyArray<String?>())
     private var idListe: IntArray = IntArray(0)
     private var movePage: Boolean = false
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
-//    private var tabs: TabLayout? = null
-    private var mLastClickTime: Long = 0
-    private val mPageChange: ViewPager2.OnPageChangeCallback =
-        object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                Log.d(TAG, "onPageSelected: $position")
-                Log.d(
-                    TAG,
-                    " BEFORE mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
-                )
-                if (mCustomListsViewModel.indexToShow != position) {
-                    mCustomListsViewModel.indexToShow = position
-                    mMainActivity?.destroyActionMode()
-                }
-                Log.d(
-                    TAG,
-                    " AFTER mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
-                )
-                initFabOptions(position >= 2)
-            }
-        }
-    private var menuProvider: MenuProvider? = null
-
-    private var _binding: TabsLayoutBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = TabsLayoutBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        return ComposeView(requireContext()).apply {
+            setContent {
 
-    override fun onStop() {
-        super.onStop()
-        menuProvider?.let {
-            Log.d(TAG, "removeMenu")
-            mMainActivity?.removeMenuProvider(it)
-        }
-    }
+                val localItems by titoliListe.observeAsState()
 
-    override fun onStart() {
-        super.onStart()
-        menuProvider = object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.help_menu, menu)
-            }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    val localPagerState = rememberPagerState(
+                        pageCount = {
+                            2 + (localItems.orEmpty().size)
+                        })
+                    HorizontalPager(
+                        state = localPagerState
+                    ) { page ->
+                        // Our page content
+                        when (page) {
+                            0, 1 ->
+                                AndroidFragment<ListaPredefinitaFragment>(
+                                    arguments = bundleOf(ListaPredefinitaFragment.INDICE_LISTA to page + 1)
+                                )
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.action_help -> {
-                        playIntro()
-                        return true
+                            else ->
+                                AndroidFragment<ListaPersonalizzataFragment>(
+                                    arguments = bundleOf(ListaPersonalizzataFragment.INDICE_LISTA to idListe[page - 2])
+                                )
+
+                        }
+                    }
+
+                    LaunchedEffect(localPagerState) {
+                        snapshotFlow { localPagerState.currentPage }
+                            .distinctUntilChanged()
+                            .collect { page ->
+                                Log.d(
+                                    TAG,
+                                    "localPagerState.currentPage CHANGED (from snapshotFlow): $page"
+                                )
+                                if (sharedTabViewModel.tabsSelectedIndex.intValue != page) {
+                                    sharedTabViewModel.tabsSelectedIndex.intValue = page
+                                    initFabOptions(page >= 2)
+                                }
+                            }
+                    }
+
+                    LaunchedEffect(Unit) { // Esegui una volta e colleziona il flow
+                        snapshotFlow { sharedTabViewModel.tabsSelectedIndex.intValue }
+                            .collect { selectedIndex ->
+                                Log.d(
+                                    TAG,
+                                    "Tabs selected index CHANGED (from snapshotFlow): $selectedIndex"
+                                )
+                                if (localPagerState.currentPage != selectedIndex) {
+                                    Log.d(TAG, "Animating pager to page: $selectedIndex")
+                                    localPagerState.scrollToPage(selectedIndex)
+                                }
+                            }
+                    }
+
+                    val showInputDialog by inputdialogViewModel.showAlertDialog.observeAsState()
+
+                    val rememberConfirmNewList = remember<(String) -> Unit> {
+                        { text ->
+                            inputdialogViewModel.showAlertDialog.value = false
+                            Log.d(TAG, "idListe.size ${idListe.size}")
+                            mCustomListsViewModel.indDaModif = 2 + idListe.size
+                            Log.d(
+                                TAG,
+                                "mCustomListsViewModel.indDaModif ${mCustomListsViewModel.indDaModif}"
+                            )
+                            mMainActivity?.let { act ->
+                                act.launchForResultWithAnimation(
+                                    startListEditForResult,
+                                    Intent(
+                                        act, CreaListaActivity::class.java
+                                    ).putExtras(
+                                        bundleOf(
+                                            LIST_TITLE to text,
+                                            EDIT_EXISTING_LIST to false
+                                        )
+                                    ),
+                                    MaterialSharedAxis.Y
+                                )
+                            }
+                        }
+                    }
+
+                    mMainActivity?.createOptionsMenu(
+                        helpOptionMenu,
+                        null
+                    )
+
+                    if (mCustomListsViewModel.showAlertDialog.observeAsState().value == true) {
+                        SimpleAlertDialog(
+                            onDismissRequest = {
+                                mCustomListsViewModel.showAlertDialog.postValue(false)
+                            },
+                            onConfirmation = {
+                                when (it) {
+                                    RESET_LIST -> {
+                                        mCustomListsViewModel.showAlertDialog.postValue(false)
+                                        activity?.findViewById<Button>(R.id.button_pulisci)
+                                            ?.performClick()
+                                    }
+
+                                    DELETE_LIST -> {
+                                        mCustomListsViewModel.showAlertDialog.postValue(false)
+                                        sharedTabViewModel.tabsSelectedIndex.intValue--
+                                        lifecycleScope.launch { deleteList() }
+
+                                    }
+
+                                    else -> {}
+                                }
+                            },
+                            dialogTitle = mCustomListsViewModel.dialogTitle.value.orEmpty(),
+                            dialogText = mCustomListsViewModel.content.value.orEmpty(),
+                            icon = mCustomListsViewModel.icon.value!!,
+                            confirmButtonText = mCustomListsViewModel.positiveButton.value.orEmpty(),
+                            dismissButtonText = mCustomListsViewModel.negativeButton.value.orEmpty(),
+                            dialogTag = mCustomListsViewModel.dialogTag
+                        )
+                    }
+
+                    if (showInputDialog == true) {
+                        InputDialog(
+                            dialogTitleRes = R.string.lista_add_desc,
+                            onDismissRequest = {
+                                inputdialogViewModel.showAlertDialog.value = false
+                            },
+                            onConfirmation = { rememberConfirmNewList(it) },
+                            confirmationTextRes = R.string.create_confirm,
+                            prefill = inputdialogViewModel.dialogPrefill,
+                            multiline = true
+                        )
                     }
                 }
-                return false
             }
         }
-        menuProvider?.let {
-            Log.d(TAG, "addMenu")
-            mMainActivity?.addMenuProvider(it)
-        }
-    }
-
-    override fun onDestroyView() {
-        Log.d(TAG, "onDestroyView")
-        binding.viewPager.unregisterOnPageChangeCallback(mPageChange)
-        _binding = null
-        super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -154,11 +236,7 @@ class CustomListsFragment : AccountMenuFragment() {
             requireContext(), requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
         )
 
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
-
-        mMainActivity?.enableFab(true)
-
-        movePage = savedInstanceState != null
+        movePage = false
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         Log.d(
@@ -168,12 +246,8 @@ class CustomListsFragment : AccountMenuFragment() {
         )
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false)) playIntro()
 
-        mSectionsPagerAdapter = SectionsPagerAdapter(this)
-
-        binding.viewPager.adapter = mSectionsPagerAdapter
-        binding.viewPager.registerOnPageChangeCallback(mPageChange)
-
         subscribeUiChanges()
+
     }
 
     private val startListEditForResult =
@@ -239,27 +313,15 @@ class CustomListsFragment : AccountMenuFragment() {
 //        }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun subscribeUiChanges() {
         mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->
             Log.d(TAG, "list size ${list.size}")
-            titoliListe = arrayOfNulls(list.size)
+            val newArray = arrayOfNulls<String>(list.size)
             idListe = IntArray(list.size)
 
             for (i in list.indices) {
-                titoliListe[i] = list[i].titolo
+                newArray[i] = list[i].titolo
                 idListe[i] = list[i].id
-            }
-            mSectionsPagerAdapter?.notifyDataSetChanged()
-            Handler(Looper.getMainLooper()).postDelayed(1000) {
-                Log.d(TAG, "movePage: $movePage")
-                Log.d(
-                    TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
-                )
-                if (movePage) {
-                    binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
-                    movePage = false
-                }
             }
             val destinationList = ArrayList<Destination>()
             destinationList.add(Destination.CantiParola)
@@ -267,87 +329,25 @@ class CustomListsFragment : AccountMenuFragment() {
             list.forEach {
                 destinationList.add(Destination("LISTA_PERS_${it.id}", 0, it.titolo ?: ""))
             }
-            mMainActivity?.setupMaterialTab(destinationList)
-            mMainActivity?.changeMaterialTabPage(mCustomListsViewModel.indexToShow)
+            titoliListe.value = newArray
+            mMainActivity?.setupMaterialTab(
+                destinationList,
+                sharedTabViewModel.tabsSelectedIndex.intValue
+            )
             mMainActivity?.setTabVisible(true)
-        }
 
-        inputdialogViewModel.state.observe(viewLifecycleOwner) {
-            Log.d(TAG, "inputdialogViewModel state $it")
-            if (!inputdialogViewModel.handled) {
-                when (it) {
-                    is DialogState.Positive -> {
-                        when (inputdialogViewModel.mTag) {
-                            NEW_LIST -> {
-                                inputdialogViewModel.handled = true
-                                Log.d(TAG, "idListe.size ${idListe.size}")
-                                mCustomListsViewModel.indDaModif = 2 + idListe.size
-                                Log.d(
-                                    TAG,
-                                    "mCustomListsViewModel.indDaModif ${mCustomListsViewModel.indDaModif}"
-                                )
-                                mMainActivity?.let { act ->
-                                    act.launchForResultWithAnimation(
-                                        startListEditForResult,
-                                        Intent(
-                                            act, CreaListaActivity::class.java
-                                        ).putExtras(
-                                            bundleOf(
-                                                LIST_TITLE to inputdialogViewModel.outputText,
-                                                EDIT_EXISTING_LIST to false
-                                            )
-                                        ),
-                                        com.google.android.material.transition.platform.MaterialSharedAxis.Y
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    is DialogState.Negative -> {
-                        inputdialogViewModel.handled = true
-                    }
+            Handler(Looper.getMainLooper()).postDelayed(1000) {
+                Log.d(TAG, "movePage: $movePage")
+                Log.d(
+                    TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                )
+                if (movePage) {
+                    sharedTabViewModel.tabsSelectedIndex.intValue =
+                        mCustomListsViewModel.indexToShow
+                    movePage = false
                 }
             }
         }
-
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
-            Log.d(TAG, "simpleDialogViewModel state $it")
-            if (!simpleDialogViewModel.handled) {
-                when (it) {
-                    is DialogState.Positive -> {
-                        when (simpleDialogViewModel.mTag) {
-                            RESET_LIST -> {
-                                simpleDialogViewModel.handled = true
-                                binding.viewPager.findViewById<Button>(R.id.button_pulisci)
-                                    .performClick()
-                            }
-
-                            DELETE_LIST -> {
-                                simpleDialogViewModel.handled = true
-                                binding.viewPager.currentItem -= 1
-                                lifecycleScope.launch { deleteList() }
-                            }
-                        }
-                    }
-
-                    is DialogState.Negative -> {
-                        simpleDialogViewModel.handled = true
-                    }
-                }
-            }
-        }
-    }
-
-    private inner class SectionsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-
-        override fun createFragment(position: Int): Fragment = when (position) {
-            0 -> ListaPredefinitaFragment.newInstance(1)
-            1 -> ListaPredefinitaFragment.newInstance(2)
-            else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
-        }
-
-        override fun getItemCount(): Int = 2 + titoliListe.size
 
     }
 
@@ -366,54 +366,37 @@ class CustomListsFragment : AccountMenuFragment() {
                 R.id.fab_pulisci -> {
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
-                        SimpleDialogFragment.show(
-                            SimpleDialogFragment.Builder(
-                                RESET_LIST
-                            ).title(R.string.dialog_reset_list_title)
-                                .icon(R.drawable.cleaning_services_24px)
-                                .content(R.string.reset_list_question)
-                                .positiveButton(R.string.reset_confirm)
-                                .negativeButton(R.string.cancel), mActivity.supportFragmentManager
-                        )
-                    }
-                    true
-                }
-
-                R.id.fab_add_lista -> {
-                    mMainActivity?.let { mActivity ->
-                        closeFabMenu()
-                        InputTextDialogFragment.show(
-                            InputTextDialogFragment.Builder(
-                                NEW_LIST
-                            ).apply {
-                                title = R.string.lista_add_desc
-                                positiveButton = R.string.create_confirm
-                                negativeButton = R.string.cancel
-                            }, mActivity.supportFragmentManager
-                        )
+                        mCustomListsViewModel.dialogTag = RESET_LIST
+                        mCustomListsViewModel.dialogTitle.postValue(getString(R.string.dialog_reset_list_title))
+                        mCustomListsViewModel.content.postValue(getString(R.string.reset_list_question))
+                        mCustomListsViewModel.icon.postValue(Icons.Filled.CleaningServices)
+                        mCustomListsViewModel.positiveButton.postValue(getString(R.string.reset_confirm))
+                        mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
+                        mCustomListsViewModel.showAlertDialog.postValue(true)
                     }
                     true
                 }
 
                 R.id.fab_condividi -> {
                     closeFabMenu()
-                    binding.viewPager.findViewById<Button>(R.id.button_condividi).performClick()
+                    activity?.findViewById<Button>(R.id.button_condividi)?.performClick()
                     true
                 }
 
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
-                    mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
+                    mCustomListsViewModel.indDaModif =
+                        sharedTabViewModel.tabsSelectedIndex.intValue - 2
                     mMainActivity?.let { act ->
                         act.launchForResultWithAnimation(
                             startListEditForResult, Intent(
                                 act, CreaListaActivity::class.java
                             ).putExtras(
                                 bundleOf(
-                                    ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                    ID_DA_MODIF to idListe[sharedTabViewModel.tabsSelectedIndex.intValue - 2 - 2],
                                     EDIT_EXISTING_LIST to true
                                 )
-                            ), com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                            ), MaterialSharedAxis.Y
                         )
                     }
                     true
@@ -426,7 +409,7 @@ class CustomListsFragment : AccountMenuFragment() {
 
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
-                    binding.viewPager.findViewById<Button>(R.id.button_invia_file).performClick()
+                    activity?.findViewById<Button>(R.id.button_invia_file)?.performClick()
                     true
                 }
 
@@ -442,15 +425,13 @@ class CustomListsFragment : AccountMenuFragment() {
             toggleFabMenu()
         }
 
-        icon?.let {
-            mMainActivity?.initFab(true, it, click, actionListener, customList)
-        }
+        mMainActivity?.initFab(this, Icons.Default.Add)
     }
 
     private suspend fun deleteListDialog() {
         mMainActivity?.let { mActivity ->
             closeFabMenu()
-            mCustomListsViewModel.listaDaCanc = binding.viewPager.currentItem - 2
+            mCustomListsViewModel.listaDaCanc = sharedTabViewModel.tabsSelectedIndex.intValue - 2
             mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
             val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
             val lista = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
@@ -458,13 +439,14 @@ class CustomListsFragment : AccountMenuFragment() {
             }
             mCustomListsViewModel.titoloDaCanc = lista?.titolo
             mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
-            SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(
-                    DELETE_LIST
-                ).title(R.string.action_remove_list).icon(R.drawable.delete_24px)
-                    .content(R.string.delete_list_dialog).positiveButton(R.string.delete_confirm)
-                    .negativeButton(R.string.cancel), mActivity.supportFragmentManager
-            )
+
+            mCustomListsViewModel.dialogTag = DELETE_LIST
+            mCustomListsViewModel.dialogTitle.postValue(getString(R.string.action_remove_list))
+            mCustomListsViewModel.content.postValue(getString(R.string.delete_list_dialog))
+            mCustomListsViewModel.icon.postValue(Icons.Outlined.Delete)
+            mCustomListsViewModel.positiveButton.postValue(getString(R.string.delete_confirm))
+            mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
+            mCustomListsViewModel.showAlertDialog.postValue(true)
         }
     }
 
@@ -473,41 +455,58 @@ class CustomListsFragment : AccountMenuFragment() {
         val listToDelete = ListaPers()
         listToDelete.id = mCustomListsViewModel.idDaCanc
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.deleteList(listToDelete) }
-        mMainActivity?.activityMainContent?.let { mainContent ->
-            Snackbar.make(
-                mainContent,
-                getString(R.string.list_removed) + mCustomListsViewModel.titoloDaCanc + "'!",
-                Snackbar.LENGTH_LONG
-            ).setAction(
-                getString(R.string.cancel).uppercase(systemLocale)
-            ) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                    mLastClickTime = SystemClock.elapsedRealtime()
-                    mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
-                    movePage = true
-                    val mListePersDao =
-                        RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-                    val listaToRestore = ListaPers()
-                    listaToRestore.id = mCustomListsViewModel.idDaCanc
-                    listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
-                    listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        mListePersDao.insertLista(
-                            listaToRestore
-                        )
-                    }
-                }
-            }.show()
+        showSnackBar(
+            "${getString(R.string.list_removed)}mCustomListsViewModel.titoloDaCanc'!",
+            getString(R.string.cancel).uppercase(systemLocale)
+        )
+    }
+
+    override fun showSnackBar(message: String, label: String?) {
+        mMainActivity?.showSnackBar(
+            message = message,
+            callback = this,
+            label = label
+        )
+    }
+
+    override fun onActionPerformed() {
+        mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
+        movePage = true
+        val mListePersDao =
+            RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+        val listaToRestore = ListaPers()
+        listaToRestore.id = mCustomListsViewModel.idDaCanc
+        listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+        listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
+        lifecycleScope.launch(Dispatchers.IO) {
+            mListePersDao.insertLista(
+                listaToRestore
+            )
         }
+    }
+
+    override fun onDismissed() {}
+
+    override fun onItemClick(route: String) {
+        when (route) {
+            OptionMenuItem.Help.route -> {
+                playIntro()
+            }
+        }
+    }
+
+    override fun onFabClick(item: FabFragment.FabItem) {
+        closeFabMenu()
+        inputdialogViewModel.showAlertDialog.value = true
     }
 
     companion object {
         const val RESULT_OK = 0
         const val RESULT_KO = -1
         const val RESULT_CANCELED = -2
-        private const val RESET_LIST = "RESET_LIST"
-        private const val NEW_LIST = "NEW_LIST"
         private const val DELETE_LIST = "DELETE_LIST"
+
+        private const val RESET_LIST = "RESET_LIST"
         private val TAG = CustomListsFragment::class.java.canonicalName
     }
 }

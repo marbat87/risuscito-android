@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
-class SharedScrollViewModel : ViewModel() { // Costruttore per Hilt
+class SharedScrollViewModel : ViewModel() {
 
     private val _scrollBehavior = MutableStateFlow<TopAppBarScrollBehavior?>(null)
     val scrollBehavior: StateFlow<TopAppBarScrollBehavior?> = _scrollBehavior.asStateFlow()
@@ -16,4 +16,5 @@ class SharedScrollViewModel : ViewModel() { // Costruttore per Hilt
     fun setScrollBehavior(behavior: TopAppBarScrollBehavior) {
         _scrollBehavior.value = behavior
     }
+
 }

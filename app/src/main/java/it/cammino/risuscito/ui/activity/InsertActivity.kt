@@ -1,45 +1,66 @@
 package it.cammino.risuscito.ui.activity
 
 import android.os.Bundle
-import android.os.SystemClock
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.addCallback
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.lifecycleScope
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ExpandedFullScreenSearchBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
+import androidx.fragment.compose.AndroidFragment
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
-import com.mikepenz.fastadapter.IAdapter
-import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.binding.listeners.addClickListener
 import it.cammino.risuscito.R
-import it.cammino.risuscito.databinding.ActivityInsertSearchBinding
-import it.cammino.risuscito.databinding.RowItemToInsertBinding
-import it.cammino.risuscito.items.InsertItem
+import it.cammino.risuscito.ui.composable.main.StatusBarProtection
+import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CustomListsFragment
+import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
 import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.ListeUtils
-import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -48,45 +69,24 @@ import java.text.Collator
 
 class InsertActivity : ThemeableActivity() {
 
-    private val cantoAdapter: FastItemAdapter<InsertItem> = FastItemAdapter()
-
-    private var mLastClickTime: Long = 0
     private var listaPredefinita: Int = 0
     private var idLista: Int = 0
     private var listPosition: Int = 0
-
-    private var job: Job = Job()
 
     private val simpleIndexViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 3) })
     }
 
-    private lateinit var binding: ActivityInsertSearchBinding
+    private val sharedSearchViewModel: SharedSearchViewModel by viewModels()
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         setEnterTransition()
         super.onCreate(savedInstanceState)
-        binding = ActivityInsertSearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        setSupportActionBar(binding.risuscitoToolbar)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val bundle = intent.extras
-        listaPredefinita = bundle?.getInt(FROM_ADD) ?: 0
-        idLista = bundle?.getInt(ID_LISTA) ?: 0
-        listPosition = bundle?.getInt(POSITION) ?: 0
-
-        if (savedInstanceState == null) {
-            val pref = PreferenceManager.getDefaultSharedPreferences(this)
-            val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
-            simpleIndexViewModel.advancedSearch = currentItem != 0
-        }
 
         try {
             val inputStream: InputStream = resources.openRawResource(R.raw.fileout)
-            simpleIndexViewModel.aTexts = CantiXmlParser().parse(inputStream)
+            sharedSearchViewModel.aTexts = CantiXmlParser().parse(inputStream)
             inputStream.close()
         } catch (e: XmlPullParserException) {
             Log.e(TAG, "Error:", e)
@@ -96,207 +96,223 @@ class InsertActivity : ThemeableActivity() {
             Firebase.crashlytics.recordException(e)
         }
 
-//        binding.textBoxRicerca.hint =
-//            if (simpleIndexViewModel.advancedSearch) getString(R.string.advanced_search_subtitle) else getString(
-//                R.string.fast_search_subtitle
-//            )
+        if (savedInstanceState == null) {
+            val pref = PreferenceManager.getDefaultSharedPreferences(this)
+            val currentItem = Integer.parseInt(pref.getString(Utility.DEFAULT_SEARCH, "0") ?: "0")
+            sharedSearchViewModel.advancedSearchFilter.value = currentItem != 0
+        }
 
-        cantoAdapter.onClickListener =
-            { _: View?, _: IAdapter<InsertItem>, item: InsertItem, _: Int ->
-                var consume = false
-                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                    mLastClickTime = SystemClock.elapsedRealtime()
-                    if (listaPredefinita == 1) {
-                        ListeUtils.addToListaDupAndFinish(this, idLista, listPosition, item.id)
-                    } else {
-                        ListeUtils.updateListaPersonalizzataAndFinish(
-                            this,
-                            idLista,
-                            item.id,
-                            listPosition
+        // enableEdgeToEdge sets window.isNavigationBarContrastEnforced = true
+        // which is used to add a translucent scrim to three-button navigation
+        enableEdgeToEdge()
+
+        setContent {
+
+            val scope = rememberCoroutineScope()
+            val searchBarState = rememberSearchBarState(SearchBarValue.Expanded)
+
+            RisuscitoTheme {
+
+                Scaffold(
+                    // 2. Collega il scrollBehavior allo Scaffold tramite il Modifier.nestedScroll
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    topBar = {
+                        val textFieldState = rememberTextFieldState()
+
+                        LaunchedEffect(searchBarState.currentValue) {
+                            textFieldState.edit { replace(0, length, "") }
+                            sharedSearchViewModel.searchFilter.value = ""
+                        }
+
+                        val inputField =
+                            @Composable {
+                                SearchBarDefaults.InputField(
+                                    query = textFieldState.text.toString(),
+                                    onQueryChange = {
+                                        textFieldState.edit { replace(0, length, it) }
+                                        sharedSearchViewModel.searchFilter.value = it
+                                    },
+                                    expanded = true,
+                                    onExpandedChange = {
+                                        if (it) scope.launch { searchBarState.animateToExpanded() }
+                                        else {
+                                            scope.launch { searchBarState.animateToCollapsed() }
+                                        }
+                                    },
+                                    onSearch = { },
+                                    placeholder = {
+                                        Text(
+                                            stringResource(R.string.search_hint),
+                                            textAlign = TextAlign.Start,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    },
+                                    leadingIcon = {
+                                        IconButton(onClick = {
+                                            scope.launch { onBackPressedAction() }
+                                        }) {
+                                            Icon(
+                                                Icons.AutoMirrored.Filled.ArrowBack,
+                                                contentDescription = stringResource(R.string.material_drawer_close)
+                                            )
+                                        }
+                                    },
+                                    trailingIcon = {
+                                        if (textFieldState.text.isNotEmpty()) {
+                                            IconButton(onClick = {
+                                                textFieldState.edit { replace(0, length, "") }
+                                                sharedSearchViewModel.searchFilter.value = ""
+                                            }) {
+                                                Icon(
+                                                    Icons.Filled.Close,
+                                                    contentDescription = "Cancella"
+                                                )
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+                        SearchBar(
+                            state = searchBarState,
+                            inputField = inputField,
+                            modifier =
+                                Modifier
+                                    .padding(vertical = 8.dp, horizontal = 4.dp)
+                                    .fillMaxWidth()
                         )
+                        ExpandedFullScreenSearchBar(
+                            state = searchBarState,
+                            inputField = inputField
+                        ) {
+                            val advancedSelected by sharedSearchViewModel.advancedSearchFilter.observeAsState()
+                            val consegnatiOnlySelected by sharedSearchViewModel.consegnatiOnlyFilter.observeAsState()
+
+                            Column {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                        .padding(horizontal = 16.dp)
+                                ) {
+                                    FilterChip(
+                                        onClick = {
+                                            sharedSearchViewModel.advancedSearchFilter.value =
+                                                advancedSelected != true
+                                        },
+                                        label = {
+                                            Text(stringResource(R.string.advanced_search_subtitle))
+                                        },
+                                        selected = advancedSelected == true,
+                                        leadingIcon = if (advancedSelected == true) {
+                                            {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Done,
+                                                    contentDescription = "Done icon",
+                                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                                )
+                                            }
+                                        } else {
+                                            null
+                                        },
+                                    )
+                                    FilterChip(
+                                        onClick = {
+                                            sharedSearchViewModel.consegnatiOnlyFilter.value =
+                                                consegnatiOnlySelected != true
+                                        },
+                                        label = {
+                                            Text(stringResource(R.string.consegnati_only).uppercase())
+                                        },
+                                        selected = consegnatiOnlySelected == true,
+                                        leadingIcon = if (consegnatiOnlySelected == true) {
+                                            {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Done,
+                                                    contentDescription = "Done icon",
+                                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                                )
+                                            }
+                                        } else {
+                                            null
+                                        },
+                                    )
+                                }
+                                AndroidFragment<SimpleIndexFragment>(
+                                    arguments = bundleOf(
+                                        SimpleIndexFragment.INDICE_LISTA to 3,
+                                        SimpleIndexFragment.IS_SEARCH to true,
+                                        SimpleIndexFragment.IS_INSERT to true
+                                    )
+                                )
+                            }
+                        }
                     }
-                    consume = true
+                ) { innerPadding ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    )
                 }
-                consume
+
+                // After drawing main content, draw status bar protection
+                StatusBarProtection()
             }
 
-        cantoAdapter.addClickListener<RowItemToInsertBinding, InsertItem>({ binding -> binding.preview }) { _, _, _, item ->
-            if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                mLastClickTime = SystemClock.elapsedRealtime()
-                openCanto(TAG, item.id, item.source?.getText(this@InsertActivity), true)
+            val searchDone by sharedSearchViewModel.done.observeAsState()
+
+            LaunchedEffect(searchDone) {
+                snapshotFlow { searchDone }
+                    .distinctUntilChanged()
+                    .collect { done ->
+                        if (done == true) {
+                            sharedSearchViewModel.done.value = false
+                            if (listaPredefinita == 1) {
+                                ListeUtils.addToListaDupAndFinish(
+                                    this@InsertActivity,
+                                    idLista,
+                                    listPosition,
+                                    sharedSearchViewModel.insertItemId
+                                )
+                            } else {
+                                ListeUtils.updateListaPersonalizzataAndFinish(
+                                    this@InsertActivity,
+                                    idLista,
+                                    sharedSearchViewModel.insertItemId,
+                                    listPosition
+                                )
+                            }
+                        }
+                    }
             }
+
         }
 
-        cantoAdapter.setHasStableIds(true)
-
-        binding.matchedList.adapter = cantoAdapter
-        val glm = GridLayoutManager(this, 2)
-        val llm = LinearLayoutManager(this)
-        binding.matchedList.layoutManager = if (isGridLayout) glm else llm
-
-        binding.searchView
-            .editText
-            .setOnEditorActionListener { _, keyCode, _ ->
-                var returnValue = false
-                if (keyCode == EditorInfo.IME_ACTION_DONE) {
-                    // to hide soft keyboard
-                    ContextCompat.getSystemService(this, InputMethodManager::class.java)
-                        ?.hideSoftInputFromWindow(
-                            binding.searchView
-                                .editText.windowToken, 0
-                        )
-                    returnValue = true
-                }
-                returnValue
-            }
-
-        binding.searchView
-            .editText.doOnTextChanged { s: CharSequence?, _: Int, _: Int, _: Int ->
-                job.cancel()
-                ricercaStringa(s.toString())
-            }
-
-        binding.advancedSearchChip.isChecked = simpleIndexViewModel.advancedSearch
-        binding.advancedSearchChip.setOnCheckedChangeListener { _, checked ->
-            simpleIndexViewModel.advancedSearch = checked
-            job.cancel()
-            ricercaStringa(binding.searchView.text.toString())
-        }
-
-        binding.consegnatiOnlySearchChip.isChecked =
-            simpleIndexViewModel.consegnatiOnly
-        binding.consegnatiOnlySearchChip.setOnCheckedChangeListener { _, checked ->
-            simpleIndexViewModel.consegnatiOnly = checked
-            job.cancel()
-            ricercaStringa(binding.searchView.text.toString())
-        }
+        val bundle = intent.extras
+        listaPredefinita = bundle?.getInt(FROM_ADD) ?: 0
+        idLista = bundle?.getInt(ID_LISTA) ?: 0
+        listPosition = bundle?.getInt(POSITION) ?: 0
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
         }
 
-        binding.searchView.show()
-        binding.searchView.toolbar.setNavigationOnClickListener {
-            onBackPressedAction()
+        simpleIndexViewModel.itemsResult?.observe(this) { canti ->
+            sharedSearchViewModel.titoli = canti.sortedWith(
+                compareBy(
+                    Collator.getInstance(systemLocale)
+                ) { getString(it.titleRes) })
         }
 
-        subscribeObservers()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                setResult(CustomListsFragment.RESULT_CANCELED)
-                finishAfterTransitionWrapper()
-                return true
-            }
-        }
-        return false
     }
 
     private fun onBackPressedAction() {
         Log.d(TAG, "onBackPressed: ")
         setResult(CustomListsFragment.RESULT_CANCELED)
         finishAfterTransitionWrapper()
-    }
-
-    private fun ricercaStringa(s: String) {
-        job = lifecycleScope.launch {
-            // abilita il pulsante solo se la stringa ha più di 3 caratteri, senza contare gli spazi
-            if (s.trim { it <= ' ' }.length >= 3) {
-                binding.searchNoResults.isVisible = false
-                binding.searchProgress.isVisible = true
-                val titoliResult = ArrayList<InsertItem>()
-
-                Log.d(TAG, "performInsertSearch STRINGA: $s")
-                Log.d(TAG, "performInsertSearch ADVANCED: ${simpleIndexViewModel.advancedSearch}")
-                Log.d(
-                    TAG,
-                    "performInsertSearch CONSEGNATI ONLY: ${simpleIndexViewModel.consegnatiOnly}"
-                )
-                if (simpleIndexViewModel.advancedSearch) {
-                    val words =
-                        s.split("\\W".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-                    for (aText in simpleIndexViewModel.aTexts) {
-                        if (!isActive) return@launch
-
-                        if (aText[0] == null || aText[0].isNullOrEmpty()) break
-
-                        var found = true
-                        for (word in words) {
-                            if (!isActive) return@launch
-
-                            if (word.trim { it <= ' ' }.length > 1) {
-                                var text = word.trim { it <= ' ' }
-                                text = text.lowercase(systemLocale)
-                                text = Utility.removeAccents(text)
-
-                                if (aText[1]?.contains(text) != true) found = false
-                            }
-                        }
-
-                        if (found) {
-                            Log.d(TAG, "aText[0]: ${aText[0]}")
-                            simpleIndexViewModel.titoliInsert
-                                .filter {
-                                    (aText[0].orEmpty()) == it.undecodedSource && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
-                                }
-                                .forEach {
-                                    if (!isActive) return@launch
-                                    titoliResult.add(it.apply { filter = StringUtils.EMPTY })
-                                }
-
-                        }
-                    }
-                } else {
-                    val stringa = Utility.removeAccents(s).lowercase(systemLocale)
-                    Log.d(TAG, "performInsertSearch onTextChanged: stringa $stringa")
-                    simpleIndexViewModel.titoliInsert
-                        .filter {
-                            Utility.removeAccents(
-                                it.title?.getText(this@InsertActivity).orEmpty()
-                            ).lowercase(systemLocale)
-                                .contains(stringa) && (!simpleIndexViewModel.consegnatiOnly || it.consegnato == 1)
-                        }
-                        .forEach {
-                            if (!isActive) return@launch
-                            titoliResult.add(it.apply { filter = stringa })
-                        }
-                }
-                if (isActive) {
-                    cantoAdapter.set(
-                        titoliResult.sortedWith(
-                            compareBy(
-                                Collator.getInstance(systemLocale)
-                            ) { it.title?.getText(this@InsertActivity) })
-                    )
-                    binding.searchProgress.isVisible = false
-                    binding.searchNoResults.isVisible =
-                        cantoAdapter.adapterItemCount == 0
-                    binding.matchedList.isGone = cantoAdapter.adapterItemCount == 0
-                }
-            } else {
-                if (s.isEmpty()) {
-                    binding.searchNoResults.isVisible = false
-                    binding.matchedList.isVisible = false
-                    cantoAdapter.clear()
-                    binding.searchProgress.isVisible = false
-                    binding.appBarLayout.setExpanded(true, true)
-                }
-            }
-        }
-    }
-
-    private fun subscribeObservers() {
-        simpleIndexViewModel.insertItemsResult?.observe(this) { canti ->
-            simpleIndexViewModel.titoliInsert =
-                canti.sortedWith(compareBy(Collator.getInstance(systemLocale)) {
-                    it.title?.getText(this)
-                })
-        }
-
     }
 
     companion object {
