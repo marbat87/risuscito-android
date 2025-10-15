@@ -5,8 +5,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import it.cammino.risuscito.utils.extension.capitalize
 
 @Composable
@@ -15,14 +15,14 @@ fun SimpleAlertDialog(
     onConfirmation: (SimpleDialogTag) -> Unit,
     dialogTitle: String,
     dialogText: String,
-    icon: ImageVector,
+    iconRes: Int,
     confirmButtonText: CharSequence,
     dismissButtonText: CharSequence,
     dialogTag: SimpleDialogTag = SimpleDialogTag.DEFAULT
 ) {
     AlertDialog(
         icon = {
-            Icon(imageVector = icon, contentDescription = "Dialog Icon")
+            Icon(painter = painterResource(iconRes), contentDescription = "Dialog Icon")
         },
         title = {
             Text(text = dialogTitle)

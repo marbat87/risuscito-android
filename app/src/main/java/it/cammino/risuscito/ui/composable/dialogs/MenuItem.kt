@@ -2,9 +2,6 @@ package it.cammino.risuscito.ui.composable.dialogs
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -14,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -31,7 +27,7 @@ fun MenuExpandableItem(
         onClick = { onClick() },
         trailingIcon = {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowRight,
+                painter = painterResource(R.drawable.arrow_right_24px),
                 contentDescription = null
             )
         }
@@ -70,15 +66,18 @@ fun AccountMenuImage(
 ) {
     IconButton(
         onClick = {
-            if (loggedIn) onProfileClick() else onLoginClick() }
+            if (loggedIn) onProfileClick() else onLoginClick()
+        }
     ) {
         if (loggedIn) {
             AsyncImage(
                 model = profilePhotoUrl,
                 contentDescription = "Profile Button",
-                modifier = Modifier.clip(CircleShape).size(32.dp),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(32.dp),
                 contentScale = ContentScale.Crop,
-                placeholder = rememberVectorPainter(Icons.Outlined.AccountCircle),
+                placeholder = painterResource(R.drawable.account_circle_24px),
             )
         } else {
             Icon(

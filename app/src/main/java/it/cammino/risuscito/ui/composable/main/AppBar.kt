@@ -15,21 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.Help
-import androidx.compose.material.icons.automirrored.outlined.Undo
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Shuffle
-import androidx.compose.material.icons.outlined.ClearAll
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.FilterList
-import androidx.compose.material.icons.outlined.FilterListOff
-import androidx.compose.material.icons.outlined.FilterNone
-import androidx.compose.material.icons.outlined.LibraryAddCheck
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -57,8 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -72,107 +57,92 @@ import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import kotlinx.coroutines.launch
 
-sealed class ActionModeItem(
-    val route: String,
+enum class ActionModeItem(
     val label: Int,
-    val icon: ImageVector,
+    val iconRes: Int,
 ) {
-    object Delete :
-        ActionModeItem(
-            "action_remove_item",
-            R.string.action_remove,
-            Icons.Outlined.Delete
-        )
+    DELETE(
+        R.string.action_remove,
+        R.drawable.delete_24px
+    ),
 
-    object Undo :
-        ActionModeItem(
-            "action_remove_item",
-            android.R.string.cancel,
-            Icons.AutoMirrored.Outlined.Undo
-        )
+    UNDO(
+        android.R.string.cancel,
+        R.drawable.undo_24px
+    ),
 
-    object SelectNone :
-        ActionModeItem(
-            "select_none",
-            R.string.select_none,
-            Icons.Outlined.FilterNone
-        )
+    SELECTNONE(
+        R.string.select_none,
+        R.drawable.filter_none_24px
+    ),
 
-    object SelectAll :
-        ActionModeItem(
-            "select_all",
-            android.R.string.selectAll,
-            Icons.Outlined.LibraryAddCheck
-        )
+    SELECTALL(
+        android.R.string.selectAll,
+        R.drawable.library_add_check_24px
+    ),
 
-    object Help :
-        ActionModeItem(
-            "action_help",
-            R.string.action_help,
-            Icons.AutoMirrored.Outlined.Help
-        )
+    HELP(
+        R.string.action_help,
+        R.drawable.help_24px
+    ),
 
-    object Swap :
-        ActionModeItem(
-            "action_switch_item",
-            R.string.action_switch_to,
-            Icons.Filled.Shuffle
-        )
+    SWAP(
+        R.string.action_switch_to,
+        R.drawable.shuffle_24px
+    ),
 
-    object Close :
-        ActionModeItem(
-            "action_mode_close",
-            R.string.material_drawer_close,
-            Icons.AutoMirrored.Outlined.ArrowBack
-        )
+    CLOSE(
+        R.string.material_drawer_close,
+        R.drawable.arrow_back_24px
+    )
 }
 
 val deleteMenu =
-    listOf(ActionModeItem.Delete)
+    listOf(ActionModeItem.DELETE)
 
 val consegnatiMenu =
     listOf(
-        ActionModeItem.Undo,
-        ActionModeItem.SelectNone,
-        ActionModeItem.SelectAll,
-        ActionModeItem.Help
+        ActionModeItem.UNDO,
+        ActionModeItem.SELECTNONE,
+        ActionModeItem.SELECTALL,
+        ActionModeItem.HELP
     )
 
 val customListsMenu =
-    listOf(ActionModeItem.Swap, ActionModeItem.Delete)
+    listOf(ActionModeItem.SWAP, ActionModeItem.DELETE)
 
 
 sealed class OptionMenuItem(
     val route: String,
     val label: Int,
-    val icon: ImageVector,
+    val iconRes: Int,
 ) {
     object ClearAll :
         OptionMenuItem(
             "list_reset",
             R.string.dialog_reset_favorites_title,
-            Icons.Outlined.ClearAll
+            R.drawable.clear_all_24px
         )
 
     object Help :
         OptionMenuItem(
             "action_help",
             R.string.action_help,
-            Icons.AutoMirrored.Outlined.Help
+            R.drawable.help_24px
         )
 
     object FilterRemove :
         OptionMenuItem(
             "action_filter_remove",
             R.string.filters_remove,
-            Icons.Outlined.FilterListOff
+            R.drawable.filter_list_off_24px
         )
 
     object Filter :
         OptionMenuItem(
             "action_filter",
             R.string.passage_filter,
-            Icons.Outlined.FilterList
+            R.drawable.filter_list_24px
         )
 }
 
@@ -197,7 +167,7 @@ fun TopAppBarWithSearch(
     isActionMode: Boolean = false,
     actionModeMenu: List<ActionModeItem> = emptyList(),
     hideNavigation: Boolean = false,
-    onActionModeClick: (String) -> Unit = {},
+    onActionModeClick: (ActionModeItem) -> Unit = {},
     contextualTitle: String = "",
     sharedSearchViewModel: SharedSearchViewModel,
     optionMenu: List<OptionMenuItem>? = emptyList(),
@@ -252,7 +222,7 @@ fun TopAppBarWithSearch(
                                         scope.launch { searchBarState.animateToCollapsed() }
                                     }) {
                                         Icon(
-                                            Icons.AutoMirrored.Filled.ArrowBack,
+                                            painter = painterResource(R.drawable.arrow_back_24px),
                                             contentDescription = stringResource(R.string.material_drawer_close)
                                         )
                                     }
@@ -265,7 +235,7 @@ fun TopAppBarWithSearch(
                                         sharedSearchViewModel.searchFilter.value = ""
                                     }) {
                                         Icon(
-                                            Icons.Filled.Close,
+                                            painter = painterResource(R.drawable.close_24px),
                                             contentDescription = "Cancella"
                                         )
                                     }
@@ -275,7 +245,7 @@ fun TopAppBarWithSearch(
                                             optionMenu?.forEach {
                                                 IconButton(onClick = { onOptionMenuClick(it.route) }) {
                                                     Icon(
-                                                        imageVector = it.icon,
+                                                        painter = painterResource(it.iconRes),
                                                         contentDescription = stringResource(it.label)
                                                     )
                                                 }
@@ -315,7 +285,7 @@ fun TopAppBarWithSearch(
                                 leadingIcon = if (selected) {
                                     {
                                         Icon(
-                                            imageVector = Icons.Filled.Done,
+                                            painter = painterResource(R.drawable.check_24px),
                                             contentDescription = "Done icon",
                                             modifier = Modifier.size(FilterChipDefaults.IconSize)
                                         )
@@ -350,10 +320,10 @@ fun TopAppBarWithSearch(
             if (isActionMode) {
                 if (!hideNavigation) { // Mostra l'icona del menu solo se la barra di ricerca non è espansa
                     IconButton(
-                        onClick = { onActionModeClick(ActionModeItem.Close.route) }
+                        onClick = { onActionModeClick(ActionModeItem.CLOSE) }
                     ) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
+                            painter = painterResource(R.drawable.arrow_back_24px),
                             contentDescription = stringResource(R.string.material_drawer_close),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -364,7 +334,7 @@ fun TopAppBarWithSearch(
                     onClick = onMenuClick
                 ) {
                     Icon(
-                        Icons.Filled.Menu,
+                        painter = painterResource(R.drawable.menu_24px),
                         contentDescription = stringResource(R.string.material_drawer_open)
                     )
                 }
@@ -374,10 +344,10 @@ fun TopAppBarWithSearch(
             if (isActionMode) {
                 actionModeMenu.forEach { item ->
                     IconButton(onClick = {
-                        onActionModeClick(item.route)
+                        onActionModeClick(item)
                     }) {
                         Icon(
-                            imageVector = item.icon,
+                            painter = painterResource(item.iconRes),
                             contentDescription = stringResource(item.label),
                             tint = MaterialTheme.colorScheme.primary
                         )

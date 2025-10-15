@@ -294,7 +294,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
         actionModeOk = false
         mMainActivity?.createActionMode(customListsMenu, this) { itemRoute ->
             when (itemRoute) {
-                ActionModeItem.Delete.route -> {
+                ActionModeItem.DELETE -> {
                     cantoDaCanc =
                         mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
                             .orEmpty()
@@ -313,7 +313,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                     true
                 }
 
-                ActionModeItem.Swap.route -> {
+                ActionModeItem.SWAP -> {
                     cantoDaCanc =
                         mCantiViewModel.listaPersonalizzata?.getCantoPosizione(mCantiViewModel.posizioneDaCanc)
                             .orEmpty()
@@ -330,11 +330,13 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                     true
                 }
 
-                ActionModeItem.Close.route -> {
+                ActionModeItem.CLOSE -> {
                     actionModeOk = false
                     mMainActivity?.destroyActionMode()
                     true
                 }
+
+                else -> {}
             }
         }
         updateActionModeTitle(false)

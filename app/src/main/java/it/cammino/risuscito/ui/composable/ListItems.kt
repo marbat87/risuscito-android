@@ -24,15 +24,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
-import androidx.compose.material.icons.automirrored.outlined.StickyNote2
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Sell
-import androidx.compose.material.icons.outlined.AddCircleOutline
-import androidx.compose.material.icons.outlined.RemoveRedEye
-import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
@@ -142,7 +133,7 @@ fun SimpleListItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Check,
+                        painter = painterResource(R.drawable.check_24px),
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.onPrimary,
                     )
@@ -171,7 +162,7 @@ fun SimpleListItem(
             if (isInsert) {
                 FilledTonalButton(onClick = { onIconClick(simpleItem) }) {
                     Icon(
-                        imageVector = Icons.Outlined.RemoveRedEye,
+                        painter = painterResource(R.drawable.visibility_24px),
                         contentDescription = "Notation"
                     )
                 }
@@ -351,7 +342,7 @@ fun ListExpandableTitle(
             ),
         trailingContent = {
             Icon(
-                imageVector = Icons.Filled.KeyboardArrowDown,
+                painter = painterResource(R.drawable.keyboard_arrow_down_24px),
                 contentDescription = "Expand",
                 tint = if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                 modifier = modifier.rotate(rotationAngle.value)
@@ -378,7 +369,7 @@ fun PassageListItem(
         trailingContent = {
             FilledTonalButton(onClick = { onIconClick(simpleItem) }) {
                 Icon(
-                    imageVector = if (simpleItem.numPassaggio != -1) Icons.Filled.Sell else Icons.Outlined.Sell,
+                    painter = painterResource(if (simpleItem.numPassaggio != -1) R.drawable.sell_filled_24px else R.drawable.sell_24px),
                     contentDescription = "Notation"
                 )
             }
@@ -467,7 +458,7 @@ fun NotableListItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Check,
+                        painter = painterResource(R.drawable.check_24px),
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.onPrimary,
                     )
@@ -496,7 +487,7 @@ fun NotableListItem(
             if (!selected) {
                 FilledTonalButton(onClick = { onNoteClick(item) }) {
                     Icon(
-                        imageVector = if (item.nota.isNotEmpty()) Icons.AutoMirrored.Filled.StickyNote2 else Icons.AutoMirrored.Outlined.StickyNote2,
+                        painter = painterResource(if (item.nota.isNotEmpty()) R.drawable.sticky_note_2_filled_24px else R.drawable.sticky_note_2_24px),
                         contentDescription = "Notation"
                     )
                 }
@@ -547,7 +538,7 @@ fun PosizioneListItem(
                         .padding(horizontal = 16.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.AddCircleOutline,
+                        painter = painterResource(R.drawable.add_circle_24px),
                         contentDescription = "Add canto",
                     )
                     Text(stringResource(R.string.select_canto))

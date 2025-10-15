@@ -1,12 +1,5 @@
 package it.cammino.risuscito.ui.composable.main
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.AttachFile
-import androidx.compose.material.icons.outlined.CleaningServices
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonMenu
@@ -19,13 +12,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
@@ -37,74 +30,59 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.zIndex
 import it.cammino.risuscito.R
 
-sealed class FabActionItem(
-    val route: String,
+enum class FabActionItem(
     val label: Int,
-    val icon: ImageVector,
+    val iconRes: Int,
 ) {
     //MOCK PER IL MAIN FAB
-    object Main :
-        FabActionItem(
-            "main_fab",
-            0,
-            icon = Icons.Outlined.Edit
-        )
+    MAIN(
+        0,
+        R.drawable.edit_24px
+    ),
 
-    object Pulisci :
-        FabActionItem(
-            "fab_pulisci",
-            R.string.dialog_reset_list_title,
-            Icons.Outlined.CleaningServices
-        )
+    PULISCI(
+        R.string.dialog_reset_list_title,
+        R.drawable.cleaning_services_24px
+    ),
 
-    object AddLista :
-        FabActionItem(
-            "fab_add_lista",
-            R.string.action_add_list,
-            Icons.Filled.Add
-        )
+    ADDLISTA(
+        R.string.action_add_list,
+        R.drawable.add_24px
+    ),
 
-    object Condividi :
-        FabActionItem(
-            "fab_condividi",
-            R.string.action_share,
-            Icons.Outlined.Share
-        )
+    CONDIVIDI(
+        R.string.action_share,
+        R.drawable.share_24px
+    ),
 
-    object CondividiFile :
-        FabActionItem(
-            "fab_condividi_file",
-            R.string.action_share_file,
-            Icons.Outlined.AttachFile
-        )
+    CONDIVIDIFILE(
+        R.string.action_share_file,
+        R.drawable.attach_file_24px
+    ),
 
-    object Edit :
-        FabActionItem(
-            "fab_edit_lista",
-            R.string.action_edit_list,
-            Icons.Outlined.Edit
-        )
+    EDIT(
+        R.string.action_edit_list,
+        R.drawable.edit_24px
+    ),
 
-    object Delete :
-        FabActionItem(
-            "fab_delete_lista",
-            R.string.action_remove_list,
-            Icons.Outlined.Delete
-        )
+    DELETE(
+        R.string.action_remove_list,
+        R.drawable.delete_24px
+    )
 }
 
 val listaPersonalizzata =
     listOf(
-        FabActionItem.Delete,
-        FabActionItem.Edit,
-        FabActionItem.CondividiFile,
-        FabActionItem.Condividi,
-        FabActionItem.AddLista,
-        FabActionItem.Pulisci,
+        FabActionItem.DELETE,
+        FabActionItem.EDIT,
+        FabActionItem.CONDIVIDIFILE,
+        FabActionItem.CONDIVIDI,
+        FabActionItem.ADDLISTA,
+        FabActionItem.PULISCI,
     )
 
 val listaPredefinita =
-    listOf(FabActionItem.Condividi, FabActionItem.AddLista, FabActionItem.Pulisci)
+    listOf(FabActionItem.CONDIVIDI, FabActionItem.ADDLISTA, FabActionItem.PULISCI)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -113,7 +91,7 @@ fun RisuscitoFab(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onFabActionClick: (FabActionItem) -> Unit = {},
-    mainIcon: ImageVector
+    mainIconRes: Int
 ) {
 
     val focusRequester = remember { FocusRequester() }
@@ -124,9 +102,12 @@ fun RisuscitoFab(
         button = {
             if (actions.orEmpty().isEmpty()) {
                 FloatingActionButton(
-                    onClick = { onFabActionClick(FabActionItem.Main) },
+                    onClick = { onFabActionClick(FabActionItem.MAIN) },
                 ) {
-                    Icon(mainIcon, "Floating action button.")
+                    Icon(
+                        painter = painterResource(mainIconRes),
+                        contentDescription = "Floating action button."
+                    )
                 }
             } else {
                 ToggleFloatingActionButton(
@@ -141,7 +122,7 @@ fun RisuscitoFab(
                     onCheckedChange = { onExpandedChange(!expanded) },
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Add,
+                        painter = painterResource(R.drawable.add_24px),
                         contentDescription = null,
                         modifier = Modifier.rotate(checkedProgress * 135f)
                     )
@@ -194,7 +175,12 @@ fun RisuscitoFab(
                     onExpandedChange(false)
                     onFabActionClick(item)
                 },
-                icon = { Icon(item.icon, contentDescription = null) },
+                icon = {
+                    Icon(
+                        painter = painterResource(item.iconRes),
+                        contentDescription = stringResource(item.label)
+                    )
+                },
                 text = { Text(text = stringResource(item.label)) },
             )
         }

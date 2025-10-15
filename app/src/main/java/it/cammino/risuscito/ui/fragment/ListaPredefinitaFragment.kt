@@ -562,13 +562,13 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
         selectItem(true)
         mMainActivity?.createActionMode(customListsMenu, this) { itemRoute ->
             when (itemRoute) {
-                ActionModeItem.Delete.route -> {
+                ActionModeItem.DELETE -> {
                     mMainActivity?.destroyActionMode()
                     removePositionWithUndo()
                     true
                 }
 
-                ActionModeItem.Swap.route -> {
+                ActionModeItem.SWAP -> {
                     mSwhitchMode = true
                     updateActionModeTitle(true)
                     Toast.makeText(
@@ -580,10 +580,12 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                     true
                 }
 
-                ActionModeItem.Close.route -> {
+                ActionModeItem.CLOSE -> {
                     mMainActivity?.destroyActionMode()
                     true
                 }
+
+                else -> {}
             }
         }
         updateActionModeTitle(false)

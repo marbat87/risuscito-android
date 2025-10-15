@@ -12,9 +12,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +23,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -60,7 +56,7 @@ import it.cammino.risuscito.ui.CredentialCacheManager
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.Destination
-import it.cammino.risuscito.ui.composable.main.Drawer
+import it.cammino.risuscito.ui.composable.main.DrawerItem
 import it.cammino.risuscito.ui.composable.main.FabActionItem
 import it.cammino.risuscito.ui.composable.main.MainScreen
 import it.cammino.risuscito.ui.composable.main.NavigationScreen
@@ -151,7 +147,7 @@ class MainActivity : ThemeableActivity() {
     private var actionModeTitle = mutableStateOf("")
     private var hideNavigationIcon = mutableStateOf(false)
     private var actionModeMenuList = mutableListOf<ActionModeItem>()
-    private var onActionModeClickItem: (String) -> Unit = {}
+    private var onActionModeClickItem: (ActionModeItem) -> Unit = {}
     private var navHostController = mutableStateOf(NavHostController(this))
     private val drawerState = mutableStateOf(DrawerState(initialValue = DrawerValue.Closed))
     private val tabsDestinationList = MutableLiveData(ArrayList<Destination>())
@@ -167,7 +163,7 @@ class MainActivity : ThemeableActivity() {
 
     private var fabActionsFragment: FabActionsFragment? = null
 
-    private val fabIcon = mutableStateOf(Icons.Outlined.Edit)
+    private val fabIconRes = mutableStateOf(R.drawable.edit_24px)
 
     private val showFab = mutableStateOf(false)
 
@@ -242,7 +238,7 @@ class MainActivity : ThemeableActivity() {
                     sharedSearchViewModel = sharedSearchViewModel,
                     optionMenu = localOptionMenu.value,
                     onOptionMenuClick = { optionMenuFragment?.onItemClick(it) },
-                    fabIcon = fabIcon.value,
+                    fabIconRes = fabIconRes.value,
                     onFabClick = { fabFragment?.onFabClick(it) },
                     fabActions = localFabActionsList,
                     fabExpanded = fabExpanded,
@@ -569,13 +565,12 @@ class MainActivity : ThemeableActivity() {
 
     }
 
-    private fun onMobileDrawerItemClick(itemRoute: String) {
+    private fun onMobileDrawerItemClick(itemRoute: DrawerItem) {
         expandToolbar()
 
         val activityClass = when (itemRoute) {
-            Drawer.SETTINGS.route -> SettingsActivity::class.java
-            Drawer.INFO.route -> AboutActivity::class.java
-            else -> SettingsActivity::class.java
+            DrawerItem.SETTINGS -> SettingsActivity::class.java
+            DrawerItem.INFO -> AboutActivity::class.java
         }
 
         val intent = Intent(this, activityClass)
@@ -585,13 +580,13 @@ class MainActivity : ThemeableActivity() {
     fun initFab(
         enable: Boolean,
         fragment: FabFragment? = null,
-        icon: ImageVector = Icons.Outlined.Add,
+        iconRes: Int = R.drawable.add_24px,
         fabActions: List<FabActionItem>? = null
     ) {
         Log.d(TAG, "initFab: $enable")
         fabExpanded.value = false
         fabFragment = fragment
-        fabIcon.value = icon
+        fabIconRes.value = iconRes
         val newList = ArrayList(fabActions.orEmpty())
         fabActionList.value = newList
         showFab.value = enable
@@ -945,7 +940,7 @@ class MainActivity : ThemeableActivity() {
         actionModeMenu: List<ActionModeItem>,
         fragment: ActionModeFragment,
         hideNavigation: Boolean = false,
-        onActionModeClick: (String) -> Unit = {}
+        onActionModeClick: (ActionModeItem) -> Unit = {}
     ) {
         hideNavigationIcon.value = hideNavigation
         actionModeFragment = fragment

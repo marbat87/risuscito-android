@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
@@ -21,30 +18,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.material.color.MaterialColors
 import it.cammino.risuscito.R
 
-enum class Drawer(
-    val route: String,
+enum class DrawerItem(
     val label: Int,
-    val icon: ImageVector? = null
+    val iconRes: Int? = null
 ) {
-    SETTINGS("navigation_settings", R.string.title_activity_settings, Icons.Outlined.Settings),
-    INFO("navigation_changelog", R.string.title_activity_about, Icons.Outlined.Info)
+    SETTINGS(R.string.title_activity_settings, R.drawable.settings_24px),
+    INFO(R.string.title_activity_about, R.drawable.info_24px)
 }
 
 val drawerNavItems =
-    listOf(Drawer.SETTINGS, Drawer.INFO)
+    listOf(DrawerItem.SETTINGS, DrawerItem.INFO)
 
 @Preview
 @Composable
 fun AppDrawerContent(
-    onItemClick: (String) -> Unit = {},
+    onItemClick: (DrawerItem) -> Unit = {},
     onCloseDrawer: () -> Unit = {},
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed)
 ) {
@@ -71,9 +67,9 @@ fun AppDrawerContent(
                 val title = stringResource(screen.label)
                 NavigationDrawerItem(
                     icon = {
-                        screen.icon?.let {
+                        screen.iconRes?.let {
                             Icon(
-                                screen.icon,
+                                painter = painterResource(it),
                                 contentDescription = title
                             )
                         }
@@ -81,7 +77,7 @@ fun AppDrawerContent(
                     label = { Text(title) },
                     selected = false,
                     onClick = {
-                        onItemClick(screen.route)
+                        onItemClick(screen)
                     }
                 )
             }

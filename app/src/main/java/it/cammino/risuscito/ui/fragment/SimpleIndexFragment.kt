@@ -23,8 +23,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FindReplace
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -315,7 +313,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                         },
                         dialogTitle = stringResource(R.string.dialog_replace_title),
                         dialogText = mCantiViewModel.content.value.orEmpty(),
-                        icon = Icons.Outlined.FindReplace,
+                        iconRes = R.drawable.find_replace_24px,
                         confirmButtonText = stringResource(R.string.replace_confirm),
                         dismissButtonText = stringResource(R.string.cancel)
                     )

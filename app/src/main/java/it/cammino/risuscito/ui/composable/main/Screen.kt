@@ -27,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -41,11 +40,11 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     sharedScrollViewModel: SharedScrollViewModel,
     navController: NavHostController = rememberNavController(),
-    onDrawerItemClick: (String) -> Unit = {},
+    onDrawerItemClick: (DrawerItem) -> Unit = {},
     isActionMode: Boolean = false,
     actionModeMenu: List<ActionModeItem> = emptyList(),
     hideNavigation: Boolean = false,
-    onActionModeClick: (String) -> Unit = {},
+    onActionModeClick: (ActionModeItem) -> Unit = {},
     contextualTitle: String = "",
     drawerState: DrawerState = DrawerState(initialValue = DrawerValue.Closed),
     searchBarState: SearchBarState = rememberSearchBarState(),
@@ -61,7 +60,7 @@ fun MainScreen(
     sharedSearchViewModel: SharedSearchViewModel,
     optionMenu: List<OptionMenuItem>? = emptyList(),
     onOptionMenuClick: (String) -> Unit = {},
-    fabIcon: ImageVector,
+    fabIconRes: Int,
     onFabClick: (FabActionItem) -> Unit = {},
     loggedIn: Boolean = false,
     profilePhotoUrl: String = "",
@@ -146,7 +145,7 @@ fun MainScreen(
                         expanded = fabExpanded.value,
                         onExpandedChange = { fabExpanded.value = it },
                         onFabActionClick = onFabClick,
-                        mainIcon = fabIcon,
+                        mainIconRes = fabIconRes,
                     )
                 }
             },

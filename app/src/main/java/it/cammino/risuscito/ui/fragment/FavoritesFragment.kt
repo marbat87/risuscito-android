@@ -27,8 +27,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ClearAll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -260,7 +258,7 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                         },
                         dialogTitle = stringResource(R.string.dialog_reset_favorites_title),
                         dialogText = stringResource(R.string.dialog_reset_favorites_desc),
-                        icon = Icons.Outlined.ClearAll,
+                        iconRes = R.drawable.clear_all_24px,
                         confirmButtonText = stringResource(R.string.clear_confirm),
                         dismissButtonText = stringResource(R.string.cancel)
                     )
@@ -272,10 +270,18 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                             compareBy(
                                 Collator.getInstance(systemLocale)
                             ) { getString(it.titleRes) })
+
                     mMainActivity?.createOptionsMenu(
-                        if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
-                        this@FavoritesFragment
+                        cleanListOptionMenu,
+                        null
                     )
+                    Handler(Looper.getMainLooper()).postDelayed(1) {
+                        mMainActivity?.createOptionsMenu(
+                            if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
+                            this@FavoritesFragment
+                        )
+                    }
+
                     mFavoritesViewModel.viewMode.value =
                         if (canti.isEmpty()) FavoritesViewModel.ViewMode.EMPTY else FavoritesViewModel.ViewMode.VIEW
                     if (canti.isEmpty())
@@ -322,18 +328,20 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
         actionModeOk = false
         mMainActivity?.createActionMode(deleteMenu, this) { itemRoute ->
             when (itemRoute) {
-                ActionModeItem.Delete.route -> {
+                ActionModeItem.DELETE -> {
                     removeFavoritesWithUndo()
                     actionModeOk = true
                     mMainActivity?.destroyActionMode()
                     true
                 }
 
-                ActionModeItem.Close.route -> {
+                ActionModeItem.CLOSE -> {
                     actionModeOk = false
                     mMainActivity?.destroyActionMode()
                     true
                 }
+
+                else -> {}
             }
         }
         updateActionModeTitle()

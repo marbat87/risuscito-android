@@ -6,17 +6,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.FactCheck
-import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
-import androidx.compose.material.icons.automirrored.outlined.FactCheck
-import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
-import androidx.compose.material.icons.filled.Bookmarks
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.ViewCarousel
-import androidx.compose.material.icons.outlined.Bookmarks
-import androidx.compose.material.icons.outlined.History
-import androidx.compose.material.icons.outlined.ViewCarousel
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -24,7 +13,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.compose.AndroidFragment
 import androidx.fragment.compose.rememberFragmentState
@@ -42,42 +31,42 @@ import it.cammino.risuscito.ui.fragment.HistoryFragment
 sealed class NavigationScreen(
     val route: String,
     val labelRes: Int,
-    val icon: ImageVector,
-    val selectedIcon: ImageVector
+    val iconRes: Int,
+    val selectediconRes: Int
 ) {
     object GeneralIndex : NavigationScreen(
         "navigation_indexes",
         R.string.title_activity_general_index,
-        Icons.AutoMirrored.Outlined.FormatListBulleted,
-        Icons.AutoMirrored.Filled.FormatListBulleted
+        R.drawable.format_list_bulleted_24px,
+        R.drawable.format_list_bulleted_24px
     )
 
     object CustomLists : NavigationScreen(
         "navigation_lists",
         R.string.title_activity_custom_lists,
-        Icons.Outlined.ViewCarousel,
-        Icons.Filled.ViewCarousel
+        R.drawable.view_carousel_24px,
+        R.drawable.view_carousel_filled_24px
     )
 
     object Favorites : NavigationScreen(
         "navigation_favorites",
         R.string.action_favourites,
-        Icons.Outlined.Bookmarks,
-        Icons.Filled.Bookmarks
+        R.drawable.bookmarks_24px,
+        R.drawable.bookmarks_filled_24px
     )
 
     object Consegnati : NavigationScreen(
         "navigation_consegnati",
         R.string.title_activity_consegnati,
-        Icons.AutoMirrored.Outlined.FactCheck,
-        Icons.AutoMirrored.Filled.FactCheck
+        R.drawable.fact_check_24px,
+        R.drawable.fact_check_filled_24px
     )
 
     object History : NavigationScreen(
         "navigation_history",
         R.string.title_activity_history,
-        Icons.Outlined.History,
-        Icons.Filled.History
+        R.drawable.history_24px,
+        R.drawable.history_24px
     )
 
 }
@@ -103,7 +92,7 @@ fun RisuscitoBottomNavigationBar(
             NavigationBarItem(
                 icon = {
                     Icon(
-                        if (currentRoute == screen.route) screen.selectedIcon else screen.icon,
+                        painterResource(if (currentRoute == screen.route) screen.selectediconRes else screen.iconRes),
                         contentDescription = label
                     )
                 },

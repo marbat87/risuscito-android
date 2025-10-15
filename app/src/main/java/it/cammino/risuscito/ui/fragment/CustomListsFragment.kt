@@ -16,10 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CleaningServices
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -202,7 +198,7 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
                             },
                             dialogTitle = mCustomListsViewModel.dialogTitle.value.orEmpty(),
                             dialogText = mCustomListsViewModel.content.value.orEmpty(),
-                            icon = mCustomListsViewModel.icon.value!!,
+                            iconRes = mCustomListsViewModel.iconRes.value!!,
                             confirmButtonText = mCustomListsViewModel.positiveButton.value.orEmpty(),
                             dismissButtonText = mCustomListsViewModel.negativeButton.value.orEmpty(),
                             dialogTag = mCustomListsViewModel.dialogTag
@@ -252,7 +248,10 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
     private val startListEditForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
-                Log.d(TAG, "startListEditForResult mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}")
+                Log.d(
+                    TAG,
+                    "startListEditForResult mCustomListsViewModel.indDaModif: ${mCustomListsViewModel.indDaModif}"
+                )
                 mCustomListsViewModel.indexToShow = mCustomListsViewModel.indDaModif
                 movePage = true
             }
@@ -335,7 +334,8 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
             )
             mMainActivity?.setTabVisible(true)
             Log.d(
-                TAG, "sharedTabViewModel.tabsSelectedIndex.intValue: ${sharedTabViewModel.tabsSelectedIndex.intValue}"
+                TAG,
+                "sharedTabViewModel.tabsSelectedIndex.intValue: ${sharedTabViewModel.tabsSelectedIndex.intValue}"
             )
             initFabOptions(sharedTabViewModel.tabsSelectedIndex.intValue >= 2)
 
@@ -367,74 +367,10 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
     }
 
     fun initFabOptions(customList: Boolean) {
-//        val actionListener = SpeedDialView.OnActionSelectedListener {
-//            when (it.id) {
-//                R.id.fab_pulisci -> {
-//                    mMainActivity?.let { mActivity ->
-//                        closeFabMenu()
-//                        mCustomListsViewModel.dialogTag = RESET_LIST
-//                        mCustomListsViewModel.dialogTitle.postValue(getString(R.string.dialog_reset_list_title))
-//                        mCustomListsViewModel.content.postValue(getString(R.string.reset_list_question))
-//                        mCustomListsViewModel.icon.postValue(Icons.Filled.CleaningServices)
-//                        mCustomListsViewModel.positiveButton.postValue(getString(R.string.reset_confirm))
-//                        mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
-//                        mCustomListsViewModel.showAlertDialog.postValue(true)
-//                    }
-//                    true
-//                }
-//
-//                R.id.fab_condividi -> {
-//                    closeFabMenu()
-//                    activity?.findViewById<Button>(R.id.button_condividi)?.performClick()
-//                    true
-//                }
-//
-//                R.id.fab_edit_lista -> {
-//                    closeFabMenu()
-//                    mCustomListsViewModel.indDaModif =
-//                        sharedTabViewModel.tabsSelectedIndex.intValue - 2
-//                    mMainActivity?.let { act ->
-//                        act.launchForResultWithAnimation(
-//                            startListEditForResult, Intent(
-//                                act, CreaListaActivity::class.java
-//                            ).putExtras(
-//                                bundleOf(
-//                                    ID_DA_MODIF to idListe[sharedTabViewModel.tabsSelectedIndex.intValue - 2 - 2],
-//                                    EDIT_EXISTING_LIST to true
-//                                )
-//                            ), MaterialSharedAxis.Y
-//                        )
-//                    }
-//                    true
-//                }
-//
-//                R.id.fab_delete_lista -> {
-//                    lifecycleScope.launch { deleteListDialog() }
-//                    true
-//                }
-//
-//                R.id.fab_condividi_file -> {
-//                    closeFabMenu()
-//                    activity?.findViewById<Button>(R.id.button_invia_file)?.performClick()
-//                    true
-//                }
-//
-//                else -> {
-//                    closeFabMenu()
-//                    false
-//                }
-//            }
-//        }
-//
-//        val click = View.OnClickListener {
-//            mMainActivity?.destroyActionMode()
-//            toggleFabMenu()
-//        }
-
         mMainActivity?.initFab(
             enable = true,
             fragment = this,
-            icon = Icons.Default.Add,
+            iconRes = R.drawable.add_24px,
             fabActions = if (customList) listaPersonalizzata else listaPredefinita
         )
     }
@@ -453,7 +389,7 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
             mCustomListsViewModel.dialogTag = SimpleDialogTag.DELETE_LIST
             mCustomListsViewModel.dialogTitle.postValue(getString(R.string.action_remove_list))
             mCustomListsViewModel.content.postValue(getString(R.string.delete_list_dialog))
-            mCustomListsViewModel.icon.postValue(Icons.Outlined.Delete)
+            mCustomListsViewModel.iconRes.postValue(R.drawable.delete_24px)
             mCustomListsViewModel.positiveButton.postValue(getString(R.string.delete_confirm))
             mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
             mCustomListsViewModel.showAlertDialog.postValue(true)
@@ -507,33 +443,33 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
 
     override fun onFabClick(item: FabActionItem) {
         when (item) {
-            FabActionItem.Pulisci -> {
+            FabActionItem.PULISCI -> {
                 mCustomListsViewModel.dialogTag = SimpleDialogTag.RESET_LIST
                 mCustomListsViewModel.dialogTitle.postValue(getString(R.string.dialog_reset_list_title))
                 mCustomListsViewModel.content.postValue(getString(R.string.reset_list_question))
-                mCustomListsViewModel.icon.postValue(Icons.Filled.CleaningServices)
+                mCustomListsViewModel.iconRes.postValue(R.drawable.cleaning_services_24px)
                 mCustomListsViewModel.positiveButton.postValue(getString(R.string.reset_confirm))
                 mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
                 mCustomListsViewModel.showAlertDialog.postValue(true)
             }
 
-            FabActionItem.AddLista -> {
+            FabActionItem.ADDLISTA -> {
                 inputdialogViewModel.showAlertDialog.value = true
             }
 
-            FabActionItem.Condividi -> {
+            FabActionItem.CONDIVIDI -> {
                 mMainActivity?.getFabActionsFragment()?.condividi()
             }
 
-            FabActionItem.CondividiFile -> {
+            FabActionItem.CONDIVIDIFILE -> {
                 mMainActivity?.getFabActionsFragment()?.inviaFile()
             }
 
-            FabActionItem.Delete -> {
+            FabActionItem.DELETE -> {
                 lifecycleScope.launch { deleteListDialog() }
             }
 
-            FabActionItem.Edit -> {
+            FabActionItem.EDIT -> {
                 mCustomListsViewModel.indDaModif =
                     sharedTabViewModel.tabsSelectedIndex.intValue - 2
                 mMainActivity?.let { act ->

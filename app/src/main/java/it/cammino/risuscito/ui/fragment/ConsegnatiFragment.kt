@@ -28,10 +28,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -320,7 +316,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                 },
                                 dialogTitle = stringResource(R.string.dialog_save_consegnati_title),
                                 dialogText = stringResource(R.string.dialog_save_consegnati_desc),
-                                icon = Icons.Outlined.Save,
+                                iconRes = R.drawable.save_24px,
                                 confirmButtonText = stringResource(R.string.action_salva),
                                 dismissButtonText = stringResource(R.string.cancel)
                             )
@@ -448,12 +444,12 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
         mMainActivity?.updateActionModeTitle("")
         mMainActivity?.createActionMode(consegnatiMenu, this, true) { itemRoute ->
             when (itemRoute) {
-                ActionModeItem.SelectNone.route -> {
+                ActionModeItem.SELECTNONE -> {
                     consegnatiViewModel.consegnatiSelectedList.value = emptyList()
                     true
                 }
 
-                ActionModeItem.SelectAll.route -> {
+                ActionModeItem.SELECTALL -> {
                     consegnatiViewModel.consegnatiFullList.value?.let { consegnati ->
                         consegnatiViewModel.consegnatiSelectedList.value =
                             (consegnati.map { it.id })
@@ -461,16 +457,18 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                     true
                 }
 
-                ActionModeItem.Undo.route -> {
+                ActionModeItem.UNDO -> {
                     mMainActivity?.destroyActionMode()
                     initFab()
                     true
                 }
 
-                ActionModeItem.Help.route -> {
+                ActionModeItem.HELP -> {
                     managerIntro()
                     true
                 }
+
+                else -> {}
             }
         }
     }
@@ -484,7 +482,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
         mMainActivity?.initFab(
             enable = true,
             fragment = this,
-            icon = if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) Icons.Default.Save else Icons.Default.Edit
+            iconRes = if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) R.drawable.save_24px else R.drawable.edit_24px
         )
     }
 
