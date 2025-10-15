@@ -59,8 +59,8 @@ import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.risuscito_medium_font
-import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.StringUtils
@@ -160,165 +160,165 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     }
                 }
 
-                RisuscitoTheme {
-                    if (isSearch) {
-                        if (localItems.value.isEmpty()) {
-                            Column(
+                if (isSearch) {
+                    if (localItems.value.isEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .padding(horizontal = 16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_search_question_mark),
+                                contentDescription = stringResource(id = R.string.search_no_results),
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .padding(horizontal = 16.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable.ic_search_question_mark),
-                                    contentDescription = stringResource(id = R.string.search_no_results),
-                                    modifier = Modifier
-                                        .size(120.dp)
-                                )
-                                Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
-                                Text(
-                                    text = stringResource(R.string.search_no_results),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
-                                    fontFamily = risuscito_medium_font,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
-                                )
-                            }
-                        }
-                    }
-                    if (showSearchProgress.value) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.width(64.dp),
-                                color = MaterialTheme.colorScheme.secondary,
-                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    .size(120.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
+                            Text(
+                                text = stringResource(R.string.search_no_results),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
+                                fontFamily = risuscito_medium_font,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
                             )
                         }
                     }
-                    Box(
-                        modifier = Modifier.pointerInteropFilter {
-                            offset = DpOffset(it.x.dp, it.y.dp)
-                            false
-                        }
-                    ) {
-                        val listModifier = Modifier
-                            .fillMaxSize()
-                            .then(
-                                scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
-                                    ?: Modifier
-                            )
-                        if (context?.isGridLayout == true) {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
-                                modifier = listModifier
-                            ) {
-                                items(localItems.value) { simpleItem ->
-                                    SimpleListItem(
-                                        requireContext(),
-                                        simpleItem,
-                                        onItemClick = { rememberItemClick(it) },
-                                        onItemLongClick = { rememberItemLongClick(it) },
-                                        selected = false,
-                                        modifier = Modifier.animateItem(),
-                                        isInsert = isInsert,
-                                        onIconClick = { rememberIconClick(it) }
-                                    )
-                                }
-                            }
-                        } else {
-                            LazyColumn(
-                                state = state,
-                                modifier = listModifier
-                            ) {
-                                items(localItems.value) { simpleItem ->
-                                    SimpleListItem(
-                                        requireContext(),
-                                        simpleItem,
-                                        onItemClick = { rememberItemClick(it) },
-                                        onItemLongClick = { rememberItemLongClick(it) },
-                                        selected = false,
-                                        modifier = Modifier.animateItem(),
-                                        isInsert = isInsert,
-                                        onIconClick = { rememberIconClick(it) }
-                                    )
-                                }
+                }
+                if (showSearchProgress.value) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.width(64.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                    }
+                }
+                Box(
+                    modifier = Modifier.pointerInteropFilter {
+                        offset = DpOffset(it.x.dp, it.y.dp)
+                        false
+                    }
+                ) {
+                    val listModifier = Modifier
+                        .fillMaxSize()
+                        .then(
+                            scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
+                                ?: Modifier
+                        )
+                    if (context?.isGridLayout == true) {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = listModifier
+                        ) {
+                            items(localItems.value) { simpleItem ->
+                                SimpleListItem(
+                                    requireContext(),
+                                    simpleItem,
+                                    onItemClick = { rememberItemClick(it) },
+                                    onItemLongClick = { rememberItemLongClick(it) },
+                                    selected = false,
+                                    modifier = Modifier.animateItem(),
+                                    isInsert = isInsert,
+                                    onIconClick = { rememberIconClick(it) }
+                                )
                             }
                         }
-                        when (mCantiViewModel.tipoLista) {
-                            0 -> AddToDropDownMenu(
-                                this@SimpleIndexFragment,
-                                mCantiViewModel,
-                                ALPHA_REPLACE,
-                                ALPHA_REPLACE_2,
-                                listePersonalizzate,
-                                contextMenuExpanded.value,
-                                offset
-                            ) { contextMenuExpanded.value = false }
-
-                            1 -> AddToDropDownMenu(
-                                this@SimpleIndexFragment,
-                                mCantiViewModel,
-                                NUMERIC_REPLACE,
-                                NUMERIC_REPLACE_2,
-                                listePersonalizzate,
-                                contextMenuExpanded.value,
-                                offset
-                            ) { contextMenuExpanded.value = false }
-
-                            2 -> AddToDropDownMenu(
-                                this@SimpleIndexFragment,
-                                mCantiViewModel,
-                                SALMI_REPLACE,
-                                SALMI_REPLACE_2,
-                                listePersonalizzate,
-                                contextMenuExpanded.value,
-                                offset
-                            ) { contextMenuExpanded.value = false }
+                    } else {
+                        LazyColumn(
+                            state = state,
+                            modifier = listModifier
+                        ) {
+                            items(localItems.value) { simpleItem ->
+                                SimpleListItem(
+                                    requireContext(),
+                                    simpleItem,
+                                    onItemClick = { rememberItemClick(it) },
+                                    onItemLongClick = { rememberItemLongClick(it) },
+                                    selected = false,
+                                    modifier = Modifier.animateItem(),
+                                    isInsert = isInsert,
+                                    onIconClick = { rememberIconClick(it) }
+                                )
+                            }
                         }
                     }
-                    if (mCantiViewModel.showAlertDialog.observeAsState().value == true) {
-                        SimpleAlertDialog(
-                            onDismissRequest = { mCantiViewModel.showAlertDialog.postValue(false) },
-                            onConfirmation = {
-                                Log.d(
-                                    TAG,
-                                    "mCantiViewModel.shownDialogTag ${mCantiViewModel.dialogTag}"
-                                )
-                                mCantiViewModel.showAlertDialog.postValue(false)
-                                when (mCantiViewModel.dialogTag) {
-                                    ALPHA_REPLACE, NUMERIC_REPLACE, SALMI_REPLACE -> {
-                                        listePersonalizzate?.let { lista ->
-                                            lista[mCantiViewModel.idListaClick]
-                                                .lista?.addCanto(
-                                                    (mCantiViewModel.idDaAgg).toString(),
-                                                    mCantiViewModel.idPosizioneClick
-                                                )
-                                            ListeUtils.updateListaPersonalizzata(
-                                                this@SimpleIndexFragment,
-                                                lista[mCantiViewModel.idListaClick]
+                    when (mCantiViewModel.tipoLista) {
+                        0 -> AddToDropDownMenu(
+                            this@SimpleIndexFragment,
+                            mCantiViewModel,
+                            SimpleDialogTag.ALPHA_REPLACE,
+                            SimpleDialogTag.ALPHA_REPLACE_2,
+                            listePersonalizzate,
+                            contextMenuExpanded.value,
+                            offset
+                        ) { contextMenuExpanded.value = false }
+
+                        1 -> AddToDropDownMenu(
+                            this@SimpleIndexFragment,
+                            mCantiViewModel,
+                            SimpleDialogTag.NUMERIC_REPLACE,
+                            SimpleDialogTag.NUMERIC_REPLACE_2,
+                            listePersonalizzate,
+                            contextMenuExpanded.value,
+                            offset
+                        ) { contextMenuExpanded.value = false }
+
+                        2 -> AddToDropDownMenu(
+                            this@SimpleIndexFragment,
+                            mCantiViewModel,
+                            SimpleDialogTag.SALMI_REPLACE,
+                            SimpleDialogTag.SALMI_REPLACE_2,
+                            listePersonalizzate,
+                            contextMenuExpanded.value,
+                            offset
+                        ) { contextMenuExpanded.value = false }
+                    }
+                }
+                if (mCantiViewModel.showAlertDialog.observeAsState().value == true) {
+                    SimpleAlertDialog(
+                        onDismissRequest = { mCantiViewModel.showAlertDialog.postValue(false) },
+                        onConfirmation = {
+                            Log.d(
+                                TAG,
+                                "mCantiViewModel.shownDialogTag ${mCantiViewModel.dialogTag}"
+                            )
+                            mCantiViewModel.showAlertDialog.postValue(false)
+                            when (mCantiViewModel.dialogTag) {
+                                SimpleDialogTag.ALPHA_REPLACE, SimpleDialogTag.NUMERIC_REPLACE, SimpleDialogTag.SALMI_REPLACE -> {
+                                    listePersonalizzate?.let { lista ->
+                                        lista[mCantiViewModel.idListaClick]
+                                            .lista?.addCanto(
+                                                (mCantiViewModel.idDaAgg).toString(),
+                                                mCantiViewModel.idPosizioneClick
                                             )
-                                        }
-                                    }
-
-                                    ALPHA_REPLACE_2, NUMERIC_REPLACE_2, SALMI_REPLACE_2 -> {
-                                        ListeUtils.updatePosizione(
+                                        ListeUtils.updateListaPersonalizzata(
                                             this@SimpleIndexFragment,
-                                            mCantiViewModel.idDaAgg,
-                                            mCantiViewModel.idListaDaAgg,
-                                            mCantiViewModel.posizioneDaAgg
+                                            lista[mCantiViewModel.idListaClick]
                                         )
                                     }
                                 }
-                            },
-                            dialogTitle = stringResource(R.string.dialog_replace_title),
-                            dialogText = mCantiViewModel.content.value.orEmpty(),
-                            icon = Icons.Outlined.FindReplace,
-                            confirmButtonText = stringResource(R.string.replace_confirm),
-                            dismissButtonText = stringResource(R.string.cancel)
-                        )
-                    }
+
+                                SimpleDialogTag.ALPHA_REPLACE_2, SimpleDialogTag.NUMERIC_REPLACE_2, SimpleDialogTag.SALMI_REPLACE_2 -> {
+                                    ListeUtils.updatePosizione(
+                                        this@SimpleIndexFragment,
+                                        mCantiViewModel.idDaAgg,
+                                        mCantiViewModel.idListaDaAgg,
+                                        mCantiViewModel.posizioneDaAgg
+                                    )
+                                }
+
+                                else -> {}
+                            }
+                        },
+                        dialogTitle = stringResource(R.string.dialog_replace_title),
+                        dialogText = mCantiViewModel.content.value.orEmpty(),
+                        icon = Icons.Outlined.FindReplace,
+                        confirmButtonText = stringResource(R.string.replace_confirm),
+                        dismissButtonText = stringResource(R.string.cancel)
+                    )
                 }
 
                 Log.d(TAG, "onCreateView: IS_SEARCH ${arguments?.getBoolean(IS_SEARCH, false)}")
@@ -462,12 +462,6 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
 
     companion object {
         private val TAG = SimpleIndexFragment::class.java.canonicalName
-        private const val ALPHA_REPLACE = "ALPHA_REPLACE"
-        private const val ALPHA_REPLACE_2 = "ALPHA_REPLACE_2"
-        private const val NUMERIC_REPLACE = "NUMERIC_REPLACE"
-        private const val NUMERIC_REPLACE_2 = "NUMERIC_REPLACE_2"
-        private const val SALMI_REPLACE = "SALMI_REPLACE"
-        private const val SALMI_REPLACE_2 = "SALMI_REPLACE_2"
         const val INDICE_LISTA = "indiceLista"
 
         const val IS_INSERT = "isInsert"

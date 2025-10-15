@@ -80,7 +80,7 @@ ksp {
 }
 
 val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.8.1"
+val roomVersion = "2.8.2"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0")
@@ -93,7 +93,6 @@ dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
-    implementation("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.media:media:1.7.1")
@@ -105,12 +104,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
     implementation("com.google.android.gms:play-services-auth:21.4.0")
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-auth")
@@ -138,9 +136,9 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 
-    implementation(platform("androidx.compose:compose-bom:2025.09.01"))
+    implementation(platform("androidx.compose:compose-bom:2025.10.00"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha06")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")

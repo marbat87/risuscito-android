@@ -792,6 +792,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
         }
 
     override fun pulisci() {
+        Log.d(TAG, "pulisci: ${mCantiViewModel.defaultListaId}")
         lifecycleScope.launch(Dispatchers.IO) {
             RisuscitoDatabase.getInstance(requireContext()).customListDao()
                 .deleteListById(mCantiViewModel.defaultListaId)

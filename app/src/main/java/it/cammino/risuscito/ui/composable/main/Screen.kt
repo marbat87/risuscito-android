@@ -9,8 +9,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -25,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +32,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import it.cammino.risuscito.ui.interfaces.FabFragment.FabItem
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import kotlinx.coroutines.launch
@@ -57,16 +55,18 @@ fun MainScreen(
     tabsList: List<Destination>? = emptyList(),
     resetTab: MutableState<Boolean>,
     snackbarHostState: SnackbarHostState,
-    showFab: Boolean = false,
+    showFab: Boolean,
+    fabActions: List<FabActionItem>? = emptyList(),
+    fabExpanded: MutableState<Boolean> = mutableStateOf(false),
     sharedSearchViewModel: SharedSearchViewModel,
     optionMenu: List<OptionMenuItem>? = emptyList(),
     onOptionMenuClick: (String) -> Unit = {},
     fabIcon: ImageVector,
-    onFabClick: (FabItem) -> Unit = {},
+    onFabClick: (FabActionItem) -> Unit = {},
     loggedIn: Boolean = false,
     profilePhotoUrl: String = "",
     onProfileClick: () -> Unit = {},
-    onLoginClick: () -> Unit = {}
+    onLoginClick: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
 
@@ -140,13 +140,14 @@ fun MainScreen(
                 )
             },
             floatingActionButton = {
-                //TODO
                 if (showFab) {
-                    FloatingActionButton(
-                        onClick = { onFabClick(FabItem.MAIN) },
-                    ) {
-                        Icon(fabIcon, "Floating action button.")
-                    }
+                    RisuscitoFab(
+                        actions = fabActions,
+                        expanded = fabExpanded.value,
+                        onExpandedChange = { fabExpanded.value = it },
+                        onFabActionClick = onFabClick,
+                        mainIcon = fabIcon,
+                    )
                 }
             },
             floatingActionButtonPosition = FabPosition.End,
@@ -154,29 +155,45 @@ fun MainScreen(
                 SnackbarHost(hostState = snackbarHostState)
             },
         ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                if (showTabs) {
-                    RisuscitoTabs(
-                        selectedTabIndex = selectedTabIndex,
-                        tabsList = tabsList
-                    )
-                }
-                Box {
-                    AppNavigationHost(navController = navController)
-
-                    // LinearProgressIndicator sovrapposto
-                    if (showLoadingBar) {
-                        LinearProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.TopCenter)
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    if (showTabs) {
+                        RisuscitoTabs(
+                            selectedTabIndex = selectedTabIndex,
+                            tabsList = tabsList
                         )
                     }
+                    Box {
+                        AppNavigationHost(navController = navController)
+
+                        // LinearProgressIndicator sovrapposto
+                        if (showLoadingBar) {
+                            LinearProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.TopCenter)
+                            )
+                        }
+                    }
                 }
+
+//                if (fabExpanded.value) {
+//                    Surface(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .clickable(
+//                                enabled = true,
+//                                onClickLabel = stringResource(R.string.material_drawer_close),
+//                                onClick = { fabExpanded.value = false }
+//                            ),
+//                        color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.4f)
+//                    ) {}
+//                }
+
             }
         }
     }

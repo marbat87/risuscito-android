@@ -67,13 +67,14 @@ import it.cammino.risuscito.ui.composable.PassageListItem
 import it.cammino.risuscito.ui.composable.dialogs.ListChoiceAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.PassaggesDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.FabActionItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.consegnatiMenu
 import it.cammino.risuscito.ui.composable.main.consegnatiOptionMenu
 import it.cammino.risuscito.ui.composable.main.consegnatiResetOptionMenu
 import it.cammino.risuscito.ui.composable.risuscito_medium_font
-import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
@@ -89,7 +90,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.Collator
 
-class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment, OptionMenuFragment,
+class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFragment,
     FabFragment {
 
     private val consegnatiViewModel: ConsegnatiViewModel by viewModels()
@@ -131,243 +132,242 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment, OptionMenu
 
                 val viewMode by remember { consegnatiViewModel.viewMode }
 
-                RisuscitoTheme {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
 
-                        // In SectionedIndexFragment, dentro setContent
-                        val rememberedOnItemClick = remember<(RisuscitoListItem) -> Unit> {
-                            { item ->
-                                mMainActivity?.openCanto(
-                                    TAG,
-                                    item.id,
-                                    getString(item.sourceRes),
-                                    false
-                                )
-                            }
-                        }
-
-                        AnimatedContent(
-                            viewMode,
-                            transitionSpec = {
-                                fadeIn(
-                                    animationSpec = tween(1000)
-                                ) togetherWith fadeOut(animationSpec = tween(1000))
-                            },
-                            label = "Animated Content"
-                        )
-                        { targetState ->
-                            when (targetState) {
-                                ConsegnatiViewModel.ViewMode.LOADING -> {
-                                    CircularProgressIndicator()
-                                }
-
-                                ConsegnatiViewModel.ViewMode.VIEW -> {
-                                    val simpleListState = rememberLazyListState()
-                                    backCallback?.isEnabled = false
-                                    val listModifier = Modifier
-                                        .fillMaxSize()
-                                        .then(
-                                            scrollBehaviorFromSharedVM?.let {
-                                                Modifier.nestedScroll(
-                                                    it.nestedScrollConnection
-                                                )
-                                            }
-                                                ?: Modifier
-                                        )
-                                    if (context?.isGridLayout == true) {
-                                        LazyVerticalGrid(
-                                            columns = Fixed(2),
-                                            modifier = listModifier
-                                        ) {
-                                            items(
-                                                consegnatiItems ?: emptyList(),
-                                                key = { it.id }) { simpleItem ->
-                                                PassageListItem(
-                                                    simpleItem,
-                                                    onItemClick = rememberedOnItemClick,
-                                                    onIconClick = { openPassageModal(it) },
-                                                    modifier = Modifier.animateItem()
-                                                )
-                                            }
-                                            item {
-                                                Spacer(Modifier.height(86.dp))
-                                            }
-                                        }
-                                    } else {
-                                        LazyColumn(
-                                            state = simpleListState,
-                                            modifier = listModifier
-                                        ) {
-                                            items(
-                                                consegnatiItems ?: emptyList(),
-                                                key = { it.id }) { simpleItem ->
-                                                PassageListItem(
-                                                    simpleItem,
-                                                    onItemClick = rememberedOnItemClick,
-                                                    onIconClick = { openPassageModal(it) },
-                                                    modifier = Modifier.animateItem()
-                                                )
-                                            }
-                                            item {
-                                                Spacer(Modifier.height(86.dp))
-                                            }
-                                        }
-                                    }
-                                }
-
-                                ConsegnatiViewModel.ViewMode.EDIT -> {
-                                    backCallback?.isEnabled = true
-                                    val checkableListState = rememberLazyListState()
-                                    val listModifier = Modifier
-                                        .fillMaxSize()
-                                    if (context?.isGridLayout == true) {
-                                        LazyVerticalGrid(
-                                            columns = Fixed(2),
-                                            modifier = listModifier
-                                        ) {
-                                            items(
-                                                consegnatiSelectableItems ?: emptyList(),
-                                                key = { it.id }) { simpleItem ->
-                                                CheckableListItem(
-                                                    simpleItem,
-                                                    modifier = Modifier.animateItem(),
-                                                    onSelect = {
-                                                        if (it) selectItem(simpleItem.id)
-                                                        else deselectItem(simpleItem.id)
-                                                    },
-                                                    selected = consegnatiSelectedItems?.contains(
-                                                        simpleItem.id
-                                                    ) ?: false
-                                                )
-                                            }
-                                            item {
-                                                Spacer(Modifier.height(86.dp))
-                                            }
-                                        }
-                                    } else {
-                                        LazyColumn(
-                                            state = checkableListState,
-                                            modifier = listModifier
-                                        ) {
-                                            items(
-                                                consegnatiSelectableItems ?: emptyList(),
-                                                key = { it.id }) { simpleItem ->
-                                                CheckableListItem(
-                                                    simpleItem,
-                                                    modifier = Modifier.animateItem(),
-                                                    onSelect = {
-                                                        if (it) selectItem(simpleItem.id)
-                                                        else deselectItem(simpleItem.id)
-                                                    },
-                                                    selected = consegnatiSelectedItems?.contains(
-                                                        simpleItem.id
-                                                    ) ?: false
-                                                )
-                                            }
-                                            item {
-                                                Spacer(Modifier.height(86.dp))
-                                            }
-                                        }
-                                    }
-                                }
-
-                                ConsegnatiViewModel.ViewMode.EMPTY -> {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .wrapContentHeight(), // Occupa solo l'altezza necessaria
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Image(
-                                            painter = painterResource(R.drawable.ic_sleeping_checklist),
-                                            contentDescription = stringResource(id = R.string.no_consegnati),
-                                            modifier = Modifier
-                                                .size(120.dp)
-                                        )
-                                        Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
-                                        Text(
-                                            text = stringResource(R.string.no_consegnati),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
-                                            fontFamily = risuscito_medium_font,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
-                                        )
-                                    }
-                                }
-                            }
+                    // In SectionedIndexFragment, dentro setContent
+                    val rememberedOnItemClick = remember<(RisuscitoListItem) -> Unit> {
+                        { item ->
+                            mMainActivity?.openCanto(
+                                TAG,
+                                item.id,
+                                getString(item.sourceRes),
+                                false
+                            )
                         }
                     }
 
-                    val passaggiArray = integerArrayResource(R.array.passaggi_values)
-                    val passaggiTitle = stringArrayResource(R.array.passaggi_entries)
-
-                    if (consegnatiViewModel.showAlertDialog.observeAsState().value == true) {
-                        when (consegnatiViewModel.dialogTag) {
-                            SAVE_CONSEGNATI_DIALOG -> {
-                                SimpleAlertDialog(
-                                    onDismissRequest = {
-                                        consegnatiViewModel.showAlertDialog.postValue(false)
-                                    },
-                                    onConfirmation = {
-                                        consegnatiViewModel.showAlertDialog.postValue(false)
-                                        mMainActivity?.destroyActionMode()
-                                        lifecycleScope.launch { saveConsegnati() }
-                                    },
-                                    dialogTitle = stringResource(R.string.dialog_save_consegnati_title),
-                                    dialogText = stringResource(R.string.dialog_save_consegnati_desc),
-                                    icon = Icons.Outlined.Save,
-                                    confirmButtonText = stringResource(R.string.action_salva),
-                                    dismissButtonText = stringResource(R.string.cancel)
-                                )
+                    AnimatedContent(
+                        viewMode,
+                        transitionSpec = {
+                            fadeIn(
+                                animationSpec = tween(1000)
+                            ) togetherWith fadeOut(animationSpec = tween(1000))
+                        },
+                        label = "Animated Content"
+                    )
+                    { targetState ->
+                        when (targetState) {
+                            ConsegnatiViewModel.ViewMode.LOADING -> {
+                                CircularProgressIndicator()
                             }
 
-                            ADD_PASSAGE_DIALOG -> {
-                                ListChoiceAlertDialog(
-                                    onDismissRequest = {
-                                        consegnatiViewModel.showAlertDialog.postValue(false)
-                                    },
-                                    onConfirmation = { passaggio ->
-                                        consegnatiViewModel.showAlertDialog.postValue(false)
-                                        val consegnato = Consegnato().apply {
-                                            idConsegnato =
-                                                consegnatiViewModel.mIdConsegnatoSelected
-                                            idCanto = consegnatiViewModel.mIdCantoSelected
-                                            numPassaggio = passaggio
-                                        }
-                                        val mDao =
-                                            RisuscitoDatabase.getInstance(requireContext())
-                                                .consegnatiDao()
-                                        lifecycleScope.launch(Dispatchers.IO) {
-                                            mDao.updateConsegnato(
-                                                consegnato
+                            ConsegnatiViewModel.ViewMode.VIEW -> {
+                                val simpleListState = rememberLazyListState()
+                                backCallback?.isEnabled = false
+                                val listModifier = Modifier
+                                    .fillMaxSize()
+                                    .then(
+                                        scrollBehaviorFromSharedVM?.let {
+                                            Modifier.nestedScroll(
+                                                it.nestedScrollConnection
                                             )
                                         }
-                                    },
-                                    nomiPassaggi = passaggiTitle,
-                                    indiciPassaggi = passaggiArray,
-                                    passaggioSelezionato = consegnatiViewModel.dialogPrefill
-                                )
+                                            ?: Modifier
+                                    )
+                                if (context?.isGridLayout == true) {
+                                    LazyVerticalGrid(
+                                        columns = Fixed(2),
+                                        modifier = listModifier
+                                    ) {
+                                        items(
+                                            consegnatiItems ?: emptyList(),
+                                            key = { it.id }) { simpleItem ->
+                                            PassageListItem(
+                                                simpleItem,
+                                                onItemClick = rememberedOnItemClick,
+                                                onIconClick = { openPassageModal(it) },
+                                                modifier = Modifier.animateItem()
+                                            )
+                                        }
+                                        item {
+                                            Spacer(Modifier.height(86.dp))
+                                        }
+                                    }
+                                } else {
+                                    LazyColumn(
+                                        state = simpleListState,
+                                        modifier = listModifier
+                                    ) {
+                                        items(
+                                            consegnatiItems ?: emptyList(),
+                                            key = { it.id }) { simpleItem ->
+                                            PassageListItem(
+                                                simpleItem,
+                                                onItemClick = rememberedOnItemClick,
+                                                onIconClick = { openPassageModal(it) },
+                                                modifier = Modifier.animateItem()
+                                            )
+                                        }
+                                        item {
+                                            Spacer(Modifier.height(86.dp))
+                                        }
+                                    }
+                                }
+                            }
+
+                            ConsegnatiViewModel.ViewMode.EDIT -> {
+                                backCallback?.isEnabled = true
+                                val checkableListState = rememberLazyListState()
+                                val listModifier = Modifier
+                                    .fillMaxSize()
+                                if (context?.isGridLayout == true) {
+                                    LazyVerticalGrid(
+                                        columns = Fixed(2),
+                                        modifier = listModifier
+                                    ) {
+                                        items(
+                                            consegnatiSelectableItems ?: emptyList(),
+                                            key = { it.id }) { simpleItem ->
+                                            CheckableListItem(
+                                                simpleItem,
+                                                modifier = Modifier.animateItem(),
+                                                onSelect = {
+                                                    if (it) selectItem(simpleItem.id)
+                                                    else deselectItem(simpleItem.id)
+                                                },
+                                                selected = consegnatiSelectedItems?.contains(
+                                                    simpleItem.id
+                                                ) ?: false
+                                            )
+                                        }
+                                        item {
+                                            Spacer(Modifier.height(86.dp))
+                                        }
+                                    }
+                                } else {
+                                    LazyColumn(
+                                        state = checkableListState,
+                                        modifier = listModifier
+                                    ) {
+                                        items(
+                                            consegnatiSelectableItems ?: emptyList(),
+                                            key = { it.id }) { simpleItem ->
+                                            CheckableListItem(
+                                                simpleItem,
+                                                modifier = Modifier.animateItem(),
+                                                onSelect = {
+                                                    if (it) selectItem(simpleItem.id)
+                                                    else deselectItem(simpleItem.id)
+                                                },
+                                                selected = consegnatiSelectedItems?.contains(
+                                                    simpleItem.id
+                                                ) ?: false
+                                            )
+                                        }
+                                        item {
+                                            Spacer(Modifier.height(86.dp))
+                                        }
+                                    }
+                                }
+                            }
+
+                            ConsegnatiViewModel.ViewMode.EMPTY -> {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight(), // Occupa solo l'altezza necessaria
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.ic_sleeping_checklist),
+                                        contentDescription = stringResource(id = R.string.no_consegnati),
+                                        modifier = Modifier
+                                            .size(120.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
+                                    Text(
+                                        text = stringResource(R.string.no_consegnati),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
+                                        fontFamily = risuscito_medium_font,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
+                                    )
+                                }
                             }
                         }
                     }
+                }
 
-                    PassaggesDropDownMenu(
-                        contextMenuExpanded.value,
-                        passaggiTitle,
-                        passaggiArray,
-                        consegnatiViewModel.passaggiSelectedList,
-                        { contextMenuExpanded.value = false }
-                    ) { item, selected ->
-                        if (selected) selectPassaggiItem(item) else deselectPassaggiItem(
-                            item
-                        )
+                val passaggiArray = integerArrayResource(R.array.passaggi_values)
+                val passaggiTitle = stringArrayResource(R.array.passaggi_entries)
+
+                if (consegnatiViewModel.showAlertDialog.observeAsState().value == true) {
+                    when (consegnatiViewModel.dialogTag) {
+                        SimpleDialogTag.SAVE_CONSEGNATI_DIALOG -> {
+                            SimpleAlertDialog(
+                                onDismissRequest = {
+                                    consegnatiViewModel.showAlertDialog.postValue(false)
+                                },
+                                onConfirmation = {
+                                    consegnatiViewModel.showAlertDialog.postValue(false)
+                                    mMainActivity?.destroyActionMode()
+                                    lifecycleScope.launch { saveConsegnati() }
+                                },
+                                dialogTitle = stringResource(R.string.dialog_save_consegnati_title),
+                                dialogText = stringResource(R.string.dialog_save_consegnati_desc),
+                                icon = Icons.Outlined.Save,
+                                confirmButtonText = stringResource(R.string.action_salva),
+                                dismissButtonText = stringResource(R.string.cancel)
+                            )
+                        }
+
+                        SimpleDialogTag.ADD_PASSAGE_DIALOG -> {
+                            ListChoiceAlertDialog(
+                                onDismissRequest = {
+                                    consegnatiViewModel.showAlertDialog.postValue(false)
+                                },
+                                onConfirmation = { passaggio ->
+                                    consegnatiViewModel.showAlertDialog.postValue(false)
+                                    val consegnato = Consegnato().apply {
+                                        idConsegnato =
+                                            consegnatiViewModel.mIdConsegnatoSelected
+                                        idCanto = consegnatiViewModel.mIdCantoSelected
+                                        numPassaggio = passaggio
+                                    }
+                                    val mDao =
+                                        RisuscitoDatabase.getInstance(requireContext())
+                                            .consegnatiDao()
+                                    lifecycleScope.launch(Dispatchers.IO) {
+                                        mDao.updateConsegnato(
+                                            consegnato
+                                        )
+                                    }
+                                },
+                                nomiPassaggi = passaggiTitle,
+                                indiciPassaggi = passaggiArray,
+                                passaggioSelezionato = consegnatiViewModel.dialogPrefill
+                            )
+                        }
+
+                        else -> {}
                     }
+                }
 
+                PassaggesDropDownMenu(
+                    contextMenuExpanded.value,
+                    passaggiTitle,
+                    passaggiArray,
+                    consegnatiViewModel.passaggiSelectedList,
+                    { contextMenuExpanded.value = false }
+                ) { item, selected ->
+                    if (selected) selectPassaggiItem(item) else deselectPassaggiItem(
+                        item
+                    )
                 }
 
                 consegnatiViewModel.consegnatiList?.observe(viewLifecycleOwner) { canti ->
@@ -482,8 +482,9 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment, OptionMenu
 
     private fun initFab() {
         mMainActivity?.initFab(
-            this,
-            if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) Icons.Default.Save else Icons.Default.Edit
+            enable = true,
+            fragment = this,
+            icon = if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) Icons.Default.Save else Icons.Default.Edit
         )
     }
 
@@ -639,7 +640,7 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment, OptionMenu
             consegnatiViewModel.mIdConsegnatoSelected = item.idConsegnato
             consegnatiViewModel.mIdCantoSelected = item.id
             consegnatiViewModel.dialogPrefill = item.numPassaggio
-            consegnatiViewModel.dialogTag = ADD_PASSAGE_DIALOG
+            consegnatiViewModel.dialogTag = SimpleDialogTag.ADD_PASSAGE_DIALOG
             consegnatiViewModel.showAlertDialog.value = true
         }
     }
@@ -660,9 +661,9 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment, OptionMenu
         }
     }
 
-    override fun onFabClick(item: FabFragment.FabItem) {
+    override fun onFabClick(item: FabActionItem) {
         if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) {
-            consegnatiViewModel.dialogTag = SAVE_CONSEGNATI_DIALOG
+            consegnatiViewModel.dialogTag = SimpleDialogTag.SAVE_CONSEGNATI_DIALOG
             consegnatiViewModel.showAlertDialog.value = true
         } else {
             consegnatiViewModel.viewMode.value = ConsegnatiViewModel.ViewMode.EDIT
@@ -707,7 +708,5 @@ class ConsegnatiFragment : AccountMenuFragment(), ActionModeFragment, OptionMenu
 
     companion object {
         private val TAG = ConsegnatiFragment::class.java.canonicalName
-        private const val ADD_PASSAGE_DIALOG = "ADD_PASSAGE"
-        private const val SAVE_CONSEGNATI_DIALOG = "SAVE_CONSEGNATI"
     }
 }

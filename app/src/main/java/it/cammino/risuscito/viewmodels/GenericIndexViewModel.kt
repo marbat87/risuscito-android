@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.CustomList
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,7 @@ open class GenericIndexViewModel(application: Application) : DialogManagerViewMo
         idLista: Int,
         listPosition: Int,
         fragment: Fragment,
-        tag: String
+        tag: SimpleDialogTag
     ) {
         idListaDaAgg = idLista
         posizioneDaAgg = listPosition
@@ -85,7 +86,7 @@ open class GenericIndexViewModel(application: Application) : DialogManagerViewMo
         }
     }
 
-    fun manageReplaceDialog(fragment: Fragment, idCanto: Int, replaceTag: String) {
+    fun manageReplaceDialog(fragment: Fragment, idCanto: Int, replaceTag: SimpleDialogTag) {
         fragment.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cantoDao()
             val existingTitle =

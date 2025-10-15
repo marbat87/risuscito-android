@@ -12,7 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,12 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.DialogTitle
 import it.cammino.risuscito.ui.composable.RadioListItem
 import it.cammino.risuscito.utils.extension.capitalize
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListChoiceAlertDialog(
     onDismissRequest: () -> Unit,
@@ -44,7 +46,7 @@ fun ListChoiceAlertDialog(
 
     var localSelezionato by remember { mutableIntStateOf(passaggioSelezionato) }
 
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    BasicAlertDialog(onDismissRequest = { onDismissRequest() }) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()

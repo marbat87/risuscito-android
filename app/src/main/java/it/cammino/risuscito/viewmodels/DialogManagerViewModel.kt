@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 
 open class DialogManagerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -19,7 +20,7 @@ open class DialogManagerViewModel(application: Application) : AndroidViewModel(a
 
     val negativeButton = MutableLiveData<String>()
 
-    var dialogTag = ""
+    var dialogTag: SimpleDialogTag = SimpleDialogTag.DEFAULT
 
     var dialogPrefill = -1
 

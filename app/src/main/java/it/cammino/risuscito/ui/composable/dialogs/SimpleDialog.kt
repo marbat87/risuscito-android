@@ -11,14 +11,14 @@ import it.cammino.risuscito.utils.extension.capitalize
 
 @Composable
 fun SimpleAlertDialog(
-    onDismissRequest: (String?) -> Unit,
-    onConfirmation: (String?) -> Unit,
+    onDismissRequest: (SimpleDialogTag) -> Unit,
+    onConfirmation: (SimpleDialogTag) -> Unit,
     dialogTitle: String,
     dialogText: String,
     icon: ImageVector,
     confirmButtonText: CharSequence,
     dismissButtonText: CharSequence,
-    dialogTag: String = ""
+    dialogTag: SimpleDialogTag = SimpleDialogTag.DEFAULT
 ) {
     AlertDialog(
         icon = {
@@ -61,5 +61,16 @@ fun SimpleAlertDialog(
 enum class SimpleDialogTag {
     DEFAULT,
     RESET_LIST,
-    DELETE_LIST
+    DELETE_LIST,
+    LITURGICO_REPLACE,
+    LITURGICO_REPLACE_2,
+    SAVE_CONSEGNATI_DIALOG,
+    ADD_PASSAGE_DIALOG,
+    ALPHA_REPLACE,
+    ALPHA_REPLACE_2,
+    NUMERIC_REPLACE,
+    NUMERIC_REPLACE_2,
+    SALMI_REPLACE,
+    SALMI_REPLACE_2
+
 }

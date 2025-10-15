@@ -40,8 +40,8 @@ import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 fun AddToDropDownMenu(
     fragment: Fragment,
     viewModel: SimpleIndexViewModel,
-    dialogTag: String,
-    dialogTag2: String,
+    dialogTag: SimpleDialogTag,
+    dialogTag2: SimpleDialogTag,
     listePersonalizzate: List<ListaPers>?,
     menuExpanded: Boolean,
     offset: DpOffset,

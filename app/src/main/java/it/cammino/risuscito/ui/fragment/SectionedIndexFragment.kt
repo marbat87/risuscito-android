@@ -46,7 +46,7 @@ import it.cammino.risuscito.ui.composable.ExpandableListItem
 import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
-import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
@@ -113,110 +113,110 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                     }
                 }
 
-                RisuscitoTheme {
-                    Box(
-                        modifier = Modifier.pointerInteropFilter {
-                            offset = DpOffset(it.x.dp, it.y.dp)
-                            false
-                        }
-                    ) {
-                        val listModifier = Modifier
-                            .fillMaxSize()
-                            .then(
-                                scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
-                                    ?: Modifier
-                            )
-                        if (context?.isGridLayout == true) {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
-                                modifier = listModifier
-                            ) {
-                                items(localItems.value) { simpleItem ->
-                                    SimpleListItem(
-                                        requireContext(),
-                                        simpleItem,
-                                        onItemClick = rememberedOnItemClick,
-                                        onItemLongClick = rememberedOnItemLongClick,
-                                        selected = false,
-                                        modifier = Modifier
-                                    )
-                                }
-                            }
-                        } else {
-                            LazyColumn(
-                                state = state,
-                                modifier = listModifier
-                            ) {
-                                items(
-                                    localItems.value,
-                                    key = { it.identifier },
-                                    contentType = { it.itemType }) { simpleItem ->
-                                    var isExpanded = false
-                                    if (simpleItem.itemType == ExpandableItemType.EXPANDABLE)
-                                        isExpanded = expandedItem.intValue == simpleItem.identifier
-                                    if (simpleItem.itemType == ExpandableItemType.SUBITEM) {
-                                        isExpanded = expandedItem.intValue == simpleItem.groupIndex
-                                    }
-
-                                    ExpandableListItem(
-                                        requireContext(),
-                                        simpleItem,
-                                        onItemClick = rememberedOnItemClick,
-                                        onItemLongClick = rememberedOnItemLongClick,
-                                        onHeaderClicked = rememberedOnHeaderClick,
-                                        isExpanded = isExpanded,
-                                        modifier = Modifier
-                                    )
-                                }
-                            }
-                        }
-                        AddToDropDownMenu(
-                            this@SectionedIndexFragment,
-                            mCantiViewModel,
-                            LITURGICO_REPLACE,
-                            LITURGICO_REPLACE_2,
-                            listePersonalizzate,
-                            contextMenuExpanded.value,
-                            offset
-                        ) { contextMenuExpanded.value = false }
+                Box(
+                    modifier = Modifier.pointerInteropFilter {
+                        offset = DpOffset(it.x.dp, it.y.dp)
+                        false
                     }
-                    if (mCantiViewModel.showAlertDialog.observeAsState().value == true) {
-                        SimpleAlertDialog(
-                            onDismissRequest = { mCantiViewModel.showAlertDialog.postValue(false) },
-                            onConfirmation = {
-                                mCantiViewModel.showAlertDialog.postValue(false)
-                                when (mCantiViewModel.dialogTag) {
-                                    LITURGICO_REPLACE -> {
-                                        listePersonalizzate?.let { lista ->
-                                            lista[mCantiViewModel.idListaClick]
-                                                .lista?.addCanto(
-                                                    (mCantiViewModel.idDaAgg).toString(),
-                                                    mCantiViewModel.idPosizioneClick
-                                                )
-                                            ListeUtils.updateListaPersonalizzata(
-                                                this@SectionedIndexFragment,
-                                                lista[mCantiViewModel.idListaClick]
-                                            )
-                                        }
-                                    }
+                ) {
+                    val listModifier = Modifier
+                        .fillMaxSize()
+                        .then(
+                            scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
+                                ?: Modifier
+                        )
+                    if (context?.isGridLayout == true) {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = listModifier
+                        ) {
+                            items(localItems.value) { simpleItem ->
+                                SimpleListItem(
+                                    requireContext(),
+                                    simpleItem,
+                                    onItemClick = rememberedOnItemClick,
+                                    onItemLongClick = rememberedOnItemLongClick,
+                                    selected = false,
+                                    modifier = Modifier
+                                )
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            state = state,
+                            modifier = listModifier
+                        ) {
+                            items(
+                                localItems.value,
+                                key = { it.identifier },
+                                contentType = { it.itemType }) { simpleItem ->
+                                var isExpanded = false
+                                if (simpleItem.itemType == ExpandableItemType.EXPANDABLE)
+                                    isExpanded = expandedItem.intValue == simpleItem.identifier
+                                if (simpleItem.itemType == ExpandableItemType.SUBITEM) {
+                                    isExpanded = expandedItem.intValue == simpleItem.groupIndex
+                                }
 
-                                    LITURGICO_REPLACE_2 -> {
-                                        ListeUtils.updatePosizione(
+                                ExpandableListItem(
+                                    requireContext(),
+                                    simpleItem,
+                                    onItemClick = rememberedOnItemClick,
+                                    onItemLongClick = rememberedOnItemLongClick,
+                                    onHeaderClicked = rememberedOnHeaderClick,
+                                    isExpanded = isExpanded,
+                                    modifier = Modifier
+                                )
+                            }
+                        }
+                    }
+                    AddToDropDownMenu(
+                        this@SectionedIndexFragment,
+                        mCantiViewModel,
+                        SimpleDialogTag.LITURGICO_REPLACE,
+                        SimpleDialogTag.LITURGICO_REPLACE_2,
+                        listePersonalizzate,
+                        contextMenuExpanded.value,
+                        offset
+                    ) { contextMenuExpanded.value = false }
+                }
+                if (mCantiViewModel.showAlertDialog.observeAsState().value == true) {
+                    SimpleAlertDialog(
+                        onDismissRequest = { mCantiViewModel.showAlertDialog.postValue(false) },
+                        onConfirmation = {
+                            mCantiViewModel.showAlertDialog.postValue(false)
+                            when (mCantiViewModel.dialogTag) {
+                                SimpleDialogTag.LITURGICO_REPLACE -> {
+                                    listePersonalizzate?.let { lista ->
+                                        lista[mCantiViewModel.idListaClick]
+                                            .lista?.addCanto(
+                                                (mCantiViewModel.idDaAgg).toString(),
+                                                mCantiViewModel.idPosizioneClick
+                                            )
+                                        ListeUtils.updateListaPersonalizzata(
                                             this@SectionedIndexFragment,
-                                            mCantiViewModel.idDaAgg,
-                                            mCantiViewModel.idListaDaAgg,
-                                            mCantiViewModel.posizioneDaAgg
+                                            lista[mCantiViewModel.idListaClick]
                                         )
                                     }
                                 }
-                            },
-                            dialogTitle = stringResource(R.string.dialog_replace_title),
-                            dialogText = mCantiViewModel.content.value.orEmpty(),
-                            icon = Icons.Outlined.FindReplace,
-                            confirmButtonText = stringResource(R.string.replace_confirm),
-                            dismissButtonText = stringResource(R.string.cancel)
-                        )
-                    }
+
+                                SimpleDialogTag.LITURGICO_REPLACE_2 -> {
+                                    ListeUtils.updatePosizione(
+                                        this@SectionedIndexFragment,
+                                        mCantiViewModel.idDaAgg,
+                                        mCantiViewModel.idListaDaAgg,
+                                        mCantiViewModel.posizioneDaAgg
+                                    )
+                                }
+
+                                else -> {}
+                            }
+                        },
+                        dialogTitle = stringResource(R.string.dialog_replace_title),
+                        dialogText = mCantiViewModel.content.value.orEmpty(),
+                        icon = Icons.Outlined.FindReplace,
+                        confirmButtonText = stringResource(R.string.replace_confirm),
+                        dismissButtonText = stringResource(R.string.cancel)
+                    )
                 }
 
                 val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
@@ -316,8 +316,6 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
 
     companion object {
         private val TAG = SectionedIndexFragment::class.java.canonicalName
-        private const val LITURGICO_REPLACE = "LITURGICO_REPLACE"
-        private const val LITURGICO_REPLACE_2 = "LITURGICO_REPLACE_2"
         const val INDICE_LISTA = "indiceLista"
 
         fun newInstance(tipoLista: Int): SectionedIndexFragment {

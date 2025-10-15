@@ -22,7 +22,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-class GeneralIndexFragment : AccountMenuFragment() {
+class GeneralIndexFragment : RisuscitoFragment() {
 
     private val sharedTabViewModel: SharedTabViewModel by activityViewModels()
 
@@ -100,7 +100,7 @@ class GeneralIndexFragment : AccountMenuFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity?.enableFab(false)
+        mMainActivity?.initFab(enable = false)
 
         lifecycleScope.launch {
             delay(500)

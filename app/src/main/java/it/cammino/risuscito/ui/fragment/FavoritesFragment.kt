@@ -62,7 +62,6 @@ import it.cammino.risuscito.ui.composable.main.cleanListOptionMenu
 import it.cammino.risuscito.ui.composable.main.deleteMenu
 import it.cammino.risuscito.ui.composable.main.helpOptionMenu
 import it.cammino.risuscito.ui.composable.risuscito_medium_font
-import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
@@ -78,7 +77,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.Collator
 
-class FavoritesFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFragment,
+class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragment,
     OptionMenuFragment {
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
@@ -101,172 +100,170 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFra
 
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
-                RisuscitoTheme {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AnimatedContent(
-                            viewMode,
-                            transitionSpec = {
-                                fadeIn(
-                                    animationSpec = tween(1000)
-                                ) togetherWith fadeOut(animationSpec = tween(1000))
-                            },
-                            label = "Animated Content"
-                        )
-                        { targetState ->
-                            when (targetState) {
-                                FavoritesViewModel.ViewMode.VIEW -> {
-                                    val listModifier = Modifier
-                                        .fillMaxSize()
-                                        .then(
-                                            scrollBehaviorFromSharedVM?.let {
-                                                Modifier.nestedScroll(
-                                                    it.nestedScrollConnection
-                                                )
-                                            }
-                                                ?: Modifier
-                                        )
-
-                                    if (context?.isGridLayout == true) {
-                                        LazyVerticalGrid(
-                                            columns = GridCells.Fixed(2),
-                                            modifier = listModifier
-                                        ) {
-                                            items(
-                                                localItems.orEmpty(),
-                                                key = { it.id }) { simpleItem ->
-                                                val isItemSelected =
-                                                    localSelectedItems.orEmpty().contains(simpleItem.id)
-                                                val source = stringResource(simpleItem.sourceRes)
-                                                SimpleListItem(
-                                                    requireContext(),
-                                                    simpleItem,
-                                                    onItemClick = { item ->
-                                                        if (mMainActivity?.isActionMode?.value == true) {
-                                                            if (isItemSelected) {
-                                                                deselectItem(item.id)
-                                                            } else {
-                                                                selectItem(item.id)
-                                                            }
-                                                            if (localSelectedItems?.isEmpty() == true) {
-                                                                mMainActivity?.destroyActionMode()
-                                                            } else updateActionModeTitle()
-                                                        } else {
-                                                            mMainActivity?.openCanto(
-                                                                TAG,
-                                                                item.id,
-                                                                source,
-                                                                false
-                                                            )
-                                                        }
-                                                    },
-                                                    onItemLongClick = { item ->
-                                                        if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
-                                                            selectItem(item.id)
-                                                            startCab()
-                                                        }
-                                                    },
-                                                    selected = isItemSelected,
-                                                    modifier = Modifier.animateItem()
-                                                )
-                                            }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimatedContent(
+                        viewMode,
+                        transitionSpec = {
+                            fadeIn(
+                                animationSpec = tween(1000)
+                            ) togetherWith fadeOut(animationSpec = tween(1000))
+                        },
+                        label = "Animated Content"
+                    )
+                    { targetState ->
+                        when (targetState) {
+                            FavoritesViewModel.ViewMode.VIEW -> {
+                                val listModifier = Modifier
+                                    .fillMaxSize()
+                                    .then(
+                                        scrollBehaviorFromSharedVM?.let {
+                                            Modifier.nestedScroll(
+                                                it.nestedScrollConnection
+                                            )
                                         }
-                                    } else {
-                                        LazyColumn(
-                                            state = state,
-                                            modifier = listModifier
-                                        ) {
-                                            items(
-                                                localItems.orEmpty(),
-                                                key = { it.id }) { simpleItem ->
-                                                val isItemSelected =
-                                                    localSelectedItems.orEmpty().contains(simpleItem.id)
-                                                val source = stringResource(simpleItem.sourceRes)
-                                                SimpleListItem(
-                                                    requireContext(),
-                                                    simpleItem,
-                                                    onItemClick = { item ->
-                                                        if (mMainActivity?.isActionMode?.value == true) {
-                                                            if (isItemSelected) {
-                                                                deselectItem(item.id)
-                                                            } else {
-                                                                selectItem(item.id)
-                                                            }
-                                                            if (localSelectedItems?.isEmpty() == true) {
-                                                                mMainActivity?.destroyActionMode()
-                                                            } else updateActionModeTitle()
+                                            ?: Modifier
+                                    )
+
+                                if (context?.isGridLayout == true) {
+                                    LazyVerticalGrid(
+                                        columns = GridCells.Fixed(2),
+                                        modifier = listModifier
+                                    ) {
+                                        items(
+                                            localItems.orEmpty(),
+                                            key = { it.id }) { simpleItem ->
+                                            val isItemSelected =
+                                                localSelectedItems.orEmpty().contains(simpleItem.id)
+                                            val source = stringResource(simpleItem.sourceRes)
+                                            SimpleListItem(
+                                                requireContext(),
+                                                simpleItem,
+                                                onItemClick = { item ->
+                                                    if (mMainActivity?.isActionMode?.value == true) {
+                                                        if (isItemSelected) {
+                                                            deselectItem(item.id)
                                                         } else {
-                                                            mMainActivity?.openCanto(
-                                                                TAG,
-                                                                item.id,
-                                                                source,
-                                                                false
-                                                            )
-                                                        }
-                                                    },
-                                                    onItemLongClick = { item ->
-                                                        if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
                                                             selectItem(item.id)
-                                                            startCab()
                                                         }
-                                                    },
-                                                    selected = isItemSelected,
-                                                    modifier = Modifier.animateItem(tween())
-                                                )
-                                            }
+                                                        if (localSelectedItems?.isEmpty() == true) {
+                                                            mMainActivity?.destroyActionMode()
+                                                        } else updateActionModeTitle()
+                                                    } else {
+                                                        mMainActivity?.openCanto(
+                                                            TAG,
+                                                            item.id,
+                                                            source,
+                                                            false
+                                                        )
+                                                    }
+                                                },
+                                                onItemLongClick = { item ->
+                                                    if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
+                                                        selectItem(item.id)
+                                                        startCab()
+                                                    }
+                                                },
+                                                selected = isItemSelected,
+                                                modifier = Modifier.animateItem()
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    LazyColumn(
+                                        state = state,
+                                        modifier = listModifier
+                                    ) {
+                                        items(
+                                            localItems.orEmpty(),
+                                            key = { it.id }) { simpleItem ->
+                                            val isItemSelected =
+                                                localSelectedItems.orEmpty().contains(simpleItem.id)
+                                            val source = stringResource(simpleItem.sourceRes)
+                                            SimpleListItem(
+                                                requireContext(),
+                                                simpleItem,
+                                                onItemClick = { item ->
+                                                    if (mMainActivity?.isActionMode?.value == true) {
+                                                        if (isItemSelected) {
+                                                            deselectItem(item.id)
+                                                        } else {
+                                                            selectItem(item.id)
+                                                        }
+                                                        if (localSelectedItems?.isEmpty() == true) {
+                                                            mMainActivity?.destroyActionMode()
+                                                        } else updateActionModeTitle()
+                                                    } else {
+                                                        mMainActivity?.openCanto(
+                                                            TAG,
+                                                            item.id,
+                                                            source,
+                                                            false
+                                                        )
+                                                    }
+                                                },
+                                                onItemLongClick = { item ->
+                                                    if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
+                                                        selectItem(item.id)
+                                                        startCab()
+                                                    }
+                                                },
+                                                selected = isItemSelected,
+                                                modifier = Modifier.animateItem(tween())
+                                            )
                                         }
                                     }
                                 }
+                            }
 
-                                FavoritesViewModel.ViewMode.EMPTY -> {
-                                    Column(
+                            FavoritesViewModel.ViewMode.EMPTY -> {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight(), // Occupa solo l'altezza necessaria
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.ic_sunglassed_star),
+                                        contentDescription = stringResource(id = R.string.no_favourites_short),
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .wrapContentHeight(), // Occupa solo l'altezza necessaria
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Image(
-                                            painter = painterResource(R.drawable.ic_sunglassed_star),
-                                            contentDescription = stringResource(id = R.string.no_favourites_short),
-                                            modifier = Modifier
-                                                .size(120.dp)
-                                        )
-                                        Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
-                                        Text(
-                                            text = stringResource(R.string.no_favourites_short),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
-                                            fontFamily = risuscito_medium_font,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
-                                        )
-                                    }
+                                            .size(120.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
+                                    Text(
+                                        text = stringResource(R.string.no_favourites_short),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
+                                        fontFamily = risuscito_medium_font,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
+                                    )
                                 }
                             }
                         }
                     }
-                    if (mFavoritesViewModel.showAlertDialog.observeAsState().value == true) {
-                        SimpleAlertDialog(
-                            onDismissRequest = {
-                                mFavoritesViewModel.showAlertDialog.postValue(false)
-                            },
-                            onConfirmation = {
-                                mFavoritesViewModel.showAlertDialog.postValue(false)
-                                val mDao =
-                                    RisuscitoDatabase.getInstance(requireContext())
-                                        .favoritesDao()
-                                coroutineScope.launch(Dispatchers.IO) { mDao.resetFavorites() }
-                            },
-                            dialogTitle = stringResource(R.string.dialog_reset_favorites_title),
-                            dialogText = stringResource(R.string.dialog_reset_favorites_desc),
-                            icon = Icons.Outlined.ClearAll,
-                            confirmButtonText = stringResource(R.string.clear_confirm),
-                            dismissButtonText = stringResource(R.string.cancel)
-                        )
-                    }
+                }
+                if (mFavoritesViewModel.showAlertDialog.observeAsState().value == true) {
+                    SimpleAlertDialog(
+                        onDismissRequest = {
+                            mFavoritesViewModel.showAlertDialog.postValue(false)
+                        },
+                        onConfirmation = {
+                            mFavoritesViewModel.showAlertDialog.postValue(false)
+                            val mDao =
+                                RisuscitoDatabase.getInstance(requireContext())
+                                    .favoritesDao()
+                            coroutineScope.launch(Dispatchers.IO) { mDao.resetFavorites() }
+                        },
+                        dialogTitle = stringResource(R.string.dialog_reset_favorites_title),
+                        dialogText = stringResource(R.string.dialog_reset_favorites_desc),
+                        icon = Icons.Outlined.ClearAll,
+                        confirmButtonText = stringResource(R.string.clear_confirm),
+                        dismissButtonText = stringResource(R.string.cancel)
+                    )
                 }
 
                 mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
@@ -306,7 +303,7 @@ class FavoritesFragment : AccountMenuFragment(), ActionModeFragment, SnackBarFra
         super.onViewCreated(view, savedInstanceState)
 
         mMainActivity?.setTabVisible(false)
-        mMainActivity?.enableFab(false)
+        mMainActivity?.initFab(enable = false)
 
         if (!PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(Utility.PREFERITI_OPEN, false)

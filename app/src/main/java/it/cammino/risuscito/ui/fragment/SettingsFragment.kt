@@ -7,14 +7,10 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.content.edit
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.DropDownPreference
@@ -38,7 +34,6 @@ import com.google.firebase.crashlytics.crashlytics
 import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
-import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.utils.CambioAccordi
@@ -209,19 +204,19 @@ class SettingsFragment : PreferenceFragmentCompat(),
         splitInstallManager = SplitInstallManagerFactory.create(requireContext())
 
         //usato solo in tablet
-        (mMainActivity as? MainActivity)?.let {
-            it.setTabVisible(false)
-            it.enableFab(false)
-            it.addMenuProvider(object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    it.updateProfileImage()
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    return false
-                }
-            }, viewLifecycleOwner)
-        }
+//        (mMainActivity as? MainActivity)?.let {
+//            it.setTabVisible(false)
+//            it.initFab(enable = false)
+//            it.addMenuProvider(object : MenuProvider {
+//                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+//                    it.updateProfileImage()
+//                }
+//
+//                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+//                    return false
+//                }
+//            }, viewLifecycleOwner)
+//        }
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as? DropDownPreference
 

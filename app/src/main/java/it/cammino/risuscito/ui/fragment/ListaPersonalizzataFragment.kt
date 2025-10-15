@@ -500,6 +500,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
     }
 
     override fun pulisci() {
+        Log.d(TAG, "pulisci: ${mCantiViewModel.listaPersonalizzataId}")
         for (i in 0 until (mCantiViewModel.listaPersonalizzata?.numPosizioni ?: 0))
             mCantiViewModel.listaPersonalizzata?.removeCanto(i)
         runUpdate()

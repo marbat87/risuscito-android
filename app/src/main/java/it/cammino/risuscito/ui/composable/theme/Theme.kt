@@ -2,15 +2,19 @@ package it.cammino.risuscito.ui.composable.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import it.cammino.risuscito.ui.composable.risuscito_medium_font
 import it.cammino.risuscito.ui.composable.risuscito_regular_font
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun RisuscitoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -21,7 +25,7 @@ fun RisuscitoTheme(
         dynamicColor && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
         dynamicColor && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
         darkTheme -> darkColorPalette
-        else -> lightColorPalette
+        else -> expressiveLightColorScheme()
     }
 
     val risuscitoTypography = Typography(
@@ -46,7 +50,7 @@ fun RisuscitoTheme(
         labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = risuscito_medium_font)
     )
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = colors,
         content = content,
         typography = risuscitoTypography

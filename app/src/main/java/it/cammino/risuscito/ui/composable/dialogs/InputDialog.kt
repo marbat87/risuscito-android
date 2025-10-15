@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,9 +37,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.DialogTitle
+import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.extension.capitalize
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +49,7 @@ fun InputDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: (String) -> Unit,
     confirmationTextRes: Int,
-    prefill: String,
+    prefill: String = StringUtils.EMPTY,
     multiline: Boolean = false
 ) {
 
@@ -59,7 +60,7 @@ fun InputDialog(
         capitalization = KeyboardCapitalization.Sentences
     )
 
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    BasicAlertDialog(onDismissRequest = { onDismissRequest() }) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()

@@ -1,9 +1,8 @@
 package it.cammino.risuscito.ui.interfaces
 
-interface FabFragment {
-    fun onFabClick(item: FabItem)
+import it.cammino.risuscito.ui.composable.main.FabActionItem
 
-    enum class FabItem {
-        MAIN
-    }
+interface FabFragment {
+    fun onFabClick(item: FabActionItem)
+
 }

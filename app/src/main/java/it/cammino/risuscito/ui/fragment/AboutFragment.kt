@@ -4,14 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.MenuProvider
 import com.danielstone.materialaboutlibrary.ConvenienceBuilder
 import com.danielstone.materialaboutlibrary.MaterialAboutFragment
 import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
@@ -19,11 +14,10 @@ import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
 import com.google.android.material.transition.MaterialSharedAxis
-import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.activity.ChangelogActivity
-import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.utils.extension.shareThisApp
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
@@ -46,24 +40,24 @@ class AboutFragment : MaterialAboutFragment() {
         Firebase.crashlytics.log("Fragment: ${this::class.java}")
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        //solo per tablet
-        (mMainActivity as? MainActivity)?.let {
-            it.addMenuProvider(object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    it.updateProfileImage()
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    return false
-                }
-            }, viewLifecycleOwner)
-            it.setTabVisible(false)
-            it.enableFab(false)
-        }
-    }
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        //solo per tablet
+//        (mMainActivity as? MainActivity)?.let {
+//            it.addMenuProvider(object : MenuProvider {
+//                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+//                    it.updateProfileImage()
+//                }
+//
+//                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+//                    return false
+//                }
+//            }, viewLifecycleOwner)
+//            it.setTabVisible(false)
+//            it.initFab(enable = false)
+//        }
+//    }
 
     override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList? {
         val builder = MaterialAboutList.Builder()

@@ -6,8 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -15,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -22,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,11 +57,11 @@ import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.CredendialObject
 import it.cammino.risuscito.ui.CredentialCacheManager
-import it.cammino.risuscito.ui.ProfileUiManager
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.Drawer
+import it.cammino.risuscito.ui.composable.main.FabActionItem
 import it.cammino.risuscito.ui.composable.main.MainScreen
 import it.cammino.risuscito.ui.composable.main.NavigationScreen
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
@@ -126,8 +126,9 @@ class MainActivity : ThemeableActivity() {
     private lateinit var mCredentialManager: CredentialManager
     private var mCredentialRequest: GetCredentialRequest? = null
     private lateinit var auth: FirebaseAuth
-    private var profileItem: MenuItem? = null
-    private var profileUiManager: ProfileUiManager? = null
+
+    //    private var profileItem: MenuItem? = null
+//    private var profileUiManager: ProfileUiManager? = null
     private var profilePhotoUrl: String = StringUtils.EMPTY
     private var profileNameStr: String = StringUtils.EMPTY
     private var profileEmailStr: String = StringUtils.EMPTY
@@ -170,6 +171,10 @@ class MainActivity : ThemeableActivity() {
 
     private val showFab = mutableStateOf(false)
 
+    private val fabActionList = MutableLiveData(ArrayList<FabActionItem>())
+
+    private val fabExpanded = mutableStateOf(false)
+
     private val signedId = mutableStateOf(false)
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -204,7 +209,9 @@ class MainActivity : ThemeableActivity() {
 
                 val sharedScrollVM: SharedScrollViewModel = viewModel()
 
-                val localTabsList = tabsDestinationList.observeAsState()
+                val localTabsList by tabsDestinationList.observeAsState()
+
+                val localFabActionsList by fabActionList.observeAsState()
 
                 val localOptionMenu = optionMenuList.observeAsState()
 
@@ -227,7 +234,7 @@ class MainActivity : ThemeableActivity() {
                     searchBarState = searchBarState,
                     showLoadingBar = showProgressBar.value,
                     showTabs = tabsVisible.value,
-                    tabsList = localTabsList.value,
+                    tabsList = localTabsList,
                     resetTab = sharedTabViewModel.resetTab,
                     selectedTabIndex = sharedTabViewModel.tabsSelectedIndex,
                     snackbarHostState = snackbarHostState,
@@ -237,6 +244,8 @@ class MainActivity : ThemeableActivity() {
                     onOptionMenuClick = { optionMenuFragment?.onItemClick(it) },
                     fabIcon = fabIcon.value,
                     onFabClick = { fabFragment?.onFabClick(it) },
+                    fabActions = localFabActionsList,
+                    fabExpanded = fabExpanded,
                     loggedIn = signedId.value,
                     profilePhotoUrl = profilePhotoUrl,
                     onLoginClick = { signIn(false) },
@@ -253,11 +262,21 @@ class MainActivity : ThemeableActivity() {
 
                 // After drawing main content, draw status bar protection
                 StatusBarProtection()
+
+//                BackHandler {
+//                    when {
+//                        fabExpanded.value -> fabExpanded.value = false
+//                        !isOnTablet && drawerState.value.isOpen -> scope.launch { drawerState.value.close() }
+//                        isActionMode.value -> destroyActionMode()
+//                        searchBarState.currentValue == SearchBarValue.Expanded -> scope.launch { searchBarState.animateToCollapsed() }
+//                        else -> backToHome(true)
+//                    }
+//                }
             }
 
             onBackPressedDispatcher.addCallback(this) {
                 when {
-//                binding.fabPager.isOpen -> binding.fabPager.close()
+                    fabExpanded.value -> fabExpanded.value = false
                     !isOnTablet && drawerState.value.isOpen -> scope.launch { drawerState.value.close() }
                     isActionMode.value -> destroyActionMode()
                     searchBarState.currentValue == SearchBarValue.Expanded -> scope.launch { searchBarState.animateToCollapsed() }
@@ -563,121 +582,20 @@ class MainActivity : ThemeableActivity() {
         startActivityWithTransition(intent, MaterialSharedAxis.Y)
     }
 
-    fun closeFabMenu() {
-        //TODO
-//        if (binding.fabPager.isOpen) binding.fabPager.close()
-    }
-
-    fun toggleFabMenu() {
-        //TODO
-//        binding.fabPager.toggle()
-    }
-
-    fun enableFab(enable: Boolean, autoHide: Boolean = true) {
-        Log.d(TAG, "enableFab: $enable")
-        showFab.value = enable
-    }
-
     fun initFab(
-        fragment: FabFragment,
-        icon: ImageVector
+        enable: Boolean,
+        fragment: FabFragment? = null,
+        icon: ImageVector = Icons.Outlined.Add,
+        fabActions: List<FabActionItem>? = null
     ) {
+        Log.d(TAG, "initFab: $enable")
+        fabExpanded.value = false
         fabFragment = fragment
         fabIcon.value = icon
-        showFab.value = true
+        val newList = ArrayList(fabActions.orEmpty())
+        fabActionList.value = newList
+        showFab.value = enable
     }
-
-//    fun initFab(
-//        optionMenu: Boolean,
-//        icon: Drawable,
-//        click: View.OnClickListener,
-//        action: SpeedDialView.OnActionSelectedListener?,
-//        customList: Boolean
-//    ) {
-//        Log.d(TAG, "initFab()")
-    //TODO
-//        enableFab(false)
-//        binding.fabPager.setMainFabClosedDrawable(icon)
-//        binding.fabPager.mainFab.rippleColor =
-//            ContextCompat.getColor(this, android.R.color.transparent)
-//        binding.fabPager.clearActionItems()
-//        binding.fabPager.expansionMode =
-//            if (isFabExpansionLeft) SpeedDialView.ExpansionMode.LEFT else SpeedDialView.ExpansionMode.TOP
-//        enableFab(true)
-//        Log.d(TAG, "initFab optionMenu: $optionMenu")
-//
-//        if (optionMenu) {
-//            val iconColor = MaterialColors.getColor(
-//                this, com.google.android.material.R.attr.colorOnPrimaryContainer, TAG
-//            )
-//            val backgroundColor = MaterialColors.getColor(
-//                this, com.google.android.material.R.attr.colorPrimaryContainer, TAG
-//            )
-//
-//            binding.fabPager.addActionItem(
-//                SpeedDialActionItem.Builder(
-//                    R.id.fab_pulisci,
-//                    AppCompatResources.getDrawable(this, R.drawable.cleaning_services_24px)
-//                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-//                    .setLabel(getString(R.string.dialog_reset_list_title))
-//                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
-//                    .setLabelColor(iconColor).create()
-//            )
-//
-//            binding.fabPager.addActionItem(
-//                SpeedDialActionItem.Builder(
-//                    R.id.fab_add_lista, AppCompatResources.getDrawable(this, R.drawable.add_24px)
-//                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-//                    .setLabel(getString(R.string.action_add_list))
-//                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
-//                    .setLabelColor(iconColor).create()
-//            )
-//
-//            binding.fabPager.addActionItem(
-//                SpeedDialActionItem.Builder(
-//                    R.id.fab_condividi, AppCompatResources.getDrawable(this, R.drawable.share_24px)
-//                ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-//                    .setLabel(getString(R.string.action_share))
-//                    .setFabBackgroundColor(backgroundColor).setLabelBackgroundColor(backgroundColor)
-//                    .setLabelColor(iconColor).create()
-//            )
-//
-//            if (customList) {
-//                binding.fabPager.addActionItem(
-//                    SpeedDialActionItem.Builder(
-//                        R.id.fab_condividi_file,
-//                        AppCompatResources.getDrawable(this, R.drawable.attachment_24px)
-//                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-//                        .setLabel(getString(R.string.action_share_file))
-//                        .setFabBackgroundColor(backgroundColor)
-//                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
-//                )
-//
-//                binding.fabPager.addActionItem(
-//                    SpeedDialActionItem.Builder(
-//                        R.id.fab_edit_lista,
-//                        AppCompatResources.getDrawable(this, R.drawable.edit_24px)
-//                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-//                        .setLabel(getString(R.string.action_edit_list))
-//                        .setFabBackgroundColor(backgroundColor)
-//                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
-//                )
-//
-//                binding.fabPager.addActionItem(
-//                    SpeedDialActionItem.Builder(
-//                        R.id.fab_delete_lista,
-//                        AppCompatResources.getDrawable(this, R.drawable.delete_24px)
-//                    ).setTheme(R.style.Risuscito_SpeedDialActionItem)
-//                        .setLabel(getString(R.string.action_remove_list))
-//                        .setFabBackgroundColor(backgroundColor)
-//                        .setLabelBackgroundColor(backgroundColor).setLabelColor(iconColor).create()
-//                )
-//            }
-//            binding.fabPager.setOnActionSelectedListener(action)
-//
-//        }
-//        binding.fabPager.mainFab.setOnClickListener(click)
-//    }
 
     fun setTabVisible(visible: Boolean) {
         tabsVisible.value = visible
@@ -735,14 +653,14 @@ class MainActivity : ThemeableActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        profileItem = menu.findItem(R.id.account_manager)
-        profileUiManager = ProfileUiManager(
-            this, supportFragmentManager, profileItem?.actionView, ::signIn
-        )
-        return super.onCreateOptionsMenu(menu)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        menuInflater.inflate(R.menu.main_menu, menu)
+//        profileItem = menu.findItem(R.id.account_manager)
+//        profileUiManager = ProfileUiManager(
+//            this, supportFragmentManager, profileItem?.actionView, ::signIn
+//        )
+//        return super.onCreateOptionsMenu(menu)
+//    }
 
     // [START revokeAccess]
     private fun revokeAccess() {
@@ -834,13 +752,13 @@ class MainActivity : ThemeableActivity() {
         }
 
         signedId.value = signedIn
-        updateProfileImage()
+//        updateProfileImage()
 //        hideProgressDialog()
     }
 
-    fun updateProfileImage() {
-        profileUiManager?.updateProfileUi(profilePhotoUrl, profileNameStr, profileEmailStr)
-    }
+//    fun updateProfileImage() {
+////        profileUiManager?.updateProfileUi(profilePhotoUrl, profileNameStr, profileEmailStr)
+//    }
 
     /**
      * Updates the profile information (name, email, photo URL) based on the user's account.
@@ -1064,6 +982,10 @@ class MainActivity : ThemeableActivity() {
 
     fun setFabActionsFragment(fragment: FabActionsFragment) {
         fabActionsFragment = fragment
+    }
+
+    fun getFabActionsFragment(): FabActionsFragment? {
+        return fabActionsFragment
     }
 
     fun updateActionModeTitle(title: String) {
