@@ -3,17 +3,24 @@ package it.cammino.risuscito.ui.composable
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,16 +34,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +66,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.items.ExpandableItemType
 import it.cammino.risuscito.items.ListaPersonalizzataRisuscitoListItem
 import it.cammino.risuscito.items.RisuscitoListItem
+import it.cammino.risuscito.items.SwipeableRisuscitoListItem
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.spannedFromHtml
 import it.cammino.risuscito.utils.extension.systemLocale
@@ -61,6 +76,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.OptIn
 import kotlin.String
 import kotlin.Unit
 import kotlin.let
@@ -122,24 +138,35 @@ fun SimpleListItem(
         } ?: baseTitle
     }
 
+    val animatedColor by animateColorAsState(
+        if (selected) MaterialTheme.colorScheme.secondaryContainer else ListItemDefaults.containerColor,
+        label = "background color"
+    )
+
     ListItem(
         leadingContent = {
-            if (selected) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.check_24px),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
+            AnimatedRisuscitoListItemPage(
+                selected
+            ) { state ->
+                when (state) {
+                    true -> {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.check_24px),
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+
+                    else -> PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor)
                 }
-            } else {
-                PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor)
             }
         },
         headlineContent = { Text(title) },
@@ -152,15 +179,11 @@ fun SimpleListItem(
                 }
             ),
         colors = ListItemDefaults.colors(
-            containerColor = if (selected) {
-                MaterialTheme.colorScheme.secondaryContainer // Colore per selezione
-            } else {
-                Color.Transparent
-            }
+            containerColor = animatedColor
         ),
         trailingContent = {
             if (isInsert) {
-                FilledTonalButton(onClick = { onIconClick(simpleItem) }) {
+                FilledTonalIconButton(onClick = { onIconClick(simpleItem) }) {
                     Icon(
                         painter = painterResource(R.drawable.visibility_24px),
                         contentDescription = "Notation"
@@ -201,24 +224,35 @@ fun HistoryListItem(
         } else
             ""
 
+    val animatedColor by animateColorAsState(
+        if (selected) MaterialTheme.colorScheme.secondaryContainer else ListItemDefaults.containerColor,
+        label = "background color"
+    )
+
     ListItem(
         leadingContent = {
-            if (selected) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.check_24px),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
+            AnimatedRisuscitoListItemPage(
+                selected
+            ) { state ->
+                when (state) {
+                    true -> {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.check_24px),
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+
+                    else -> PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor)
                 }
-            } else {
-                PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor)
             }
         },
         headlineContent = { Text(stringResource(simpleItem.titleRes)) },
@@ -232,11 +266,7 @@ fun HistoryListItem(
                 }
             ),
         colors = ListItemDefaults.colors(
-            containerColor = if (selected) {
-                MaterialTheme.colorScheme.secondaryContainer // Colore per selezione
-            } else {
-                ListItemDefaults.containerColor // Colore di default (o Color.Transparent)
-            }
+            containerColor = animatedColor
         )
     )
 }
@@ -252,10 +282,6 @@ fun ExpandableListItem(
     isExpanded: Boolean,
 ) {
     when (item.itemType) {
-        ExpandableItemType.TITLE -> {
-            ListTitleItem(item)
-        }
-
         ExpandableItemType.EXPANDABLE -> ListExpandableTitle(
             item,
             isExpanded,
@@ -295,11 +321,11 @@ fun ExpandableListItem(
 }
 
 @Composable
-fun ListTitleItem(item: RisuscitoListItem) {
+fun ListTitleItem(titleRes: Int) {
     ListItem(
         headlineContent = {
             Text(
-                text = stringResource(item.titleRes),
+                text = stringResource(titleRes),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -352,6 +378,7 @@ fun ListExpandableTitle(
 
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PassageListItem(
     simpleItem: RisuscitoListItem,
@@ -367,11 +394,22 @@ fun PassageListItem(
             onClick = { onItemClick(simpleItem) }
         ),
         trailingContent = {
-            FilledTonalButton(onClick = { onIconClick(simpleItem) }) {
-                Icon(
-                    painter = painterResource(if (simpleItem.numPassaggio != -1) R.drawable.sell_filled_24px else R.drawable.sell_24px),
-                    contentDescription = "Notation"
-                )
+            FilledTonalIconToggleButton(
+                checked = simpleItem.numPassaggio != -1,
+                onCheckedChange = { onIconClick(simpleItem) },
+                shapes = IconButtonDefaults.toggleableShapes()
+            ) {
+                if (simpleItem.numPassaggio != -1) {
+                    Icon(
+                        painter = painterResource(R.drawable.sell_filled_24px),
+                        contentDescription = "Notation"
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(R.drawable.sell_24px),
+                        contentDescription = "Notation"
+                    )
+                }
             }
         }
     )
@@ -384,6 +422,11 @@ fun CheckableListItem(
     onSelect: (Boolean) -> Unit,
     selected: Boolean = false
 ) {
+
+    val animatedColor by animateColorAsState(
+        if (selected) MaterialTheme.colorScheme.secondaryContainer else ListItemDefaults.containerColor,
+        label = "background color"
+    )
 
     ListItem(
         leadingContent = { PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor) },
@@ -403,11 +446,7 @@ fun CheckableListItem(
             )
         },
         colors = ListItemDefaults.colors(
-            containerColor = if (selected) {
-                MaterialTheme.colorScheme.secondaryContainer
-            } else {
-                ListItemDefaults.containerColor
-            }
+            containerColor = animatedColor
         )
     )
 }
@@ -439,6 +478,7 @@ fun RadioListItem(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NotableListItem(
     item: ListaPersonalizzataRisuscitoListItem,
@@ -449,22 +489,28 @@ fun NotableListItem(
 ) {
     ListItem(
         leadingContent = {
-            if (selected) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.check_24px),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                    )
+            AnimatedRisuscitoListItemPage(
+                selected
+            ) { state ->
+                when (state) {
+                    true -> {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.check_24px),
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+
+                    else -> PageText(stringResource(item.pageRes), item.rawColor)
                 }
-            } else {
-                PageText(stringResource(item.pageRes), item.rawColor)
             }
         },
         headlineContent = { Text(stringResource(item.titleRes)) },
@@ -485,11 +531,22 @@ fun NotableListItem(
         ),
         trailingContent = {
             if (!selected) {
-                FilledTonalButton(onClick = { onNoteClick(item) }) {
-                    Icon(
-                        painter = painterResource(if (item.nota.isNotEmpty()) R.drawable.sticky_note_2_filled_24px else R.drawable.sticky_note_2_24px),
-                        contentDescription = "Notation"
-                    )
+                FilledTonalIconToggleButton(
+                    checked = item.nota.isNotEmpty(),
+                    onCheckedChange = { onNoteClick(item) },
+                    shapes = IconButtonDefaults.toggleableShapes(),
+                ) {
+                    if (item.nota.isNotEmpty()) {
+                        Icon(
+                            painter = painterResource(R.drawable.sticky_note_2_filled_24px),
+                            contentDescription = "Notation"
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(R.drawable.sticky_note_2_24px),
+                            contentDescription = "Notation"
+                        )
+                    }
                 }
             }
         }
@@ -545,5 +602,85 @@ fun PosizioneListItem(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DraggableDismissableListItem(
+    modifier: Modifier,
+    dragModifier: Modifier,
+    interactionSource: MutableInteractionSource,
+    swipeToDismissBoxState: SwipeToDismissBoxState,
+    index: Int,
+    item: SwipeableRisuscitoListItem,
+    onItemLongClick: (Int, SwipeableRisuscitoListItem) -> Unit
+) {
+    SwipeToDismissBox(
+        state = swipeToDismissBoxState,
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        backgroundContent = {
+            SwipeToDismissBackground(swipeToDismissBoxState)
+        }
+    ) {
+
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp,
+                draggedElevation = 16.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            onClick = {},
+            interactionSource = interactionSource
+        ) {
+            ListItem(
+                headlineContent = { Text(item.title) },
+                modifier = Modifier
+                    .combinedClickable(
+                        enabled = true,
+                        onClick = { },
+                        onLongClick = {
+                            onItemLongClick(
+                                index,
+                                item
+                            )
+                        }
+                    ),
+                trailingContent = {
+                    IconButton(
+                        modifier = dragModifier,
+                        onClick = {},
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.drag_handle_24px),
+                            contentDescription = "Reorder"
+                        )
+                    }
+                }
+            )
+        }
+    }
+}
+
+const val risuscitoListItemPageAnimation = 300
+
+@Composable
+fun <S> AnimatedRisuscitoListItemPage(
+    targetState: S,
+    content: @Composable() AnimatedContentScope.(targetState: S) -> Unit
+) {
+    AnimatedContent(
+        targetState,
+        transitionSpec = {
+            scaleIn(
+                animationSpec = tween(risuscitoListItemPageAnimation)
+            ) togetherWith scaleOut(animationSpec = tween(risuscitoListItemPageAnimation))
+        },
+        label = "Animated Content"
+    ) {
+        content(it)
     }
 }

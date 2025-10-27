@@ -21,7 +21,6 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.googleapis.util.Utils
-import com.mikepenz.fastadapter.ui.utils.StringHolder
 import java.io.File
 import java.text.Normalizer
 import java.util.Random
@@ -258,12 +257,6 @@ object Utility {
         mChannel.setShowBadge(false)
         mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         mNotificationManager.createNotificationChannel(mChannel)
-    }
-
-    fun <T> helperSetString(t: T): StringHolder = when (t) {
-        is String -> StringHolder(t)
-        is Int -> StringHolder(t)
-        else -> throw IllegalArgumentException()
     }
 
     fun helperSetColor(t: String?): Int =

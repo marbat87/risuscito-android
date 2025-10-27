@@ -16,7 +16,7 @@ class SharedSearchViewModel : ViewModel() {
 
     lateinit var aTexts: Array<Array<String?>>
 
-    var titoli: List<RisuscitoListItem> = ArrayList()
+    var titoli: MutableLiveData<List<RisuscitoListItem>> = MutableLiveData(emptyList())
 
     var insertItemId = 0
 

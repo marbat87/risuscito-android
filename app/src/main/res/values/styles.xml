@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Widget.Risuscito.Button.TextButton.Icon" parent="Widget.Material3.Button.TextButton.Icon">
-        <item name="android:textAlignment">viewStart</item>
-    </style>
-
-    <style name="Widget.Risuscito.Button.TextButton.Left" parent="Widget.Material3.Button.TextButton">
-        <item name="android:textAlignment">viewStart</item>
-    </style>
-
-    <style name="TitoloSezione" parent="TextAppearance.Material3.TitleMedium">
-        <item name="android:gravity">start|center_vertical</item>
-        <item name="android:textAlignment">viewStart</item>
-        <item name="android:paddingStart">@dimen/abc_action_bar_content_inset_material</item>
-        <item name="android:paddingEnd">@dimen/abc_action_bar_content_inset_material</item>
-        <item name="android:layout_marginTop">16dp</item>
-    </style>
-
     <style name="Widget.Risuscito.Toolbar.InAppBarLayout" parent="Widget.Material3.Toolbar">
         <item name="android:elevation">0dp</item>
     </style>

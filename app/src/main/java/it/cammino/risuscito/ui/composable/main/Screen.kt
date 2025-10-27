@@ -12,11 +12,9 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +45,6 @@ fun MainScreen(
     onActionModeClick: (ActionModeItem) -> Unit = {},
     contextualTitle: String = "",
     drawerState: DrawerState = DrawerState(initialValue = DrawerValue.Closed),
-    searchBarState: SearchBarState = rememberSearchBarState(),
     showLoadingBar: Boolean = false,
     showTabs: Boolean = false,
     selectedTabIndex: MutableIntState,
@@ -89,11 +86,9 @@ fun MainScreen(
         drawerContent = {
             AppDrawerContent(
                 onItemClick = { route ->
-                    scope.launch { drawerState.close() }
                     onDrawerItemClick(route)
-                },
-                onCloseDrawer = { scope.launch { drawerState.close() } },
-                drawerState = drawerState
+                    scope.launch { drawerState.close() }
+                }
             )
         }
     ) {
@@ -104,7 +99,6 @@ fun MainScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 TopAppBarWithSearch(
-                    searchBarState = searchBarState,
                     onMenuClick = { scope.launch { drawerState.open() } },
                     scrollBehavior = scrollBehavior,
                     isActionMode = isActionMode,

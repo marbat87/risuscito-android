@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.compose.BackHandler
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -198,7 +199,7 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
                             },
                             dialogTitle = mCustomListsViewModel.dialogTitle.value.orEmpty(),
                             dialogText = mCustomListsViewModel.content.value.orEmpty(),
-                            iconRes = mCustomListsViewModel.iconRes.value!!,
+                            iconRes = mCustomListsViewModel.iconRes.value ?: 0,
                             confirmButtonText = mCustomListsViewModel.positiveButton.value.orEmpty(),
                             dismissButtonText = mCustomListsViewModel.negativeButton.value.orEmpty(),
                             dialogTag = mCustomListsViewModel.dialogTag
@@ -211,12 +212,22 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
                             onDismissRequest = {
                                 inputdialogViewModel.showAlertDialog.value = false
                             },
-                            onConfirmation = { rememberConfirmNewList(it) },
+                            onConfirmation = { _, text -> rememberConfirmNewList(text) },
                             confirmationTextRes = R.string.create_confirm,
-                            multiline = true
+                            multiline = true,
+                            required = true
                         )
                     }
                 }
+
+                BackHandler(mMainActivity?.getFabExpanded() == true || mMainActivity?.isDrawerOpen() == true) {
+                    Log.d(TAG, "handleOnBackPressed")
+                    when {
+                        mMainActivity?.isDrawerOpen() == true -> mMainActivity?.closeDrawer()
+                        else -> mMainActivity?.setFabExpanded(false)
+                    }
+                }
+
             }
         }
     }

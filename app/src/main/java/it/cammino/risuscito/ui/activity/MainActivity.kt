@@ -7,22 +7,24 @@ import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -54,6 +56,9 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.CredendialObject
 import it.cammino.risuscito.ui.CredentialCacheManager
 import it.cammino.risuscito.ui.RisuscitoApplication
+import it.cammino.risuscito.ui.composable.dialogs.ProgressDialog
+import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.DrawerItem
@@ -66,13 +71,10 @@ import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
-import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.FabActionsFragment
 import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
-import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
@@ -85,7 +87,6 @@ import it.cammino.risuscito.utils.extension.convertiBarre
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.getVersionCode
 import it.cammino.risuscito.utils.extension.isDarkMode
-import it.cammino.risuscito.utils.extension.isOnTablet
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -96,6 +97,7 @@ import it.cammino.risuscito.viewmodels.SharedTabViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParserException
@@ -105,16 +107,12 @@ import java.text.Collator
 
 
 class MainActivity : ThemeableActivity() {
-    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels()
     private val profileDialogViewModel: ProfileDialogFragment.DialogViewModel by viewModels()
     private val cantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
-
     private val scrollViewModel: SharedScrollViewModel by viewModels()
-
     private val sharedSearchViewModel: SharedSearchViewModel by viewModels()
-
     private val sharedTabViewModel: SharedTabViewModel by viewModels()
 
     private lateinit var mCredentialCacheManager: CredentialCacheManager
@@ -149,13 +147,8 @@ class MainActivity : ThemeableActivity() {
     private var actionModeMenuList = mutableListOf<ActionModeItem>()
     private var onActionModeClickItem: (ActionModeItem) -> Unit = {}
     private var navHostController = mutableStateOf(NavHostController(this))
-    private val drawerState = mutableStateOf(DrawerState(initialValue = DrawerValue.Closed))
     private val tabsDestinationList = MutableLiveData(ArrayList<Destination>())
     private val tabsVisible = mutableStateOf(false)
-    private val showSnackbar = mutableStateOf(false)
-    private val snackbarMessage = mutableStateOf("")
-    private val actionLabel = mutableStateOf("")
-    private var snackBarFragment: SnackBarFragment? = null
     private var optionMenuFragment: OptionMenuFragment? = null
     private val optionMenuList = MutableLiveData(ArrayList<OptionMenuItem>())
 
@@ -163,7 +156,7 @@ class MainActivity : ThemeableActivity() {
 
     private var fabActionsFragment: FabActionsFragment? = null
 
-    private val fabIconRes = mutableStateOf(R.drawable.edit_24px)
+    private val fabIconRes = mutableIntStateOf(R.drawable.edit_24px)
 
     private val showFab = mutableStateOf(false)
 
@@ -172,6 +165,10 @@ class MainActivity : ThemeableActivity() {
     private val fabExpanded = mutableStateOf(false)
 
     private val signedId = mutableStateOf(false)
+
+    private val isDrawerOpen = mutableStateOf(false)
+
+    private val closeDrawer = mutableStateOf(false)
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -199,7 +196,13 @@ class MainActivity : ThemeableActivity() {
         setContent {
 
             val scope = rememberCoroutineScope()
-            val searchBarState = rememberSearchBarState()
+
+            val drawerState = rememberDrawerState(
+                initialValue = DrawerValue.Closed,
+                confirmStateChange = {
+                    isDrawerOpen.value = it == DrawerValue.Open
+                    true
+                })
 
             RisuscitoTheme {
 
@@ -216,18 +219,22 @@ class MainActivity : ThemeableActivity() {
                 val navControllerInstance = rememberNavController() // Create NavController here
                 navHostController.value = navControllerInstance
 
+                val showAlertDialog by mViewModel.showAlertDialog.observeAsState()
+
+                val showProgressDialog by progressDialogViewModel.showProgressDialog.observeAsState()
 
                 MainScreen(
                     sharedScrollViewModel = sharedScrollVM,
                     navController = navHostController.value,
-                    drawerState = drawerState.value,
-                    onDrawerItemClick = { onMobileDrawerItemClick(it) },
+                    drawerState = drawerState,
+                    onDrawerItemClick = {
+                        onMobileDrawerItemClick(it)
+                    },
                     isActionMode = isActionMode.value,
                     actionModeMenu = actionModeMenuList,
                     hideNavigation = hideNavigationIcon.value,
                     onActionModeClick = onActionModeClickItem,
                     contextualTitle = actionModeTitle.value,
-                    searchBarState = searchBarState,
                     showLoadingBar = showProgressBar.value,
                     showTabs = tabsVisible.value,
                     tabsList = localTabsList,
@@ -238,7 +245,7 @@ class MainActivity : ThemeableActivity() {
                     sharedSearchViewModel = sharedSearchViewModel,
                     optionMenu = localOptionMenu.value,
                     onOptionMenuClick = { optionMenuFragment?.onItemClick(it) },
-                    fabIconRes = fabIconRes.value,
+                    fabIconRes = fabIconRes.intValue,
                     onFabClick = { fabFragment?.onFabClick(it) },
                     fabActions = localFabActionsList,
                     fabExpanded = fabExpanded,
@@ -256,29 +263,83 @@ class MainActivity : ThemeableActivity() {
                     showSnackBar = showSnackbar
                 )
 
-                // After drawing main content, draw status bar protection
-                StatusBarProtection()
+                if (showAlertDialog == true) {
+                    SimpleAlertDialog(
+                        onDismissRequest = {
+                            mViewModel.showAlertDialog.postValue(false)
+                        },
+                        onConfirmation = { tag ->
+                            mViewModel.showAlertDialog.postValue(false)
+                            when (tag) {
+                                SimpleDialogTag.BACKUP_ASK -> {
+                                    backToHome()
+                                    mViewModel.profileAction = ProfileAction.BACKUP
+                                    mCredentialCacheManager.validateToken()
+                                }
 
-//                BackHandler {
-//                    when {
-//                        fabExpanded.value -> fabExpanded.value = false
-//                        !isOnTablet && drawerState.value.isOpen -> scope.launch { drawerState.value.close() }
-//                        isActionMode.value -> destroyActionMode()
-//                        searchBarState.currentValue == SearchBarValue.Expanded -> scope.launch { searchBarState.animateToCollapsed() }
-//                        else -> backToHome(true)
-//                    }
-//                }
-            }
+                                SimpleDialogTag.RESTORE_ASK -> {
+                                    backToHome()
+                                    mViewModel.profileAction = ProfileAction.RESTORE
+                                    mCredentialCacheManager.validateToken()
+                                }
 
-            onBackPressedDispatcher.addCallback(this) {
-                when {
-                    fabExpanded.value -> fabExpanded.value = false
-                    !isOnTablet && drawerState.value.isOpen -> scope.launch { drawerState.value.close() }
-                    isActionMode.value -> destroyActionMode()
-                    searchBarState.currentValue == SearchBarValue.Expanded -> scope.launch { searchBarState.animateToCollapsed() }
-                    else -> backToHome(true)
+                                SimpleDialogTag.SIGNOUT -> {
+                                    signOut()
+                                }
+
+                                SimpleDialogTag.REVOKE -> {
+                                    revokeAccess()
+                                }
+
+                                SimpleDialogTag.RESTORE_DONE -> {
+                                    if (PreferenceManager.getDefaultSharedPreferences(this)
+                                            .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY)
+                                            .isNullOrEmpty()
+                                    ) RisuscitoApplication.localeManager.setDefaultSystemLanguage(
+                                        this
+                                    )
+                                    else RisuscitoApplication.localeManager.updateLanguage(this)
+
+                                }
+
+                                else -> {}
+                            }
+                        },
+                        dialogTitle = mViewModel.dialogTitle.value.orEmpty(),
+                        dialogText = mViewModel.content.value.orEmpty(),
+                        iconRes = mViewModel.iconRes.value ?: 0,
+                        confirmButtonText = mViewModel.positiveButton.value.orEmpty(),
+                        dismissButtonText = mViewModel.negativeButton.value.orEmpty(),
+                        dialogTag = mViewModel.dialogTag
+                    )
                 }
+
+                if (showProgressDialog == true) {
+                    ProgressDialog(
+                        dialogTitleRes = progressDialogViewModel.dialogTitleRes,
+                        messageRes = progressDialogViewModel.messageRes.value ?: 0,
+                        onDismissRequest = { progressDialogViewModel.showProgressDialog.value = false },
+                        buttonTextRes = progressDialogViewModel.buttonTextRes,
+                        indeterminate = progressDialogViewModel.indeterminate
+                    )
+                }
+
+                // After drawing main content, draw status bar protection
+                StatusBarProtection(if (isActionMode.value) MaterialTheme.colorScheme.primaryContainer else TopAppBarDefaults.topAppBarColors().containerColor)
+
+                LaunchedEffect(closeDrawer.value) {
+                    snapshotFlow { closeDrawer.value }
+                        .distinctUntilChanged()
+                        .collect { close ->
+                            if (close) {
+                                scope.launch { drawerState.close() }
+                                closeDrawer.value = false
+                            }
+                        }
+                }
+
             }
+
         }
 
         mCredentialManager = CredentialManager.create(this)
@@ -322,6 +383,9 @@ class MainActivity : ThemeableActivity() {
         }
 
         FirebaseAnalytics.getInstance(this)
+
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
 
         subscribeUiChanges()
 
@@ -380,7 +444,8 @@ class MainActivity : ThemeableActivity() {
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                             )
                         }
-                    }.setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+                    }
+                    .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
                     .show()
             }
 
@@ -395,66 +460,17 @@ class MainActivity : ThemeableActivity() {
     }
 
     private fun subscribeUiChanges() {
-        simpleDialogViewModel.state.observe(this) {
-            Log.d(TAG, "simpleDialogViewModel state $it")
-            if (!simpleDialogViewModel.handled) {
-                when (it) {
-                    is DialogState.Positive -> {
-                        when (simpleDialogViewModel.mTag) {
-                            BACKUP_ASK -> {
-                                simpleDialogViewModel.handled = true
-                                backToHome(false)
-                                mViewModel.profileAction = ProfileAction.BACKUP
-                                mCredentialCacheManager.validateToken()
-                            }
-
-                            RESTORE_ASK -> {
-                                simpleDialogViewModel.handled = true
-                                backToHome(false)
-                                mViewModel.profileAction = ProfileAction.RESTORE
-                                mCredentialCacheManager.validateToken()
-                            }
-
-                            SIGNOUT -> {
-                                simpleDialogViewModel.handled = true
-                                signOut()
-                            }
-
-                            REVOKE -> {
-                                simpleDialogViewModel.handled = true
-                                revokeAccess()
-                            }
-
-                            RESTORE_DONE -> {
-                                simpleDialogViewModel.handled = true
-                                if (PreferenceManager.getDefaultSharedPreferences(this)
-                                        .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY)
-                                        .isNullOrEmpty()
-                                ) RisuscitoApplication.localeManager.setDefaultSystemLanguage(this)
-                                else RisuscitoApplication.localeManager.updateLanguage(this)
-
-                            }
-                        }
-                    }
-
-                    is DialogState.Negative -> {
-                        simpleDialogViewModel.handled = true
-                    }
-                }
-            }
-        }
-
         profileDialogViewModel.state.observe(this) {
             Log.d(TAG, "profileDialogViewModel state $it")
             if (!profileDialogViewModel.handled) {
                 if (it is DialogState.Positive) {
                     when (profileDialogViewModel.menuItemId) {
                         R.id.gdrive_backup -> {
-                            showAccountRelatedDialog(BACKUP_ASK)
+                            showAccountRelatedDialog(SimpleDialogTag.BACKUP_ASK)
                         }
 
                         R.id.gdrive_restore -> {
-                            showAccountRelatedDialog(RESTORE_ASK)
+                            showAccountRelatedDialog(SimpleDialogTag.RESTORE_ASK)
                         }
 
                         R.id.gdrive_refresh -> {
@@ -463,11 +479,11 @@ class MainActivity : ThemeableActivity() {
                         }
 
                         R.id.gplus_signout -> {
-                            showAccountRelatedDialog(SIGNOUT)
+                            showAccountRelatedDialog(SimpleDialogTag.SIGNOUT)
                         }
 
                         R.id.gplus_revoke -> {
-                            showAccountRelatedDialog(REVOKE)
+                            showAccountRelatedDialog(SimpleDialogTag.REVOKE)
                         }
                     }
                     profileDialogViewModel.handled = true
@@ -478,43 +494,35 @@ class MainActivity : ThemeableActivity() {
         mViewModel.backupRestoreState.observe(this) { state ->
             state?.let {
                 when (it) {
-                    MainActivityViewModel.BakupRestoreState.RESTORE_STARTED -> ProgressDialogFragment.show(
-                        ProgressDialogFragment.Builder(RESTORE_RUNNING).apply {
-                            title = R.string.restore_running
-                            icon = R.drawable.cloud_download_24px
-                            content = R.string.restoring_database
-                            progressIndeterminate = true
-                        }, supportFragmentManager
-                    )
-
-                    MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2 -> {
-                        val sFragment =
-                            ProgressDialogFragment.findVisible(this@MainActivity, RESTORE_RUNNING)
-                        sFragment?.setContent(R.string.restoring_settings)
+                    MainActivityViewModel.BakupRestoreState.RESTORE_STARTED -> {
+                        progressDialogViewModel.indeterminate = true
+                        progressDialogViewModel.dialogTitleRes = R.string.restore_running
+                        progressDialogViewModel.dialogIconRes = R.drawable.cloud_download_24px
+                        progressDialogViewModel.messageRes.value = R.string.restoring_database
+                        progressDialogViewModel.buttonTextRes = 0
+                        progressDialogViewModel.showProgressDialog.value = true
                     }
 
-                    MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED -> dismissProgressDialog(
-                        RESTORE_RUNNING
-                    )
+                    MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2 -> progressDialogViewModel.messageRes.value =
+                        R.string.restoring_settings
 
-                    MainActivityViewModel.BakupRestoreState.BACKUP_STARTED -> ProgressDialogFragment.show(
-                        ProgressDialogFragment.Builder(BACKUP_RUNNING).apply {
-                            title = R.string.backup_running
-                            icon = R.drawable.cloud_upload_24px
-                            content = R.string.backup_database
-                            progressIndeterminate = true
-                        }, supportFragmentManager
-                    )
+                    MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED -> progressDialogViewModel.showProgressDialog.value =
+                        false
 
-                    MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2 -> {
-                        val sFragment =
-                            ProgressDialogFragment.findVisible(this@MainActivity, BACKUP_RUNNING)
-                        sFragment?.setContent(R.string.backup_settings)
+                    MainActivityViewModel.BakupRestoreState.BACKUP_STARTED -> {
+                        progressDialogViewModel.indeterminate = true
+                        progressDialogViewModel.dialogTitleRes = R.string.backup_running
+                        progressDialogViewModel.dialogIconRes = R.drawable.cloud_upload_24px
+                        progressDialogViewModel.messageRes.value = R.string.backup_database
+                        progressDialogViewModel.buttonTextRes = 0
+                        progressDialogViewModel.showProgressDialog.value = true
                     }
 
-                    MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED -> dismissProgressDialog(
-                        BACKUP_RUNNING
-                    )
+                    MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2 -> progressDialogViewModel.messageRes.value =
+                        R.string.backup_settings
+
+                    MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED -> progressDialogViewModel.showProgressDialog.value =
+                        false
 
                     MainActivityViewModel.BakupRestoreState.NONE -> {}
                 }
@@ -557,7 +565,7 @@ class MainActivity : ThemeableActivity() {
         }
 
         cantiViewModel.itemsResult?.observe(this) { canti ->
-            sharedSearchViewModel.titoli = canti.sortedWith(
+            sharedSearchViewModel.titoli.value = canti.sortedWith(
                 compareBy(
                     Collator.getInstance(systemLocale)
                 ) { getString(it.titleRes) })
@@ -586,7 +594,7 @@ class MainActivity : ThemeableActivity() {
         Log.d(TAG, "initFab: $enable")
         fabExpanded.value = false
         fabFragment = fragment
-        fabIconRes.value = iconRes
+        fabIconRes.intValue = iconRes
         val newList = ArrayList(fabActions.orEmpty())
         fabActionList.value = newList
         showFab.value = enable
@@ -594,6 +602,14 @@ class MainActivity : ThemeableActivity() {
 
     fun setTabVisible(visible: Boolean) {
         tabsVisible.value = visible
+    }
+
+    fun getFabExpanded(): Boolean {
+        return fabExpanded.value
+    }
+
+    fun setFabExpanded(expanded: Boolean) {
+        fabExpanded.value = expanded
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -627,17 +643,20 @@ class MainActivity : ThemeableActivity() {
     }
 
     private fun buildCredentialRequest(credOption: CredentialOption) {
-        mCredentialRequest = GetCredentialRequest.Builder().addCredentialOption(credOption).build()
+        mCredentialRequest =
+            GetCredentialRequest.Builder().addCredentialOption(credOption).build()
     }
 
     private fun buildLastAccountCredentialOption(): CredentialOption {
         return GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(true)
-            .setServerClientId(getString(R.string.default_web_client_id)).setAutoSelectEnabled(true)
+            .setServerClientId(getString(R.string.default_web_client_id))
+            .setAutoSelectEnabled(true)
             .build()
     }
 
     private fun buildGoogleCredentialOption(): CredentialOption {
-        return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id)).build()
+        return GetSignInWithGoogleOption.Builder(getString(R.string.default_web_client_id))
+            .build()
     }
 
     // [START signOut]
@@ -647,15 +666,6 @@ class MainActivity : ThemeableActivity() {
             logout()
         }
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menuInflater.inflate(R.menu.main_menu, menu)
-//        profileItem = menu.findItem(R.id.account_manager)
-//        profileUiManager = ProfileUiManager(
-//            this, supportFragmentManager, profileItem?.actionView, ::signIn
-//        )
-//        return super.onCreateOptionsMenu(menu)
-//    }
 
     // [START revokeAccess]
     private fun revokeAccess() {
@@ -792,70 +802,63 @@ class MainActivity : ThemeableActivity() {
         showProgressBar.value = false
     }
 
-    private fun dismissProgressDialog(tag: String) {
-        val sFragment = ProgressDialogFragment.findVisible(this, tag)
-        sFragment?.dismiss()
-    }
-
-    private fun backToHome(exitAlso: Boolean) {
-        val myFragment =
-            supportFragmentManager.findFragmentByTag(R.id.navigation_indexes.toString())
-        if (myFragment != null && myFragment.isVisible) {
-            if (exitAlso) finish()
+    private fun backToHome() {
+        Log.d(TAG, "backToHome")
+        if (navHostController.value.currentDestination?.route == NavigationScreen.GeneralIndex.route) {
             return
         }
-
-        navHostController.value.navigate(NavigationScreen.GeneralIndex.route)
-
+        navHostController.value.navigate(NavigationScreen.GeneralIndex.route) {
+            popUpTo(navHostController.value.graph.startDestinationId)
+            launchSingleTop = true
+        }
         expandToolbar()
     }
 
-    private fun showAccountRelatedDialog(tag: String) {
-        SimpleDialogFragment.show(
-            SimpleDialogFragment.Builder(tag).apply {
-                when (tag) {
-                    BACKUP_ASK -> {
-                        title(R.string.gdrive_backup)
-                        icon(R.drawable.cloud_upload_24px)
-                        content(R.string.gdrive_backup_content)
-                        positiveButton(R.string.backup_confirm)
-                    }
+    private fun showAccountRelatedDialog(tag: SimpleDialogTag) {
+        mViewModel.dialogTag = tag
+        when (tag) {
+            SimpleDialogTag.BACKUP_ASK -> {
+                mViewModel.dialogTitle.value = getString(R.string.gdrive_backup)
+                mViewModel.iconRes.value = R.drawable.cloud_upload_24px
+                mViewModel.content.value = getString(R.string.gdrive_backup_content)
+                mViewModel.positiveButton.value = getString(R.string.backup_confirm)
+            }
 
-                    RESTORE_ASK -> {
-                        title(R.string.gdrive_restore)
-                        icon(R.drawable.cloud_download_24px)
-                        content(R.string.gdrive_restore_content)
-                        positiveButton(R.string.restore_confirm)
-                    }
+            SimpleDialogTag.RESTORE_ASK -> {
+                mViewModel.dialogTitle.value = getString(R.string.gdrive_restore)
+                mViewModel.iconRes.value = R.drawable.cloud_download_24px
+                mViewModel.content.value = getString(R.string.gdrive_restore_content)
+                mViewModel.positiveButton.value = getString(R.string.restore_confirm)
+            }
 
-                    SIGNOUT -> {
-                        title(R.string.gplus_signout)
-                        icon(R.drawable.person_remove_24px)
-                        content(R.string.dialog_acc_disconn_text)
-                        positiveButton(R.string.disconnect_confirm)
-                    }
+            SimpleDialogTag.SIGNOUT -> {
+                mViewModel.dialogTitle.value = getString(R.string.gplus_signout)
+                mViewModel.iconRes.value = R.drawable.person_remove_24px
+                mViewModel.content.value = getString(R.string.dialog_acc_disconn_text)
+                mViewModel.positiveButton.value = getString(R.string.disconnect_confirm)
+            }
 
-                    REVOKE -> {
-                        title(R.string.gplus_revoke)
-                        icon(R.drawable.person_off_24px)
-                        content(R.string.dialog_acc_revoke_text)
-                        positiveButton(R.string.disconnect_confirm)
-                    }
-                }
-                negativeButton(android.R.string.cancel)
-            }, supportFragmentManager
-        )
-        lifecycleScope.launch { drawerState.value.close() }
+            SimpleDialogTag.REVOKE -> {
+                mViewModel.dialogTitle.value = getString(R.string.gplus_revoke)
+                mViewModel.iconRes.value = R.drawable.person_off_24px
+                mViewModel.content.value = getString(R.string.dialog_acc_revoke_text)
+                mViewModel.positiveButton.value = getString(R.string.disconnect_confirm)
+            }
+
+            else -> {}
+        }
+        mViewModel.negativeButton.value = getString(android.R.string.cancel)
+        mViewModel.showAlertDialog.value = true
     }
 
     private suspend fun translate() {
         Log.d(TAG, "translate")
-        ProgressDialogFragment.show(
-            ProgressDialogFragment.Builder(TRANSLATION).apply {
-                content = R.string.translation_running
-                progressIndeterminate = true
-            }, supportFragmentManager
-        )
+        progressDialogViewModel.indeterminate = true
+        progressDialogViewModel.dialogIconRes = R.drawable.translate_24px
+        progressDialogViewModel.messageRes.value = R.string.translation_running
+        progressDialogViewModel.buttonTextRes = 0
+        progressDialogViewModel.dialogTitleRes = 0
+        progressDialogViewModel.showProgressDialog.value = true
         intent.removeExtra(CHANGE_LANGUAGE)
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
             convertTabs()
@@ -863,11 +866,7 @@ class MainActivity : ThemeableActivity() {
         }
         intent.removeExtra(OLD_LANGUAGE)
         intent.removeExtra(NEW_LANGUAGE)
-        try {
-            dismissProgressDialog(TRANSLATION)
-        } catch (e: IllegalArgumentException) {
-            Log.e(javaClass.name, e.localizedMessage, e)
-        }
+        progressDialogViewModel.showProgressDialog.value = false
     }
 
     private suspend fun backupDbPrefs() {
@@ -885,17 +884,19 @@ class MainActivity : ThemeableActivity() {
 
             withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
                 backupSharedPreferences(
-                    mViewModel.sub, mCredentialCacheManager.getCachedCredential()?.getAccountId()
+                    mViewModel.sub,
+                    mCredentialCacheManager.getCachedCredential()?.getAccountId()
                 )
             }
 
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_COMPLETED
-            SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(BACKUP_DONE).title(R.string.general_message)
-                    .icon(R.drawable.cloud_done_24px).content(R.string.gdrive_backup_success)
-                    .positiveButton(R.string.ok), supportFragmentManager
-            )
+            mViewModel.dialogTag = SimpleDialogTag.BACKUP_DONE
+            mViewModel.dialogTitle.value = getString(R.string.general_message)
+            mViewModel.iconRes.value = R.drawable.cloud_done_24px
+            mViewModel.content.value = getString(R.string.gdrive_backup_success)
+            mViewModel.positiveButton.value = getString(R.string.ok)
+            mViewModel.showAlertDialog.value = true
         } catch (e: Exception) {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
             mViewModel.backupRestoreState.value =
@@ -923,11 +924,12 @@ class MainActivity : ThemeableActivity() {
 
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_COMPLETED
-            SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(RESTORE_DONE).title(R.string.general_message)
-                    .icon(R.drawable.cloud_done_24px).content(R.string.gdrive_restore_success)
-                    .positiveButton(R.string.ok), supportFragmentManager
-            )
+            mViewModel.dialogTag = SimpleDialogTag.RESTORE_DONE
+            mViewModel.dialogTitle.value = getString(R.string.general_message)
+            mViewModel.iconRes.value = R.drawable.cloud_done_24px
+            mViewModel.content.value = getString(R.string.gdrive_restore_success)
+            mViewModel.positiveButton.value = getString(R.string.ok)
+            mViewModel.showAlertDialog.value = true
         } catch (e: Exception) {
             Log.e(TAG, "Exception: " + e.localizedMessage, e)
             mViewModel.backupRestoreState.value =
@@ -947,14 +949,12 @@ class MainActivity : ThemeableActivity() {
         actionModeMenuList.clear()
         actionModeMenuList.addAll(actionModeMenu)
         onActionModeClickItem = onActionModeClick
-        setTransparentStatusBar(false)
         expandToolbar()
         isActionMode.value = true
     }
 
     fun destroyActionMode() {
         isActionMode.value = false
-        setTransparentStatusBar(true)
         actionModeFragment?.destroyActionMode()
     }
 
@@ -966,13 +966,6 @@ class MainActivity : ThemeableActivity() {
         val newList = ArrayList(optionMenu) // Crea una nuova lista
         optionMenuList.value = newList
         optionMenuFragment = fragment
-    }
-
-    fun showSnackBar(message: String, callback: SnackBarFragment? = null, label: String? = null) {
-        snackBarFragment = callback
-        snackbarMessage.value = message
-        actionLabel.value = label.orEmpty()
-        showSnackbar.value = true
     }
 
     fun setFabActionsFragment(fragment: FabActionsFragment) {
@@ -997,17 +990,15 @@ class MainActivity : ThemeableActivity() {
         )
     }
 
-    companion object {
-        private const val RESTORE_RUNNING = "RESTORE_RUNNING"
-        private const val BACKUP_RUNNING = "BACKUP_RUNNING"
-        private const val TRANSLATION = "TRANSLATION"
-        private const val BACKUP_ASK = "BACKUP_ASK"
-        private const val RESTORE_ASK = "RESTORE_ASK"
-        private const val SIGNOUT = "SIGNOUT"
-        private const val REVOKE = "REVOKE"
-        private const val BACKUP_DONE = "BACKUP_DONE"
-        private const val RESTORE_DONE = "RESTORE_DONE"
+    fun isDrawerOpen(): Boolean {
+        return isDrawerOpen.value
+    }
 
+    fun closeDrawer() {
+        closeDrawer.value = true
+    }
+
+    companion object {
         private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val OLD_PHOTO_RES = "s96-c"
         private const val NEW_PHOTO_RES = "s400-c"

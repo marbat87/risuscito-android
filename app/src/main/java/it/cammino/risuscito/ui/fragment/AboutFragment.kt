@@ -40,25 +40,6 @@ class AboutFragment : MaterialAboutFragment() {
         Firebase.crashlytics.log("Fragment: ${this::class.java}")
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        //solo per tablet
-//        (mMainActivity as? MainActivity)?.let {
-//            it.addMenuProvider(object : MenuProvider {
-//                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-//                    it.updateProfileImage()
-//                }
-//
-//                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-//                    return false
-//                }
-//            }, viewLifecycleOwner)
-//            it.setTabVisible(false)
-//            it.initFab(enable = false)
-//        }
-//    }
-
     override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList? {
         val builder = MaterialAboutList.Builder()
 

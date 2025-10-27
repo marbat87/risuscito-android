@@ -6,14 +6,14 @@ plugins {
     kotlin("android")
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.21"
 }
 
 
 android {
 
     compileSdk = 36
-    buildToolsVersion = "36.0.0"
+    buildToolsVersion = "36.1.0"
     defaultConfig {
         applicationId = "it.cammino.risuscito"
         minSdk = 23
@@ -77,13 +77,9 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.expandProjection", "true")
     arg("room.generateKotlin", "true")
-}
-
-val fastAdapterVersion = "5.7.0"
-val roomVersion = "2.8.2"
+} val roomVersion = "2.8.3"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
@@ -100,7 +96,7 @@ dependencies {
     implementation("androidx.navigation:navigation-runtime-ktx:2.9.5")
     implementation("androidx.fragment:fragment-compose:1.8.9")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.10.5")
+    implementation("androidx.work:work-runtime-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
     implementation("androidx.preference:preference-ktx:1.2.1")
@@ -118,13 +114,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("com.mikepenz:itemanimators:1.1.0")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.15.0")
-    implementation("com.mikepenz:fastadapter:$fastAdapterVersion")
-    implementation("com.mikepenz:fastadapter-extensions-drag:$fastAdapterVersion")
-    implementation("com.mikepenz:fastadapter-extensions-swipe:$fastAdapterVersion")
-    implementation("com.mikepenz:fastadapter-extensions-expandable:$fastAdapterVersion")
-    implementation("com.mikepenz:fastadapter-extensions-ui:$fastAdapterVersion")
-    implementation("com.mikepenz:fastadapter-extensions-binding:$fastAdapterVersion")
-    implementation("com.mikepenz:fastadapter-extensions-utils:$fastAdapterVersion")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.leinardi.android:speed-dial:3.3.0")
     implementation("com.github.MFlisar:changelog:1.1.7")
@@ -135,10 +124,11 @@ dependencies {
     implementation("com.google.api-client:google-api-client:2.8.1")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
+    implementation("sh.calvin.reorderable:reorderable:3.0.0")
 
-    implementation(platform("androidx.compose:compose-bom:2025.10.00"))
+    implementation(platform("androidx.compose:compose-bom:2025.10.01"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha06")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha04")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")

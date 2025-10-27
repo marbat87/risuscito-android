@@ -17,13 +17,12 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
-import com.google.android.material.color.MaterialColors
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -46,8 +45,8 @@ import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
 import it.cammino.risuscito.utils.extension.createTaskDescription
@@ -55,9 +54,9 @@ import it.cammino.risuscito.utils.extension.isDarkMode
 import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.isLandscape
 import it.cammino.risuscito.utils.extension.isOnTablet
-import it.cammino.risuscito.utils.extension.setLigthStatusBar
-import it.cammino.risuscito.utils.extension.setupNavBarColor
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
+import it.cammino.risuscito.viewmodels.ProgressDialogManagerViewModel
+import it.cammino.risuscito.viewmodels.SharedSnackBarViewModel
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -69,6 +68,15 @@ import java.util.concurrent.ExecutionException
 abstract class ThemeableActivity : AppCompatActivity() {
 
     protected val mViewModel: MainActivityViewModel by viewModels()
+
+    protected val sharedSnackBarViewModel: SharedSnackBarViewModel by viewModels()
+
+    protected val progressDialogViewModel: ProgressDialogManagerViewModel by viewModels()
+
+    protected val showSnackbar = mutableStateOf(false)
+    protected val snackbarMessage = mutableStateOf("")
+    protected val actionLabel = mutableStateOf("")
+    protected var snackBarFragment: SnackBarFragment? = null
 
     @SuppressLint("NewApi")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,9 +98,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithFixedDrawer}")
         mViewModel.isTabletWithNoFixedDrawer = isOnTablet && !isLandscape
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
-
-        setupNavBarColor()
-        updateStatusBarLightMode()
 
         setTaskDescription(this.createTaskDescription(TAG))
 
@@ -128,8 +133,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        updateStatusBarLightMode()
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
             showInfoBroadcastReceiver,
             IntentFilter(RisuscitoMessagingService.MESSAGE_RECEIVED_TAG)
@@ -152,27 +155,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.onDestroy()
         Log.d(TAG, "onDestroy(): $isFinishing")
         if (isFinishing) stopMedia()
-    }
-
-    private fun updateStatusBarLightMode() {
-        setLigthStatusBar(!isDarkMode)
-    }
-
-    fun setTransparentStatusBar(trasparent: Boolean) {
-        if (!OSUtils.hasV())
-            setTransparentStatusBarLegacy(trasparent)
-    }
-
-    @Suppress("DEPRECATION")
-    private fun setTransparentStatusBarLegacy(trasparent: Boolean) {
-        window.statusBarColor = if (trasparent) ContextCompat.getColor(
-            this,
-            android.R.color.transparent
-        ) else MaterialColors.getColor(
-            this,
-            com.google.android.material.R.attr.colorSurfaceContainer,
-            TAG
-        )
     }
 
     override fun attachBaseContext(newBase: Context) {
@@ -552,14 +534,12 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 R.string.general_message
             )
             val body = intent.getStringExtra(RisuscitoMessagingService.MESSAGE_BODY).orEmpty()
-            SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(NOTIFICATION_DIALOG)
-                    .title(title)
-                    .icon(R.drawable.info_24px)
-                    .content(body)
-                    .positiveButton(R.string.ok),
-                supportFragmentManager
-            )
+            mViewModel.dialogTag = SimpleDialogTag.NOTIFICATION_DIALOG
+            mViewModel.dialogTitle.value = title
+            mViewModel.iconRes.value = R.drawable.info_24px
+            mViewModel.content.value = body
+            mViewModel.positiveButton.value = getString(R.string.ok)
+            mViewModel.showAlertDialog.value = true
         }
     }
 
@@ -637,6 +617,17 @@ abstract class ThemeableActivity : AppCompatActivity() {
         }
     }
 
+    fun showSnackBar(
+        message: String,
+        callback: SnackBarFragment? = null,
+        label: String? = null
+    ) {
+        snackBarFragment = callback
+        snackbarMessage.value = message
+        actionLabel.value = label.orEmpty()
+        showSnackbar.value = true
+    }
+
     companion object {
         internal val TAG = ThemeableActivity::class.java.canonicalName
 
@@ -646,7 +637,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         internal const val FIREBASE_FIELD_TIMESTAMP = "timestamp"
         internal const val FIREBASE_COLLECTION_IMPOSTAZIONI = "Impostazioni"
         internal const val CANTO_FILE_NAME = "Canto"
-        internal const val NOTIFICATION_DIALOG = "NOTIFICATION_DIALOG"
         internal const val CUSTOM_LIST_FILE_NAME = "CustomList"
         internal const val LISTA_PERS_FILE_NAME = "ListaPers"
         internal const val LOCAL_LINK_FILE_NAME = "LocalLink"

@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +51,7 @@ class GeneralIndexFragment : RisuscitoFragment() {
 
                         2 ->
                             AndroidFragment<SectionedIndexFragment>(
-                                arguments = bundleOf(SectionedIndexFragment.INDICE_LISTA to 0)
+                                arguments = bundleOf(SectionedIndexFragment.INDICE_LISTA to 4)
                             )
 
                         3 ->
@@ -59,8 +60,6 @@ class GeneralIndexFragment : RisuscitoFragment() {
                             )
                     }
                 }
-                mMainActivity?.setupMaterialTab(generalIndexesList)
-                mMainActivity?.setTabVisible(true)
 
                 LaunchedEffect(localPagerState) {
                     snapshotFlow { localPagerState.currentPage }
@@ -89,32 +88,35 @@ class GeneralIndexFragment : RisuscitoFragment() {
                         }
                 }
 
-                mMainActivity?.createOptionsMenu(
-                    emptyList(),
-                    null
-                )
-            }
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        mMainActivity?.initFab(enable = false)
-
-        lifecycleScope.launch {
-            delay(500)
-            if (sharedTabViewModel.resetTab.value) {
-                Log.d(TAG, "GeneralIndexFragment newINSTANCE")
-                sharedTabViewModel.resetTab.value = false
-                val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                sharedTabViewModel.tabsSelectedIndex.intValue = Integer.parseInt(
-                    pref.getString(Utility.DEFAULT_INDEX, "0")
-                        ?: "0"
-                )
-                mMainActivity?.setTabVisible(true)
+                BackHandler(mMainActivity?.isDrawerOpen() == true) {
+                    Log.d(TAG, "handleOnBackPressed")
+                    mMainActivity?.closeDrawer()
+                }
             }
 
+            mMainActivity?.createOptionsMenu(
+                emptyList(),
+                null
+            )
+
+            mMainActivity?.setupMaterialTab(generalIndexesList)
+            mMainActivity?.setTabVisible(true)
+            mMainActivity?.initFab(enable = false)
+
+            lifecycleScope.launch {
+                delay(500)
+                if (sharedTabViewModel.resetTab.value) {
+                    Log.d(TAG, "GeneralIndexFragment newINSTANCE")
+                    sharedTabViewModel.resetTab.value = false
+                    val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    sharedTabViewModel.tabsSelectedIndex.intValue = Integer.parseInt(
+                        pref.getString(Utility.DEFAULT_INDEX, "0")
+                            ?: "0"
+                    )
+                    mMainActivity?.setTabVisible(true)
+                }
+
+            }
         }
     }
 

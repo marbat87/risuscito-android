@@ -5,15 +5,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,11 +37,9 @@ val drawerNavItems =
 @Preview
 @Composable
 fun AppDrawerContent(
-    onItemClick: (DrawerItem) -> Unit = {},
-    onCloseDrawer: () -> Unit = {},
-    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed)
+    onItemClick: (DrawerItem) -> Unit = {}
 ) {
-    ModalDrawerSheet(drawerState = drawerState) {
+    ModalDrawerSheet {
         Column(
             modifier = Modifier
                 .fillMaxSize()

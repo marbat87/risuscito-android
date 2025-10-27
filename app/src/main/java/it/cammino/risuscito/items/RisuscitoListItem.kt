@@ -63,7 +63,6 @@ data class RisuscitoListItem(
 }
 
 enum class ExpandableItemType {
-    TITLE,
     EXPANDABLE,
     SUBITEM,
 }

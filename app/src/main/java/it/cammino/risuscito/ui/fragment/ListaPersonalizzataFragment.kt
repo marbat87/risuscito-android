@@ -8,11 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -20,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -75,6 +79,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
     private var longclickedPos: Int = 0
     private var longClickedChild: Int = 0
     private var actionModeOk: Boolean = false
+    private var backCallbackEnabled = mutableStateOf(false)
     private var mMainActivity: MainActivity? = null
 
     private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
@@ -201,13 +206,17 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                             noteClickListener = rememberNoteClick
                         )
                     }
+
+                    item {
+                        Spacer(Modifier.height(112.dp))
+                    }
                 }
 
                 if (showInputDialog == true) {
                     InputDialog(
                         dialogTitleRes = R.string.edit_note_title,
                         onDismissRequest = { inputdialogViewModel.showAlertDialog.value = false },
-                        onConfirmation = { rememberConfirmEditNote(it) },
+                        onConfirmation = { _, text -> rememberConfirmEditNote(text) },
                         confirmationTextRes = R.string.action_salva,
                         prefill = inputdialogViewModel.dialogPrefill,
                         multiline = true
@@ -217,6 +226,12 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                 mCantiViewModel.listaPersonalizzataResult?.observe(viewLifecycleOwner) { listaPersonalizzataResult ->
                     mCantiViewModel.posizioniList.value = listaPersonalizzataResult
                 }
+
+                BackHandler(backCallbackEnabled.value) {
+                    Log.d(TAG, "handleOnBackPressed")
+                    mMainActivity?.destroyActionMode()
+                }
+
             }
         }
     }
@@ -226,6 +241,11 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
         mMainActivity = activity as? MainActivity
         mSwhitchMode = false
         mMainActivity?.setFabActionsFragment(this)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mMainActivity?.destroyActionMode()
     }
 
     private fun getSendIntent(exportUri: Uri): Intent {
@@ -340,6 +360,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
             }
         }
         updateActionModeTitle(false)
+        backCallbackEnabled.value = true
     }
 
     private fun selectItem(selected: Boolean) {
@@ -400,6 +421,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                 Firebase.crashlytics.recordException(e)
             }
         }
+        backCallbackEnabled.value = false
     }
 
     private fun updateActionModeTitle(switchMode: Boolean) {
@@ -528,11 +550,5 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
     companion object {
         internal val TAG = ListaPersonalizzataFragment::class.java.canonicalName
         const val INDICE_LISTA = "indiceLista"
-
-        fun newInstance(indiceLista: Int): ListaPersonalizzataFragment {
-            val f = ListaPersonalizzataFragment()
-            f.arguments = bundleOf(INDICE_LISTA to indiceLista)
-            return f
-        }
     }
 }

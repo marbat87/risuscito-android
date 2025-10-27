@@ -1,11 +1,11 @@
 package it.cammino.risuscito.viewmodels
 
+import android.app.Application
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 
-class MainActivityViewModel : ViewModel() {
+class MainActivityViewModel(application: Application) : DialogManagerViewModel(application) {
 
     var backupRestoreState = MutableLiveData(BakupRestoreState.NONE)
     var httpRequestState = MutableLiveData(ClientState.STARTED)

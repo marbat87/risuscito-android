@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.content.edit
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.DropDownPreference
@@ -18,7 +19,6 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallManager
@@ -35,7 +35,6 @@ import com.jakewharton.processphoenix.ProcessPhoenix
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.activity.ThemeableActivity
-import it.cammino.risuscito.ui.dialog.ProgressDialogFragment
 import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.LocaleManager
 import it.cammino.risuscito.utils.StringUtils
@@ -53,6 +52,7 @@ import it.cammino.risuscito.utils.extension.hasStorageAccess
 import it.cammino.risuscito.utils.extension.isOnTablet
 import it.cammino.risuscito.utils.extension.setDefaultNightMode
 import it.cammino.risuscito.utils.extension.systemLocale
+import it.cammino.risuscito.viewmodels.ProgressDialogManagerViewModel
 import it.cammino.risuscito.viewmodels.SettingsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,6 +63,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val mSettingsViewModel: SettingsViewModel by viewModels()
+
+    private val progressDialogViewModel: ProgressDialogManagerViewModel by activityViewModels()
 
     private lateinit var mEntries: Array<String>
     private lateinit var mEntryValues: Array<String>
@@ -76,15 +78,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
             when (state.status()) {
                 FAILED -> {
                     Log.e(TAG, "Module install failed with ${state.errorCode()}")
-                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
-                    mMainActivity?.let {
-                        Snackbar.make(
-                            it.findViewById(android.R.id.content),
-                            "Module install failed with ${state.errorCode()}",
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-
+                    progressDialogViewModel.showProgressDialog.value = false
+                    mMainActivity?.showSnackBar("Module install failed with ${state.errorCode()}")
                 }
 
                 REQUIRES_USER_CONFIRMATION -> {
@@ -98,16 +93,16 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     val progress = state.bytesDownloaded()
                     Log.i(TAG, "DOWNLOADING LANGUAGE - progress: $progress su $totalBytes")
                     // Update progress bar.
-                    if (totalBytes > 0) ProgressDialogFragment.findVisible(
-                        mMainActivity,
-                        DOWNLOAD_LANGUAGE
-                    )?.setProgress((100 * progress / totalBytes).toInt())
+                    if (totalBytes > 0)
+                        progressDialogViewModel.progress.value = (progress / totalBytes).toFloat()
                 }
 
                 INSTALLED -> {
                     val newLanguage = mSettingsViewModel.persistingLanguage
                     mSettingsViewModel.persistingLanguage = StringUtils.EMPTY
-                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
+                    mMainActivity
+                    progressDialogViewModel.showProgressDialog.value = false
+                    Log.i(TAG, "Module installed")
                     if (state.languages().isNotEmpty()) {
                         val currentLang = systemLocale.language
                         Log.i(TAG, "Module installed: language $currentLang")
@@ -115,13 +110,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         lifecycleScope.launch { translate(currentLang, newLanguage) }
                     } else {
                         Log.e(TAG, "Module install failed: empyt language list")
-                        mMainActivity?.let {
-                            Snackbar.make(
-                                it.findViewById(android.R.id.content),
-                                "Module install failed: no language installed!",
-                                Snackbar.LENGTH_SHORT
-                            ).show()
-                        }
+                        mMainActivity?.showSnackBar("Module install failed: no language installed!")
                     }
                 }
 
@@ -137,16 +126,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
         Log.i(TAG, "OnPreferenceChangeListener - newValue: $newLanguage")
         if (!currentLang.equals(newLanguage, ignoreCase = true)) {
             mMainActivity?.let { activity ->
-                ProgressDialogFragment.show(
-                    ProgressDialogFragment.Builder(
-                        DOWNLOAD_LANGUAGE
-                    ).apply {
-                        content = R.string.download_running
-                        icon = R.drawable.file_download_24px
-                        progressIndeterminate = false
-                        progressMax = 100
-                    }, activity.supportFragmentManager
-                )
+                progressDialogViewModel.indeterminate = false
+                progressDialogViewModel.dialogTitleRes = 0
+                progressDialogViewModel.dialogIconRes = R.drawable.file_download_24px
+                progressDialogViewModel.messageRes.value = R.string.download_running
+                progressDialogViewModel.buttonTextRes = 0
+                progressDialogViewModel.progress.value = 0f
+                progressDialogViewModel.showProgressDialog.value = true
             }
             // Creates a request to download and install additional language resources.
             val request = SplitInstallRequest.newBuilder().addLanguage(
@@ -167,14 +153,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 // processing the request.
                 ?.addOnFailureListener { exception ->
                     Log.e(TAG, "language download error", exception)
-                    ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
-                    mMainActivity?.let {
-                        Snackbar.make(
-                            it.findViewById(android.R.id.content),
-                            "error downloading language: ${(exception as? SplitInstallException)?.errorCode}",
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
+                    progressDialogViewModel.showProgressDialog.value = false
+                    mMainActivity?.showSnackBar("error downloading language: ${(exception as? SplitInstallException)?.errorCode}")
                 }
                 // When the platform accepts your request to download
                 // an on demand module, it binds it to the following session ID.
@@ -202,21 +182,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
         mMainActivity = activity as? ThemeableActivity
 
         splitInstallManager = SplitInstallManagerFactory.create(requireContext())
-
-        //usato solo in tablet
-//        (mMainActivity as? MainActivity)?.let {
-//            it.setTabVisible(false)
-//            it.initFab(enable = false)
-//            it.addMenuProvider(object : MenuProvider {
-//                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-//                    it.updateProfileImage()
-//                }
-//
-//                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-//                    return false
-//                }
-//            }, viewLifecycleOwner)
-//        }
 
         val listPreference = findPreference("memoria_salvataggio_scelta") as? DropDownPreference
 
@@ -284,14 +249,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
             // you may want to disable certain functionality that depends on the module.
             if (resultCode == Activity.RESULT_CANCELED) {
                 Log.e(TAG, "download cancelled by user")
-                ProgressDialogFragment.findVisible(mMainActivity, DOWNLOAD_LANGUAGE)?.dismiss()
-                mMainActivity?.let {
-                    Snackbar.make(
-                        it.findViewById(android.R.id.content),
-                        "download cancelled by user",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                }
+                progressDialogViewModel.showProgressDialog.value = false
+                mMainActivity?.showSnackBar("download cancelled by user")
             }
         }
     }
@@ -347,12 +306,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
     private suspend fun translate(oldLanguage: String, newLanguage: String) {
         Log.d(TAG, "translate")
         mMainActivity?.let { activity ->
-            ProgressDialogFragment.show(
-                ProgressDialogFragment.Builder(TRANSLATION).apply {
-                    content = R.string.translation_running
-                    progressIndeterminate = true
-                }, activity.supportFragmentManager
-            )
+            progressDialogViewModel.dialogTitleRes = 0
+            progressDialogViewModel.dialogIconRes = R.drawable.translate_24px
+            progressDialogViewModel.buttonTextRes = 0
+            progressDialogViewModel.indeterminate = true
+            progressDialogViewModel.messageRes.value = R.string.translation_running
+            progressDialogViewModel.showProgressDialog.value = true
         }
         val cambioAccordi = CambioAccordi(requireContext())
         withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
@@ -360,7 +319,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             cambioAccordi.convertiBarre(oldLanguage, newLanguage)
         }
         try {
-            ProgressDialogFragment.findVisible(mMainActivity, TRANSLATION)?.dismiss()
+            progressDialogViewModel.showProgressDialog.value = false
             RisuscitoApplication.localeManager.updateLanguage(
                 requireContext(), newLanguage
             )
@@ -370,9 +329,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     companion object {
-        private const val DOWNLOAD_LANGUAGE = "download_language"
         private const val CONFIRMATION_REQUEST_CODE = 1
-        private const val TRANSLATION = "TRANSLATION"
         private val TAG = SettingsFragment::class.java.canonicalName
     }
 

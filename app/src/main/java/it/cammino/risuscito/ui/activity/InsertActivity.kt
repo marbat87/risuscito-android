@@ -2,7 +2,7 @@ package it.cammino.risuscito.ui.activity
 
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.addCallback
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -116,11 +116,6 @@ class InsertActivity : ThemeableActivity() {
                         .fillMaxSize(),
                     topBar = {
                         val textFieldState = rememberTextFieldState()
-
-                        LaunchedEffect(searchBarState.currentValue) {
-                            textFieldState.edit { replace(0, length, "") }
-                            sharedSearchViewModel.searchFilter.value = ""
-                        }
 
                         val inputField =
                             @Composable {
@@ -286,6 +281,10 @@ class InsertActivity : ThemeableActivity() {
                     }
             }
 
+            BackHandler {
+                onBackPressedAction()
+            }
+
         }
 
         val bundle = intent.extras
@@ -293,12 +292,8 @@ class InsertActivity : ThemeableActivity() {
         idLista = bundle?.getInt(ID_LISTA) ?: 0
         listPosition = bundle?.getInt(POSITION) ?: 0
 
-        onBackPressedDispatcher.addCallback(this) {
-            onBackPressedAction()
-        }
-
         simpleIndexViewModel.itemsResult?.observe(this) { canti ->
-            sharedSearchViewModel.titoli = canti.sortedWith(
+            sharedSearchViewModel.titoli.value = canti.sortedWith(
                 compareBy(
                     Collator.getInstance(systemLocale)
                 ) { getString(it.titleRes) })

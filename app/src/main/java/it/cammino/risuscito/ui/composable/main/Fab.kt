@@ -7,6 +7,7 @@ import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,7 +28,6 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.traversalIndex
-import androidx.compose.ui.zIndex
 import it.cammino.risuscito.R
 
 enum class FabActionItem(
@@ -97,7 +97,6 @@ fun RisuscitoFab(
     val focusRequester = remember { FocusRequester() }
 
     FloatingActionButtonMenu(
-        modifier = Modifier.zIndex(999F),
         expanded = expanded,
         button = {
             if (actions.orEmpty().isEmpty()) {
@@ -119,6 +118,7 @@ fun RisuscitoFab(
                                 contentDescription = "Toggle menu"
                             },
                     checked = expanded,
+                    containerSize = ToggleFloatingActionButtonDefaults.containerSizeMedium(),
                     onCheckedChange = { onExpandedChange(!expanded) },
                 ) {
                     Icon(

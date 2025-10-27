@@ -3,9 +3,11 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.items.ExpandableItemType
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.risuscitoListItem
 import it.cammino.risuscito.utils.Utility
@@ -15,6 +17,11 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
 
     var itemsResult: LiveData<List<RisuscitoListItem>>? = null
         private set
+
+    var sectionedItemsResult: LiveData<Map<Int, List<RisuscitoListItem>>>? = null
+            private set
+
+    var modelSectionedItemsResult = MutableLiveData(mutableMapOf<Int, List<RisuscitoListItem>>())
 
     //-1 come valore per indicare che non è mai stato settato ancora (fragment appena creato)
     var tipoLista: Int = -1
@@ -87,6 +94,72 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                         )
                     }
                     newList
+                }
+            4 ->
+                sectionedItemsResult = mDb.indiceLiturgicoDao().liveAll().map { canti ->
+                    val finalMap = mutableMapOf<Int, List<RisuscitoListItem>>()
+                    val cantiList = ArrayList<RisuscitoListItem>()
+                    val cantiSubItemList = ArrayList<RisuscitoListItem>()
+                    var totCanti = 0
+                    var totGruppi = 0
+                    var ultimoGruppo = 0
+
+                    for (i in canti.indices) {
+//                AGGIUNTA RIGA DI GRUPPO
+                        cantiSubItemList.add(
+                            risuscitoListItem(
+                                itemType = ExpandableItemType.SUBITEM,
+                                titleRes = Utility.getResId(canti[i].titolo, R.string::class.java)
+                            ) {
+                                pageRes = Utility.getResId(
+                                    canti[i].pagina,
+                                    R.string::class.java
+                                )
+                                sourceRes = Utility.getResId(canti[i].source, R.string::class.java)
+                                setColor = canti[i].color
+                                id = canti[i].id
+                                groupIndex = totGruppi
+                            }
+                        )
+
+                        if ((i == (canti.size - 1) || canti[i].idIndice != canti[i + 1].idIndice)) {
+                            cantiList.add(
+                                risuscitoListItem(
+                                    itemType = ExpandableItemType.EXPANDABLE,
+                                    titleRes = Utility.getResId(canti[i].nome, R.string::class.java)
+                                ) {
+                                    pageRes = Utility.getResId(
+                                        canti[i].pagina,
+                                        R.string::class.java
+                                    )
+                                    sourceRes =
+                                        Utility.getResId(canti[i].source, R.string::class.java)
+                                    setColor = canti[i].color
+                                    identifier = totCanti++
+                                    groupIndex = totGruppi++
+                                    subCantiCounter = cantiSubItemList.size
+                                }
+                            )
+
+                            cantiSubItemList.forEach { subitem ->
+                                subitem.identifier = totCanti++
+                                cantiList.add(subitem)
+                            }
+                            cantiSubItemList.clear()
+
+                        }
+
+                        if (i == canti.size - 1 || canti[i].idGruppo != canti[i+1].idGruppo) {
+                            ultimoGruppo = canti[i].idGruppo
+                            finalMap[Utility.getResId(
+                                canti[i].nomeGruppo,
+                                R.string::class.java
+                            )] = ArrayList(cantiList)
+                            cantiList.clear()
+                        }
+
+                    }
+                    finalMap
                 }
         }
     }

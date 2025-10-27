@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,8 +22,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
@@ -101,7 +101,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
         mThemeableActivity = activity as? ThemeableActivity
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -187,11 +187,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 }
                 if (showSearchProgress.value) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.width(64.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        )
+                        LoadingIndicator(modifier = Modifier.size(64.dp))
                     }
                 }
                 Box(
@@ -342,6 +338,12 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                                 getString(it.titleRes)
                             })
                     }
+
+                    sharedSearchViewModel.titoli.observe(viewLifecycleOwner) { canti ->
+                        job.cancel()
+                        ricercaStringa()
+                    }
+
                 } else {
                     mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
                         localItems.value =
@@ -420,7 +422,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
 
                         if (found) {
                             Log.d(TAG, "aText[0]: ${aText[0]}")
-                            sharedSearchViewModel.titoli.filter { (aText[0].orEmpty()) == it.undecodedSource && (sharedSearchViewModel.consegnatiOnlyFilter.value != true || it.consegnato != -1) }
+                            sharedSearchViewModel.titoli.value.orEmpty().filter { (aText[0].orEmpty()) == it.undecodedSource && (sharedSearchViewModel.consegnatiOnlyFilter.value != true || it.consegnato != -1) }
                                 .forEach {
                                     if (!isActive) return@launch
                                     titoliResult.add(it.apply { filter = StringUtils.EMPTY })
@@ -430,7 +432,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 } else {
                     val stringa = Utility.removeAccents(s).lowercase(systemLocale)
                     Log.d(TAG, "performSearch onTextChanged: stringa $stringa")
-                    sharedSearchViewModel.titoli.filter {
+                    sharedSearchViewModel.titoli.value.orEmpty().filter {
                         Utility.removeAccents(
                             getString(it.titleRes)
                         ).lowercase(systemLocale)
@@ -450,9 +452,8 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 }
             } else {
                 if (s.isEmpty()) {
-                    sharedSearchViewModel.itemsResultFiltered.value = sharedSearchViewModel.titoli
+                    sharedSearchViewModel.itemsResultFiltered.value = sharedSearchViewModel.titoli.value
                     showSearchProgress.value = false
-//                    expandToolbar()
                 }
             }
         }

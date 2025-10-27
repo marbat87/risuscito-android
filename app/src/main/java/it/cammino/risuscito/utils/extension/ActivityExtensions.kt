@@ -31,10 +31,9 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.elevation.SurfaceColors
 import com.google.android.material.transition.platform.MaterialSharedAxis
-import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -83,33 +82,6 @@ val Resources.systemLocale: Locale
         return if (OSUtils.hasN()) getSystemLocaleN()
         else getSystemLocaleLegacy()
     }
-
-fun Activity.setupNavBarColor() {
-    if (!OSUtils.hasV()) setupNavBarColorLegacy()
-}
-
-@Suppress("DEPRECATION")
-fun Activity.setupNavBarColorLegacy() {
-    if (OSUtils.hasO()) {
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        if (!isDarkMode) setLightNavigationBar()
-        window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun Activity.setLightNavigationBar() {
-    WindowInsetsControllerCompat(
-        window, window.decorView
-    ).isAppearanceLightNavigationBars = true
-}
-
-fun Activity.setLigthStatusBar(light: Boolean) {
-    WindowCompat.getInsetsController(
-        window, window.decorView
-    ).isAppearanceLightStatusBars = light
-//    if (light) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-}
 
 fun Activity.startActivityWithTransition(intent: Intent, axis: Int) {
     if (OSUtils.isObySamsung()) {

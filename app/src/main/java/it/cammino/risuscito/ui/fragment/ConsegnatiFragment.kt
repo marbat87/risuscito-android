@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -28,8 +28,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -96,28 +97,14 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
     private val contextMenuExpanded = mutableStateOf(false)
     private var mRegularFont: Typeface? = null
     private var mMediumFont: Typeface? = null
-    private var backCallback: OnBackPressedCallback? = null
+    private var backCallbackEnabled = mutableStateOf(false)
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        backCallback = object :
-            OnBackPressedCallback(consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) {
-            override fun handleOnBackPressed() {
-                Log.d(TAG, "handleOnBackPressed")
-                mMainActivity?.destroyActionMode()
-                mMainActivity?.expandToolbar()
-                initFab()
-            }
-        }
-        // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
-        backCallback?.let {
-            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it)
-        }
-
         return ComposeView(requireContext()).apply {
             setContent {
                 val consegnatiItems by consegnatiViewModel.consegnatiSortedList.observeAsState()
@@ -158,12 +145,11 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                     { targetState ->
                         when (targetState) {
                             ConsegnatiViewModel.ViewMode.LOADING -> {
-                                CircularProgressIndicator()
+                                LoadingIndicator()
                             }
 
                             ConsegnatiViewModel.ViewMode.VIEW -> {
                                 val simpleListState = rememberLazyListState()
-                                backCallback?.isEnabled = false
                                 val listModifier = Modifier
                                     .fillMaxSize()
                                     .then(
@@ -216,7 +202,6 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                             }
 
                             ConsegnatiViewModel.ViewMode.EDIT -> {
-                                backCallback?.isEnabled = true
                                 val checkableListState = rememberLazyListState()
                                 val listModifier = Modifier
                                     .fillMaxSize()
@@ -396,6 +381,19 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                         this@ConsegnatiFragment
                     )
                 }
+
+                BackHandler(backCallbackEnabled.value || mMainActivity?.isDrawerOpen() == true) {
+                    Log.d(TAG, "handleOnBackPressed")
+                    when {
+                        mMainActivity?.isDrawerOpen() == true -> mMainActivity?.closeDrawer()
+                        else -> {
+                            mMainActivity?.destroyActionMode()
+                            mMainActivity?.expandToolbar()
+                            initFab()
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -422,18 +420,6 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
 
     override fun onResume() {
         super.onResume()
-//        backCallback = object :
-//            OnBackPressedCallback(consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) {
-//            override fun handleOnBackPressed() {
-//                Log.d(TAG, "handleOnBackPressed")
-//                mMainActivity?.destroyActionMode()
-//                mMainActivity?.expandToolbar()
-//            }
-//        }
-//        // note that you could enable/disable the callback here as well by setting callback.isEnabled = true/false
-//        backCallback?.let {
-//            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, it)
-//        }
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
             fabIntro()
@@ -471,11 +457,13 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                 else -> {}
             }
         }
+        backCallbackEnabled.value = true
     }
 
     override fun destroyActionMode() {
         consegnatiViewModel.viewMode.value =
             if (consegnatiViewModel.consegnatiList?.value?.isNotEmpty() == true) ConsegnatiViewModel.ViewMode.VIEW else ConsegnatiViewModel.ViewMode.EMPTY
+        backCallbackEnabled.value = false
     }
 
     private fun initFab() {

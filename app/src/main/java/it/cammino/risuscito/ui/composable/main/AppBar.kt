@@ -6,7 +6,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -22,15 +22,19 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -55,6 +60,7 @@ import it.cammino.risuscito.ui.composable.ContextualToolbarTitle
 import it.cammino.risuscito.ui.composable.dialogs.AccountMenuImage
 import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 enum class ActionModeItem(
@@ -95,6 +101,7 @@ enum class ActionModeItem(
         R.string.material_drawer_close,
         R.drawable.arrow_back_24px
     )
+
 }
 
 val deleteMenu =
@@ -110,6 +117,10 @@ val consegnatiMenu =
 
 val customListsMenu =
     listOf(ActionModeItem.SWAP, ActionModeItem.DELETE)
+
+val creaListaMenu =
+    listOf(ActionModeItem.HELP)
+//    listOf(ActionModeItem.SAVE, ActionModeItem.HELP)
 
 
 sealed class OptionMenuItem(
@@ -161,7 +172,6 @@ val consegnatiResetOptionMenu =
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarWithSearch(
-    searchBarState: SearchBarState = rememberSearchBarState(),
     onMenuClick: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior,
     isActionMode: Boolean = false,
@@ -182,13 +192,20 @@ fun TopAppBarWithSearch(
         title = {
             if (!isActionMode) {
                 val textFieldState = rememberTextFieldState()
+                val searchBarState = rememberSearchBarState()
+                val scope = rememberCoroutineScope()
 
-                LaunchedEffect(searchBarState.currentValue) {
-                    textFieldState.edit { replace(0, length, "") }
-                    sharedSearchViewModel.searchFilter.value = ""
+                LaunchedEffect(searchBarState) {
+                    snapshotFlow { searchBarState.currentValue }
+                        .distinctUntilChanged()
+                        .collect {
+                            if (it == SearchBarValue.Collapsed) {
+                                textFieldState.edit { replace(0, length, "") }
+                                sharedSearchViewModel.searchFilter.value = ""
+                            }
+                        }
                 }
 
-                val scope = rememberCoroutineScope()
                 val inputField =
                     @Composable {
                         SearchBarDefaults.InputField(
@@ -218,13 +235,22 @@ fun TopAppBarWithSearch(
                             },
                             leadingIcon = {
                                 if (searchBarState.currentValue == SearchBarValue.Expanded) {
-                                    IconButton(onClick = {
-                                        scope.launch { searchBarState.animateToCollapsed() }
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_back_24px),
-                                            contentDescription = stringResource(R.string.material_drawer_close)
-                                        )
+                                    TooltipBox(
+                                        positionProvider =
+                                            TooltipDefaults.rememberTooltipPositionProvider(
+                                                TooltipAnchorPosition.Above
+                                            ),
+                                        tooltip = { PlainTooltip { Text(stringResource(R.string.material_drawer_close)) } },
+                                        state = rememberTooltipState(),
+                                    ) {
+                                        IconButton(
+                                            onClick = { scope.launch { searchBarState.animateToCollapsed() } }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_back_24px),
+                                                contentDescription = stringResource(R.string.material_drawer_close),
+                                            )
+                                        }
                                     }
                                 }
                             },
@@ -241,14 +267,18 @@ fun TopAppBarWithSearch(
                                     }
                                 } else {
                                     if (searchBarState.currentValue == SearchBarValue.Collapsed) {
-                                        Row {
+                                        AppBarRow(overflowIndicator = {}) {
                                             optionMenu?.forEach {
-                                                IconButton(onClick = { onOptionMenuClick(it.route) }) {
-                                                    Icon(
-                                                        painter = painterResource(it.iconRes),
-                                                        contentDescription = stringResource(it.label)
-                                                    )
-                                                }
+                                                clickableItem(
+                                                    onClick = { onOptionMenuClick(it.route) },
+                                                    icon = {
+                                                        Icon(
+                                                            painter = painterResource(it.iconRes),
+                                                            contentDescription = stringResource(it.label)
+                                                        )
+                                                    },
+                                                    label = "",
+                                                )
                                             }
                                         }
                                     }
@@ -313,7 +343,7 @@ fun TopAppBarWithSearch(
             }
         },
         colors = if (isActionMode) TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,
         ) else TopAppBarDefaults.topAppBarColors(),
         navigationIcon = {
@@ -342,14 +372,18 @@ fun TopAppBarWithSearch(
         },
         actions = {
             if (isActionMode) {
-                actionModeMenu.forEach { item ->
-                    IconButton(onClick = {
-                        onActionModeClick(item)
-                    }) {
-                        Icon(
-                            painter = painterResource(item.iconRes),
-                            contentDescription = stringResource(item.label),
-                            tint = MaterialTheme.colorScheme.primary
+                AppBarRow(overflowIndicator = {}) {
+                    actionModeMenu.forEach {
+                        clickableItem(
+                            onClick = { onActionModeClick(it) },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(it.iconRes),
+                                    contentDescription = stringResource(it.label),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            label = "",
                         )
                     }
                 }

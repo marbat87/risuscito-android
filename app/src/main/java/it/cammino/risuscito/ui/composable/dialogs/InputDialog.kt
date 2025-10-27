@@ -14,7 +14,6 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,14 +27,19 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.DialogTitle
 import it.cammino.risuscito.utils.StringUtils
@@ -44,12 +48,14 @@ import it.cammino.risuscito.utils.extension.capitalize
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputDialog(
+    dialogTag: InputDialogTag = InputDialogTag.DEFAULT,
     dialogTitleRes: Int,
     onDismissRequest: () -> Unit,
-    onConfirmation: (String) -> Unit,
+    onConfirmation: (InputDialogTag, String) -> Unit,
     confirmationTextRes: Int,
     prefill: String = StringUtils.EMPTY,
-    multiline: Boolean = false
+    multiline: Boolean = false,
+    required: Boolean = false
 ) {
 
     val inputState = rememberTextFieldState(prefill)
@@ -59,7 +65,9 @@ fun InputDialog(
         capitalization = KeyboardCapitalization.Sentences
     )
 
-    BasicAlertDialog(onDismissRequest = { onDismissRequest() }) {
+    val focusRequester = remember { FocusRequester() }
+
+    Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,14 +84,14 @@ fun InputDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 if (multiline) {
                     OutlinedTextField(
-                        modifier = Modifier.padding(horizontal = 24.dp),
+                        modifier = Modifier.padding(horizontal = 24.dp).focusRequester(focusRequester),
                         state = inputState,
                         keyboardOptions = keyboardOptions,
                         trailingIcon = { ClearText(inputState) },
                     )
                 } else {
                     OutlinedTextField(
-                        modifier = Modifier.padding(horizontal = 24.dp),
+                        modifier = Modifier.padding(horizontal = 24.dp).focusRequester(focusRequester),
                         state = inputState, lineLimits = TextFieldLineLimits.SingleLine,
                         keyboardOptions = keyboardOptions,
                         trailingIcon = { ClearText(inputState) },
@@ -105,13 +113,18 @@ fun InputDialog(
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(
                         onClick = {
-                            onConfirmation(inputState.text.toString())
-                        }
+                            onConfirmation(dialogTag, inputState.text.toString())
+                        },
+                        enabled = !required || inputState.text.isNotEmpty()
                     ) {
                         Text(stringResource(confirmationTextRes).capitalize(LocalContext.current))
                     }
                 }
             }
+        }
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
         }
     }
 }
@@ -136,4 +149,10 @@ fun ClearText(inputState: TextFieldState) {
             }
         }
     }
+}
+
+enum class InputDialogTag {
+    DEFAULT,
+    RENAME,
+    ADD
 }
