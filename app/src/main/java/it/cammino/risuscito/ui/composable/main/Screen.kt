@@ -58,7 +58,7 @@ fun MainScreen(
     optionMenu: List<OptionMenuItem>? = emptyList(),
     onOptionMenuClick: (String) -> Unit = {},
     fabIconRes: Int,
-    onFabClick: (FabActionItem) -> Unit = {},
+    onFabClick: (String) -> Unit = {},
     loggedIn: Boolean = false,
     profilePhotoUrl: String = "",
     onProfileClick: () -> Unit = {},

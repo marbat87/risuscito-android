@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import it.cammino.risuscito.ui.composable.DialogTitle
 import it.cammino.risuscito.utils.extension.capitalize
+import java.text.NumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -42,8 +44,10 @@ fun ProgressDialog(
     onDismissRequest: (ProgressDialogTag) -> Unit,
     buttonTextRes: Int = 0,
     indeterminate: Boolean = true,
-    progress: Float = 0.1f,
+    progress: Float = 0f,
 ) {
+
+    val progressPercentFormat = remember { NumberFormat.getPercentInstance() }
 
     Dialog(onDismissRequest = { onDismissRequest(dialogTag) }) {
         Card(
@@ -74,6 +78,14 @@ fun ProgressDialog(
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
                 ) {
+                    if (messageRes > 0) {
+                        Text(
+                            text = stringResource(messageRes),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
                     if (indeterminate) {
                         LoadingIndicator()
                     } else {
@@ -83,12 +95,13 @@ fun ProgressDialog(
                             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
                         )
                         LinearWavyProgressIndicator(progress = { animatedProgress })
-                    }
-                    if (messageRes > 0) {
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = stringResource(messageRes),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyLarge
+                            text = progressPercentFormat.format(
+                                progress
+                            ),
+                            textAlign = TextAlign.Start,
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
                 }
@@ -115,5 +128,7 @@ fun ProgressDialog(
 }
 
 enum class ProgressDialogTag {
-    DEFAULT
+    DEFAULT,
+    DOWNLOAD_MP3,
+    EXPORT_PDF
 }

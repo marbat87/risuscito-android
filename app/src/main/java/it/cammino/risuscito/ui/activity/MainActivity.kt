@@ -258,9 +258,9 @@ class MainActivity : ThemeableActivity() {
                 RisuscitoSnackBar(
                     snackbarHostState = snackbarHostState,
                     callBack = snackBarFragment,
-                    message = snackbarMessage.value,
-                    actionLabel = actionLabel.value,
-                    showSnackBar = showSnackbar
+                    message = sharedSnackBarViewModel.snackbarMessage,
+                    actionLabel = sharedSnackBarViewModel.actionLabel,
+                    showSnackBar = sharedSnackBarViewModel.showSnackBar
                 )
 
                 if (showAlertDialog == true) {

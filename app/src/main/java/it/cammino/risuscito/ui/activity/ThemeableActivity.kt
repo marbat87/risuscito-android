@@ -17,7 +17,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -73,9 +72,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     protected val progressDialogViewModel: ProgressDialogManagerViewModel by viewModels()
 
-    protected val showSnackbar = mutableStateOf(false)
-    protected val snackbarMessage = mutableStateOf("")
-    protected val actionLabel = mutableStateOf("")
     protected var snackBarFragment: SnackBarFragment? = null
 
     @SuppressLint("NewApi")
@@ -623,9 +619,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
         label: String? = null
     ) {
         snackBarFragment = callback
-        snackbarMessage.value = message
-        actionLabel.value = label.orEmpty()
-        showSnackbar.value = true
+        sharedSnackBarViewModel.snackbarMessage = message
+        sharedSnackBarViewModel.actionLabel = label.orEmpty()
+        sharedSnackBarViewModel.showSnackBar.value = true
     }
 
     companion object {

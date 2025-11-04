@@ -9,11 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,6 +38,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
+import it.cammino.risuscito.ui.composable.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
@@ -96,15 +92,7 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    AnimatedContent(
-                        viewMode,
-                        transitionSpec = {
-                            fadeIn(
-                                animationSpec = tween(1000)
-                            ) togetherWith fadeOut(animationSpec = tween(1000))
-                        },
-                        label = "Animated Content"
-                    )
+                    AnimatedFadeContent(viewMode)
                     { targetState ->
                         when (targetState) {
                             FavoritesViewModel.ViewMode.VIEW -> {

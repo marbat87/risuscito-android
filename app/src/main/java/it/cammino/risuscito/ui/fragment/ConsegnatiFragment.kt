@@ -8,11 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,6 +54,7 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.risuscitoListItem
+import it.cammino.risuscito.ui.composable.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.CheckableListItem
 import it.cammino.risuscito.ui.composable.PassageListItem
 import it.cammino.risuscito.ui.composable.dialogs.ListChoiceAlertDialog
@@ -66,7 +62,6 @@ import it.cammino.risuscito.ui.composable.dialogs.PassaggesDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
-import it.cammino.risuscito.ui.composable.main.FabActionItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.consegnatiMenu
 import it.cammino.risuscito.ui.composable.main.consegnatiOptionMenu
@@ -133,15 +128,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                         }
                     }
 
-                    AnimatedContent(
-                        viewMode,
-                        transitionSpec = {
-                            fadeIn(
-                                animationSpec = tween(1000)
-                            ) togetherWith fadeOut(animationSpec = tween(1000))
-                        },
-                        label = "Animated Content"
-                    )
+                    AnimatedFadeContent(viewMode)
                     { targetState ->
                         when (targetState) {
                             ConsegnatiViewModel.ViewMode.LOADING -> {
@@ -647,7 +634,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
         }
     }
 
-    override fun onFabClick(item: FabActionItem) {
+    override fun onFabClick(item: String) {
         if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) {
             consegnatiViewModel.dialogTag = SimpleDialogTag.SAVE_CONSEGNATI_DIALOG
             consegnatiViewModel.showAlertDialog.value = true

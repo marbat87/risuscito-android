@@ -3,8 +3,6 @@ package it.cammino.risuscito.ui.composable
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
@@ -12,10 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -145,7 +140,7 @@ fun SimpleListItem(
 
     ListItem(
         leadingContent = {
-            AnimatedRisuscitoListItemPage(
+            AnimatedScaleContent(
                 selected
             ) { state ->
                 when (state) {
@@ -231,7 +226,7 @@ fun HistoryListItem(
 
     ListItem(
         leadingContent = {
-            AnimatedRisuscitoListItemPage(
+            AnimatedScaleContent(
                 selected
             ) { state ->
                 when (state) {
@@ -489,7 +484,7 @@ fun NotableListItem(
 ) {
     ListItem(
         leadingContent = {
-            AnimatedRisuscitoListItemPage(
+            AnimatedScaleContent(
                 selected
             ) { state ->
                 when (state) {
@@ -662,25 +657,5 @@ fun DraggableDismissableListItem(
                 }
             )
         }
-    }
-}
-
-const val risuscitoListItemPageAnimation = 300
-
-@Composable
-fun <S> AnimatedRisuscitoListItemPage(
-    targetState: S,
-    content: @Composable() AnimatedContentScope.(targetState: S) -> Unit
-) {
-    AnimatedContent(
-        targetState,
-        transitionSpec = {
-            scaleIn(
-                animationSpec = tween(risuscitoListItemPageAnimation)
-            ) togetherWith scaleOut(animationSpec = tween(risuscitoListItemPageAnimation))
-        },
-        label = "Animated Content"
-    ) {
-        content(it)
     }
 }

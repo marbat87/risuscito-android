@@ -113,9 +113,6 @@ val Context.isGridLayout: Boolean
 val Context.isLandscape: Boolean
     get() = resources.getBoolean(R.bool.landscape)
 
-val Context.isFabExpansionLeft: Boolean
-    get() = resources.getBoolean(R.bool.fab_orientation_left)
-
 fun PackageManager.queryIntentActivities(intent: Intent): MutableList<ResolveInfo> {
     return if (OSUtils.hasT())
         queryIntentActivitiesTiramisu(intent)

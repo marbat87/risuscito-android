@@ -452,9 +452,9 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
         }
     }
 
-    override fun onFabClick(item: FabActionItem) {
+    override fun onFabClick(item: String) {
         when (item) {
-            FabActionItem.PULISCI -> {
+            FabActionItem.PULISCI.id -> {
                 mCustomListsViewModel.dialogTag = SimpleDialogTag.RESET_LIST
                 mCustomListsViewModel.dialogTitle.postValue(getString(R.string.dialog_reset_list_title))
                 mCustomListsViewModel.content.postValue(getString(R.string.reset_list_question))
@@ -464,23 +464,23 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
                 mCustomListsViewModel.showAlertDialog.postValue(true)
             }
 
-            FabActionItem.ADDLISTA -> {
+            FabActionItem.ADDLISTA.id -> {
                 inputdialogViewModel.showAlertDialog.value = true
             }
 
-            FabActionItem.CONDIVIDI -> {
+            FabActionItem.CONDIVIDI.id -> {
                 mMainActivity?.getFabActionsFragment()?.condividi()
             }
 
-            FabActionItem.CONDIVIDIFILE -> {
+            FabActionItem.CONDIVIDIFILE.id -> {
                 mMainActivity?.getFabActionsFragment()?.inviaFile()
             }
 
-            FabActionItem.DELETE -> {
+            FabActionItem.DELETE.id -> {
                 lifecycleScope.launch { deleteListDialog() }
             }
 
-            FabActionItem.EDIT -> {
+            FabActionItem.EDIT.id -> {
                 mCustomListsViewModel.indDaModif =
                     sharedTabViewModel.tabsSelectedIndex.intValue - 2
                 mMainActivity?.let { act ->

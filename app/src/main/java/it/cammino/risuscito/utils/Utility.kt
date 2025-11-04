@@ -13,11 +13,8 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.toColorInt
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.googleapis.util.Utils
@@ -68,6 +65,9 @@ object Utility {
     // Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     internal const val HTML_CONTENT = "htmlContent"
     internal const val SPEED_VALUE = "speedValue"
+    internal const val ZOOM_VALUE = "zoomValue"
+    internal const val SCROLL_X_VALUE = "scrollXValue"
+    internal const val SCROLL_Y_VALUE = "scrollYValue"
     internal const val SCROLL_PLAYING = "scrollPlaying"
     internal const val TIPO_LISTA = "tipoLista"
 
@@ -418,26 +418,26 @@ object Utility {
 
     }
 
-    fun fixSystemBarPadding(view: View) {
-        ViewCompat.setOnApplyWindowInsetsListener(
-            view
-        ) { v, insets ->
-            val innerPadding = insets.getInsets(
-                // Notice we're using systemBars, not statusBar
-                WindowInsetsCompat.Type.systemBars()
-                        // Notice we're also accounting for the display cutouts
-                        or WindowInsetsCompat.Type.displayCutout()
-                // If using EditText, also add
-                // "or WindowInsetsCompat.Type.ime()"
-                // to maintain focus when opening the IME
-            )
-            v.setPadding(
-                innerPadding.left,
-                0,
-                innerPadding.right,
-                innerPadding.bottom)
-            insets
-        }
-    }
+//    fun fixSystemBarPadding(view: View) {
+//        ViewCompat.setOnApplyWindowInsetsListener(
+//            view
+//        ) { v, insets ->
+//            val innerPadding = insets.getInsets(
+//                // Notice we're using systemBars, not statusBar
+//                WindowInsetsCompat.Type.systemBars()
+//                        // Notice we're also accounting for the display cutouts
+//                        or WindowInsetsCompat.Type.displayCutout()
+//                // If using EditText, also add
+//                // "or WindowInsetsCompat.Type.ime()"
+//                // to maintain focus when opening the IME
+//            )
+//            v.setPadding(
+//                innerPadding.left,
+//                0,
+//                innerPadding.right,
+//                innerPadding.bottom)
+//            insets
+//        }
+//    }
 
 }

@@ -21,6 +21,7 @@
     <string name="material_drawer_open" translatable="false">Open</string>
     <string name="material_drawer_close" translatable="false">Close</string>
     <string name="uri_play_store_app_website" translatable="false">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="more" translatable="false">More</string>
 
 <!--    <string name="litanie_penitenziali_brevi_page_old" translatable="false">1</string>-->
 <!--    <string name="preghiera_litanica_penitenziale_page_old" translatable="false">2</string>-->

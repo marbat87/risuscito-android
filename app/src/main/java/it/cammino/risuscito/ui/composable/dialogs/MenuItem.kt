@@ -20,7 +20,8 @@ import it.cammino.risuscito.R
 @Composable
 fun MenuExpandableItem(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    iconRes: Int = 0
 ) {
     DropdownMenuItem(
         text = { Text(text) },
@@ -30,6 +31,13 @@ fun MenuExpandableItem(
                 painter = painterResource(R.drawable.arrow_right_24px),
                 contentDescription = null
             )
+        },
+        leadingIcon = {
+            if (iconRes > 0)
+                Icon(
+                    painter = painterResource(iconRes),
+                    contentDescription = text
+                )
         }
     )
 }

@@ -354,3 +354,305 @@ fun PassaggesDropDownMenu(
     }
 
 }
+
+enum class DropDownMenuItem(
+    val label: Int,
+    val iconRes: Int,
+    val value: Int
+) {
+    DEFAULT(
+        0,
+        0,
+        0
+    ),
+
+    TONALITA_TRASPORTA(
+        R.string.action_trasporta,
+        R.drawable.swap_vert_24px,
+        0
+    ),
+
+    TONO_DO(
+        R.string.action_trasporta_do,
+        0,
+        R.string.title_trasporta_do
+    ),
+
+    TONO_DO_D(
+        R.string.action_trasporta_dod,
+        0,
+        R.string.title_trasporta_dod
+    ),
+
+    TONO_RE(
+        R.string.action_trasporta_re,
+        0,
+        R.string.title_trasporta_re
+    ),
+
+    TONO_MI_B(
+        R.string.action_trasporta_mib,
+        0,
+        R.string.title_trasporta_mib
+    ),
+
+    TONO_MI(
+        R.string.action_trasporta_mi,
+        0,
+        R.string.title_trasporta_mi
+    ),
+
+    TONO_FA(
+        R.string.action_trasporta_fa,
+        0,
+        R.string.title_trasporta_fa
+    ),
+
+    TONO_FA_D(
+        R.string.action_trasporta_fad,
+        0,
+        R.string.title_trasporta_fad
+    ),
+
+    TONO_SOL(
+        R.string.action_trasporta_sol,
+        0,
+        R.string.title_trasporta_sol
+    ),
+
+    TONO_SOL_D(
+        R.string.action_trasporta_sold,
+        0,
+        R.string.title_trasporta_sold
+    ),
+
+    TONO_LA(
+        R.string.action_trasporta_la,
+        0,
+        R.string.title_trasporta_la
+    ),
+
+    TONO_SI_B(
+        R.string.action_trasporta_sib,
+        0,
+        R.string.title_trasporta_sib
+    ),
+
+    TONO_SI(
+        R.string.action_trasporta_si,
+        0,
+        R.string.title_trasporta_si
+    ),
+
+    TONALITA_SALVA(
+        R.string.action_salva,
+        R.drawable.save_24px,
+        0
+    ),
+
+    TONALITA_RESET(
+        R.string.action_reset_tonalita,
+        R.drawable.refresh_24px,
+        0
+    ),
+
+    /*TONALITA END
+     */
+
+    BARRE_TRASPORTA(
+        R.string.action_trasporta,
+        R.drawable.swap_vert_24px,
+        0
+    ),
+
+    BARRE_NO(
+        R.string.action_trabar_NO,
+        0,
+        0
+    ),
+
+    BARRE_I(
+        R.string.action_trabar_I,
+        0,
+        R.string.title_trabar_I
+    ),
+
+    BARRE_II(
+        R.string.action_trabar_II,
+        0,
+        R.string.title_trabar_II
+    ),
+
+    BARRE_III(
+        R.string.action_trabar_III,
+        0,
+        R.string.title_trabar_III
+    ),
+
+    BARRE_IV(
+        R.string.action_trabar_IV,
+        0,
+        R.string.title_trabar_IV
+    ),
+
+    BARRE_V(
+        R.string.action_trabar_V,
+        0,
+        R.string.title_trabar_V
+    ),
+
+    BARRE_VI(
+        R.string.action_trabar_VI,
+        0,
+        R.string.title_trabar_VI
+    ),
+
+    BARRE_VII(
+        R.string.action_trabar_VII,
+        0,
+        R.string.title_trabar_VII
+    ),
+
+    BARRE_SALVA(
+        R.string.action_salva,
+        R.drawable.save_24px,
+        0
+    ),
+
+    BARRE_RESET(
+        R.string.action_reset_barre,
+        R.drawable.refresh_24px,
+        0
+    ),
+
+    EXPORT_PDF(
+        R.string.action_exp_pdf,
+        R.drawable.picture_as_pdf_24px,
+        0
+    ),
+
+    HELP(
+        R.string.action_help,
+        R.drawable.help_24px,
+        0
+    )
+
+}
+
+val tontalitaDropDownMenu =
+    mutableMapOf(
+        DropDownMenuItem.TONALITA_TRASPORTA to listOf(
+            DropDownMenuItem.TONO_DO,
+            DropDownMenuItem.TONO_DO_D,
+            DropDownMenuItem.TONO_RE,
+            DropDownMenuItem.TONO_MI_B,
+            DropDownMenuItem.TONO_MI,
+            DropDownMenuItem.TONO_FA,
+            DropDownMenuItem.TONO_FA_D,
+            DropDownMenuItem.TONO_SOL,
+            DropDownMenuItem.TONO_SOL_D,
+            DropDownMenuItem.TONO_LA,
+            DropDownMenuItem.TONO_SI_B,
+            DropDownMenuItem.TONO_SI
+        ),
+        DropDownMenuItem.TONALITA_SALVA to emptyList(),
+        DropDownMenuItem.TONALITA_RESET to emptyList()
+    )
+
+val barreDropDownMenu =
+    mutableMapOf(
+        DropDownMenuItem.BARRE_TRASPORTA to listOf(
+            DropDownMenuItem.BARRE_NO,
+            DropDownMenuItem.BARRE_I,
+            DropDownMenuItem.BARRE_II,
+            DropDownMenuItem.BARRE_III,
+            DropDownMenuItem.BARRE_IV,
+            DropDownMenuItem.BARRE_V,
+            DropDownMenuItem.BARRE_VI,
+            DropDownMenuItem.BARRE_VII
+        ),
+        DropDownMenuItem.BARRE_SALVA to emptyList(),
+        DropDownMenuItem.BARRE_RESET to emptyList()
+    )
+
+val otherDropDownMenu =
+    mutableMapOf<DropDownMenuItem, List<DropDownMenuItem>>(
+        DropDownMenuItem.EXPORT_PDF to emptyList(),
+        DropDownMenuItem.HELP to emptyList()
+    )
+
+@Composable
+fun CantoDropDownMenu(
+    menu: Map<DropDownMenuItem, List<DropDownMenuItem>>,
+    menuExpanded: Boolean,
+    offset: DpOffset,
+    onItemClick: (DropDownMenuItem) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+
+    var subMenuExpanded by remember { mutableStateOf(DropDownMenuItem.DEFAULT) }
+
+    DropdownMenu(
+        expanded = menuExpanded,
+        onDismissRequest = { onDismissRequest() },
+        offset = offset
+    ) {
+        menu.forEach { item ->
+            if (item.value.isNotEmpty()) {
+                MenuExpandableItem(
+                    text = stringResource(item.key.label),
+                    onClick = {
+                        onDismissRequest()
+                        subMenuExpanded = item.key
+                    },
+                    iconRes = item.key.iconRes
+                )
+            } else {
+                DropdownMenuItem(
+                    text = { Text(stringResource(item.key.label)) },
+                    onClick = {
+                        onDismissRequest()
+                        onItemClick(item.key) },
+                    leadingIcon = {
+                        if (item.key.iconRes > 0)
+                            Icon(
+                                painter = painterResource(item.key.iconRes),
+                                contentDescription = stringResource(item.key.label)
+                            )
+                    }
+                )
+            }
+        }
+    }
+
+    menu.forEach { item ->
+        if (item.value.isNotEmpty()) {
+            DropdownMenu(
+                expanded = subMenuExpanded == item.key,
+                onDismissRequest = { subMenuExpanded = DropDownMenuItem.DEFAULT },
+                offset = offset
+            ) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(item.key.label)) },
+                    onClick = {},
+                    enabled = false
+                )
+
+                item.value.forEach { listItem ->
+                    DropdownMenuItem(
+                        text = { Text(stringResource(listItem.label)) },
+                        onClick = { onItemClick(listItem) },
+                        leadingIcon = {
+                            if (listItem.iconRes > 0)
+                                Icon(
+                                    painter = painterResource(listItem.iconRes),
+                                    contentDescription = stringResource(listItem.label)
+                                )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+}

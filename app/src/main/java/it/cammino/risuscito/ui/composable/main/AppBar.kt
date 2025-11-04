@@ -100,6 +100,21 @@ enum class ActionModeItem(
     CLOSE(
         R.string.material_drawer_close,
         R.drawable.arrow_back_24px
+    ),
+
+    TONALITA(
+        R.string.action_tonalita,
+        R.drawable.music_note_24px
+    ),
+
+    BARRE(
+    R.string.action_barre,
+    R.drawable.guitar_acoustic_24
+    ),
+
+    MORE(
+    R.string.more,
+    R.drawable.more_vert_24px
     )
 
 }
@@ -120,7 +135,9 @@ val customListsMenu =
 
 val creaListaMenu =
     listOf(ActionModeItem.HELP)
-//    listOf(ActionModeItem.SAVE, ActionModeItem.HELP)
+
+val cantoMenu =
+    listOf(ActionModeItem.TONALITA, ActionModeItem.BARRE, ActionModeItem.MORE)
 
 
 sealed class OptionMenuItem(
