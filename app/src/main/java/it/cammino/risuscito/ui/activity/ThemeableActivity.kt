@@ -17,8 +17,11 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.edit
 import androidx.core.net.toUri
+import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
@@ -45,12 +48,13 @@ import it.cammino.risuscito.database.serializer.DateTimeSerializer
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.composable.main.FabActionItem
+import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
 import it.cammino.risuscito.utils.extension.createTaskDescription
 import it.cammino.risuscito.utils.extension.isDarkMode
-import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.isLandscape
 import it.cammino.risuscito.utils.extension.isOnTablet
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -74,6 +78,18 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     protected var snackBarFragment: SnackBarFragment? = null
 
+    protected val tabsVisible = mutableStateOf(false)
+
+    protected val showFab = mutableStateOf(false)
+
+    protected var fabFragment: FabFragment? = null
+
+    protected val fabIconRes = mutableIntStateOf(R.drawable.edit_24px)
+
+    protected val fabActionList = MutableLiveData(ArrayList<FabActionItem>())
+
+    protected val fabExpanded = mutableStateOf(false)
+
     @SuppressLint("NewApi")
     public override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -88,7 +104,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         convertIntPreferences()
 
         Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
-        Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
         Log.d(TAG, "onCreate: isLandscape = $isLandscape")
         mViewModel.isTabletWithFixedDrawer = isOnTablet && isLandscape
         Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithFixedDrawer}")
@@ -619,9 +634,28 @@ abstract class ThemeableActivity : AppCompatActivity() {
         label: String? = null
     ) {
         snackBarFragment = callback
-        sharedSnackBarViewModel.snackbarMessage = message
-        sharedSnackBarViewModel.actionLabel = label.orEmpty()
+        sharedSnackBarViewModel.snackbarMessage.value = message
+        sharedSnackBarViewModel.actionLabel.value = label.orEmpty()
         sharedSnackBarViewModel.showSnackBar.value = true
+    }
+
+    fun setTabVisible(visible: Boolean) {
+        tabsVisible.value = visible
+    }
+
+    fun initFab(
+        enable: Boolean,
+        fragment: FabFragment? = null,
+        iconRes: Int = R.drawable.add_24px,
+        fabActions: List<FabActionItem>? = null
+    ) {
+        Log.d(TAG, "initFab: $enable")
+        fabExpanded.value = false
+        fabFragment = fragment
+        fabIconRes.intValue = iconRes
+        val newList = ArrayList(fabActions.orEmpty())
+        fabActionList.value = newList
+        showFab.value = enable
     }
 
     companion object {

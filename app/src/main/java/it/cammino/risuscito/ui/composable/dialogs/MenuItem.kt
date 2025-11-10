@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import it.cammino.risuscito.R
@@ -23,23 +24,60 @@ fun MenuExpandableItem(
     onClick: () -> Unit,
     iconRes: Int = 0
 ) {
-    DropdownMenuItem(
-        text = { Text(text) },
-        onClick = { onClick() },
-        trailingIcon = {
-            Icon(
-                painter = painterResource(R.drawable.arrow_right_24px),
-                contentDescription = null
-            )
-        },
-        leadingIcon = {
-            if (iconRes > 0)
+    if (iconRes > 0) {
+        DropdownMenuItem(
+            text = { Text(text) },
+            onClick = onClick,
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_right_24px),
+                    contentDescription = null
+                )
+            },
+            leadingIcon = {
                 Icon(
                     painter = painterResource(iconRes),
                     contentDescription = text
                 )
-        }
-    )
+            }
+        )
+    } else {
+        DropdownMenuItem(
+            text = { Text(text) },
+            onClick = onClick,
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_right_24px),
+                    contentDescription = null
+                )
+            }
+        )
+    }
+}
+
+@Composable
+fun MenuSimpleItem(
+    textRes: Int,
+    onClick: () -> Unit,
+    iconRes: Int = 0
+) {
+    if (iconRes > 0) {
+        DropdownMenuItem(
+            text = { Text(stringResource(textRes)) },
+            onClick = onClick,
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(iconRes),
+                    contentDescription = stringResource(textRes)
+                )
+            }
+        )
+    } else {
+        DropdownMenuItem(
+            text = { Text(stringResource(textRes)) },
+            onClick = onClick
+        )
+    }
 }
 
 @Composable

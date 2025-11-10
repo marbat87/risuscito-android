@@ -49,7 +49,6 @@ import it.cammino.risuscito.ui.composable.PosizioneListItem
 import it.cammino.risuscito.ui.composable.dialogs.InputDialog
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.customListsMenu
-import it.cammino.risuscito.ui.dialog.BottomSheetFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.FabActionsFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
@@ -239,7 +238,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                     }
 
                     item {
-                        Spacer(Modifier.height(112.dp))
+                        Spacer(Modifier.height(86.dp))
                     }
                 }
 
@@ -823,9 +822,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
     }
 
     override fun condividi() {
-        val bottomSheetDialog =
-            BottomSheetFragment.newInstance(R.string.share_by, defaultIntent)
-        bottomSheetDialog.show(parentFragmentManager, null)
+        mMainActivity?.showBottomSheet(R.string.share_by, defaultIntent)
     }
 
     override fun inviaFile() {}

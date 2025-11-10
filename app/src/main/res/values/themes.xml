@@ -47,15 +47,14 @@
         <item name="risuscito_regular_font">@font/googlesans_regular</item>
         <item name="risuscito_medium_font">@font/googlesans_medium</item>
 
-        <item name="android:textViewStyle">@style/Widget.AppCompat.TextView.Risuscito</item>
-        <item name="editTextStyle">@style/Widget.AppCompat.EditText.Risuscito</item>
+<!--        <item name="android:textViewStyle">@style/Widget.AppCompat.TextView.Risuscito</item>-->
+<!--        <item name="editTextStyle">@style/Widget.AppCompat.EditText.Risuscito</item>-->
 
-        <item name="windowActionModeOverlay">true</item>
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+<!--        <item name="windowActionModeOverlay">true</item>-->
 
-        <item name="tabStyle">@style/Widget.Risuscito.TabLayout</item>
+<!--        <item name="tabStyle">@style/Widget.Risuscito.TabLayout</item>-->
 
-        <item name="actionModeCloseDrawable">@drawable/close_24px</item>
+<!--        <item name="actionModeCloseDrawable">@drawable/close_24px</item>-->
         <item name="textAppearanceDisplayLarge">@style/TextAppearance.Risuscito.DisplayLarge</item>
         <item name="textAppearanceDisplayMedium">@style/TextAppearance.Risuscito.DisplayMedium
         </item>
@@ -112,15 +111,15 @@
         </item>
     </style>
 
-    <style name="Widget.AppCompat.TextView.Risuscito">
-        <item name="fontFamily">?risuscito_regular_font</item>
-        <item name="android:fontFamily">?risuscito_regular_font</item>
-    </style>
+<!--    <style name="Widget.AppCompat.TextView.Risuscito">-->
+<!--        <item name="fontFamily">?risuscito_regular_font</item>-->
+<!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
+<!--    </style>-->
 
-    <style name="Widget.AppCompat.EditText.Risuscito">
-        <item name="fontFamily">?risuscito_regular_font</item>
-        <item name="android:fontFamily">?risuscito_regular_font</item>
-    </style>
+<!--    <style name="Widget.AppCompat.EditText.Risuscito">-->
+<!--        <item name="fontFamily">?risuscito_regular_font</item>-->
+<!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
+<!--    </style>-->
 
     <style name="TextAppearance.Risuscito.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
         <item name="fontFamily">?risuscito_regular_font</item>

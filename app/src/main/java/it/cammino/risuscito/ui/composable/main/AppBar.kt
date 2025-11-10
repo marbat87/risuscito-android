@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarRow
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -58,6 +60,7 @@ import androidx.fragment.compose.AndroidFragment
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.ContextualToolbarTitle
 import it.cammino.risuscito.ui.composable.dialogs.AccountMenuImage
+import it.cammino.risuscito.ui.composable.hasDrawer
 import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -108,13 +111,13 @@ enum class ActionModeItem(
     ),
 
     BARRE(
-    R.string.action_barre,
-    R.drawable.guitar_acoustic_24
+        R.string.action_barre,
+        R.drawable.guitar_acoustic_24
     ),
 
-    MORE(
-    R.string.more,
-    R.drawable.more_vert_24px
+    EXPORT_PDF(
+        R.string.action_exp_pdf,
+        R.drawable.picture_as_pdf_24px,
     )
 
 }
@@ -126,9 +129,15 @@ val consegnatiMenu =
     listOf(
         ActionModeItem.UNDO,
         ActionModeItem.SELECTNONE,
-        ActionModeItem.SELECTALL,
-        ActionModeItem.HELP
+        ActionModeItem.SELECTALL
     )
+//val consegnatiMenu =
+//    listOf(
+//        ActionModeItem.UNDO,
+//        ActionModeItem.SELECTNONE,
+//        ActionModeItem.SELECTALL,
+//        ActionModeItem.HELP
+//    )
 
 val customListsMenu =
     listOf(ActionModeItem.SWAP, ActionModeItem.DELETE)
@@ -137,7 +146,9 @@ val creaListaMenu =
     listOf(ActionModeItem.HELP)
 
 val cantoMenu =
-    listOf(ActionModeItem.TONALITA, ActionModeItem.BARRE, ActionModeItem.MORE)
+    listOf(ActionModeItem.TONALITA, ActionModeItem.BARRE, ActionModeItem.EXPORT_PDF)
+//val cantoMenu =
+//    listOf(ActionModeItem.TONALITA, ActionModeItem.BARRE, ActionModeItem.EXPORT_PDF, ActionModeItem.HELP)
 
 
 sealed class OptionMenuItem(
@@ -181,10 +192,14 @@ val cleanListOptionMenu =
     listOf(OptionMenuItem.ClearAll, OptionMenuItem.Help)
 
 val consegnatiOptionMenu =
-    listOf(OptionMenuItem.Filter, OptionMenuItem.Help)
+    listOf(OptionMenuItem.Filter)
+//val consegnatiOptionMenu =
+//    listOf(OptionMenuItem.Filter, OptionMenuItem.Help)
 
 val consegnatiResetOptionMenu =
-    listOf(OptionMenuItem.FilterRemove, OptionMenuItem.Filter, OptionMenuItem.Help)
+    listOf(OptionMenuItem.FilterRemove, OptionMenuItem.Filter)
+//val consegnatiResetOptionMenu =
+//    listOf(OptionMenuItem.FilterRemove, OptionMenuItem.Filter, OptionMenuItem.Help)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -342,12 +357,20 @@ fun TopAppBarWithSearch(
                                 },
                             )
                         }
-                        AndroidFragment<SimpleIndexFragment>(
-                            arguments = bundleOf(
-                                SimpleIndexFragment.INDICE_LISTA to 0,
-                                SimpleIndexFragment.IS_SEARCH to true
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .padding(horizontal = 8.dp),
+                            shape = RoundedCornerShape(14.dp),
+                        ) {
+                            AndroidFragment<SimpleIndexFragment>(
+                                arguments = bundleOf(
+                                    SimpleIndexFragment.INDICE_LISTA to 0,
+                                    SimpleIndexFragment.IS_SEARCH to true
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
@@ -377,13 +400,15 @@ fun TopAppBarWithSearch(
                     }
                 }
             } else {
-                IconButton(
-                    onClick = onMenuClick
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.menu_24px),
-                        contentDescription = stringResource(R.string.material_drawer_open)
-                    )
+                if (hasDrawer()) {
+                    IconButton(
+                        onClick = onMenuClick
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.menu_24px),
+                            contentDescription = stringResource(R.string.material_drawer_open)
+                        )
+                    }
                 }
             }
         },

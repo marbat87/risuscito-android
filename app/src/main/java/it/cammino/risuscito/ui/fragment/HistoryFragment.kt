@@ -12,9 +12,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,7 +51,6 @@ import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
@@ -108,54 +104,54 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
                                             ?: Modifier
                                     )
 
-                                if (context?.isGridLayout == true) {
-                                    LazyVerticalGrid(
-                                        columns = GridCells.Fixed(2),
-                                        modifier = listModifier
-                                    ) {
-                                        items(
-                                            localItems.orEmpty(),
-                                            key = { it.id }) { simpleItem ->
-                                            val isItemSelected =
-                                                localSelectedItems.orEmpty()
-                                                    .any { it.id == simpleItem.id }
-                                            val source = stringResource(simpleItem.sourceRes)
-                                            HistoryListItem(
-                                                requireContext(),
-                                                simpleItem,
-                                                onItemClick = { item ->
-                                                    if (mMainActivity?.isActionMode?.value == true) {
-                                                        if (isItemSelected) {
-                                                            deselectItem(item.id)
-                                                        } else {
-                                                            selectItem(item.id, item.timestamp)
-                                                        }
-                                                        if (localSelectedItems.orEmpty()
-                                                                .isEmpty()
-                                                        ) {
-                                                            mMainActivity?.destroyActionMode()
-                                                        } else updateActionModeTitle()
-                                                    } else {
-                                                        mMainActivity?.openCanto(
-                                                            TAG,
-                                                            item.id,
-                                                            source,
-                                                            false
-                                                        )
-                                                    }
-                                                },
-                                                onItemLongClick = { item ->
-                                                    if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
-                                                        selectItem(item.id, item.timestamp)
-                                                        startCab()
-                                                    }
-                                                },
-                                                selected = isItemSelected,
-                                                modifier = Modifier.animateItem()
-                                            )
-                                        }
-                                    }
-                                }
+//                                if (hasGridLayout()) {
+//                                    LazyVerticalGrid(
+//                                        columns = GridCells.Fixed(2),
+//                                        modifier = listModifier
+//                                    ) {
+//                                        items(
+//                                            localItems.orEmpty(),
+//                                            key = { it.id }) { simpleItem ->
+//                                            val isItemSelected =
+//                                                localSelectedItems.orEmpty()
+//                                                    .any { it.id == simpleItem.id }
+//                                            val source = stringResource(simpleItem.sourceRes)
+//                                            HistoryListItem(
+//                                                requireContext(),
+//                                                simpleItem,
+//                                                onItemClick = { item ->
+//                                                    if (mMainActivity?.isActionMode?.value == true) {
+//                                                        if (isItemSelected) {
+//                                                            deselectItem(item.id)
+//                                                        } else {
+//                                                            selectItem(item.id, item.timestamp)
+//                                                        }
+//                                                        if (localSelectedItems.orEmpty()
+//                                                                .isEmpty()
+//                                                        ) {
+//                                                            mMainActivity?.destroyActionMode()
+//                                                        } else updateActionModeTitle()
+//                                                    } else {
+//                                                        mMainActivity?.openCanto(
+//                                                            TAG,
+//                                                            item.id,
+//                                                            source,
+//                                                            false
+//                                                        )
+//                                                    }
+//                                                },
+//                                                onItemLongClick = { item ->
+//                                                    if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
+//                                                        selectItem(item.id, item.timestamp)
+//                                                        startCab()
+//                                                    }
+//                                                },
+//                                                selected = isItemSelected,
+//                                                modifier = Modifier.animateItem()
+//                                            )
+//                                        }
+//                                    }
+//                                }
                                 LazyColumn(
                                     state = state,
                                     modifier = listModifier
@@ -225,8 +221,8 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
                                     .cronologiaDao()
                             coroutineScope.launch(Dispatchers.IO) { mDao.emptyCronologia() }
                         },
-                        dialogTitle = stringResource(R.string.dialog_reset_favorites_title),
-                        dialogText = stringResource(R.string.dialog_reset_favorites_desc),
+                        dialogTitle = stringResource(R.string.dialog_reset_history_title),
+                        dialogText = stringResource(R.string.dialog_reset_history_desc),
                         iconRes = R.drawable.clear_all_24px,
                         confirmButtonText = stringResource(R.string.clear_confirm),
                         dismissButtonText = stringResource(R.string.cancel)
@@ -362,8 +358,8 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
                 showSnackBar(
                     message = resources.getQuantityString(
                         R.plurals.histories_removed,
-                        selectedItems.value.orEmpty().count(),
-                        selectedItems.value.orEmpty().count()
+                        removedItems.count(),
+                        removedItems.count()
                     ),
                     label = getString(R.string.cancel)
                         .uppercase(systemLocale)

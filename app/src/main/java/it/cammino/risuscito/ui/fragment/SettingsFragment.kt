@@ -216,6 +216,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
             )
         }
 
+        mMainActivity?.setTabVisible(false)
+        mMainActivity?.initFab(enable = false)
+
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 

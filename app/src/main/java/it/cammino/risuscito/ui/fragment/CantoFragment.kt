@@ -7,7 +7,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Typeface
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
@@ -39,14 +38,19 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,16 +61,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -93,8 +93,8 @@ import it.cammino.risuscito.ui.composable.dialogs.ProgressDialogTag
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.dialogs.barreDropDownMenu
-import it.cammino.risuscito.ui.composable.dialogs.otherDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.tontalitaDropDownMenu
+import it.cammino.risuscito.ui.composable.hasFiveMenuElements
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.FabActionItem
 import it.cammino.risuscito.ui.composable.main.RisuscitoFab
@@ -118,7 +118,6 @@ import it.cammino.risuscito.utils.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.utils.Utility.mediaScan
 import it.cammino.risuscito.utils.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.hasStorageAccess
 import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
 import it.cammino.risuscito.utils.extension.isOnline
@@ -169,7 +168,8 @@ open class CantoFragment : Fragment(), SnackBarFragment {
     private val cantoFabActionsList = mutableStateOf(cantoFabActions)
     private val tonalitaMenuExpanded = mutableStateOf(false)
     private val barreMenuExpanded = mutableStateOf(false)
-    private val otherMenuExpanded = mutableStateOf(false)
+
+    //    private val otherMenuExpanded = mutableStateOf(false)
     private val initialScale = mutableIntStateOf(0)
     private var url: String? = null
     private var personalUrl: String? = null
@@ -189,8 +189,6 @@ open class CantoFragment : Fragment(), SnackBarFragment {
         Runnable { if (!mExecutorService.isShutdown) updateProgress() }
 
     private var mScheduleFuture: ScheduledFuture<*>? = null
-    private var mRegularFont: Typeface? = null
-    private var mMediumFont: Typeface? = null
     private val mHandler = Handler(Looper.getMainLooper())
     private var resolveDeleteAudioConsent: ActivityResultLauncher<IntentSenderRequest>? = null
 
@@ -229,8 +227,6 @@ open class CantoFragment : Fragment(), SnackBarFragment {
             setContent {
                 RisuscitoTheme {
 
-                    var offset = DpOffset.Zero
-
                     val scrollBehavior =
                         TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -258,32 +254,70 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                                     Text(stringResource(R.string.canto_title_activity))
                                 },
                                 navigationIcon = {
-                                    IconButton(onClick = { onOptionsItemSelected(ActionModeItem.CLOSE) }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_back_24px),
-                                            contentDescription = stringResource(R.string.material_drawer_close)
-                                        )
+                                    TooltipBox(
+                                        positionProvider =
+                                            TooltipDefaults.rememberTooltipPositionProvider(
+                                                TooltipAnchorPosition.Above
+                                            ),
+                                        tooltip = { PlainTooltip { Text(stringResource(R.string.material_drawer_close)) } },
+                                        state = rememberTooltipState(),
+                                    ) {
+                                        IconButton(onClick = { onOptionsItemSelected(ActionModeItem.CLOSE) }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_back_24px),
+                                                contentDescription = stringResource(R.string.material_drawer_close)
+                                            )
+                                        }
                                     }
                                 },
                                 actions = {
-                                    AppBarRow(
-                                        overflowIndicator = {},
-                                        modifier = Modifier.pointerInteropFilter {
-                                            offset = DpOffset(it.x.dp, it.y.dp)
-                                            false
-                                        }) {
-                                        cantoMenu.forEach {
-                                            clickableItem(
-                                                onClick = { onOptionsItemSelected(it) },
-                                                icon = {
-                                                    Icon(
-                                                        painter = painterResource(it.iconRes),
-                                                        contentDescription = stringResource(it.label),
-                                                    )
-                                                },
-                                                label = "",
-                                            )
+                                    // Material guidelines state 3 items max in compact, and 5 items max elsewhere.
+                                    val maxItemCount =
+                                        if (hasFiveMenuElements()) 5 else 3
+                                    Box {
+                                        AppBarRow(
+                                            maxItemCount = maxItemCount,
+                                            overflowIndicator = {
+                                                TooltipBox(
+                                                    positionProvider =
+                                                        TooltipDefaults.rememberTooltipPositionProvider(
+                                                            TooltipAnchorPosition.Above
+                                                        ),
+                                                    tooltip = { PlainTooltip { Text(stringResource(R.string.more)) } },
+                                                    state = rememberTooltipState(),
+                                                ) {
+                                                    IconButton(onClick = { it.show() }) {
+                                                        Icon(
+                                                            painter = painterResource(R.drawable.more_vert_24px),
+                                                            contentDescription = stringResource(R.string.more),
+                                                        )
+                                                    }
+                                                }
+                                            },
+                                        ) {
+                                            cantoMenu.forEach { item ->
+                                                clickableItem(
+                                                    onClick = { onOptionsItemSelected(item) },
+                                                    icon = {
+                                                        Icon(
+                                                            painter = painterResource(item.iconRes),
+                                                            contentDescription = stringResource(item.label),
+                                                        )
+                                                    },
+                                                    label = getString(item.label),
+                                                )
+                                            }
                                         }
+                                        CantoDropDownMenu(
+                                            menu = tontalitaDropDownMenu,
+                                            menuExpanded = tonalitaMenuExpanded.value,
+                                            onItemClick = { onDropDownMenuItemClick(it) }
+                                        ) { tonalitaMenuExpanded.value = false }
+                                        CantoDropDownMenu(
+                                            menu = barreDropDownMenu,
+                                            menuExpanded = barreMenuExpanded.value,
+                                            onItemClick = { onDropDownMenuItemClick(it) }
+                                        ) { barreMenuExpanded.value = false }
                                     }
                                 },
                                 scrollBehavior = scrollBehavior
@@ -313,10 +347,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(innerPadding)
-                                .pointerInteropFilter {
-                                    offset = DpOffset(it.x.dp, it.y.dp)
-                                    false
-                                }) {
+                        ) {
                             Column(modifier = Modifier.fillMaxSize()) {
                                 if (localmediaPlayerVisible) {
                                     AnimatedFadeContent(
@@ -440,24 +471,6 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                                 )
 
                             }
-                            CantoDropDownMenu(
-                                tontalitaDropDownMenu,
-                                tonalitaMenuExpanded.value,
-                                offset,
-                                onItemClick = { onDropDownMenuItemClick(it) }
-                            ) { tonalitaMenuExpanded.value = false }
-                            CantoDropDownMenu(
-                                barreDropDownMenu,
-                                barreMenuExpanded.value,
-                                offset,
-                                onItemClick = { onDropDownMenuItemClick(it) }
-                            ) { barreMenuExpanded.value = false }
-                            CantoDropDownMenu(
-                                otherDropDownMenu,
-                                otherMenuExpanded.value,
-                                offset,
-                                onItemClick = { onDropDownMenuItemClick(it) }
-                            ) { otherMenuExpanded.value = false }
                         }
                     }
 
@@ -465,7 +478,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                         if (sharedSnackBarViewModel.showSnackBar.value) {
                             val result = snackbarHostState
                                 .showSnackbar(
-                                    message = sharedSnackBarViewModel.snackbarMessage,
+                                    message = sharedSnackBarViewModel.snackbarMessage.value,
                                     duration = SnackbarDuration.Short,
                                     withDismissAction = true
                                 )
@@ -670,18 +683,6 @@ open class CantoFragment : Fragment(), SnackBarFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        mRegularFont =
-            ResourcesCompat.getFont(
-                requireContext(),
-                requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
-            )
-        mMediumFont =
-            ResourcesCompat.getFont(
-                requireContext(),
-                requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
-            )
-
         Log.d(
             TAG,
             "onCreateOptionsMenu - INTRO_PAGINARENDER: ${
@@ -691,11 +692,11 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                 )
             }"
         )
-        if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
-            Handler(Looper.getMainLooper()).postDelayed(1500) {
-                playIntro(mediaPlayerVisible.value)
-            }
-        }
+//        if (!mSharedPrefs.getBoolean(Utility.INTRO_PAGINARENDER, false)) {
+//            Handler(Looper.getMainLooper()).postDelayed(1500) {
+//                playIntro(mediaPlayerVisible.value)
+//            }
+//        }
 
         Log.d(TAG, "LINGUA CTX: ${requireContext().systemLocale.language}")
         Log.d(TAG, "LINGUA BASE: ${requireActivity().systemLocale.language}")
@@ -1190,7 +1191,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
         mCantiViewModel.scrollPlaying.value = scrolling
     }
 
-    private fun playIntro(isFull: Boolean) {
+//    private fun playIntro(isFull: Boolean) {
 //        binding.musicControls.isVisible = true
 //        enableMusicControls(true)
 //        val colorOnPrimary = MaterialColors.getColor(
@@ -1301,7 +1302,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
 //                    }
 //                })
 //        }.start()
-    }
+//    }
 
     private fun playMedia() {
         Log.d(TAG, "playMedia: ")
@@ -1668,21 +1669,14 @@ open class CantoFragment : Fragment(), SnackBarFragment {
             ActionModeItem.CLOSE -> onBackPressedAction()
             ActionModeItem.TONALITA -> tonalitaMenuExpanded.value = true
             ActionModeItem.BARRE -> barreMenuExpanded.value = true
-            ActionModeItem.MORE -> otherMenuExpanded.value = true
+            ActionModeItem.EXPORT_PDF -> lifecycleScope.launch { exportPdf() }
+//            ActionModeItem.HELP -> playIntro(mediaPlayerVisible.value)
             else -> {}
         }
     }
 
     private fun onDropDownMenuItemClick(item: DropDownMenuItem) {
         when (item) {
-            DropDownMenuItem.EXPORT_PDF -> {
-                lifecycleScope.launch { exportPdf() }
-            }
-
-            DropDownMenuItem.HELP -> {
-                playIntro(mediaPlayerVisible.value)
-            }
-
             DropDownMenuItem.TONALITA_SALVA -> {
                 if (!mCantiViewModel.mCurrentCanto?.savedTab.equals(
                         mCantiViewModel.notaCambio,
@@ -1836,43 +1830,42 @@ open class CantoFragment : Fragment(), SnackBarFragment {
             DropDownMenuItem.BARRE_II, DropDownMenuItem.BARRE_III,
             DropDownMenuItem.BARRE_IV, DropDownMenuItem.BARRE_V,
             DropDownMenuItem.BARRE_VI, DropDownMenuItem.BARRE_VII -> {
-                {
-                    mCantiViewModel.barreCambio = if (item.value > 0) getString(item.value) else "0"
-                    val convMap3 = cambioAccordi.diffSemiToni(
+                mCantiViewModel.barreCambio = if (item.value > 0) getString(item.value) else "0"
+                Log.d(TAG, "barreCambio: ${mCantiViewModel.barreCambio}")
+                val convMap3 = cambioAccordi.diffSemiToni(
+                    mCantiViewModel.primaNota,
+                    mCantiViewModel.notaCambio
+                )
+                var convMin3: HashMap<String, String>? = null
+                if (requireContext().systemLocale.language.equals(
+                        LANGUAGE_UKRAINIAN,
+                        ignoreCase = true
+                    ) || requireContext().systemLocale.language.equals(
+                        LANGUAGE_POLISH,
+                        ignoreCase = true
+                    )
+                )
+                    convMin3 = cambioAccordi.diffSemiToniMin(
                         mCantiViewModel.primaNota,
                         mCantiViewModel.notaCambio
                     )
-                    var convMin3: HashMap<String, String>? = null
-                    if (requireContext().systemLocale.language.equals(
-                            LANGUAGE_UKRAINIAN,
-                            ignoreCase = true
-                        ) || requireContext().systemLocale.language.equals(
-                            LANGUAGE_POLISH,
-                            ignoreCase = true
+                saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
+                if (convMap3 != null) {
+                    htmlContent.value =
+                        cambiaAccordi(
+                            convMap3,
+                            mCantiViewModel.barreCambio,
+                            convMin3
                         )
-                    )
-                        convMin3 = cambioAccordi.diffSemiToniMin(
-                            mCantiViewModel.primaNota,
-                            mCantiViewModel.notaCambio
+                } else
+                    htmlContent.value =
+                        resources.readTextFromResource(
+                            mCantiViewModel.pagina
+                                ?: NO_CANTO
                         )
-                    saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
-                    if (convMap3 != null) {
-                        htmlContent.value =
-                            cambiaAccordi(
-                                convMap3,
-                                mCantiViewModel.barreCambio,
-                                convMin3
-                            )
-                    } else
-                        htmlContent.value =
-                            resources.readTextFromResource(
-                                mCantiViewModel.pagina
-                                    ?: NO_CANTO
-                            )
-                    mCantiViewModel.mCurrentCanto?.let {
-                        if (it.zoom > 0)
-                            initialScale.intValue = it.zoom
-                    }
+                mCantiViewModel.mCurrentCanto?.let {
+                    if (it.zoom > 0)
+                        initialScale.intValue = it.zoom
                 }
             }
 

@@ -1,11 +1,12 @@
 package it.cammino.risuscito.ui.activity
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,7 +21,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,24 +56,22 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.CredendialObject
 import it.cammino.risuscito.ui.CredentialCacheManager
 import it.cammino.risuscito.ui.RisuscitoApplication
+import it.cammino.risuscito.ui.composable.dialogs.ProfileDialog
+import it.cammino.risuscito.ui.composable.dialogs.ProfileMenuItem
 import it.cammino.risuscito.ui.composable.dialogs.ProgressDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.DrawerItem
-import it.cammino.risuscito.ui.composable.main.FabActionItem
 import it.cammino.risuscito.ui.composable.main.MainScreen
 import it.cammino.risuscito.ui.composable.main.NavigationScreen
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.RisuscitoSnackBar
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.ProfileDialogFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.FabActionsFragment
-import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.OSUtils
@@ -87,10 +85,13 @@ import it.cammino.risuscito.utils.extension.convertiBarre
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.getVersionCode
 import it.cammino.risuscito.utils.extension.isDarkMode
+import it.cammino.risuscito.utils.extension.queryIntentActivities
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.MainActivityViewModel.ProfileAction
+import it.cammino.risuscito.viewmodels.SharedBottomSheetViewModel
+import it.cammino.risuscito.viewmodels.SharedProfileViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import it.cammino.risuscito.viewmodels.SharedTabViewModel
@@ -107,25 +108,22 @@ import java.text.Collator
 
 
 class MainActivity : ThemeableActivity() {
-    private val profileDialogViewModel: ProfileDialogFragment.DialogViewModel by viewModels()
+//    private val profileDialogViewModel: ProfileDialogFragment.DialogViewModel by viewModels()
     private val cantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
     private val scrollViewModel: SharedScrollViewModel by viewModels()
     private val sharedSearchViewModel: SharedSearchViewModel by viewModels()
     private val sharedTabViewModel: SharedTabViewModel by viewModels()
+    private val sharedBottomSheetViewModel: SharedBottomSheetViewModel by viewModels()
+
+    private val sharedProfileViewModel: SharedProfileViewModel by viewModels()
 
     private lateinit var mCredentialCacheManager: CredentialCacheManager
 
     private lateinit var mCredentialManager: CredentialManager
     private var mCredentialRequest: GetCredentialRequest? = null
     private lateinit var auth: FirebaseAuth
-
-    //    private var profileItem: MenuItem? = null
-//    private var profileUiManager: ProfileUiManager? = null
-    private var profilePhotoUrl: String = StringUtils.EMPTY
-    private var profileNameStr: String = StringUtils.EMPTY
-    private var profileEmailStr: String = StringUtils.EMPTY
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -148,26 +146,11 @@ class MainActivity : ThemeableActivity() {
     private var onActionModeClickItem: (ActionModeItem) -> Unit = {}
     private var navHostController = mutableStateOf(NavHostController(this))
     private val tabsDestinationList = MutableLiveData(ArrayList<Destination>())
-    private val tabsVisible = mutableStateOf(false)
     private var optionMenuFragment: OptionMenuFragment? = null
     private val optionMenuList = MutableLiveData(ArrayList<OptionMenuItem>())
-
-    private var fabFragment: FabFragment? = null
-
     private var fabActionsFragment: FabActionsFragment? = null
-
-    private val fabIconRes = mutableIntStateOf(R.drawable.edit_24px)
-
-    private val showFab = mutableStateOf(false)
-
-    private val fabActionList = MutableLiveData(ArrayList<FabActionItem>())
-
-    private val fabExpanded = mutableStateOf(false)
-
     private val signedId = mutableStateOf(false)
-
     private val isDrawerOpen = mutableStateOf(false)
-
     private val closeDrawer = mutableStateOf(false)
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -250,16 +233,19 @@ class MainActivity : ThemeableActivity() {
                     fabActions = localFabActionsList,
                     fabExpanded = fabExpanded,
                     loggedIn = signedId.value,
-                    profilePhotoUrl = profilePhotoUrl,
+                    profilePhotoUrl = sharedProfileViewModel.profilePhotoUrl,
                     onLoginClick = { signIn(false) },
-                    onProfileClick = { showProfileDialog() }
+                    onProfileClick = { sharedProfileViewModel.showProfileDialog.value = true },
+                    bottomSheetViewModel = sharedBottomSheetViewModel,
+                    bottomSheetOnItemClick = { startExternalActivity(it) },
+                    pm = packageManager
                 )
 
                 RisuscitoSnackBar(
                     snackbarHostState = snackbarHostState,
                     callBack = snackBarFragment,
-                    message = sharedSnackBarViewModel.snackbarMessage,
-                    actionLabel = sharedSnackBarViewModel.actionLabel,
+                    message = sharedSnackBarViewModel.snackbarMessage.value,
+                    actionLabel = sharedSnackBarViewModel.actionLabel.value,
                     showSnackBar = sharedSnackBarViewModel.showSnackBar
                 )
 
@@ -318,11 +304,38 @@ class MainActivity : ThemeableActivity() {
                     ProgressDialog(
                         dialogTitleRes = progressDialogViewModel.dialogTitleRes,
                         messageRes = progressDialogViewModel.messageRes.value ?: 0,
-                        onDismissRequest = { progressDialogViewModel.showProgressDialog.value = false },
+                        onDismissRequest = {
+                            progressDialogViewModel.showProgressDialog.value = false
+                        },
                         buttonTextRes = progressDialogViewModel.buttonTextRes,
                         indeterminate = progressDialogViewModel.indeterminate
                     )
                 }
+
+                ProfileDialog(sharedProfileViewModel, { item ->
+                    when (item) {
+                        ProfileMenuItem.GDRIVE_BACKUP -> {
+                            showAccountRelatedDialog(SimpleDialogTag.BACKUP_ASK)
+                        }
+
+                        ProfileMenuItem.GDRIVE_RESTORE -> {
+                            showAccountRelatedDialog(SimpleDialogTag.RESTORE_ASK)
+                        }
+
+                        ProfileMenuItem.GDRIVE_REFRESH -> {
+                            mViewModel.profileAction = ProfileAction.NONE
+                            signIn(lastAccount = true, forceRefresh = true)
+                        }
+
+                        ProfileMenuItem.GOOGLE_SIGNOUT -> {
+                            showAccountRelatedDialog(SimpleDialogTag.SIGNOUT)
+                        }
+
+                        ProfileMenuItem.GOOGLE_REVOKE -> {
+                            showAccountRelatedDialog(SimpleDialogTag.REVOKE)
+                        }
+                    }
+                })
 
                 // After drawing main content, draw status bar protection
                 StatusBarProtection(if (isActionMode.value) MaterialTheme.colorScheme.primaryContainer else TopAppBarDefaults.topAppBarColors().containerColor)
@@ -345,13 +358,6 @@ class MainActivity : ThemeableActivity() {
         mCredentialManager = CredentialManager.create(this)
 
         mCredentialCacheManager = CredentialCacheManager(mViewModel, this, mCredentialManager)
-
-        //TODO
-        val outValue = TypedValue()
-        resources.getValue(R.dimen.horizontal_percentage_half_divider, outValue, true)
-        val percentage = outValue.float
-
-//        binding.halfGuideline?.setGuidelinePercent(percentage)
 
         Log.d(TAG, "getVersionCode(): ${getVersionCode()}")
 
@@ -460,36 +466,36 @@ class MainActivity : ThemeableActivity() {
     }
 
     private fun subscribeUiChanges() {
-        profileDialogViewModel.state.observe(this) {
-            Log.d(TAG, "profileDialogViewModel state $it")
-            if (!profileDialogViewModel.handled) {
-                if (it is DialogState.Positive) {
-                    when (profileDialogViewModel.menuItemId) {
-                        R.id.gdrive_backup -> {
-                            showAccountRelatedDialog(SimpleDialogTag.BACKUP_ASK)
-                        }
-
-                        R.id.gdrive_restore -> {
-                            showAccountRelatedDialog(SimpleDialogTag.RESTORE_ASK)
-                        }
-
-                        R.id.gdrive_refresh -> {
-                            mViewModel.profileAction = ProfileAction.NONE
-                            signIn(lastAccount = true, forceRefresh = true)
-                        }
-
-                        R.id.gplus_signout -> {
-                            showAccountRelatedDialog(SimpleDialogTag.SIGNOUT)
-                        }
-
-                        R.id.gplus_revoke -> {
-                            showAccountRelatedDialog(SimpleDialogTag.REVOKE)
-                        }
-                    }
-                    profileDialogViewModel.handled = true
-                }
-            }
-        }
+//        profileDialogViewModel.state.observe(this) {
+//            Log.d(TAG, "profileDialogViewModel state $it")
+//            if (!profileDialogViewModel.handled) {
+//                if (it is DialogState.Positive) {
+//                    when (profileDialogViewModel.menuItemId) {
+//                        R.id.gdrive_backup -> {
+//                            showAccountRelatedDialog(SimpleDialogTag.BACKUP_ASK)
+//                        }
+//
+//                        R.id.gdrive_restore -> {
+//                            showAccountRelatedDialog(SimpleDialogTag.RESTORE_ASK)
+//                        }
+//
+//                        R.id.gdrive_refresh -> {
+//                            mViewModel.profileAction = ProfileAction.NONE
+//                            signIn(lastAccount = true, forceRefresh = true)
+//                        }
+//
+//                        R.id.gplus_signout -> {
+//                            showAccountRelatedDialog(SimpleDialogTag.SIGNOUT)
+//                        }
+//
+//                        R.id.gplus_revoke -> {
+//                            showAccountRelatedDialog(SimpleDialogTag.REVOKE)
+//                        }
+//                    }
+//                    profileDialogViewModel.handled = true
+//                }
+//            }
+//        }
 
         mViewModel.backupRestoreState.observe(this) { state ->
             state?.let {
@@ -583,25 +589,6 @@ class MainActivity : ThemeableActivity() {
 
         val intent = Intent(this, activityClass)
         startActivityWithTransition(intent, MaterialSharedAxis.Y)
-    }
-
-    fun initFab(
-        enable: Boolean,
-        fragment: FabFragment? = null,
-        iconRes: Int = R.drawable.add_24px,
-        fabActions: List<FabActionItem>? = null
-    ) {
-        Log.d(TAG, "initFab: $enable")
-        fabExpanded.value = false
-        fabFragment = fragment
-        fabIconRes.intValue = iconRes
-        val newList = ArrayList(fabActions.orEmpty())
-        fabActionList.value = newList
-        showFab.value = enable
-    }
-
-    fun setTabVisible(visible: Boolean) {
-        tabsVisible.value = visible
     }
 
     fun getFabExpanded(): Boolean {
@@ -771,13 +758,13 @@ class MainActivity : ThemeableActivity() {
      * @param account The user's account information.
      */
     private fun updateProfileInfo(account: CredendialObject?) { // Replace YourAccountType with the actual type
-        profileNameStr = account?.getDisplayName().orEmpty()
-        Log.d(TAG, "LOGIN profileName: $profileNameStr")
+        sharedProfileViewModel.profileNameStr.value = account?.getDisplayName().orEmpty()
+        Log.d(TAG, "LOGIN profileName: ${sharedProfileViewModel.profileNameStr.value}")
 
-        profileEmailStr = account?.getAccountId().orEmpty()
-        Log.d(TAG, "LOGIN profileEmail: $profileEmailStr")
+        sharedProfileViewModel.profileEmailStr.value = account?.getAccountId().orEmpty()
+        Log.d(TAG, "LOGIN profileEmail: ${sharedProfileViewModel.profileNameStr.value}")
 
-        profilePhotoUrl = account?.getProfilePictureUri()?.let { uri ->
+        sharedProfileViewModel.profilePhotoUrl = account?.getProfilePictureUri()?.let { uri ->
             Log.d(TAG, "personPhotoUrl BEFORE: $uri")
             val modifiedUrl = uri.replace(OLD_PHOTO_RES, NEW_PHOTO_RES)
             Log.d(TAG, "personPhotoUrl AFTER: $modifiedUrl")
@@ -789,9 +776,9 @@ class MainActivity : ThemeableActivity() {
      * Clears the profile information (name, email, photo URL).
      */
     private fun clearProfileInfo() {
-        profileNameStr = StringUtils.EMPTY
-        profileEmailStr = StringUtils.EMPTY
-        profilePhotoUrl = StringUtils.EMPTY
+        sharedProfileViewModel.profileNameStr.value = StringUtils.EMPTY
+        sharedProfileViewModel.profileEmailStr.value = StringUtils.EMPTY
+        sharedProfileViewModel.profilePhotoUrl = StringUtils.EMPTY
     }
 
     fun showProgressDialog() {
@@ -980,16 +967,6 @@ class MainActivity : ThemeableActivity() {
         actionModeTitle.value = title
     }
 
-    fun showProfileDialog() {
-        ProfileDialogFragment.show(
-            ProfileDialogFragment.Builder(PROFILE_DIALOG).apply {
-                profileName = profileNameStr
-                profileEmail = profileEmailStr
-                profileImageSrc = profilePhotoUrl
-            }, supportFragmentManager
-        )
-    }
-
     fun isDrawerOpen(): Boolean {
         return isDrawerOpen.value
     }
@@ -998,8 +975,53 @@ class MainActivity : ThemeableActivity() {
         closeDrawer.value = true
     }
 
+
+    fun showBottomSheet(titleRes: Int = 0, intent: Intent?) {
+        intent?.let { mIntent ->
+            val list = packageManager.queryIntentActivities(mIntent)
+
+            val lastApp = PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getString(Utility.ULTIMA_APP_USATA, StringUtils.EMPTY)
+            val lastAppInfo: ResolveInfo? = list.indices
+                .firstOrNull { list[it].activityInfo.applicationInfo.packageName == lastApp }
+                ?.let { list.removeAt(it) }
+
+            lastAppInfo?.let { list.add(it) }
+
+            sharedBottomSheetViewModel.appList.clear()
+            sharedBottomSheetViewModel.appList.addAll(list)
+
+            sharedBottomSheetViewModel.titleTextRes.intValue = titleRes
+            sharedBottomSheetViewModel.intent.value = intent
+
+            sharedBottomSheetViewModel.showBottomSheet.value = true
+
+        }
+
+    }
+
+    private fun startExternalActivity(selectedProduct: ResolveInfo) {
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .edit {
+                putString(
+                    Utility.ULTIMA_APP_USATA,
+                    selectedProduct.activityInfo?.packageName
+                )
+            }
+
+        val name = ComponentName(
+            selectedProduct.activityInfo?.packageName.orEmpty(),
+            selectedProduct.activityInfo?.name.orEmpty()
+        )
+
+        val newIntent = sharedBottomSheetViewModel.intent.value?.clone() as? Intent
+        newIntent?.component = name
+        startActivity(newIntent)
+    }
+
     companion object {
-        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
+//        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val OLD_PHOTO_RES = "s96-c"
         private const val NEW_PHOTO_RES = "s400-c"
         private val TAG = MainActivity::class.java.canonicalName

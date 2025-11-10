@@ -5,25 +5,20 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.fragment.compose.AndroidFragment
 import androidx.fragment.compose.rememberFragmentState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import it.cammino.risuscito.R
+import it.cammino.risuscito.ui.fragment.AboutFragment
 import it.cammino.risuscito.ui.fragment.ConsegnatiFragment
 import it.cammino.risuscito.ui.fragment.CustomListsFragment
 import it.cammino.risuscito.ui.fragment.FavoritesFragment
 import it.cammino.risuscito.ui.fragment.GeneralIndexFragment
 import it.cammino.risuscito.ui.fragment.HistoryFragment
+import it.cammino.risuscito.ui.fragment.SettingsFragment
 
 sealed class NavigationScreen(
     val route: String,
@@ -66,6 +61,20 @@ sealed class NavigationScreen(
         R.drawable.history_24px
     )
 
+    object Settings : NavigationScreen(
+        "navigation_settings",
+        R.string.title_activity_settings,
+        R.drawable.settings_24px,
+        R.drawable.settings_filled_24px
+    )
+
+    object Info : NavigationScreen(
+        "navigation_info",
+        R.string.title_activity_about,
+        R.drawable.info_24px,
+        R.drawable.info_filled_24px
+    )
+
 }
 
 val bottomNavItems =
@@ -77,32 +86,16 @@ val bottomNavItems =
         NavigationScreen.History
     )
 
-@Composable
-fun RisuscitoBottomNavigationBar(
-    currentRoute: String?,
-    onNavigate: (String) -> Unit,
-    resetTab: MutableState<Boolean>
-) {
-    NavigationBar {
-        bottomNavItems.forEach { screen ->
-            val label = stringResource(screen.labelRes)
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painterResource(if (currentRoute == screen.route) screen.selectediconRes else screen.iconRes),
-                        contentDescription = label
-                    )
-                },
-                label = { Text(label) },
-                selected = currentRoute == screen.route,
-                onClick = {
-                    resetTab.value = true
-                    onNavigate(screen.route) },
-                alwaysShowLabel = false
-            )
-        }
-    }
-}
+val navitagionRailItems =
+    listOf(
+        NavigationScreen.GeneralIndex,
+        NavigationScreen.CustomLists,
+        NavigationScreen.Favorites,
+        NavigationScreen.Consegnati,
+        NavigationScreen.History,
+        NavigationScreen.Settings,
+        NavigationScreen.Info
+    )
 
 const val animationDuration = 300
 
@@ -136,32 +129,49 @@ fun AppNavigationHost(navController: NavHostController) {
                 tween(animationDuration, easing = EaseOut)
             )
         }
-        ) {
+    ) {
 
         composable(
-            NavigationScreen.GeneralIndex.route) {
+            NavigationScreen.GeneralIndex.route
+        ) {
             val fragmentState = rememberFragmentState()
             AndroidFragment<GeneralIndexFragment>(fragmentState = fragmentState)
         }
         composable(
-            NavigationScreen.CustomLists.route) {
+            NavigationScreen.CustomLists.route
+        ) {
             val fragmentState = rememberFragmentState()
             AndroidFragment<CustomListsFragment>(fragmentState = fragmentState)
         }
         composable(
-            NavigationScreen.Favorites.route) {
+            NavigationScreen.Favorites.route
+        ) {
             val fragmentState = rememberFragmentState()
             AndroidFragment<FavoritesFragment>(fragmentState = fragmentState)
         }
         composable(
-            NavigationScreen.Consegnati.route) {
+            NavigationScreen.Consegnati.route
+        ) {
             val fragmentState = rememberFragmentState()
             AndroidFragment<ConsegnatiFragment>(fragmentState = fragmentState)
         }
         composable(
-            NavigationScreen.History.route) {
+            NavigationScreen.History.route
+        ) {
             val fragmentState = rememberFragmentState()
             AndroidFragment<HistoryFragment>(fragmentState = fragmentState)
+        }
+        composable(
+            NavigationScreen.Settings.route
+        ) {
+            val fragmentState = rememberFragmentState()
+            AndroidFragment<SettingsFragment>(fragmentState = fragmentState)
+        }
+        composable(
+            NavigationScreen.Info.route
+        ) {
+            val fragmentState = rememberFragmentState()
+            AndroidFragment<AboutFragment>(fragmentState = fragmentState)
         }
     }
 }

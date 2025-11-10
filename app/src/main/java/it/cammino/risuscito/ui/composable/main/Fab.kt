@@ -7,7 +7,6 @@ import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
-import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -192,7 +191,6 @@ fun RisuscitoFab(
                                 contentDescription = "Toggle menu"
                             },
                     checked = expanded,
-                    containerSize = ToggleFloatingActionButtonDefaults.containerSizeMedium(),
                     onCheckedChange = { onExpandedChange(!expanded) },
                 ) {
                     Icon(

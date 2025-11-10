@@ -1,5 +1,8 @@
 package it.cammino.risuscito.ui.composable.main
 
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,12 +12,15 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,9 +32,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import it.cammino.risuscito.ui.composable.dialogs.RisuscitoBottomSheet
+import it.cammino.risuscito.ui.composable.hasDrawer
+import it.cammino.risuscito.viewmodels.SharedBottomSheetViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import kotlinx.coroutines.launch
@@ -63,16 +74,17 @@ fun MainScreen(
     profilePhotoUrl: String = "",
     onProfileClick: () -> Unit = {},
     onLoginClick: () -> Unit = {},
+    bottomSheetViewModel: SharedBottomSheetViewModel,
+    bottomSheetOnItemClick: (ResolveInfo) -> Unit,
+    pm: PackageManager
 ) {
     val scope = rememberCoroutineScope()
 
-    // Per ottenere la route corrente per evidenziare l'item nel drawer/bottomNav
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
-    // Imposta lo scrollBehavior nel ViewModel condiviso
     LaunchedEffect(
         scrollBehavior,
         sharedScrollViewModel
@@ -80,99 +92,73 @@ fun MainScreen(
         sharedScrollViewModel.setScrollBehavior(scrollBehavior)
     }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = drawerState.isOpen,
-        drawerContent = {
-            AppDrawerContent(
-                onItemClick = { route ->
-                    onDrawerItemClick(route)
-                    scope.launch { drawerState.close() }
-                }
-            )
-        }
-    ) {
-        Scaffold(
-            // 2. Collega il scrollBehavior allo Scaffold tramite il Modifier.nestedScroll
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                TopAppBarWithSearch(
-                    onMenuClick = { scope.launch { drawerState.open() } },
-                    scrollBehavior = scrollBehavior,
-                    isActionMode = isActionMode,
-                    actionModeMenu = actionModeMenu,
-                    hideNavigation = hideNavigation,
-                    onActionModeClick = onActionModeClick,
-                    contextualTitle = contextualTitle,
-                    sharedSearchViewModel = sharedSearchViewModel,
-                    optionMenu = optionMenu,
-                    onOptionMenuClick = onOptionMenuClick,
-                    loggedIn = loggedIn,
-                    profilePhotoUrl = profilePhotoUrl,
-                    onProfileClick = onProfileClick,
-                    onLoginClick = onLoginClick
-                )
-                // Se hai anche i TabLayout, la loro gestione andrà qui,
-                // probabilmente sotto la SearchBar o come parte di essa se integrati.
-                // Se i TabLayout sono condizionali, mostra/nascondi qui.
-            },
-            bottomBar = {
-                RisuscitoBottomNavigationBar(
-                    currentRoute = currentRoute,
-                    onNavigate = { route ->
-                        scrollBehavior.state.heightOffset = 0F
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
-//                            restoreState = true
-                        }
-                    },
-                    resetTab = resetTab
-                )
-            },
-            floatingActionButton = {
-                if (showFab) {
-                    RisuscitoFab(
-                        actions = fabActions,
-                        expanded = fabExpanded.value,
-                        onExpandedChange = { fabExpanded.value = it },
-                        onFabActionClick = onFabClick,
-                        mainIconRes = fabIconRes,
+    Log.d("MainScreen", "hasDrawer: ${hasDrawer()}")
+
+    val mainScaffold =
+        @Composable {
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                topBar = {
+                    TopAppBarWithSearch(
+                        onMenuClick = { scope.launch { drawerState.open() } },
+                        scrollBehavior = scrollBehavior,
+                        isActionMode = isActionMode,
+                        actionModeMenu = actionModeMenu,
+                        hideNavigation = hideNavigation,
+                        onActionModeClick = onActionModeClick,
+                        contextualTitle = contextualTitle,
+                        sharedSearchViewModel = sharedSearchViewModel,
+                        optionMenu = optionMenu,
+                        onOptionMenuClick = onOptionMenuClick,
+                        loggedIn = loggedIn,
+                        profilePhotoUrl = profilePhotoUrl,
+                        onProfileClick = onProfileClick,
+                        onLoginClick = onLoginClick
                     )
-                }
-            },
-            floatingActionButtonPosition = FabPosition.End,
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-        ) { innerPadding ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                ) {
-                    if (showTabs) {
-                        RisuscitoTabs(
-                            selectedTabIndex = selectedTabIndex,
-                            tabsList = tabsList
+                },
+                floatingActionButton = {
+                    if (showFab) {
+                        RisuscitoFab(
+                            actions = fabActions,
+                            expanded = fabExpanded.value,
+                            onExpandedChange = { fabExpanded.value = it },
+                            onFabActionClick = onFabClick,
+                            mainIconRes = fabIconRes,
                         )
                     }
-                    Box {
-                        AppNavigationHost(navController = navController)
-
-                        // LinearProgressIndicator sovrapposto
-                        if (showLoadingBar) {
-                            LinearProgressIndicator(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.TopCenter)
+                },
+                floatingActionButtonPosition = FabPosition.End,
+                snackbarHost = {
+                    SnackbarHost(hostState = snackbarHostState)
+                },
+            ) { innerPadding ->
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        if (showTabs) {
+                            RisuscitoTabs(
+                                selectedTabIndex = selectedTabIndex,
+                                tabsList = tabsList
                             )
                         }
+                        Box {
+                            AppNavigationHost(navController = navController)
+
+                            // LinearProgressIndicator sovrapposto
+                            if (showLoadingBar) {
+                                LinearProgressIndicator(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.TopCenter)
+                                )
+                            }
+                        }
                     }
-                }
 
 //                if (fabExpanded.value) {
 //                    Surface(
@@ -187,7 +173,62 @@ fun MainScreen(
 //                    ) {}
 //                }
 
+                }
+
+                RisuscitoBottomSheet(
+                    bottomSheetViewModel = bottomSheetViewModel,
+                    onItemClick = bottomSheetOnItemClick,
+                    pm = pm
+                )
+
             }
         }
-    }
+
+    val mainScaffoldWithDrawer =
+        @Composable {
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                gesturesEnabled = drawerState.isOpen,
+                drawerContent = {
+                    AppDrawerContent(
+                        onItemClick = { route ->
+                            onDrawerItemClick(route)
+                            scope.launch { drawerState.close() }
+                        }
+                    )
+                },
+                content = mainScaffold
+            )
+        }
+
+    val itemsList = if (hasDrawer()) bottomNavItems else navitagionRailItems
+
+    // 2. USA LA NUOVA API DI NavigationSuiteScaffold
+    NavigationSuiteScaffold(
+        // Fornisci le destinazioni qui
+        navigationSuiteItems = {
+            itemsList.forEach { screen ->
+                item(
+                    icon = {
+                        Icon(
+                            painterResource(if (currentRoute == screen.route) screen.selectediconRes else screen.iconRes),
+                            contentDescription = stringResource(screen.labelRes)
+                        )
+                    },
+                    label = { Text(stringResource(screen.labelRes)) },
+                    selected = currentRoute == screen.route,
+                    onClick = {
+                        resetTab.value = true
+                        scrollBehavior.state.heightOffset = 0F
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    },
+                )
+            }
+        },
+        content = if (hasDrawer()) mainScaffoldWithDrawer else mainScaffold
+    )
+
 }

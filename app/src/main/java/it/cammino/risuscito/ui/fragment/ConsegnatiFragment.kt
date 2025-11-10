@@ -3,6 +3,8 @@ package it.cammino.risuscito.ui.fragment
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells.Fixed
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.postDelayed
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -72,7 +72,6 @@ import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.getTypedValueResId
-import it.cammino.risuscito.utils.extension.isGridLayout
 import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
@@ -147,99 +146,99 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                         }
                                             ?: Modifier
                                     )
-                                if (context?.isGridLayout == true) {
-                                    LazyVerticalGrid(
-                                        columns = Fixed(2),
-                                        modifier = listModifier
-                                    ) {
-                                        items(
-                                            consegnatiItems ?: emptyList(),
-                                            key = { it.id }) { simpleItem ->
-                                            PassageListItem(
-                                                simpleItem,
-                                                onItemClick = rememberedOnItemClick,
-                                                onIconClick = { openPassageModal(it) },
-                                                modifier = Modifier.animateItem()
-                                            )
-                                        }
-                                        item {
-                                            Spacer(Modifier.height(86.dp))
-                                        }
+//                                if (hasGridLayout()) {
+//                                    LazyVerticalGrid(
+//                                        columns = Fixed(2),
+//                                        modifier = listModifier
+//                                    ) {
+//                                        items(
+//                                            consegnatiItems ?: emptyList(),
+//                                            key = { it.id }) { simpleItem ->
+//                                            PassageListItem(
+//                                                simpleItem,
+//                                                onItemClick = rememberedOnItemClick,
+//                                                onIconClick = { openPassageModal(it) },
+//                                                modifier = Modifier.animateItem()
+//                                            )
+//                                        }
+//                                        item(span = { GridItemSpan(2) }) {
+//                                            Spacer(Modifier.height(86.dp))
+//                                        }
+//                                    }
+//                                } else {
+                                LazyColumn(
+                                    state = simpleListState,
+                                    modifier = listModifier
+                                ) {
+                                    items(
+                                        consegnatiItems ?: emptyList(),
+                                        key = { it.id }) { simpleItem ->
+                                        PassageListItem(
+                                            simpleItem,
+                                            onItemClick = rememberedOnItemClick,
+                                            onIconClick = { openPassageModal(it) },
+                                            modifier = Modifier.animateItem()
+                                        )
                                     }
-                                } else {
-                                    LazyColumn(
-                                        state = simpleListState,
-                                        modifier = listModifier
-                                    ) {
-                                        items(
-                                            consegnatiItems ?: emptyList(),
-                                            key = { it.id }) { simpleItem ->
-                                            PassageListItem(
-                                                simpleItem,
-                                                onItemClick = rememberedOnItemClick,
-                                                onIconClick = { openPassageModal(it) },
-                                                modifier = Modifier.animateItem()
-                                            )
-                                        }
-                                        item {
-                                            Spacer(Modifier.height(86.dp))
-                                        }
+                                    item {
+                                        Spacer(Modifier.height(86.dp))
                                     }
                                 }
+//                                }
                             }
 
                             ConsegnatiViewModel.ViewMode.EDIT -> {
                                 val checkableListState = rememberLazyListState()
                                 val listModifier = Modifier
                                     .fillMaxSize()
-                                if (context?.isGridLayout == true) {
-                                    LazyVerticalGrid(
-                                        columns = Fixed(2),
-                                        modifier = listModifier
-                                    ) {
-                                        items(
-                                            consegnatiSelectableItems ?: emptyList(),
-                                            key = { it.id }) { simpleItem ->
-                                            CheckableListItem(
-                                                simpleItem,
-                                                modifier = Modifier.animateItem(),
-                                                onSelect = {
-                                                    if (it) selectItem(simpleItem.id)
-                                                    else deselectItem(simpleItem.id)
-                                                },
-                                                selected = consegnatiSelectedItems?.contains(
-                                                    simpleItem.id
-                                                ) ?: false
-                                            )
-                                        }
-                                        item {
-                                            Spacer(Modifier.height(86.dp))
-                                        }
+//                                if (hasGridLayout()) {
+//                                    LazyVerticalGrid(
+//                                        columns = Fixed(2),
+//                                        modifier = listModifier
+//                                    ) {
+//                                        items(
+//                                            consegnatiSelectableItems ?: emptyList(),
+//                                            key = { it.id }) { simpleItem ->
+//                                            CheckableListItem(
+//                                                simpleItem,
+//                                                modifier = Modifier.animateItem(),
+//                                                onSelect = {
+//                                                    if (it) selectItem(simpleItem.id)
+//                                                    else deselectItem(simpleItem.id)
+//                                                },
+//                                                selected = consegnatiSelectedItems?.contains(
+//                                                    simpleItem.id
+//                                                ) ?: false
+//                                            )
+//                                        }
+//                                        item(span = { GridItemSpan(2) }) {
+//                                            Spacer(Modifier.height(86.dp))
+//                                        }
+//                                    }
+//                                } else {
+                                LazyColumn(
+                                    state = checkableListState,
+                                    modifier = listModifier
+                                ) {
+                                    items(
+                                        consegnatiSelectableItems ?: emptyList(),
+                                        key = { it.id }) { simpleItem ->
+                                        CheckableListItem(
+                                            simpleItem,
+                                            modifier = Modifier.animateItem(),
+                                            onSelect = {
+                                                if (it) selectItem(simpleItem.id)
+                                                else deselectItem(simpleItem.id)
+                                            },
+                                            selected = consegnatiSelectedItems?.contains(
+                                                simpleItem.id
+                                            ) ?: false
+                                        )
                                     }
-                                } else {
-                                    LazyColumn(
-                                        state = checkableListState,
-                                        modifier = listModifier
-                                    ) {
-                                        items(
-                                            consegnatiSelectableItems ?: emptyList(),
-                                            key = { it.id }) { simpleItem ->
-                                            CheckableListItem(
-                                                simpleItem,
-                                                modifier = Modifier.animateItem(),
-                                                onSelect = {
-                                                    if (it) selectItem(simpleItem.id)
-                                                    else deselectItem(simpleItem.id)
-                                                },
-                                                selected = consegnatiSelectedItems?.contains(
-                                                    simpleItem.id
-                                                ) ?: false
-                                            )
-                                        }
-                                        item {
-                                            Spacer(Modifier.height(86.dp))
-                                        }
+                                    item {
+                                        Spacer(Modifier.height(86.dp))
                                     }
+//                                    }
                                 }
                             }
 
@@ -363,10 +362,19 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                     passaggiSelectedListState?.any { it == consegnato.numPassaggio }
                                     ?: false
                         }
+
                     mMainActivity?.createOptionsMenu(
-                        if (passaggiSelectedListState?.isEmpty() == true) consegnatiOptionMenu else consegnatiResetOptionMenu,
-                        this@ConsegnatiFragment
+                        consegnatiResetOptionMenu,
+                        null
                     )
+
+                    Handler(Looper.getMainLooper()).postDelayed(1) {
+                        mMainActivity?.createOptionsMenu(
+                            if (passaggiSelectedListState?.isEmpty() == true) consegnatiOptionMenu else consegnatiResetOptionMenu,
+                            this@ConsegnatiFragment
+                        )
+                    }
+
                 }
 
                 BackHandler(backCallbackEnabled.value || mMainActivity?.isDrawerOpen() == true) {
@@ -436,10 +444,10 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                     true
                 }
 
-                ActionModeItem.HELP -> {
-                    managerIntro()
-                    true
-                }
+//                ActionModeItem.HELP -> {
+//                    managerIntro()
+//                    true
+//                }
 
                 else -> {}
             }
@@ -497,7 +505,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
 //        }
     }
 
-    private fun managerIntro() {
+//    private fun managerIntro() {
 //        val colorOnPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
 //        mMainActivity?.getFab()?.let { fab ->
 //            TapTargetSequence(requireActivity())
@@ -551,7 +559,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
 //                    })
 //                .start()
 //        }
-    }
+//    }
 
     private suspend fun updateChooseList() {
         Log.i(TAG, "updateChooseList start")
@@ -644,10 +652,10 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
             startCab()
             initFab()
             lifecycleScope.launch { updateChooseList() }
-            val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-            if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
-                managerIntro()
-            }
+//            val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+//            if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI_2, false)) {
+//                managerIntro()
+//            }
         }
     }
 

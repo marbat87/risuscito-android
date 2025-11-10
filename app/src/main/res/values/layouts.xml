@@ -3,7 +3,6 @@
     <bool name="is_phone_view">true</bool>
     <bool name="is_tablet">false</bool>
     <bool name="is_bottom_sheet_limited">false</bool>
-    <bool name="is_grid_layout">false</bool>
     <bool name="landscape">false</bool>
     <bool name="fab_orientation_left">false</bool>
     <bool name="useDrawerArrowDrawable">true</bool>

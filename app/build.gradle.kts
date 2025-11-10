@@ -82,7 +82,7 @@ dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.activity:activity-ktx:1.11.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.appcompat:appcompat-resources:1.7.1")
@@ -93,7 +93,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.media:media:1.7.1")
     implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.9.5")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.9.6")
     implementation("androidx.fragment:fragment-compose:1.8.9")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.11.0")
@@ -112,8 +112,6 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.code.gson:gson:2.13.2")
-    implementation("com.mikepenz:itemanimators:1.1.0")
-    implementation("com.getkeepsafe.taptargetview:taptargetview:1.15.0")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.leinardi.android:speed-dial:3.3.0")
     implementation("com.github.MFlisar:changelog:1.1.7")
@@ -126,7 +124,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
     implementation("sh.calvin.reorderable:reorderable:3.0.0")
 
-    implementation(platform("androidx.compose:compose-bom:2025.10.01"))
+    implementation(platform("androidx.compose:compose-bom:2025.11.00"))
     // Material Design 3
     implementation("androidx.compose.material3:material3:1.5.0-alpha04")
     // Android Studio Preview support
@@ -140,4 +138,5 @@ dependencies {
     implementation("androidx.compose.animation:animation")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.animation:animation-graphics")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
 }

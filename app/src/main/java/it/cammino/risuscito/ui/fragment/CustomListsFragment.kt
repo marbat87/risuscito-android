@@ -2,7 +2,6 @@ package it.cammino.risuscito.ui.fragment
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -24,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.fragment.app.activityViewModels
@@ -46,16 +44,11 @@ import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.FabActionItem
-import it.cammino.risuscito.ui.composable.main.OptionMenuItem
-import it.cammino.risuscito.ui.composable.main.cleanListOptionMenu
-import it.cammino.risuscito.ui.composable.main.helpOptionMenu
 import it.cammino.risuscito.ui.composable.main.listaPersonalizzata
 import it.cammino.risuscito.ui.composable.main.listaPredefinita
 import it.cammino.risuscito.ui.interfaces.FabFragment
-import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.launchForResultWithAnimation
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
@@ -66,7 +59,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFragment,
+class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
     FabFragment {
 
     private val mCustomListsViewModel: CustomListsViewModel by viewModels()
@@ -77,8 +70,6 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
     val titoliListe = MutableLiveData(emptyArray<String?>())
     private var idListe: IntArray = IntArray(0)
     private var movePage: Boolean = false
-    private var mRegularFont: Typeface? = null
-    private var mMediumFont: Typeface? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -235,13 +226,6 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mRegularFont = ResourcesCompat.getFont(
-            requireContext(), requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
-        )
-        mMediumFont = ResourcesCompat.getFont(
-            requireContext(), requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
-        )
-
         movePage = false
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -250,7 +234,7 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
                 Utility.INTRO_CUSTOMLISTS, false
             )
         )
-        if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false)) playIntro()
+//        if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false)) playIntro()
 
         subscribeUiChanges()
 
@@ -268,9 +252,8 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
             }
         }
 
-    private fun playIntro() {
+//    private fun playIntro() {
 //        mMainActivity?.initFab(true)
-        //TODO
 //        mMainActivity?.getFab()?.let { fab ->
 //            val colorOnPrimary = MaterialColors.getColor(
 //                requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG
@@ -320,7 +303,7 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
 //                }
 //            }).start()
 //        }
-    }
+//    }
 
     private fun subscribeUiChanges() {
         mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->
@@ -362,16 +345,16 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
                 }
             }
 
-            mMainActivity?.createOptionsMenu(
-                cleanListOptionMenu,
-                null
-            )
-            Handler(Looper.getMainLooper()).postDelayed(1) {
-                mMainActivity?.createOptionsMenu(
-                    helpOptionMenu,
-                    null
-                )
-            }
+//            mMainActivity?.createOptionsMenu(
+//                cleanListOptionMenu,
+//                null
+//            )
+//            Handler(Looper.getMainLooper()).postDelayed(1) {
+//                mMainActivity?.createOptionsMenu(
+//                    helpOptionMenu,
+//                    null
+//                )
+//            }
 
         }
 
@@ -444,13 +427,13 @@ class CustomListsFragment : RisuscitoFragment(), OptionMenuFragment, SnackBarFra
 
     override fun onDismissed() {}
 
-    override fun onItemClick(route: String) {
-        when (route) {
-            OptionMenuItem.Help.route -> {
-                playIntro()
-            }
-        }
-    }
+//    override fun onItemClick(route: String) {
+//        when (route) {
+//            OptionMenuItem.Help.route -> {
+//                playIntro()
+//            }
+//        }
+//    }
 
     override fun onFabClick(item: String) {
         when (item) {

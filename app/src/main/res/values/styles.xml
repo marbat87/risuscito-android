@@ -5,18 +5,10 @@
         <item name="android:elevation">0dp</item>
     </style>
 
-    <style name="Widget.Risuscito.TabLayout" parent="Widget.Material3.TabLayout">
-        <item name="tabGravity">start</item>
-        <item name="tabMode">scrollable</item>
-    </style>
-
-    <style name="AppBottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppModalStyle</item>
-    </style>
-
-    <style name="AppModalStyle" parent="Widget.Material3.BottomSheet.Modal">
-        <item name="behavior_peekHeight">@dimen/custom_peek_height</item>
-    </style>
+<!--    <style name="Widget.Risuscito.TabLayout" parent="Widget.Material3.TabLayout">-->
+<!--        <item name="tabGravity">start</item>-->
+<!--        <item name="tabMode">scrollable</item>-->
+<!--    </style>-->
 
     <style name="Risuscito_SpeedDialActionItem">
         <item name="colorOnSecondary">?colorOnSecondaryContainer</item>

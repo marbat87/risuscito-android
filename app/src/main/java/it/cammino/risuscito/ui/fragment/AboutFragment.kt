@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
@@ -131,6 +132,12 @@ class AboutFragment : MaterialAboutFragment() {
         }
 
         return builder.build()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mMainActivity?.setTabVisible(false)
+        mMainActivity?.initFab(enable = false)
     }
 
     companion object {

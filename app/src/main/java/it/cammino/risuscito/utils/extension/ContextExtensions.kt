@@ -107,9 +107,6 @@ val Context.isOnTablet: Boolean
 val Context.isOnPhone: Boolean
     get() = resources.getBoolean(R.bool.is_phone_view)
 
-val Context.isGridLayout: Boolean
-    get() = resources.getBoolean(R.bool.is_grid_layout)
-
 val Context.isLandscape: Boolean
     get() = resources.getBoolean(R.bool.landscape)
 

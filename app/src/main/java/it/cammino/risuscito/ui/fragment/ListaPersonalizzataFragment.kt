@@ -47,7 +47,6 @@ import it.cammino.risuscito.ui.composable.PosizioneListItem
 import it.cammino.risuscito.ui.composable.dialogs.InputDialog
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.customListsMenu
-import it.cammino.risuscito.ui.dialog.BottomSheetFragment
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.FabActionsFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
@@ -208,7 +207,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                     }
 
                     item {
-                        Spacer(Modifier.height(112.dp))
+                        Spacer(Modifier.height(86.dp))
                     }
                 }
 
@@ -531,17 +530,14 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
     }
 
     override fun condividi() {
-        val bottomSheetDialog = BottomSheetFragment.newInstance(R.string.share_by, shareIntent)
-        bottomSheetDialog.show(parentFragmentManager, null)
+        mMainActivity?.showBottomSheet(R.string.share_by, shareIntent)
     }
 
     override fun inviaFile() {
         val exportUri = activity?.listToXML(mCantiViewModel.listaPersonalizzata)
         Log.d(TAG, "onClick: exportUri = $exportUri")
         exportUri?.let {
-            val bottomSheetDialog =
-                BottomSheetFragment.newInstance(R.string.share_by, getSendIntent(it))
-            bottomSheetDialog.show(parentFragmentManager, null)
+            mMainActivity?.showBottomSheet(R.string.share_by, getSendIntent(it))
         } ?: run {
             showSnackBar(R.string.xml_error)
         }

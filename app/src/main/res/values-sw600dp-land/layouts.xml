@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="is_phone_view">false</bool>
-    <bool name="is_grid_layout">false</bool>
     <bool name="fab_orientation_left">false</bool>
 </resources>

@@ -525,17 +525,17 @@ enum class DropDownMenuItem(
         0
     ),
 
-    EXPORT_PDF(
-        R.string.action_exp_pdf,
-        R.drawable.picture_as_pdf_24px,
-        0
-    ),
+//    EXPORT_PDF(
+//        R.string.action_exp_pdf,
+//        R.drawable.picture_as_pdf_24px,
+//        0
+//    ),
 
-    HELP(
-        R.string.action_help,
-        R.drawable.help_24px,
-        0
-    )
+//    HELP(
+//        R.string.action_help,
+//        R.drawable.help_24px,
+//        0
+//    )
 
 }
 
@@ -575,17 +575,17 @@ val barreDropDownMenu =
         DropDownMenuItem.BARRE_RESET to emptyList()
     )
 
-val otherDropDownMenu =
-    mutableMapOf<DropDownMenuItem, List<DropDownMenuItem>>(
-        DropDownMenuItem.EXPORT_PDF to emptyList(),
-        DropDownMenuItem.HELP to emptyList()
-    )
+//val otherDropDownMenu =
+//    mutableMapOf<DropDownMenuItem, List<DropDownMenuItem>>(
+//        DropDownMenuItem.EXPORT_PDF to emptyList(),
+//        DropDownMenuItem.HELP to emptyList()
+//    )
 
 @Composable
 fun CantoDropDownMenu(
     menu: Map<DropDownMenuItem, List<DropDownMenuItem>>,
     menuExpanded: Boolean,
-    offset: DpOffset,
+    offset: DpOffset = DpOffset.Zero,
     onItemClick: (DropDownMenuItem) -> Unit,
     onDismissRequest: () -> Unit
 ) {
@@ -608,18 +608,13 @@ fun CantoDropDownMenu(
                     iconRes = item.key.iconRes
                 )
             } else {
-                DropdownMenuItem(
-                    text = { Text(stringResource(item.key.label)) },
+                MenuSimpleItem(
+                    textRes = item.key.label,
                     onClick = {
                         onDismissRequest()
-                        onItemClick(item.key) },
-                    leadingIcon = {
-                        if (item.key.iconRes > 0)
-                            Icon(
-                                painter = painterResource(item.key.iconRes),
-                                contentDescription = stringResource(item.key.label)
-                            )
-                    }
+                        onItemClick(item.key)
+                    },
+                    iconRes = item.key.iconRes
                 )
             }
         }
@@ -639,16 +634,13 @@ fun CantoDropDownMenu(
                 )
 
                 item.value.forEach { listItem ->
-                    DropdownMenuItem(
-                        text = { Text(stringResource(listItem.label)) },
-                        onClick = { onItemClick(listItem) },
-                        leadingIcon = {
-                            if (listItem.iconRes > 0)
-                                Icon(
-                                    painter = painterResource(listItem.iconRes),
-                                    contentDescription = stringResource(listItem.label)
-                                )
-                        }
+                    MenuSimpleItem(
+                        textRes = listItem.label,
+                        onClick = {
+                            subMenuExpanded = DropDownMenuItem.DEFAULT
+                            onItemClick(listItem)
+                        },
+                        iconRes = listItem.iconRes
                     )
                 }
             }

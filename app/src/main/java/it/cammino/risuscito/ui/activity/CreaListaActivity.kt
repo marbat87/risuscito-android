@@ -1,10 +1,7 @@
 package it.cammino.risuscito.ui.activity
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -46,11 +43,12 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SwipeToDismissBoxDefaults
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -70,8 +68,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.postDelayed
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.ListaPersonalizzata
@@ -92,7 +88,6 @@ import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
@@ -122,9 +117,6 @@ class CreaListaActivity : ThemeableActivity() {
     private var indiceRimosso: Int = 0
 
     private val hintVisible = mutableStateOf(false)
-
-    private var mRegularFont: Typeface? = null
-    private var mMediumFont: Typeface? = null
 
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("ClickableViewAccessibility")
@@ -182,15 +174,16 @@ class CreaListaActivity : ThemeableActivity() {
                 val lazyListState = rememberLazyListState()
                 val reorderableLazyListState =
                     rememberReorderableLazyListState(lazyListState) { from, to ->
-                        mCreaListaViewModel.elementi.value =
+                        mCreaListaViewModel.elementi.value = ArrayList(
                             mCreaListaViewModel.elementi.value.orEmpty().toMutableList().apply {
                                 add(to.index - 1, removeAt(from.index - 1))
-                            }
+                            })
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                     }
 
                 val rememberItemLongClick = remember<(Int, SwipeableRisuscitoListItem) -> Unit> {
                     { index, item ->
+                        Log.d(TAG, "rememberItemLongClick: $index")
                         mCreaListaViewModel.positionToRename = index
                         inputdialogViewModel.dialogTag = InputDialogTag.RENAME
                         inputdialogViewModel.dialogTitleRes = R.string.posizione_rename
@@ -227,7 +220,7 @@ class CreaListaActivity : ThemeableActivity() {
                                                     contentDescription = stringResource(it.label),
                                                 )
                                             },
-                                            label = "",
+                                            label = getString(it.label)
                                         )
                                     }
                                 }
@@ -302,9 +295,11 @@ class CreaListaActivity : ThemeableActivity() {
                                 Column {
                                     OutlinedTextField(
                                         label = { Text(stringResource(R.string.list_title)) },
-                                        modifier = Modifier.padding(
-                                            bottom = 12.dp
-                                        ),
+                                        modifier = Modifier
+                                            .padding(
+                                                bottom = 12.dp
+                                            )
+                                            .fillMaxWidth(),
                                         state = inputState,
                                         lineLimits = TextFieldLineLimits.SingleLine,
                                         keyboardOptions = keyboardOptions
@@ -343,17 +338,10 @@ class CreaListaActivity : ThemeableActivity() {
                             itemsIndexed(
                                 localItems.orEmpty(),
                                 key = { _, item -> item.identifier }) { index, item ->
-                                val swipeToDismissBoxState = rememberSwipeToDismissBoxState(
-                                    confirmValueChange = {
-                                        if (it == SwipeToDismissBoxValue.StartToEnd) removeItem(
-                                            index, item
-                                        )
-                                        else if (it == SwipeToDismissBoxValue.EndToStart) removeItem(
-                                            index, item
-                                        )
-                                        // Reset item when toggling done status
-                                        it != SwipeToDismissBoxValue.StartToEnd && it != SwipeToDismissBoxValue.EndToStart
-                                    }
+//                                val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
+                                val swipeToDismissBoxState = SwipeToDismissBoxState(
+                                    SwipeToDismissBoxValue.Settled,
+                                    SwipeToDismissBoxDefaults.positionalThreshold
                                 )
 
                                 ReorderableItem(
@@ -382,7 +370,19 @@ class CreaListaActivity : ThemeableActivity() {
                                         swipeToDismissBoxState = swipeToDismissBoxState,
                                         index = index,
                                         item = item,
-                                        onItemLongClick = rememberItemLongClick
+                                        onItemLongClick = rememberItemLongClick,
+                                        onDismiss = { value, index, item ->
+                                            Log.d(TAG, "confirmValueChange: $value, $index")
+                                            when (value) {
+                                                SwipeToDismissBoxValue.StartToEnd,
+                                                SwipeToDismissBoxValue.EndToStart ->
+                                                    scope.launch {
+                                                        removeItem(index, item)
+                                                    }
+                                                // Reset item when toggling done status
+                                                else -> scope.launch { swipeToDismissBoxState.reset() }
+                                            }
+                                        }
                                     )
                                 }
                             }
@@ -410,8 +410,8 @@ class CreaListaActivity : ThemeableActivity() {
                     if (sharedSnackBarViewModel.showSnackBar.value) {
                         val result = snackbarHostState
                             .showSnackbar(
-                                message = sharedSnackBarViewModel.snackbarMessage,
-                                actionLabel = sharedSnackBarViewModel.actionLabel.ifBlank { null },
+                                message = sharedSnackBarViewModel.snackbarMessage.value,
+                                actionLabel = sharedSnackBarViewModel.actionLabel.value.ifBlank { null },
                                 duration = SnackbarDuration.Short,
                                 withDismissAction = true
                             )
@@ -526,11 +526,11 @@ class CreaListaActivity : ThemeableActivity() {
                     if (mCreaListaViewModel.tempTitle.value.isEmpty())
                         mCreaListaViewModel.tempTitle.value = listaPers.titolo ?: DEFAULT_TITLE
 
-                    if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false)) {
-                        Handler(Looper.getMainLooper()).postDelayed(1500) {
-                            playIntro()
-                        }
-                    }
+//                    if (!mSharedPrefs.getBoolean(Utility.INTRO_CREALISTA, false)) {
+//                        Handler(Looper.getMainLooper()).postDelayed(500) {
+//                            showAppIntro.value = true
+//                        }
+//                    }
 
                     hintVisible.value =
                         mCreaListaViewModel.elementi.value.orEmpty()
@@ -540,16 +540,12 @@ class CreaListaActivity : ThemeableActivity() {
                 }
             else {
                 if (mCreaListaViewModel.tempTitle.value.isEmpty())
-                    mCreaListaViewModel.tempTitle.value = intent.extras?.getString(LIST_TITLE).orEmpty()
+                    mCreaListaViewModel.tempTitle.value =
+                        intent.extras?.getString(LIST_TITLE).orEmpty()
                 mCreaListaViewModel.elementi.value = emptyList()
             }
 
         }
-
-        mRegularFont =
-            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_regular_font))
-        mMediumFont =
-            ResourcesCompat.getFont(this, getTypedValueResId(R.attr.risuscito_medium_font))
 
     }
 
@@ -560,8 +556,10 @@ class CreaListaActivity : ThemeableActivity() {
             mCreaListaViewModel.elementi.value?.filter { it.identifier != item.identifier }
 
         sharedSnackBarViewModel.snackBarTag = SnackBarTag.ELEMENT_REMOVED
-        sharedSnackBarViewModel.snackbarMessage = getString(R.string.generic_removed, item.title)
-        sharedSnackBarViewModel.actionLabel = getString(R.string.cancel).uppercase(systemLocale)
+        sharedSnackBarViewModel.snackbarMessage.value =
+            getString(R.string.generic_removed, item.title)
+        sharedSnackBarViewModel.actionLabel.value =
+            getString(R.string.cancel).uppercase(systemLocale)
         sharedSnackBarViewModel.showSnackBar.value = true
 
     }
@@ -608,7 +606,7 @@ class CreaListaActivity : ThemeableActivity() {
     fun onOptionsItemSelected(item: ActionModeItem) {
         when (item) {
             ActionModeItem.HELP -> {
-                playIntro()
+//                showAppIntro.value = true
                 hintVisible.value =
                     mCreaListaViewModel.elementi.value.orEmpty().isNotEmpty()
             }
@@ -645,8 +643,8 @@ class CreaListaActivity : ThemeableActivity() {
         mCreaListaViewModel.elementi.value.orEmpty().forEachIndexed { index, item ->
             if (celebrazione.addPosizione(item.title) == -2) {
                 sharedSnackBarViewModel.snackBarTag = SnackBarTag.DEFAULT
-                sharedSnackBarViewModel.snackbarMessage = getString(R.string.lista_pers_piena)
-                sharedSnackBarViewModel.actionLabel = StringUtils.EMPTY
+                sharedSnackBarViewModel.snackbarMessage.value = getString(R.string.lista_pers_piena)
+                sharedSnackBarViewModel.actionLabel.value = StringUtils.EMPTY
                 sharedSnackBarViewModel.showSnackBar.value = true
             }
             celebrazione.addCanto(item.idCanto, index)
@@ -655,8 +653,8 @@ class CreaListaActivity : ThemeableActivity() {
 
         if (celebrazione.getNomePosizione(0).isEmpty()) {
             sharedSnackBarViewModel.snackBarTag = SnackBarTag.DEFAULT
-            sharedSnackBarViewModel.snackbarMessage = getString(R.string.lista_pers_vuota)
-            sharedSnackBarViewModel.actionLabel = StringUtils.EMPTY
+            sharedSnackBarViewModel.snackbarMessage.value = getString(R.string.lista_pers_vuota)
+            sharedSnackBarViewModel.actionLabel.value = StringUtils.EMPTY
             sharedSnackBarViewModel.showSnackBar.value = true
             return
         }
@@ -686,71 +684,6 @@ class CreaListaActivity : ThemeableActivity() {
         ).show()
         setResult(RESULT_OK)
         finishAfterTransitionWrapper()
-    }
-
-    //TODO
-    private fun playIntro() {
-//        binding.fabCreaLista.show()
-//        val colorOnPrimary =
-//            MaterialColors.getColor(
-//                this,
-//                com.google.android.material.R.attr.colorOnPrimary,
-//                TAG
-//            )
-//        TapTargetSequence(this).continueOnCancel(true).targets(
-//            TapTarget.forView(
-//                binding.fabCreaLista,
-//                getString(R.string.add_position),
-//                getString(R.string.showcase_add_pos_desc)
-//            )
-//                // All options below are optional
-//                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
-//                .tintTarget(false).setForceCenteredTarget(true).id(1),
-//            TapTarget.forToolbarMenuItem(
-//                binding.risuscitoToolbar,
-//                R.id.action_save_list,
-//                getString(R.string.list_save_exit),
-//                getString(R.string.showcase_saveexit_desc)
-//            )
-//                // All options below are optional
-//                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
-//                .setForceCenteredTarget(true).id(2),
-//            TapTarget.forToolbarMenuItem(
-//                binding.risuscitoToolbar,
-//                R.id.action_help,
-//                getString(R.string.showcase_end_title),
-//                getString(R.string.showcase_help_general)
-//            )
-//                // All options below are optional
-//                .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
-//                .setForceCenteredTarget(true).id(3)
-//        ).listener(object :
-//            TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-//            override fun onSequenceFinish() {
-//                Log.d(TAG, "onSequenceFinish: ")
-//                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity)
-//                    .edit { putBoolean(Utility.INTRO_CREALISTA, true) }
-//            }
-//
-//            override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-//                // no-op
-//            }
-//
-//            override fun onSequenceCanceled(tapTarget: TapTarget) {
-//                Log.d(TAG, "onSequenceCanceled: ")
-//                PreferenceManager.getDefaultSharedPreferences(this@CreaListaActivity)
-//                    .edit { putBoolean(Utility.INTRO_CREALISTA, true) }
-//            }
-//        }).start()
     }
 
     companion object {

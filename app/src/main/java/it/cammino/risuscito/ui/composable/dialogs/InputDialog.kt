@@ -84,14 +84,20 @@ fun InputDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 if (multiline) {
                     OutlinedTextField(
-                        modifier = Modifier.padding(horizontal = 24.dp).focusRequester(focusRequester),
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester),
                         state = inputState,
                         keyboardOptions = keyboardOptions,
                         trailingIcon = { ClearText(inputState) },
                     )
                 } else {
                     OutlinedTextField(
-                        modifier = Modifier.padding(horizontal = 24.dp).focusRequester(focusRequester),
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester),
                         state = inputState, lineLimits = TextFieldLineLimits.SingleLine,
                         keyboardOptions = keyboardOptions,
                         trailingIcon = { ClearText(inputState) },

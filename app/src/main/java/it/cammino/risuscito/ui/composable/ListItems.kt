@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -55,6 +56,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import it.cammino.risuscito.R
@@ -63,7 +67,6 @@ import it.cammino.risuscito.items.ListaPersonalizzataRisuscitoListItem
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.SwipeableRisuscitoListItem
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.spannedFromHtml
 import it.cammino.risuscito.utils.extension.systemLocale
 import java.lang.Long
 import java.sql.Date
@@ -122,15 +125,15 @@ fun SimpleListItem(
                 val highlighted = StringBuilder(
                     if (mPosition > 0) (baseTitle.substring(0, mPosition)) else ""
                 )
-                    .append("<i>")
+                    .append("<b>")
                     .append(baseTitle.substring(mPosition, mPosition + filterValue.length))
-                    .append("</i>")
+                    .append("</b>")
                     .append(baseTitle.substring(mPosition + filterValue.length))
-                highlighted.toString().spannedFromHtml.toString()
+                AnnotatedString.Companion.fromHtml(highlighted.toString())
             } else {
-                baseTitle
+                AnnotatedString.Companion.fromHtml(baseTitle)
             }
-        } ?: baseTitle
+        } ?: AnnotatedString.Companion.fromHtml(baseTitle)
     }
 
     val animatedColor by animateColorAsState(
@@ -425,7 +428,7 @@ fun CheckableListItem(
 
     ListItem(
         leadingContent = { PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor) },
-        headlineContent = { Text(stringResource(simpleItem.titleRes)) },
+        headlineContent = { Text(stringResource(simpleItem.titleRes), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         modifier = modifier.clickable(
             enabled = true,
             onClick = {
@@ -608,7 +611,8 @@ fun DraggableDismissableListItem(
     swipeToDismissBoxState: SwipeToDismissBoxState,
     index: Int,
     item: SwipeableRisuscitoListItem,
-    onItemLongClick: (Int, SwipeableRisuscitoListItem) -> Unit
+    onItemLongClick: (Int, SwipeableRisuscitoListItem) -> Unit,
+    onDismiss: (SwipeToDismissBoxValue, Int, SwipeableRisuscitoListItem) -> Unit
 ) {
     SwipeToDismissBox(
         state = swipeToDismissBoxState,
@@ -617,7 +621,8 @@ fun DraggableDismissableListItem(
             .wrapContentHeight(),
         backgroundContent = {
             SwipeToDismissBackground(swipeToDismissBoxState)
-        }
+        },
+        onDismiss = { onDismiss(it, index, item) }
     ) {
 
         ElevatedCard(
@@ -629,7 +634,7 @@ fun DraggableDismissableListItem(
                 .fillMaxWidth()
                 .wrapContentHeight(),
             onClick = {},
-            interactionSource = interactionSource
+            interactionSource = interactionSource,
         ) {
             ListItem(
                 headlineContent = { Text(item.title) },

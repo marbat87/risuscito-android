@@ -86,8 +86,8 @@ class SettingsActivity : ThemeableActivity() {
                     if (sharedSnackBarViewModel.showSnackBar.value) {
                         val result = snackbarHostState
                             .showSnackbar(
-                                message = sharedSnackBarViewModel.snackbarMessage,
-                                actionLabel = sharedSnackBarViewModel.actionLabel.ifBlank { null },
+                                message = sharedSnackBarViewModel.snackbarMessage.value,
+                                actionLabel = sharedSnackBarViewModel.actionLabel.value.ifBlank { null },
                                 duration = SnackbarDuration.Short,
                                 withDismissAction = true
                             )
