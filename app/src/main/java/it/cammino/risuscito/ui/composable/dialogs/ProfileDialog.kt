@@ -19,16 +19,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -56,7 +58,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProfileDialog(
     viewModel: SharedProfileViewModel,
@@ -76,9 +78,9 @@ fun ProfileDialog(
         Dialog(
             onDismissRequest = {
                 coroutineScope.launch {
-                    startDismissWithExitAnimation(
-                        animateTrigger,
-                        { viewModel.showProfileDialog.value = false })
+                    startDismissWithExitAnimation(animateTrigger) {
+                        viewModel.showProfileDialog.value = false
+                    }
                 }
             },
             properties = DialogProperties(
@@ -127,11 +129,9 @@ fun ProfileDialog(
                             )
                             IconButton(onClick = {
                                 coroutineScope.launch {
-                                    startDismissWithExitAnimation(
-                                        animateTrigger,
-                                        {
-                                            viewModel.showProfileDialog.value = false
-                                        })
+                                    startDismissWithExitAnimation(animateTrigger) {
+                                        viewModel.showProfileDialog.value = false
+                                    }
                                 }
                             }) {
                                 Icon(
@@ -145,9 +145,9 @@ fun ProfileDialog(
                             model = viewModel.profilePhotoUrl,
                             contentDescription = "Profile Button",
                             modifier = Modifier
-                                .clip(CircleShape)
+                                .clip(MaterialShapes.Cookie9Sided.toShape())
                                 .size(72.dp),
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             placeholder = painterResource(R.drawable.account_circle_24px),
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -185,12 +185,10 @@ fun ProfileDialog(
                                         },
                                         modifier = Modifier.clickable {
                                             coroutineScope.launch {
-                                                startDismissWithExitAnimation(
-                                                    animateTrigger,
-                                                    {
-                                                        viewModel.showProfileDialog.value = false
-                                                        onItemClick(item)
-                                                    })
+                                                startDismissWithExitAnimation(animateTrigger) {
+                                                    viewModel.showProfileDialog.value = false
+                                                    onItemClick(item)
+                                                }
                                             }
                                         }
                                     )

@@ -16,7 +16,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +42,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.material.color.DynamicColors
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -51,7 +49,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.messaging.messaging
-import com.michaelflisar.changelog.ChangelogBuilder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.CredendialObject
 import it.cammino.risuscito.ui.CredentialCacheManager
@@ -83,8 +80,6 @@ import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.extension.convertTabs
 import it.cammino.risuscito.utils.extension.convertiBarre
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
-import it.cammino.risuscito.utils.extension.getVersionCode
-import it.cammino.risuscito.utils.extension.isDarkMode
 import it.cammino.risuscito.utils.extension.queryIntentActivities
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
@@ -108,7 +103,7 @@ import java.text.Collator
 
 
 class MainActivity : ThemeableActivity() {
-//    private val profileDialogViewModel: ProfileDialogFragment.DialogViewModel by viewModels()
+    //    private val profileDialogViewModel: ProfileDialogFragment.DialogViewModel by viewModels()
     private val cantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
@@ -288,6 +283,14 @@ class MainActivity : ThemeableActivity() {
 
                                 }
 
+                                SimpleDialogTag.PERMISSION_ASK -> {
+                                    run {
+                                        requestPermissionLauncher.launch(
+                                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                        )
+                                    }
+                                }
+
                                 else -> {}
                             }
                         },
@@ -312,7 +315,7 @@ class MainActivity : ThemeableActivity() {
                     )
                 }
 
-                ProfileDialog(sharedProfileViewModel, { item ->
+                ProfileDialog(sharedProfileViewModel) { item ->
                     when (item) {
                         ProfileMenuItem.GDRIVE_BACKUP -> {
                             showAccountRelatedDialog(SimpleDialogTag.BACKUP_ASK)
@@ -335,10 +338,10 @@ class MainActivity : ThemeableActivity() {
                             showAccountRelatedDialog(SimpleDialogTag.REVOKE)
                         }
                     }
-                })
+                }
 
                 // After drawing main content, draw status bar protection
-                StatusBarProtection(if (isActionMode.value) MaterialTheme.colorScheme.primaryContainer else TopAppBarDefaults.topAppBarColors().containerColor)
+                StatusBarProtection(if (isActionMode.value) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer)
 
                 LaunchedEffect(closeDrawer.value) {
                     snapshotFlow { closeDrawer.value }
@@ -358,21 +361,6 @@ class MainActivity : ThemeableActivity() {
         mCredentialManager = CredentialManager.create(this)
 
         mCredentialCacheManager = CredentialCacheManager(mViewModel, this, mCredentialManager)
-
-        Log.d(TAG, "getVersionCode(): ${getVersionCode()}")
-
-        ChangelogBuilder().withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
-            .withMinVersionToShow(getVersionCode())     // provide a number and the log will only show changelog rows for versions equal or higher than this number
-            .withManagedShowOnStart(
-                getSharedPreferences(
-                    "com.michaelflisar.changelog", 0
-                ).getInt("changelogVersion", -1) != -1
-            )  // library will take care to show activity/dialog only if the changelog has new infos and will only show this new infos
-            .withTitle(getString(R.string.dialog_change_title)) // provide a custom title if desired, default one is "Changelog <VERSION>"
-            .withOkButtonLabel(getString(R.string.ok)) // provide a custom ok button text if desired, default one is "OK"
-            .buildAndShowDialog(
-                this, isDarkMode
-            ) // second parameter defines, if the dialog has a dark or light theme
 
         if (!OSUtils.hasQ()) checkPermission()
 
@@ -442,17 +430,13 @@ class MainActivity : ThemeableActivity() {
                 // permission for a specific feature to behave as expected. In this UI,
                 // include a "cancel" or "no thanks" button that allows the user to
                 // continue using your app without granting the permission.
-                MaterialAlertDialogBuilder(this).setMessage(R.string.external_storage_pref_rationale)
-                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
-                        run {
-                            dialog.cancel()
-                            requestPermissionLauncher.launch(
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            )
-                        }
-                    }
-                    .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
-                    .show()
+                mViewModel.dialogTag = SimpleDialogTag.PERMISSION_ASK
+                mViewModel.dialogTitle.value = "Permission"
+                mViewModel.iconRes.value = R.drawable.storage_24px
+                mViewModel.content.value = getString(R.string.external_storage_pref_rationale)
+                mViewModel.positiveButton.value = getString(R.string.ok)
+                mViewModel.negativeButton.value = getString(android.R.string.cancel)
+                mViewModel.showAlertDialog.value = true
             }
 
             else -> {
@@ -466,37 +450,6 @@ class MainActivity : ThemeableActivity() {
     }
 
     private fun subscribeUiChanges() {
-//        profileDialogViewModel.state.observe(this) {
-//            Log.d(TAG, "profileDialogViewModel state $it")
-//            if (!profileDialogViewModel.handled) {
-//                if (it is DialogState.Positive) {
-//                    when (profileDialogViewModel.menuItemId) {
-//                        R.id.gdrive_backup -> {
-//                            showAccountRelatedDialog(SimpleDialogTag.BACKUP_ASK)
-//                        }
-//
-//                        R.id.gdrive_restore -> {
-//                            showAccountRelatedDialog(SimpleDialogTag.RESTORE_ASK)
-//                        }
-//
-//                        R.id.gdrive_refresh -> {
-//                            mViewModel.profileAction = ProfileAction.NONE
-//                            signIn(lastAccount = true, forceRefresh = true)
-//                        }
-//
-//                        R.id.gplus_signout -> {
-//                            showAccountRelatedDialog(SimpleDialogTag.SIGNOUT)
-//                        }
-//
-//                        R.id.gplus_revoke -> {
-//                            showAccountRelatedDialog(SimpleDialogTag.REVOKE)
-//                        }
-//                    }
-//                    profileDialogViewModel.handled = true
-//                }
-//            }
-//        }
-
         mViewModel.backupRestoreState.observe(this) { state ->
             state?.let {
                 when (it) {
@@ -601,7 +554,7 @@ class MainActivity : ThemeableActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     fun expandToolbar() {
-        scrollViewModel.scrollBehavior.value?.state?.heightOffset = 0F
+        scrollViewModel.scrollBehavior.value?.scrollOffset = 0F
     }
 
     fun setupMaterialTab(tabsList: List<Destination>, selectedIndex: Int = 0) {
@@ -1021,7 +974,6 @@ class MainActivity : ThemeableActivity() {
     }
 
     companion object {
-//        private const val PROFILE_DIALOG = "PROFILE_DIALOG"
         private const val OLD_PHOTO_RES = "s96-c"
         private const val NEW_PHOTO_RES = "s400-c"
         private val TAG = MainActivity::class.java.canonicalName

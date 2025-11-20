@@ -1,71 +1,125 @@
 package it.cammino.risuscito.ui.activity
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.view.MenuItem
 import androidx.activity.addCallback
-import androidx.core.os.postDelayed
-import androidx.core.view.isVisible
-import com.michaelflisar.changelog.ChangelogBuilder
-import it.cammino.risuscito.databinding.ChangelogLayoutBinding
-import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.setEnterTransition
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import com.michaelflisar.composechangelog.Changelog
+import com.michaelflisar.composechangelog.ChangelogDefaults
+import com.michaelflisar.composechangelog.DefaultVersionFormatter
+import com.michaelflisar.composechangelog.classes.rememberChangelogState
+import com.michaelflisar.composechangelog.setup
+import it.cammino.risuscito.R
+import it.cammino.risuscito.ui.composable.ClassicBackNavitagionButton
+import it.cammino.risuscito.ui.composable.layoutMargins
+import it.cammino.risuscito.ui.composable.main.StatusBarProtection
+import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.utils.extension.slideOutRight
 
-class ChangelogActivity : ThemeableActivity() {
+class ChangelogActivity : AppCompatActivity() {
 
-    private lateinit var binding: ChangelogLayoutBinding
 
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        setEnterTransition()
         super.onCreate(savedInstanceState)
-        binding = ChangelogLayoutBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        setSupportActionBar(binding.risuscitoToolbar)
+        enableEdgeToEdge()
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setContent {
+            val state = rememberChangelogState()
 
-        Handler(Looper.getMainLooper()).postDelayed(1000) {
-            ChangelogBuilder()
-                .withUseBulletList(true) // true if you want to show bullets before each changelog row, false otherwise
-                .buildAndSetup(binding.aboutText) // second parameter defines, if the dialog has a dark or light theme
-            binding.loadingBar.isVisible = false
+            val context = LocalContext.current
+
+            val setup = ChangelogDefaults.setup(
+                context = context,
+                versionFormatter = CHANGELOG_FORMATTER
+            )
+
+            RisuscitoTheme {
+                val scrollBehavior =
+                    TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+                Scaffold(
+                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                    topBar = {
+                        TopAppBar(
+                            title = { Text(stringResource(id = R.string.changelog)) },
+                            navigationIcon = {
+                                ClassicBackNavitagionButton(
+                                    onBackPressedAction = { onBackPressedAction() })
+                            },
+                            scrollBehavior = scrollBehavior,
+                            colors = TopAppBarDefaults.topAppBarColors().copy(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            )
+                        )
+                    }
+                ) { innerPadding ->
+                    Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+                        Column(modifier = Modifier.padding(innerPadding)) {
+                            Text(
+                                text = stringResource(R.string.about_subtitle),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                            )
+                            Changelog(
+                                state = state,
+                                setup = setup,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = layoutMargins()),
+                                loading = { LoadingIndicator() }
+                            )
+                        }
+                    }
+                }
+            }
+
+            StatusBarProtection()
+
+            LaunchedEffect(Unit) {
+                state.show()
+            }
         }
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedAction()
         }
-
     }
 
     private fun onBackPressedAction() {
-        Log.d(TAG, "onBackPressed: ")
-        binding.aboutText.isVisible = false
-        if (OSUtils.isObySamsung()) {
-            finish()
-            slideOutRight()
-        } else
-            finishAfterTransitionWrapper()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                binding.aboutText.isVisible = false
-                finishAfterTransitionWrapper()
-                slideOutRight()
-                true
-            }
-            else -> false
-        }
+        finish()
+        slideOutRight()
     }
 
     companion object {
-        private val TAG = ChangelogActivity::class.java.canonicalName
+        val CHANGELOG_FORMATTER =
+            DefaultVersionFormatter(DefaultVersionFormatter.Format.MajorMinorPatchCandidate)
     }
 
 }

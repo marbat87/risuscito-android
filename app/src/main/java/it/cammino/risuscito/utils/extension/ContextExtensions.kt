@@ -2,7 +2,6 @@ package it.cammino.risuscito.utils.extension
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.content.res.Configuration
@@ -40,7 +39,7 @@ fun Context.setDefaultNightMode() {
     }
 }
 
-private val Context.prefNightMode: String
+val Context.prefNightMode: String
     get() {
         return PreferenceManager.getDefaultSharedPreferences(this)
             .getString(Utility.NIGHT_MODE, DEFAULT_MODE)
@@ -107,9 +106,6 @@ val Context.isOnTablet: Boolean
 val Context.isOnPhone: Boolean
     get() = resources.getBoolean(R.bool.is_phone_view)
 
-val Context.isLandscape: Boolean
-    get() = resources.getBoolean(R.bool.landscape)
-
 fun PackageManager.queryIntentActivities(intent: Intent): MutableList<ResolveInfo> {
     return if (OSUtils.hasT())
         queryIntentActivitiesTiramisu(intent)
@@ -127,25 +123,6 @@ fun PackageManager.queryIntentActivitiesTiramisu(intent: Intent): MutableList<Re
 
 fun PackageManager.queryIntentActivitiesLegacy(intent: Intent): MutableList<ResolveInfo> {
     return queryIntentActivities(intent, 0)
-}
-
-fun PackageManager.getPackageInfo(packageName: String): PackageInfo {
-    return if (OSUtils.hasT())
-        getPackageInfoTiramisu(packageName)
-    else
-        getPackageInfoLegacy(packageName)
-}
-
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-fun PackageManager.getPackageInfoTiramisu(packageName: String): PackageInfo {
-    return getPackageInfo(
-        packageName,
-        PackageManager.PackageInfoFlags.of(0)
-    )
-}
-
-fun PackageManager.getPackageInfoLegacy(packageName: String): PackageInfo {
-    return getPackageInfo(packageName, 0)
 }
 
 fun Context.shareThisApp(subject: String?): Intent {

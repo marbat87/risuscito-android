@@ -35,17 +35,23 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -109,13 +115,13 @@ fun Hint(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.info_24px),
-                        contentDescription = null, // Come da android:contentDescription="@null"
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary), // Simula app:tint="?colorControlActivated"
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                         modifier = Modifier
-                            .zIndex(1f) // Per stare sopra la linea
+                            .zIndex(1f)
                             .size(34.dp)
-                            .clip(CircleShape) // Per lo sfondo ovale/circolare
-                            .background(MaterialTheme.colorScheme.surface) // Simula @drawable/oval_bg_hint
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surface)
                     )
                     VerticalDivider()
                 }
@@ -498,7 +504,7 @@ fun ScrollPlayerView(
 fun <S> AnimatedFadeContent(
     targetState: S,
     duration: Int = 1000,
-    content: @Composable() AnimatedContentScope.(targetState: S) -> Unit
+    content: @Composable AnimatedContentScope.(targetState: S) -> Unit
 ) {
     AnimatedContent(
         targetState,
@@ -517,7 +523,7 @@ fun <S> AnimatedFadeContent(
 fun <S> AnimatedScaleContent(
     targetState: S,
     duration: Int = 300,
-    content: @Composable() AnimatedContentScope.(targetState: S) -> Unit
+    content: @Composable AnimatedContentScope.(targetState: S) -> Unit
 ) {
     AnimatedContent(
         targetState,
@@ -529,5 +535,27 @@ fun <S> AnimatedScaleContent(
         label = "Animated Content"
     ) {
         content(it)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ClassicBackNavitagionButton(onBackPressedAction: () -> Unit) {
+    TooltipBox(
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                TooltipAnchorPosition.Above
+            ),
+        tooltip = { PlainTooltip { Text(stringResource(R.string.material_drawer_close)) } },
+        state = rememberTooltipState(),
+    ) {
+        IconButton(
+            onClick = { onBackPressedAction() }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.arrow_back_24px),
+                contentDescription = stringResource(R.string.material_drawer_close),
+            )
+        }
     }
 }

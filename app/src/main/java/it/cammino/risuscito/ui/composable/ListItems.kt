@@ -18,11 +18,10 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
@@ -82,23 +81,21 @@ import kotlin.takeIf
 
 @Composable
 fun BottomSheetItem(infoItem: ResolveInfo, pm: PackageManager, onItemClick: (ResolveInfo) -> Unit) {
+    val title = remember { infoItem.loadLabel(pm).toString() }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .clickable { onItemClick(infoItem) }
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 16.dp)
     ) {
         Image(
             painter = rememberDrawablePainter(drawable = infoItem.loadIcon(pm)),
-            contentDescription = "",
-            modifier = Modifier
-                .width(48.dp)
-                .height(48.dp)
-                .padding(8.dp),
+            contentDescription = title,
+            modifier = Modifier.size(48.dp)
         )
-        GridItemTitle(infoItem.loadLabel(pm).toString())
+        Spacer(modifier = Modifier.padding(8.dp))
+        GridItemTitle(title)
     }
 }
 
@@ -123,17 +120,17 @@ fun SimpleListItem(
                 .indexOf(filterValue.lowercase(ctx.systemLocale)) // Normalizza anche il filtro
             if (mPosition >= 0) {
                 val highlighted = StringBuilder(
-                    if (mPosition > 0) (baseTitle.substring(0, mPosition)) else ""
+                    if (mPosition > 0) (baseTitle.take(mPosition)) else ""
                 )
                     .append("<b>")
                     .append(baseTitle.substring(mPosition, mPosition + filterValue.length))
                     .append("</b>")
                     .append(baseTitle.substring(mPosition + filterValue.length))
-                AnnotatedString.Companion.fromHtml(highlighted.toString())
+                AnnotatedString.fromHtml(highlighted.toString())
             } else {
-                AnnotatedString.Companion.fromHtml(baseTitle)
+                AnnotatedString.fromHtml(baseTitle)
             }
-        } ?: AnnotatedString.Companion.fromHtml(baseTitle)
+        } ?: AnnotatedString.fromHtml(baseTitle)
     }
 
     val animatedColor by animateColorAsState(
@@ -428,7 +425,13 @@ fun CheckableListItem(
 
     ListItem(
         leadingContent = { PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor) },
-        headlineContent = { Text(stringResource(simpleItem.titleRes), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        headlineContent = {
+            Text(
+                stringResource(simpleItem.titleRes),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
         modifier = modifier.clickable(
             enabled = true,
             onClick = {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,9 +29,7 @@ fun BottomSheetTitle(title: String = "Titolo") {
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
@@ -39,13 +38,11 @@ fun BottomSheetTitle(title: String = "Titolo") {
 fun GridItemTitle(title: String = "Elemento") {
     Text(
         text = title,
-        textAlign = TextAlign.Start,
+        textAlign = TextAlign.Center,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurface,
-        maxLines = 1,
         modifier = Modifier
-            .height(16.dp)
-            .padding(0.dp)
+            .wrapContentSize()
     )
 }
 
@@ -101,7 +98,9 @@ fun DialogTitle(title: String = "Filtra per passaggi") {
     Text(
         text = title,
         style = MaterialTheme.typography.headlineSmall,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
         color = MaterialTheme.colorScheme.onSurface,
         textAlign = TextAlign.Center
     )

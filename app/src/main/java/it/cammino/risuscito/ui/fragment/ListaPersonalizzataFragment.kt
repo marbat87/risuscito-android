@@ -329,7 +329,6 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                         R.string.song_removed,
                         R.string.cancel
                     )
-                    true
                 }
 
                 ActionModeItem.SWAP -> {
@@ -346,13 +345,11 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                         resources.getString(R.string.switch_tooltip),
                         Toast.LENGTH_SHORT
                     ).show()
-                    true
                 }
 
                 ActionModeItem.CLOSE -> {
                     actionModeOk = false
                     mMainActivity?.destroyActionMode()
-                    true
                 }
 
                 else -> {}

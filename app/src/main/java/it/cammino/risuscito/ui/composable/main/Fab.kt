@@ -65,7 +65,7 @@ open class FabActionItem(
     object CONDIVIDIFILE : FabActionItem(
         "CONDIVIDIFILE",
         R.string.action_share_file,
-        R.drawable.attach_file_24px
+        R.drawable.file_export_24px
     )
 
     object EDIT : FabActionItem(

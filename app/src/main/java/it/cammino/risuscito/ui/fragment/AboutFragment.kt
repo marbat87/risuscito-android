@@ -46,7 +46,7 @@ class AboutFragment : MaterialAboutFragment() {
 
         context?.let { ctx ->
 
-            val infoCard = MaterialAboutCard.Builder().outline(false).addItem(
+            val infoCard = MaterialAboutCard.Builder().addItem(
                 MaterialAboutTitleItem.Builder().text(getString(R.string.app_name))
                     .icon(R.drawable.ic_launcher_144dp).build()
             ).addItem(
@@ -69,7 +69,7 @@ class AboutFragment : MaterialAboutFragment() {
                 )
             ).build()
 
-            val authorCard = MaterialAboutCard.Builder().outline(false).title("Author").addItem(
+            val authorCard = MaterialAboutCard.Builder().title("Author").addItem(
                 MaterialAboutTitleItem.Builder().text("Marbat87").desc("Italy")
                     .icon(R.drawable.ic_brand_icon).build()
             ).addItem(
@@ -93,7 +93,7 @@ class AboutFragment : MaterialAboutFragment() {
                     }.build()
             ).build()
 
-            val miscCard = MaterialAboutCard.Builder().outline(false).addItem(
+            val miscCard = MaterialAboutCard.Builder().addItem(
                 MaterialAboutActionItem.Builder().text(R.string.changelog)
                     .icon(R.drawable.list_alt_24px).setOnClickAction {
                         activity?.let {

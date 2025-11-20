@@ -315,21 +315,6 @@ fun ThemeableActivity.openCanto(
 
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
-fun Activity.getVersionCodeP(): Int {
-    return packageManager.getPackageInfo(packageName).longVersionCode.toInt()
-}
-
-@Suppress("DEPRECATION")
-fun Activity.getVersionCodeLegacy(): Int {
-    return packageManager.getPackageInfo(packageName).versionCode
-}
-
-fun Activity.getVersionCode(): Int {
-    return if (OSUtils.hasP()) getVersionCodeP()
-    else getVersionCodeLegacy()
-}
-
 fun Activity.overrideOpenTransition(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
     if (OSUtils.hasU()) overrideOpenTransitionU(enterAnim, exitAnim)
     else overrideOpenTransitionLegacy(enterAnim, exitAnim)

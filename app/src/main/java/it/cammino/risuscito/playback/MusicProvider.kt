@@ -119,7 +119,7 @@ internal constructor(
             Log.d(
                 TAG,
                 "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext)
-                    .getString(Utility.SYSTEM_LANGUAGE, "")
+                    .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY)
             )
 
 //            val mNewBase = mContext

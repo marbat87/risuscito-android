@@ -28,21 +28,21 @@ class ListaPersonalizzata : Serializable {
 
     //restituisce il titolo della posizione all'indice "index"
     fun getNomePosizione(index: Int): String {
-        return if (index < 0 || index >= numPosizioni) StringUtils.EMPTY else posizioni[index].orEmpty()
+        return if (index !in 0..<numPosizioni) StringUtils.EMPTY else posizioni[index].orEmpty()
             .trim()
 
     }
 
     //restituisce il titolo della canto in posizione "index"
     fun getCantoPosizione(index: Int): String {
-        if (index < 0 || index >= numPosizioni)
+        if (index !in 0..<numPosizioni)
             return StringUtils.EMPTY
         return canti[index].orEmpty().trim()
     }
 
     //restituisce il titolo della canto in posizione "index"
     fun getNotaPosizione(index: Int): String {
-        if (index < 0 || index >= numPosizioni)
+        if (index !in 0..<numPosizioni)
             return StringUtils.EMPTY
         //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
         @Suppress("SENSELESS_COMPARISON")
@@ -78,7 +78,7 @@ class ListaPersonalizzata : Serializable {
         if (titoloCanto.isNullOrBlank())
             return -1
 
-        if (posizione < 0 || posizione >= MAX_POSIZIONI || posizione >= numPosizioni)
+        if (posizione !in 0..<MAX_POSIZIONI || posizione >= numPosizioni)
             return -2
 
         canti[posizione] = titoloCanto.trim()
@@ -87,7 +87,7 @@ class ListaPersonalizzata : Serializable {
 
     //rimuove il canto alla posizione indicata
     fun removeCanto(posizione: Int): Int {
-        if (posizione < 0 || posizione >= MAX_POSIZIONI)
+        if (posizione !in 0..<MAX_POSIZIONI)
             return -1
 
         canti[posizione] = StringUtils.EMPTY
@@ -102,7 +102,7 @@ class ListaPersonalizzata : Serializable {
         if (testoNota == null)
             return -1
 
-        if (posizione < 0 || posizione >= MAX_POSIZIONI || posizione >= numPosizioni)
+        if (posizione !in 0..<MAX_POSIZIONI || posizione >= numPosizioni)
             return -2
         //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
         @Suppress("SENSELESS_COMPARISON")
@@ -118,7 +118,7 @@ class ListaPersonalizzata : Serializable {
 
     //rimuove la nota alla posizione indicata
     fun removeNota(posizione: Int): Int {
-        if (posizione < 0 || posizione >= MAX_POSIZIONI)
+        if (posizione !in 0..<MAX_POSIZIONI)
             return -1
         //Serve perchè note è stato aggiunto in fase successiva e quindi negli oggetti già salvati a DB è nullo
         @Suppress("SENSELESS_COMPARISON")
@@ -148,7 +148,7 @@ class ListaPersonalizzata : Serializable {
 
     // rimuove la posizione all'indice "index"
     fun removePosizione(index: Int): Int {
-        if (index < 0 || index >= MAX_POSIZIONI)
+        if (index !in 0..<MAX_POSIZIONI)
             return -1
 
         val newPosizioni = arrayOfNulls<String>(20)

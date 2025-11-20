@@ -47,8 +47,8 @@ fun AddToDropDownMenu(
     onDismissRequest: () -> Unit
 ) {
 
-    var parolaExpanded by remember { mutableStateOf(false) }
-    var eucarestiaExpanded by remember { mutableStateOf(false) }
+    val parolaExpanded = remember { mutableStateOf(false) }
+    val eucarestiaExpanded = remember { mutableStateOf(false) }
     var subMenuExpanded by remember { mutableIntStateOf(0) }
     val pref = PreferenceManager.getDefaultSharedPreferences(fragment.requireContext())
 
@@ -75,7 +75,7 @@ fun AddToDropDownMenu(
             text = stringResource(R.string.title_activity_canti_parola),
             onClick = {
                 onDismissRequest()
-                parolaExpanded = true
+                parolaExpanded.value = true
             }
         )
 
@@ -83,7 +83,7 @@ fun AddToDropDownMenu(
             text = stringResource(R.string.title_activity_canti_eucarestia),
             onClick = {
                 onDismissRequest()
-                eucarestiaExpanded = true
+                eucarestiaExpanded.value = true
             }
         )
 
@@ -101,8 +101,8 @@ fun AddToDropDownMenu(
     }
 
     DropdownMenu(
-        expanded = parolaExpanded,
-        onDismissRequest = { parolaExpanded = false },
+        expanded = parolaExpanded.value,
+        onDismissRequest = { parolaExpanded.value = false },
         offset = offset
     ) {
         DropdownMenuItem(
@@ -114,7 +114,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.canto_iniziale)) },
             onClick = {
-                parolaExpanded = false
+                parolaExpanded.value = false
                 viewModel.addToListaNoDup(1, 1, fragment, dialogTag2)
             }
         )
@@ -122,7 +122,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.prima_lettura)) },
             onClick = {
-                parolaExpanded = false
+                parolaExpanded.value = false
                 viewModel.addToListaNoDup(1, 2, fragment, dialogTag2)
             }
         )
@@ -130,7 +130,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.seconda_lettura)) },
             onClick = {
-                parolaExpanded = false
+                parolaExpanded.value = false
                 viewModel.addToListaNoDup(1, 3, fragment, dialogTag2)
             }
         )
@@ -138,7 +138,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.terza_lettura)) },
             onClick = {
-                parolaExpanded = false
+                parolaExpanded.value = false
                 viewModel.addToListaNoDup(1, 4, fragment, dialogTag2)
             }
         )
@@ -147,7 +147,7 @@ fun AddToDropDownMenu(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.canto_pace)) },
                 onClick = {
-                    parolaExpanded = false
+                    parolaExpanded.value = false
                     viewModel.addToListaNoDup(1, 6, fragment, dialogTag2)
                 }
             )
@@ -156,7 +156,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.canto_fine)) },
             onClick = {
-                parolaExpanded = false
+                parolaExpanded.value = false
                 viewModel.addToListaNoDup(1, 5, fragment, dialogTag2)
             }
         )
@@ -164,8 +164,8 @@ fun AddToDropDownMenu(
     }
 
     DropdownMenu(
-        expanded = eucarestiaExpanded,
-        onDismissRequest = { eucarestiaExpanded = false },
+        expanded = eucarestiaExpanded.value,
+        onDismissRequest = { eucarestiaExpanded.value = false },
         offset = offset
     ) {
         DropdownMenuItem(
@@ -177,7 +177,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.canto_iniziale)) },
             onClick = {
-                eucarestiaExpanded = false
+                eucarestiaExpanded.value = false
                 viewModel.addToListaNoDup(2, 1, fragment, dialogTag2)
             }
         )
@@ -186,7 +186,7 @@ fun AddToDropDownMenu(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.seconda_lettura)) },
                 onClick = {
-                    eucarestiaExpanded = false
+                    eucarestiaExpanded.value = false
                     viewModel.addToListaNoDup(2, 6, fragment, dialogTag2)
                 }
             )
@@ -195,7 +195,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.canto_pace)) },
             onClick = {
-                eucarestiaExpanded = false
+                eucarestiaExpanded.value = false
                 viewModel.addToListaNoDup(2, 2, fragment, dialogTag2)
             }
         )
@@ -204,7 +204,7 @@ fun AddToDropDownMenu(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.canto_offertorio)) },
                 onClick = {
-                    eucarestiaExpanded = false
+                    eucarestiaExpanded.value = false
                     viewModel.addToListaNoDup(2, 8, fragment, dialogTag2)
                 }
             )
@@ -214,7 +214,7 @@ fun AddToDropDownMenu(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.santo)) },
                 onClick = {
-                    eucarestiaExpanded = false
+                    eucarestiaExpanded.value = false
                     viewModel.addToListaNoDup(2, 8, fragment, dialogTag2)
                 }
             )
@@ -223,7 +223,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.canto_pane)) },
             onClick = {
-                eucarestiaExpanded = false
+                eucarestiaExpanded.value = false
                 viewModel.addToListaNoDup(2, 3, fragment, dialogTag2)
             }
         )
@@ -231,7 +231,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.canto_vino)) },
             onClick = {
-                eucarestiaExpanded = false
+                eucarestiaExpanded.value = false
                 ListeUtils.addToListaDup(fragment, 2, 4, viewModel.idDaAgg)
             }
         )
@@ -239,7 +239,7 @@ fun AddToDropDownMenu(
         DropdownMenuItem(
             text = { Text(stringResource(R.string.canto_fine)) },
             onClick = {
-                eucarestiaExpanded = false
+                eucarestiaExpanded.value = false
                 viewModel.addToListaNoDup(2, 5, fragment, dialogTag2)
             }
         )

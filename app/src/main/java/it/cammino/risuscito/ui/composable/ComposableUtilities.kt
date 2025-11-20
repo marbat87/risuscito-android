@@ -5,6 +5,8 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.navigationSuiteType
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 
 
@@ -36,6 +38,17 @@ fun hasDrawer(): Boolean {
     val returnValue = navigationSuiteType == NavigationSuiteType.ShortNavigationBarCompact
             || navigationSuiteType == NavigationSuiteType.ShortNavigationBarMedium
     Log.d(TAG, "hasDrawer: $returnValue")
+    return returnValue
+}
+
+@Composable
+fun layoutMargins(): Dp {
+    val sizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    var returnValue = 16.dp
+    if (sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+        returnValue = 24.dp
+    }
+    Log.d(TAG, "layoutMargins: $returnValue")
     return returnValue
 }
 

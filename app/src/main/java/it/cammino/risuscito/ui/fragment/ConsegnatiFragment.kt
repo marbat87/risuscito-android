@@ -3,8 +3,6 @@ package it.cammino.risuscito.ui.fragment
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -44,11 +42,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.postDelayed
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
@@ -364,16 +360,9 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                         }
 
                     mMainActivity?.createOptionsMenu(
-                        consegnatiResetOptionMenu,
-                        null
+                        if (passaggiSelectedListState?.isEmpty() == true) consegnatiOptionMenu else consegnatiResetOptionMenu,
+                        this@ConsegnatiFragment
                     )
-
-                    Handler(Looper.getMainLooper()).postDelayed(1) {
-                        mMainActivity?.createOptionsMenu(
-                            if (passaggiSelectedListState?.isEmpty() == true) consegnatiOptionMenu else consegnatiResetOptionMenu,
-                            this@ConsegnatiFragment
-                        )
-                    }
 
                 }
 
@@ -413,13 +402,13 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
         view.requestFocus()
     }
 
-    override fun onResume() {
-        super.onResume()
-        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
-            fabIntro()
-        }
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+//        if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
+//            fabIntro()
+//        }
+//    }
 
     private fun startCab() {
         mMainActivity?.updateActionModeTitle("")
@@ -427,7 +416,6 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
             when (itemRoute) {
                 ActionModeItem.SELECTNONE -> {
                     consegnatiViewModel.consegnatiSelectedList.value = emptyList()
-                    true
                 }
 
                 ActionModeItem.SELECTALL -> {
@@ -435,18 +423,15 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                         consegnatiViewModel.consegnatiSelectedList.value =
                             (consegnati.map { it.id })
                     }
-                    true
                 }
 
                 ActionModeItem.UNDO -> {
                     mMainActivity?.destroyActionMode()
                     initFab()
-                    true
                 }
 
 //                ActionModeItem.HELP -> {
 //                    managerIntro()
-//                    true
 //                }
 
                 else -> {}
@@ -469,8 +454,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
         )
     }
 
-    private fun fabIntro() {
-        //TODO
+//    private fun fabIntro() {
 //        mMainActivity?.getFab()?.let { fab ->
 //            val colorOnPrimary =
 //                MaterialColors.getColor(
@@ -503,7 +487,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
 //                    }
 //                })
 //        }
-    }
+//    }
 
 //    private fun managerIntro() {
 //        val colorOnPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
@@ -617,13 +601,11 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
     }
 
     private fun openPassageModal(item: RisuscitoListItem) {
-        mMainActivity?.let { activity ->
-            consegnatiViewModel.mIdConsegnatoSelected = item.idConsegnato
-            consegnatiViewModel.mIdCantoSelected = item.id
-            consegnatiViewModel.dialogPrefill = item.numPassaggio
-            consegnatiViewModel.dialogTag = SimpleDialogTag.ADD_PASSAGE_DIALOG
-            consegnatiViewModel.showAlertDialog.value = true
-        }
+        consegnatiViewModel.mIdConsegnatoSelected = item.idConsegnato
+        consegnatiViewModel.mIdCantoSelected = item.id
+        consegnatiViewModel.dialogPrefill = item.numPassaggio
+        consegnatiViewModel.dialogTag = SimpleDialogTag.ADD_PASSAGE_DIALOG
+        consegnatiViewModel.showAlertDialog.value = true
     }
 
     override fun onItemClick(route: String) {
@@ -636,9 +618,9 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                 consegnatiViewModel.passaggiSelectedList.value = emptyList()
             }
 
-            OptionMenuItem.Help.route -> {
-                fabIntro()
-            }
+//            OptionMenuItem.Help.route -> {
+//                fabIntro()
+//            }
         }
     }
 

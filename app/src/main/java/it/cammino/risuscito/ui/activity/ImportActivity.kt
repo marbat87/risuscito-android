@@ -2,17 +2,23 @@ package it.cammino.risuscito.ui.activity
 
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Observer
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.cammino.risuscito.R
 import it.cammino.risuscito.services.XmlImportService
+import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.utils.extension.capitalize
 import it.cammino.risuscito.viewmodels.ImportActivityViewModel
 
@@ -29,36 +35,77 @@ class ImportActivity : AppCompatActivity() {
             Log.d(TAG, "onCreate: schema = " + data.scheme)
 
             intent.data = null
-            MaterialAlertDialogBuilder(this).apply {
-                setTitle(R.string.app_name)
-                setMessage(R.string.dialog_import)
-                setPositiveButton(getString(R.string.import_confirm).capitalize(context)) { _, _ ->
-                    val builder = Data.Builder()
-                    builder.putString(XmlImportService.TAG_IMPORT_DATA, data.toString())
-                    val blurRequest = OneTimeWorkRequestBuilder<XmlImportService>()
-                        .setInputData(builder.build())
-                        .addTag(ImportActivityViewModel.TAG_IMPORT_JOB)
-                        .build()
-                    mViewModel.workManager.enqueueUniqueWork(
-                        ImportActivityViewModel.TAG_IMPORT_JOB,
-                        ExistingWorkPolicy.REPLACE,
-                        blurRequest
-                    )
-                }
-                setNegativeButton(getString(R.string.cancel).capitalize(context)) { _, _ ->
-                    finish()
-                }
-                setCancelable(false)
 
-                setOnKeyListener { arg0, keyCode, event ->
-                    if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                        arg0.dismiss()
-                        finish()
-                        true
-                    } else
-                        false
+            setContent {
+
+                val showAlertDialog = remember { mutableStateOf(true) }
+
+                RisuscitoTheme {
+                    if (showAlertDialog.value) {
+                        SimpleAlertDialog(
+                            onDismissRequest = {
+                                showAlertDialog.value = false
+                                finish()
+                            },
+                            onConfirmation = { _ ->
+                                showAlertDialog.value = false
+                                val builder = Data.Builder()
+                                builder.putString(XmlImportService.TAG_IMPORT_DATA, data.toString())
+                                val blurRequest = OneTimeWorkRequestBuilder<XmlImportService>()
+                                    .setInputData(builder.build())
+                                    .addTag(ImportActivityViewModel.TAG_IMPORT_JOB)
+                                    .build()
+                                mViewModel.workManager.enqueueUniqueWork(
+                                    ImportActivityViewModel.TAG_IMPORT_JOB,
+                                    ExistingWorkPolicy.REPLACE,
+                                    blurRequest
+                                )
+                            },
+                            dialogTitle = stringResource(R.string.app_name),
+                            dialogText = stringResource(R.string.dialog_import),
+                            iconRes = R.drawable.file_open_24px,
+                            confirmButtonText = stringResource(R.string.import_confirm).capitalize(
+                                LocalContext.current
+                            ),
+                            dismissButtonText = stringResource(R.string.cancel).capitalize(
+                                LocalContext.current
+                            ),
+                            dialogTag = SimpleDialogTag.FILE_IMPORT
+                        )
+                    }
                 }
-            }.show()
+            }
+
+//            MaterialAlertDialogBuilder(this).apply {
+//                setTitle(R.string.app_name)
+//                setMessage(R.string.dialog_import)
+//                setPositiveButton(getString(R.string.import_confirm).capitalize(context)) { _, _ ->
+//                    val builder = Data.Builder()
+//                    builder.putString(XmlImportService.TAG_IMPORT_DATA, data.toString())
+//                    val blurRequest = OneTimeWorkRequestBuilder<XmlImportService>()
+//                        .setInputData(builder.build())
+//                        .addTag(ImportActivityViewModel.TAG_IMPORT_JOB)
+//                        .build()
+//                    mViewModel.workManager.enqueueUniqueWork(
+//                        ImportActivityViewModel.TAG_IMPORT_JOB,
+//                        ExistingWorkPolicy.REPLACE,
+//                        blurRequest
+//                    )
+//                }
+//                setNegativeButton(getString(R.string.cancel).capitalize(context)) { _, _ ->
+//                    finish()
+//                }
+//                setCancelable(false)
+//
+//                setOnKeyListener { arg0, keyCode, event ->
+//                    if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+//                        arg0.dismiss()
+//                        finish()
+//                        true
+//                    } else
+//                        false
+//                }
+//            }.show()
             mViewModel.outputWorkInfos.observe(this, workInfosObserver())
         }
 

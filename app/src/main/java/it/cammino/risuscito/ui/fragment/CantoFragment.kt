@@ -1056,7 +1056,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                                     notaCambioMin = if (notaCambioMin.length == 1)
                                         notaCambioMin.lowercase(systemLocale)
                                     else
-                                        notaCambioMin.substring(0, 1)
+                                        notaCambioMin.take(1)
                                             .lowercase(systemLocale) + notaCambioMin.substring(
                                             1
                                         )
@@ -1942,7 +1942,6 @@ open class CantoFragment : Fragment(), SnackBarFragment {
 
             FabActionItem.FAVORITE.id -> {
                 lifecycleScope.launch { updateFavorite() }
-                true
             }
         }
     }

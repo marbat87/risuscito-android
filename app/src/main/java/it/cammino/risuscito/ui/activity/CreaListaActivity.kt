@@ -35,7 +35,6 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -75,6 +74,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.SwipeableRisuscitoListItem
+import it.cammino.risuscito.ui.composable.ClassicBackNavitagionButton
 import it.cammino.risuscito.ui.composable.DraggableDismissableListItem
 import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.Hint
@@ -201,12 +201,9 @@ class CreaListaActivity : ThemeableActivity() {
                                 Text(mCreaListaViewModel.tempTitle.value)
                             },
                             navigationIcon = {
-                                IconButton(onClick = { onOptionsItemSelected(ActionModeItem.CLOSE) }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.arrow_back_24px),
-                                        contentDescription = stringResource(R.string.material_drawer_close)
-                                    )
-                                }
+                                ClassicBackNavitagionButton(
+                                    onBackPressedAction = { onOptionsItemSelected(ActionModeItem.CLOSE) }
+                                )
                             },
                             actions = {
                                 AppBarRow(overflowIndicator = {}) {
@@ -347,7 +344,7 @@ class CreaListaActivity : ThemeableActivity() {
                                 ReorderableItem(
                                     state = reorderableLazyListState,
                                     key = item.identifier
-                                ) { isDragging ->
+                                ) { _ ->
                                     val interactionSource =
                                         remember { MutableInteractionSource() }
 

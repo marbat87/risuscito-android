@@ -11,9 +11,6 @@ class MainActivityViewModel(application: Application) : DialogManagerViewModel(a
     var httpRequestState = MutableLiveData(ClientState.STARTED)
     var loginState = MutableLiveData(LOGIN_STATE_STARTED)
     var profileAction = ProfileAction.NONE
-
-    var isTabletWithFixedDrawer: Boolean = false
-    var isTabletWithNoFixedDrawer: Boolean = false
     var catalogRefreshReady = MutableLiveData(true)
     var lastPlaybackState = MutableLiveData<PlaybackStateCompat>()
     var medatadaCompat = MutableLiveData<MediaMetadataCompat>()

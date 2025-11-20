@@ -83,6 +83,8 @@ enum class SimpleDialogTag {
     DELETE_MP3,
     DELETE_LINK,
     DOWNLINK_CHOOSE,
-    ONLY_LINK
+    ONLY_LINK,
+    PERMISSION_ASK,
+    FILE_IMPORT
 
 }

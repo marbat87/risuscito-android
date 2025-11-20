@@ -1,12 +1,14 @@
 package it.cammino.risuscito.ui.composable.dialogs
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -103,6 +105,7 @@ fun MenuSelectabletem(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AccountMenuImage(
     onProfileClick: () -> Unit,
@@ -120,9 +123,9 @@ fun AccountMenuImage(
                 model = profilePhotoUrl,
                 contentDescription = "Profile Button",
                 modifier = Modifier
-                    .clip(CircleShape)
+                    .clip(MaterialShapes.Cookie9Sided.toShape())
                     .size(32.dp),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 placeholder = painterResource(R.drawable.account_circle_24px),
             )
         } else {
@@ -130,7 +133,9 @@ fun AccountMenuImage(
                 painter = painterResource(R.drawable.google_icon_56dp),
                 contentDescription = "Login Button",
                 tint = Color.Unspecified,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(MaterialShapes.Cookie9Sided.toShape())
             )
         }
     }

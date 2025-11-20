@@ -16,12 +16,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
@@ -37,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import it.cammino.risuscito.ui.composable.dialogs.ChangelogBottomSheet
 import it.cammino.risuscito.ui.composable.dialogs.RisuscitoBottomSheet
 import it.cammino.risuscito.ui.composable.hasDrawer
 import it.cammino.risuscito.viewmodels.SharedBottomSheetViewModel
@@ -83,7 +83,7 @@ fun MainScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
     LaunchedEffect(
         scrollBehavior,
@@ -181,6 +181,8 @@ fun MainScreen(
                     pm = pm
                 )
 
+                ChangelogBottomSheet()
+
             }
         }
 
@@ -219,7 +221,7 @@ fun MainScreen(
                     selected = currentRoute == screen.route,
                     onClick = {
                         resetTab.value = true
-                        scrollBehavior.state.heightOffset = 0F
+                        scrollBehavior.scrollOffset = 0F
                         navController.navigate(screen.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true

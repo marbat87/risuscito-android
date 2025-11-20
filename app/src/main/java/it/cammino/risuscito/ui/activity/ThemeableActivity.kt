@@ -55,8 +55,6 @@ import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
 import it.cammino.risuscito.utils.extension.createTaskDescription
 import it.cammino.risuscito.utils.extension.isDarkMode
-import it.cammino.risuscito.utils.extension.isLandscape
-import it.cammino.risuscito.utils.extension.isOnTablet
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ProgressDialogManagerViewModel
 import it.cammino.risuscito.viewmodels.SharedSnackBarViewModel
@@ -102,13 +100,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         Log.d(TAG, "isDarkMode: $isDarkMode")
         convertIntPreferences()
-
-        Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
-        Log.d(TAG, "onCreate: isLandscape = $isLandscape")
-        mViewModel.isTabletWithFixedDrawer = isOnTablet && isLandscape
-        Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithFixedDrawer}")
-        mViewModel.isTabletWithNoFixedDrawer = isOnTablet && !isLandscape
-        Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
 
         setTaskDescription(this.createTaskDescription(TAG))
 

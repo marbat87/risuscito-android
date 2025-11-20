@@ -370,24 +370,22 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
     }
 
     private suspend fun deleteListDialog() {
-        mMainActivity?.let { mActivity ->
-            mCustomListsViewModel.listaDaCanc = sharedTabViewModel.tabsSelectedIndex.intValue - 2
-            mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
-            val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-            val lista = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
-                mDao.getListById(mCustomListsViewModel.idDaCanc)
-            }
-            mCustomListsViewModel.titoloDaCanc = lista?.titolo
-            mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
-
-            mCustomListsViewModel.dialogTag = SimpleDialogTag.DELETE_LIST
-            mCustomListsViewModel.dialogTitle.postValue(getString(R.string.action_remove_list))
-            mCustomListsViewModel.content.postValue(getString(R.string.delete_list_dialog))
-            mCustomListsViewModel.iconRes.postValue(R.drawable.delete_24px)
-            mCustomListsViewModel.positiveButton.postValue(getString(R.string.delete_confirm))
-            mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
-            mCustomListsViewModel.showAlertDialog.postValue(true)
+        mCustomListsViewModel.listaDaCanc = sharedTabViewModel.tabsSelectedIndex.intValue - 2
+        mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
+        val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+        val lista = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            mDao.getListById(mCustomListsViewModel.idDaCanc)
         }
+        mCustomListsViewModel.titoloDaCanc = lista?.titolo
+        mCustomListsViewModel.celebrazioneDaCanc = lista?.lista
+
+        mCustomListsViewModel.dialogTag = SimpleDialogTag.DELETE_LIST
+        mCustomListsViewModel.dialogTitle.postValue(getString(R.string.action_remove_list))
+        mCustomListsViewModel.content.postValue(getString(R.string.delete_list_dialog))
+        mCustomListsViewModel.iconRes.postValue(R.drawable.delete_24px)
+        mCustomListsViewModel.positiveButton.postValue(getString(R.string.delete_confirm))
+        mCustomListsViewModel.negativeButton.postValue(getString(R.string.cancel))
+        mCustomListsViewModel.showAlertDialog.postValue(true)
     }
 
     private suspend fun deleteList() {

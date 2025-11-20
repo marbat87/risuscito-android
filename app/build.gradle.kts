@@ -19,8 +19,8 @@ android {
         minSdk = 23
         targetSdk = 36
         multiDexEnabled = true
-        versionCode = 6010
-        versionName = "6.0.0"
+        versionCode = 6100
+        versionName = "6.1.0"
 
     }
 
@@ -39,14 +39,14 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             ndk {
                 debugSymbolLevel = "FULL"
             }
         }
         getByName("debug") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
@@ -77,13 +77,16 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.expandProjection", "true")
     arg("room.generateKotlin", "true")
-} val roomVersion = "2.8.3"
+}
+val roomVersion = "2.8.4"
+val kotpreferences = "3.0.1"
+val composepreferences = "2.0.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.activity:activity-ktx:1.11.0")
+    implementation("androidx.activity:activity-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.appcompat:appcompat-resources:1.7.1")
     implementation("androidx.core:core-ktx:1.17.0")
@@ -97,14 +100,14 @@ dependencies {
     implementation("androidx.fragment:fragment-compose:1.8.9")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.11.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.gms:play-services-auth:21.4.0")
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-auth")
@@ -112,9 +115,7 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.code.gson:gson:2.13.2")
-    implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.leinardi.android:speed-dial:3.3.0")
-    implementation("com.github.MFlisar:changelog:1.1.7")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.jakewharton:process-phoenix:3.0.0")
@@ -123,8 +124,14 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
     implementation("sh.calvin.reorderable:reorderable:3.0.0")
+    implementation("io.github.mflisar.composechangelog:core-android:3.0.0")
+    implementation("io.github.mflisar.composechangelog:statesaver-preferences-android:3.0.0") // core
+    implementation("io.github.mflisar.composepreferences:core:$composepreferences") // modules
+    implementation("io.github.mflisar.composepreferences:screen-bool:$composepreferences")
+    implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
+    implementation("io.github.mflisar.composepreferences:screen-number:${composepreferences}")
 
-    implementation(platform("androidx.compose:compose-bom:2025.11.00"))
+    implementation(platform("androidx.compose:compose-bom:2025.11.01"))
     // Material Design 3
     implementation("androidx.compose.material3:material3:1.5.0-alpha04")
     // Android Studio Preview support

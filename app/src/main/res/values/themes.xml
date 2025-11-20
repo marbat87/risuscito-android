@@ -47,14 +47,6 @@
         <item name="risuscito_regular_font">@font/googlesans_regular</item>
         <item name="risuscito_medium_font">@font/googlesans_medium</item>
 
-<!--        <item name="android:textViewStyle">@style/Widget.AppCompat.TextView.Risuscito</item>-->
-<!--        <item name="editTextStyle">@style/Widget.AppCompat.EditText.Risuscito</item>-->
-
-<!--        <item name="windowActionModeOverlay">true</item>-->
-
-<!--        <item name="tabStyle">@style/Widget.Risuscito.TabLayout</item>-->
-
-<!--        <item name="actionModeCloseDrawable">@drawable/close_24px</item>-->
         <item name="textAppearanceDisplayLarge">@style/TextAppearance.Risuscito.DisplayLarge</item>
         <item name="textAppearanceDisplayMedium">@style/TextAppearance.Risuscito.DisplayMedium
         </item>
@@ -73,8 +65,6 @@
         <item name="textAppearanceBodySmall">@style/TextAppearance.Risuscito.BodySmall</item>
         <item name="textAppearanceLabelLarge">@style/TextAppearance.Risuscito.LabelLarge</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.Risuscito.LabelSmall</item>
-
-        <item name="preferenceTheme">@style/RisuscitoPreferenceThemeOverlay</item>
 
         <item name="risuscitoToolbarWithCloseButtonStyle">
             @style/Widget.Risuscito.Toolbar.WithCloseButton
@@ -110,16 +100,6 @@
             @dimen/m3_searchbar_margin_vertical
         </item>
     </style>
-
-<!--    <style name="Widget.AppCompat.TextView.Risuscito">-->
-<!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-<!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-<!--    </style>-->
-
-<!--    <style name="Widget.AppCompat.EditText.Risuscito">-->
-<!--        <item name="fontFamily">?risuscito_regular_font</item>-->
-<!--        <item name="android:fontFamily">?risuscito_regular_font</item>-->
-<!--    </style>-->
 
     <style name="TextAppearance.Risuscito.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
         <item name="fontFamily">?risuscito_regular_font</item>
@@ -186,7 +166,6 @@
         <item name="android:fontFamily">?risuscito_medium_font</item>
     </style>
 
-
     <style name="TextAppearance.Risuscito.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
         <item name="fontFamily">?risuscito_medium_font</item>
         <item name="android:fontFamily">?risuscito_medium_font</item>
@@ -195,16 +174,6 @@
     <style name="TextAppearance.Risuscito.ActionBar.Title" parent="TextAppearance.Material3.ActionBar.Title">
         <item name="fontFamily">?risuscito_medium_font</item>
         <item name="android:fontFamily">?risuscito_medium_font</item>
-    </style>
-
-    <style name="RisuscitoPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
-        <item name="switchPreferenceCompatStyle">
-            @style/Preference.SwitchPreferenceCompat.Material.Risuscito
-        </item>
-    </style>
-
-    <style name="Preference.SwitchPreferenceCompat.Material.Risuscito">
-        <item name="android:widgetLayout">@layout/preference_widget_material_switch</item>
     </style>
 
 </resources>

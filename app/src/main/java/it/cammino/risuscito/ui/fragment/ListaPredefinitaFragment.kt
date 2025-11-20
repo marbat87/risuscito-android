@@ -583,7 +583,6 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                 ActionModeItem.DELETE -> {
                     mMainActivity?.destroyActionMode()
                     removePositionWithUndo()
-                    true
                 }
 
                 ActionModeItem.SWAP -> {
@@ -595,12 +594,10 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                         Toast.LENGTH_SHORT
                     )
                         .show()
-                    true
                 }
 
                 ActionModeItem.CLOSE -> {
                     mMainActivity?.destroyActionMode()
-                    true
                 }
 
                 else -> {}
@@ -628,7 +625,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
 
     private fun selectItem(selected: Boolean) {
         Log.d(
-            ListaPersonalizzataFragment.Companion.TAG,
+            ListaPersonalizzataFragment.TAG,
             "selectItem: $selected / longclickedPos: $longclickedPos / longClickedChild: $longClickedChild"
         )
         val currentList = mCantiViewModel.posizioniList.value.orEmpty()

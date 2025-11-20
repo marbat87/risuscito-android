@@ -231,17 +231,10 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
 
                 mCronologiaViewModel.cronologiaCanti?.observe(viewLifecycleOwner) { canti ->
                     mCronologiaViewModel.historySortedResult.postValue(canti)
-
                     mMainActivity?.createOptionsMenu(
-                        cleanListOptionMenu,
-                        null
+                        if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
+                        this@HistoryFragment
                     )
-                    Handler(Looper.getMainLooper()).postDelayed(1) {
-                        mMainActivity?.createOptionsMenu(
-                            if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
-                            this@HistoryFragment
-                        )
-                    }
 
                     mCronologiaViewModel.viewMode.value =
                         if (canti.isEmpty()) CronologiaViewModel.ViewMode.EMPTY else CronologiaViewModel.ViewMode.VIEW
@@ -314,13 +307,11 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
                     removeHistories()
                     actionModeOk = true
                     mMainActivity?.destroyActionMode()
-                    true
                 }
 
                 ActionModeItem.CLOSE -> {
                     actionModeOk = false
                     mMainActivity?.destroyActionMode()
-                    true
                 }
 
                 else -> {}

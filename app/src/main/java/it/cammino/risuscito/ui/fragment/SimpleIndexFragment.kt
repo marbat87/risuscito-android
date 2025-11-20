@@ -382,7 +382,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                             })
                     }
 
-                    sharedSearchViewModel.titoli.observe(viewLifecycleOwner) { canti ->
+                    sharedSearchViewModel.titoli.observe(viewLifecycleOwner) { _ ->
                         job.cancel()
                         ricercaStringa()
                     }

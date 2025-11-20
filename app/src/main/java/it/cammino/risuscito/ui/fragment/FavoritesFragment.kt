@@ -231,15 +231,9 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                             ) { getString(it.titleRes) })
 
                     mMainActivity?.createOptionsMenu(
-                        cleanListOptionMenu,
-                        null
+                        if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
+                        this@FavoritesFragment
                     )
-                    Handler(Looper.getMainLooper()).postDelayed(1) {
-                        mMainActivity?.createOptionsMenu(
-                            if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
-                            this@FavoritesFragment
-                        )
-                    }
 
                     mFavoritesViewModel.viewMode.value =
                         if (canti.isEmpty()) FavoritesViewModel.ViewMode.EMPTY else FavoritesViewModel.ViewMode.VIEW
@@ -304,13 +298,11 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                     removeFavoritesWithUndo()
                     actionModeOk = true
                     mMainActivity?.destroyActionMode()
-                    true
                 }
 
                 ActionModeItem.CLOSE -> {
                     actionModeOk = false
                     mMainActivity?.destroyActionMode()
-                    true
                 }
 
                 else -> {}

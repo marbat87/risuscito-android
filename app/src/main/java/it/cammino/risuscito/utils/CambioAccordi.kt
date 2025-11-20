@@ -93,9 +93,9 @@ class CambioAccordi internal constructor(private val mContext: Context) {
 
         if (language == LANGUAGE_UKRAINIAN || language == LANGUAGE_POLISH) {
             primoAccordo = if (primoAccordo.length == 1) primoAccordo.uppercase(locale)
-            else primoAccordo.substring(0, 1).uppercase(locale) + primoAccordo.substring(1)
+            else primoAccordo.take(1).uppercase(locale) + primoAccordo.substring(1)
             cambioAccordo = if (cambioAccordo.length == 1) cambioAccordo.uppercase(locale)
-            else cambioAccordo.substring(0, 1).uppercase(locale) + cambioAccordo.substring(1)
+            else cambioAccordo.take(1).uppercase(locale) + cambioAccordo.substring(1)
         }
 
         var start = 0
@@ -138,10 +138,10 @@ class CambioAccordi internal constructor(private val mContext: Context) {
 
         var primoAccordo: String = primaNota
         primoAccordo = if (primoAccordo.length == 1) primoAccordo.lowercase(locale)
-        else primoAccordo.substring(0, 1).lowercase(locale) + primoAccordo.substring(1)
+        else primoAccordo.take(1).lowercase(locale) + primoAccordo.substring(1)
         var cambioAccordo: String = notaCambio
         cambioAccordo = if (cambioAccordo.length == 1) cambioAccordo.lowercase(locale)
-        else cambioAccordo.substring(0, 1).lowercase(locale) + cambioAccordo.substring(1)
+        else cambioAccordo.take(1).lowercase(locale) + cambioAccordo.substring(1)
 
         val accordiMin: Array<String> = when (language) {
             LANGUAGE_UKRAINIAN -> accordi_uk_lower

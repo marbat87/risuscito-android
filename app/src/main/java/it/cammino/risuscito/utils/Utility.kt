@@ -28,7 +28,7 @@ object Utility {
     // Costanti per le impostazioni
     private val TAG = Utility::class.java.canonicalName
 //    const val VECCHIO_INDICE = "vecchio_indice"
-    const val VECCHIO_INDICE = "vecchio_indice_new"
+//    const val VECCHIO_INDICE = "vecchio_indice_new"
     const val SCREEN_ON = "sempre_acceso"
     const val SYSTEM_LANGUAGE = "lingua_sistema_new_new"
     const val CHANGE_LANGUAGE = "changed_language"
@@ -47,10 +47,10 @@ object Utility {
     internal const val SHOW_EUCARESTIA_PACE = "mostra_eucarestia_pace"
     internal const val PREFERITI_OPEN = "preferiti_open"
     internal const val HISTORY_OPEN = "history_open"
-    internal const val INTRO_CONSEGNATI = "intro_consegnati_test"
-    internal const val INTRO_CONSEGNATI_2 = "intro_consegnati_2_test"
+//    internal const val INTRO_CONSEGNATI = "intro_consegnati_test"
+//    internal const val INTRO_CONSEGNATI_2 = "intro_consegnati_2_test"
     internal const val INTRO_PAGINARENDER = "intro_paginarender_test"
-    internal const val INTRO_CREALISTA = "intro_crealista_test"
+//    internal const val INTRO_CREALISTA = "intro_crealista_test"
     internal const val INTRO_CREALISTA_2 = "intro_crealista_2_test"
     internal const val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
     internal const val NIGHT_MODE = "night_mode"
