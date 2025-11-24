@@ -151,9 +151,4 @@
         <item name="android:fontFamily">?risuscito_medium_font</item>
     </style>
 
-    <style name="TextAppearance.Risuscito.ActionBar.Title" parent="TextAppearance.Material3.ActionBar.Title">
-        <item name="fontFamily">?risuscito_medium_font</item>
-        <item name="android:fontFamily">?risuscito_medium_font</item>
-    </style>
-
 </resources>

@@ -11,14 +11,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -176,18 +174,18 @@ fun MainScreen(
                                 tabsList = tabsList
                             )
                         }
-                        Box {
+//                        Box {
                             AppNavigationHost(navController = navController)
 
                             // LinearProgressIndicator sovrapposto
-                            if (false) {
-                                LinearProgressIndicator(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .align(Alignment.TopCenter)
-                                )
-                            }
-                        }
+//                            if (false) {
+//                                LinearProgressIndicator(
+//                                    modifier = Modifier
+//                                        .fillMaxWidth()
+//                                        .align(Alignment.TopCenter)
+//                                )
+//                            }
+//                        }
                     }
 
 //                if (fabExpanded.value) {

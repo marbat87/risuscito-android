@@ -18,7 +18,6 @@
     <string name="label_play" translatable="false">Play</string>
     <string name="label_restart" translatable="false">Restart</string>
     <string name="error_no_metadata" translatable="false">Unable to retrieve metadata.</string>
-    <string name="material_drawer_open" translatable="false">Open</string>
     <string name="material_drawer_close" translatable="false">Close</string>
     <string name="uri_play_store_app_website" translatable="false">https://play.google.com/store/apps/details?id=%s</string>
     <string name="more" translatable="false">More</string>
