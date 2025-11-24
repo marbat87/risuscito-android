@@ -33,11 +33,11 @@ fun hasFiveMenuElements(): Boolean {
 }
 
 @Composable
-fun hasDrawer(): Boolean {
+fun hasNavigationBar(): Boolean {
     val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfo())
     val returnValue = navigationSuiteType == NavigationSuiteType.ShortNavigationBarCompact
             || navigationSuiteType == NavigationSuiteType.ShortNavigationBarMedium
-    Log.d(TAG, "hasDrawer: $returnValue")
+    Log.d(TAG, "hasNavigationBar: $returnValue")
     return returnValue
 }
 

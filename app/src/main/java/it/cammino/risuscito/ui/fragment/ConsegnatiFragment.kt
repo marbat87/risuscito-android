@@ -50,9 +50,9 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Consegnato
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.risuscitoListItem
-import it.cammino.risuscito.ui.composable.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.CheckableListItem
 import it.cammino.risuscito.ui.composable.PassageListItem
+import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.dialogs.ListChoiceAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.PassaggesDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
@@ -68,7 +68,6 @@ import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.getTypedValueResId
-import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
@@ -366,16 +365,11 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
 
                 }
 
-                BackHandler(backCallbackEnabled.value || mMainActivity?.isDrawerOpen() == true) {
+                BackHandler(backCallbackEnabled.value) {
                     Log.d(TAG, "handleOnBackPressed")
-                    when {
-                        mMainActivity?.isDrawerOpen() == true -> mMainActivity?.closeDrawer()
-                        else -> {
-                            mMainActivity?.destroyActionMode()
-                            mMainActivity?.expandToolbar()
-                            initFab()
-                        }
-                    }
+                    mMainActivity?.destroyActionMode()
+                    mMainActivity?.expandToolbar()
+                    initFab()
                 }
 
             }

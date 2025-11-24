@@ -108,14 +108,13 @@ fun MenuSelectabletem(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AccountMenuImage(
-    onProfileClick: () -> Unit,
-    onLoginClick: () -> Unit,
+    onClick: (Boolean) -> Unit,
     loggedIn: Boolean,
     profilePhotoUrl: String
 ) {
     IconButton(
         onClick = {
-            if (loggedIn) onProfileClick() else onLoginClick()
+            onClick(loggedIn)
         }
     ) {
         if (loggedIn) {

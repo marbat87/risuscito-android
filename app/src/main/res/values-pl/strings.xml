@@ -324,5 +324,6 @@
     <string name="rate_five_stars">Oceń tę aplikację na 5 gwiazdek</string>
     <string name="share_app">Udostępnij tą aplikację</string>
     <string name="update_app">Zaktualizuj tę aplikację</string>
-    <string name="select_none">Select None</string>
+    <string name="select_none">Wybierz opcję Brak</string>
+    <string name="select_one_song">Wybierz piosenkę</string>
 </resources>

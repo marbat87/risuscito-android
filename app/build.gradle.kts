@@ -7,6 +7,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.compose") version "2.2.21"
+    id("kotlin-parcelize")
 }
 
 
@@ -52,7 +53,6 @@ android {
 
     buildFeatures {
         compose = true
-        viewBinding = true
     }
     namespace = "it.cammino.risuscito"
 
@@ -84,7 +84,7 @@ val composepreferences = "2.0.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.material:material:1.13.0")
+    implementation("com.google.android.material:material:1.14.0-alpha07")
     implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.activity:activity-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
@@ -96,8 +96,6 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.media:media:1.7.1")
     implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.9.6")
-    implementation("androidx.fragment:fragment-compose:1.8.9")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
@@ -129,7 +127,7 @@ dependencies {
     implementation("io.github.mflisar.composepreferences:core:$composepreferences") // modules
     implementation("io.github.mflisar.composepreferences:screen-bool:$composepreferences")
     implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
-    implementation("io.github.mflisar.composepreferences:screen-number:${composepreferences}")
+    implementation("io.github.fornewid:material-motion-compose-core:2.0.1")
 
     implementation(platform("androidx.compose:compose-bom:2025.11.01"))
     // Material Design 3
@@ -146,4 +144,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.animation:animation-graphics")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
+    implementation("androidx.compose.material3.adaptive:adaptive-navigation")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.9.6")
+    implementation("androidx.fragment:fragment-compose:1.8.9")
 }

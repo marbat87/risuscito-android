@@ -81,11 +81,11 @@ import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.ui.activity.PaginaRenderFullScreen
 import it.cammino.risuscito.ui.activity.ThemeableActivity
-import it.cammino.risuscito.ui.composable.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.MediaPlayerView
 import it.cammino.risuscito.ui.composable.ScrollPlayerView
 import it.cammino.risuscito.ui.composable.StateNotificationView
 import it.cammino.risuscito.ui.composable.WebView
+import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.dialogs.CantoDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.DropDownMenuItem
 import it.cammino.risuscito.ui.composable.dialogs.ProgressDialog
@@ -501,7 +501,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                                             showScrolling(false)
                                         }
                                         saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-                                        mMainActivity?.finishAfterTransitionWrapper()
+                                        closeCanto()
                                     }
 
                                     else -> {}
@@ -613,7 +613,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                                             showScrolling(false)
                                         }
                                         saveZoom(andSpeedAlso = true, andSaveTabAlso = true)
-                                        mMainActivity?.finishAfterTransitionWrapper()
+                                        closeCanto()
                                     }
 
                                     else -> {}
@@ -905,8 +905,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                 showScrolling(false)
             }
             saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
-            if (mCantiViewModel.inActivity)
-                activity?.finishAfterTransitionWrapper()
+            closeCanto()
         } else {
             mCantiViewModel.dialogTag = SimpleDialogTag.SAVE_TAB
             mCantiViewModel.dialogTitle.value = getString(R.string.dialog_save_tab_title)
@@ -921,6 +920,15 @@ open class CantoFragment : Fragment(), SnackBarFragment {
         super.onResume()
         Log.d(TAG, "onResume: ")
         enableMusicControls(mCantiViewModel.mostraAudio)
+    }
+
+    private fun closeCanto() {
+        if (mCantiViewModel.inActivity) {
+            mMainActivity?.finishAfterTransitionWrapper()
+        }
+        else {
+            mMainActivity?.closeCanto()
+        }
     }
 
     // recupera e setta il record per la registrazione

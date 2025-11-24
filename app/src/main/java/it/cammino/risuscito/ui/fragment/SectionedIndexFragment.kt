@@ -46,7 +46,6 @@ import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory

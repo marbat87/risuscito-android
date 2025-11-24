@@ -50,17 +50,16 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.ui.activity.MainActivity
-import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.composable.hasNavigationBar
 import it.cammino.risuscito.ui.composable.risuscito_medium_font
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
@@ -89,12 +88,10 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
 
     private var job: Job = Job()
     private var mActivity: MainActivity? = null
-    private var mThemeableActivity: ThemeableActivity? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mActivity = activity as? MainActivity
-        mThemeableActivity = activity as? ThemeableActivity
     }
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -115,13 +112,19 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
 
                 val isInsert = arguments?.getBoolean(IS_INSERT, false) == true
 
+                val hasNavigationBar = hasNavigationBar()
+
+
                 val rememberItemClick = remember<(RisuscitoListItem) -> Unit> {
                     { item ->
                         if (isInsert) {
                             sharedSearchViewModel.insertItemId = item.id
                             sharedSearchViewModel.done.value = true
                         } else {
-                            mThemeableActivity?.openCanto(
+                            if (isSearch && hasNavigationBar) {
+                                mActivity?.closeSearch()
+                            }
+                            mActivity?.openCanto(
                                 TAG,
                                 item.id,
                                 getString(item.sourceRes),
@@ -134,11 +137,11 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 val rememberIconClick = remember<(RisuscitoListItem) -> Unit> {
                     { item ->
                         Log.d(TAG, "rememberIconClick: ${item.id}")
-                        mThemeableActivity?.openCanto(
+                        mActivity?.openCanto(
                             TAG,
                             item.id,
                             getString(item.sourceRes),
-                            false
+                            true
                         )
                     }
                 }
@@ -191,68 +194,6 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                         scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
                             ?: Modifier
                     )
-//                if (hasGridLayout()) {
-//                    LazyVerticalGrid(
-//                        columns = GridCells.Fixed(2),
-//                        modifier = listModifier,
-//                        verticalArrangement = Arrangement.spacedBy(if (isSearch) 2.dp else 0.dp),
-//                        horizontalArrangement = Arrangement.spacedBy(if (isSearch) 2.dp else 0.dp)
-//                    ) {
-//                        items(localItems.value) { simpleItem ->
-//                            Box(
-//                                modifier = Modifier
-//                                    .wrapContentHeight()
-//                                    .fillMaxWidth()
-//                            )
-//                            {
-//                                val itemContextMenuExpanded = remember { mutableStateOf(false) }
-//                                val offset = remember { mutableStateOf(DpOffset.Zero) }
-//                                SimpleListItem(
-//                                    requireContext(),
-//                                    simpleItem,
-//                                    onItemClick = { rememberItemClick(it) },
-//                                    onItemLongClick = {
-//                                        rememberItemLongClick(it)
-//                                        itemContextMenuExpanded.value = true
-//                                    },
-//                                    selected = false,
-//                                    modifier = Modifier
-//                                        .animateItem()
-//                                        .onSizeChanged {
-//                                            offset.value = DpOffset((it.width / 12).dp, 0.dp)
-//                                        },
-//                                    isInsert = isInsert,
-//                                    onIconClick = { rememberIconClick(it) }
-//                                )
-//
-//                                if (mCantiViewModel.tipoLista == 0 ||
-//                                    mCantiViewModel.tipoLista == 1 ||
-//                                    mCantiViewModel.tipoLista == 2
-//                                ) {
-//                                    val tag1 = when (mCantiViewModel.tipoLista) {
-//                                        0 -> SimpleDialogTag.ALPHA_REPLACE
-//                                        1 -> SimpleDialogTag.NUMERIC_REPLACE
-//                                        else -> SimpleDialogTag.SALMI_REPLACE
-//                                    }
-//                                    val tag2 = when (mCantiViewModel.tipoLista) {
-//                                        0 -> SimpleDialogTag.ALPHA_REPLACE_2
-//                                        1 -> SimpleDialogTag.NUMERIC_REPLACE_2
-//                                        else -> SimpleDialogTag.SALMI_REPLACE_2
-//                                    }
-//                                    AddToDropDownMenu(
-//                                        this@SimpleIndexFragment,
-//                                        mCantiViewModel,
-//                                        tag1,
-//                                        tag2,
-//                                        listePersonalizzate,
-//                                        itemContextMenuExpanded.value,
-//                                        offset.value
-//                                    ) { itemContextMenuExpanded.value = false }
-//                                }
-//                            }
-//                        }
-//                    }
-//                } else {
                 LazyColumn(
                     state = state,
                     modifier = listModifier,
@@ -312,7 +253,6 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                         }
                     }
                 }
-//                }
 
                 if (mCantiViewModel.showAlertDialog.observeAsState().value == true) {
                     SimpleAlertDialog(

@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Widget.Risuscito.Toolbar.InAppBarLayout" parent="Widget.Material3.Toolbar">
-        <item name="android:elevation">0dp</item>
-    </style>
-
-<!--    <style name="Widget.Risuscito.TabLayout" parent="Widget.Material3.TabLayout">-->
-<!--        <item name="tabGravity">start</item>-->
-<!--        <item name="tabMode">scrollable</item>-->
-<!--    </style>-->
-
-    <style name="Risuscito_SpeedDialActionItem">
-        <item name="colorOnSecondary">?colorOnSecondaryContainer</item>
-    </style>
-
-    <style name="Risuscito_SpeedDialMainFab">
-        <item name="sdMainFabAnimationRotateAngle">90</item>
-        <item name="sdMainFabClosedBackgroundColor">?colorPrimaryContainer</item>
-        <item name="sdMainFabClosedIconColor">?colorOnPrimaryContainer</item>
-        <item name="sdMainFabOpenedBackgroundColor">?colorPrimary</item>
-        <item name="sdMainFabOpenedIconColor">?colorOnPrimary</item>
-        <item name="sdMainFabOpenedSrc">@drawable/close_24px</item>
-    </style>
-
     <macro name="m3_ref_typeface_brand_medium">?risuscito_medium_font</macro>
     <macro name="m3_ref_typeface_brand_regular">?risuscito_regular_font</macro>
     <macro name="m3_ref_typeface_plain_medium">?risuscito_medium_font</macro>

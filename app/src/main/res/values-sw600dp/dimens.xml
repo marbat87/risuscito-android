@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <dimen name="activity_min_margin">10dip</dimen>
-    <dimen name="activity_min_top_margin">15dip</dimen>
-
-</resources>

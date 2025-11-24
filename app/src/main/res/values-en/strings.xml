@@ -319,4 +319,5 @@
     <string name="share_app">Share this app</string>
     <string name="update_app">Update this app</string>
     <string name="select_none">Select None</string>
+    <string name="select_one_song">Select a song</string>
 </resources>

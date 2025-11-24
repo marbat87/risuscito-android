@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen.IconBackground">
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
@@ -8,7 +8,7 @@
         <item name="postSplashScreenTheme">@style/Risuscito.Theme</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3Expressive.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
@@ -66,9 +66,6 @@
         <item name="textAppearanceLabelLarge">@style/TextAppearance.Risuscito.LabelLarge</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.Risuscito.LabelSmall</item>
 
-        <item name="risuscitoToolbarWithCloseButtonStyle">
-            @style/Widget.Risuscito.Toolbar.WithCloseButton
-        </item>
     </style>
 
     <style name="Risuscito.Theme" parent="Base.Risuscito.Theme">
@@ -82,23 +79,6 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
-    </style>
-
-    <style name="ThemeOverlay.Material3.Risuscito.Toolbar.Contextual" parent="">
-        <item name="colorControlNormal">?colorPrimary</item>
-    </style>
-
-    <style name="Widget.Risuscito.Toolbar" parent="Widget.Material3.Toolbar.OnSurface" />
-
-    <style name="Widget.Risuscito.Toolbar.WithCloseButton">
-        <item name="navigationContentDescription">@string/material_drawer_close</item>
-        <item name="navigationIcon">@drawable/arrow_back_24px</item>
-        <item name="navigationIconTint">?colorPrimary</item>
-        <item name="minHeight" tools:ignore="PrivateResource">@dimen/m3_searchbar_height</item>
-        <item name="titleTextColor">?colorPrimary</item>
-        <item name="android:layout_marginTop" tools:ignore="PrivateResource">
-            @dimen/m3_searchbar_margin_vertical
-        </item>
     </style>
 
     <style name="TextAppearance.Risuscito.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">

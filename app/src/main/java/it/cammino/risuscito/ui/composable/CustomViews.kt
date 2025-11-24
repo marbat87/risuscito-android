@@ -4,17 +4,9 @@ import android.util.Log
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,6 +22,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -38,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Slider
@@ -52,6 +48,7 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,6 +57,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -70,10 +68,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import androidx.core.os.bundleOf
 import androidx.core.view.postDelayed
+import androidx.fragment.compose.AndroidFragment
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.entities.Canto
+import it.cammino.risuscito.items.CantoViewData
+import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
+import it.cammino.risuscito.ui.composable.animations.AnimatedScaleContent
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
+import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.delay
 
@@ -165,6 +169,7 @@ fun MainHintLayoutPreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EmptyListView(iconRes: Int, textRes: Int) {
     Column(
@@ -173,12 +178,22 @@ fun EmptyListView(iconRes: Int, textRes: Int) {
             .wrapContentHeight(), // Occupa solo l'altezza necessaria
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(iconRes),
-            contentDescription = stringResource(id = textRes),
+        Box(
             modifier = Modifier
-                .size(120.dp)
-        )
+                .size(140.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = MaterialShapes.Bun.toShape()
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(iconRes),
+                contentDescription = stringResource(id = textRes),
+                modifier = Modifier.size(110.dp),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
         Text(
             text = stringResource(textRes),
@@ -195,7 +210,7 @@ fun EmptyListView(iconRes: Int, textRes: Int) {
 @Composable
 fun EmptyListViewPreview() {
     EmptyListView(
-        iconRes = R.drawable.ic_sunglassed_star,
+        iconRes = R.drawable.bookmarks_24px,
         textRes = R.string.no_favourites_short
     )
 }
@@ -394,7 +409,7 @@ fun MediaPlayerView(
         Spacer(modifier = Modifier.width(16.dp))
 
         Box(modifier = Modifier.weight(1f)) {
-            AnimatedScaleContent(
+            AnimatedFadeContent(
                 seekbarViewMode,
             ) { state ->
                 when (state) {
@@ -500,47 +515,10 @@ fun ScrollPlayerView(
     }
 }
 
-@Composable
-fun <S> AnimatedFadeContent(
-    targetState: S,
-    duration: Int = 1000,
-    content: @Composable AnimatedContentScope.(targetState: S) -> Unit
-) {
-    AnimatedContent(
-        targetState,
-        transitionSpec = {
-            fadeIn(
-                animationSpec = tween(duration)
-            ) togetherWith fadeOut(animationSpec = tween(duration))
-        },
-        label = "Animated Content"
-    ) {
-        content(it)
-    }
-}
-
-@Composable
-fun <S> AnimatedScaleContent(
-    targetState: S,
-    duration: Int = 300,
-    content: @Composable AnimatedContentScope.(targetState: S) -> Unit
-) {
-    AnimatedContent(
-        targetState,
-        transitionSpec = {
-            scaleIn(
-                animationSpec = tween(duration)
-            ) togetherWith scaleOut(animationSpec = tween(duration))
-        },
-        label = "Animated Content"
-    ) {
-        content(it)
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassicBackNavitagionButton(onBackPressedAction: () -> Unit) {
+
     TooltipBox(
         positionProvider =
             TooltipDefaults.rememberTooltipPositionProvider(
@@ -559,3 +537,41 @@ fun ClassicBackNavitagionButton(onBackPressedAction: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun CantoView(canto: CantoViewData) {
+    AndroidFragment<CantoFragment>(
+        arguments = bundleOf(
+            CantoFragment.ARG_ID_CANTO to canto.idCanto,
+            CantoFragment.ARG_NUM_PAGINA to canto.pagina,
+            CantoFragment.ARG_ON_ACTIVITY to canto.inActivity
+        ),
+        modifier = Modifier.fillMaxSize()
+    )
+}
+
+@Composable
+fun SignInButton(
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp),
+        shape = RoundedCornerShape(6.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Black,
+            contentColor = Color.White
+        )
+    ) {
+        Image(
+            modifier = Modifier.size(24.dp),
+            painter = painterResource(id = R.drawable.google_icon_56dp),
+            contentDescription = "Sign in with Google"
+        )
+        Text(text = "Sign in with Google", modifier = Modifier.padding(6.dp))
+    }
+}
+
+

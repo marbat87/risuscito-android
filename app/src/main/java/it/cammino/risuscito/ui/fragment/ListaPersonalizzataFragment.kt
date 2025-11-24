@@ -53,7 +53,6 @@ import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.launchForResultWithAnimation
 import it.cammino.risuscito.utils.extension.listToXML
-import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.InputDialogManagerViewModel
 import it.cammino.risuscito.viewmodels.ListaPersonalizzataViewModel

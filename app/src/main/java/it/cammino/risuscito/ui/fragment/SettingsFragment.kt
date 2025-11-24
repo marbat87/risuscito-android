@@ -46,6 +46,7 @@ import com.michaelflisar.composepreferences.screen.list.PreferenceList
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.RisuscitoApplication
 import it.cammino.risuscito.ui.activity.ThemeableActivity
+import it.cammino.risuscito.ui.composable.hasNavigationBar
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.LocaleManager
@@ -66,7 +67,6 @@ import it.cammino.risuscito.utils.Utility.SHOW_SANTO
 import it.cammino.risuscito.utils.Utility.SHOW_SECONDA
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.hasStorageAccess
-import it.cammino.risuscito.utils.extension.isOnTablet
 import it.cammino.risuscito.utils.extension.prefNightMode
 import it.cammino.risuscito.utils.extension.setDefaultNightMode
 import it.cammino.risuscito.utils.extension.systemLocale
@@ -166,6 +166,8 @@ class SettingsFragment : Fragment() {
         return ComposeView(requireContext()).apply {
 
             setContent {
+
+                val hasNavigationBar = hasNavigationBar()
 
                 val themeLablesArray = stringArrayResource(R.array.themeListArray)
                 val themeValueArray = stringArrayResource(R.array.themeEntryArray)
@@ -397,7 +399,7 @@ class SettingsFragment : Fragment() {
                                             preferenManager.edit {
                                                     putString(DEFAULT_SEARCH, newValue)
                                                 }
-                                            recreateActivity()
+                                            recreateActivity(hasNavigationBar)
                                         }
                                     },
                                     items = defaultSearchMap,
@@ -507,7 +509,8 @@ class SettingsFragment : Fragment() {
                                 saveBooleanPreference(
                                     preferenceKey = DYNAMIC_COLORS,
                                     preferenceValue = it,
-                                    restart = true
+                                    restart = true,
+                                    hasNavigationBar = hasNavigationBar
                                 )
                             }
                     }
@@ -516,7 +519,7 @@ class SettingsFragment : Fragment() {
                         snapshotFlow { showSecondaLettura.value }.distinctUntilChanged().collect {
                                 saveBooleanPreference(
                                     preferenceKey = SHOW_SECONDA,
-                                    preferenceValue = it,
+                                    preferenceValue = it
                                 )
                             }
                     }
@@ -612,7 +615,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun saveBooleanPreference(
-        preferenceKey: String, preferenceValue: Boolean, restart: Boolean = false
+        preferenceKey: String, preferenceValue: Boolean, restart: Boolean = false, hasNavigationBar: Boolean = false
     ) {
         Log.d(TAG, "saveBooleanPreference: $preferenceKey / $preferenceValue")
         val preferenManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -623,14 +626,14 @@ class SettingsFragment : Fragment() {
                     putBoolean(preferenceKey, preferenceValue)
                 }
             if (restart) {
-                recreateActivity()
+                recreateActivity(hasNavigationBar)
             }
         }
     }
 
-    private fun recreateActivity() {
+    private fun recreateActivity(hasNavigationBar: Boolean = false) {
         mMainActivity?.let {
-            if (requireContext().isOnTablet) {
+            if (hasNavigationBar) {
                 it.recreate()
             } else ProcessPhoenix.triggerRebirth(
                 it.applicationContext

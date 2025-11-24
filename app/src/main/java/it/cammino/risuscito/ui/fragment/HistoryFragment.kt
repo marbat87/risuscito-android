@@ -38,9 +38,9 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.risuscitoListItem
-import it.cammino.risuscito.ui.composable.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.HistoryListItem
+import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
@@ -51,7 +51,6 @@ import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
@@ -103,55 +102,6 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
                                         }
                                             ?: Modifier
                                     )
-
-//                                if (hasGridLayout()) {
-//                                    LazyVerticalGrid(
-//                                        columns = GridCells.Fixed(2),
-//                                        modifier = listModifier
-//                                    ) {
-//                                        items(
-//                                            localItems.orEmpty(),
-//                                            key = { it.id }) { simpleItem ->
-//                                            val isItemSelected =
-//                                                localSelectedItems.orEmpty()
-//                                                    .any { it.id == simpleItem.id }
-//                                            val source = stringResource(simpleItem.sourceRes)
-//                                            HistoryListItem(
-//                                                requireContext(),
-//                                                simpleItem,
-//                                                onItemClick = { item ->
-//                                                    if (mMainActivity?.isActionMode?.value == true) {
-//                                                        if (isItemSelected) {
-//                                                            deselectItem(item.id)
-//                                                        } else {
-//                                                            selectItem(item.id, item.timestamp)
-//                                                        }
-//                                                        if (localSelectedItems.orEmpty()
-//                                                                .isEmpty()
-//                                                        ) {
-//                                                            mMainActivity?.destroyActionMode()
-//                                                        } else updateActionModeTitle()
-//                                                    } else {
-//                                                        mMainActivity?.openCanto(
-//                                                            TAG,
-//                                                            item.id,
-//                                                            source,
-//                                                            false
-//                                                        )
-//                                                    }
-//                                                },
-//                                                onItemLongClick = { item ->
-//                                                    if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
-//                                                        selectItem(item.id, item.timestamp)
-//                                                        startCab()
-//                                                    }
-//                                                },
-//                                                selected = isItemSelected,
-//                                                modifier = Modifier.animateItem()
-//                                            )
-//                                        }
-//                                    }
-//                                }
                                 LazyColumn(
                                     state = state,
                                     modifier = listModifier
@@ -202,7 +152,7 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
 
                             CronologiaViewModel.ViewMode.EMPTY -> {
                                 EmptyListView(
-                                    iconRes = R.drawable.ic_history_clock,
+                                    iconRes = R.drawable.history_24px,
                                     textRes = R.string.history_empty
                                 )
                             }
@@ -242,15 +192,10 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
                         mMainActivity?.expandToolbar()
                 }
 
-                BackHandler(backCallbackEnabled.value || mMainActivity?.isDrawerOpen() == true) {
+                BackHandler(backCallbackEnabled.value) {
                     Log.d(TAG, "handleOnBackPressed")
-                    when {
-                        mMainActivity?.isDrawerOpen() == true -> mMainActivity?.closeDrawer()
-                        else -> {
-                            mMainActivity?.destroyActionMode()
-                            mMainActivity?.expandToolbar()
-                        }
-                    }
+                    mMainActivity?.destroyActionMode()
+                    mMainActivity?.expandToolbar()
                 }
 
             }

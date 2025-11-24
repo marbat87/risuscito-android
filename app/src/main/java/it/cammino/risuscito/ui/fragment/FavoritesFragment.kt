@@ -35,9 +35,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.ui.composable.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.SimpleListItem
+import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
@@ -49,7 +49,6 @@ import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.openCanto
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
@@ -102,52 +101,6 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                                         }
                                             ?: Modifier
                                     )
-
-//                                if (hasGridLayout()) {
-//                                    LazyVerticalGrid(
-//                                        columns = GridCells.Fixed(2),
-//                                        modifier = listModifier
-//                                    ) {
-//                                        items(
-//                                            localItems.orEmpty(),
-//                                            key = { it.id }) { simpleItem ->
-//                                            val isItemSelected =
-//                                                localSelectedItems.orEmpty().contains(simpleItem.id)
-//                                            val source = stringResource(simpleItem.sourceRes)
-//                                            SimpleListItem(
-//                                                requireContext(),
-//                                                simpleItem,
-//                                                onItemClick = { item ->
-//                                                    if (mMainActivity?.isActionMode?.value == true) {
-//                                                        if (isItemSelected) {
-//                                                            deselectItem(item.id)
-//                                                        } else {
-//                                                            selectItem(item.id)
-//                                                        }
-//                                                        if (localSelectedItems?.isEmpty() == true) {
-//                                                            mMainActivity?.destroyActionMode()
-//                                                        } else updateActionModeTitle()
-//                                                    } else {
-//                                                        mMainActivity?.openCanto(
-//                                                            TAG,
-//                                                            item.id,
-//                                                            source,
-//                                                            false
-//                                                        )
-//                                                    }
-//                                                },
-//                                                onItemLongClick = { item ->
-//                                                    if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
-//                                                        selectItem(item.id)
-//                                                        startCab()
-//                                                    }
-//                                                },
-//                                                selected = isItemSelected,
-//                                                modifier = Modifier.animateItem()
-//                                            )
-//                                        }
-//                                    }
-//                                } else {
                                 LazyColumn(
                                     state = state,
                                     modifier = listModifier
@@ -192,11 +145,10 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                                     }
                                 }
                             }
-//                            }
 
                             FavoritesViewModel.ViewMode.EMPTY -> {
                                 EmptyListView(
-                                    iconRes = R.drawable.ic_sunglassed_star,
+                                    iconRes = R.drawable.bookmarks_24px,
                                     textRes = R.string.no_favourites_short
                                 )
                             }
@@ -223,35 +175,30 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                     )
                 }
 
-                mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
-                    mFavoritesViewModel.mFavoritesSortedResult.value =
-                        canti.sortedWith(
-                            compareBy(
-                                Collator.getInstance(systemLocale)
-                            ) { getString(it.titleRes) })
-
-                    mMainActivity?.createOptionsMenu(
-                        if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
-                        this@FavoritesFragment
-                    )
-
-                    mFavoritesViewModel.viewMode.value =
-                        if (canti.isEmpty()) FavoritesViewModel.ViewMode.EMPTY else FavoritesViewModel.ViewMode.VIEW
-                    if (canti.isEmpty())
-                        mMainActivity?.expandToolbar()
-                }
-
-                BackHandler(backCallbackEnabled.value || mMainActivity?.isDrawerOpen() == true) {
+                BackHandler(backCallbackEnabled.value) {
                     Log.d(TAG, "handleOnBackPressed")
-                    when {
-                        mMainActivity?.isDrawerOpen() == true -> mMainActivity?.closeDrawer()
-                        else -> {
-                            mMainActivity?.destroyActionMode()
-                            mMainActivity?.expandToolbar()
-                        }
-                    }
+                    mMainActivity?.destroyActionMode()
+                    mMainActivity?.expandToolbar()
                 }
 
+            }
+
+            mFavoritesViewModel.mFavoritesResult?.observe(viewLifecycleOwner) { canti ->
+                mFavoritesViewModel.mFavoritesSortedResult.value =
+                    canti.sortedWith(
+                        compareBy(
+                            Collator.getInstance(systemLocale)
+                        ) { getString(it.titleRes) })
+
+                mMainActivity?.createOptionsMenu(
+                    if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
+                    this@FavoritesFragment
+                )
+
+                mFavoritesViewModel.viewMode.value =
+                    if (canti.isEmpty()) FavoritesViewModel.ViewMode.EMPTY else FavoritesViewModel.ViewMode.VIEW
+                if (canti.isEmpty())
+                    mMainActivity?.expandToolbar()
             }
         }
     }

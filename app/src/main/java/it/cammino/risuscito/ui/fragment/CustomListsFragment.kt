@@ -211,12 +211,9 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                     }
                 }
 
-                BackHandler(mMainActivity?.getFabExpanded() == true || mMainActivity?.isDrawerOpen() == true) {
+                BackHandler(mMainActivity?.getFabExpanded() == true) {
                     Log.d(TAG, "handleOnBackPressed")
-                    when {
-                        mMainActivity?.isDrawerOpen() == true -> mMainActivity?.closeDrawer()
-                        else -> mMainActivity?.setFabExpanded(false)
-                    }
+                    mMainActivity?.setFabExpanded(false)
                 }
 
             }
@@ -234,7 +231,6 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                 Utility.INTRO_CUSTOMLISTS, false
             )
         )
-//        if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false)) playIntro()
 
         subscribeUiChanges()
 
@@ -251,59 +247,6 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                 movePage = true
             }
         }
-
-//    private fun playIntro() {
-//        mMainActivity?.initFab(true)
-//        mMainActivity?.getFab()?.let { fab ->
-//            val colorOnPrimary = MaterialColors.getColor(
-//                requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG
-//            )
-//            TapTargetSequence(requireActivity()).continueOnCancel(true).targets(
-//                TapTarget.forView(
-//                    fab,
-//                    getString(R.string.showcase_listepers_title),
-//                    getString(R.string.showcase_listepers_desc1)
-//                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
-//                    .descriptionTextSize(15)
-//                    .tintTarget(false) // Whether to tint the target view's color
-//                    .setForceCenteredTarget(true), TapTarget.forView(
-//                    fab,
-//                    getString(R.string.showcase_listepers_title),
-//                    getString(R.string.showcase_listepers_desc3)
-//                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                    .icon(
-//                        AppCompatResources.getDrawable(
-//                            requireContext(), R.drawable.check_24px
-//                        )
-//                    ).descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
-//                    .setForceCenteredTarget(true)
-//            ).listener(object :
-//                TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-//                override fun onSequenceFinish() {
-//                    context?.let {
-//                        PreferenceManager.getDefaultSharedPreferences(it)
-//                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-//                    }
-//                }
-//
-//                override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-//                    // no-op
-//                }
-//
-//                override fun onSequenceCanceled(tapTarget: TapTarget) {
-//                    context?.let {
-//                        PreferenceManager.getDefaultSharedPreferences(it)
-//                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-//                    }
-//                }
-//            }).start()
-//        }
-//    }
 
     private fun subscribeUiChanges() {
         mCustomListsViewModel.customListResult?.observe(viewLifecycleOwner) { list ->

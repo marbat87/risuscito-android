@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,10 +27,12 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarScrollBehavior
+import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -37,8 +40,8 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,8 +52,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -59,10 +64,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import androidx.fragment.compose.AndroidFragment
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.MaterialColors
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.ContextualToolbarTitle
 import it.cammino.risuscito.ui.composable.dialogs.AccountMenuImage
-import it.cammino.risuscito.ui.composable.hasDrawer
+import it.cammino.risuscito.ui.composable.hasNavigationBar
 import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
@@ -206,7 +212,7 @@ val consegnatiResetOptionMenu =
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopAppBarWithSearch(
-    onMenuClick: () -> Unit = {},
+    searchBarState: SearchBarState,
     scrollBehavior: SearchBarScrollBehavior,
     isActionMode: Boolean = false,
     actionModeMenu: List<ActionModeItem> = emptyList(),
@@ -218,14 +224,13 @@ fun TopAppBarWithSearch(
     onOptionMenuClick: (String) -> Unit = {},
     loggedIn: Boolean = false,
     profilePhotoUrl: String = "",
-    onProfileClick: () -> Unit = {},
-    onLoginClick: () -> Unit = {}
+    onProfileItemClick: (Boolean) -> Unit = {},
 ) {
 
     val pref = PreferenceManager.getDefaultSharedPreferences(LocalContext.current)
 
     val textFieldState = rememberTextFieldState()
-    val searchBarState = rememberSearchBarState()
+//    val searchBarState = rememberSearchBarState()
     val scope = rememberCoroutineScope()
 
     val inputField =
@@ -315,21 +320,34 @@ fun TopAppBarWithSearch(
         contentPadding = PaddingValues(vertical = 6.dp),
         inputField = inputField,
         navigationIcon = {
-            if (hasDrawer()) {
+            if (hasNavigationBar()) {
                 IconButton(
-                    onClick = onMenuClick
+                    onClick = {},
+                    shape = MaterialShapes.Circle.toShape()
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.menu_24px),
-                        contentDescription = stringResource(R.string.material_drawer_open)
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(
+                                color = Color(
+                                    MaterialColors.harmonize(
+                                        colorResource(R.color.ic_launcher_background).toArgb(),
+                                        MaterialTheme.colorScheme.primary.toArgb()
+                                    )
+                                ),
+                                shape = MaterialShapes.Circle.toShape()
+                            ),
+                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = stringResource(R.string.copertina),
+                        tint = Color.White
                     )
                 }
+
             }
         },
         actions = {
             AccountMenuImage(
-                onProfileClick = onProfileClick,
-                onLoginClick = onLoginClick,
+                onClick = onProfileItemClick,
                 loggedIn = loggedIn,
                 profilePhotoUrl = profilePhotoUrl
             )

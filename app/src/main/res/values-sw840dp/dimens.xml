@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <dimen name="fab_margin_coord">48dp</dimen>
-    <dimen name="recycler_fab_padding_bottom">152dp</dimen>
-
-</resources>

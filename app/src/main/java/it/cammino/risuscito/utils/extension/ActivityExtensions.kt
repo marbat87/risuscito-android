@@ -26,9 +26,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.platform.MaterialSharedAxis
@@ -37,10 +34,6 @@ import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Cronologia
-import it.cammino.risuscito.ui.activity.CantoHostActivity
-import it.cammino.risuscito.ui.activity.ThemeableActivity
-import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
@@ -51,8 +44,6 @@ import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.Utility.SHARED_AXIS
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -89,12 +80,12 @@ fun Activity.startActivityWithTransition(intent: Intent, axis: Int) {
         slideInRight()
     } else {
         val exit = MaterialSharedAxis(axis, true).apply {
-            addTarget(R.id.content_frame)
+            addTarget(android.R.id.content)
             duration = 700L
         }
 
         val enter = MaterialSharedAxis(axis, false).apply {
-            addTarget(R.id.content_frame)
+            addTarget(android.R.id.content)
             duration = 700L
         }
         window.exitTransition = exit
@@ -284,37 +275,6 @@ fun Activity.slideOutRight() {
     overrideCloseTransition(R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
 }
 
-fun ThemeableActivity.openCanto(
-    function: String?, idCanto: Int, numPagina: String?, forceOpenActivity: Boolean = false
-) {
-
-    Firebase.crashlytics.log("open_canto - function: ${function.orEmpty()} - idCanto: $idCanto - numPagina: ${numPagina.orEmpty()} - onActivity: ${forceOpenActivity || isOnPhone}")
-
-    val args = bundleOf(
-        CantoFragment.ARG_NUM_PAGINA to numPagina,
-        CantoFragment.ARG_ID_CANTO to idCanto,
-        CantoFragment.ARG_ON_ACTIVITY to (forceOpenActivity || isOnPhone)
-    )
-
-    if (forceOpenActivity || isOnPhone) {
-        val intent = Intent(this, CantoHostActivity::class.java)
-        intent.putExtras(args)
-        startActivityWithTransition(intent, MaterialSharedAxis.X)
-    } else {
-        stopMedia()
-        val fragment: Fragment = CantoFragment()
-        fragment.arguments = args
-        supportFragmentManager.commit {
-            replace(
-                R.id.detail_fragment, fragment, R.id.canto_fragment.toString()
-            )
-        }
-    }
-
-    (this as? AppCompatActivity)?.updateHistory(idCanto)
-
-}
-
 fun Activity.overrideOpenTransition(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
     if (OSUtils.hasU()) overrideOpenTransitionU(enterAnim, exitAnim)
     else overrideOpenTransitionLegacy(enterAnim, exitAnim)
@@ -386,17 +346,6 @@ private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.
     )
 }
 
-private fun AppCompatActivity.updateHistory(idCanto: Int) {
-    val mDao = RisuscitoDatabase.getInstance(this).cronologiaDao()
-    val cronologia = Cronologia()
-    cronologia.idCanto = idCanto
-    this.lifecycleScope.launch(Dispatchers.IO) {
-        mDao.insertCronologia(
-            cronologia
-        )
-    }
-}
-
 fun AppCompatActivity.launchForResultWithAnimation(
     resultLauncher: ActivityResultLauncher<Intent>, intent: Intent, axis: Int
 ) {
@@ -405,12 +354,12 @@ fun AppCompatActivity.launchForResultWithAnimation(
         slideInRight()
     } else {
         val exit = MaterialSharedAxis(axis, true).apply {
-            addTarget(R.id.content_frame)
+            addTarget(android.R.id.content)
             duration = 700L
         }
 
         val enter = MaterialSharedAxis(axis, false).apply {
-            addTarget(R.id.content_frame)
+            addTarget(android.R.id.content)
             duration = 700L
         }
         window.exitTransition = exit

@@ -21,12 +21,16 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.edit
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
@@ -45,19 +49,24 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
+import it.cammino.risuscito.items.CantoViewData
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.main.FabActionItem
+import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
 import it.cammino.risuscito.utils.extension.createTaskDescription
 import it.cammino.risuscito.utils.extension.isDarkMode
+import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ProgressDialogManagerViewModel
 import it.cammino.risuscito.viewmodels.SharedSnackBarViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -647,6 +656,46 @@ abstract class ThemeableActivity : AppCompatActivity() {
         val newList = ArrayList(fabActions.orEmpty())
         fabActionList.value = newList
         showFab.value = enable
+    }
+
+    fun openCanto(
+        function: String?, idCanto: Int, numPagina: String?, forceOpenActivity: Boolean = false
+    ) {
+
+        Firebase.crashlytics.log("open_canto - function: ${function.orEmpty()} - idCanto: $idCanto - numPagina: ${numPagina.orEmpty()} - onActivity: $forceOpenActivity")
+
+        if (forceOpenActivity) {
+            val args = bundleOf(
+                CantoFragment.ARG_NUM_PAGINA to numPagina,
+                CantoFragment.ARG_ID_CANTO to idCanto,
+                CantoFragment.ARG_ON_ACTIVITY to true
+            )
+            val intent = Intent(this, CantoHostActivity::class.java)
+            intent.putExtras(args)
+            startActivityWithTransition(intent, MaterialSharedAxis.X)
+        } else {
+            mViewModel.cantoData.value =
+                CantoViewData(idCanto, numPagina.orEmpty())
+        }
+
+        updateHistory(idCanto)
+
+    }
+
+    fun closeCanto() {
+        mViewModel.cantoData.value = CantoViewData()
+        mViewModel.navigateBack.value = true
+    }
+
+    private fun updateHistory(idCanto: Int) {
+        val mDao = RisuscitoDatabase.getInstance(this).cronologiaDao()
+        val cronologia = Cronologia()
+        cronologia.idCanto = idCanto
+        this.lifecycleScope.launch(Dispatchers.IO) {
+            mDao.insertCronologia(
+                cronologia
+            )
+        }
     }
 
     companion object {

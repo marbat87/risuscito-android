@@ -1,12 +1,18 @@
 package it.cammino.risuscito.ui.composable.main
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -157,7 +163,7 @@ val cantoFabActions =
 val listaPredefinita =
     listOf(FabActionItem.CONDIVIDI, FabActionItem.ADDLISTA, FabActionItem.PULISCI)
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun RisuscitoFab(
     actions: List<FabActionItem>? = emptyList(),
@@ -172,32 +178,53 @@ fun RisuscitoFab(
     FloatingActionButtonMenu(
         expanded = expanded,
         button = {
-            if (actions.orEmpty().isEmpty()) {
-                FloatingActionButton(
-                    onClick = { onFabActionClick(FabActionItem.MAIN.id) },
-                ) {
-                    Icon(
-                        painter = painterResource(mainIconRes),
-                        contentDescription = "Floating action button."
-                    )
-                }
-            } else {
-                ToggleFloatingActionButton(
-                    modifier =
-                        Modifier
-                            .semantics {
-                                traversalIndex = -1f
-                                stateDescription = if (expanded) "Expanded" else "Collapsed"
-                                contentDescription = "Toggle menu"
-                            },
-                    checked = expanded,
-                    onCheckedChange = { onExpandedChange(!expanded) },
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.add_24px),
-                        contentDescription = null,
-                        modifier = Modifier.rotate(checkedProgress * 135f)
-                    )
+            TooltipBox(
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(
+                        if (expanded) {
+                            TooltipAnchorPosition.Start
+                        } else {
+                            TooltipAnchorPosition.Above
+                        }
+                    ),
+                tooltip = {
+                    PlainTooltip {
+                        Text(
+                            if (actions.orEmpty()
+                                    .isEmpty()
+                            ) "Floating action button." else "Toggle menu"
+                        )
+                    }
+                },
+                state = rememberTooltipState(),
+            ) {
+                if (actions.orEmpty().isEmpty()) {
+                    FloatingActionButton(
+                        onClick = { onFabActionClick(FabActionItem.MAIN.id) },
+                    ) {
+                        Icon(
+                            painter = painterResource(mainIconRes),
+                            contentDescription = "Floating action button."
+                        )
+                    }
+                } else {
+                    ToggleFloatingActionButton(
+                        modifier =
+                            Modifier
+                                .semantics {
+                                    traversalIndex = -1f
+                                    stateDescription = if (expanded) "Expanded" else "Collapsed"
+                                    contentDescription = "Toggle menu"
+                                },
+                        checked = expanded,
+                        onCheckedChange = { onExpandedChange(!expanded) },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.add_24px),
+                            contentDescription = null,
+                            modifier = Modifier.rotate(checkedProgress * 135f)
+                        )
+                    }
                 }
             }
         },

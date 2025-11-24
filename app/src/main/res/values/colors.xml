@@ -3,7 +3,7 @@
 
     <color name="ic_launcher_background">#A24444</color>
 
-    <color name="background_dim_overlay">#44000000</color>
+<!--    <color name="background_dim_overlay">#44000000</color>-->
 
     <color name="md_theme_light_primary">#335BB1</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>

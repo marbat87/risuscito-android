@@ -5,11 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
@@ -39,25 +41,30 @@ class GeneralIndexFragment : RisuscitoFragment() {
                     4
                 })
 
-                HorizontalPager(
-                    state = localPagerState
-                ) { page ->
-                    // Our page content
-                    when (page) {
-                        0, 1 ->
-                            AndroidFragment<SimpleIndexFragment>(
-                                arguments = bundleOf(SimpleIndexFragment.INDICE_LISTA to page)
-                            )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    HorizontalPager(
+                        state = localPagerState
+                    ) { page ->
+                        // Our page content
+                        when (page) {
+                            0, 1 ->
+                                AndroidFragment<SimpleIndexFragment>(
+                                    arguments = bundleOf(SimpleIndexFragment.INDICE_LISTA to page)
+                                )
 
-                        2 ->
-                            AndroidFragment<SectionedIndexFragment>(
-                                arguments = bundleOf(SectionedIndexFragment.INDICE_LISTA to 4)
-                            )
+                            2 ->
+                                AndroidFragment<SectionedIndexFragment>(
+                                    arguments = bundleOf(SectionedIndexFragment.INDICE_LISTA to 4)
+                                )
 
-                        3 ->
-                            AndroidFragment<SimpleIndexFragment>(
-                                arguments = bundleOf(SimpleIndexFragment.INDICE_LISTA to 2)
-                            )
+                            3 ->
+                                AndroidFragment<SimpleIndexFragment>(
+                                    arguments = bundleOf(SimpleIndexFragment.INDICE_LISTA to 2)
+                                )
+                        }
                     }
                 }
 
@@ -88,10 +95,6 @@ class GeneralIndexFragment : RisuscitoFragment() {
                         }
                 }
 
-                BackHandler(mMainActivity?.isDrawerOpen() == true) {
-                    Log.d(TAG, "handleOnBackPressed")
-                    mMainActivity?.closeDrawer()
-                }
             }
 
             mMainActivity?.createOptionsMenu(
@@ -103,20 +106,25 @@ class GeneralIndexFragment : RisuscitoFragment() {
             mMainActivity?.setTabVisible(true)
             mMainActivity?.initFab(enable = false)
 
-            lifecycleScope.launch {
-                delay(500)
-                if (sharedTabViewModel.resetTab.value) {
-                    Log.d(TAG, "GeneralIndexFragment newINSTANCE")
-                    sharedTabViewModel.resetTab.value = false
-                    val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                    sharedTabViewModel.tabsSelectedIndex.intValue = Integer.parseInt(
-                        pref.getString(Utility.DEFAULT_INDEX, "0")
-                            ?: "0"
-                    )
-                    mMainActivity?.setTabVisible(true)
-                }
+        }
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch {
+            delay(500)
+            if (sharedTabViewModel.resetTab.value) {
+                Log.d(TAG, "GeneralIndexFragment newINSTANCE")
+                sharedTabViewModel.resetTab.value = false
+                val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                sharedTabViewModel.tabsSelectedIndex.intValue = Integer.parseInt(
+                    pref.getString(Utility.DEFAULT_INDEX, "0")
+                        ?: "0"
+                )
+                mMainActivity?.setTabVisible(true)
             }
+
         }
     }
 

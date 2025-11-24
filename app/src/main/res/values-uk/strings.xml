@@ -324,5 +324,6 @@
     <string name="rate_five_stars">Оцініть цей застосунок на 5 зірок</string>
     <string name="share_app">Поділитися застосунком</string>
     <string name="update_app">Оновити застосунок</string>
-    <string name="select_none">Select None</string>
+    <string name="select_none">Виберіть Немає</string>
+    <string name="select_one_song">Виберіть пісню</string>
 </resources>

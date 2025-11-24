@@ -100,9 +100,6 @@ val Context.isOnline: Boolean
         return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
-val Context.isOnTablet: Boolean
-    get() = resources.getBoolean(R.bool.is_tablet)
-
 val Context.isOnPhone: Boolean
     get() = resources.getBoolean(R.bool.is_phone_view)
 

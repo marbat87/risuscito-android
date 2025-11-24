@@ -12,11 +12,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -58,9 +57,9 @@ import it.cammino.risuscito.ui.composable.dialogs.ProfileMenuItem
 import it.cammino.risuscito.ui.composable.dialogs.ProgressDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.composable.hasNavigationBar
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.Destination
-import it.cammino.risuscito.ui.composable.main.DrawerItem
 import it.cammino.risuscito.ui.composable.main.MainScreen
 import it.cammino.risuscito.ui.composable.main.NavigationScreen
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
@@ -103,7 +102,6 @@ import java.text.Collator
 
 
 class MainActivity : ThemeableActivity() {
-    //    private val profileDialogViewModel: ProfileDialogFragment.DialogViewModel by viewModels()
     private val cantiViewModel: SimpleIndexViewModel by viewModels {
         ViewModelWithArgumentsFactory(application, Bundle().apply { putInt(Utility.TIPO_LISTA, 0) })
     }
@@ -145,8 +143,7 @@ class MainActivity : ThemeableActivity() {
     private val optionMenuList = MutableLiveData(ArrayList<OptionMenuItem>())
     private var fabActionsFragment: FabActionsFragment? = null
     private val signedId = mutableStateOf(false)
-    private val isDrawerOpen = mutableStateOf(false)
-    private val closeDrawer = mutableStateOf(false)
+    private val closeSearch = mutableStateOf(false)
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -175,12 +172,7 @@ class MainActivity : ThemeableActivity() {
 
             val scope = rememberCoroutineScope()
 
-            val drawerState = rememberDrawerState(
-                initialValue = DrawerValue.Closed,
-                confirmStateChange = {
-                    isDrawerOpen.value = it == DrawerValue.Open
-                    true
-                })
+            val searchBarState = rememberSearchBarState()
 
             RisuscitoTheme {
 
@@ -201,13 +193,11 @@ class MainActivity : ThemeableActivity() {
 
                 val showProgressDialog by progressDialogViewModel.showProgressDialog.observeAsState()
 
+                val hasNavigationBar = hasNavigationBar()
+
                 MainScreen(
                     sharedScrollViewModel = sharedScrollVM,
                     navController = navHostController.value,
-                    drawerState = drawerState,
-                    onDrawerItemClick = {
-                        onMobileDrawerItemClick(it)
-                    },
                     isActionMode = isActionMode.value,
                     actionModeMenu = actionModeMenuList,
                     hideNavigation = hideNavigationIcon.value,
@@ -229,11 +219,18 @@ class MainActivity : ThemeableActivity() {
                     fabExpanded = fabExpanded,
                     loggedIn = signedId.value,
                     profilePhotoUrl = sharedProfileViewModel.profilePhotoUrl,
-                    onLoginClick = { signIn(false) },
-                    onProfileClick = { sharedProfileViewModel.showProfileDialog.value = true },
+                    onProfileItemClick = {
+                        if (it || hasNavigationBar)
+                            sharedProfileViewModel.showProfileDialog.value = true
+                        else
+                            signIn(false)
+                    },
                     bottomSheetViewModel = sharedBottomSheetViewModel,
                     bottomSheetOnItemClick = { startExternalActivity(it) },
-                    pm = packageManager
+                    pm = packageManager,
+                    cantoData = mViewModel.cantoData.value,
+                    navigateBack = mViewModel.navigateBack,
+                    searchBarState = searchBarState
                 )
 
                 RisuscitoSnackBar(
@@ -315,41 +312,42 @@ class MainActivity : ThemeableActivity() {
                     )
                 }
 
-                ProfileDialog(sharedProfileViewModel) { item ->
+                ProfileDialog(
+                    viewModel = sharedProfileViewModel,
+                    loggedIn = signedId.value
+                ) { item ->
                     when (item) {
-                        ProfileMenuItem.GDRIVE_BACKUP -> {
-                            showAccountRelatedDialog(SimpleDialogTag.BACKUP_ASK)
-                        }
+                        ProfileMenuItem.GDRIVE_BACKUP -> showAccountRelatedDialog(SimpleDialogTag.BACKUP_ASK)
 
-                        ProfileMenuItem.GDRIVE_RESTORE -> {
-                            showAccountRelatedDialog(SimpleDialogTag.RESTORE_ASK)
-                        }
+                        ProfileMenuItem.GDRIVE_RESTORE -> showAccountRelatedDialog(SimpleDialogTag.RESTORE_ASK)
 
                         ProfileMenuItem.GDRIVE_REFRESH -> {
                             mViewModel.profileAction = ProfileAction.NONE
                             signIn(lastAccount = true, forceRefresh = true)
                         }
 
-                        ProfileMenuItem.GOOGLE_SIGNOUT -> {
-                            showAccountRelatedDialog(SimpleDialogTag.SIGNOUT)
-                        }
+                        ProfileMenuItem.GOOGLE_SIGNOUT -> showAccountRelatedDialog(SimpleDialogTag.SIGNOUT)
 
-                        ProfileMenuItem.GOOGLE_REVOKE -> {
-                            showAccountRelatedDialog(SimpleDialogTag.REVOKE)
-                        }
+                        ProfileMenuItem.GOOGLE_REVOKE -> showAccountRelatedDialog(SimpleDialogTag.REVOKE)
+
+                        ProfileMenuItem.SETTINGS -> onSettingsItemClick(item)
+
+                        ProfileMenuItem.ABOUT -> onSettingsItemClick(item)
+
+                        ProfileMenuItem.SIGN_IN -> signIn(false)
                     }
                 }
 
                 // After drawing main content, draw status bar protection
                 StatusBarProtection(if (isActionMode.value) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer)
 
-                LaunchedEffect(closeDrawer.value) {
-                    snapshotFlow { closeDrawer.value }
+                LaunchedEffect(closeSearch.value) {
+                    snapshotFlow { closeSearch.value }
                         .distinctUntilChanged()
                         .collect { close ->
                             if (close) {
-                                scope.launch { drawerState.close() }
-                                closeDrawer.value = false
+                                scope.launch { searchBarState.animateToCollapsed() }
+                                closeSearch.value = false
                             }
                         }
                 }
@@ -532,12 +530,12 @@ class MainActivity : ThemeableActivity() {
 
     }
 
-    private fun onMobileDrawerItemClick(itemRoute: DrawerItem) {
+    private fun onSettingsItemClick(item: ProfileMenuItem) {
         expandToolbar()
 
-        val activityClass = when (itemRoute) {
-            DrawerItem.SETTINGS -> SettingsActivity::class.java
-            DrawerItem.INFO -> AboutActivity::class.java
+        val activityClass = when (item) {
+            ProfileMenuItem.SETTINGS -> SettingsActivity::class.java
+            else -> AboutActivity::class.java
         }
 
         val intent = Intent(this, activityClass)
@@ -570,7 +568,10 @@ class MainActivity : ThemeableActivity() {
     ) {
         Log.d(TAG, "signIn -> lastAccount: $lastAccount / forceRefresh: $forceRefresh")
         // [START build_client]
-        buildCredentialRequest(if (lastAccount) buildLastAccountCredentialOption() else buildGoogleCredentialOption())
+        buildCredentialRequest(if (lastAccount) buildLastAccountCredentialOption() else {
+            showProgressDialog()
+            buildGoogleCredentialOption()
+        })
         // [END build_client]
 
         mCredentialRequest?.let {
@@ -697,13 +698,8 @@ class MainActivity : ThemeableActivity() {
         }
 
         signedId.value = signedIn
-//        updateProfileImage()
-//        hideProgressDialog()
+        hideProgressDialog()
     }
-
-//    fun updateProfileImage() {
-////        profileUiManager?.updateProfileUi(profilePhotoUrl, profileNameStr, profileEmailStr)
-//    }
 
     /**
      * Updates the profile information (name, email, photo URL) based on the user's account.
@@ -920,12 +916,8 @@ class MainActivity : ThemeableActivity() {
         actionModeTitle.value = title
     }
 
-    fun isDrawerOpen(): Boolean {
-        return isDrawerOpen.value
-    }
-
-    fun closeDrawer() {
-        closeDrawer.value = true
+    fun closeSearch() {
+        closeSearch.value = true
     }
 
 

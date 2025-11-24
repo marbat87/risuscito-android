@@ -3,7 +3,9 @@ package it.cammino.risuscito.viewmodels
 import android.app.Application
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
+import it.cammino.risuscito.items.CantoViewData
 
 class MainActivityViewModel(application: Application) : DialogManagerViewModel(application) {
 
@@ -15,6 +17,10 @@ class MainActivityViewModel(application: Application) : DialogManagerViewModel(a
     var lastPlaybackState = MutableLiveData<PlaybackStateCompat>()
     var medatadaCompat = MutableLiveData<MediaMetadataCompat>()
     var playerConnected = MutableLiveData(false)
+
+    val cantoData = mutableStateOf(CantoViewData())
+
+    val navigateBack = mutableStateOf(false)
 
     enum class BakupRestoreState {
         NONE,

@@ -65,6 +65,7 @@ import it.cammino.risuscito.items.ExpandableItemType
 import it.cammino.risuscito.items.ListaPersonalizzataRisuscitoListItem
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.SwipeableRisuscitoListItem
+import it.cammino.risuscito.ui.composable.animations.AnimatedScaleContent
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.systemLocale
 import java.lang.Long

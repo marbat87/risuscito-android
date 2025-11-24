@@ -101,7 +101,7 @@ class AboutFragment : MaterialAboutFragment() {
                                 Intent(
                                     it, ChangelogActivity::class.java
                                 ),
-                                com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                                MaterialSharedAxis.Y
                             )
                         }
                     }.build()
