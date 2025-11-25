@@ -187,13 +187,20 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     }
                 }
 
-                val listModifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .then(
-                        scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
-                            ?: Modifier
-                    )
+                val listModifier =
+                    if (!isSearch)
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .then(
+                                scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
+                                    ?: Modifier
+                            )
+                    else
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+
                 LazyColumn(
                     state = state,
                     modifier = listModifier,
@@ -298,7 +305,10 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     )
                 }
 
-                Log.d(TAG, "onCreateView: IS_SEARCH ${arguments?.getBoolean(IS_SEARCH, false)}")
+                Log.d(
+                    TAG,
+                    "onCreateView: IS_SEARCH ${arguments?.getBoolean(IS_SEARCH, false)}"
+                )
                 if (arguments?.getBoolean(IS_SEARCH, false) == true) {
                     sharedSearchViewModel.advancedSearchFilter.observe(viewLifecycleOwner) {
                         job.cancel()
@@ -331,9 +341,14 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
                         localItems.value =
                             when (mCantiViewModel.tipoLista) {
-                                0 -> canti.sortedWith(compareBy(Collator.getInstance(systemLocale)) {
-                                    getString(it.titleRes)
-                                })
+                                0 -> canti.sortedWith(
+                                    compareBy(
+                                        Collator.getInstance(
+                                            systemLocale
+                                        )
+                                    ) {
+                                        getString(it.titleRes)
+                                    })
 
                                 1 -> canti.sortedBy { getString(it.pageRes).toInt() }
                                 else -> canti

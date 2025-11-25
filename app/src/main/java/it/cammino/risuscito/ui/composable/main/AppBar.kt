@@ -1,5 +1,6 @@
 package it.cammino.risuscito.ui.composable.main
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -43,11 +44,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -72,6 +75,7 @@ import it.cammino.risuscito.ui.composable.hasNavigationBar
 import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 enum class ActionModeItem(
@@ -230,38 +234,36 @@ fun TopAppBarWithSearch(
     val pref = PreferenceManager.getDefaultSharedPreferences(LocalContext.current)
 
     val textFieldState = rememberTextFieldState()
-//    val searchBarState = rememberSearchBarState()
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(textFieldState) {
+        snapshotFlow { textFieldState.text }
+            .distinctUntilChanged()
+            .collect {
+                Log.d("AppBar", "textFieldState.text: $it")
+                sharedSearchViewModel.searchFilter.value = it.toString()
+            }
+    }
 
     val inputField =
         @Composable {
             SearchBarDefaults.InputField(
-                query = textFieldState.text.toString(),
-                onQueryChange = {
-                    textFieldState.edit { replace(0, length, it) }
-                    sharedSearchViewModel.searchFilter.value = it
-                },
-                expanded = searchBarState.currentValue == SearchBarValue.Expanded,
-                onExpandedChange = {
-                    if (it) scope.launch { searchBarState.animateToExpanded() }
-                    else {
-                        scope.launch { searchBarState.animateToCollapsed() }
-                    }
-                },
+                searchBarState = searchBarState,
+                textFieldState = textFieldState,
                 onSearch = { },
                 placeholder = {
                     Text(
-                        if (searchBarState.currentValue == SearchBarValue.Expanded) stringResource(
+                        if (searchBarState.isExpanded) stringResource(
                             R.string.search_hint
                         ) else stringResource(R.string.search_name_text),
-                        textAlign = if (searchBarState.currentValue == SearchBarValue.Expanded) TextAlign.Start else TextAlign.Center,
+                        textAlign = if (searchBarState.isExpanded) TextAlign.Start else TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 },
                 leadingIcon = {
-                    if (searchBarState.currentValue == SearchBarValue.Expanded) {
+                    if (searchBarState.isExpanded) {
                         TooltipBox(
                             positionProvider =
                                 TooltipDefaults.rememberTooltipPositionProvider(
@@ -282,7 +284,7 @@ fun TopAppBarWithSearch(
                     }
                 },
                 trailingIcon = {
-                    if (searchBarState.currentValue == SearchBarValue.Expanded) {
+                    if (searchBarState.isExpanded) {
                         if (textFieldState.text.isNotEmpty()) {
                             IconButton(onClick = {
                                 textFieldState.edit { replace(0, length, "") }
@@ -397,59 +399,61 @@ fun TopAppBarWithSearch(
             )
         )
     }
-    ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
-        var selected by remember {
-            mutableStateOf(
-                (Integer.parseInt(
-                    pref.getString(
-                        Utility.DEFAULT_SEARCH,
-                        "0"
-                    ) ?: "0"
-                ) != 0)
-            )
-        }
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 16.dp)
-            ) {
-                FilterChip(
-                    onClick = {
-                        selected = !selected
-                        sharedSearchViewModel.advancedSearchFilter.value = selected
-                    },
-                    label = {
-                        Text(stringResource(R.string.advanced_search_subtitle))
-                    },
-                    selected = selected,
-                    leadingIcon = if (selected) {
-                        {
-                            Icon(
-                                painter = painterResource(R.drawable.check_24px),
-                                contentDescription = "Done icon",
-                                modifier = Modifier.size(FilterChipDefaults.IconSize)
-                            )
-                        }
-                    } else {
-                        null
-                    },
+    if (searchBarState.isExpanded) {
+        ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
+            var selected by remember {
+                mutableStateOf(
+                    (Integer.parseInt(
+                        pref.getString(
+                            Utility.DEFAULT_SEARCH,
+                            "0"
+                        ) ?: "0"
+                    ) != 0)
                 )
             }
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 8.dp),
-                shape = RoundedCornerShape(14.dp),
-            ) {
-                AndroidFragment<SimpleIndexFragment>(
-                    arguments = bundleOf(
-                        SimpleIndexFragment.INDICE_LISTA to 0,
-                        SimpleIndexFragment.IS_SEARCH to true
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    FilterChip(
+                        onClick = {
+                            selected = !selected
+                            sharedSearchViewModel.advancedSearchFilter.value = selected
+                        },
+                        label = {
+                            Text(stringResource(R.string.advanced_search_subtitle))
+                        },
+                        selected = selected,
+                        leadingIcon = if (selected) {
+                            {
+                                Icon(
+                                    painter = painterResource(R.drawable.check_24px),
+                                    contentDescription = "Done icon",
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        },
                     )
-                )
+                }
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 8.dp),
+                    shape = RoundedCornerShape(14.dp),
+                ) {
+                    AndroidFragment<SimpleIndexFragment>(
+                        arguments = bundleOf(
+                            SimpleIndexFragment.INDICE_LISTA to 0,
+                            SimpleIndexFragment.IS_SEARCH to true
+                        )
+                    )
+                }
             }
         }
     }
@@ -478,6 +482,10 @@ fun StatusBarProtection(
         )
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+private val SearchBarState.isExpanded
+    get() = this.currentValue == SearchBarValue.Expanded
 
 @Composable
 fun calculateGradientHeight(): () -> Float {

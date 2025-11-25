@@ -131,7 +131,7 @@ dependencies {
 
     implementation(platform("androidx.compose:compose-bom:2025.11.01"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha04")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha09")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")

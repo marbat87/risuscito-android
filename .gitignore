@@ -10,3 +10,4 @@ build
 /.idea/compiler.xml
 /.idea/encodings.xml
 /.idea/deploymentTargetDropDown.xml
+/app/google-services.json
