@@ -1,5 +1,6 @@
 package it.cammino.risuscito.ui.composable.main
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
@@ -21,6 +22,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -236,6 +238,8 @@ fun TopAppBarWithSearch(
     val textFieldState = rememberTextFieldState()
     val scope = rememberCoroutineScope()
 
+    val appBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
+
     LaunchedEffect(textFieldState) {
         snapshotFlow { textFieldState.text }
             .distinctUntilChanged()
@@ -354,7 +358,7 @@ fun TopAppBarWithSearch(
                 profilePhotoUrl = profilePhotoUrl
             )
         },
-        colors = SearchBarDefaults.appBarWithSearchColors()
+        colors = appBarWithSearchColors,
     )
     AnimatedVisibility(
         visible = isActionMode,
@@ -400,60 +404,19 @@ fun TopAppBarWithSearch(
         )
     }
     if (searchBarState.isExpanded) {
-        ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
-            var selected by remember {
-                mutableStateOf(
-                    (Integer.parseInt(
-                        pref.getString(
-                            Utility.DEFAULT_SEARCH,
-                            "0"
-                        ) ?: "0"
-                    ) != 0)
+        if (hasNavigationBar())
+            ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
+                ExpandedSarchBarContent(
+                    sharedSearchViewModel = sharedSearchViewModel,
+                    pref = pref
                 )
             }
-            Column {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    FilterChip(
-                        onClick = {
-                            selected = !selected
-                            sharedSearchViewModel.advancedSearchFilter.value = selected
-                        },
-                        label = {
-                            Text(stringResource(R.string.advanced_search_subtitle))
-                        },
-                        selected = selected,
-                        leadingIcon = if (selected) {
-                            {
-                                Icon(
-                                    painter = painterResource(R.drawable.check_24px),
-                                    contentDescription = "Done icon",
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                )
-                            }
-                        } else {
-                            null
-                        },
-                    )
-                }
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(horizontal = 8.dp),
-                    shape = RoundedCornerShape(14.dp),
-                ) {
-                    AndroidFragment<SimpleIndexFragment>(
-                        arguments = bundleOf(
-                            SimpleIndexFragment.INDICE_LISTA to 0,
-                            SimpleIndexFragment.IS_SEARCH to true
-                        )
-                    )
-                }
+        else {
+            ExpandedDockedSearchBar(state = searchBarState, inputField = inputField) {
+                ExpandedSarchBarContent(
+                    sharedSearchViewModel = sharedSearchViewModel,
+                    pref = pref
+                )
             }
         }
     }
@@ -480,6 +443,67 @@ fun StatusBarProtection(
             brush = gradient,
             size = Size(size.width, calculatedHeight),
         )
+    }
+}
+
+@Composable
+private fun ExpandedSarchBarContent(
+    sharedSearchViewModel: SharedSearchViewModel,
+    pref: SharedPreferences
+) {
+    var selected by remember {
+        mutableStateOf(
+            (Integer.parseInt(
+                pref.getString(
+                    Utility.DEFAULT_SEARCH,
+                    "0"
+                ) ?: "0"
+            ) != 0)
+        )
+    }
+    Column {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp)
+        ) {
+            FilterChip(
+                onClick = {
+                    selected = !selected
+                    sharedSearchViewModel.advancedSearchFilter.value = selected
+                },
+                label = {
+                    Text(stringResource(R.string.advanced_search_subtitle))
+                },
+                selected = selected,
+                leadingIcon = if (selected) {
+                    {
+                        Icon(
+                            painter = painterResource(R.drawable.check_24px),
+                            contentDescription = "Done icon",
+                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                        )
+                    }
+                } else {
+                    null
+                },
+            )
+        }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 8.dp),
+            shape = RoundedCornerShape(14.dp),
+        ) {
+            AndroidFragment<SimpleIndexFragment>(
+                arguments = bundleOf(
+                    SimpleIndexFragment.INDICE_LISTA to 0,
+                    SimpleIndexFragment.IS_SEARCH to true
+                )
+            )
+        }
     }
 }
 

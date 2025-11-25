@@ -6,13 +6,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -22,8 +20,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -34,9 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -50,12 +44,12 @@ import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.ui.activity.MainActivity
+import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.hasNavigationBar
-import it.cammino.risuscito.ui.composable.risuscito_medium_font
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.StringUtils
@@ -69,6 +63,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import soup.compose.material.motion.animation.materialFadeThroughIn
+import soup.compose.material.motion.animation.materialFadeThroughOut
 import java.text.Collator
 
 class SimpleIndexFragment : Fragment(), SnackBarFragment {
@@ -155,30 +151,16 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 }
 
                 if (isSearch) {
-                    if (localItems.value.isEmpty()) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .padding(horizontal = 16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_search_question_mark),
-                                contentDescription = stringResource(id = R.string.search_no_results),
-                                modifier = Modifier
-                                    .size(120.dp)
-                            )
-                            Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
-                            Text(
-                                text = stringResource(R.string.search_no_results),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
-                                fontFamily = risuscito_medium_font,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
-                            )
-                        }
+                    AnimatedVisibility(
+                        visible = localItems.value.isEmpty(),
+                        enter = materialFadeThroughIn(),
+                        exit = materialFadeThroughOut()
+                    ) {
+                        EmptyListView(
+                            modifier = Modifier.padding(16.dp),
+                            iconRes = R.drawable.search_off_24px,
+                            textRes = R.string.search_no_results
+                        )
                     }
                 }
                 if (showSearchProgress.value) {

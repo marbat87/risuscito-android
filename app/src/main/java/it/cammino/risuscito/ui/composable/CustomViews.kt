@@ -171,9 +171,9 @@ fun MainHintLayoutPreview() {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun EmptyListView(iconRes: Int, textRes: Int) {
+fun EmptyListView(modifier: Modifier = Modifier, iconRes: Int, textRes: Int) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(), // Occupa solo l'altezza necessaria
         horizontalAlignment = Alignment.CenterHorizontally
