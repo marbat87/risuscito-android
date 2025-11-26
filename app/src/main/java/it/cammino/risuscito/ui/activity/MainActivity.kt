@@ -143,7 +143,6 @@ class MainActivity : ThemeableActivity() {
     private val optionMenuList = MutableLiveData(ArrayList<OptionMenuItem>())
     private var fabActionsFragment: FabActionsFragment? = null
     private val signedId = mutableStateOf(false)
-    private val closeSearch = mutableStateOf(false)
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -568,10 +567,12 @@ class MainActivity : ThemeableActivity() {
     ) {
         Log.d(TAG, "signIn -> lastAccount: $lastAccount / forceRefresh: $forceRefresh")
         // [START build_client]
-        buildCredentialRequest(if (lastAccount) buildLastAccountCredentialOption() else {
-            showProgressDialog()
-            buildGoogleCredentialOption()
-        })
+        buildCredentialRequest(
+            if (lastAccount) buildLastAccountCredentialOption() else {
+                showProgressDialog()
+                buildGoogleCredentialOption()
+            }
+        )
         // [END build_client]
 
         mCredentialRequest?.let {
@@ -915,11 +916,6 @@ class MainActivity : ThemeableActivity() {
     fun updateActionModeTitle(title: String) {
         actionModeTitle.value = title
     }
-
-    fun closeSearch() {
-        closeSearch.value = true
-    }
-
 
     fun showBottomSheet(titleRes: Int = 0, intent: Intent?) {
         intent?.let { mIntent ->

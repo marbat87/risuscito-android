@@ -97,6 +97,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     protected val fabExpanded = mutableStateOf(false)
 
+    protected val closeSearch = mutableStateOf(false)
+
     @SuppressLint("NewApi")
     public override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -659,7 +661,10 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     fun openCanto(
-        function: String?, idCanto: Int, numPagina: String?, forceOpenActivity: Boolean = false
+        function: String?,
+        idCanto: Int,
+        numPagina: String?,
+        forceOpenActivity: Boolean = false
     ) {
 
         Firebase.crashlytics.log("open_canto - function: ${function.orEmpty()} - idCanto: $idCanto - numPagina: ${numPagina.orEmpty()} - onActivity: $forceOpenActivity")
@@ -696,6 +701,10 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 cronologia
             )
         }
+    }
+
+    fun closeSearch() {
+        closeSearch.value = true
     }
 
     companion object {

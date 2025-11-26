@@ -43,7 +43,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.RisuscitoListItem
-import it.cammino.risuscito.ui.activity.MainActivity
+import it.cammino.risuscito.ui.activity.ThemeableActivity
 import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
@@ -83,11 +83,11 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
     private var listePersonalizzate: List<ListaPers>? = null
 
     private var job: Job = Job()
-    private var mActivity: MainActivity? = null
+    private var mActivity: ThemeableActivity? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mActivity = activity as? MainActivity
+        mActivity = activity as? ThemeableActivity
     }
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

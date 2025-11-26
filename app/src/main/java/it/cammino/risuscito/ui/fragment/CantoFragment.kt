@@ -501,6 +501,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                                             showScrolling(false)
                                         }
                                         saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
+                                        stopMedia()
                                         closeCanto()
                                     }
 
@@ -905,6 +906,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
                 showScrolling(false)
             }
             saveZoom(andSpeedAlso = true, andSaveTabAlso = false)
+            stopMedia()
             closeCanto()
         } else {
             mCantiViewModel.dialogTag = SimpleDialogTag.SAVE_TAB

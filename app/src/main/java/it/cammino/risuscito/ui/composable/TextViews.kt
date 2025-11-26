@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import it.cammino.risuscito.ui.composable.theme.RisuscitoColor
 
 @Preview
 @Composable
@@ -60,7 +61,7 @@ fun PageText(title: String = "15", color: Long = 0xFFFCFCFC) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = RisuscitoColor.md_theme_light_onBackground
         )
     }
 }
