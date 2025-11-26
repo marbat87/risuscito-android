@@ -68,7 +68,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -102,7 +101,6 @@ import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.main.cantoFabActions
 import it.cammino.risuscito.ui.composable.main.cantoMenu
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
-import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.DownloadState
 import it.cammino.risuscito.utils.Downloader
@@ -142,7 +140,7 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 
-open class CantoFragment : Fragment(), SnackBarFragment {
+open class CantoFragment : Fragment() {
 
     private lateinit var cambioAccordi: CambioAccordi
     private val mExecutorService = Executors.newSingleThreadScheduledExecutor()
@@ -159,7 +157,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
 
     private val mCantiViewModel: PaginaRenderViewModel by viewModels()
 
-    private val sharedSnackBarViewModel: SharedSnackBarViewModel by activityViewModels()
+    private val sharedSnackBarViewModel: SharedSnackBarViewModel by viewModels()
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels({ requireActivity() })
     protected val progressDialogViewModel: ProgressDialogManagerViewModel by viewModels()
@@ -927,8 +925,7 @@ open class CantoFragment : Fragment(), SnackBarFragment {
     private fun closeCanto() {
         if (mCantiViewModel.inActivity) {
             mMainActivity?.finishAfterTransitionWrapper()
-        }
-        else {
+        } else {
             mMainActivity?.closeCanto()
         }
     }
@@ -1662,16 +1659,9 @@ open class CantoFragment : Fragment(), SnackBarFragment {
         }
     }
 
-    override fun onActionPerformed() {}
-
-    override fun onDismissed() {}
-
-    override fun showSnackBar(message: String, label: String?) {
-        mMainActivity?.showSnackBar(
-            message = message,
-            callback = this,
-            label = label
-        )
+    private fun showSnackBar(message: String) {
+        sharedSnackBarViewModel.snackbarMessage.value = message
+        sharedSnackBarViewModel.showSnackBar.value = true
     }
 
     private fun onOptionsItemSelected(item: ActionModeItem) {
@@ -1680,7 +1670,6 @@ open class CantoFragment : Fragment(), SnackBarFragment {
             ActionModeItem.TONALITA -> tonalitaMenuExpanded.value = true
             ActionModeItem.BARRE -> barreMenuExpanded.value = true
             ActionModeItem.EXPORT_PDF -> lifecycleScope.launch { exportPdf() }
-//            ActionModeItem.HELP -> playIntro(mediaPlayerVisible.value)
             else -> {}
         }
     }

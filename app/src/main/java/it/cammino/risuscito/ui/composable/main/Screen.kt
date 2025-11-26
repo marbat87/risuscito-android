@@ -174,18 +174,7 @@ fun MainScreen(
                                 tabsList = tabsList
                             )
                         }
-//                        Box {
-                            AppNavigationHost(navController = navController)
-
-                            // LinearProgressIndicator sovrapposto
-//                            if (false) {
-//                                LinearProgressIndicator(
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .align(Alignment.TopCenter)
-//                                )
-//                            }
-//                        }
+                        AppNavigationHost(navController = navController)
                     }
 
 //                if (fabExpanded.value) {
