@@ -126,9 +126,8 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                     sharedTabViewModel.tabsSelectedIndex.intValue = page
                                 }
                                 initFabOptions(page >= 2)
-                                fragmentsList[page]?.let {
-                                    mMainActivity?.setFabActionsFragment(it)
-                                }
+                                mMainActivity?.setFabActionsFragment(fragmentsList[page])
+
                             }
                     }
 

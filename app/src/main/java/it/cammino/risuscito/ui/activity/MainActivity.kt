@@ -885,7 +885,7 @@ class MainActivity : ThemeableActivity() {
         optionMenuFragment = fragment
     }
 
-    fun setFabActionsFragment(fragment: FabActionsFragment) {
+    fun setFabActionsFragment(fragment: FabActionsFragment?) {
         fabActionsFragment = fragment
     }
 
