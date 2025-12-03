@@ -99,7 +99,6 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                 AndroidFragment<ListaPredefinitaFragment>(
                                     arguments = bundleOf(ListaPredefinitaFragment.INDICE_LISTA to page + 1),
                                     onUpdate = {
-                                        Log.d(TAG, "onUpdate ListaPredefinitaFragment: $page")
                                         fragmentsList[page] = it
                                     }
                                 )
@@ -108,7 +107,6 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                 AndroidFragment<ListaPersonalizzataFragment>(
                                     arguments = bundleOf(ListaPersonalizzataFragment.INDICE_LISTA to idListe[page - 2]),
                                     onUpdate = {
-                                        Log.d(TAG, "onUpdate ListaPersonalizzataFragment: $page")
                                         fragmentsList[page] = it
                                     }
                                 )
@@ -126,10 +124,10 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                 )
                                 if (sharedTabViewModel.tabsSelectedIndex.intValue != page) {
                                     sharedTabViewModel.tabsSelectedIndex.intValue = page
-                                    initFabOptions(page >= 2)
-                                    fragmentsList[page]?.let {
-                                        mMainActivity?.setFabActionsFragment(it)
-                                    }
+                                }
+                                initFabOptions(page >= 2)
+                                fragmentsList[page]?.let {
+                                    mMainActivity?.setFabActionsFragment(it)
                                 }
                             }
                     }
@@ -145,7 +143,6 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                     Log.d(TAG, "Animating pager to page: $selectedIndex")
                                     localPagerState.scrollToPage(selectedIndex)
                                 }
-                                initFabOptions(selectedIndex >= 2)
                             }
                     }
 
