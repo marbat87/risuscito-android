@@ -55,7 +55,7 @@ object Utility {
     internal const val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
     internal const val NIGHT_MODE = "night_mode"
     internal const val DYNAMIC_COLORS = "dynamic_colors"
-    internal const val SHARED_AXIS = "shared_axis"
+//    internal const val SHARED_AXIS = "shared_axis"
 //    private const val TOKEN_VALIDATION_PATH = "https://oauth2.googleapis.com/tokeninfo?id_token="
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"

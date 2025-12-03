@@ -14,7 +14,6 @@ import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
 import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
-import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.R
@@ -27,12 +26,6 @@ import it.cammino.risuscito.utils.extension.startActivityWithTransition
 class AboutFragment : MaterialAboutFragment() {
 
     private var mMainActivity: ThemeableActivity? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -87,7 +80,9 @@ class AboutFragment : MaterialAboutFragment() {
                             Log.e(TAG, "Error:", e)
                             // No activity to handle intent
                             Toast.makeText(
-                                ctx, com.danielstone.materialaboutlibrary.R.string.mal_activity_exception, Toast.LENGTH_SHORT
+                                ctx,
+                                com.danielstone.materialaboutlibrary.R.string.mal_activity_exception,
+                                Toast.LENGTH_SHORT
                             ).show()
                         }
                     }.build()
@@ -100,8 +95,7 @@ class AboutFragment : MaterialAboutFragment() {
                             it.startActivityWithTransition(
                                 Intent(
                                     it, ChangelogActivity::class.java
-                                ),
-                                MaterialSharedAxis.Y
+                                )
                             )
                         }
                     }.build()

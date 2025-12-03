@@ -33,7 +33,6 @@
     <string name="canto_vino">Na roznoszenie wina</string>
     <string name="title_activity_custom_lists">Listy</string>
     <string name="copertina">pokrycie</string>
-    <string name="title_activity_inserisci_titolo">Szukanie dla danych wejściowych</string>
     <string name="title_activity_about">Informacje</string>
     <string name="save_file">Zapisz lokalnie</string>
     <string name="no_connection">Brak połączenia z internetem</string>
@@ -58,9 +57,7 @@
     <string name="action_add_list">Nowa lista</string>
     <string name="action_remove_list">Anuluj listę</string>
     <string name="action_edit_list">Edytuj listę</string>
-    <string name="list_save_exit">Zapisz i wyjdź</string>
     <string name="add_position">Dodaj pozycję</string>
-    <string name="content_drag">Przenieś pozycję</string>
     <string name="aggiungi_confirm">dodaj</string>
     <string name="posizione_add_desc">Tytuł nowej pozycji</string>
     <string name="lista_pers_piena">Maksymalna liczba pozycji wynosi 30</string>
@@ -85,17 +82,13 @@
     <string name="action_trasporta_sib">B / b</string>
     <string name="action_trasporta_si">H / h</string>
     <string name="dialog_save_tab">Czy chcesz zapisać tonację i próg?</string>
-    <string name="showcase_help_general">Możesz powtórzyć ten samouczek wybierając w menu opcję \"Pomoc\".</string>
     <string name="tab_saved">Tonacja zapisana</string>
     <string name="barre_saved">Pozycja zapisanego progu</string>
     <string name="tab_not_saved">Nie zmieniono tonacji</string>
     <string name="barre_not_saved">Nie zmieniono  pozycji progu gitary</string>
-    <string name="showcase_end_title">Koniec</string>
     <string name="list_added">Dodano do listy</string>
     <string name="posizione_rename">Zmień nazwę pozycji</string>
-    <string name="showcase_add_pos_desc">Za pomocą tego przycisku możesz dodać nową pozycję (np. \"Pieśń na wejście\", \"pierwsze czytanie\", itp.).\nMożesz dodać maksymalnie 30 pozycji.</string>
     <string name="showcase_rename_desc">Dotknij na nazwie pozycji aby zmienić jej nazwę.</string>
-    <string name="showcase_saveexit_desc">Kiedy skończysz, naciśnij na tą ikonkę aby zapisać i zobaczyć swoją listę.</string>
     <string name="showcase_delete_desc">Przesuń w prawo lub w lewo aby usunąć pozycję.</string>
     <string name="action_barre">Próg gitary (Barre)</string>
     <string name="action_reset_barre">Domyślny</string>
@@ -117,7 +110,6 @@
     <string name="dialog_delete_link">Czy jesteś pewien, że chcesz odłączyć pieśń? (Plik nie zostanie usunięty)</string>
     <string name="delink_delete">Plik odłączony</string>
     <string name="list_title">Tytuł listy</string>
-    <string name="list_title_modif">Edytuj tytuł&#8230;</string>
     <string name="list_elements">POZYCJA LISTY:</string>
     <string name="no_title_edited">Tytuł nie został zmodyfikowany ponieważ jest pusty</string>
     <string name="no_elements_added">Nie dodano żadnych pozycji.</string>
@@ -162,9 +154,6 @@
     <string name="no_favourites_short">Nie masz żadnych ulubionych.</string>
     <string name="no_consegnati">Nie masz tutaj żadnych pieśni.</string>
     <string name="title_activity_consegnati">Dostarczone</string>
-    <string name="showcase_consegnati_howto">Naciśnij na ten przycisk, aby uzyskać dostęp do listy i zaznaczyć pieśni.</string>
-    <string name="showcase_consegnati_confirm">Gdy skończysz, naciśnij ENTER aby zapisać zmiany&#8230;</string>
-    <string name="showcase_consegnati_cancel">&#8230;lub wciśnij ANULUJ aby odrzucić je.</string>
     <string name="title_activity_history">Historia</string>
     <string name="new_hint_remove">Naciśnij i przytrzymaj na elemencie aby go usunąć.</string>
     <string name="history_empty">Historia jest pusta.</string>
@@ -193,12 +182,6 @@
         <item quantity="many">%1$d pieśni usunięte z historii</item>
         <item quantity="other">%1$d pieśni usunięte z historii</item>
     </plurals>
-    <string name="sc_tonalita_desc">Z tego menu możesz zarządzać zmianami tonów za pomocą funkcji traspozycji akordów.</string>
-    <string name="sc_barre_desc">Z tego menu możesz zarządzać zmianami progów gitary.</string>
-    <string name="sc_audio_title">Odtwarzanie audio</string>
-    <string name="sc_audio_desc">Używając tego panelu możesz odtwarzać nagraną pieśń.</string>
-    <string name="sc_scroll_title">Automatyczne przesuwanie tekstu</string>
-    <string name="sc_scroll_desc">Używając tego panelu możesz włączyć automatyczne przesuwanie tekstu. Suwakiem możesz kontrolować szybkość przewijania.\nWSKAZÓWKA: Wybierz odpowiednie powiększenie tekstu dla lepszego efektu.</string>
     <string name="download_error">Błąd pobierania:</string>
     <string name="share_by">Udostępnij&#8230;</string>
     <string name="delete_list_dialog">Czy aby na pewno chcesz usunąć tę listę?</string>
@@ -241,9 +224,6 @@
     <string name="fab_delete_unlink">Usuń plik</string>
     <string name="favorite_on">Dodaj do ulubionych</string>
     <string name="favorite_off">Usuń z ulubionych</string>
-    <string name="showcase_listepers_title">Eksportuj/importuj listy</string>
-    <string name="showcase_listepers_desc1">Od tej wersji możesz eksportować i importować szablony i wybrane pieśni spersonalizowanych list (opcja ta nie jest domyślna).\nNaciśnij na ten przycisk po dodatkowe opcje. Wybierz opcję - udostępnij, aby zdecydować jak i do kogo wysłać listę</string>
-    <string name="showcase_listepers_desc3">Aby zaimportować listę, otwórz plik w formacie \"Zmartwychwstał Pan\" bezpośrednio z aplikacji lub z menedżera plików.</string>
     <string name="show_offertorio_title">Eucharystia - Pieśń na kolektę</string>
     <string name="show_offertorio_summary">Dodaj pozycję \"Pieśń na kolektę\" dla Eucharystii</string>
     <string name="canto_offertorio">Na kolektę</string>

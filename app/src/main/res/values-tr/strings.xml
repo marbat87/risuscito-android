@@ -33,7 +33,6 @@
     <string name="canto_vino">Şarapta</string>
     <string name="title_activity_custom_lists">Listeler</string>
     <string name="copertina">Kapak</string>
-    <string name="title_activity_inserisci_titolo">Eklenene göre ara</string>
     <string name="title_activity_about">Hakkında</string>
     <string name="save_file">Yerel\'e kaydet</string>
     <string name="no_connection">Aktif İnternetle bağlantı yok</string>
@@ -58,9 +57,7 @@
     <string name="action_add_list">Yeni liste</string>
     <string name="action_remove_list">Listeyi sil</string>
     <string name="action_edit_list">Listeyi düzenle</string>
-    <string name="list_save_exit">Kaydet ve çık</string>
     <string name="add_position">Öğe ekle</string>
-    <string name="content_drag">Öğeyi sürükle</string>
     <string name="aggiungi_confirm">ekle</string>
     <string name="posizione_add_desc">Yeni öğenin başlığı</string>
     <string name="lista_pers_piena">Maksimum eklenebilir öğe sayısı 30 </string>
@@ -85,18 +82,13 @@
     <string name="action_trasporta_sib">Sib / Sib-</string>
     <string name="action_trasporta_si">Si / Si-</string>
     <string name="dialog_save_tab">Kullanılmış Ses Tonu ve Bareyi kaydetmek ister misin?</string>
-    <string name="showcase_help_general">Menüden \"Yardım\" kısmını seçerek bu önerileri tekrar görebilirsin</string>
     <string name="tab_saved">Ses tonu kaydedildi</string>
     <string name="barre_saved">Barenin yeri kaydedildi</string>
     <string name="tab_not_saved">ses tonununu değiştirmedin</string>
     <string name="barre_not_saved">Barenin yerini değiştirmedin</string>
-    <string name="showcase_end_title">Bitti</string>
     <string name="list_added">Listeye eklendi</string>
     <string name="posizione_rename">Öğeyi yeniden adlandır</string>
-    <string name="showcase_add_pos_desc">Bu düğmeyle istediğin gibi yeni bir öğe ekleyebilirsin (Örn. \" Giriş İlahisi\" , \" 1. Okuma\", vs.)
-        30 öğeye kadar ekleyebilirsin.</string>
     <string name="showcase_rename_desc">Öğeyi yeniden adlandırmak için öğenin isminin üzerine basılı tut.</string>
-    <string name="showcase_saveexit_desc">Bitirdiğinde, kaydetmek ve diğerleriyle görmek için buraya tıkla.</string>
     <string name="showcase_delete_desc">Öğeyi silmek için sağa veya sola kaydırın.</string>
     <string name="action_barre">Bare</string>
     <string name="action_reset_barre">Varsayılan</string>
@@ -118,7 +110,6 @@
     <string name="dialog_delete_link">Hafızanda bulunan parçanın bağlantısını kesmek istediğinden emin misin? (Dosya silinmeyecektir.)</string>
     <string name="delink_delete">Dosyanın bağlantısı kesildi</string>
     <string name="list_title">Listenin başlığı</string>
-    <string name="list_title_modif">Başlığı düzenle&#8230;</string>
     <string name="list_elements">LİSTENİN ÖĞELERİ:</string>
     <string name="no_title_edited">Başlık, girilmediğinden dolayı değiştirilmedi.</string>
     <string name="no_elements_added">Hala hiçbir öğe eklemedin.</string>
@@ -163,9 +154,6 @@
     <string name="no_favourites_short">Hiçbir favori eklemedin.</string>
     <string name="no_consegnati">Hiçbir ilahiyi \"Teslim edildi\" diye işaretlemedin.</string>
     <string name="title_activity_consegnati">Teslim edilmiş</string>
-    <string name="showcase_consegnati_howto">Listeye girip ilahileri işaretlemek için bu düğmeye tıkla.</string>
-    <string name="showcase_consegnati_confirm">Bitirdiğinde, kaydetmek için KABUL e tıkla.</string>
-    <string name="showcase_consegnati_cancel">Onları silmek için &#8230; yada İPTAL e tıkla.</string>
     <string name="title_activity_history">Geçmiş</string>
     <string name="new_hint_remove">Öğeyi kaldırmak için üzerine basılı tut</string>
     <string name="history_empty">Geçmiş boş</string>
@@ -190,15 +178,6 @@
         <item quantity="one">%1$d geçmişten çıkarıldı</item>
         <item quantity="other">%1$d geçmişten çıkarıldılar</item>
     </plurals>
-    <string name="sc_tonalita_desc">Bu menüden şu fonksiyonlarla ses tonu değişikliği yapabilirsin: akorların değişimi,
-        Ayarlanan ses tonunun ve varsayılanın sıfırlanmasının kaydedilmesi</string>
-    <string name="sc_barre_desc">Bu menüden ses tonunun aynı 3 fonksiyonuyla Barenin yerini değiştirebilirsin.</string>
-    <string name="sc_audio_title">Ses çalma</string>
-    <string name="sc_audio_desc">Bu kontrolleri kullanarak ilahinin kaydını oynatabilirsin: Play, pausa,
-        Bare ile parçada yerleşme, kullanılan zamanın görünümü.</string>
-    <string name="sc_scroll_title">Otomatik metin kaydırma</string>
-    <string name="sc_scroll_desc">Bu kontrolleri kullanarak metni otomatik olarak oynatabilir ve hızını ayarlayabilirsin.
-        \n ÖNERİ: Daha iyi bir görünüm alması için ekranı büyütebilirsin.</string>
     <string name="download_error">Yüklemede hata olustu:</string>
     <string name="share_by">Şununla paylas&#8230;</string>
     <string name="delete_list_dialog">Silmek istediğinden emin misin?</string>
@@ -243,9 +222,6 @@
     <string name="fab_delete_unlink">Dosyayı sil</string>
     <string name="favorite_on">Favorilere ekle</string>
     <string name="favorite_off">Favorilerden çıkar</string>
-    <string name="showcase_listepers_title">Liste gönderimi / alınması</string>
-    <string name="showcase_listepers_desc1">Bu versiyonda yaratılan listelerin yapısı ve seçilmiş ilahileri (belirlenmiş değil)  alınabilir veya gönderilebilir.\n Donanım düğmesine tıkla.</string>
-    <string name="showcase_listepers_desc3">Bir listeyi almak için, ".risuscito" adlı dosyayı direkt olarak aldığın program veya dosyacı aracılığıyla açınız.</string>
     <string name="show_offertorio_title">Efkaristiya - sunma</string>
     <string name="show_offertorio_summary">Efkaristiya\'yı sunabilmek için ilahi</string>
     <string name="canto_offertorio">Sunmada</string>

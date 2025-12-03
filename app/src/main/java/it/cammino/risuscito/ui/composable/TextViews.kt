@@ -78,7 +78,7 @@ fun ContextualToolbarTitle(title: String = "1 selezionato") {
             text = title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary,
-            fontFamily = risuscito_medium_font,
+//            fontFamily = risuscito_medium_font,
         )
     }
 }

@@ -39,6 +39,7 @@ import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.hasTwoPanes
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.cleanListOptionMenu
@@ -79,6 +80,8 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                 val localSelectedItems by selectedItems.observeAsState()
 
                 val viewMode by remember { mFavoritesViewModel.viewMode }
+
+                val hasTwoPanes = hasTwoPanes()
 
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
@@ -129,7 +132,7 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                                                         TAG,
                                                         item.id,
                                                         source,
-                                                        false
+                                                        !hasTwoPanes
                                                     )
                                                 }
                                             },

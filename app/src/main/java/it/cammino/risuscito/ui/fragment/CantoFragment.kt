@@ -115,11 +115,11 @@ import it.cammino.risuscito.utils.Utility.getExternalLink
 import it.cammino.risuscito.utils.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.utils.Utility.mediaScan
 import it.cammino.risuscito.utils.Utility.retrieveMediaFileLink
-import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
 import it.cammino.risuscito.utils.extension.hasStorageAccess
 import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
 import it.cammino.risuscito.utils.extension.isOnline
 import it.cammino.risuscito.utils.extension.readTextFromResource
+import it.cammino.risuscito.utils.extension.slideOutRight
 import it.cammino.risuscito.utils.extension.startActivityWithFadeIn
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -737,8 +737,6 @@ open class CantoFragment : Fragment() {
             Log.e(TAG, e.localizedMessage, e)
         }
 
-//        showScrolling(false)
-
         lifecycleScope.launch { retrieveData() }
 
         if (savedInstanceState == null)
@@ -853,6 +851,7 @@ open class CantoFragment : Fragment() {
 
     private fun updatePlayBackStatus(state: PlaybackStateCompat) {
         Log.d(TAG, "updatePlayBackStatus - state: ${state.state}")
+        enableMusicControls(mCantiViewModel.mostraAudio)
         when (state.state) {
             PlaybackStateCompat.STATE_PAUSED -> {
                 stopSeekbarUpdate()
@@ -913,18 +912,20 @@ open class CantoFragment : Fragment() {
             mCantiViewModel.content.value = getString(R.string.dialog_save_tab)
             mCantiViewModel.positiveButton.value = getString(R.string.save_exit_confirm)
             mCantiViewModel.negativeButton.value = getString(R.string.discard_exit_confirm)
+            mCantiViewModel.showAlertDialog.value = true
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume: ")
-        enableMusicControls(mCantiViewModel.mostraAudio)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        Log.d(TAG, "onResume: ")
+//        enableMusicControls(mCantiViewModel.mostraAudio)
+//    }
 
     private fun closeCanto() {
         if (mCantiViewModel.inActivity) {
-            mMainActivity?.finishAfterTransitionWrapper()
+            mMainActivity?.finish()
+            mMainActivity?.slideOutRight()
         } else {
             mMainActivity?.closeCanto()
         }
@@ -1197,119 +1198,6 @@ open class CantoFragment : Fragment() {
     private fun showScrolling(scrolling: Boolean) {
         mCantiViewModel.scrollPlaying.value = scrolling
     }
-
-//    private fun playIntro(isFull: Boolean) {
-//        binding.musicControls.isVisible = true
-//        enableMusicControls(true)
-//        val colorOnPrimary = MaterialColors.getColor(
-//            requireContext(),
-//            com.google.android.material.R.attr.colorOnPrimary,
-//            TAG
-//        )
-//        var id = 1
-//        TapTargetSequence(requireActivity()).apply {
-//            continueOnCancel(true)
-//            target(
-//                TapTarget.forToolbarMenuItem(
-//                    binding.risuscitoToolbarCanto,
-//                    R.id.tonalita,
-//                    getString(R.string.action_tonalita),
-//                    getString(R.string.sc_tonalita_desc)
-//                )
-//                    // All options below are optional
-//                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                    .titleTextColorInt(colorOnPrimary)
-//                    .textColorInt(colorOnPrimary)
-//                    .setForceCenteredTarget(true)
-//                    .id(id++)
-//            )
-//            target(
-//                TapTarget.forToolbarMenuItem(
-//                    binding.risuscitoToolbarCanto,
-//                    R.id.barre,
-//                    getString(R.string.action_barre),
-//                    getString(R.string.sc_barre_desc)
-//                )
-//                    // All options below are optional
-//                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                    .titleTextColorInt(colorOnPrimary)
-//                    .textColorInt(colorOnPrimary)
-//                    .setForceCenteredTarget(true)
-//                    .id(id++)
-//            )
-//            if (isFull) {
-//                target(
-//                    TapTarget.forView(
-//                        binding.playSong,
-//                        getString(R.string.sc_audio_title),
-//                        getString(R.string.sc_audio_desc)
-//                    )
-//                        // All options below are optional
-//                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                        .titleTextColorInt(colorOnPrimary)
-//                        .textColorInt(colorOnPrimary)
-//                        .setForceCenteredTarget(true)
-//                        .id(id++)
-//                )
-//            }
-//            target(
-//                TapTarget.forView(
-//                    binding.playScroll,
-//                    getString(R.string.sc_scroll_title),
-//                    getString(R.string.sc_scroll_desc)
-//                )
-//                    // All options below are optional
-//                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                    .titleTextColorInt(colorOnPrimary)
-//                    .textColorInt(colorOnPrimary)
-//                    .setForceCenteredTarget(true)
-//                    .id(id++)
-//            )
-//            target(
-//                TapTarget.forToolbarOverflow(
-//                    binding.risuscitoToolbarCanto,
-//                    getString(R.string.showcase_end_title),
-//                    getString(R.string.showcase_help_general)
-//                )
-//                    // All options below are optional
-//                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                    .titleTextColorInt(colorOnPrimary)
-//                    .textColorInt(colorOnPrimary)
-//                    .setForceCenteredTarget(true)
-//                    .id(id)
-//            )
-//            listener(
-//                object :
-//                    TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-//                    override fun onSequenceFinish() {
-//                        mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-//                        enableMusicControls(mCantiViewModel.mostraAudio)
-////                        binding.musicControls.isVisible = mCantiViewModel.mostraAudio
-//                    }
-//
-//                    override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-//                        // no-op
-//                    }
-//
-//                    override fun onSequenceCanceled(tapTarget: TapTarget) {
-//                        mSharedPrefs.edit { putBoolean(Utility.INTRO_PAGINARENDER, true) }
-////                        binding.musicControls.isVisible = mCantiViewModel.mostraAudio
-//                        enableMusicControls(mCantiViewModel.mostraAudio)
-//                    }
-//                })
-//        }.start()
-//    }
 
     private fun playMedia() {
         Log.d(TAG, "playMedia: ")

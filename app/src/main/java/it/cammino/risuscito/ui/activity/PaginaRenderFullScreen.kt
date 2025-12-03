@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
@@ -25,6 +26,7 @@ import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.exitZoom
 import it.cammino.risuscito.utils.extension.goFullscreen
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
@@ -32,7 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PaginaRenderFullScreen : ThemeableActivity() {
+class PaginaRenderFullScreen : AppCompatActivity() {
 
     private val paginaRenderViewModel: PaginaRenderViewModel by viewModels()
 
@@ -109,6 +111,11 @@ class PaginaRenderFullScreen : ThemeableActivity() {
 
         lifecycleScope.launch { loadCantoData() }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkScreenAwake()
     }
 
     private fun onBackPressedAction() {

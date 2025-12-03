@@ -10,7 +10,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.compose.AndroidFragment
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CantoFragment
-import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 
 class CantoHostActivity : ThemeableActivity() {
@@ -18,7 +17,7 @@ class CantoHostActivity : ThemeableActivity() {
     private val viewModel: PaginaRenderViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setEnterTransition()
+//        setEnterTransition()
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()

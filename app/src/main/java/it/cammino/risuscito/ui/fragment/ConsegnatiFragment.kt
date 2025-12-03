@@ -1,30 +1,22 @@
 package it.cammino.risuscito.ui.fragment
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,12 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.integerArrayResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -51,23 +40,23 @@ import it.cammino.risuscito.database.entities.Consegnato
 import it.cammino.risuscito.items.RisuscitoListItem
 import it.cammino.risuscito.items.risuscitoListItem
 import it.cammino.risuscito.ui.composable.CheckableListItem
+import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.PassageListItem
 import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.dialogs.ListChoiceAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.PassaggesDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.composable.hasTwoPanes
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.consegnatiMenu
 import it.cammino.risuscito.ui.composable.main.consegnatiOptionMenu
 import it.cammino.risuscito.ui.composable.main.consegnatiResetOptionMenu
-import it.cammino.risuscito.ui.composable.risuscito_medium_font
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.getTypedValueResId
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
@@ -84,8 +73,6 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
     private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
 
     private val contextMenuExpanded = mutableStateOf(false)
-    private var mRegularFont: Typeface? = null
-    private var mMediumFont: Typeface? = null
     private var backCallbackEnabled = mutableStateOf(false)
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -104,6 +91,8 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
 
                 val viewMode by remember { consegnatiViewModel.viewMode }
 
+                val hasTwoPanes = hasTwoPanes()
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -117,7 +106,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                 TAG,
                                 item.id,
                                 getString(item.sourceRes),
-                                false
+                                !hasTwoPanes
                             )
                         }
                     }
@@ -130,7 +119,6 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                             }
 
                             ConsegnatiViewModel.ViewMode.VIEW -> {
-                                val simpleListState = rememberLazyListState()
                                 val listModifier = Modifier
                                     .fillMaxSize()
                                     .then(
@@ -141,28 +129,8 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                         }
                                             ?: Modifier
                                     )
-//                                if (hasGridLayout()) {
-//                                    LazyVerticalGrid(
-//                                        columns = Fixed(2),
-//                                        modifier = listModifier
-//                                    ) {
-//                                        items(
-//                                            consegnatiItems ?: emptyList(),
-//                                            key = { it.id }) { simpleItem ->
-//                                            PassageListItem(
-//                                                simpleItem,
-//                                                onItemClick = rememberedOnItemClick,
-//                                                onIconClick = { openPassageModal(it) },
-//                                                modifier = Modifier.animateItem()
-//                                            )
-//                                        }
-//                                        item(span = { GridItemSpan(2) }) {
-//                                            Spacer(Modifier.height(86.dp))
-//                                        }
-//                                    }
-//                                } else {
                                 LazyColumn(
-                                    state = simpleListState,
+                                    state = rememberLazyListState(),
                                     modifier = listModifier
                                 ) {
                                     items(
@@ -179,41 +147,13 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                         Spacer(Modifier.height(86.dp))
                                     }
                                 }
-//                                }
                             }
 
                             ConsegnatiViewModel.ViewMode.EDIT -> {
-                                val checkableListState = rememberLazyListState()
-                                val listModifier = Modifier
-                                    .fillMaxSize()
-//                                if (hasGridLayout()) {
-//                                    LazyVerticalGrid(
-//                                        columns = Fixed(2),
-//                                        modifier = listModifier
-//                                    ) {
-//                                        items(
-//                                            consegnatiSelectableItems ?: emptyList(),
-//                                            key = { it.id }) { simpleItem ->
-//                                            CheckableListItem(
-//                                                simpleItem,
-//                                                modifier = Modifier.animateItem(),
-//                                                onSelect = {
-//                                                    if (it) selectItem(simpleItem.id)
-//                                                    else deselectItem(simpleItem.id)
-//                                                },
-//                                                selected = consegnatiSelectedItems?.contains(
-//                                                    simpleItem.id
-//                                                ) ?: false
-//                                            )
-//                                        }
-//                                        item(span = { GridItemSpan(2) }) {
-//                                            Spacer(Modifier.height(86.dp))
-//                                        }
-//                                    }
-//                                } else {
                                 LazyColumn(
-                                    state = checkableListState,
-                                    modifier = listModifier
+                                    state = rememberLazyListState(),
+                                    modifier = Modifier
+                                        .fillMaxSize()
                                 ) {
                                     items(
                                         consegnatiSelectableItems ?: emptyList(),
@@ -233,33 +173,14 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                     item {
                                         Spacer(Modifier.height(86.dp))
                                     }
-//                                    }
                                 }
                             }
 
                             ConsegnatiViewModel.ViewMode.EMPTY -> {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight(), // Occupa solo l'altezza necessaria
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Image(
-                                        painter = painterResource(R.drawable.ic_sleeping_checklist),
-                                        contentDescription = stringResource(id = R.string.no_consegnati),
-                                        modifier = Modifier
-                                            .size(120.dp)
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp)) // Spazio tra immagine e testo
-                                    Text(
-                                        text = stringResource(R.string.no_consegnati),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
-                                        fontFamily = risuscito_medium_font,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
-                                    )
-                                }
+                                EmptyListView(
+                                    iconRes = R.drawable.assignment_turned_in_24px,
+                                    textRes = R.string.no_consegnati
+                                )
                             }
                         }
                     }
@@ -380,29 +301,10 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mRegularFont = ResourcesCompat.getFont(
-            requireContext(),
-            requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
-        )
-        mMediumFont = ResourcesCompat.getFont(
-            requireContext(),
-            requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
-        )
-
         mMainActivity?.setTabVisible(false)
         initFab()
 
-        view.isFocusableInTouchMode = true
-        view.requestFocus()
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-//        if (!mSharedPrefs.getBoolean(Utility.INTRO_CONSEGNATI, false)) {
-//            fabIntro()
-//        }
-//    }
 
     private fun startCab() {
         mMainActivity?.updateActionModeTitle("")
@@ -424,10 +326,6 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                     initFab()
                 }
 
-//                ActionModeItem.HELP -> {
-//                    managerIntro()
-//                }
-
                 else -> {}
             }
         }
@@ -447,97 +345,6 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
             iconRes = if (consegnatiViewModel.viewMode.value == ConsegnatiViewModel.ViewMode.EDIT) R.drawable.save_24px else R.drawable.edit_24px
         )
     }
-
-//    private fun fabIntro() {
-//        mMainActivity?.getFab()?.let { fab ->
-//            val colorOnPrimary =
-//                MaterialColors.getColor(
-//                    requireContext(),
-//                    com.google.android.material.R.attr.colorOnPrimary,
-//                    TAG
-//                )
-//            TapTargetView.showFor(
-//                requireActivity(), // `this` is an Activity
-//                TapTarget.forView(
-//                    fab,
-//                    getString(R.string.title_activity_consegnati),
-//                    getString(R.string.showcase_consegnati_howto)
-//                )
-//                    .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                    .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                    .titleTextColorInt(colorOnPrimary)
-//                    .textColorInt(colorOnPrimary)
-//                    .tintTarget(false) // Whether to tint the target view's color
-//                    .setForceCenteredTarget(true),
-//                object :
-//                    TapTargetView.Listener() { // The listener can listen for regular clicks, long clicks or cancels
-//                    override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
-//                        super.onTargetDismissed(view, userInitiated)
-//                        context?.let {
-//                            PreferenceManager.getDefaultSharedPreferences(it)
-//                                .edit { putBoolean(Utility.INTRO_CONSEGNATI, true) }
-//                        }
-//                    }
-//                })
-//        }
-//    }
-
-//    private fun managerIntro() {
-//        val colorOnPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG)
-//        mMainActivity?.getFab()?.let { fab ->
-//            TapTargetSequence(requireActivity())
-//                .continueOnCancel(true)
-//                .targets(
-//                    TapTarget.forView(
-//                        fab,
-//                        getString(R.string.title_activity_consegnati),
-//                        getString(R.string.showcase_consegnati_confirm)
-//                    )
-//                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                        .titleTextColorInt(colorOnPrimary)
-//                        .textColorInt(colorOnPrimary)
-//                        .tintTarget(false)
-//                        .setForceCenteredTarget(true),
-//                    TapTarget.forToolbarMenuItem(
-//                        mMainActivity?.activityContextualToolbar,
-//                        R.id.cancel_change,
-//                        getString(R.string.title_activity_consegnati),
-//                        getString(R.string.showcase_consegnati_cancel)
-//                    )
-//                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-//                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-//                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-//                        .titleTextColorInt(colorOnPrimary)
-//                        .textColorInt(colorOnPrimary)
-//                        .setForceCenteredTarget(true)
-//                )
-//                .listener(
-//                    object :
-//                        TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-//                        override fun onSequenceFinish() {
-//                            context?.let {
-//                                PreferenceManager.getDefaultSharedPreferences(it)
-//                                    .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
-//                            }
-//                        }
-//
-//                        override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-//                            // no-op
-//                        }
-//
-//                        override fun onSequenceCanceled(tapTarget: TapTarget) {
-//                            context?.let {
-//                                PreferenceManager.getDefaultSharedPreferences(it)
-//                                    .edit { putBoolean(Utility.INTRO_CONSEGNATI_2, true) }
-//                            }
-//                        }
-//                    })
-//                .start()
-//        }
-//    }
 
     private suspend fun updateChooseList() {
         Log.i(TAG, "updateChooseList start")

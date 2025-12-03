@@ -42,6 +42,13 @@ fun hasNavigationBar(): Boolean {
 }
 
 @Composable
+fun hasTwoPanes(): Boolean {
+    val returnValue =  currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+    Log.d(TAG, "hasTwoPanes: $returnValue")
+    return returnValue
+}
+
+@Composable
 fun layoutMargins(): Dp {
     val sizeClass = currentWindowAdaptiveInfo().windowSizeClass
     var returnValue = 16.dp

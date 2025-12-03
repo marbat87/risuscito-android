@@ -9,7 +9,6 @@ import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -23,13 +22,6 @@ import it.cammino.risuscito.utils.Utility
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.Locale
-
-
-fun Context.getTypedValueResId(resId: Int): Int {
-    val outTypedValue = TypedValue()
-    theme.resolveAttribute(resId, outTypedValue, true)
-    return outTypedValue.resourceId
-}
 
 fun Context.setDefaultNightMode() {
     when (prefNightMode) {

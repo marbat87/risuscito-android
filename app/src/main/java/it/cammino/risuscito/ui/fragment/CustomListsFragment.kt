@@ -31,7 +31,6 @@ import androidx.fragment.compose.AndroidFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
@@ -158,8 +157,7 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                             LIST_TITLE to text,
                                             EDIT_EXISTING_LIST to false
                                         )
-                                    ),
-                                    MaterialSharedAxis.Y
+                                    )
                                 )
                             }
                         }
@@ -416,7 +414,7 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                 ID_DA_MODIF to idListe[sharedTabViewModel.tabsSelectedIndex.intValue - 2],
                                 EDIT_EXISTING_LIST to true
                             )
-                        ), MaterialSharedAxis.Y
+                        )
                     )
                 }
             }

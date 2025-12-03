@@ -10,10 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringArrayResource
@@ -73,7 +73,6 @@ import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.ProgressDialogManagerViewModel
 import it.cammino.risuscito.viewmodels.SettingsViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
@@ -203,7 +202,7 @@ class SettingsFragment : Fragment() {
 
                 val nightMode = remember { mutableStateOf(requireContext().prefNightMode) }
 
-                val dynamicColors = remember {
+                var dynamicColors by remember {
                     mutableStateOf(
                         preferenManager.getBoolean(
                             DYNAMIC_COLORS, false
@@ -211,7 +210,7 @@ class SettingsFragment : Fragment() {
                     )
                 }
 
-                val showSecondaLettura = remember {
+                var showSecondaLettura by remember {
                     mutableStateOf(
                         preferenManager.getBoolean(
                             SHOW_SECONDA, false
@@ -219,7 +218,7 @@ class SettingsFragment : Fragment() {
                     )
                 }
 
-                val showOffertorio = remember {
+                var showOffertorio by remember {
                     mutableStateOf(
                         preferenManager.getBoolean(
                             SHOW_OFFERTORIO, false
@@ -227,7 +226,7 @@ class SettingsFragment : Fragment() {
                     )
                 }
 
-                val showEucaristiaPace = remember {
+                var showEucaristiaPace by remember {
                     mutableStateOf(
                         preferenManager.getBoolean(
                             SHOW_EUCARESTIA_PACE, true
@@ -235,7 +234,7 @@ class SettingsFragment : Fragment() {
                     )
                 }
 
-                val showSanto = remember {
+                var showSanto by remember {
                     mutableStateOf(
                         preferenManager.getBoolean(
                             SHOW_SANTO, false
@@ -243,7 +242,7 @@ class SettingsFragment : Fragment() {
                     )
                 }
 
-                val showParolaPace = remember {
+                var showParolaPace by remember {
                     mutableStateOf(
                         preferenManager.getBoolean(
                             SHOW_PACE, false
@@ -267,7 +266,7 @@ class SettingsFragment : Fragment() {
                     )
                 }
 
-                val alwaysOnDisplay = remember {
+                var alwaysOnDisplay by remember {
                     mutableStateOf(
                         preferenManager.getBoolean(
                             SCREEN_ON, false
@@ -275,7 +274,7 @@ class SettingsFragment : Fragment() {
                     )
                 }
 
-                val showAudio = remember {
+                var showAudio by remember {
                     mutableStateOf(
                         preferenManager.getBoolean(
                             SHOW_AUDIO, true
@@ -314,8 +313,8 @@ class SettingsFragment : Fragment() {
                                         val newValue = it?.first.orEmpty()
                                         nightMode.value = newValue
                                         preferenManager.edit {
-                                                putString(NIGHT_MODE, newValue)
-                                            }
+                                            putString(NIGHT_MODE, newValue)
+                                        }
                                         context?.setDefaultNightMode()
                                     },
                                     items = themeMapList,
@@ -325,6 +324,16 @@ class SettingsFragment : Fragment() {
                                 if (OSUtils.hasS()) {
                                     PreferenceBool(
                                         value = dynamicColors,
+                                        onValueChange = {
+                                            @Suppress("AssignedValueIsNeverRead")
+                                            dynamicColors = it
+                                            saveBooleanPreference(
+                                                preferenceKey = DYNAMIC_COLORS,
+                                                preferenceValue = it,
+                                                restart = true,
+                                                hasNavigationBar = hasNavigationBar
+                                            )
+                                        },
                                         title = stringResource(R.string.dynamic_colors_title),
                                         subtitle = stringResource(R.string.dynamic_colors_summary)
                                     )
@@ -336,26 +345,66 @@ class SettingsFragment : Fragment() {
                             ) {
                                 PreferenceBool(
                                     value = showSecondaLettura,
+                                    onValueChange = {
+                                        @Suppress("AssignedValueIsNeverRead")
+                                        showSecondaLettura = it
+                                        saveBooleanPreference(
+                                            preferenceKey = SHOW_SECONDA,
+                                            preferenceValue = it
+                                        )
+                                    },
                                     title = stringResource(R.string.show_seconda_title),
                                     subtitle = stringResource(R.string.show_seconda_summary)
                                 )
                                 PreferenceBool(
                                     value = showOffertorio,
+                                    onValueChange = {
+                                        @Suppress("AssignedValueIsNeverRead")
+                                        showOffertorio = it
+                                        saveBooleanPreference(
+                                            preferenceKey = SHOW_OFFERTORIO,
+                                            preferenceValue = it,
+                                        )
+                                    },
                                     title = stringResource(R.string.show_offertorio_title),
                                     subtitle = stringResource(R.string.show_offertorio_summary)
                                 )
                                 PreferenceBool(
                                     value = showEucaristiaPace,
+                                    onValueChange = {
+                                        @Suppress("AssignedValueIsNeverRead")
+                                        showEucaristiaPace = it
+                                        saveBooleanPreference(
+                                            preferenceKey = SHOW_EUCARESTIA_PACE,
+                                            preferenceValue = it,
+                                        )
+                                    },
                                     title = stringResource(R.string.show_eucarestia_pace_title),
                                     subtitle = stringResource(R.string.show_eucarestia_pace_summary)
                                 )
                                 PreferenceBool(
                                     value = showSanto,
+                                    onValueChange = {
+                                        @Suppress("AssignedValueIsNeverRead")
+                                        showSanto = it
+                                        saveBooleanPreference(
+                                            preferenceKey = SHOW_SANTO,
+                                            preferenceValue = it,
+                                        )
+                                    },
                                     title = stringResource(R.string.show_santo_title),
                                     subtitle = stringResource(R.string.show_santo_summary)
                                 )
                                 PreferenceBool(
                                     value = showParolaPace,
+                                    onValueChange = {
+                                        @Suppress("AssignedValueIsNeverRead")
+                                        showParolaPace = it
+                                        saveBooleanPreference(
+                                            preferenceKey = SHOW_PACE,
+                                            preferenceValue = it,
+                                        )
+                                    },
                                     title = stringResource(R.string.show_pace_title),
                                     subtitle = stringResource(R.string.show_pace_summary)
                                 )
@@ -367,8 +416,8 @@ class SettingsFragment : Fragment() {
                                         val newValue = it?.first.orEmpty()
                                         defaultIndex.value = newValue
                                         preferenManager.edit {
-                                                putString(DEFAULT_INDEX, newValue)
-                                            }
+                                            putString(DEFAULT_INDEX, newValue)
+                                        }
                                     },
                                     items = defaultIndexesMap,
                                     itemTextProvider = { it?.second.orEmpty() },
@@ -397,8 +446,8 @@ class SettingsFragment : Fragment() {
                                                 "saveStringPreference SAVE: $DEFAULT_SEARCH / $newValue"
                                             )
                                             preferenManager.edit {
-                                                    putString(DEFAULT_SEARCH, newValue)
-                                                }
+                                                putString(DEFAULT_SEARCH, newValue)
+                                            }
                                             recreateActivity(hasNavigationBar)
                                         }
                                     },
@@ -414,11 +463,28 @@ class SettingsFragment : Fragment() {
                             ) {
                                 PreferenceBool(
                                     value = alwaysOnDisplay,
+                                    onValueChange = {
+                                        @Suppress("AssignedValueIsNeverRead")
+                                        alwaysOnDisplay = it
+                                        saveBooleanPreference(
+                                            preferenceKey = SCREEN_ON,
+                                            preferenceValue = it,
+                                        )
+                                        activity?.checkScreenAwake()
+                                    },
                                     title = stringResource(R.string.always_on),
                                     subtitle = stringResource(R.string.always_on_summary)
                                 )
                                 PreferenceBool(
                                     value = showAudio,
+                                    onValueChange = {
+                                        @Suppress("AssignedValueIsNeverRead")
+                                        showAudio = it
+                                        saveBooleanPreference(
+                                            preferenceKey = SHOW_AUDIO,
+                                            preferenceValue = it,
+                                        )
+                                    },
                                     title = stringResource(R.string.show_audio_title),
                                     subtitle = stringResource(R.string.show_audio_summary)
                                 )
@@ -430,8 +496,8 @@ class SettingsFragment : Fragment() {
                                         val newValue = it?.first.orEmpty()
                                         defaultSaveLocation.value = newValue
                                         preferenManager.edit {
-                                                putString(SAVE_LOCATION, newValue)
-                                            }
+                                            putString(SAVE_LOCATION, newValue)
+                                        }
                                     },
                                     items = storageMapList,
                                     itemTextProvider = { it?.second.orEmpty() },
@@ -504,81 +570,6 @@ class SettingsFragment : Fragment() {
                         }
                     }
 
-                    LaunchedEffect(dynamicColors) {
-                        snapshotFlow { dynamicColors.value }.distinctUntilChanged().collect {
-                                saveBooleanPreference(
-                                    preferenceKey = DYNAMIC_COLORS,
-                                    preferenceValue = it,
-                                    restart = true,
-                                    hasNavigationBar = hasNavigationBar
-                                )
-                            }
-                    }
-
-                    LaunchedEffect(showSecondaLettura) {
-                        snapshotFlow { showSecondaLettura.value }.distinctUntilChanged().collect {
-                                saveBooleanPreference(
-                                    preferenceKey = SHOW_SECONDA,
-                                    preferenceValue = it
-                                )
-                            }
-                    }
-
-                    LaunchedEffect(showOffertorio) {
-                        snapshotFlow { showOffertorio.value }.distinctUntilChanged().collect {
-                                saveBooleanPreference(
-                                    preferenceKey = SHOW_OFFERTORIO,
-                                    preferenceValue = it,
-                                )
-                            }
-                    }
-
-                    LaunchedEffect(showEucaristiaPace) {
-                        snapshotFlow { showEucaristiaPace.value }.distinctUntilChanged().collect {
-                                saveBooleanPreference(
-                                    preferenceKey = SHOW_EUCARESTIA_PACE,
-                                    preferenceValue = it,
-                                )
-                            }
-                    }
-
-                    LaunchedEffect(showSanto) {
-                        snapshotFlow { showSanto.value }.distinctUntilChanged().collect {
-                                saveBooleanPreference(
-                                    preferenceKey = SHOW_SANTO,
-                                    preferenceValue = it,
-                                )
-                            }
-                    }
-
-                    LaunchedEffect(showParolaPace) {
-                        snapshotFlow { showParolaPace.value }.distinctUntilChanged().collect {
-                                saveBooleanPreference(
-                                    preferenceKey = SHOW_PACE,
-                                    preferenceValue = it,
-                                )
-                            }
-                    }
-
-                    LaunchedEffect(alwaysOnDisplay) {
-                        snapshotFlow { alwaysOnDisplay.value }.distinctUntilChanged().collect {
-                                saveBooleanPreference(
-                                    preferenceKey = SCREEN_ON,
-                                    preferenceValue = it,
-                                )
-                                activity?.checkScreenAwake()
-                            }
-                    }
-
-                    LaunchedEffect(showAudio) {
-                        snapshotFlow { showAudio.value }.distinctUntilChanged().collect {
-                                saveBooleanPreference(
-                                    preferenceKey = SHOW_AUDIO,
-                                    preferenceValue = it,
-                                )
-                            }
-                    }
-
                 }
             }
         }
@@ -615,7 +606,10 @@ class SettingsFragment : Fragment() {
     }
 
     private fun saveBooleanPreference(
-        preferenceKey: String, preferenceValue: Boolean, restart: Boolean = false, hasNavigationBar: Boolean = false
+        preferenceKey: String,
+        preferenceValue: Boolean,
+        restart: Boolean = false,
+        hasNavigationBar: Boolean = false
     ) {
         Log.d(TAG, "saveBooleanPreference: $preferenceKey / $preferenceValue")
         val preferenManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -623,8 +617,8 @@ class SettingsFragment : Fragment() {
         if (actualValue != preferenceValue) {
             Log.d(TAG, "saveBooleanPreference SAVE: $preferenceKey / $preferenceValue")
             preferenManager.edit {
-                    putBoolean(preferenceKey, preferenceValue)
-                }
+                putBoolean(preferenceKey, preferenceValue)
+            }
             if (restart) {
                 recreateActivity(hasNavigationBar)
             }

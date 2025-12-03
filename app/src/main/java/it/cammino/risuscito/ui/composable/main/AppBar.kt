@@ -238,14 +238,23 @@ fun TopAppBarWithSearch(
     val textFieldState = rememberTextFieldState()
     val scope = rememberCoroutineScope()
 
-    val appBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
-
     LaunchedEffect(textFieldState) {
         snapshotFlow { textFieldState.text }
             .distinctUntilChanged()
             .collect {
                 Log.d("AppBar", "textFieldState.text: $it")
                 sharedSearchViewModel.searchFilter.value = it.toString()
+            }
+    }
+
+    LaunchedEffect(searchBarState) {
+        snapshotFlow { searchBarState.isExpanded }
+            .distinctUntilChanged()
+            .collect {
+                Log.d("AppBar", "searchBarState: $it")
+                if (!it) {
+                    textFieldState.edit { replace(0, length, "") }
+                }
             }
     }
 
@@ -277,7 +286,9 @@ fun TopAppBarWithSearch(
                             state = rememberTooltipState(),
                         ) {
                             IconButton(
-                                onClick = { scope.launch { searchBarState.animateToCollapsed() } }
+                                onClick = {
+                                    scope.launch { searchBarState.animateToCollapsed() }
+                                }
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.arrow_back_24px),
@@ -292,7 +303,6 @@ fun TopAppBarWithSearch(
                         if (textFieldState.text.isNotEmpty()) {
                             IconButton(onClick = {
                                 textFieldState.edit { replace(0, length, "") }
-                                sharedSearchViewModel.searchFilter.value = ""
                             }) {
                                 Icon(
                                     painter = painterResource(R.drawable.close_24px),
@@ -357,8 +367,7 @@ fun TopAppBarWithSearch(
                 loggedIn = loggedIn,
                 profilePhotoUrl = profilePhotoUrl
             )
-        },
-        colors = appBarWithSearchColors,
+        }
     )
     AnimatedVisibility(
         visible = isActionMode,
@@ -494,7 +503,7 @@ private fun ExpandedSarchBarContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(horizontal = 8.dp),
+                .padding(8.dp),
             shape = RoundedCornerShape(14.dp),
         ) {
             AndroidFragment<SimpleIndexFragment>(

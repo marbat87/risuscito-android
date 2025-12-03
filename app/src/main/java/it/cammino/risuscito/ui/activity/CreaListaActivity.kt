@@ -88,7 +88,6 @@ import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.InputDialogManagerViewModel
@@ -121,7 +120,7 @@ class CreaListaActivity : ThemeableActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        setEnterTransition()
+//        setEnterTransition()
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()

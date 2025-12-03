@@ -199,7 +199,7 @@ fun EmptyListView(modifier: Modifier = Modifier, iconRes: Int, textRes: Int) {
             text = stringResource(textRes),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant, // Colore secondario del testo
-            fontFamily = risuscito_medium_font,
+//            fontFamily = risuscito_medium_font,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth() // Per centrare il testo se è multiriga
         )
@@ -259,6 +259,7 @@ fun WebView(
         }
     }
 
+
     webView.setOnScrollChangeListener { _, scrollX, scrollY, _, _ ->
         onScrollChange(scrollX, scrollY)
     }
@@ -294,11 +295,15 @@ open class InitialScrollWebClient(val canto: Canto?, val onZoomChange: (Int) -> 
         view.postDelayed(600) {
             if ((canto?.scrollX
                     ?: 0) > 0 || (canto?.scrollY ?: 0) > 0
-            )
+            ) {
                 view.scrollTo(
                     canto?.scrollX
                         ?: 0, canto?.scrollY ?: 0
                 )
+            }
+            else {
+                view.scrollTo(1, 1)
+            }
         }
         super.onPageFinished(view, url)
     }

@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -34,6 +35,7 @@ import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +49,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.colorResource
@@ -64,6 +67,7 @@ import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.dialogs.ChangelogBottomSheet
 import it.cammino.risuscito.ui.composable.dialogs.RisuscitoBottomSheet
 import it.cammino.risuscito.ui.composable.hasNavigationBar
+import it.cammino.risuscito.ui.composable.hasTwoPanes
 import it.cammino.risuscito.viewmodels.SharedBottomSheetViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
@@ -177,19 +181,6 @@ fun MainScreen(
                         AppNavigationHost(navController = navController)
                     }
 
-//                if (fabExpanded.value) {
-//                    Surface(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .clickable(
-//                                enabled = true,
-//                                onClickLabel = stringResource(R.string.material_drawer_close),
-//                                onClick = { fabExpanded.value = false }
-//                            ),
-//                        color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.4f)
-//                    ) {}
-//                }
-
                 }
 
                 RisuscitoBottomSheet(
@@ -202,6 +193,7 @@ fun MainScreen(
 
             }
         }
+
 
     val itemsList = if (hasNavigationBar()) bottomNavItems else navitagionRailItems
 
@@ -252,74 +244,66 @@ fun MainScreen(
     val iconHeaderShape = MaterialShapes.Circle.toShape()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        NavigableListDetailPaneScaffold(
-            navigator = scaffoldNavigator,
-            listPane = {
-                Box(modifier = Modifier.preferredWidth(0.5f)) {
-                    NavigationSuiteScaffold(
-                        navigationSuiteItems = {
-                            if (showRailIcon) {
-                                item(
-                                    icon = {
-                                        Icon(
-                                            modifier = Modifier
-                                                .size(32.dp)
-                                                .background(
-                                                    color = iconHeaderColor,
-                                                    shape = iconHeaderShape
-                                                ),
-                                            painter = painterResource(R.drawable.ic_launcher_foreground),
-                                            contentDescription = stringResource(R.string.copertina),
-                                            tint = Color.White
-                                        )
-                                    },
-                                    selected = false,
-                                    onClick = {},
+        if (hasTwoPanes()) {
+            NavigableListDetailPaneScaffold(
+                navigator = scaffoldNavigator,
+                listPane = {
+                    Box(modifier = Modifier.preferredWidth(0.5f)) {
+                        NavigationSuiteScaffold(
+                            navigationSuiteItems = {
+                                // Chiama la nuova funzione passando i parametri necessari
+                                myNavigationSuiteItems(
+                                    showRailIcon = showRailIcon,
+                                    iconHeaderColor = iconHeaderColor,
+                                    iconHeaderShape = iconHeaderShape,
+                                    itemsList = itemsList,
+                                    currentRoute = currentRoute,
+                                    resetTab = resetTab,
+                                    scrollBehavior = scrollBehavior, // Assicurati di passarlo
+                                    navController = navController
                                 )
+                            },
+                            content = mainScaffold
+                        )
+                    }
+                },
+                detailPane = {
+                    AnimatedPane(
+                        enterTransition =
+                            slideInHorizontally(tween(1000, easing = EaseIn)),
+                        exitTransition = slideOutHorizontally(tween(1000, easing = EaseIn))
+                    ) {
+                        // Show the detail pane content if selected item is available
+                        scaffoldNavigator.currentDestination?.contentKey?.let { cantoData ->
+                            key(cantoData.idCanto) {
+                                CantoView(cantoData)
                             }
-                            itemsList.forEach { screen ->
-                                item(
-                                    icon = {
-                                        Icon(
-                                            painterResource(if (currentRoute == screen.route) screen.selectediconRes else screen.iconRes),
-                                            contentDescription = stringResource(screen.labelRes)
-                                        )
-                                    },
-                                    label = { Text(stringResource(screen.labelRes)) },
-                                    selected = currentRoute == screen.route,
-                                    onClick = {
-                                        resetTab.value = true
-                                        scrollBehavior.scrollOffset = 0F
-                                        navController.navigate(screen.route) {
-                                            popUpTo(navController.graph.startDestinationId)
-                                            launchSingleTop = true
-                                        }
-                                    },
-                                )
-                            }
-                        },
-                        content = mainScaffold
-                    )
+                        } ?: EmptyListView(
+                            iconRes = R.drawable.lyrics_24px,
+                            textRes = R.string.select_one_song
+                        )
+                    }
                 }
-            },
-            detailPane = {
-                AnimatedPane(
-                    enterTransition =
-                        slideInHorizontally(tween(animationDuration, easing = EaseIn)),
-                    exitTransition = slideOutHorizontally(tween(animationDuration, easing = EaseIn))
-                ) {
-                    // Show the detail pane content if selected item is available
-                    scaffoldNavigator.currentDestination?.contentKey?.let { cantoData ->
-                        key(cantoData.idCanto) {
-                            CantoView(cantoData)
-                        }
-                    } ?: EmptyListView(
-                        iconRes = R.drawable.lyrics_24px,
-                        textRes = R.string.select_one_song
+            )
+        }
+        else {
+            NavigationSuiteScaffold(
+                navigationSuiteItems = {
+                    // Chiama la nuova funzione passando i parametri necessari
+                    myNavigationSuiteItems(
+                        showRailIcon = showRailIcon,
+                        iconHeaderColor = iconHeaderColor,
+                        iconHeaderShape = iconHeaderShape,
+                        itemsList = itemsList,
+                        currentRoute = currentRoute,
+                        resetTab = resetTab,
+                        scrollBehavior = scrollBehavior, // Assicurati di passarlo
+                        navController = navController
                     )
-                }
-            }
-        )
+                },
+                content = mainScaffold
+            )
+        }
 
         if (showLoadingBar) {
             Surface(
@@ -338,4 +322,56 @@ fun MainScreen(
 
     }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+private fun NavigationSuiteScope.myNavigationSuiteItems(
+    showRailIcon: Boolean,
+    iconHeaderColor: Color,iconHeaderShape: Shape,
+    itemsList: List<NavigationScreen>,
+    currentRoute: String?,
+    resetTab: MutableState<Boolean>,
+    scrollBehavior: SearchBarScrollBehavior,
+    navController: NavHostController
+) {
+    if (showRailIcon) {
+        item(
+            icon = {
+                Icon(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(
+                            color = iconHeaderColor,
+                            shape = iconHeaderShape
+                        ),
+                    painter = painterResource(R.drawable.ic_launcher_foreground),
+                    contentDescription = stringResource(R.string.copertina),
+                    tint = Color.White
+                )
+            },
+            selected = false,
+            onClick = {},
+        )
+    }
+    itemsList.forEach { screen ->
+        item(
+            icon = {
+                Icon(
+                    painterResource(if (currentRoute == screen.route) screen.selectediconRes else screen.iconRes),
+                    contentDescription = stringResource(screen.labelRes)
+                )
+            },
+            label = { Text(stringResource(screen.labelRes)) },
+            selected = currentRoute == screen.route,
+            onClick = {
+                resetTab.value = true
+                scrollBehavior.scrollOffset = 0F
+                scrollBehavior.contentOffset = 0f
+                navController.navigate(screen.route) {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            },
+        )
+    }
 }

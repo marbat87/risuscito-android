@@ -34,7 +34,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.CustomList
@@ -47,6 +46,7 @@ import it.cammino.risuscito.ui.activity.InsertActivity
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.composable.PosizioneListItem
 import it.cammino.risuscito.ui.composable.dialogs.InputDialog
+import it.cammino.risuscito.ui.composable.hasTwoPanes
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.customListsMenu
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
@@ -103,6 +103,8 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
 
                 val showInputDialog by inputdialogViewModel.showAlertDialog.observeAsState()
 
+                val hasTwoPanes = hasTwoPanes()
+
                 val rememberAddClick = remember<(Int) -> Unit> {
                     { idPosizione ->
                         if (mSwhitchMode) {
@@ -119,8 +121,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                                                 InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
                                                 InsertActivity.POSITION to idPosizione
                                             )
-                                        ),
-                                        MaterialSharedAxis.Y
+                                        )
                                     )
                                 }
                             }
@@ -143,7 +144,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                                     TAG,
                                     item.id,
                                     getString(item.sourceRes),
-                                    false
+                                    !hasTwoPanes
                                 )
                             }
                         else {

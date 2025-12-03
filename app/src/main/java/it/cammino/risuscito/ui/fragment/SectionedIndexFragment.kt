@@ -43,6 +43,7 @@ import it.cammino.risuscito.ui.composable.ListTitleItem
 import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.composable.hasTwoPanes
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
@@ -78,12 +79,14 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                 val coroutineScope = rememberCoroutineScope()
                 val expandedItem = remember { mutableIntStateOf(-1) }
 
+                val hasTwoPanes = hasTwoPanes()
+
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
                 // In SectionedIndexFragment, dentro setContent
                 val rememberedOnItemClick = remember<(RisuscitoListItem) -> Unit> {
                     { item ->
-                        mActivity?.openCanto(TAG, item.id, getString(item.sourceRes), false)
+                        mActivity?.openCanto(TAG, item.id, getString(item.sourceRes), !hasTwoPanes)
                     }
                 }
 

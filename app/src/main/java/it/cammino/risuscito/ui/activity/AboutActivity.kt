@@ -23,16 +23,12 @@ import it.cammino.risuscito.ui.composable.ClassicBackNavitagionButton
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.AboutFragment
-import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.slideOutRight
 
 class AboutActivity : ThemeableActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        setEnterTransition()
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -82,10 +78,7 @@ class AboutActivity : ThemeableActivity() {
     }
 
     private fun onBackPressedAction() {
-        if (OSUtils.isObySamsung()) {
-            finish()
-            slideOutRight()
-        } else
-            finishAfterTransitionWrapper()
+        finish()
+        slideOutRight()
     }
 }

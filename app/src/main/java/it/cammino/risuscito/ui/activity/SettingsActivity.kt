@@ -33,16 +33,13 @@ import it.cammino.risuscito.ui.composable.dialogs.ProgressDialog
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.SettingsFragment
-import it.cammino.risuscito.utils.OSUtils
-import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.slideOutRight
 
 class SettingsActivity : ThemeableActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        setEnterTransition()
+//        setEnterTransition()
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -82,7 +79,9 @@ class SettingsActivity : ThemeableActivity() {
                     },
                 ) { innerPadding ->
                     AndroidFragment<SettingsFragment>(
-                        modifier = Modifier.padding(innerPadding).fillMaxSize()
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
                     )
                 }
 
@@ -111,7 +110,9 @@ class SettingsActivity : ThemeableActivity() {
                     ProgressDialog(
                         dialogTitleRes = progressDialogViewModel.dialogTitleRes,
                         messageRes = progressDialogViewModel.messageRes.value ?: 0,
-                        onDismissRequest = { progressDialogViewModel.showProgressDialog.value = false },
+                        onDismissRequest = {
+                            progressDialogViewModel.showProgressDialog.value = false
+                        },
                         buttonTextRes = progressDialogViewModel.buttonTextRes,
                         indeterminate = progressDialogViewModel.indeterminate
                     )
@@ -130,11 +131,8 @@ class SettingsActivity : ThemeableActivity() {
     }
 
     private fun onBackPressedAction() {
-        if (OSUtils.isObySamsung()) {
-            finish()
-            slideOutRight()
-        } else
-            finishAfterTransitionWrapper()
+        finish()
+        slideOutRight()
     }
 
 }

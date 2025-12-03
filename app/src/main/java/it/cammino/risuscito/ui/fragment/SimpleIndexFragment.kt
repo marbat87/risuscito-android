@@ -49,7 +49,7 @@ import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
-import it.cammino.risuscito.ui.composable.hasNavigationBar
+import it.cammino.risuscito.ui.composable.hasTwoPanes
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.StringUtils
@@ -108,8 +108,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
 
                 val isInsert = arguments?.getBoolean(IS_INSERT, false) == true
 
-                val hasNavigationBar = hasNavigationBar()
-
+                val hasTwoPanes = hasTwoPanes()
 
                 val rememberItemClick = remember<(RisuscitoListItem) -> Unit> {
                     { item ->
@@ -117,14 +116,11 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                             sharedSearchViewModel.insertItemId = item.id
                             sharedSearchViewModel.done.value = true
                         } else {
-                            if (isSearch && hasNavigationBar) {
-                                mActivity?.closeSearch()
-                            }
                             mActivity?.openCanto(
                                 TAG,
                                 item.id,
                                 getString(item.sourceRes),
-                                false
+                                !hasTwoPanes
                             )
                         }
                     }
@@ -137,7 +133,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                             TAG,
                             item.id,
                             getString(item.sourceRes),
-                            true
+                            !hasTwoPanes
                         )
                     }
                 }

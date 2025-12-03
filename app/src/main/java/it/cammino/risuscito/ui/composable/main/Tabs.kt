@@ -1,7 +1,7 @@
 package it.cammino.risuscito.ui.composable.main
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +43,7 @@ fun RisuscitoTabs(
     tabsList: List<Destination>? = generalIndexesList
 ) {
 
-    SecondaryScrollableTabRow(
+    PrimaryScrollableTabRow(
         selectedTabIndex = selectedTabIndex.intValue
     ) {
         tabsList?.forEachIndexed { index, destination ->

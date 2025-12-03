@@ -16,13 +16,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberSearchBarState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -40,8 +37,6 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
-import com.google.android.material.color.DynamicColors
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
@@ -78,7 +73,6 @@ import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.extension.convertTabs
 import it.cammino.risuscito.utils.extension.convertiBarre
-import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.queryIntentActivities
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
@@ -92,7 +86,6 @@ import it.cammino.risuscito.viewmodels.SharedTabViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParserException
@@ -148,7 +141,7 @@ class MainActivity : ThemeableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
         installSplashScreen()
-        DynamicColors.applyToActivityIfAvailable(this, dynamicColorOptions)
+//        DynamicColors.applyToActivityIfAvailable(this, dynamicColorOptions)
         super.onCreate(savedInstanceState)
 
         try {
@@ -168,8 +161,6 @@ class MainActivity : ThemeableActivity() {
         enableEdgeToEdge()
 
         setContent {
-
-            val scope = rememberCoroutineScope()
 
             val searchBarState = rememberSearchBarState()
 
@@ -339,17 +330,6 @@ class MainActivity : ThemeableActivity() {
 
                 // After drawing main content, draw status bar protection
                 StatusBarProtection(if (isActionMode.value) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer)
-
-                LaunchedEffect(closeSearch.value) {
-                    snapshotFlow { closeSearch.value }
-                        .distinctUntilChanged()
-                        .collect { close ->
-                            if (close) {
-                                scope.launch { searchBarState.animateToCollapsed() }
-                                closeSearch.value = false
-                            }
-                        }
-                }
 
             }
 
@@ -538,7 +518,7 @@ class MainActivity : ThemeableActivity() {
         }
 
         val intent = Intent(this, activityClass)
-        startActivityWithTransition(intent, MaterialSharedAxis.Y)
+        startActivityWithTransition(intent)
     }
 
     fun getFabExpanded(): Boolean {

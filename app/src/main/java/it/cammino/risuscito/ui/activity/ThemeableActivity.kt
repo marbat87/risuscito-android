@@ -27,7 +27,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
@@ -96,8 +95,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
     protected val fabActionList = MutableLiveData(ArrayList<FabActionItem>())
 
     protected val fabExpanded = mutableStateOf(false)
-
-    protected val closeSearch = mutableStateOf(false)
 
     @SuppressLint("NewApi")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -669,6 +666,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         Firebase.crashlytics.log("open_canto - function: ${function.orEmpty()} - idCanto: $idCanto - numPagina: ${numPagina.orEmpty()} - onActivity: $forceOpenActivity")
 
+        mViewModel.cantoData.value = CantoViewData(idCanto, numPagina.orEmpty())
+
         if (forceOpenActivity) {
             val args = bundleOf(
                 CantoFragment.ARG_NUM_PAGINA to numPagina,
@@ -677,10 +676,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
             )
             val intent = Intent(this, CantoHostActivity::class.java)
             intent.putExtras(args)
-            startActivityWithTransition(intent, MaterialSharedAxis.X)
-        } else {
-            mViewModel.cantoData.value =
-                CantoViewData(idCanto, numPagina.orEmpty())
+            startActivityWithTransition(intent)
         }
 
         updateHistory(idCanto)
@@ -701,10 +697,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 cronologia
             )
         }
-    }
-
-    fun closeSearch() {
-        closeSearch.value = true
     }
 
     companion object {

@@ -18,17 +18,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.AnimRes
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.transition.platform.MaterialSharedAxis
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.ListaPersonalizzata
@@ -43,7 +40,6 @@ import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
-import it.cammino.risuscito.utils.Utility.SHARED_AXIS
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -74,50 +70,50 @@ val Resources.systemLocale: Locale
         else getSystemLocaleLegacy()
     }
 
-fun Activity.startActivityWithTransition(intent: Intent, axis: Int) {
-    if (OSUtils.isObySamsung()) {
+fun Activity.startActivityWithTransition(intent: Intent) {
+//    if (OSUtils.isObySamsung()) {
         startActivity(intent)
         slideInRight()
-    } else {
-        val exit = MaterialSharedAxis(axis, true).apply {
-            addTarget(android.R.id.content)
-            duration = 700L
-        }
-
-        val enter = MaterialSharedAxis(axis, false).apply {
-            addTarget(android.R.id.content)
-            duration = 700L
-        }
-        window.exitTransition = exit
-        window.reenterTransition = enter
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
-        startActivity(
-            intent.putExtras(
-                bundleOf(SHARED_AXIS to axis)
-            ), options.toBundle()
-        )
-    }
+//    } else {
+//        val exit = MaterialSharedAxis(axis, true).apply {
+//            addTarget(android.R.id.content)
+//            duration = 700L
+//        }
+//
+//        val enter = MaterialSharedAxis(axis, false).apply {
+//            addTarget(android.R.id.content)
+//            duration = 700L
+//        }
+//        window.exitTransition = exit
+//        window.reenterTransition = enter
+//        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
+//        startActivity(
+//            intent.putExtras(
+//                bundleOf(SHARED_AXIS to axis)
+//            ), options.toBundle()
+//        )
+//    }
 
 }
 
 
-fun Activity.setEnterTransition() {
-    if (!OSUtils.isObySamsung()) {
-        val axis = intent.getIntExtra(SHARED_AXIS, MaterialSharedAxis.X)
-        val enter = MaterialSharedAxis(axis, true).apply {
-            duration = 700L
-        }
-        val returnT = MaterialSharedAxis(axis, false).apply {
-            duration = 700L
-        }
-        window.enterTransition = enter
-        window.returnTransition = returnT
-
-        // Allow Activity A’s exit transition to play at the same time as this Activity’s
-        // enter transition instead of playing them sequentially.
-        window.allowEnterTransitionOverlap = true
-    }
-}
+//fun Activity.setEnterTransition() {
+//    if (!OSUtils.isObySamsung()) {
+//        val axis = intent.getIntExtra(SHARED_AXIS, MaterialSharedAxis.X)
+//        val enter = MaterialSharedAxis(axis, true).apply {
+//            duration = 700L
+//        }
+//        val returnT = MaterialSharedAxis(axis, false).apply {
+//            duration = 700L
+//        }
+//        window.enterTransition = enter
+//        window.returnTransition = returnT
+//
+//        // Allow Activity A’s exit transition to play at the same time as this Activity’s
+//        // enter transition instead of playing them sequentially.
+//        window.allowEnterTransitionOverlap = true
+//    }
+//}
 
 fun Activity.startActivityWithFadeIn(intent: Intent) {
     startActivity(intent)
@@ -127,7 +123,8 @@ fun Activity.startActivityWithFadeIn(intent: Intent) {
 //ISSUE in API 21
 fun Activity.finishAfterTransitionWrapper() {
     closeKeyboard()
-    finishAfterTransition()
+    finish()
+    slideOutDown()
 }
 
 private fun Activity.closeKeyboard() {
@@ -275,6 +272,14 @@ fun Activity.slideOutRight() {
     overrideCloseTransition(R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
 }
 
+fun Activity.slideInDown() {
+    overrideOpenTransition(R.anim.animate_slide_in_down, R.anim.animate_slide_out_up)
+}
+
+fun Activity.slideOutDown() {
+    overrideOpenTransition(R.anim.animate_slide_in_up, R.anim.animate_slide_out_down)
+}
+
 fun Activity.overrideOpenTransition(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
     if (OSUtils.hasU()) overrideOpenTransitionU(enterAnim, exitAnim)
     else overrideOpenTransitionLegacy(enterAnim, exitAnim)
@@ -347,31 +352,30 @@ private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.
 }
 
 fun AppCompatActivity.launchForResultWithAnimation(
-    resultLauncher: ActivityResultLauncher<Intent>, intent: Intent, axis: Int
-) {
-    if (OSUtils.isObySamsung()) {
-        resultLauncher.launch(intent)
-        slideInRight()
-    } else {
-        val exit = MaterialSharedAxis(axis, true).apply {
-            addTarget(android.R.id.content)
-            duration = 700L
-        }
-
-        val enter = MaterialSharedAxis(axis, false).apply {
-            addTarget(android.R.id.content)
-            duration = 700L
-        }
-        window.exitTransition = exit
-        window.reenterTransition = enter
-        resultLauncher.launch(
-            intent.putExtras(
-                bundleOf(SHARED_AXIS to axis)
-            ), ActivityOptionsCompat.makeSceneTransitionAnimation(
-                this
-            )
-        )
-    }
+    resultLauncher: ActivityResultLauncher<Intent>, intent: Intent) {
+//    if (OSUtils.isObySamsung()) {
+    resultLauncher.launch(intent)
+    slideInDown()
+//    } else {
+//        val exit = MaterialSharedAxis(axis, true).apply {
+//            addTarget(android.R.id.content)
+//            duration = 700L
+//        }
+//
+//        val enter = MaterialSharedAxis(axis, false).apply {
+//            addTarget(android.R.id.content)
+//            duration = 700L
+//        }
+//        window.exitTransition = exit
+//        window.reenterTransition = enter
+//        resultLauncher.launch(
+//            intent.putExtras(
+//                bundleOf(SHARED_AXIS to axis)
+//            ), ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                this
+//            )
+//        )
+//    }
 }
 
 // converte gli accordi salvati dalla lingua vecchia alla nuova

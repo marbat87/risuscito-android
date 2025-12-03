@@ -42,6 +42,7 @@ import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.HistoryListItem
 import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.hasTwoPanes
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.cleanListOptionMenu
@@ -80,6 +81,8 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
                 val localSelectedItems by selectedItems.observeAsState()
 
                 val viewMode by remember { mCronologiaViewModel.viewMode }
+
+                val hasTwoPanes = hasTwoPanes()
 
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
@@ -133,7 +136,7 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
                                                         TAG,
                                                         item.id,
                                                         source,
-                                                        false
+                                                        !hasTwoPanes
                                                     )
                                                 }
                                             },

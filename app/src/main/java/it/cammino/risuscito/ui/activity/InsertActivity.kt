@@ -6,14 +6,20 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -21,14 +27,20 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
+import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
@@ -44,6 +56,10 @@ import androidx.preference.PreferenceManager
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.R
+import it.cammino.risuscito.items.CantoViewData
+import it.cammino.risuscito.ui.composable.CantoView
+import it.cammino.risuscito.ui.composable.EmptyListView
+import it.cammino.risuscito.ui.composable.hasTwoPanes
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CustomListsFragment
@@ -52,7 +68,6 @@ import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
-import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -76,9 +91,9 @@ class InsertActivity : ThemeableActivity() {
 
     private val sharedSearchViewModel: SharedSearchViewModel by viewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        setEnterTransition()
+//        setEnterTransition()
         super.onCreate(savedInstanceState)
 
         try {
@@ -106,12 +121,46 @@ class InsertActivity : ThemeableActivity() {
         setContent {
 
             val scope = rememberCoroutineScope()
+
+            val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<CantoViewData>()
+            val backNavigationBehavior = BackNavigationBehavior.PopUntilScaffoldValueChange
             val searchBarState = rememberSearchBarState(SearchBarValue.Expanded)
+
+            LaunchedEffect(mViewModel.cantoData) {
+                snapshotFlow { mViewModel.cantoData.value }
+                    .distinctUntilChanged()
+                    .collect {
+                        Log.d("MainScreen", "cantoData: ${it.idCanto}")
+                        // Navigate to the detail pane with the passed item
+                        if (it.idCanto > 0) {
+                            scope.launch {
+                                scaffoldNavigator.navigateTo(
+                                    ListDetailPaneScaffoldRole.Detail,
+                                    it
+                                )
+                            }
+                        }
+                    }
+            }
+
+            LaunchedEffect(mViewModel.navigateBack) {
+                snapshotFlow { mViewModel.navigateBack.value }
+                    .distinctUntilChanged()
+                    .collect {
+                        Log.d("MainScreen", "navigateBack: $it")
+                        // Navigate to the detail pane with the passed item
+                        if (it) {
+                            scope.launch {
+                                scaffoldNavigator.navigateBack(backNavigationBehavior)
+                            }
+                            mViewModel.navigateBack.value = false
+                        }
+                    }
+            }
 
             RisuscitoTheme {
 
                 Scaffold(
-                    // 2. Collega il scrollBehavior allo Scaffold tramite il Modifier.nestedScroll
                     modifier = Modifier
                         .fillMaxSize(),
                     topBar = {
@@ -167,13 +216,10 @@ class InsertActivity : ThemeableActivity() {
                                     }
                                 )
                             }
-                        SearchBar(
+                        AppBarWithSearch(
                             state = searchBarState,
+                            contentPadding = PaddingValues(vertical = 6.dp),
                             inputField = inputField,
-                            modifier =
-                                Modifier
-                                    .padding(vertical = 8.dp, horizontal = 4.dp)
-                                    .fillMaxWidth()
                         )
                         ExpandedFullScreenSearchBar(
                             state = searchBarState,
@@ -232,13 +278,57 @@ class InsertActivity : ThemeableActivity() {
                                         },
                                     )
                                 }
-                                AndroidFragment<SimpleIndexFragment>(
-                                    arguments = bundleOf(
-                                        SimpleIndexFragment.INDICE_LISTA to 3,
-                                        SimpleIndexFragment.IS_SEARCH to true,
-                                        SimpleIndexFragment.IS_INSERT to true
+                                if (hasTwoPanes()) {
+                                    NavigableListDetailPaneScaffold(
+                                        navigator = scaffoldNavigator,
+                                        listPane = {
+                                            Box(modifier = Modifier.preferredWidth(0.5f)) {
+                                                AndroidFragment<SimpleIndexFragment>(
+                                                    arguments = bundleOf(
+                                                        SimpleIndexFragment.INDICE_LISTA to 3,
+                                                        SimpleIndexFragment.IS_SEARCH to true,
+                                                        SimpleIndexFragment.IS_INSERT to true
+                                                    )
+                                                )
+                                            }
+                                        },
+                                        detailPane = {
+                                            AnimatedPane(
+                                                enterTransition =
+                                                    slideInHorizontally(
+                                                        tween(
+                                                            1000,
+                                                            easing = EaseIn
+                                                        )
+                                                    ),
+                                                exitTransition = slideOutHorizontally(
+                                                    tween(
+                                                        1000,
+                                                        easing = EaseIn
+                                                    )
+                                                )
+                                            ) {
+                                                // Show the detail pane content if selected item is available
+                                                scaffoldNavigator.currentDestination?.contentKey?.let { cantoData ->
+                                                    key(cantoData.idCanto) {
+                                                        CantoView(cantoData)
+                                                    }
+                                                } ?: EmptyListView(
+                                                    iconRes = R.drawable.lyrics_24px,
+                                                    textRes = R.string.select_one_song
+                                                )
+                                            }
+                                        }
                                     )
-                                )
+                                } else {
+                                    AndroidFragment<SimpleIndexFragment>(
+                                        arguments = bundleOf(
+                                            SimpleIndexFragment.INDICE_LISTA to 3,
+                                            SimpleIndexFragment.IS_SEARCH to true,
+                                            SimpleIndexFragment.IS_INSERT to true
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
