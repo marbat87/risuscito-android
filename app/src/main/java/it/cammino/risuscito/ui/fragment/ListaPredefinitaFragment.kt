@@ -398,7 +398,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
         super.onViewCreated(view, savedInstanceState)
         mMainActivity = activity as? MainActivity
         mSwhitchMode = false
-        mMainActivity?.setFabActionsFragment(this)
+//        mMainActivity?.setFabActionsFragment(this)
     }
 
     override fun onDestroyView() {

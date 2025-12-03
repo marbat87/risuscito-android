@@ -45,6 +45,7 @@ import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.FabActionItem
 import it.cammino.risuscito.ui.composable.main.listaPersonalizzata
 import it.cammino.risuscito.ui.composable.main.listaPredefinita
+import it.cammino.risuscito.ui.interfaces.FabActionsFragment
 import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
@@ -70,6 +71,8 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
     private var idListe: IntArray = IntArray(0)
     private var movePage: Boolean = false
 
+    private val fragmentsList = HashMap<Int, FabActionsFragment>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -90,15 +93,24 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                         state = localPagerState
                     ) { page ->
                         // Our page content
+                        Log.d(TAG, "page: $page")
                         when (page) {
                             0, 1 ->
                                 AndroidFragment<ListaPredefinitaFragment>(
-                                    arguments = bundleOf(ListaPredefinitaFragment.INDICE_LISTA to page + 1)
+                                    arguments = bundleOf(ListaPredefinitaFragment.INDICE_LISTA to page + 1),
+                                    onUpdate = {
+                                        Log.d(TAG, "onUpdate ListaPredefinitaFragment: $page")
+                                        fragmentsList[page] = it
+                                    }
                                 )
 
                             else ->
                                 AndroidFragment<ListaPersonalizzataFragment>(
-                                    arguments = bundleOf(ListaPersonalizzataFragment.INDICE_LISTA to idListe[page - 2])
+                                    arguments = bundleOf(ListaPersonalizzataFragment.INDICE_LISTA to idListe[page - 2]),
+                                    onUpdate = {
+                                        Log.d(TAG, "onUpdate ListaPersonalizzataFragment: $page")
+                                        fragmentsList[page] = it
+                                    }
                                 )
 
                         }
@@ -115,6 +127,9 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                 if (sharedTabViewModel.tabsSelectedIndex.intValue != page) {
                                     sharedTabViewModel.tabsSelectedIndex.intValue = page
                                     initFabOptions(page >= 2)
+                                    fragmentsList[page]?.let {
+                                        mMainActivity?.setFabActionsFragment(it)
+                                    }
                                 }
                             }
                     }

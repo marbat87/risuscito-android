@@ -239,7 +239,7 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
         super.onViewCreated(view, savedInstanceState)
         mMainActivity = activity as? MainActivity
         mSwhitchMode = false
-        mMainActivity?.setFabActionsFragment(this)
+//        mMainActivity?.setFabActionsFragment(this)
     }
 
     override fun onDestroyView() {
