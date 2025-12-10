@@ -297,10 +297,10 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                 }
             }
 
-//            mMainActivity?.createOptionsMenu(
-//                cleanListOptionMenu,
-//                null
-//            )
+            mMainActivity?.createOptionsMenu(
+                emptyList(),
+                null
+            )
 //            Handler(Looper.getMainLooper()).postDelayed(1) {
 //                mMainActivity?.createOptionsMenu(
 //                    helpOptionMenu,

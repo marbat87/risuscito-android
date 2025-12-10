@@ -53,8 +53,10 @@ import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.main.FabActionItem
+import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.ui.interfaces.FabFragment
+import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
@@ -95,6 +97,9 @@ abstract class ThemeableActivity : AppCompatActivity() {
     protected val fabActionList = MutableLiveData(ArrayList<FabActionItem>())
 
     protected val fabExpanded = mutableStateOf(false)
+
+    protected var optionMenuFragment: OptionMenuFragment? = null
+    protected val optionMenuList = MutableLiveData(ArrayList<OptionMenuItem>())
 
     @SuppressLint("NewApi")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -697,6 +702,16 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 cronologia
             )
         }
+    }
+
+    fun createOptionsMenu(
+        optionMenu: List<OptionMenuItem>,
+        fragment: OptionMenuFragment?
+    ) {
+        Log.d(TAG, "createOptionsMenu")
+        val newList = ArrayList(optionMenu) // Crea una nuova lista
+        optionMenuList.value = newList
+        optionMenuFragment = fragment
     }
 
     companion object {

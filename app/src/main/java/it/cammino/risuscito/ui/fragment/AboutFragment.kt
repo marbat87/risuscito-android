@@ -132,6 +132,10 @@ class AboutFragment : MaterialAboutFragment() {
         super.onViewCreated(view, savedInstanceState)
         mMainActivity?.setTabVisible(false)
         mMainActivity?.initFab(enable = false)
+        mMainActivity?.createOptionsMenu(
+            emptyList(),
+            null
+        )
     }
 
     companion object {

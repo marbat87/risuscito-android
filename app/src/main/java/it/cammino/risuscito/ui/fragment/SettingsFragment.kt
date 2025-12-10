@@ -161,6 +161,10 @@ class SettingsFragment : Fragment() {
 
         mMainActivity?.setTabVisible(false)
         mMainActivity?.initFab(enable = false)
+        mMainActivity?.createOptionsMenu(
+            emptyList(),
+            null
+        )
 
         return ComposeView(requireContext()).apply {
 

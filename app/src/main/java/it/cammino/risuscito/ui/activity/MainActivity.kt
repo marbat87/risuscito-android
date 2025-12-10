@@ -57,13 +57,11 @@ import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.MainScreen
 import it.cammino.risuscito.ui.composable.main.NavigationScreen
-import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.RisuscitoSnackBar
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.FabActionsFragment
-import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.StringUtils
@@ -132,8 +130,7 @@ class MainActivity : ThemeableActivity() {
     private var onActionModeClickItem: (ActionModeItem) -> Unit = {}
     private var navHostController = mutableStateOf(NavHostController(this))
     private val tabsDestinationList = MutableLiveData(ArrayList<Destination>())
-    private var optionMenuFragment: OptionMenuFragment? = null
-    private val optionMenuList = MutableLiveData(ArrayList<OptionMenuItem>())
+
     private var fabActionsFragment: FabActionsFragment? = null
     private val signedId = mutableStateOf(false)
 
@@ -873,16 +870,6 @@ class MainActivity : ThemeableActivity() {
     fun destroyActionMode() {
         isActionMode.value = false
         actionModeFragment?.destroyActionMode()
-    }
-
-    fun createOptionsMenu(
-        optionMenu: List<OptionMenuItem>,
-        fragment: OptionMenuFragment?
-    ) {
-        Log.d(TAG, "createOptionsMenu")
-        val newList = ArrayList(optionMenu) // Crea una nuova lista
-        optionMenuList.value = newList
-        optionMenuFragment = fragment
     }
 
     fun setFabActionsFragment(fragment: FabActionsFragment?) {
