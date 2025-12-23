@@ -4,26 +4,22 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -35,26 +31,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
@@ -100,22 +93,26 @@ fun BottomSheetItem(infoItem: ResolveInfo, pm: PackageManager, onItemClick: (Res
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SimpleListItem(
     ctx: Context,
-    simpleItem: RisuscitoListItem,
+    item: RisuscitoListItem,
     onItemClick: (RisuscitoListItem) -> Unit,
     onItemLongClick: (RisuscitoListItem) -> Unit,
-    selected: Boolean,
+    selected: Boolean = false,
     modifier: Modifier,
     isInsert: Boolean = false,
     onIconClick: (RisuscitoListItem) -> Unit = {},
+    index: Int = 0,
+    itemsCount: Int = 0,
+    colors: ListItemColors? = null
 ) {
 
-    val title = remember(simpleItem.titleRes, simpleItem.filter) {
+    val title = remember(item.titleRes, item.filter) {
         val baseTitle =
-            ctx.getString(simpleItem.titleRes) // Usa ctx.getString se stringResource è problematico in remember
-        simpleItem.filter?.takeIf { it.isNotEmpty() }?.let { filterValue ->
+            ctx.getString(item.titleRes)
+        item.filter?.takeIf { it.isNotEmpty() }?.let { filterValue ->
             val normalizedTitle = Utility.removeAccents(baseTitle)
             val mPosition = normalizedTitle.lowercase(ctx.systemLocale)
                 .indexOf(filterValue.lowercase(ctx.systemLocale)) // Normalizza anche il filtro
@@ -134,362 +131,9 @@ fun SimpleListItem(
         } ?: AnnotatedString.fromHtml(baseTitle)
     }
 
-    val animatedColor by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.secondaryContainer else ListItemDefaults.containerColor,
-        label = "background color"
-    )
-
-    ListItem(
-        leadingContent = {
-            AnimatedScaleContent(
-                selected
-            ) { state ->
-                when (state) {
-                    true -> {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.check_24px),
-                                contentDescription = "",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
-                    }
-
-                    else -> PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor)
-                }
-            }
-        },
-        headlineContent = { Text(title) },
-        modifier = modifier
-            .combinedClickable(
-                enabled = true,
-                onClick = { onItemClick(simpleItem) },
-                onLongClick = {
-                    onItemLongClick(simpleItem)
-                }
-            ),
-        colors = ListItemDefaults.colors(
-            containerColor = animatedColor
-        ),
-        trailingContent = {
-            if (isInsert) {
-                FilledTonalIconButton(onClick = { onIconClick(simpleItem) }) {
-                    Icon(
-                        painter = painterResource(R.drawable.visibility_24px),
-                        contentDescription = "Notation"
-                    )
-                }
-            }
-        }
-    )
-}
-
-@Composable
-fun HistoryListItem(
-    ctx: Context,
-    simpleItem: RisuscitoListItem,
-    onItemClick: (RisuscitoListItem) -> Unit,
-    onItemLongClick: (RisuscitoListItem) -> Unit,
-    selected: Boolean,
-    modifier: Modifier
-) {
-
-    val textTimestamp =
-        if (simpleItem.timestamp.isNotEmpty()) {
-            // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
-            val df = DateFormat.getDateTimeInstance(
-                DateFormat.SHORT, DateFormat.MEDIUM, ctx.systemLocale
-            )
-            val tempTimestamp: String
-
-            val dateTimestamp =
-                Date(Long.parseLong(simpleItem.timestamp))
-            tempTimestamp = if (df is SimpleDateFormat) {
-                val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
-                df.applyPattern(pattern)
-                df.format(dateTimestamp)
-            } else
-                df.format(dateTimestamp)
-            tempTimestamp
-        } else
-            ""
-
-    val animatedColor by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.secondaryContainer else ListItemDefaults.containerColor,
-        label = "background color"
-    )
-
-    ListItem(
-        leadingContent = {
-            AnimatedScaleContent(
-                selected
-            ) { state ->
-                when (state) {
-                    true -> {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.check_24px),
-                                contentDescription = "",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
-                    }
-
-                    else -> PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor)
-                }
-            }
-        },
-        headlineContent = { Text(stringResource(simpleItem.titleRes)) },
-        supportingContent = { Text(textTimestamp) },
-        modifier = modifier
-            .combinedClickable(
-                enabled = true,
-                onClick = { onItemClick(simpleItem) },
-                onLongClick = {
-                    onItemLongClick(simpleItem)
-                }
-            ),
-        colors = ListItemDefaults.colors(
-            containerColor = animatedColor
-        )
-    )
-}
-
-@Composable
-fun ExpandableListItem(
-    ctx: Context,
-    item: RisuscitoListItem,
-    onHeaderClicked: (RisuscitoListItem) -> Unit,
-    onItemClick: (RisuscitoListItem) -> Unit,
-    onItemLongClick: (RisuscitoListItem) -> Unit,
-    modifier: Modifier,
-    isExpanded: Boolean,
-) {
-    when (item.itemType) {
-        ExpandableItemType.EXPANDABLE -> ListExpandableTitle(
-            item,
-            isExpanded,
-            onHeaderClicked,
-            modifier
-        )
-
-        ExpandableItemType.SUBITEM ->
-            AnimatedVisibility(
-                visible = isExpanded, // Sempre visibile quando il gruppo è espanso
-                enter = fadeIn(
-                    animationSpec = tween(
-                        150,
-                        delayMillis = 100
-                    )
-                ) + expandVertically(
-                    animationSpec = tween(300)
-                ),
-                exit = fadeOut(animationSpec = tween(150)) + shrinkVertically(
-                    animationSpec = tween(
-                        300
-                    )
-                ),
-                label = "SubItemAnimation-${item.id}"
-            ) {
-                SimpleListItem(
-                    ctx,
-                    item,
-                    onItemClick,
-                    onItemLongClick,
-                    false,
-                    modifier
-                )
-            }
-    }
-
-}
-
-@Composable
-fun ListTitleItem(titleRes: Int) {
-    ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(titleRes),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
-    )
-}
-
-@Composable
-fun ListExpandableTitle(
-    item: RisuscitoListItem,
-    isExpanded: Boolean,
-    onHeaderClicked: (RisuscitoListItem) -> Unit,
-    modifier: Modifier
-) {
-    // Animatable per la rotazione. Inizializza a 0f (non ruotato) o 180f se inizia espanso.
-    // Lo stato iniziale dell'icona (freccia in giù) corrisponde a 0 gradi di rotazione.
-    // Quando è espanso, la freccia dovrebbe puntare in su, che otteniamo ruotando la freccia in giù di 180 gradi.
-    val rotationAngle = remember { Animatable(if (isExpanded) 180f else 0f) }
-
-    // Questo LaunchedEffect reagisce ai cambiamenti di isExpanded
-    // e anima la rotazione all'angolo appropriato.
-    LaunchedEffect(isExpanded) {
-        rotationAngle.animateTo(
-            targetValue = if (isExpanded) 180f else 0f,
-            animationSpec = tween(durationMillis = 300) // Puoi personalizzare la durata e il tipo di animazione
-        )
-    }
-
-    ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(item.titleRes) + " (${item.subCantiCounter})",
-                color = if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-            )
-        },
-        modifier = modifier
-            .combinedClickable(
-                enabled = true,
-                onClick = { onHeaderClicked(item) }
-            ),
-        trailingContent = {
-            Icon(
-                painter = painterResource(R.drawable.keyboard_arrow_down_24px),
-                contentDescription = "Expand",
-                tint = if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                modifier = modifier.rotate(rotationAngle.value)
-            )
-        }
-    )
-
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun PassageListItem(
-    simpleItem: RisuscitoListItem,
-    onItemClick: (RisuscitoListItem) -> Unit,
-    onIconClick: (RisuscitoListItem) -> Unit,
-    modifier: Modifier
-) {
-    ListItem(
-        leadingContent = { PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor) },
-        headlineContent = { Text(stringResource(simpleItem.titleRes)) },
-        modifier = modifier.clickable(
-            enabled = true,
-            onClick = { onItemClick(simpleItem) }
-        ),
-        trailingContent = {
-            FilledTonalIconToggleButton(
-                checked = simpleItem.numPassaggio != -1,
-                onCheckedChange = { onIconClick(simpleItem) },
-                shapes = IconButtonDefaults.toggleableShapes()
-            ) {
-                if (simpleItem.numPassaggio != -1) {
-                    Icon(
-                        painter = painterResource(R.drawable.sell_filled_24px),
-                        contentDescription = "Notation"
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.sell_24px),
-                        contentDescription = "Notation"
-                    )
-                }
-            }
-        }
-    )
-}
-
-@Composable
-fun CheckableListItem(
-    simpleItem: RisuscitoListItem,
-    modifier: Modifier,
-    onSelect: (Boolean) -> Unit,
-    selected: Boolean = false
-) {
-
-    val animatedColor by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.secondaryContainer else ListItemDefaults.containerColor,
-        label = "background color"
-    )
-
-    ListItem(
-        leadingContent = { PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor) },
-        headlineContent = {
-            Text(
-                stringResource(simpleItem.titleRes),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        modifier = modifier.clickable(
-            enabled = true,
-            onClick = {
-                onSelect(!selected)
-            }
-        ),
-        trailingContent = {
-            Checkbox(
-                checked = selected,
-                onCheckedChange = {
-                    onSelect(it)
-                }
-            )
-        },
-        colors = ListItemDefaults.colors(
-            containerColor = animatedColor
-        )
-    )
-}
-
-@Composable
-fun RadioListItem(
-    titleItem: String,
-    onSelect: (Int) -> Unit,
-    itemId: Int,
-    selectedOption: Int,
-) {
-
-    ListItem(
-        headlineContent = { Text(titleItem) },
-        modifier = Modifier
-            .selectable(
-                selected = itemId == selectedOption,
-                onClick = { onSelect(itemId) },
-                role = Role.RadioButton
-            ),
-        trailingContent = {
-            RadioButton(
-                selected = itemId == selectedOption,
-                onClick = null // null recommended for accessibility with screen readers
-            )
-        },
-        colors = ListItemDefaults.colors()
-            .copy(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)
-    )
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun NotableListItem(
-    item: ListaPersonalizzataRisuscitoListItem,
-    onItemClick: (ListaPersonalizzataRisuscitoListItem) -> Unit,
-    onItemLongClick: (ListaPersonalizzataRisuscitoListItem) -> Unit,
-    onNoteClick: (ListaPersonalizzataRisuscitoListItem) -> Unit,
-    selected: Boolean
-) {
-    ListItem(
+    SegmentedListItem(
+        shapes = ListItemDefaults.segmentedShapes(index = index, count = itemsCount),
+        onClick = { onItemClick(item) },
         leadingContent = {
             AnimatedScaleContent(
                 selected
@@ -515,46 +159,380 @@ fun NotableListItem(
                 }
             }
         },
-        headlineContent = { Text(stringResource(item.titleRes)) },
-        modifier = Modifier
-            .combinedClickable(
-                enabled = true,
-                onClick = { onItemClick(item) },
-                onLongClick = {
-                    onItemLongClick(item)
+        modifier = modifier,
+        selected = selected,
+        trailingContent = {
+            if (isInsert) {
+                FilledTonalIconButton(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(35.dp),
+                    onClick = { onIconClick(item) }) {
+                    Icon(
+                        modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
+                        painter = painterResource(R.drawable.visibility_24px),
+                        contentDescription = "Notation"
+                    )
                 }
-            ),
-        colors = ListItemDefaults.colors(
-            containerColor = if (selected) {
-                MaterialTheme.colorScheme.secondaryContainer // Colore per selezione
-            } else {
-                Color.Transparent
             }
-        ),
+        },
+        onLongClick = { onItemLongClick(item) },
+        colors = colors ?: ListItemDefaults.segmentedColors()
+    ) {
+        Text(title)
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun HistoryListItem(
+    ctx: Context,
+    simpleItem: RisuscitoListItem,
+    onItemClick: (RisuscitoListItem) -> Unit,
+    onItemLongClick: (RisuscitoListItem) -> Unit,
+    selected: Boolean,
+    modifier: Modifier,
+    index: Int = 0,
+    itemsCount: Int = 0
+) {
+
+    val textTimestamp = remember(simpleItem.timestamp) {
+        if (simpleItem.timestamp.isNotEmpty()) {
+            // FORMATTO LA DATA IN BASE ALLA LOCALIZZAZIONE
+            val df = DateFormat.getDateTimeInstance(
+                DateFormat.SHORT, DateFormat.MEDIUM, ctx.systemLocale
+            )
+            val tempTimestamp: String
+
+            val dateTimestamp =
+                Date(Long.parseLong(simpleItem.timestamp))
+            tempTimestamp = if (df is SimpleDateFormat) {
+                val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
+                df.applyPattern(pattern)
+                df.format(dateTimestamp)
+            } else
+                df.format(dateTimestamp)
+            tempTimestamp
+        } else
+            ""
+    }
+
+    SegmentedListItem(
+        shapes = ListItemDefaults.segmentedShapes(index = index, count = itemsCount),
+        modifier = modifier,
+        selected = selected,
+        leadingContent = {
+            AnimatedScaleContent(
+                selected
+            ) { state ->
+                when (state) {
+                    true -> {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.check_24px),
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+
+                    else -> PageText(stringResource(simpleItem.pageRes), simpleItem.rawColor)
+                }
+            }
+        },
+        supportingContent = { Text(textTimestamp) },
+        onClick = { onItemClick(simpleItem) },
+        onLongClick = { onItemLongClick(simpleItem) }
+    ) {
+        Text(stringResource(simpleItem.titleRes))
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun ExpandableListItem(
+    ctx: Context,
+    item: RisuscitoListItem,
+    onHeaderClicked: (RisuscitoListItem) -> Unit,
+    onItemClick: (RisuscitoListItem) -> Unit,
+    onItemLongClick: (RisuscitoListItem) -> Unit,
+    modifier: Modifier,
+    isExpanded: Boolean
+) {
+
+    val itemCount = 1 + if (isExpanded) item.subCantiCounter else 0
+
+    val colors = if (isExpanded)
+        ListItemDefaults.segmentedColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+    else ListItemDefaults.segmentedColors()
+
+    when (item.itemType) {
+        ExpandableItemType.EXPANDABLE -> ListExpandableTitle(
+            item = item,
+            isExpanded = isExpanded,
+            onHeaderClicked = onHeaderClicked,
+            modifier = modifier,
+            itemCount = itemCount,
+            colors = colors
+        )
+
+        ExpandableItemType.SUBITEM ->
+            AnimatedVisibility(
+                visible = isExpanded, // Sempre visibile quando il gruppo è espanso
+                enter = expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
+                exit = shrinkVertically(MaterialTheme.motionScheme.fastSpatialSpec())
+            ) {
+                Box(modifier = Modifier.padding(top = ListItemDefaults.SegmentedGap)) {
+                    SimpleListItem(
+                        ctx = ctx,
+                        item = item,
+                        onItemClick = onItemClick,
+                        onItemLongClick = onItemLongClick,
+                        modifier = modifier,
+                        index = item.subIndex + 1,
+                        itemsCount = itemCount,
+                        colors = colors
+                    )
+                }
+            }
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun ListTitleItem(titleRes: Int) {
+    ListItem(
+        selected = false,
+        onClick = {}
+    ) {
+        Text(
+            text = stringResource(titleRes),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun ListExpandableTitle(
+    item: RisuscitoListItem,
+    isExpanded: Boolean,
+    onHeaderClicked: (RisuscitoListItem) -> Unit,
+    modifier: Modifier,
+    itemCount: Int = 0,
+    colors: ListItemColors
+) {
+    // Animatable per la rotazione. Inizializza a 0f (non ruotato) o 180f se inizia espanso.
+    // Lo stato iniziale dell'icona (freccia in giù) corrisponde a 0 gradi di rotazione.
+    // Quando è espanso, la freccia dovrebbe puntare in su, che otteniamo ruotando la freccia in giù di 180 gradi.
+//    val rotationAngle = remember { Animatable(if (isExpanded) 180f else 0f) }
+
+    // Questo LaunchedEffect reagisce ai cambiamenti di isExpanded
+    // e anima la rotazione all'angolo appropriato.
+//    LaunchedEffect(isExpanded) {
+//        rotationAngle.animateTo(
+//            targetValue = if (isExpanded) 180f else 0f,
+//            animationSpec = tween(durationMillis = 300) // Puoi personalizzare la durata e il tipo di animazione
+//        )
+//    }
+
+    SegmentedListItem(
+        shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
+        modifier = modifier,
+        selected = false,
+        colors = colors,
+        trailingContent = {
+            Box(
+                modifier = Modifier
+                    .width(30.dp)
+                    .height(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
+                    painter = painterResource(if (isExpanded) R.drawable.keyboard_arrow_up_24px else R.drawable.keyboard_arrow_down_24px),
+                    contentDescription = null
+                )
+            }
+        },
+        supportingContent = {
+            Text(text = item.subCantiCounter.toString())
+        },
+        onClick = { onHeaderClicked(item) }
+    ) {
+        Text(text = stringResource(item.titleRes))
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun PassageListItem(
+    item: RisuscitoListItem,
+    onItemClick: (RisuscitoListItem) -> Unit,
+    onIconClick: (RisuscitoListItem) -> Unit,
+    modifier: Modifier,
+    index: Int,
+    itemsCount: Int
+) {
+    SegmentedListItem(
+        shapes = ListItemDefaults.segmentedShapes(index = index, count = itemsCount),
+        selected = false,
+        leadingContent = { PageText(stringResource(item.pageRes), item.rawColor) },
+        modifier = modifier,
+        trailingContent = {
+            FilledTonalIconToggleButton(
+                modifier = Modifier
+                    .height(40.dp)
+                    .width(35.dp),
+                checked = item.numPassaggio != -1,
+                onCheckedChange = { onIconClick(item) },
+                shapes = IconButtonDefaults.toggleableShapes()
+            ) {
+                Icon(
+                    modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
+                    painter = painterResource(if (item.numPassaggio != -1) R.drawable.sell_filled_24px else R.drawable.sell_24px),
+                    contentDescription = "Notation"
+                )
+            }
+        },
+        onClick = { onItemClick(item) }
+    ) {
+        Text(stringResource(item.titleRes))
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun CheckableListItem(
+    item: RisuscitoListItem,
+    modifier: Modifier,
+    onSelect: (Boolean) -> Unit,
+    selected: Boolean = false,
+    index: Int,
+    itemsCount: Int
+) {
+
+    SegmentedListItem(
+        shapes = ListItemDefaults.segmentedShapes(index = index, count = itemsCount),
+        modifier = modifier,
+        checked = selected,
+        leadingContent = { PageText(stringResource(item.pageRes), item.rawColor) },
+        trailingContent = {
+            Checkbox(
+                checked = selected,
+                onCheckedChange = null
+            )
+        },
+        onCheckedChange = { onSelect(!selected) }
+    ) {
+        Text(
+            stringResource(item.titleRes),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun RadioListItem(
+    titleItem: String,
+    onSelect: (Int) -> Unit,
+    itemId: Int,
+    selectedOption: Int
+) {
+
+    ListItem(
+        selected = itemId == selectedOption,
+        trailingContent = {
+            RadioButton(
+                selected = itemId == selectedOption,
+                onClick = null // null recommended for accessibility with screen readers
+            )
+        },
+        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
+        onClick = { onSelect(itemId) }
+    ) {
+        Text(titleItem)
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun NotableListItem(
+    item: ListaPersonalizzataRisuscitoListItem,
+    onItemClick: (ListaPersonalizzataRisuscitoListItem) -> Unit,
+    onItemLongClick: (ListaPersonalizzataRisuscitoListItem) -> Unit,
+    onNoteClick: (ListaPersonalizzataRisuscitoListItem) -> Unit,
+    selected: Boolean,
+    index: Int,
+    itemsCount: Int
+) {
+    SegmentedListItem(
+        shapes = ListItemDefaults.segmentedShapes(index = index, count = itemsCount),
+        selected = selected,
+        leadingContent = {
+            AnimatedScaleContent(
+                selected
+            ) { state ->
+                when (state) {
+                    true -> {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.check_24px),
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+
+                    else -> PageText(stringResource(item.pageRes), item.rawColor)
+                }
+            }
+        },
         trailingContent = {
             if (!selected) {
                 FilledTonalIconToggleButton(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(35.dp),
                     checked = item.nota.isNotEmpty(),
                     onCheckedChange = { onNoteClick(item) },
-                    shapes = IconButtonDefaults.toggleableShapes(),
+                    shapes = IconButtonDefaults.toggleableShapes()
                 ) {
-                    if (item.nota.isNotEmpty()) {
-                        Icon(
-                            painter = painterResource(R.drawable.sticky_note_2_filled_24px),
-                            contentDescription = "Notation"
-                        )
-                    } else {
-                        Icon(
-                            painter = painterResource(R.drawable.sticky_note_2_24px),
-                            contentDescription = "Notation"
-                        )
-                    }
+                    Icon(
+                        modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
+                        painter = painterResource(if (item.nota.isNotEmpty()) R.drawable.sticky_note_2_filled_24px else R.drawable.sticky_note_2_24px),
+                        contentDescription = "Notation"
+                    )
                 }
             }
-        }
-    )
+        },
+        onClick = { onItemClick(item) },
+        onLongClick = { onItemLongClick(item) }
+    ) {
+        Text(stringResource(item.titleRes))
+    }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PosizioneListItem(
     titoloPosizione: String,
@@ -574,19 +552,24 @@ fun PosizioneListItem(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+            modifier = Modifier.padding(horizontal = 5.dp)
+        ) {
             Text(
                 text = titoloPosizione,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(start = 16.dp, top = 12.dp)
             )
-            posizioni.forEach {
+            posizioni.forEachIndexed { index, item ->
                 NotableListItem(
-                    item = it,
+                    item = item,
                     onItemClick = cantoClickListener,
                     onItemLongClick = cantoLongClickListener,
                     onNoteClick = noteClickListener,
-                    selected = it.selected
+                    selected = item.selected,
+                    index = index,
+                    itemsCount = posizioni.size
                 )
             }
             if (posizioni.isEmpty() || isMultiple) {
@@ -607,6 +590,7 @@ fun PosizioneListItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DraggableDismissableListItem(
     modifier: Modifier,
@@ -616,7 +600,8 @@ fun DraggableDismissableListItem(
     index: Int,
     item: SwipeableRisuscitoListItem,
     onItemLongClick: (Int, SwipeableRisuscitoListItem) -> Unit,
-    onDismiss: (SwipeToDismissBoxValue, Int, SwipeableRisuscitoListItem) -> Unit
+    onDismiss: (SwipeToDismissBoxValue, Int, SwipeableRisuscitoListItem) -> Unit,
+    itemsCount: Int
 ) {
     SwipeToDismissBox(
         state = swipeToDismissBoxState,
@@ -629,42 +614,34 @@ fun DraggableDismissableListItem(
         onDismiss = { onDismiss(it, index, item) }
     ) {
 
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 6.dp,
-                draggedElevation = 16.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            onClick = {},
-            interactionSource = interactionSource,
-        ) {
-            ListItem(
-                headlineContent = { Text(item.title) },
-                modifier = Modifier
-                    .combinedClickable(
-                        enabled = true,
-                        onClick = { },
-                        onLongClick = {
-                            onItemLongClick(
-                                index,
-                                item
-                            )
-                        }
-                    ),
-                trailingContent = {
-                    IconButton(
-                        modifier = dragModifier,
-                        onClick = {},
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.drag_handle_24px),
-                            contentDescription = "Reorder"
-                        )
-                    }
+        SegmentedListItem(
+            shapes = ListItemDefaults.segmentedShapes(index = index, count = itemsCount),
+            selected = false,
+            trailingContent = {
+                IconButton(
+                    modifier = dragModifier
+                        .height(40.dp)
+                        .width(30.dp),
+                    onClick = {},
+                ) {
+                    Icon(
+                        modifier = Modifier.size(IconButtonDefaults.extraSmallIconSize),
+                        painter = painterResource(R.drawable.drag_handle_24px),
+                        contentDescription = "Reorder"
+                    )
                 }
-            )
+            },
+            onClick = {},
+            onLongClick = {
+                onItemLongClick(
+                    index,
+                    item
+                )
+            },
+            interactionSource = interactionSource
+        ) {
+            Text(item.title)
         }
+
     }
 }

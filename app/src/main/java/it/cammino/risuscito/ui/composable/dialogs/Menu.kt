@@ -224,7 +224,7 @@ fun AddToDropDownMenu(
             text = { Text(stringResource(R.string.canto_pane)) },
             onClick = {
                 eucarestiaExpanded.value = false
-                viewModel.addToListaNoDup(2, 3, fragment, dialogTag2)
+                ListeUtils.addToListaDup(fragment, 2, 3,  viewModel.idDaAgg)
             }
         )
 

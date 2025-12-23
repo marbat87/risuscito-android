@@ -1,7 +1,6 @@
 package it.cammino.risuscito.ui.composable.dialogs
 
 import android.view.Window
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,9 +19,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -50,6 +50,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.SignInButton
 import it.cammino.risuscito.ui.composable.animations.AnimatedSlideInTransition
 import it.cammino.risuscito.ui.composable.hasNavigationBar
+import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.viewmodels.SharedProfileViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -192,7 +193,7 @@ fun ProfileDialogContent(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 24.dp)
+            .padding(layoutMinMargins())
             .statusBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -286,39 +287,34 @@ fun ProfileDialogImage(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProfileDialogAccountOptions(
     loggedIn: Boolean = false,
     onItemClick: (ProfileMenuItem) -> Unit
 ) {
     if (loggedIn) {
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            shape = RoundedCornerShape(28.dp),
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
         ) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .weight(weight = 1f, fill = false),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                profileMenuItems.forEach { item ->
-                    ListItem(
-                        leadingContent = {
-                            Icon(
-                                painter = painterResource(item.iconRes),
-                                contentDescription = stringResource(item.label)
-                            )
-                        },
-                        headlineContent = {
-                            Text(stringResource(item.label))
-                        },
-                        modifier = Modifier.clickable {
-                            onItemClick(item)
-                        }
-                    )
+            profileMenuItems.forEachIndexed { index, item ->
+                SegmentedListItem(
+                    shapes = ListItemDefaults.segmentedShapes(
+                        index = index,
+                        count = profileMenuItems.size
+                    ),
+                    selected = false,
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(item.iconRes),
+                            contentDescription = stringResource(item.label)
+                        )
+                    },
+                    onClick = { onItemClick(item) }
+                ) {
+                    Text(stringResource(item.label))
                 }
             }
         }
@@ -329,39 +325,34 @@ fun ProfileDialogAccountOptions(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProfileDialogSettingsOptions(
     onItemClick: (ProfileMenuItem) -> Unit
 ) {
     if (hasNavigationBar()) {
         Spacer(modifier = Modifier.height(8.dp))
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            shape = RoundedCornerShape(28.dp),
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
         ) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .weight(weight = 1f, fill = false),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                settingsMenuItems.forEach { item ->
-                    ListItem(
-                        leadingContent = {
-                            Icon(
-                                painter = painterResource(item.iconRes),
-                                contentDescription = stringResource(item.label)
-                            )
-                        },
-                        headlineContent = {
-                            Text(stringResource(item.label))
-                        },
-                        modifier = Modifier.clickable {
-                            onItemClick(item)
-                        }
-                    )
+            settingsMenuItems.forEachIndexed { index, item ->
+                SegmentedListItem(
+                    shapes = ListItemDefaults.segmentedShapes(
+                        index = index,
+                        count = settingsMenuItems.size
+                    ),
+                    selected = false,
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(item.iconRes),
+                            contentDescription = stringResource(item.label)
+                        )
+                    },
+                    onClick = { onItemClick(item) }
+                ) {
+                    Text(stringResource(item.label))
                 }
             }
         }

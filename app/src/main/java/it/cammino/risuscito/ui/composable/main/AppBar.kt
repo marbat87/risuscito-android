@@ -17,11 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.AppBarWithSearch
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -74,6 +72,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.ContextualToolbarTitle
 import it.cammino.risuscito.ui.composable.dialogs.AccountMenuImage
 import it.cammino.risuscito.ui.composable.hasNavigationBar
+import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
@@ -475,7 +474,7 @@ private fun ExpandedSarchBarContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = layoutMinMargins())
         ) {
             FilterChip(
                 onClick = {
@@ -499,20 +498,12 @@ private fun ExpandedSarchBarContent(
                 },
             )
         }
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(8.dp),
-            shape = RoundedCornerShape(14.dp),
-        ) {
-            AndroidFragment<SimpleIndexFragment>(
-                arguments = bundleOf(
-                    SimpleIndexFragment.INDICE_LISTA to 0,
-                    SimpleIndexFragment.IS_SEARCH to true
-                )
+        AndroidFragment<SimpleIndexFragment>(
+            arguments = bundleOf(
+                SimpleIndexFragment.INDICE_LISTA to 0,
+                SimpleIndexFragment.IS_SEARCH to true
             )
-        }
+        )
     }
 }
 

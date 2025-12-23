@@ -16,7 +16,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,10 +30,12 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -81,6 +82,7 @@ import it.cammino.risuscito.ui.composable.Hint
 import it.cammino.risuscito.ui.composable.dialogs.InputDialog
 import it.cammino.risuscito.ui.composable.dialogs.InputDialogTag
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.main.creaListaMenu
@@ -117,7 +119,7 @@ class CreaListaActivity : ThemeableActivity() {
 
     private val hintVisible = mutableStateOf(false)
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
 //        setEnterTransition()
@@ -278,17 +280,21 @@ class CreaListaActivity : ThemeableActivity() {
 
                     Box(
                         modifier = Modifier
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .padding(horizontal = layoutMinMargins()),
                         contentAlignment = Alignment.Center
                     ) {
                         LazyColumn(
                             modifier = listModifier,
                             state = lazyListState,
-                            contentPadding = PaddingValues(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                         ) {
                             item {
-                                Column {
+                                Column(
+                                    modifier = Modifier
+                                        .wrapContentHeight()
+                                        .padding(horizontal = layoutMinMargins())
+                                ) {
                                     OutlinedTextField(
                                         label = { Text(stringResource(R.string.list_title)) },
                                         modifier = Modifier
@@ -378,7 +384,8 @@ class CreaListaActivity : ThemeableActivity() {
                                                 // Reset item when toggling done status
                                                 else -> scope.launch { swipeToDismissBoxState.reset() }
                                             }
-                                        }
+                                        },
+                                        itemsCount = localItems.orEmpty().size
                                     )
                                 }
                             }

@@ -60,6 +60,8 @@ data class RisuscitoListItem(
 
     var consegnato = 0
 
+    var subIndex = 0
+
 }
 
 enum class ExpandableItemType {

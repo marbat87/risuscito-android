@@ -60,6 +60,7 @@ import it.cammino.risuscito.items.CantoViewData
 import it.cammino.risuscito.ui.composable.CantoView
 import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.hasTwoPanes
+import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CustomListsFragment
@@ -233,7 +234,7 @@ class InsertActivity : ThemeableActivity() {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .wrapContentHeight()
-                                        .padding(horizontal = 16.dp)
+                                        .padding(horizontal = layoutMinMargins())
                                 ) {
                                     FilterChip(
                                         onClick = {

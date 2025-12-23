@@ -81,6 +81,7 @@ import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Hint(
     hintText: String,
@@ -105,6 +106,7 @@ fun Hint(
         }
     ) {
         ListItem(
+            selected = false,
             modifier = Modifier.height(88.dp),
             supportingContent = {
                 Text(
@@ -112,7 +114,6 @@ fun Hint(
                     style = MaterialTheme.typography.bodySmall
                 )
             },
-            headlineContent = {},
             leadingContent = {
                 Box(
                     contentAlignment = Alignment.TopCenter
@@ -129,8 +130,9 @@ fun Hint(
                     )
                     VerticalDivider()
                 }
-            }
-        )
+            },
+            onClick = {}
+        ) {}
     }
 }
 

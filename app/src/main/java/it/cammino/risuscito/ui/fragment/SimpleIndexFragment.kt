@@ -15,10 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,6 +51,7 @@ import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.hasTwoPanes
+import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.StringUtils
@@ -170,6 +172,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                         Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
+                            .padding(layoutMinMargins())
                             .then(
                                 scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
                                     ?: Modifier
@@ -178,13 +181,16 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                         Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
+                            .padding(layoutMinMargins())
 
                 LazyColumn(
                     state = state,
                     modifier = listModifier,
-                    verticalArrangement = Arrangement.spacedBy(if (isSearch) 2.dp else 0.dp)
+                    verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
                 ) {
-                    items(localItems.value) { simpleItem ->
+                    itemsIndexed(
+                        items = localItems.value,
+                        key = { _, it -> it.id }) { index, simpleItem ->
                         Box(
                             modifier = Modifier
                                 .wrapContentHeight()
@@ -194,8 +200,8 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                             val itemContextMenuExpanded = remember { mutableStateOf(false) }
                             val offset = remember { mutableStateOf(DpOffset.Zero) }
                             SimpleListItem(
-                                requireContext(),
-                                simpleItem,
+                                ctx = requireContext(),
+                                item = simpleItem,
                                 onItemClick = { rememberItemClick(it) },
                                 onItemLongClick = {
                                     rememberItemLongClick(it)
@@ -208,7 +214,9 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                                         offset.value = DpOffset((it.width / 12).dp, 0.dp)
                                     },
                                 isInsert = isInsert,
-                                onIconClick = { rememberIconClick(it) }
+                                onIconClick = { rememberIconClick(it) },
+                                index = index,
+                                itemsCount = localItems.value.size
                             )
 
                             if (mCantiViewModel.tipoLista == 0 ||

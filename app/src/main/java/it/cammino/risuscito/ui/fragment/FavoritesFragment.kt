@@ -9,12 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -40,6 +44,7 @@ import it.cammino.risuscito.ui.composable.SimpleListItem
 import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.hasTwoPanes
+import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.cleanListOptionMenu
@@ -68,7 +73,7 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
 
     private val selectedItems = MutableLiveData(ArrayList<Int>())
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -96,6 +101,7 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                             FavoritesViewModel.ViewMode.VIEW -> {
                                 val listModifier = Modifier
                                     .fillMaxSize()
+                                    .padding(layoutMinMargins())
                                     .then(
                                         scrollBehaviorFromSharedVM?.let {
                                             Modifier.nestedScroll(
@@ -106,17 +112,18 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                                     )
                                 LazyColumn(
                                     state = state,
-                                    modifier = listModifier
+                                    modifier = listModifier,
+                                    verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
                                 ) {
-                                    items(
+                                    itemsIndexed(
                                         localItems.orEmpty(),
-                                        key = { it.id }) { simpleItem ->
+                                        key = { _, it -> it.id }) { index, simpleItem ->
                                         val isItemSelected =
                                             localSelectedItems.orEmpty().contains(simpleItem.id)
                                         val source = stringResource(simpleItem.sourceRes)
                                         SimpleListItem(
-                                            requireContext(),
-                                            simpleItem,
+                                            ctx = requireContext(),
+                                            item = simpleItem,
                                             onItemClick = { item ->
                                                 if (mMainActivity?.isActionMode?.value == true) {
                                                     if (isItemSelected) {
@@ -143,7 +150,9 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                                                 }
                                             },
                                             selected = isItemSelected,
-                                            modifier = Modifier.animateItem()
+                                            modifier = Modifier.animateItem(),
+                                            index = index,
+                                            itemsCount = localItems.orEmpty().size
                                         )
                                     }
                                 }

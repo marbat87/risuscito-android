@@ -6,7 +6,7 @@ plugins {
     kotlin("android")
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.21"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
     id("kotlin-parcelize")
 }
 
@@ -84,9 +84,9 @@ val composepreferences = "2.0.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.google.android.material:material:1.14.0-alpha07")
+    implementation("com.google.android.material:material:1.14.0-alpha08")
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.activity:activity-ktx:1.12.0")
+    implementation("androidx.activity:activity-ktx:1.12.2")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.appcompat:appcompat-resources:1.7.1")
     implementation("androidx.core:core-ktx:1.17.0")
@@ -96,7 +96,6 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.media:media:1.7.1")
     implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.9.5")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
@@ -106,7 +105,7 @@ dependencies {
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-auth")
@@ -130,9 +129,9 @@ dependencies {
     implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
     implementation("io.github.fornewid:material-motion-compose-core:2.0.1")
 
-    implementation(platform("androidx.compose:compose-bom:2025.11.01"))
+    implementation(platform("androidx.compose:compose-bom:2025.12.01"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha09")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha11")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")
@@ -147,6 +146,7 @@ dependencies {
     implementation("androidx.compose.animation:animation-graphics")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
     implementation("androidx.compose.material3.adaptive:adaptive-navigation")
+    implementation("androidx.compose.ui:ui-text-google-fonts")
     implementation("androidx.navigation:navigation-runtime-ktx:2.9.6")
     implementation("androidx.fragment:fragment-compose:1.8.9")
 }

@@ -122,7 +122,7 @@ fun AccountMenuImage(
                 model = profilePhotoUrl,
                 contentDescription = "Profile Button",
                 modifier = Modifier
-                    .clip(MaterialShapes.Cookie9Sided.toShape())
+                    .clip(MaterialShapes.Circle.toShape())
                     .size(32.dp),
                 contentScale = ContentScale.Fit,
                 placeholder = painterResource(R.drawable.account_circle_24px),

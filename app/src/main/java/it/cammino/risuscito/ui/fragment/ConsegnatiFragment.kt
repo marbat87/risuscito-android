@@ -7,15 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,6 +51,7 @@ import it.cammino.risuscito.ui.composable.dialogs.PassaggesDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.hasTwoPanes
+import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.OptionMenuItem
 import it.cammino.risuscito.ui.composable.main.consegnatiMenu
@@ -121,6 +125,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                             ConsegnatiViewModel.ViewMode.VIEW -> {
                                 val listModifier = Modifier
                                     .fillMaxSize()
+                                    .padding(layoutMinMargins())
                                     .then(
                                         scrollBehaviorFromSharedVM?.let {
                                             Modifier.nestedScroll(
@@ -131,16 +136,19 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                     )
                                 LazyColumn(
                                     state = rememberLazyListState(),
-                                    modifier = listModifier
+                                    modifier = listModifier,
+                                    verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
                                 ) {
-                                    items(
-                                        consegnatiItems ?: emptyList(),
-                                        key = { it.id }) { simpleItem ->
+                                    itemsIndexed(
+                                        consegnatiItems.orEmpty(),
+                                        key = { _, it -> it.id }) { index, simpleItem ->
                                         PassageListItem(
-                                            simpleItem,
+                                            item = simpleItem,
                                             onItemClick = rememberedOnItemClick,
                                             onIconClick = { openPassageModal(it) },
-                                            modifier = Modifier.animateItem()
+                                            modifier = Modifier.animateItem(),
+                                            index = index,
+                                            itemsCount = consegnatiItems.orEmpty().size
                                         )
                                     }
                                     item {
@@ -154,12 +162,14 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                     state = rememberLazyListState(),
                                     modifier = Modifier
                                         .fillMaxSize()
+                                        .padding(layoutMinMargins()),
+                                    verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
                                 ) {
-                                    items(
-                                        consegnatiSelectableItems ?: emptyList(),
-                                        key = { it.id }) { simpleItem ->
+                                    itemsIndexed(
+                                        consegnatiSelectableItems.orEmpty(),
+                                        key = { _, it -> it.id }) { index, simpleItem ->
                                         CheckableListItem(
-                                            simpleItem,
+                                            item = simpleItem,
                                             modifier = Modifier.animateItem(),
                                             onSelect = {
                                                 if (it) selectItem(simpleItem.id)
@@ -167,7 +177,9 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                             },
                                             selected = consegnatiSelectedItems?.contains(
                                                 simpleItem.id
-                                            ) ?: false
+                                            ) ?: false,
+                                            index = index,
+                                            itemsCount = consegnatiSelectableItems.orEmpty().size
                                         )
                                     }
                                     item {

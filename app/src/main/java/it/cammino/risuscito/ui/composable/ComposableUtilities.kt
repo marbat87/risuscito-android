@@ -59,4 +59,15 @@ fun layoutMargins(): Dp {
     return returnValue
 }
 
+@Composable
+fun layoutMinMargins(): Dp {
+    val sizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    var returnValue = 8.dp
+    if (sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+        returnValue = 12.dp
+    }
+    Log.d(TAG, "layoutMargins: $returnValue")
+    return returnValue
+}
+
 private const val TAG = "ComposableUtilities"

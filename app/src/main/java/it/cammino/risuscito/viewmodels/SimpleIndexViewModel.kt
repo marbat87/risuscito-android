@@ -141,8 +141,10 @@ class SimpleIndexViewModel(application: Application, args: Bundle) :
                                 }
                             )
 
-                            cantiSubItemList.forEach { subitem ->
+                            cantiSubItemList.forEachIndexed { index, subitem ->
                                 subitem.identifier = totCanti++
+                                subitem.subIndex = index
+                                subitem.subCantiCounter = cantiSubItemList.size
                                 cantiList.add(subitem)
                             }
                             cantiSubItemList.clear()

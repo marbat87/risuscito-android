@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -44,6 +46,7 @@ import it.cammino.risuscito.ui.composable.dialogs.AddToDropDownMenu
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
 import it.cammino.risuscito.ui.composable.hasTwoPanes
+import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
@@ -66,7 +69,7 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
     private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
     private var mActivity: MainActivity? = null
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -114,70 +117,12 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
 
                 val listModifier = Modifier
                     .fillMaxSize()
+                    .padding(layoutMinMargins())
                     .then(
                         scrollBehaviorFromSharedVM?.let { Modifier.nestedScroll(it.nestedScrollConnection) }
                             ?: Modifier
                     )
-//                if (hasGridLayout()) {
-//                    LazyVerticalGrid(
-//                        columns = GridCells.Fixed(2),
-//                        modifier = listModifier
-//                    ) {
-//                        localItems.orEmpty().forEach { (initial, songsForGroup) ->
-//                            stickyHeader {
-//                                ListTitleItem(initial)
-//                            }
-//
-//                            songsForGroup.forEach { simpleItem ->
-//                                item(span = { GridItemSpan(if (simpleItem.itemType == ExpandableItemType.SUBITEM) 1 else 2) }) {
-//                                    Box(
-//                                        modifier = Modifier
-//                                            .wrapContentHeight()
-//                                            .fillMaxWidth()
-//                                    )
-//                                    {
-//                                        val itemContextMenuExpanded =
-//                                            remember { mutableStateOf(false) }
-//                                        val offset = remember { mutableStateOf(DpOffset.Zero) }
-//                                        var isExpanded = false
-//                                        if (simpleItem.itemType == ExpandableItemType.EXPANDABLE)
-//                                            isExpanded =
-//                                                expandedItem.intValue == simpleItem.groupIndex
-//                                        if (simpleItem.itemType == ExpandableItemType.SUBITEM) {
-//                                            isExpanded =
-//                                                expandedItem.intValue == simpleItem.groupIndex
-//                                        }
-//
-//                                        ExpandableListItem(
-//                                            requireContext(),
-//                                            simpleItem,
-//                                            onItemClick = rememberedOnItemClick,
-//                                            onItemLongClick = {
-//                                                rememberedOnItemLongClick(it)
-//                                                itemContextMenuExpanded.value = true
-//                                            },
-//                                            onHeaderClicked = rememberedOnHeaderClick,
-//                                            isExpanded = isExpanded,
-//                                            modifier = Modifier.onSizeChanged {
-//                                                offset.value = DpOffset((it.width / 12).dp, 0.dp)
-//                                            }
-//                                        )
-//                                        AddToDropDownMenu(
-//                                            this@SectionedIndexFragment,
-//                                            mCantiViewModel,
-//                                            SimpleDialogTag.LITURGICO_REPLACE,
-//                                            SimpleDialogTag.LITURGICO_REPLACE_2,
-//                                            listePersonalizzate,
-//                                            itemContextMenuExpanded.value,
-//                                            offset.value
-//                                        ) { itemContextMenuExpanded.value = false }
-//                                    }
-//                                }
-//                            }
-//
-//                        }
-//                    }
-//                } else {
+
                 LazyColumn(
                     state = state,
                     modifier = listModifier
@@ -188,7 +133,7 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                             ListTitleItem(initial)
                         }
 
-                        items(songsForGroup) { simpleItem ->
+                        items(songsForGroup, contentType = { it.itemType }) { simpleItem ->
                             Box(
                                 modifier = Modifier
                                     .wrapContentHeight()
@@ -234,7 +179,6 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                         }
                     }
                 }
-//                }
 
                 if (mCantiViewModel.showAlertDialog.observeAsState().value == true) {
                     SimpleAlertDialog(
