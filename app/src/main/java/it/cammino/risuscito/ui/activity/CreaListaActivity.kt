@@ -43,6 +43,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -206,6 +207,9 @@ class CreaListaActivity : ThemeableActivity() {
                                     onBackPressedAction = { onOptionsItemSelected(ActionModeItem.CLOSE) }
                                 )
                             },
+                            colors = TopAppBarDefaults.topAppBarColors().copy(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
                             actions = {
                                 AppBarRow(overflowIndicator = {}) {
                                     creaListaMenu.forEach {
@@ -273,139 +277,142 @@ class CreaListaActivity : ThemeableActivity() {
 
                     val listModifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
+                        .padding(horizontal = layoutMinMargins())
                         .then(
                             Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
                         )
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = layoutMinMargins()),
-                        contentAlignment = Alignment.Center
+                    Surface(
+                        color = MaterialTheme.colorScheme.surfaceContainer,
+                        modifier = Modifier.padding(innerPadding)
                     ) {
-                        LazyColumn(
-                            modifier = listModifier,
-                            state = lazyListState,
-                            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
                         ) {
-                            item {
-                                Column(
-                                    modifier = Modifier
-                                        .wrapContentHeight()
-                                        .padding(horizontal = layoutMinMargins())
-                                ) {
-                                    OutlinedTextField(
-                                        label = { Text(stringResource(R.string.list_title)) },
+                            LazyColumn(
+                                modifier = listModifier,
+                                state = lazyListState,
+                                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                            ) {
+                                item {
+                                    Column(
                                         modifier = Modifier
-                                            .padding(
-                                                bottom = 12.dp
-                                            )
-                                            .fillMaxWidth(),
-                                        state = inputState,
-                                        lineLimits = TextFieldLineLimits.SingleLine,
-                                        keyboardOptions = keyboardOptions
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.list_elements),
-                                        style = MaterialTheme.typography.titleSmall,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
                                             .wrapContentHeight()
-                                            .padding(vertical = 16.dp)
-                                    )
-                                    if (hintVisible.value) {
-                                        Hint(
-                                            hintText = stringResource(id = R.string.showcase_rename_desc) + System.lineSeparator() + stringResource(
-                                                R.string.showcase_delete_desc
-                                            ),
-                                            onDismiss = {
-                                                hintVisible.value = false
-                                                PreferenceManager.getDefaultSharedPreferences(
-                                                    this@CreaListaActivity
+                                            .padding(horizontal = layoutMinMargins())
+                                    ) {
+                                        OutlinedTextField(
+                                            label = { Text(stringResource(R.string.list_title)) },
+                                            modifier = Modifier
+                                                .padding(
+                                                    bottom = 12.dp
                                                 )
-                                                    .edit {
-                                                        putBoolean(
-                                                            Utility.INTRO_CREALISTA_2,
-                                                            true
-                                                        )
-                                                    }
-                                            }
+                                                .fillMaxWidth(),
+                                            state = inputState,
+                                            lineLimits = TextFieldLineLimits.SingleLine,
+                                            keyboardOptions = keyboardOptions
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.list_elements),
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .wrapContentHeight()
+                                                .padding(vertical = 16.dp)
+                                        )
+                                        if (hintVisible.value) {
+                                            Hint(
+                                                hintText = stringResource(id = R.string.showcase_rename_desc) + System.lineSeparator() + stringResource(
+                                                    R.string.showcase_delete_desc
+                                                ),
+                                                onDismiss = {
+                                                    hintVisible.value = false
+                                                    PreferenceManager.getDefaultSharedPreferences(
+                                                        this@CreaListaActivity
+                                                    )
+                                                        .edit {
+                                                            putBoolean(
+                                                                Utility.INTRO_CREALISTA_2,
+                                                                true
+                                                            )
+                                                        }
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+
+                                itemsIndexed(
+                                    localItems.orEmpty(),
+                                    key = { _, item -> item.identifier }) { index, item ->
+//                                val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
+                                    val swipeToDismissBoxState = SwipeToDismissBoxState(
+                                        SwipeToDismissBoxValue.Settled,
+                                        SwipeToDismissBoxDefaults.positionalThreshold
+                                    )
+
+                                    ReorderableItem(
+                                        state = reorderableLazyListState,
+                                        key = item.identifier
+                                    ) { _ ->
+                                        val interactionSource =
+                                            remember { MutableInteractionSource() }
+
+                                        DraggableDismissableListItem(
+                                            modifier = Modifier.animateItem(),
+                                            dragModifier = Modifier.draggableHandle(
+                                                onDragStarted = {
+                                                    hapticFeedback.performHapticFeedback(
+                                                        HapticFeedbackType.GestureThresholdActivate
+                                                    )
+                                                },
+                                                onDragStopped = {
+                                                    hapticFeedback.performHapticFeedback(
+                                                        HapticFeedbackType.GestureEnd
+                                                    )
+                                                },
+                                                interactionSource = interactionSource
+                                            ),
+                                            interactionSource = interactionSource,
+                                            swipeToDismissBoxState = swipeToDismissBoxState,
+                                            index = index,
+                                            item = item,
+                                            onItemLongClick = rememberItemLongClick,
+                                            onDismiss = { value, index, item ->
+                                                Log.d(TAG, "confirmValueChange: $value, $index")
+                                                when (value) {
+                                                    SwipeToDismissBoxValue.StartToEnd,
+                                                    SwipeToDismissBoxValue.EndToStart ->
+                                                        scope.launch {
+                                                            removeItem(index, item)
+                                                        }
+                                                    // Reset item when toggling done status
+                                                    else -> scope.launch { swipeToDismissBoxState.reset() }
+                                                }
+                                            },
+                                            itemsCount = localItems.orEmpty().size
                                         )
                                     }
                                 }
-                            }
 
-                            itemsIndexed(
-                                localItems.orEmpty(),
-                                key = { _, item -> item.identifier }) { index, item ->
-//                                val swipeToDismissBoxState = rememberSwipeToDismissBoxState()
-                                val swipeToDismissBoxState = SwipeToDismissBoxState(
-                                    SwipeToDismissBoxValue.Settled,
-                                    SwipeToDismissBoxDefaults.positionalThreshold
-                                )
-
-                                ReorderableItem(
-                                    state = reorderableLazyListState,
-                                    key = item.identifier
-                                ) { _ ->
-                                    val interactionSource =
-                                        remember { MutableInteractionSource() }
-
-                                    DraggableDismissableListItem(
-                                        modifier = Modifier.animateItem(),
-                                        dragModifier = Modifier.draggableHandle(
-                                            onDragStarted = {
-                                                hapticFeedback.performHapticFeedback(
-                                                    HapticFeedbackType.GestureThresholdActivate
-                                                )
-                                            },
-                                            onDragStopped = {
-                                                hapticFeedback.performHapticFeedback(
-                                                    HapticFeedbackType.GestureEnd
-                                                )
-                                            },
-                                            interactionSource = interactionSource
-                                        ),
-                                        interactionSource = interactionSource,
-                                        swipeToDismissBoxState = swipeToDismissBoxState,
-                                        index = index,
-                                        item = item,
-                                        onItemLongClick = rememberItemLongClick,
-                                        onDismiss = { value, index, item ->
-                                            Log.d(TAG, "confirmValueChange: $value, $index")
-                                            when (value) {
-                                                SwipeToDismissBoxValue.StartToEnd,
-                                                SwipeToDismissBoxValue.EndToStart ->
-                                                    scope.launch {
-                                                        removeItem(index, item)
-                                                    }
-                                                // Reset item when toggling done status
-                                                else -> scope.launch { swipeToDismissBoxState.reset() }
-                                            }
-                                        },
-                                        itemsCount = localItems.orEmpty().size
-                                    )
+                                item {
+                                    Spacer(Modifier.height(144.dp))
                                 }
                             }
 
-                            item {
-                                Spacer(Modifier.height(144.dp))
+                            AnimatedVisibility(
+                                visible = localItems.orEmpty().isEmpty(),
+                                enter = fadeIn(animationSpec = tween(1000)),
+                                exit = fadeOut(animationSpec = tween(100))
+                            ) {
+                                EmptyListView(
+                                    iconRes = R.drawable.format_list_bulleted_add_24px,
+                                    textRes = R.string.no_elements_added
+                                )
                             }
-                        }
 
-                        AnimatedVisibility(
-                            visible = localItems.orEmpty().isEmpty(),
-                            enter = fadeIn(animationSpec = tween(1000)),
-                            exit = fadeOut(animationSpec = tween(100))
-                        ) {
-                            EmptyListView(
-                                iconRes = R.drawable.format_list_bulleted_add_24px,
-                                textRes = R.string.no_elements_added
-                            )
                         }
-
                     }
                 }
 

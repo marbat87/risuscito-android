@@ -22,7 +22,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
@@ -54,7 +53,6 @@ import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SectionedIndexFragment : Fragment(), SnackBarFragment {
@@ -79,14 +77,13 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
             setContent {
                 val state = rememberLazyListState()
                 val localItems by mCantiViewModel.modelSectionedItemsResult.observeAsState()
-                val coroutineScope = rememberCoroutineScope()
+//                val coroutineScope = rememberCoroutineScope()
                 val expandedItem = remember { mutableIntStateOf(-1) }
 
                 val hasTwoPanes = hasTwoPanes()
 
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
-                // In SectionedIndexFragment, dentro setContent
                 val rememberedOnItemClick = remember<(RisuscitoListItem) -> Unit> {
                     { item ->
                         mActivity?.openCanto(TAG, item.id, getString(item.sourceRes), !hasTwoPanes)
@@ -107,11 +104,11 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                         )
                         expandedItem.intValue =
                             if (expandedItem.intValue == clickedItem.groupIndex) -1 else clickedItem.groupIndex
-                        if (expandedItem.intValue == clickedItem.groupIndex)
-                            coroutineScope.launch {
-                                delay(500)
-                                state.animateScrollToItem(index = clickedItem.identifier)
-                            }
+//                        if (expandedItem.intValue == clickedItem.groupIndex)
+//                            coroutineScope.launch {
+//                                delay(500)
+//                                state.animateScrollToItem(index = clickedItem.groupIndex + 1)
+//                            }
                     }
                 }
 
