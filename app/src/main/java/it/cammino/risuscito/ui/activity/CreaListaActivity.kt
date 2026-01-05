@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -48,6 +49,7 @@ import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -62,6 +64,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -82,7 +85,6 @@ import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.Hint
 import it.cammino.risuscito.ui.composable.dialogs.InputDialog
 import it.cammino.risuscito.ui.composable.dialogs.InputDialogTag
-import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.layoutMinMargins
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
@@ -90,6 +92,7 @@ import it.cammino.risuscito.ui.composable.main.creaListaMenu
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.capitalize
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
@@ -299,13 +302,14 @@ class CreaListaActivity : ThemeableActivity() {
                                     Column(
                                         modifier = Modifier
                                             .wrapContentHeight()
-                                            .padding(horizontal = layoutMinMargins())
                                     ) {
                                         OutlinedTextField(
                                             label = { Text(stringResource(R.string.list_title)) },
                                             modifier = Modifier
                                                 .padding(
-                                                    bottom = 12.dp
+                                                    bottom = 12.dp,
+                                                    start = layoutMinMargins(),
+                                                    end = layoutMinMargins()
                                                 )
                                                 .fillMaxWidth(),
                                             state = inputState,
@@ -319,7 +323,10 @@ class CreaListaActivity : ThemeableActivity() {
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .wrapContentHeight()
-                                                .padding(vertical = 16.dp)
+                                                .padding(
+                                                    vertical = 16.dp,
+                                                    horizontal = layoutMinMargins()
+                                                )
                                         )
                                         if (hintVisible.value) {
                                             Hint(
@@ -485,21 +492,51 @@ class CreaListaActivity : ThemeableActivity() {
                 }
 
                 if (showAlertDialog == true) {
-                    SimpleAlertDialog(
+                    AlertDialog(
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.save_24px),
+                                contentDescription = "Dialog Icon"
+                            )
+                        },
+                        title = {
+                            Text(text = stringResource(R.string.save_list_title))
+                        },
+                        text = {
+                            Text(text = stringResource(R.string.save_list_question))
+                        },
                         onDismissRequest = {
                             mCreaListaViewModel.showAlertDialog.postValue(false)
-                            setResult(RESULT_CANCELED)
-                            finishAfterTransitionWrapper()
                         },
-                        onConfirmation = {
-                            mCreaListaViewModel.showAlertDialog.postValue(false)
-                            lifecycleScope.launch { saveList() }
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    mCreaListaViewModel.showAlertDialog.postValue(false)
+                                    lifecycleScope.launch { saveList() }
+                                }
+                            ) {
+                                Text(
+                                    stringResource(R.string.save_exit_confirm).capitalize(
+                                        LocalContext.current
+                                    )
+                                )
+                            }
                         },
-                        dialogTitle = stringResource(R.string.save_list_title),
-                        dialogText = stringResource(R.string.save_list_question),
-                        iconRes = R.drawable.save_24px,
-                        confirmButtonText = stringResource(R.string.save_exit_confirm),
-                        dismissButtonText = stringResource(R.string.discard_exit_confirm)
+                        dismissButton = {
+                            TextButton(
+                                onClick = {
+                                    mCreaListaViewModel.showAlertDialog.postValue(false)
+                                    setResult(RESULT_CANCELED)
+                                    finishAfterTransitionWrapper()
+                                }
+                            ) {
+                                Text(
+                                    stringResource(R.string.discard_exit_confirm).capitalize(
+                                        LocalContext.current
+                                    )
+                                )
+                            }
+                        }
                     )
                 }
 

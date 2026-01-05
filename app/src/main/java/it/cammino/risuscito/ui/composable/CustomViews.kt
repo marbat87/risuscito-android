@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxState
@@ -143,16 +144,21 @@ fun SwipeToDismissBackground(
     when (swipeToDismissBoxState.dismissDirection) {
         SwipeToDismissBoxValue.StartToEnd,
         SwipeToDismissBoxValue.EndToStart -> {
-            Icon(
-                painter = painterResource(R.drawable.delete_sweep_24px),
-                contentDescription = "Remove item",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.error)
-                    .wrapContentSize(if (swipeToDismissBoxState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd)
-                    .padding(12.dp),
-                tint = MaterialTheme.colorScheme.onError
-            )
+            Surface(
+                color = MaterialTheme.colorScheme.error,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.wrapContentSize()
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.delete_sweep_24px),
+                    contentDescription = "Remove item",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(if (swipeToDismissBoxState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd)
+                        .padding(start = 16.dp, end= 16.dp),
+                    tint = MaterialTheme.colorScheme.onError
+                )
+            }
         }
 
         SwipeToDismissBoxValue.Settled -> {}
@@ -302,8 +308,7 @@ open class InitialScrollWebClient(val canto: Canto?, val onZoomChange: (Int) -> 
                     canto?.scrollX
                         ?: 0, canto?.scrollY ?: 0
                 )
-            }
-            else {
+            } else {
                 view.scrollTo(1, 1)
             }
         }

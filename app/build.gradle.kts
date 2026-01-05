@@ -79,7 +79,6 @@ ksp {
     arg("room.generateKotlin", "true")
 }
 val roomVersion = "2.8.4"
-val kotpreferences = "3.0.1"
 val composepreferences = "2.0.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
