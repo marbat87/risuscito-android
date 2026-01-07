@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tempo_avvento">ADWENT</string>
-    <string name="tempo_natale">BOŻE NARODZENIE</string>
-    <string name="tempo_quaresima">WIELKI POST</string>
-    <string name="tempo_pasqua">WIELKANOC</string>
-    <string name="canti_pentecoste">ZESŁANIE DUCHA ŚWIĘTEGO</string>
-    <string name="canti_vergine">PIEŚNI DO DZIEWICY</string>
-    <string name="lodi_vespri">LAUDESY I NIESZPORY</string>
-    <string name="canti_ingresso">WEJŚCIE</string>
-    <string name="canti_pace">ZNAK POKOJU</string>
-    <string name="canti_pane">CHLEB</string>
-    <string name="canti_fine">ZAKOŃCZENIE</string>
-    <string name="canti_comunione">COMUNIONE</string>
-    <string name="canti_bambini">CANTI PER I BAMBINI</string>
+    <string name="tempo_avvento">Adwent - Boże Narodzenie</string>
+    <string name="tempo_quaresima">Wielki Post</string>
+    <string name="tempo_pasqua">Wielkanoc - Zesłanie Ducha Świętego</string>
+    <string name="canti_vergine">Maryja Dziewica</string>
+    <string name="lodi_vespri">Laudesy</string>
+    <string name="canti_ingresso">Wejście</string>
+    <string name="canti_pace">Pokój</string>
+    <string name="canti_pane">Chleb</string>
+    <string name="canti_fine">Finał</string>
+    <string name="canti_comunione">Kielich</string>
+    <string name="canti_bambini">Dzieci</string>
+    <string name="nomi_biblici">Imiona biblijne</string>
+    <string name="triduo_pasqua_giovedi">Triduum Paschalne - Wielki Czwartek</string>
+    <string name="triduo_pasqua_venerdi">Triduum Paschalne - Wielki Piątek</string>
+    <string name="triduo_pasqua_veglia">Triduum Paschalne - Wigilia</string>
 </resources>

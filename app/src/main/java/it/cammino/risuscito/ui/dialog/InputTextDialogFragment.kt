@@ -20,7 +20,6 @@ import it.cammino.risuscito.utils.extension.capitalize
 import it.cammino.risuscito.utils.extension.getSerializableWrapper
 import java.io.Serializable
 
-@Suppress("unused")
 class InputTextDialogFragment : DialogFragment() {
 
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })
@@ -54,7 +53,7 @@ class InputTextDialogFragment : DialogFragment() {
             context?.let {
                 dialog.setPositiveButton(
                     it.resources.getText(mBuilder.positiveButton)
-                        .capitalize(it.resources)
+                        .capitalize(it)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
                     viewModel.outputText = input?.text.toString()
@@ -69,7 +68,7 @@ class InputTextDialogFragment : DialogFragment() {
             context?.let {
                 dialog.setNegativeButton(
                     it.resources.getText(mBuilder.negativeButton)
-                        .capitalize(it.resources)
+                        .capitalize(it)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
                     viewModel.handled = false

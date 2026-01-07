@@ -20,8 +20,10 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.media.MediaPlayer.*
-import android.net.Uri
+import android.media.MediaPlayer.OnCompletionListener
+import android.media.MediaPlayer.OnErrorListener
+import android.media.MediaPlayer.OnPreparedListener
+import android.media.MediaPlayer.OnSeekCompleteListener
 import android.net.wifi.WifiManager
 import android.os.Handler
 import android.os.Looper
@@ -33,12 +35,14 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.text.TextUtils
 import android.util.Log
 import androidx.core.app.ServiceCompat
+import androidx.core.net.toUri
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility.getExternalMediaIdByName
 import it.cammino.risuscito.utils.Utility.isExternalStorageReadable
+import it.cammino.risuscito.utils.extension.createWifiLockRisuscito
 import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
 import java.io.FileInputStream
 import java.io.IOException
@@ -72,8 +76,8 @@ class Playback internal constructor(
         .setOnAudioFocusChangeListener(this@Playback, Handler(Looper.getMainLooper()))
         .build()
 
-    internal val isConnected: Boolean
-        get() = true
+//    internal val isConnected
+//        get() = true
 
     internal val isPlaying: Boolean
         get() = mPlayOnFocusGain || (mMediaPlayer?.isPlaying == true)
@@ -95,7 +99,7 @@ class Playback internal constructor(
 
         this.mWifiLock =
             (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
-                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "sample_lock")
+                .createWifiLockRisuscito()
     }
 
     internal fun stop() {
@@ -155,7 +159,7 @@ class Playback internal constructor(
                 else {
                     source?.let {
                         if (it.contains("com.android.providers.media"))
-                            mMediaPlayer?.setDataSource(mService.applicationContext, Uri.parse(it))
+                            mMediaPlayer?.setDataSource(mService.applicationContext, it.toUri())
                         else if (OSUtils.hasQ() && isExternalStorageReadable && mService.applicationContext.isDefaultLocationPublic) {
                             val externalMediaId =
                                 getExternalMediaIdByName(mService.applicationContext, it)

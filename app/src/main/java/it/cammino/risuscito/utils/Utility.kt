@@ -1,6 +1,5 @@
 package it.cammino.risuscito.utils
 
-import android.annotation.TargetApi
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,20 +13,28 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import androidx.core.content.ContextCompat
+import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.core.graphics.toColorInt
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
+import com.google.api.client.googleapis.util.Utils
 import com.mikepenz.fastadapter.ui.utils.StringHolder
 import java.io.File
 import java.text.Normalizer
-import java.util.*
+import java.util.Random
 import java.util.regex.Pattern
 
 object Utility {
 
     // Costanti per le impostazioni
     private val TAG = Utility::class.java.canonicalName
-    const val VECCHIO_INDICE = "vecchio_indice"
+//    const val VECCHIO_INDICE = "vecchio_indice"
+    const val VECCHIO_INDICE = "vecchio_indice_new"
     const val SCREEN_ON = "sempre_acceso"
-    const val SYSTEM_LANGUAGE = "lingua_sistema_new"
+    const val SYSTEM_LANGUAGE = "lingua_sistema_new_new"
     const val CHANGE_LANGUAGE = "changed_language"
     const val OLD_LANGUAGE = "old_language"
     const val NEW_LANGUAGE = "new_language"
@@ -40,7 +47,7 @@ object Utility {
     internal const val SHOW_SANTO = "mostra_santo"
     internal const val SHOW_AUDIO = "mostra_audio"
     internal const val SIGNED_IN = "signed_id"
-    internal const val SIGN_IN_REQUESTED = "sign_id_requested"
+//    internal const val SIGN_IN_REQUESTED = "sign_id_requested"
     internal const val SHOW_OFFERTORIO = "mostra_canto_offertorio"
     internal const val SHOW_EUCARESTIA_PACE = "mostra_eucarestia_pace"
     internal const val PREFERITI_OPEN = "preferiti_open"
@@ -54,6 +61,8 @@ object Utility {
     internal const val NIGHT_MODE = "night_mode"
     internal const val DYNAMIC_COLORS = "dynamic_colors"
     internal const val OLD_PAGE_SUFFIX = "_old"
+    internal const val SHARED_AXIS = "shared_axis"
+//    private const val TOKEN_VALIDATION_PATH = "https://oauth2.googleapis.com/tokeninfo?id_token="
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"
@@ -87,17 +96,7 @@ object Utility {
             return if (it.isEmpty())
                 it
             else {
-                return when {
-                    it.indexOf("resuscicanti") > 0 -> {
-                        val start = it.indexOf(".com/")
-                        it.substring(start + 5).replace("%20".toRegex(), "_")
-                    }
-                    it.indexOf("marbat87") > 0 -> {
-                        val start = it.indexOf("audio/")
-                        it.substring(start + 6).replace("%20".toRegex(), "_")
-                    }
-                    else -> it
-                }
+                it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
         } ?: return StringUtils.EMPTY
     }
@@ -108,17 +107,7 @@ object Utility {
             return if (it.isEmpty())
                 it
             else {
-                when {
-                    it.indexOf("resuscicanti") > 0 -> {
-                        val start = it.indexOf(".com/")
-                        it.substring(start + 5)
-                    }
-                    it.indexOf("marbat87") > 0 -> {
-                        val start = it.indexOf("audio/")
-                        it.substring(start + 6)
-                    }
-                    else -> it
-                }
+                it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
         } ?: return StringUtils.EMPTY
     }
@@ -133,7 +122,7 @@ object Utility {
             retrieveMediaFileLinkLegacy(activity, link, cercaEsterno)
     }
 
-    @TargetApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.Q)
     fun retrieveMediaFileLinkQ(activity: Context, link: String, cercaEsterno: Boolean): String {
 
         if (isExternalStorageReadable && cercaEsterno) {
@@ -152,7 +141,7 @@ object Utility {
         return retrieveInternalLink(activity, link)
     }
 
-    @TargetApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.Q)
     internal fun getExternalMediaIdByName(context: Context, link: String): Long {
         val projection = arrayOf(MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID)
         val collection = MediaStore.Audio.Media
@@ -177,8 +166,7 @@ object Utility {
         return -1
     }
 
-    @Suppress("DEPRECATION")
-    fun retrieveMediaFileLinkLegacy(
+    private fun retrieveMediaFileLinkLegacy(
         activity: Context,
         link: String,
         cercaEsterno: Boolean
@@ -196,7 +184,7 @@ object Utility {
                 return fileExt.absolutePath
             } else {
                 // cerca file esterno con vecchi path e nome
-                val fileArray = ContextCompat.getExternalFilesDirs(activity, null)
+                val fileArray = activity.getExternalFilesDirs(null)
                 fileExt = File(fileArray[0], filterMediaLink(link))
                 if (fileExt.exists()) {
 //                    Log.d(TAG, "retrieveMediaFileLinkLegacy FILE esterno2: " + fileExt.absolutePath)
@@ -258,7 +246,7 @@ object Utility {
         )
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(
         applicationContext: Context,
         channelId: String,
@@ -285,7 +273,7 @@ object Utility {
         if (t.isNullOrEmpty())
             Color.WHITE
         else
-            Color.parseColor(t)
+            t.toColorInt()
 
     fun getExternalLink(link: String): String {
         return if (OSUtils.hasQ())
@@ -298,7 +286,6 @@ object Utility {
         return filterMediaLinkNew(link)
     }
 
-    @Suppress("DEPRECATION")
     private fun getExternalLinkLegacy(link: String): String {
         if (File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
@@ -315,7 +302,6 @@ object Utility {
                 + filterMediaLinkNew(link))
     }
 
-    @Suppress("DEPRECATION")
     fun mediaScan(context: Context, link: String) {
         MediaScannerConnection.scanFile(
             context,
@@ -390,6 +376,78 @@ object Utility {
         }
         Log.e(TAG, "resName NULL")
         return -1
+    }
+
+    fun validateToken(
+        idToken: String,
+        clientId: String
+    ): String {
+        Log.d(TAG, "IDTOKEN: $idToken")
+        if (idToken.isEmpty())
+            return StringUtils.EMPTY
+
+        try {
+            val verifier = GoogleIdTokenVerifier.Builder(
+                Utils.getDefaultTransport(),
+                Utils.getDefaultJsonFactory()
+            ) // Specify the CLIENT_ID of the app that accesses the backend:
+                .setAudience(listOf(clientId))
+                .build()
+            val googleIdToken: GoogleIdToken = verifier.verify(idToken)
+            Log.d(TAG, "IDTOKEN SUBJECT: ${googleIdToken.payload.subject}")
+            return googleIdToken.payload.subject
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "validateToken exception", e)
+            return StringUtils.EMPTY
+        }
+
+//        val client = OkHttpClient()
+//        val request = Request.Builder()
+//            .url(TOKEN_VALIDATION_PATH + idToken)
+//            .build()
+//
+//        try {
+//            val response = client.newCall(request).execute()
+//            Log.d(TAG, "validateToken statusCode: ${response.code}")
+//            val res = response.body?.string()
+//            Log.d(TAG, "validateToken response: $res")
+//            if (response.code == 200 && res?.isNotEmpty() == true) {
+//                val tokenInfo: TokenInfo = GsonBuilder().create().fromJson(
+//                    res, object : TypeToken<TokenInfo>() {}.type
+//                )
+//                Log.d(TAG, "validateToken response sub: ${tokenInfo.sub}")
+//                return tokenInfo.sub
+//            } else {
+//                return StringUtils.EMPTY
+//            }
+//        } catch (e: Exception) {
+//            Log.e(TAG, "validateToken exception", e)
+//            return StringUtils.EMPTY
+//        }
+
+    }
+
+    fun fixSystemBarPadding(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(
+            view
+        ) { v, insets ->
+            val innerPadding = insets.getInsets(
+                // Notice we're using systemBars, not statusBar
+                WindowInsetsCompat.Type.systemBars()
+                        // Notice we're also accounting for the display cutouts
+                        or WindowInsetsCompat.Type.displayCutout()
+                // If using EditText, also add
+                // "or WindowInsetsCompat.Type.ime()"
+                // to maintain focus when opening the IME
+            )
+            v.setPadding(
+                innerPadding.left,
+                0,
+                innerPadding.right,
+                innerPadding.bottom)
+            insets
+        }
     }
 
 }

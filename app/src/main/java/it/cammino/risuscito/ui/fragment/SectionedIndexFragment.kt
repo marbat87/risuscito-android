@@ -28,6 +28,7 @@ import it.cammino.risuscito.items.SimpleSubExpandableItem
 import it.cammino.risuscito.items.SimpleSubItem
 import it.cammino.risuscito.items.simpleSubExpandableItem
 import it.cammino.risuscito.items.simpleSubItem
+import it.cammino.risuscito.items.titleItem
 import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
@@ -44,7 +45,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.Collator
-import java.util.*
+import java.util.LinkedList
 
 class SectionedIndexFragment : Fragment() {
 
@@ -94,14 +95,13 @@ class SectionedIndexFragment : Fragment() {
         itemExpandableExtension.isOnlyOneExpandedItem = true
 
         mAdapter.onClickListener =
-            { mView: View?, _: GenericAdapter, item: GenericItem, _: Int ->
+            { _: View?, _: GenericAdapter, item: GenericItem, _: Int ->
                 var consume = false
                 if (item is SimpleSubItem) {
                     if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                         mLastClickTime = SystemClock.elapsedRealtime()
                         mActivity?.openCanto(
                             TAG,
-                            mView,
                             item.id,
                             item.source?.getText(
                                 requireContext()
@@ -138,11 +138,11 @@ class SectionedIndexFragment : Fragment() {
                     if (!item.isExpanded) {
                         if (context?.isGridLayout == true)
                             glm?.scrollToPositionWithOffset(
-                                item.position, 0
+                                item.position + item.group, 0
                             )
                         else
                             llm?.scrollToPositionWithOffset(
-                                item.position, 0
+                                item.position + item.group, 0
                             )
                     }
                 }
@@ -156,6 +156,7 @@ class SectionedIndexFragment : Fragment() {
                     return when (mAdapter.getItemViewType(position)) {
                         R.id.fastadapter_expandable_item_id -> 2
                         R.id.fastadapter_sub_item_id -> 1
+                        R.id.fastadapter_title_item_id -> 1
                         else -> -1
                     }
                 }
@@ -192,6 +193,7 @@ class SectionedIndexFragment : Fragment() {
                                     )
                                 }
                             }
+
                             LITURGICO_REPLACE_2 + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
                                 ListeUtils.updatePosizione(
@@ -203,6 +205,7 @@ class SectionedIndexFragment : Fragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }
@@ -214,7 +217,8 @@ class SectionedIndexFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
-            listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all
+            listePersonalizzate =
+                RisuscitoDatabase.getInstance(requireContext()).listePersDao().all()
         }
     }
 
@@ -227,12 +231,23 @@ class SectionedIndexFragment : Fragment() {
         if (mCantiViewModel.tipoLista == 0) {
             val useOldIndex = requireContext().useOldIndex()
             val mDao = RisuscitoDatabase.getInstance(requireContext()).indiceLiturgicoDao()
-            val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all }
+            val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.all() }
             mCantiViewModel.titoliList.clear()
             var mSubItems = LinkedList<ISubItem<*>>()
             var totCanti = 0
+            var ultimoGruppo = 0
 
             for (i in canti.indices) {
+//                AGGIUNTA RIGA DI GRUPPO
+                if (ultimoGruppo != canti[i].idGruppo) {
+                    ultimoGruppo = canti[i].idGruppo
+                    mCantiViewModel.titoliList.add(
+                        titleItem {
+                            setTitle = Utility.getResId(canti[i].nomeGruppo, R.string::class.java)
+                        }
+                    )
+                }
+
                 mSubItems.add(
                     simpleSubItem {
                         setTitle = Utility.getResId(canti[i].titolo, R.string::class.java)
@@ -258,13 +273,14 @@ class SectionedIndexFragment : Fragment() {
                         simpleSubExpandableItem {
                             setTitle = Utility.getResId(canti[i].nome, R.string::class.java)
                             totItems = totCanti
-                            id = canti[i].idIndice
+                            id = ("1000" + canti[i].idGruppo + canti[i].idIndice).toInt()
                             subItems = mSubItems
-                            subItems.sortWith(compareBy(Collator.getInstance(resources.systemLocale)) {
+                            subItems.sortWith(compareBy(Collator.getInstance(systemLocale)) {
                                 (it as? SimpleSubItem)?.title?.getText(
                                     requireContext()
                                 )
                             })
+                            group = canti[i].idGruppo
                         }
                     )
                     mSubItems = LinkedList()
@@ -274,7 +290,6 @@ class SectionedIndexFragment : Fragment() {
         }
 
         var totListe = 0
-//        mCantiViewModel.titoliList.sortWith(compareBy(Collator.getInstance(getSystemLocale(resources))) { (it as? SimpleSubExpandableItem)?.title?.getText(requireContext()) })
         mCantiViewModel.titoliList.forEach {
             (it as? SimpleSubExpandableItem)?.position = totListe++
         }

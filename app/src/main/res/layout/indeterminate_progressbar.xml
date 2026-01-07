@@ -25,7 +25,7 @@
         android:gravity="start"
         android:paddingStart="16dp"
         android:textAlignment="viewStart"
-        android:textAppearance="?textAppearanceBodyLarge"
+        style="?textAppearanceBodyLarge"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/working_progress_indeterminate"

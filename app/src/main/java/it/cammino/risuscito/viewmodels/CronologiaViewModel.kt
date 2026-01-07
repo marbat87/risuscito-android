@@ -19,7 +19,7 @@ class CronologiaViewModel(application: Application) : AndroidViewModel(applicati
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
         val useOldIndex = application.useOldIndex()
-        cronologiaCanti = mDb.cronologiaDao().liveCronologia.map { canti ->
+        cronologiaCanti = mDb.cronologiaDao().liveCronologia().map { canti ->
             val newList = ArrayList<SimpleHistoryItem>()
             canti.forEach {
                 newList.add(

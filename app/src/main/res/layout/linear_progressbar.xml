@@ -14,7 +14,7 @@
         android:id="@+id/md_content_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?textAppearanceBodyLarge"
+        style="?textAppearanceBodyLarge"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Message" />
 
@@ -33,7 +33,7 @@
         android:gravity="start"
         android:minWidth="36dp"
         android:textAlignment="viewStart"
-        android:textAppearance="?textAppearanceTitleMedium"
+        style="?textAppearanceTitleMedium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/working_progress"
         tools:text="100%" />
@@ -45,7 +45,7 @@
         android:gravity="end"
         android:minWidth="48dp"
         android:textAlignment="viewEnd"
-        android:textAppearance="?textAppearanceBodyLarge"
+        style="?textAppearanceBodyLarge"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/working_progress"
         tools:text="1/2" />

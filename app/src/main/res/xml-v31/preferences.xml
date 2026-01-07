@@ -92,7 +92,7 @@
         <DropDownPreference
             android:entries="@array/pref_languages_entries"
             android:entryValues="@array/pref_languages_values"
-            android:key="lingua_sistema_new"
+            android:key="lingua_sistema_new_new"
             android:title="@string/language_title" />
 
     </androidx.preference.PreferenceCategory>

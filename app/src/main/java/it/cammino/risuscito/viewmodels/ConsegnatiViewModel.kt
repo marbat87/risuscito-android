@@ -32,7 +32,7 @@ class ConsegnatiViewModel(application: Application) : AndroidViewModel(applicati
     init {
         val useOldIndex = application.useOldIndex()
         val mDb = RisuscitoDatabase.getInstance(getApplication())
-        mIndexResult = mDb.consegnatiDao().liveConsegnati.map { canti ->
+        mIndexResult = mDb.consegnatiDao().liveConsegnati().map { canti ->
             val newList = ArrayList<NotableItem>()
             canti.forEach {
                 newList.add(

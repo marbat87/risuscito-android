@@ -71,7 +71,7 @@ class NotableItem : AbstractBindingItem<RowItemNotableBinding>() {
         val bgShape = binding.textPage.background as? GradientDrawable
         bgShape?.setColor(color)
 
-        binding.listViewItemContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
+        binding.listViewItemContainer.setSelectableRippleBackground(com.google.android.material.R.attr.colorSecondaryContainer)
 
         binding.editNote.isGone = (numPassaggio != -1)
         binding.editNoteFilled.isGone = (numPassaggio == -1)

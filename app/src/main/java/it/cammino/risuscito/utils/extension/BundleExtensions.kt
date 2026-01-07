@@ -1,3 +1,5 @@
+@file:Suppress("SameParameterValue")
+
 package it.cammino.risuscito.utils.extension
 
 import android.os.Build

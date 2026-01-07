@@ -14,10 +14,15 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+        android:minSdkVersion="34" />
 
     <queries>
         <intent>
@@ -68,6 +73,14 @@
             android:name="it.cammino.risuscito.ui.activity.ChangelogActivity"
             android:label="" />
 
+        <activity
+            android:name="it.cammino.risuscito.ui.activity.SettingsActivity"
+            android:label="" />
+
+        <activity
+            android:name="it.cammino.risuscito.ui.activity.AboutActivity"
+            android:label="" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="it.cammino.risuscito.fileprovider"
@@ -102,7 +115,8 @@
         <service
             android:name="it.cammino.risuscito.playback.MusicService"
             android:exported="true"
-            tools:ignore="ExportedService">
+            tools:ignore="ExportedService"
+            android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
@@ -138,6 +152,15 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/ic_launcher_background" />
+
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
 
     </application>
 

@@ -16,68 +16,78 @@ class NomeLiturgico {
             val mList = ArrayList<NomeLiturgico>()
 
             var mDato = NomeLiturgico()
-            mDato.idIndice = 1
+            mDato.idIndice = 6
             mDato.nome = "tempo_avvento"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 2
-            mDato.nome = "tempo_natale"
-            mList.add(mDato)
-
-            mDato = NomeLiturgico()
-            mDato.idIndice = 3
+            mDato.idIndice = 7
             mDato.nome = "tempo_quaresima"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 4
+            mDato.idIndice = 8
             mDato.nome = "tempo_pasqua"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 5
-            mDato.nome = "canti_pentecoste"
-            mList.add(mDato)
-
-            mDato = NomeLiturgico()
-            mDato.idIndice = 6
+            mDato.idIndice = 9
             mDato.nome = "canti_vergine"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 7
+            mDato.idIndice = 10
             mDato.nome = "canti_bambini"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 8
+            mDato.idIndice = 12
             mDato.nome = "lodi_vespri"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 9
+            mDato.idIndice = 1
             mDato.nome = "canti_ingresso"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 10
+            mDato.idIndice = 2
             mDato.nome = "canti_pace"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 11
+            mDato.idIndice = 3
             mDato.nome = "canti_pane"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 12
+            mDato.idIndice = 4
             mDato.nome = "canti_comunione"
             mList.add(mDato)
 
             mDato = NomeLiturgico()
-            mDato.idIndice = 13
+            mDato.idIndice = 5
             mDato.nome = "canti_fine"
+            mList.add(mDato)
+
+            mDato = NomeLiturgico()
+            mDato.idIndice = 11
+            mDato.nome = "nomi_biblici"
+            mList.add(mDato)
+
+            mDato = NomeLiturgico()
+            mDato.idIndice = 13
+            mDato.nome = "triduo_pasqua_giovedi"
+            mList.add(mDato)
+
+            mDato = NomeLiturgico()
+            mDato.idIndice = 14
+            mDato.nome = "triduo_pasqua_venerdi"
+            mList.add(mDato)
+
+            mDato = NomeLiturgico()
+            mDato.idIndice = 15
+            mDato.nome = "triduo_pasqua_veglia"
             mList.add(mDato)
 
             return mList

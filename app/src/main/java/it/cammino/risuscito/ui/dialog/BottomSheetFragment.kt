@@ -48,7 +48,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val showTitle = arguments?.getBoolean("showTitle") ?: false
+        val showTitle = arguments?.getBoolean("showTitle") == true
 
         if (showTitle)
             binding.sheetTitle.setText(arguments?.getInt("title") ?: 0)

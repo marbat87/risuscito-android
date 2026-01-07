@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/changelog_bullet"
-        android:textAppearance="?textAppearanceBodyMedium"
+        style="?textAppearanceBodyMedium"
         app:layout_constraintEnd_toStartOf="@id/tvText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/tvText" />
@@ -23,7 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/listItemHorizontalSpacing"
-        android:textAppearance="?textAppearanceTitleMedium"
+        style="?textAppearanceTitleMedium"
         android:textColor="?colorOnPrimaryContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

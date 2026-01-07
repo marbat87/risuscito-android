@@ -1,17 +1,21 @@
 package it.cammino.risuscito.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import androidx.room.Upsert
 import it.cammino.risuscito.database.entities.LocalLink
 
-@Suppress("unused")
 @Dao
 interface LocalLinksDao {
 
     @Query("DELETE FROM locallink")
     fun truncateTable()
 
-    @get:Query("SELECT * FROM locallink")
-    val all: List<LocalLink>
+    @Query("SELECT * FROM locallink")
+    fun all(): List<LocalLink>
 
     @Query("SELECT * FROM locallink WHERE idCanto = :id")
     fun getLocalLinkByCantoId(id: Int): LocalLink?

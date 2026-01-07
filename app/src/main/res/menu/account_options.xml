@@ -12,6 +12,11 @@
         android:icon="@drawable/cloud_download_24px"
         android:title="@string/gdrive_restore" />
     <item
+        android:id="@+id/gdrive_refresh"
+        android:checkable="true"
+        android:icon="@drawable/refresh_24px"
+        android:title="@string/gdrive_refresh" />
+    <item
         android:id="@+id/gplus_signout"
         android:checkable="true"
         android:icon="@drawable/person_remove_24px"

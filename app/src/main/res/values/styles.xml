@@ -9,7 +9,7 @@
         <item name="android:textAlignment">viewStart</item>
     </style>
 
-    <style name="TitoloSezione" parent="TextAppearance.Risuscito.TitleMedium">
+    <style name="TitoloSezione" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:paddingStart">@dimen/abc_action_bar_content_inset_material</item>
@@ -37,6 +37,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">?textAppearanceTitleMedium</item>
+        <item name="fontFamily">?risuscito_medium_font</item>
+        <item name="android:fontFamily">?risuscito_medium_font</item>
         <item name="android:textColor">?android:textColorSecondary</item>
         <item name="android:gravity">center_vertical</item>
     </style>
@@ -52,6 +54,8 @@
         <item name="android:height">16dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:textAppearance">?textAppearanceBodySmall</item>
+        <item name="fontFamily">?risuscito_regular_font</item>
+        <item name="android:fontFamily">?risuscito_regular_font</item>
         <item name="android:textColor">?android:textColorHint</item>
         <item name="android:padding">0dp</item>
     </style>
@@ -83,16 +87,9 @@
         <item name="sdMainFabOpenedSrc">@drawable/close_24px</item>
     </style>
 
-    <style name="SimpleSearchViewStyle">
-        <item name="cursorColor">?colorPrimary</item>
-        <item name="backIconTint">?colorOnSurfaceVariant</item>
-        <item name="iconsTint">?colorOnSurfaceVariant</item>
-        <item name="hintColor">?colorOnSurfaceVariant</item>
-        <item name="android:textColor">?colorOnSurface</item>
-        <item name="searchBackground">?colorSurfaceVariant</item>
-        <item name="iconsAlpha">1.0</item>
-        <item name="type">card</item>
-        <item name="android:hint">@string/title_filter</item>
-    </style>
+    <macro name="m3_ref_typeface_brand_medium">?risuscito_medium_font</macro>
+    <macro name="m3_ref_typeface_brand_regular">?risuscito_regular_font</macro>
+    <macro name="m3_ref_typeface_plain_medium">?risuscito_medium_font</macro>
+    <macro name="m3_ref_typeface_plain_regular">?risuscito_regular_font</macro>
 
 </resources>

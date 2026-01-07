@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gruppo_eucarestia">ЄВХАРИСТІЯ</string>
+    <string name="gruppo_tempi">"ПЕРІОДИ І ТЕМИ "</string>
+    <string name="gruppo_altro">ІНШЕ</string>
+</resources>

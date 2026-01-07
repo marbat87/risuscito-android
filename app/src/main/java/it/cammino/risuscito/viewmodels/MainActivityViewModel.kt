@@ -8,13 +8,14 @@ import it.cammino.risuscito.R
 
 class MainActivityViewModel : ViewModel() {
 
-    var showSnackbar = true
-    var signedIn = MutableLiveData<Boolean>()
     var backupRestoreState = MutableLiveData(BakupRestoreState.NONE)
+    var httpRequestState = MutableLiveData(ClientState.STARTED)
+    var loginState = MutableLiveData(LOGIN_STATE_STARTED)
+    var profileAction = ProfileAction.NONE
 
     var isTabletWithFixedDrawer: Boolean = false
     var isTabletWithNoFixedDrawer: Boolean = false
-    var selectedMenuItemId: Int = R.id.navigation_home
+    var selectedMenuItemId: Int = R.id.navigation_indexes
     var catalogRefreshReady = MutableLiveData(true)
     var lastPlaybackState = MutableLiveData<PlaybackStateCompat>()
     var medatadaCompat = MutableLiveData<MediaMetadataCompat>()
@@ -29,6 +30,25 @@ class MainActivityViewModel : ViewModel() {
         RESTORE_STEP_2,
         RESTORE_COMPLETED
 
+    }
+
+    enum class ProfileAction {
+        BACKUP,
+        RESTORE,
+        NONE
+    }
+
+    enum class ClientState {
+        STARTED,
+        COMPLETED
+    }
+
+    var sub: String = ""
+
+    companion object {
+        const val LOGIN_STATE_STARTED = "LoginStateStarted"
+        const val LOGIN_STATE_OK = "LoginStateOk"
+        const val LOGIN_STATE_OK_SILENT = "LoginStateOkSilent"
     }
 
 }

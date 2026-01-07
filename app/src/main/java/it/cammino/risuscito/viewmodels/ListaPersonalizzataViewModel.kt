@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -15,7 +16,6 @@ import it.cammino.risuscito.objects.PosizioneItem
 import it.cammino.risuscito.objects.posizioneItem
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.map
 import it.cammino.risuscito.utils.extension.useOldIndex
 import it.cammino.risuscito.utils.extension.zipLiveDataNullable
 
@@ -38,7 +38,7 @@ class ListaPersonalizzataViewModel(application: Application, args: Bundle) :
         val useOldIndex = application.useOldIndex()
         mDb.listePersDao().getLiveListById(listaPersonalizzataId)?.let { liveList ->
             listaPersonalizzataResult =
-                zipLiveDataNullable(liveList, mDb.cantoDao().liveAll).map { result ->
+                zipLiveDataNullable(liveList, mDb.cantoDao().liveAll()).map { result ->
                     val mPosizioniList = ArrayList<ListaPersonalizzataItem>()
                     listaPersonalizzata = result.first?.lista
                     listaPersonalizzataTitle = result.first?.titolo

@@ -27,7 +27,7 @@ class CustomListsViewModel(application: Application) : AndroidViewModel(applicat
 
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
-        customListResult = mDb.listePersDao().liveAll
+        customListResult = mDb.listePersDao().liveAll()
     }
 
 }

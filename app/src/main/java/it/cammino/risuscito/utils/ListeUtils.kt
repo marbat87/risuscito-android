@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Cronologia
@@ -39,6 +41,7 @@ object ListeUtils {
                     )
                 }
             } catch (e: SQLException) {
+                Firebase.crashlytics.recordException(e)
                 Snackbar.make(
                     fragment.requireActivity().findViewById(R.id.main_content),
                     R.string.present_yet,
@@ -95,7 +98,7 @@ object ListeUtils {
                     sb.append(" ")
                     sb.append(titoloPresente)
                     sb.append(".")
-                    sb.append(System.getProperty("line.separator"))
+                    sb.append(System.lineSeparator())
                     sb.append(fragment.getString(R.string.dialog_wonna_replace))
 
                     SimpleDialogFragment.show(
@@ -168,7 +171,7 @@ object ListeUtils {
                 )
                     .setAction(
                         fragment.getString(R.string.cancel)
-                            .uppercase(fragment.resources.systemLocale)
+                            .uppercase(fragment.systemLocale)
                     ) {
                         for (removedItem in removedItems)
                             addToFavorites(fragment, removedItem.id, false)
@@ -202,7 +205,7 @@ object ListeUtils {
                 )
                     .setAction(
                         fragment.getString(R.string.cancel)
-                            .uppercase(fragment.resources.systemLocale)
+                            .uppercase(fragment.systemLocale)
                     ) {
                         for (removedItem in removedItems) {
                             val cronTemp = Cronologia()
@@ -285,7 +288,7 @@ object ListeUtils {
             )
                 .setAction(
                     fragment.getString(R.string.cancel)
-                        .uppercase(fragment.resources.systemLocale)
+                        .uppercase(fragment.systemLocale)
                 ) {
                     val positionToInsert = CustomList()
                     positionToInsert.id = idLista
@@ -325,7 +328,7 @@ object ListeUtils {
                 )
             )
             sb.append(".")
-            sb.append(System.getProperty("line.separator"))
+            sb.append(System.lineSeparator())
             sb.append(fragment.getString(R.string.dialog_wonna_replace))
 
             SimpleDialogFragment.show(
@@ -483,6 +486,7 @@ object ListeUtils {
                     )
                 }
             } catch (e: SQLException) {
+                Firebase.crashlytics.recordException(e)
                 activity.setResult(CustomListsFragment.RESULT_KO)
                 activity.finishAfterTransitionWrapper()
             }

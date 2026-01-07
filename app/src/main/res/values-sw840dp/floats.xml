@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item format="float" name="horizontal_percentage_half_divider" type="dimen">0.50</item>
+</resources>

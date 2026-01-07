@@ -1,15 +1,13 @@
 package it.cammino.risuscito.utils
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.content.res.Configuration
-import android.os.Build.VERSION_CODES.N
 import android.provider.Settings
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.core.os.LocaleListCompat
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.utils.extension.systemLocale
-import java.util.*
 
 
 class LocaleManager(context: Context) {
@@ -53,6 +51,14 @@ class LocaleManager(context: Context) {
     }
 
     fun setDefaultSystemLanguage(context: Context) {
+        Log.d(
+            TAG,
+            "applicationLocale: ${AppCompatDelegate.getApplicationLocales()[0]?.language}"
+        )
+        Log.d(
+            TAG,
+            "systemLocale: ${context.resources.systemLocale.language}"
+        )
         val mLanguage = when (context.resources.systemLocale.language) {
             LANGUAGE_UKRAINIAN -> LANGUAGE_UKRAINIAN
             LANGUAGE_ENGLISH -> if (context.resources.systemLocale.country.isNotEmpty()
@@ -61,15 +67,31 @@ class LocaleManager(context: Context) {
                 LANGUAGE_ENGLISH_PHILIPPINES
             else
                 LANGUAGE_ENGLISH
+
             LANGUAGE_TURKISH -> LANGUAGE_TURKISH
             LANGUAGE_POLISH -> LANGUAGE_POLISH
             else -> LANGUAGE_ITALIAN
         }
         Log.d(TAG, "setDefaultSystemLanguage - default language set: $mLanguage")
         persistLanguage(context, mLanguage)
+        updateLanguage(context, mLanguage)
     }
 
-    fun persistLanguage(context: Context, language: String) {
+    fun updateLanguage(context: Context, language: String) {
+        persistLanguage(context, language)
+        val appLocale: LocaleListCompat =
+            LocaleListCompat.forLanguageTags(if (language == LANGUAGE_ENGLISH_PHILIPPINES) "$LANGUAGE_ENGLISH-$COUNTRY_PHILIPPINES" else language)
+        AppCompatDelegate.setApplicationLocales(appLocale)
+    }
+
+    fun updateLanguage(context: Context) {
+        val language = getLanguage(context)
+        val appLocale: LocaleListCompat =
+            LocaleListCompat.forLanguageTags(if (language == LANGUAGE_ENGLISH_PHILIPPINES) "$LANGUAGE_ENGLISH-$COUNTRY_PHILIPPINES" else language)
+        AppCompatDelegate.setApplicationLocales(appLocale)
+    }
+
+    private fun persistLanguage(context: Context, language: String) {
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putString(Utility.SYSTEM_LANGUAGE, language)
         }
@@ -78,40 +100,6 @@ class LocaleManager(context: Context) {
     fun getLanguage(context: Context): String {
         return PreferenceManager.getDefaultSharedPreferences(context)
             .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY).orEmpty()
-    }
-
-    fun useCustomConfig(context: Context): Context {
-        Log.d(TAG, "useCustomConfig language: ${getLanguage(context)}")
-        val locale = if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(
-            LANGUAGE_ENGLISH,
-            COUNTRY_PHILIPPINES
-        ) else Locale(getLanguage(context))
-        Log.d(TAG, "useCustomConfig language: ${locale.language}")
-        Log.d(TAG, "useCustomConfig country: ${locale.country}")
-        Locale.setDefault(locale)
-        val config = Configuration()
-        if (customScale > 0F)
-            config.fontScale = customScale
-        config.setLocale(locale)
-        config.setLayoutDirection(locale)
-        return context.createConfigurationContext(config)
-    }
-
-    fun updateConfigurationIfSupported(
-        context: Context,
-        overrideConfiguration: Configuration?
-    ): Configuration? {
-        overrideConfiguration?.let { config ->
-            if (isLocaleNotEmpty(config))
-                return config
-            val locale = if (getLanguage(context) == LANGUAGE_ENGLISH_PHILIPPINES) Locale(
-                LANGUAGE_ENGLISH,
-                COUNTRY_PHILIPPINES
-            ) else Locale(getLanguage(context))
-            config.setLocale(locale)
-            config.setLayoutDirection(locale)
-        }
-        return overrideConfiguration
     }
 
     companion object {
@@ -126,22 +114,22 @@ class LocaleManager(context: Context) {
 
         const val COUNTRY_PHILIPPINES = "PH"
 
-        @Suppress("DEPRECATION")
-        private fun isLocaleNotEmptyLegacy(config: Configuration): Boolean {
-            return config.locale != null
-        }
-
-        @TargetApi(N)
-        private fun isLocaleNotEmptyN(config: Configuration): Boolean {
-            return !config.locales.isEmpty
-        }
-
-        fun isLocaleNotEmpty(config: Configuration): Boolean {
-            return if (OSUtils.hasN())
-                isLocaleNotEmptyN(config)
-            else
-                isLocaleNotEmptyLegacy(config)
-        }
+//        @Suppress("DEPRECATION")
+//        private fun isLocaleNotEmptyLegacy(config: Configuration): Boolean {
+//            return config.locale != null
+//        }
+//
+//        @TargetApi(N)
+//        private fun isLocaleNotEmptyN(config: Configuration): Boolean {
+//            return !config.locales.isEmpty
+//        }
+//
+//        fun isLocaleNotEmpty(config: Configuration): Boolean {
+//            return if (OSUtils.hasN())
+//                isLocaleNotEmptyN(config)
+//            else
+//                isLocaleNotEmptyLegacy(config)
+//        }
 
     }
 }

@@ -68,7 +68,7 @@ class SimpleSubItem : AbstractExpandableItem<SimpleSubItem.ViewHolder>(),
         StringHolder.applyTo(title, holder.mTitle)
         StringHolder.applyToOrHide(page, holder.mPage)
 
-        holder.mContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
+        holder.mContainer.setSelectableRippleBackground(com.google.android.material.R.attr.colorSecondaryContainer)
 
         val bgShape = holder.mPage.background as? GradientDrawable
         bgShape?.setColor(color)

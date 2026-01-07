@@ -14,7 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="?listPreferredItemPaddingEnd"
-        android:textAppearance="?textAppearanceListItemSmall"
+        style="?textAppearanceBodyLarge"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/check_box"
         app:layout_constraintEnd_toEndOf="parent"

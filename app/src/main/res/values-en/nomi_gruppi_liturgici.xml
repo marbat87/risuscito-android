@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gruppo_eucarestia">EUCHAREST</string>
+    <string name="gruppo_tempi">PERIODS AND THEMES</string>
+    <string name="gruppo_altro">OTHER</string>
+</resources>

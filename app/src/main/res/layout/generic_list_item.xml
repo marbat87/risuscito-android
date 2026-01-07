@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="?listPreferredItemPaddingStart"
-            android:textAppearance="?textAppearanceTitleMedium"
+            style="?textAppearanceTitleMedium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,7 +43,6 @@
             android:layout_marginStart="?listPreferredItemPaddingStart"
             android:layout_marginEnd="?listPreferredItemPaddingEnd"
             android:text="@string/select_canto"
-            android:transitionName="shared_insert_container"
             app:icon="@drawable/add_circle_24px"
             app:iconSize="24dp"
             app:layout_constraintStart_toStartOf="parent"

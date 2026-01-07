@@ -78,14 +78,13 @@ class SimpleIndexFragment : Fragment() {
         subscribeUiChanges()
 
         mAdapter.onClickListener =
-            { mView: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
+            { _: View?, _: IAdapter<SimpleItem>, item: SimpleItem, _: Int ->
                 var consume = false
                 if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     // lancia l'activity che visualizza il canto passando il parametro creato
                     mActivity?.openCanto(
                         TAG,
-                        mView,
                         item.id,
                         item.source?.getText(requireContext()),
                         false
@@ -106,6 +105,7 @@ class SimpleIndexFragment : Fragment() {
                         ALPHA_REPLACE_2 + mCantiViewModel.tipoLista,
                         listePersonalizzate
                     )
+
                     1 -> mCantiViewModel.popupMenu(
                         this,
                         v,
@@ -113,6 +113,7 @@ class SimpleIndexFragment : Fragment() {
                         NUMERIC_REPLACE_2 + mCantiViewModel.tipoLista,
                         listePersonalizzate
                     )
+
                     2 -> mCantiViewModel.popupMenu(
                         this,
                         v,
@@ -135,7 +136,8 @@ class SimpleIndexFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
-            listePersonalizzate = RisuscitoDatabase.getInstance(requireContext()).listePersDao().all
+            listePersonalizzate =
+                RisuscitoDatabase.getInstance(requireContext()).listePersDao().all()
         }
     }
 
@@ -143,11 +145,12 @@ class SimpleIndexFragment : Fragment() {
         mCantiViewModel.itemsResult?.observe(viewLifecycleOwner) { canti ->
             mAdapter.set(
                 when (mCantiViewModel.tipoLista) {
-                    0 -> canti.sortedWith(compareBy(Collator.getInstance(resources.systemLocale)) {
+                    0 -> canti.sortedWith(compareBy(Collator.getInstance(systemLocale)) {
                         it.title?.getText(
                             requireContext()
                         )
                     })
+
                     1 -> canti.sortedBy { it.page?.getText(requireContext())?.toInt() }
                     2 -> canti
                     else -> canti
@@ -175,6 +178,7 @@ class SimpleIndexFragment : Fragment() {
                                     )
                                 }
                             }
+
                             ALPHA_REPLACE_2 + mCantiViewModel.tipoLista, NUMERIC_REPLACE_2 + mCantiViewModel.tipoLista, SALMI_REPLACE_2 + mCantiViewModel.tipoLista -> {
                                 simpleDialogViewModel.handled = true
                                 ListeUtils.updatePosizione(
@@ -186,6 +190,7 @@ class SimpleIndexFragment : Fragment() {
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }

@@ -5,21 +5,27 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.os.postDelayed
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -30,6 +36,7 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.transition.MaterialSharedAxis
 import com.leinardi.android.speeddial.SpeedDialView
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
@@ -42,10 +49,9 @@ import it.cammino.risuscito.ui.activity.CreaListaActivity.Companion.LIST_TITLE
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.getTypedValueResId
-import it.cammino.risuscito.utils.extension.slideInRight
+import it.cammino.risuscito.utils.extension.launchForResultWithAnimation
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CustomListsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -71,15 +77,20 @@ class CustomListsFragment : AccountMenuFragment() {
                 Log.d(TAG, "onPageSelected: $position")
                 Log.d(
                     TAG,
-                    "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                    " BEFORE mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
                 )
                 if (mCustomListsViewModel.indexToShow != position) {
                     mCustomListsViewModel.indexToShow = position
-                    mMainActivity?.actionMode?.finish()
+                    mMainActivity?.destroyActionMode()
                 }
+                Log.d(
+                    TAG,
+                    " AFTER mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                )
                 initFabOptions(position >= 2)
             }
         }
+    private var menuProvider: MenuProvider? = null
 
     private var _binding: TabsLayoutBinding? = null
 
@@ -87,13 +98,48 @@ class CustomListsFragment : AccountMenuFragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = TabsLayoutBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onStop() {
+        super.onStop()
+        menuProvider?.let {
+            Log.d(TAG, "removeMenu")
+            mMainActivity?.removeMenuProvider(it)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        menuProvider = object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.help_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.action_help -> {
+                        playIntro()
+                        return true
+                    }
+                }
+                return false
+            }
+        }
+        menuProvider?.let {
+            Log.d(TAG, "addMenu")
+            mMainActivity?.addMenuProvider(it)
+        }
     }
 
     override fun onDestroyView() {
@@ -107,16 +153,13 @@ class CustomListsFragment : AccountMenuFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mRegularFont = ResourcesCompat.getFont(
-            requireContext(),
-            requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
+            requireContext(), requireContext().getTypedValueResId(R.attr.risuscito_regular_font)
         )
         mMediumFont = ResourcesCompat.getFont(
-            requireContext(),
-            requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
+            requireContext(), requireContext().getTypedValueResId(R.attr.risuscito_medium_font)
         )
 
         mMainActivity?.setupToolbarTitle(R.string.title_activity_custom_lists)
-        mMainActivity?.enableBottombar(false)
         mMainActivity?.setTabVisible(true)
         mMainActivity?.enableFab(true)
 
@@ -124,10 +167,8 @@ class CustomListsFragment : AccountMenuFragment() {
 
         val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         Log.d(
-            TAG,
-            "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(
-                Utility.INTRO_CUSTOMLISTS,
-                false
+            TAG, "onCreate - INTRO_CUSTOMLISTS: " + mSharedPrefs.getBoolean(
+                Utility.INTRO_CUSTOMLISTS, false
             )
         )
         if (!mSharedPrefs.getBoolean(Utility.INTRO_CUSTOMLISTS, false)) playIntro()
@@ -147,22 +188,6 @@ class CustomListsFragment : AccountMenuFragment() {
         }
         binding.viewPager.registerOnPageChangeCallback(mPageChange)
 
-        mMainActivity?.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.help_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.action_help -> {
-                        playIntro()
-                        return true
-                    }
-                }
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
         subscribeUiChanges()
     }
 
@@ -178,63 +203,53 @@ class CustomListsFragment : AccountMenuFragment() {
     private fun playIntro() {
         mMainActivity?.enableFab(true)
         mMainActivity?.getFab()?.let { fab ->
-            val colorOnPrimary =
-                MaterialColors.getColor(requireContext(), R.attr.colorOnPrimary, TAG)
-            TapTargetSequence(requireActivity())
-                .continueOnCancel(true)
-                .targets(
-                    TapTarget.forView(
-                        fab,
-                        getString(R.string.showcase_listepers_title),
-                        getString(R.string.showcase_listepers_desc1)
-                    )
-                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-                        .titleTextColorInt(colorOnPrimary)
-                        .textColorInt(colorOnPrimary)
-                        .descriptionTextSize(15)
-                        .tintTarget(false) // Whether to tint the target view's color
-                    ,
-                    TapTarget.forView(
-                        fab,
-                        getString(R.string.showcase_listepers_title),
-                        getString(R.string.showcase_listepers_desc3)
-                    )
-                        .targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
-                        .icon(
-                            AppCompatResources.getDrawable(
-                                requireContext(),
-                                R.drawable.check_24px
-                            )
+            val colorOnPrimary = MaterialColors.getColor(
+                requireContext(), com.google.android.material.R.attr.colorOnPrimary, TAG
+            )
+            TapTargetSequence(requireActivity()).continueOnCancel(true).targets(
+                TapTarget.forView(
+                    fab,
+                    getString(R.string.showcase_listepers_title),
+                    getString(R.string.showcase_listepers_desc1)
+                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                    .descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
+                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
+                    .descriptionTextSize(15)
+                    .tintTarget(false) // Whether to tint the target view's color
+                    .setForceCenteredTarget(true), TapTarget.forView(
+                    fab,
+                    getString(R.string.showcase_listepers_title),
+                    getString(R.string.showcase_listepers_desc3)
+                ).targetCircleColorInt(colorOnPrimary) // Specify a color for the target circle
+                    .icon(
+                        AppCompatResources.getDrawable(
+                            requireContext(), R.drawable.check_24px
                         )
-                        .descriptionTypeface(mRegularFont) // Specify a typeface for the text
-                        .titleTypeface(mMediumFont) // Specify a typeface for the text
-                        .titleTextColorInt(colorOnPrimary)
-                        .textColorInt(colorOnPrimary)
-                )
-                .listener(
-                    object :
-                        TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
-                        override fun onSequenceFinish() {
-                            context?.let {
-                                PreferenceManager.getDefaultSharedPreferences(it)
-                                    .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                            }
-                        }
+                    ).descriptionTypeface(mRegularFont) // Specify a typeface for the text
+                    .titleTypeface(mMediumFont) // Specify a typeface for the text
+                    .titleTextColorInt(colorOnPrimary).textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
+            ).listener(object :
+                TapTargetSequence.Listener { // The listener can listen for regular clicks, long clicks or cancels
+                override fun onSequenceFinish() {
+                    context?.let {
+                        PreferenceManager.getDefaultSharedPreferences(it)
+                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                    }
+                }
 
-                        override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
-                            // no-op
-                        }
+                override fun onSequenceStep(tapTarget: TapTarget, b: Boolean) {
+                    // no-op
+                }
 
-                        override fun onSequenceCanceled(tapTarget: TapTarget) {
-                            context?.let {
-                                PreferenceManager.getDefaultSharedPreferences(it)
-                                    .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
-                            }
-                        }
-                    })
-                .start()
+                override fun onSequenceCanceled(tapTarget: TapTarget) {
+                    context?.let {
+                        PreferenceManager.getDefaultSharedPreferences(it)
+                            .edit { putBoolean(Utility.INTRO_CUSTOMLISTS, true) }
+                    }
+                }
+            }).start()
         }
     }
 
@@ -250,11 +265,15 @@ class CustomListsFragment : AccountMenuFragment() {
                 idListe[i] = list[i].id
             }
             mSectionsPagerAdapter?.notifyDataSetChanged()
-            Log.d(TAG, "movePage: $movePage")
-            Log.d(TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}")
-            if (movePage) {
-                binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
-                movePage = false
+            Handler(Looper.getMainLooper()).postDelayed(1000) {
+                Log.d(TAG, "movePage: $movePage")
+                Log.d(
+                    TAG, "mCustomListsViewModel.indexToShow: ${mCustomListsViewModel.indexToShow}"
+                )
+                if (movePage) {
+                    binding.viewPager.currentItem = mCustomListsViewModel.indexToShow
+                    movePage = false
+                }
             }
         }
 
@@ -266,46 +285,30 @@ class CustomListsFragment : AccountMenuFragment() {
                         when (inputdialogViewModel.mTag) {
                             NEW_LIST -> {
                                 inputdialogViewModel.handled = true
+                                Log.d(TAG, "idListe.size ${idListe.size}")
                                 mCustomListsViewModel.indDaModif = 2 + idListe.size
+                                Log.d(
+                                    TAG,
+                                    "mCustomListsViewModel.indDaModif ${mCustomListsViewModel.indDaModif}"
+                                )
                                 mMainActivity?.let { act ->
-                                    if (OSUtils.isObySamsung()) {
-                                        startListEditForResult.launch(
-                                            Intent(
-                                                act,
-                                                CreaListaActivity::class.java
-                                            ).putExtras(
-                                                bundleOf(
-                                                    LIST_TITLE to inputdialogViewModel.outputText,
-                                                    EDIT_EXISTING_LIST to false
-                                                )
+                                    act.launchForResultWithAnimation(
+                                        startListEditForResult,
+                                        Intent(
+                                            act, CreaListaActivity::class.java
+                                        ).putExtras(
+                                            bundleOf(
+                                                LIST_TITLE to inputdialogViewModel.outputText,
+                                                EDIT_EXISTING_LIST to false
                                             )
-                                        )
-                                        act.slideInRight()
-                                    } else {
-                                        act.getFab().transitionName = "shared_element_crealista"
-                                        val options =
-                                            ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                                act,
-                                                act.getFab(),
-                                                "shared_element_crealista" // The transition name to be matched in Activity B.
-                                            )
-                                        startListEditForResult.launch(
-                                            Intent(
-                                                act,
-                                                CreaListaActivity::class.java
-                                            ).putExtras(
-                                                bundleOf(
-                                                    LIST_TITLE to inputdialogViewModel.outputText,
-                                                    EDIT_EXISTING_LIST to false
-                                                )
-                                            ),
-                                            options
-                                        )
-                                    }
+                                        ),
+                                        com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                                    )
                                 }
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         inputdialogViewModel.handled = true
                     }
@@ -324,13 +327,15 @@ class CustomListsFragment : AccountMenuFragment() {
                                 binding.viewPager.findViewById<Button>(R.id.button_pulisci)
                                     .performClick()
                             }
+
                             DELETE_LIST -> {
                                 simpleDialogViewModel.handled = true
-                                binding.viewPager.currentItem = binding.viewPager.currentItem - 1
+                                binding.viewPager.currentItem -= 1
                                 lifecycleScope.launch { deleteList() }
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         simpleDialogViewModel.handled = true
                     }
@@ -341,12 +346,11 @@ class CustomListsFragment : AccountMenuFragment() {
 
     private inner class SectionsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-        override fun createFragment(position: Int): Fragment =
-            when (position) {
-                0 -> ListaPredefinitaFragment.newInstance(1)
-                1 -> ListaPredefinitaFragment.newInstance(2)
-                else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
-            }
+        override fun createFragment(position: Int): Fragment = when (position) {
+            0 -> ListaPredefinitaFragment.newInstance(1)
+            1 -> ListaPredefinitaFragment.newInstance(2)
+            else -> ListaPersonalizzataFragment.newInstance(idListe[position - 2])
+        }
 
         override fun getItemCount(): Int = 2 + titoliListe.size
 
@@ -370,17 +374,16 @@ class CustomListsFragment : AccountMenuFragment() {
                         SimpleDialogFragment.show(
                             SimpleDialogFragment.Builder(
                                 RESET_LIST
-                            )
-                                .title(R.string.dialog_reset_list_title)
+                            ).title(R.string.dialog_reset_list_title)
                                 .icon(R.drawable.cleaning_services_24px)
                                 .content(R.string.reset_list_question)
                                 .positiveButton(R.string.reset_confirm)
-                                .negativeButton(R.string.cancel),
-                            mActivity.supportFragmentManager
+                                .negativeButton(R.string.cancel), mActivity.supportFragmentManager
                         )
                     }
                     true
                 }
+
                 R.id.fab_add_lista -> {
                     mMainActivity?.let { mActivity ->
                         closeFabMenu()
@@ -396,60 +399,42 @@ class CustomListsFragment : AccountMenuFragment() {
                     }
                     true
                 }
+
                 R.id.fab_condividi -> {
                     closeFabMenu()
                     binding.viewPager.findViewById<Button>(R.id.button_condividi).performClick()
                     true
                 }
+
                 R.id.fab_edit_lista -> {
                     closeFabMenu()
                     mCustomListsViewModel.indDaModif = binding.viewPager.currentItem
                     mMainActivity?.let { act ->
-                        if (OSUtils.isObySamsung()) {
-                            startListEditForResult.launch(
-                                Intent(
-                                    act,
-                                    CreaListaActivity::class.java
-                                ).putExtras(
-                                    bundleOf(
-                                        ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                        EDIT_EXISTING_LIST to true
-                                    )
+                        act.launchForResultWithAnimation(
+                            startListEditForResult, Intent(
+                                act, CreaListaActivity::class.java
+                            ).putExtras(
+                                bundleOf(
+                                    ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
+                                    EDIT_EXISTING_LIST to true
                                 )
-                            )
-                            act.slideInRight()
-                        } else {
-                            act.getFab().transitionName = "shared_element_crealista"
-                            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                act,
-                                act.getFab(),
-                                "shared_element_crealista" // The transition name to be matched in Activity B.
-                            )
-                            startListEditForResult.launch(
-                                Intent(
-                                    act,
-                                    CreaListaActivity::class.java
-                                ).putExtras(
-                                    bundleOf(
-                                        ID_DA_MODIF to idListe[binding.viewPager.currentItem - 2],
-                                        EDIT_EXISTING_LIST to true
-                                    )
-                                ),
-                                options
-                            )
-                        }
+                            ), com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                        )
                     }
                     true
                 }
+
                 R.id.fab_delete_lista -> {
                     lifecycleScope.launch { deleteListDialog() }
                     true
                 }
+
                 R.id.fab_condividi_file -> {
                     closeFabMenu()
                     binding.viewPager.findViewById<Button>(R.id.button_invia_file).performClick()
                     true
                 }
+
                 else -> {
                     closeFabMenu()
                     false
@@ -458,7 +443,7 @@ class CustomListsFragment : AccountMenuFragment() {
         }
 
         val click = View.OnClickListener {
-            mMainActivity?.actionMode?.finish()
+            mMainActivity?.destroyActionMode()
             toggleFabMenu()
         }
 
@@ -481,13 +466,9 @@ class CustomListsFragment : AccountMenuFragment() {
             SimpleDialogFragment.show(
                 SimpleDialogFragment.Builder(
                     DELETE_LIST
-                )
-                    .title(R.string.action_remove_list)
-                    .icon(R.drawable.delete_24px)
-                    .content(R.string.delete_list_dialog)
-                    .positiveButton(R.string.delete_confirm)
-                    .negativeButton(R.string.cancel),
-                mActivity.supportFragmentManager
+                ).title(R.string.action_remove_list).icon(R.drawable.delete_24px)
+                    .content(R.string.delete_list_dialog).positiveButton(R.string.delete_confirm)
+                    .negativeButton(R.string.cancel), mActivity.supportFragmentManager
             )
         }
     }
@@ -500,31 +481,28 @@ class CustomListsFragment : AccountMenuFragment() {
         mMainActivity?.activityMainContent?.let { mainContent ->
             Snackbar.make(
                 mainContent,
-                getString(R.string.list_removed)
-                        + mCustomListsViewModel.titoloDaCanc
-                        + "'!",
+                getString(R.string.list_removed) + mCustomListsViewModel.titoloDaCanc + "'!",
                 Snackbar.LENGTH_LONG
-            )
-                .setAction(
-                    getString(R.string.cancel).uppercase(resources.systemLocale)
-                ) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                        mLastClickTime = SystemClock.elapsedRealtime()
-                        mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
-                        movePage = true
-                        val mListePersDao =
-                            RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-                        val listaToRestore = ListaPers()
-                        listaToRestore.id = mCustomListsViewModel.idDaCanc
-                        listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
-                        listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            mListePersDao.insertLista(
-                                listaToRestore
-                            )
-                        }
+            ).setAction(
+                getString(R.string.cancel).uppercase(systemLocale)
+            ) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
+                    mLastClickTime = SystemClock.elapsedRealtime()
+                    mCustomListsViewModel.indexToShow = mCustomListsViewModel.listaDaCanc + 2
+                    movePage = true
+                    val mListePersDao =
+                        RisuscitoDatabase.getInstance(requireContext()).listePersDao()
+                    val listaToRestore = ListaPers()
+                    listaToRestore.id = mCustomListsViewModel.idDaCanc
+                    listaToRestore.titolo = mCustomListsViewModel.titoloDaCanc
+                    listaToRestore.lista = mCustomListsViewModel.celebrazioneDaCanc
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        mListePersDao.insertLista(
+                            listaToRestore
+                        )
                     }
-                }.show()
+                }
+            }.show()
         }
     }
 

@@ -28,8 +28,6 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.mikepenz.fastadapter.adapters.FastItemAdapter
 import com.mikepenz.fastadapter.binding.BindingViewHolder
 import com.mikepenz.fastadapter.binding.listeners.addLongClickListener
@@ -49,10 +47,10 @@ import it.cammino.risuscito.ui.SwipeDismissTouchListener
 import it.cammino.risuscito.ui.dialog.DialogState
 import it.cammino.risuscito.ui.dialog.InputTextDialogFragment
 import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
 import it.cammino.risuscito.utils.extension.getTypedValueResId
+import it.cammino.risuscito.utils.extension.setEnterTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CreaListaViewModel
 import it.cammino.risuscito.viewmodels.ViewModelWithArgumentsFactory
@@ -83,25 +81,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!OSUtils.isObySamsung()) {
-            // Set the transition name, which matches Activity A’s start view transition name, on
-            // the root view.
-            findViewById<View>(android.R.id.content).transitionName = "shared_element_crealista"
-
-            // Attach a callback used to receive the shared elements from Activity A to be
-            // used by the container transform transition.
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-
-            // Set this Activity’s enter and return transition to a MaterialContainerTransform
-            window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-                addTarget(android.R.id.content)
-                duration = 700L
-            }
-
-            // Keep system bars (status bar, navigation bar) persistent throughout the transition.
-            window.sharedElementsUseOverlay = false
-        }
-
+        setEnterTransition()
         super.onCreate(savedInstanceState)
         binding = ActivityCreaListaBinding.inflate(layoutInflater)
         val view = binding.root
@@ -120,7 +100,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
         AppCompatResources.getDrawable(this@CreaListaActivity, R.drawable.delete_sweep_24px)
             ?.let {
-                it.setTint(MaterialColors.getColor(view, R.attr.colorOnError))
+                it.setTint(MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnError))
                 val touchCallback = SimpleSwipeDragCallback(
                     this,
                     this,
@@ -128,14 +108,14 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     ItemTouchHelper.LEFT,
                     MaterialColors.harmonizeWithPrimary(
                         this,
-                        MaterialColors.getColor(this, R.attr.colorError, TAG)
+                        MaterialColors.getColor(this, androidx.appcompat.R.attr.colorError, TAG)
                     )
                 )
                     .withBackgroundSwipeRight(
                         MaterialColors.harmonizeWithPrimary(
                             this, MaterialColors.getColor(
                                 this,
-                                R.attr.colorError,
+                                androidx.appcompat.R.attr.colorError,
                                 TAG
                             )
                         )
@@ -176,7 +156,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
         binding.textTitleDescription.requestFocus()
 
         binding.recyclerContainer.hintText.setText(R.string.showcase_rename_desc)
-        binding.recyclerContainer.hintText.append(System.getProperty("line.separator"))
+        binding.recyclerContainer.hintText.append(System.lineSeparator())
         binding.recyclerContainer.hintText.append(getString(R.string.showcase_delete_desc))
         ViewCompat.setElevation(binding.recyclerContainer.questionMark, 1f)
         binding.recyclerContainer.mainHintLayout.setOnTouchListener(
@@ -241,6 +221,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                                 mElement.setName = inputdialogViewModel.outputText
                                 mAdapter.notifyAdapterItemChanged(mCreaListaViewModel.positionToRename)
                             }
+
                             ADD_POSITION -> {
                                 inputdialogViewModel.handled = true
                                 binding.recyclerContainer.noElementsAdded.isVisible = false
@@ -267,6 +248,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         inputdialogViewModel.handled = true
                     }
@@ -286,6 +268,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                             }
                         }
                     }
+
                     is DialogState.Negative -> {
                         when (simpleDialogViewModel.mTag) {
                             SAVE_LIST -> {
@@ -340,10 +323,12 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     mAdapter.adapterItems.isNotEmpty()
                 return true
             }
+
             R.id.action_save_list -> {
                 lifecycleScope.launch { saveList() }
                 return true
             }
+
             android.R.id.home -> {
                 if (mAdapter.adapterItems.isNotEmpty()) {
                     SimpleDialogFragment.show(
@@ -484,7 +469,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
             getString(R.string.generic_removed, item.name?.getText(this@CreaListaActivity)),
             Snackbar.LENGTH_SHORT
         )
-            .setAction(getString(R.string.cancel).uppercase(resources.systemLocale)) {
+            .setAction(getString(R.string.cancel).uppercase(systemLocale)) {
                 item.swipedDirection = 0
                 mAdapter.add(position, item)
                 if (position != RecyclerView.NO_POSITION)
@@ -497,7 +482,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
 
     private fun playIntro() {
         binding.fabCreaLista.show()
-        val colorOnPrimary = MaterialColors.getColor(this, R.attr.colorOnPrimary, TAG)
+        val colorOnPrimary = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnPrimary, TAG)
         TapTargetSequence(this)
             .continueOnCancel(true)
             .targets(
@@ -513,6 +498,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
                     .tintTarget(false)
+                    .setForceCenteredTarget(true)
                     .id(1),
                 TapTarget.forToolbarMenuItem(
                     binding.risuscitoToolbar,
@@ -526,6 +512,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(2),
                 TapTarget.forToolbarMenuItem(
                     binding.risuscitoToolbar,
@@ -539,6 +526,7 @@ class CreaListaActivity : ThemeableActivity(), ItemTouchCallback,
                     .titleTypeface(mMediumFont) // Specify a typeface for the text
                     .titleTextColorInt(colorOnPrimary)
                     .textColorInt(colorOnPrimary)
+                    .setForceCenteredTarget(true)
                     .id(3)
             )
             .listener(

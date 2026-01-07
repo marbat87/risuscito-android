@@ -41,7 +41,7 @@ class CheckablePassageItem : AbstractBindingItem<CheckablePassageItemBinding>() 
 
     override fun bindView(binding: CheckablePassageItemBinding, payloads: List<Any>) {
 
-        binding.passageContainer.setSelectableRippleBackground(R.attr.colorSecondaryContainer)
+        binding.passageContainer.setSelectableRippleBackground(com.google.android.material.R.attr.colorSecondaryContainer)
 
         binding.passageContainer.isSelected = isSelected
         binding.checkBox.isChecked = isSelected

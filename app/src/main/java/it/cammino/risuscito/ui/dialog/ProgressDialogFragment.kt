@@ -23,10 +23,10 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.extension.capitalize
 import it.cammino.risuscito.utils.extension.getSerializableWrapper
+import it.cammino.risuscito.utils.extension.systemLocale
 import java.io.Serializable
 import java.text.NumberFormat
 
-@Suppress("unused")
 class ProgressDialogFragment : DialogFragment() {
 
     private val viewModel: DialogViewModel by viewModels({ requireActivity() })
@@ -59,7 +59,7 @@ class ProgressDialogFragment : DialogFragment() {
             context?.let {
                 dialog.setPositiveButton(
                     it.resources.getText(mBuilder.positiveButton)
-                        .capitalize(it.resources)
+                        .capitalize(it)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
                     viewModel.handled = false
@@ -72,7 +72,7 @@ class ProgressDialogFragment : DialogFragment() {
             context?.let {
                 dialog.setNegativeButton(
                     it.resources.getText(mBuilder.negativeButton)
-                        .capitalize(it.resources)
+                        .capitalize(it)
                 ) { _, _ ->
                     viewModel.mTag = mBuilder.mTag
                     viewModel.handled = false
@@ -128,7 +128,12 @@ class ProgressDialogFragment : DialogFragment() {
                 progress.toFloat() / (builder?.progressMax?.toFloat() ?: Float.MIN_VALUE)
             )
         mView?.findViewById<TextView>(R.id.md_minMax)?.text =
-            String.format(progressNumberFormat, progress, builder?.progressMax)
+            String.format(
+                requireContext().systemLocale,
+                progressNumberFormat,
+                progress,
+                builder?.progressMax
+            )
     }
 
     fun cancel() {

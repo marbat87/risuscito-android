@@ -1,6 +1,6 @@
 package it.cammino.risuscito.database.dao
 
-class Backup constructor(
+class Backup(
         val id: Int
         , val zoom: Int
         , val scrollX: Int
