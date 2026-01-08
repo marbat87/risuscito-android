@@ -1,18 +1,14 @@
 package it.cammino.risuscito.ui.composable.animations
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
-import soup.compose.material.motion.animation.materialFadeThroughIn
-import soup.compose.material.motion.animation.materialFadeThroughOut
+import soup.compose.material.motion.MaterialMotion
+import soup.compose.material.motion.MaterialSharedAxisZ
+import soup.compose.material.motion.animation.materialFadeThrough
 
 @Composable
 internal fun AnimatedSlideInTransition(
@@ -39,16 +35,11 @@ internal fun AnimatedSlideInTransition(
 fun <S> AnimatedFadeContent(
     targetState: S,
     duration: Int = 1000,
-    content: @Composable AnimatedContentScope.(targetState: S) -> Unit
+    content: @Composable AnimatedVisibilityScope.(targetState: S) -> Unit
 ) {
-    AnimatedContent(
-        targetState,
-        transitionSpec = {
-            materialFadeThroughIn(durationMillis = duration) togetherWith materialFadeThroughOut(
-                durationMillis = duration
-            )
-        },
-        label = "Animated Content"
+    MaterialMotion(
+        targetState = targetState,
+        transitionSpec = { materialFadeThrough(duration) }
     ) {
         content(it)
     }
@@ -57,17 +48,11 @@ fun <S> AnimatedFadeContent(
 @Composable
 fun <S> AnimatedScaleContent(
     targetState: S,
-    duration: Int = 300,
-    content: @Composable AnimatedContentScope.(targetState: S) -> Unit
+    content: @Composable AnimatedVisibilityScope.(targetState: S) -> Unit
 ) {
-    AnimatedContent(
-        targetState,
-        transitionSpec = {
-            scaleIn(
-                animationSpec = tween(duration)
-            ) togetherWith scaleOut(animationSpec = tween(duration))
-        },
-        label = "Animated Content"
+    MaterialSharedAxisZ(
+        targetState = targetState,
+        forward = true
     ) {
         content(it)
     }

@@ -117,7 +117,7 @@ dependencies {
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.jakewharton:process-phoenix:3.0.0")
     implementation("com.google.android.play:feature-delivery-ktx:2.1.0")
-    implementation("com.google.api-client:google-api-client:2.8.1")
+    implementation("com.google.api-client:google-api-client:2.4.0")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
     implementation("sh.calvin.reorderable:reorderable:3.0.0")
