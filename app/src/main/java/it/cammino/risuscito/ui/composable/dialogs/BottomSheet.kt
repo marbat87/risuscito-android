@@ -2,6 +2,7 @@ package it.cammino.risuscito.ui.composable.dialogs
 
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -118,6 +119,12 @@ fun ChangelogBottomSheet() {
     // initially we check if we need to show the changelog
     // this is optional of course...
     LaunchedEffect(Unit) {
+        Log.d("ChangelogBottomSheet", "changelogStateSaver.lastShownVersion(): ${changelogStateSaver.lastShownVersion()}")
+        if (changelogStateSaver.lastShownVersion() <= 0L) {
+            val currentVersion = CHANGELOG_FORMATTER.parseVersion(versionName).toLong()
+            changelogStateSaver.saveLastShownVersion(currentVersion - 1L)
+            Log.d("ChangelogBottomSheet", "UPDATED changelogStateSaver.lastShownVersion(): ${changelogStateSaver.lastShownVersion()}")
+        }
         changelogState.checkShouldShowChangelogOnStart(
             changelogStateSaver,
             versionName,
