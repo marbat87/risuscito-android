@@ -300,4 +300,8 @@
     <string name="update_app">Update this app</string>
     <string name="select_none">Select None</string>
     <string name="select_one_song">Select a song</string>
+    <string name="mal_activity_exception">No apps to handle action</string>
+    <string name="mal_close">Close</string>
+    <string name="mal_send_email">Send email</string>
+    <string name="mal_developer">Developer</string>
 </resources>

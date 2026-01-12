@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -24,7 +23,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.google.android.material.transition.MaterialSharedAxis
 import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
@@ -142,12 +140,6 @@ class SettingsFragment : Fragment() {
         Firebase.crashlytics.log("Fragment: ${this::class.java}")
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -195,10 +187,12 @@ class SettingsFragment : Fragment() {
                 val defaultLanguageMap = defaultLanguageValuesArray.zip(defaultLanguageLabelsArray)
 
                 // select a style for your preferences
-                val modernStyle = ModernStyle.create(
-                    sectionBackgroundColor = Color.Transparent,
-                    sectionGroupItemBackgroundColor = MaterialTheme.colorScheme.surface,
-                )
+                val modernStyle = ModernStyle.create()
+                // eventualmente per il "nuovo" material 3 expressive
+//                val modernStyle = ModernStyle.create(
+//                    sectionBackgroundColor = Color.Transparent,
+//                    sectionGroupItemBackgroundColor = MaterialTheme.colorScheme.surface,
+//                )
 
                 val settings = PreferenceSettingsDefaults.settings(
                     style = modernStyle
@@ -301,7 +295,7 @@ class SettingsFragment : Fragment() {
                 }
 
                 RisuscitoTheme {
-                    Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+                    Surface(color = MaterialTheme.colorScheme.surface) {
 
                         PreferenceScreen(
                             settings = settings,
@@ -632,10 +626,12 @@ class SettingsFragment : Fragment() {
     private fun recreateActivity(hasNavigationBar: Boolean = false) {
         mMainActivity?.let {
             if (hasNavigationBar) {
+                ProcessPhoenix.triggerRebirth(
+                    it.applicationContext
+                )
+            } else {
                 it.recreate()
-            } else ProcessPhoenix.triggerRebirth(
-                it.applicationContext
-            )
+            }
         }
     }
 

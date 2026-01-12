@@ -306,4 +306,8 @@
     <string name="update_app">Zaktualizuj tę aplikację</string>
     <string name="select_none">Wybierz opcję Brak</string>
     <string name="select_one_song">Wybierz piosenkę</string>
+    <string name="mal_activity_exception">No apps to handle action</string>
+    <string name="mal_close">Zamknąć</string>
+    <string name="mal_send_email">Wyślij e-mail</string>
+    <string name="mal_developer">Wywoływacz</string>
 </resources>

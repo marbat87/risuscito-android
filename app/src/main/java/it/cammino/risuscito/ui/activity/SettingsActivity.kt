@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -39,7 +38,6 @@ class SettingsActivity : ThemeableActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-//        setEnterTransition()
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -68,10 +66,11 @@ class SettingsActivity : ThemeableActivity() {
                                     )
                                 }
                             },
-                            scrollBehavior = scrollBehavior,
-                            colors = TopAppBarDefaults.topAppBarColors().copy(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            )
+                            scrollBehavior = scrollBehavior
+                            // eventualmente per il "nuovo" material 3 expressive
+//                            colors = TopAppBarDefaults.topAppBarColors().copy(
+//                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+//                            )
                         )
                     },
                     snackbarHost = {
@@ -109,6 +108,7 @@ class SettingsActivity : ThemeableActivity() {
                 if (showProgressDialog == true) {
                     ProgressDialog(
                         dialogTitleRes = progressDialogViewModel.dialogTitleRes,
+                        iconRes = progressDialogViewModel.dialogIconRes,
                         messageRes = progressDialogViewModel.messageRes.value ?: 0,
                         onDismissRequest = {
                             progressDialogViewModel.showProgressDialog.value = false

@@ -61,7 +61,6 @@ import it.cammino.risuscito.items.SwipeableRisuscitoListItem
 import it.cammino.risuscito.ui.composable.animations.AnimatedScaleContent
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.systemLocale
-import java.lang.Long
 import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -205,7 +204,7 @@ fun HistoryListItem(
             val tempTimestamp: String
 
             val dateTimestamp =
-                Date(Long.parseLong(simpleItem.timestamp))
+                Date(java.lang.Long.parseLong(simpleItem.timestamp))
             tempTimestamp = if (df is SimpleDateFormat) {
                 val pattern = df.toPattern().replace("y+".toRegex(), "yyyy")
                 df.applyPattern(pattern)

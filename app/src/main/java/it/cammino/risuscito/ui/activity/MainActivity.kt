@@ -52,6 +52,7 @@ import it.cammino.risuscito.ui.composable.dialogs.ProfileMenuItem
 import it.cammino.risuscito.ui.composable.dialogs.ProgressDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
 import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.composable.dialogs.WebViewDialog
 import it.cammino.risuscito.ui.composable.hasNavigationBar
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.Destination
@@ -180,6 +181,8 @@ class MainActivity : ThemeableActivity() {
 
                 val showProgressDialog by progressDialogViewModel.showProgressDialog.observeAsState()
 
+                val showWebViewDialog by webViewDialogManagerViewModel.showWebViewDialog.observeAsState()
+
                 val hasNavigationBar = hasNavigationBar()
 
                 MainScreen(
@@ -290,12 +293,25 @@ class MainActivity : ThemeableActivity() {
                 if (showProgressDialog == true) {
                     ProgressDialog(
                         dialogTitleRes = progressDialogViewModel.dialogTitleRes,
+                        iconRes = progressDialogViewModel.dialogIconRes,
                         messageRes = progressDialogViewModel.messageRes.value ?: 0,
                         onDismissRequest = {
                             progressDialogViewModel.showProgressDialog.value = false
                         },
                         buttonTextRes = progressDialogViewModel.buttonTextRes,
                         indeterminate = progressDialogViewModel.indeterminate
+                    )
+                }
+
+                if (showWebViewDialog == true) {
+                    WebViewDialog(
+                        dialogTitleRes = R.string.privacy,
+                        iconRes = R.drawable.policy_24px,
+                        htmlString = "https://marbat87.altervista.org/privacy_policy.html",
+                        onDismissRequest = {
+                            webViewDialogManagerViewModel.showWebViewDialog.value = false
+                        },
+                        buttonTextRes = R.string.mal_close
                     )
                 }
 

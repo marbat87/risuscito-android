@@ -66,6 +66,7 @@ import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import it.cammino.risuscito.viewmodels.ProgressDialogManagerViewModel
 import it.cammino.risuscito.viewmodels.SharedSnackBarViewModel
+import it.cammino.risuscito.viewmodels.WebViewDialogManagerViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.BufferedWriter
@@ -84,6 +85,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
     protected val progressDialogViewModel: ProgressDialogManagerViewModel by viewModels()
 
+    protected val webViewDialogManagerViewModel: WebViewDialogManagerViewModel by viewModels()
     protected var snackBarFragment: SnackBarFragment? = null
 
     protected val tabsVisible = mutableStateOf(false)

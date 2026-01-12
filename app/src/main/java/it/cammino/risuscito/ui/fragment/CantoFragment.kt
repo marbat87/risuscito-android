@@ -630,6 +630,7 @@ open class CantoFragment : Fragment() {
                     if (showProgressDialog == true) {
                         ProgressDialog(
                             dialogTitleRes = progressDialogViewModel.dialogTitleRes,
+                            iconRes = progressDialogViewModel.dialogIconRes,
                             messageRes = progressDialogViewModel.messageRes.value ?: 0,
                             onDismissRequest = {
                                 progressDialogViewModel.showProgressDialog.value = false

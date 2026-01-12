@@ -6,7 +6,7 @@ plugins {
     kotlin("android")
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
+    id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-parcelize")
 }
 
@@ -20,7 +20,7 @@ android {
         minSdk = 23
         targetSdk = 36
         multiDexEnabled = true
-        versionCode = 6100
+        versionCode = 6101
         versionName = "6.1.0"
 
     }
@@ -33,7 +33,6 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
-            freeCompilerArgs = listOf("-Xjvm-default=all")
         }
     }
 
@@ -114,9 +113,10 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("com.leinardi.android:speed-dial:3.3.0")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
-    implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.jakewharton:process-phoenix:3.0.0")
     implementation("com.google.android.play:feature-delivery-ktx:2.1.0")
+    // ci sono conflitti di versioni dalla 2.5.0 in poi, in alcune librerie http - ce ne si accorge facendo il ripristino delle preferences
+    //noinspection NewerVersionAvailable
     implementation("com.google.api-client:google-api-client:2.4.0")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")

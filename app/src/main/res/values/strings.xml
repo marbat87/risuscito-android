@@ -560,5 +560,9 @@
     <string name="update_app">Aggiorna l\'app</string>
     <string name="select_none">Seleziona Nessuno</string>
     <string name="select_one_song">Seleziona un canto</string>
+    <string name="mal_activity_exception">Nessuna app trovata per eseguire questa azione</string>
+    <string name="mal_close">Chiudi</string>
+    <string name="mal_send_email">Contattami via Email</string>
+    <string name="mal_developer">Sviluppatore</string>
 </resources>
 

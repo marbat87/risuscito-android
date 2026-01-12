@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import it.cammino.risuscito.ui.composable.theme.RisuscitoColor
+import it.cammino.risuscito.ui.composable.theme.mediumFontFamily
 
 @Preview
 @Composable
@@ -54,7 +55,7 @@ fun PageText(title: String = "15", color: Long = 0xFFFCFCFC) {
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .border(1.dp, MaterialTheme.colorScheme.inversePrimary, CircleShape)
+            .border(1.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
             .background(Color(color)),
         contentAlignment = Alignment.Center
     ) {
@@ -78,7 +79,7 @@ fun ContextualToolbarTitle(title: String = "1 selezionato") {
             text = title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary,
-//            fontFamily = risuscito_medium_font,
+            fontFamily = mediumFontFamily
         )
     }
 }

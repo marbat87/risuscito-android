@@ -28,8 +28,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.DialogTitle
 import it.cammino.risuscito.utils.extension.capitalize
 import java.text.NumberFormat
@@ -64,11 +66,14 @@ fun ProgressDialog(
             ) {
                 if (iconRes > 0) {
                     Icon(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
                         painter = painterResource(iconRes),
                         contentDescription = "progress dialog",
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
+                if (iconRes > 0 && dialogTitleRes > 0)
+                    Spacer(modifier = Modifier.height(16.dp))
                 if (dialogTitleRes > 0) DialogTitle(title = stringResource(dialogTitleRes))
                 if (iconRes > 0 || dialogTitleRes > 0) Spacer(modifier = Modifier.height(16.dp))
 
@@ -132,3 +137,18 @@ enum class ProgressDialogTag {
     DOWNLOAD_MP3,
     EXPORT_PDF
 }
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun ProgressDialogPreview() {
+    MaterialTheme {
+        ProgressDialog(
+            dialogTitleRes = R.string.action_exp_pdf,
+            iconRes = R.drawable.picture_as_pdf_24px,
+            messageRes = R.string.export_running,
+            onDismissRequest = {},
+            buttonTextRes = 0,
+            indeterminate = true)
+    }
+}
+

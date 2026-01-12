@@ -189,8 +189,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
                 ) {
                     itemsIndexed(
-                        items = localItems.value,
-                        key = { _, it -> it.id }) { index, simpleItem ->
+                        items = localItems.value) { index, simpleItem ->
                         Box(
                             modifier = Modifier
                                 .wrapContentHeight()

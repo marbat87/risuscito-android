@@ -306,4 +306,8 @@
     <string name="update_app">Оновити застосунок</string>
     <string name="select_none">Виберіть Немає</string>
     <string name="select_one_song">Виберіть пісню</string>
+    <string name="mal_activity_exception">Немає програм для обробки дій</string>
+    <string name="mal_close">Закрити</string>
+    <string name="mal_send_email">Надіслати e-mail</string>
+    <string name="mal_developer">Розробник</string>
 </resources>
