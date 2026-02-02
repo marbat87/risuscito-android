@@ -34,13 +34,13 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -64,13 +64,6 @@ import it.cammino.risuscito.utils.extension.systemLocale
 import java.sql.Date
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import kotlin.Boolean
-import kotlin.Int
-import kotlin.OptIn
-import kotlin.String
-import kotlin.Unit
-import kotlin.let
-import kotlin.takeIf
 
 @Composable
 fun BottomSheetItem(infoItem: ResolveInfo, pm: PackageManager, onItemClick: (ResolveInfo) -> Unit) {
@@ -571,12 +564,14 @@ fun PosizioneListItem(
                     itemsCount = posizioni.size
                 )
             }
+            if (!posizioni.isEmpty() && !isMultiple) {
+                Spacer(modifier = Modifier.padding(5.dp))
+            }
             if (posizioni.isEmpty() || isMultiple) {
-                TextButton(
+                OutlinedButton(
                     onClick = { addClickListener(idPosizione) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.add_circle_24px),
