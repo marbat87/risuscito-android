@@ -501,14 +501,14 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                     showSnackBar(R.string.present_yet)
                 } else {
                     val positionToDelete =
-                        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                        withContext(Dispatchers.IO) {
                             mDao.getPositionSpecific(
                                 mCantiViewModel.defaultListaId,
                                 newPosition,
                                 newId
                             )
                         }
-                    withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    withContext(Dispatchers.IO) {
                         mDao.deletePosition(
                             positionToDelete
                         )
@@ -521,7 +521,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                     positionToInsert.timestamp = positionToDelete.timestamp
                     positionToInsert.notaPosizione = notaDaCanc
 
-                    withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    withContext(Dispatchers.IO) {
                         mDao.updatePositionNoTimestamp(
                             newId,
                             newNota,
@@ -530,7 +530,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                             idDaCanc
                         )
                     }
-                    withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                    withContext(Dispatchers.IO) {
                         mDao.insertPosition(
                             positionToInsert
                         )
@@ -548,13 +548,13 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
         lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(requireContext()).customListDao()
             val existingTitle =
-                withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     mDao.checkExistsPosition(mCantiViewModel.defaultListaId, newPosition, idDaCanc)
                 }
             if (existingTitle > 0)
                 showSnackBar(R.string.present_yet)
             else {
-                withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     val positionToDelete =
                         mDao.getPositionSpecific(
                             mCantiViewModel.defaultListaId,
@@ -614,7 +614,7 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
             positionToDelete.position = posizioneDaCanc
             positionToDelete.idCanto = idDaCanc
             val mDao = RisuscitoDatabase.getInstance(requireContext()).customListDao()
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 mDao.deletePosition(
                     positionToDelete
                 )

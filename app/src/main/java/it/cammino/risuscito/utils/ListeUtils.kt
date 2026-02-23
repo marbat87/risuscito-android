@@ -29,7 +29,7 @@ object ListeUtils {
                 position.position = listPosition
                 position.idCanto = idDaAgg
                 position.timestamp = Date(System.currentTimeMillis())
-                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     mDao.insertPosition(
                         position
                     )
@@ -45,7 +45,7 @@ object ListeUtils {
     fun addToFavorites(fragment: Fragment, idDaAgg: Int, showSnackbar: Boolean) {
         fragment.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).favoritesDao()
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 mDao.setFavorite(
                     idDaAgg
                 )
@@ -58,7 +58,7 @@ object ListeUtils {
     fun updateListaPersonalizzata(fragment: Fragment, listaUpd: ListaPers) {
         fragment.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).listePersDao()
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 mDao.updateLista(
                     listaUpd
                 )
@@ -71,7 +71,7 @@ object ListeUtils {
         fragment.lifecycleScope.launch {
             val mCustomListDao =
                 RisuscitoDatabase.getInstance(fragment.requireContext()).customListDao()
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 mCustomListDao.updatePositionNoTimestamp(
                     idDaAgg,
                     idListaDaAgg,
@@ -96,7 +96,7 @@ object ListeUtils {
                 position.position = listPosition
                 position.idCanto = idDaAgg
                 position.timestamp = Date(System.currentTimeMillis())
-                withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     mDao.insertPosition(
                         position
                     )
@@ -119,12 +119,12 @@ object ListeUtils {
     ) {
         activity.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(activity).listePersDao()
-            val listaPers = withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) {
+            val listaPers = withContext(Dispatchers.IO) {
                 mDao.getListById(idLista)
             }
             if (listaPers?.lista != null) {
                 listaPers.lista?.addCanto(idCanto.toString(), listPosition)
-                withContext(activity.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     mDao.updateLista(
                         listaPers
                     )

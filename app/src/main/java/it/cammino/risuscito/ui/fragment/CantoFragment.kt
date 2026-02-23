@@ -1271,7 +1271,7 @@ open class CantoFragment : Fragment() {
         if (mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
             // Calculate the elapsed time between the last position update and now and unless
             // paused, we can assume (delta * speed) + current position is approximately the
-            // latest position. This ensure that we do not repeatedly call the getPlaybackState()
+            // latest position. This ensures that we do not repeatedly call the getPlaybackState()
             // on MediaControllerCompat.
             val timeDelta =
                 SystemClock.elapsedRealtime() - (mainActivityViewModel.lastPlaybackState.value?.lastPositionUpdateTime
@@ -1344,7 +1344,7 @@ open class CantoFragment : Fragment() {
 
     private suspend fun retrieveData() {
         val mDao = mRisuscitoDb.cantoDao()
-        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             mCantiViewModel.mCurrentCanto = mDao.getCantoById(mCantiViewModel.idCanto)
             getRecordLink()
         }
@@ -1372,13 +1372,12 @@ open class CantoFragment : Fragment() {
         val convMap =
             cambioAccordi.diffSemiToni(mCantiViewModel.primaNota, mCantiViewModel.notaCambio)
         var convMin: HashMap<String, String>? = null
-        if (requireContext().systemLocale.language.equals(
-                LANGUAGE_UKRAINIAN,
-                ignoreCase = true
-            ) || requireContext().systemLocale.language.equals(LANGUAGE_POLISH, ignoreCase = true)
-        )
-            convMin =
-                cambioAccordi.diffSemiToniMin(mCantiViewModel.primaNota, mCantiViewModel.notaCambio)
+
+        val lang = requireContext().systemLocale.language.lowercase()
+        if (lang in USESMINSCALE) {
+            convMin = cambioAccordi.diffSemiToniMin(mCantiViewModel.primaNota, mCantiViewModel.notaCambio)
+        }
+
         if (convMap != null) {
             htmlContent.value = cambiaAccordi(convMap, mCantiViewModel.barreCambio, convMin)
         } else
@@ -1417,7 +1416,7 @@ open class CantoFragment : Fragment() {
         val linkToInsert = LocalLink()
         linkToInsert.idCanto = mCantiViewModel.idCanto
         linkToInsert.localPath = path
-        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             mDao.insertLocalLink(linkToInsert)
             getRecordLink()
         }
@@ -1426,7 +1425,7 @@ open class CantoFragment : Fragment() {
     }
 
     private suspend fun checkRecordState() {
-        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             getRecordLink()
         }
         checkRecordsState()
@@ -1436,7 +1435,7 @@ open class CantoFragment : Fragment() {
         val mDao = mRisuscitoDb.localLinksDao()
         val linkToDelete = LocalLink()
         linkToDelete.idCanto = mCantiViewModel.idCanto
-        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             mDao.deleteLocalLink(linkToDelete)
             getRecordLink()
         }
@@ -1448,7 +1447,7 @@ open class CantoFragment : Fragment() {
         val mDao = mRisuscitoDb.cantoDao()
         mCantiViewModel.mCurrentCanto?.let {
             it.favorite = if (mCantiViewModel.mCurrentCanto?.favorite == 1) 0 else 1
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 mDao.updateCanto(it)
             }
             showSnackBar(getString(if (it.favorite == 1) R.string.favorite_added else R.string.favorite_removed))
@@ -1459,7 +1458,7 @@ open class CantoFragment : Fragment() {
     private suspend fun updateCanto(option: Int) {
         val mDao = mRisuscitoDb.cantoDao()
         mCantiViewModel.mCurrentCanto?.let {
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 mDao.updateCanto(it)
             }
             if (option != 0) {
@@ -1585,18 +1584,15 @@ open class CantoFragment : Fragment() {
                     mCantiViewModel.notaCambio
                 )
                 var convMin: HashMap<String, String>? = null
-                if (requireContext().systemLocale.language.equals(
-                        LANGUAGE_UKRAINIAN,
-                        ignoreCase = true
-                    ) || requireContext().systemLocale.language.equals(
-                        LANGUAGE_POLISH,
-                        ignoreCase = true
-                    )
-                )
+
+                val lang = requireContext().systemLocale.language.lowercase()
+                if (lang in USESMINSCALE) {
                     convMin = cambioAccordi.diffSemiToniMin(
                         mCantiViewModel.primaNota,
                         mCantiViewModel.notaCambio
                     )
+                }
+
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap != null) {
                     htmlContent.value =
@@ -1638,18 +1634,15 @@ open class CantoFragment : Fragment() {
                     mCantiViewModel.notaCambio
                 )
                 var convMin1: HashMap<String, String>? = null
-                if (requireContext().systemLocale.language.equals(
-                        LANGUAGE_UKRAINIAN,
-                        ignoreCase = true
-                    ) || requireContext().systemLocale.language.equals(
-                        LANGUAGE_POLISH,
-                        ignoreCase = true
-                    )
-                )
+
+                val lang = requireContext().systemLocale.language.lowercase()
+                if (lang in USESMINSCALE) {
                     convMin1 = cambioAccordi.diffSemiToniMin(
                         mCantiViewModel.primaNota,
                         mCantiViewModel.notaCambio
                     )
+                }
+
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap1 != null) {
                     htmlContent.value =
@@ -1682,18 +1675,15 @@ open class CantoFragment : Fragment() {
                     mCantiViewModel.notaCambio
                 )
                 var convMin2: HashMap<String, String>? = null
-                if (requireContext().systemLocale.language.equals(
-                        LANGUAGE_UKRAINIAN,
-                        ignoreCase = true
-                    ) || requireContext().systemLocale.language.equals(
-                        LANGUAGE_POLISH,
-                        ignoreCase = true
-                    )
-                )
+
+                val lang = requireContext().systemLocale.language.lowercase()
+                if (lang in USESMINSCALE) {
                     convMin2 = cambioAccordi.diffSemiToniMin(
                         mCantiViewModel.primaNota,
                         mCantiViewModel.notaCambio
                     )
+                }
+
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap2 != null) {
                     htmlContent.value =
@@ -1725,18 +1715,15 @@ open class CantoFragment : Fragment() {
                     mCantiViewModel.notaCambio
                 )
                 var convMin3: HashMap<String, String>? = null
-                if (requireContext().systemLocale.language.equals(
-                        LANGUAGE_UKRAINIAN,
-                        ignoreCase = true
-                    ) || requireContext().systemLocale.language.equals(
-                        LANGUAGE_POLISH,
-                        ignoreCase = true
-                    )
-                )
+
+                val lang = requireContext().systemLocale.language.lowercase()
+                if (lang in USESMINSCALE) {
                     convMin3 = cambioAccordi.diffSemiToniMin(
                         mCantiViewModel.primaNota,
                         mCantiViewModel.notaCambio
                     )
+                }
+
                 saveZoom(andSpeedAlso = false, andSaveTabAlso = false)
                 if (convMap3 != null) {
                     htmlContent.value =
@@ -1846,6 +1833,6 @@ open class CantoFragment : Fragment() {
         private const val MP3_MIME_TYPE = "audio/mpeg"
         private const val PRE_START = "<H3><PRE>"
         private const val PRE_END = "</PRE></H3>"
-
+        private val USESMINSCALE = setOf(LANGUAGE_UKRAINIAN, LANGUAGE_POLISH)
     }
 }

@@ -36,7 +36,7 @@ open class GenericIndexViewModel(application: Application) : DialogManagerViewMo
             val listeDao = db.customListDao()
             val cantoDao = db.cantoDao()
             val idPresente =
-                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     listeDao.getIdByPosition(
                         idLista,
                         listPosition
@@ -48,7 +48,7 @@ open class GenericIndexViewModel(application: Application) : DialogManagerViewMo
                     return@launch
                 } else {
                     val titoloPresente =
-                        withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                        withContext(Dispatchers.IO) {
                             fragment.resources.getString(
                                 Utility.getResId(
                                     cantoDao.getCantoById(it)?.titolo.orEmpty(),
@@ -77,7 +77,7 @@ open class GenericIndexViewModel(application: Application) : DialogManagerViewMo
             position.position = listPosition
             position.idCanto = idDaAgg
             position.timestamp = Date(System.currentTimeMillis())
-            withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 listeDao.insertPosition(
                     position
                 )
@@ -90,7 +90,7 @@ open class GenericIndexViewModel(application: Application) : DialogManagerViewMo
         fragment.lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(fragment.requireContext()).cantoDao()
             val existingTitle =
-                withContext(fragment.lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     mDao.getCantoById(idCanto)?.titolo.orEmpty()
                 }
 

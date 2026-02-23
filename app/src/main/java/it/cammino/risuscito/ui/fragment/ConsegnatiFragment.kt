@@ -361,7 +361,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
     private suspend fun updateChooseList() {
         Log.i(TAG, "updateChooseList start")
         val mDao = RisuscitoDatabase.getInstance(requireContext()).consegnatiDao()
-        val canti = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.choosen() }
+        val canti = withContext(Dispatchers.IO) { mDao.choosen() }
         consegnatiViewModel.consegnatiFullList.value = canti.map { canto ->
             risuscitoListItem(
                 titleRes = Utility.getResId(canto.titolo, R.string::class.java)
@@ -401,12 +401,12 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
             tempConsegnato.idConsegnato = i
             tempConsegnato.idCanto = id
             tempConsegnato.numPassaggio =
-                withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     mDao.getNumPassaggio(id)
                 }
             consegnati.add(tempConsegnato)
         }
-        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             mDao.emptyConsegnati()
             mDao.insertConsegnati(consegnati)
         }

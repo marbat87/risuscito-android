@@ -297,7 +297,7 @@ class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragmen
         lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
             selectedItems.value?.let { removedItems ->
-                withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     for (removedItem in removedItems)
                         mDao.deleteCronologiaById(
                             removedItem.id

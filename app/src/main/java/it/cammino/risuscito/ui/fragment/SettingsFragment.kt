@@ -323,7 +323,6 @@ class SettingsFragment : Fragment() {
                                     PreferenceBool(
                                         value = dynamicColors,
                                         onValueChange = {
-                                            @Suppress("AssignedValueIsNeverRead")
                                             dynamicColors = it
                                             saveBooleanPreference(
                                                 preferenceKey = DYNAMIC_COLORS,
@@ -344,7 +343,6 @@ class SettingsFragment : Fragment() {
                                 PreferenceBool(
                                     value = showSecondaLettura,
                                     onValueChange = {
-                                        @Suppress("AssignedValueIsNeverRead")
                                         showSecondaLettura = it
                                         saveBooleanPreference(
                                             preferenceKey = SHOW_SECONDA,
@@ -357,7 +355,6 @@ class SettingsFragment : Fragment() {
                                 PreferenceBool(
                                     value = showOffertorio,
                                     onValueChange = {
-                                        @Suppress("AssignedValueIsNeverRead")
                                         showOffertorio = it
                                         saveBooleanPreference(
                                             preferenceKey = SHOW_OFFERTORIO,
@@ -370,7 +367,6 @@ class SettingsFragment : Fragment() {
                                 PreferenceBool(
                                     value = showEucaristiaPace,
                                     onValueChange = {
-                                        @Suppress("AssignedValueIsNeverRead")
                                         showEucaristiaPace = it
                                         saveBooleanPreference(
                                             preferenceKey = SHOW_EUCARESTIA_PACE,
@@ -383,7 +379,6 @@ class SettingsFragment : Fragment() {
                                 PreferenceBool(
                                     value = showSanto,
                                     onValueChange = {
-                                        @Suppress("AssignedValueIsNeverRead")
                                         showSanto = it
                                         saveBooleanPreference(
                                             preferenceKey = SHOW_SANTO,
@@ -396,7 +391,6 @@ class SettingsFragment : Fragment() {
                                 PreferenceBool(
                                     value = showParolaPace,
                                     onValueChange = {
-                                        @Suppress("AssignedValueIsNeverRead")
                                         showParolaPace = it
                                         saveBooleanPreference(
                                             preferenceKey = SHOW_PACE,
@@ -462,7 +456,6 @@ class SettingsFragment : Fragment() {
                                 PreferenceBool(
                                     value = alwaysOnDisplay,
                                     onValueChange = {
-                                        @Suppress("AssignedValueIsNeverRead")
                                         alwaysOnDisplay = it
                                         saveBooleanPreference(
                                             preferenceKey = SCREEN_ON,
@@ -476,7 +469,6 @@ class SettingsFragment : Fragment() {
                                 PreferenceBool(
                                     value = showAudio,
                                     onValueChange = {
-                                        @Suppress("AssignedValueIsNeverRead")
                                         showAudio = it
                                         saveBooleanPreference(
                                             preferenceKey = SHOW_AUDIO,
@@ -660,7 +652,7 @@ class SettingsFragment : Fragment() {
         progressDialogViewModel.messageRes.value = R.string.translation_running
         progressDialogViewModel.showProgressDialog.value = true
         val cambioAccordi = CambioAccordi(requireContext())
-        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             cambioAccordi.convertTabs(oldLanguage, newLanguage)
             cambioAccordi.convertiBarre(oldLanguage, newLanguage)
         }

@@ -1,9 +1,6 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     id("com.android.application")
     id("com.google.firebase.crashlytics")
-    kotlin("android")
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.compose")
@@ -28,12 +25,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_17
-        }
     }
 
     buildTypes {
@@ -71,6 +62,12 @@ android {
 
 }
 
+kotlin {
+    compilerOptions {
+        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+    }
+}
+
 ksp {
     arg("room.incremental", "true")
     arg("room.schemaLocation", "$projectDir/schemas")
@@ -81,10 +78,9 @@ val roomVersion = "2.8.4"
 val composepreferences = "2.0.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.android.material:material:1.14.0-alpha09")
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.activity:activity-ktx:1.12.3")
+    implementation("androidx.activity:activity-ktx:1.12.4")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.appcompat:appcompat-resources:1.7.1")
     implementation("androidx.core:core-ktx:1.17.0")
@@ -99,11 +95,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.gms:play-services-auth:21.5.0")
+    implementation("com.google.android.gms:play-services-auth:21.5.1")
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
-    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-auth")
@@ -128,9 +124,9 @@ dependencies {
     implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
     implementation("io.github.fornewid:material-motion-compose-core:2.0.1")
 
-    implementation(platform("androidx.compose:compose-bom:2026.01.01"))
+    implementation(platform("androidx.compose:compose-bom:2026.02.00"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha13")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha14")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")

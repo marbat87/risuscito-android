@@ -677,7 +677,7 @@ class CreaListaActivity : ThemeableActivity() {
         } else {
             result += 100
             celebrazione.name =
-                if (modifica) withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                if (modifica) withContext(Dispatchers.IO) {
                     mDao.getListById(mCreaListaViewModel.idModifica)?.titolo
                 } ?: DEFAULT_TITLE else intent.extras?.getString(LIST_TITLE)
                     ?: DEFAULT_TITLE
@@ -713,12 +713,12 @@ class CreaListaActivity : ThemeableActivity() {
         listaToUpdate.titolo = celebrazione.name
         if (modifica) {
             listaToUpdate.id = mCreaListaViewModel.idModifica
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 mDao.updateLista(
                     listaToUpdate
                 )
             }
-        } else withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        } else withContext(Dispatchers.IO) {
             mDao.insertLista(
                 listaToUpdate
             )

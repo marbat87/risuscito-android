@@ -8,7 +8,9 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ShareCompat
+import androidx.core.net.toUri
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.fragment.AboutFragment.Companion.TAG
 import it.cammino.risuscito.utils.extension.shareThisApp
@@ -90,25 +92,19 @@ object OSUtils {
         return packageInfo.versionCode.toLong()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun getVersionCodeP(packageInfo: PackageInfo): Long {
         return packageInfo.longVersionCode
     }
 
     fun rateOnClickAction(c: Context) {
-        val uri = Uri.parse("market://details?id=" + c.packageName)
+        val uri = ("market://details?id=" + c.packageName).toUri()
         val goToMarket = Intent(Intent.ACTION_VIEW, uri)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            goToMarket.addFlags(
-                Intent.FLAG_ACTIVITY_NO_HISTORY or
-                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
-                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-            )
-        } else {
-            goToMarket.addFlags(
-                Intent.FLAG_ACTIVITY_NO_HISTORY or
-                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-            )
-        }
+        goToMarket.addFlags(
+            Intent.FLAG_ACTIVITY_NO_HISTORY or
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+        )
 
         try {
             c.startActivity(goToMarket)
@@ -116,7 +112,7 @@ object OSUtils {
             c.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("http://play.google.com/store/apps/details?id=" + c.packageName)
+                    ("http://play.google.com/store/apps/details?id=" + c.packageName).toUri()
                 )
             )
         }
@@ -149,7 +145,7 @@ object OSUtils {
 
     fun createWebsiteOnClickAction(c: Context, websiteUrl: Uri?) {
         val i = Intent(Intent.ACTION_VIEW)
-        i.setData(websiteUrl)
+        i.data = websiteUrl
         try {
             c.startActivity(i)
         } catch (e: java.lang.Exception) {

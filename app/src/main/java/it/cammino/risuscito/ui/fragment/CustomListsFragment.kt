@@ -325,7 +325,7 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
         mCustomListsViewModel.listaDaCanc = sharedTabViewModel.tabsSelectedIndex.intValue - 2
         mCustomListsViewModel.idDaCanc = idListe[mCustomListsViewModel.listaDaCanc]
         val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
-        val lista = withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        val lista = withContext(Dispatchers.IO) {
             mDao.getListById(mCustomListsViewModel.idDaCanc)
         }
         mCustomListsViewModel.titoloDaCanc = lista?.titolo
@@ -344,7 +344,7 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
         val mDao = RisuscitoDatabase.getInstance(requireContext()).listePersDao()
         val listToDelete = ListaPers()
         listToDelete.id = mCustomListsViewModel.idDaCanc
-        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) { mDao.deleteList(listToDelete) }
+        withContext(Dispatchers.IO) { mDao.deleteList(listToDelete) }
         showSnackBar(
             "${getString(R.string.list_removed)}${mCustomListsViewModel.titoloDaCanc}'!",
             getString(R.string.cancel).uppercase(systemLocale)

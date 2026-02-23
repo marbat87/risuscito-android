@@ -790,7 +790,7 @@ class MainActivity : ThemeableActivity() {
         progressDialogViewModel.dialogTitleRes = 0
         progressDialogViewModel.showProgressDialog.value = true
         intent.removeExtra(CHANGE_LANGUAGE)
-        withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             convertTabs()
             convertiBarre()
         }
@@ -805,14 +805,14 @@ class MainActivity : ThemeableActivity() {
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_STARTED
 
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 backupDatabase(mViewModel.sub)
             }
 
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.BACKUP_STEP_2
 
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 backupSharedPreferences(
                     mViewModel.sub,
                     mCredentialCacheManager.getCachedCredential()?.getAccountId()
@@ -841,14 +841,14 @@ class MainActivity : ThemeableActivity() {
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_STARTED
 
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 restoreDatabase(mViewModel.sub)
             }
 
             mViewModel.backupRestoreState.value =
                 MainActivityViewModel.BakupRestoreState.RESTORE_STEP_2
 
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 restoreSharedPreferences(mViewModel.sub)
             }
 

@@ -131,7 +131,7 @@ class PaginaRenderFullScreen : AppCompatActivity() {
                 TAG,
                 "it.id ${it.id} / it.zoom ${it.zoom} / it.scrollX ${it.scrollX} / it.scrollY ${it.scrollY}"
             )
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 RisuscitoDatabase.getInstance(applicationContext).cantoDao().updateCanto(it)
             }
         }
@@ -142,7 +142,7 @@ class PaginaRenderFullScreen : AppCompatActivity() {
     private suspend fun loadCantoData() {
         val mDao = RisuscitoDatabase.getInstance(this).cantoDao()
         paginaRenderViewModel.mCurrentCanto =
-            withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 mDao.getCantoById(paginaRenderViewModel.idCanto)
             }
 

@@ -289,7 +289,7 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
         lifecycleScope.launch {
             val mDao = RisuscitoDatabase.getInstance(requireContext()).favoritesDao()
             selectedItems.value?.let { removedItems ->
-                withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     for (removedItem in removedItems)
                         mDao.removeFavorite(removedItem)
                 }

@@ -110,7 +110,7 @@ fun WebViewDialog(
                                     }
                                 }
 
-                                settings.javaScriptEnabled = true
+//                                settings.javaScriptEnabled = true
                                 settings.useWideViewPort = true
                                 settings.loadWithOverviewMode = true
                                 setBackgroundColor(0)
