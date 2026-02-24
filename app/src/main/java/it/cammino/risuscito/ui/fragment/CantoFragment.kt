@@ -80,6 +80,7 @@ import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.ui.activity.PaginaRenderFullScreen
 import it.cammino.risuscito.ui.activity.ThemeableActivity
+import it.cammino.risuscito.ui.composable.InvisibleOverlay
 import it.cammino.risuscito.ui.composable.MediaPlayerView
 import it.cammino.risuscito.ui.composable.ScrollPlayerView
 import it.cammino.risuscito.ui.composable.StateNotificationView
@@ -470,6 +471,10 @@ open class CantoFragment : Fragment() {
 
                             }
                         }
+
+                        InvisibleOverlay(visible = fabExpanded.value,
+                            onOverlayClick = { fabExpanded.value = false })
+
                     }
 
                     LaunchedEffect(sharedSnackBarViewModel.showSnackBar.value) {

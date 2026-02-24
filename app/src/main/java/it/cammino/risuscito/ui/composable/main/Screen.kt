@@ -8,8 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,7 +44,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -67,6 +64,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.items.CantoViewData
 import it.cammino.risuscito.ui.composable.CantoView
 import it.cammino.risuscito.ui.composable.EmptyListView
+import it.cammino.risuscito.ui.composable.InvisibleOverlay
 import it.cammino.risuscito.ui.composable.dialogs.ChangelogBottomSheet
 import it.cammino.risuscito.ui.composable.dialogs.RisuscitoBottomSheet
 import it.cammino.risuscito.ui.composable.hasNavigationBar
@@ -192,26 +190,9 @@ fun MainScreen(
                     pm = pm
                 )
 
-                // Overlay che compare quando il FAB è espanso
-//                AnimatedVisibility(
-//                    visible = fabExpanded.value,
-//                    enter = fadeIn(),
-//                    exit = fadeOut()
-//                ) {
-                if (fabExpanded.value) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                // Cliccando sull'overlay il menu si chiude
-                                fabExpanded.value = false
-                            }
-                    )
-                }
-//                }
+                InvisibleOverlay(
+                    visible = fabExpanded.value,
+                    onOverlayClick = { fabExpanded.value = false })
 
                 ChangelogBottomSheet()
 

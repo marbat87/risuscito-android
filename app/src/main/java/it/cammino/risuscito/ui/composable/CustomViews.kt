@@ -9,6 +9,8 @@ import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -155,7 +157,7 @@ fun SwipeToDismissBackground(
                     modifier = Modifier
                         .fillMaxSize()
                         .wrapContentSize(if (swipeToDismissBoxState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd)
-                        .padding(start = 16.dp, end= 16.dp),
+                        .padding(start = 16.dp, end = 16.dp),
                     tint = MaterialTheme.colorScheme.onError
                 )
             }
@@ -584,6 +586,30 @@ fun SignInButton(
         )
         Text(text = "Sign in with Google", modifier = Modifier.padding(6.dp))
     }
+}
+
+@Composable
+fun InvisibleOverlay(
+    visible: Boolean,
+    onOverlayClick: () -> Unit
+) {
+    //                AnimatedVisibility(
+//                    visible = visible,
+//                    enter = fadeIn(),
+//                    exit = fadeOut()
+//                ) {
+    if (visible) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onOverlayClick
+                )
+        )
+    }
+//}
 }
 
 
