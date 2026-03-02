@@ -371,6 +371,7 @@ class SettingsFragment : Fragment() {
                                         saveBooleanPreference(
                                             preferenceKey = SHOW_EUCARESTIA_PACE,
                                             preferenceValue = it,
+                                            defaultValue = true
                                         )
                                     },
                                     title = stringResource(R.string.show_eucarestia_pace_title),
@@ -473,6 +474,7 @@ class SettingsFragment : Fragment() {
                                         saveBooleanPreference(
                                             preferenceKey = SHOW_AUDIO,
                                             preferenceValue = it,
+                                            defaultValue = true
                                         )
                                     },
                                     title = stringResource(R.string.show_audio_title),
@@ -599,11 +601,12 @@ class SettingsFragment : Fragment() {
         preferenceKey: String,
         preferenceValue: Boolean,
         restart: Boolean = false,
-        hasNavigationBar: Boolean = false
+        hasNavigationBar: Boolean = false,
+        defaultValue: Boolean = false
     ) {
         Log.d(TAG, "saveBooleanPreference: $preferenceKey / $preferenceValue")
         val preferenManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val actualValue = preferenManager.getBoolean(preferenceKey, false)
+        val actualValue = preferenManager.getBoolean(preferenceKey, defaultValue)
         if (actualValue != preferenceValue) {
             Log.d(TAG, "saveBooleanPreference SAVE: $preferenceKey / $preferenceValue")
             preferenManager.edit {

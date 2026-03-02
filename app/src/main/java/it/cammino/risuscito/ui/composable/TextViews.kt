@@ -86,16 +86,6 @@ fun ContextualToolbarTitle(title: String = "1 selezionato") {
 
 @Composable
 @Preview
-fun SideMenuTitle(title: String = "Filtra per passaggi") {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.onSurface
-    )
-}
-
-@Composable
-@Preview
 fun DialogTitle(title: String = "Filtra per passaggi") {
     Text(
         text = title,

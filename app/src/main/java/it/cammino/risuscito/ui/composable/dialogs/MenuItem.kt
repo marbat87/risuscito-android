@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -20,24 +21,30 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import it.cammino.risuscito.R
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MenuExpandableItem(
     text: String,
     onClick: () -> Unit,
-    iconRes: Int = 0
+    iconRes: Int = 0,
+    menuItemIndex: Int = 0,
+    menuSize: Int = 0
 ) {
     if (iconRes > 0) {
         DropdownMenuItem(
             text = { Text(text) },
+            shape = MenuDefaults.itemShape(menuItemIndex, menuSize).shape,
             onClick = onClick,
             trailingIcon = {
                 Icon(
+                    modifier = Modifier.size(MenuDefaults.TrailingIconSize),
                     painter = painterResource(R.drawable.arrow_right_24px),
                     contentDescription = null
                 )
             },
             leadingIcon = {
                 Icon(
+                    modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                     painter = painterResource(iconRes),
                     contentDescription = text
                 )
@@ -46,9 +53,11 @@ fun MenuExpandableItem(
     } else {
         DropdownMenuItem(
             text = { Text(text) },
+            shape = MenuDefaults.itemShape(menuItemIndex, menuSize).shape,
             onClick = onClick,
             trailingIcon = {
                 Icon(
+                    modifier = Modifier.size(MenuDefaults.TrailingIconSize),
                     painter = painterResource(R.drawable.arrow_right_24px),
                     contentDescription = null
                 )
@@ -57,18 +66,23 @@ fun MenuExpandableItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MenuSimpleItem(
     textRes: Int,
     onClick: () -> Unit,
-    iconRes: Int = 0
+    iconRes: Int = 0,
+    menuItemIndex: Int = 0,
+    menuSize: Int = 1
 ) {
     if (iconRes > 0) {
         DropdownMenuItem(
             text = { Text(stringResource(textRes)) },
+            shape = MenuDefaults.itemShape(menuItemIndex, menuSize).shape,
             onClick = onClick,
             leadingIcon = {
                 Icon(
+                    modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                     painter = painterResource(iconRes),
                     contentDescription = stringResource(textRes)
                 )
@@ -77,25 +91,32 @@ fun MenuSimpleItem(
     } else {
         DropdownMenuItem(
             text = { Text(stringResource(textRes)) },
+            shape = MenuDefaults.itemShape(menuItemIndex, menuSize).shape,
             onClick = onClick
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MenuSelectabletem(
     text: String,
     onSelect: (Boolean) -> Unit,
-    selected: Boolean = false
+    selected: Boolean = false,
+    itemIndex: Int = 0,
+    itemsCount: Int = 1
 ) {
 
     DropdownMenuItem(
+        selected = selected,
         text = { Text(text) },
+        shapes = MenuDefaults.itemShape(itemIndex, itemsCount),
         onClick = {
             onSelect(!selected)
         },
         trailingIcon = {
             Checkbox(
+                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                 checked = selected,
                 onCheckedChange = {
                     onSelect(it)

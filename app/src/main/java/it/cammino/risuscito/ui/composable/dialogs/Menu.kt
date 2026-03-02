@@ -1,17 +1,24 @@
 package it.cammino.risuscito.ui.composable.dialogs
 
+import android.content.SharedPreferences
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,11 +37,11 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.entities.ListaPers
-import it.cammino.risuscito.ui.composable.SideMenuTitle
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AddToDropDownMenu(
     fragment: Fragment,
@@ -52,257 +59,355 @@ fun AddToDropDownMenu(
     var subMenuExpanded by remember { mutableIntStateOf(0) }
     val pref = PreferenceManager.getDefaultSharedPreferences(fragment.requireContext())
 
-    DropdownMenu(
+    val menuSize = remember { 3 + (listePersonalizzate?.size ?: 0) }
+    val groupInteractionSource = remember { MutableInteractionSource() }
+
+    val showPaceState = remember { mutableStateOf(pref.getBoolean(Utility.SHOW_PACE, false)) }
+    val showSecondaState = remember { mutableStateOf(pref.getBoolean(Utility.SHOW_SECONDA, false)) }
+    val showOffertorioState =
+        remember { mutableStateOf(pref.getBoolean(Utility.SHOW_OFFERTORIO, false)) }
+    val showEucarestiaPaceState = remember { mutableStateOf(pref.getBoolean(Utility.SHOW_EUCARESTIA_PACE, true)) }
+    val showSantoState = remember { mutableStateOf(pref.getBoolean(Utility.SHOW_SANTO, false)) }
+
+    DisposableEffect(pref) {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
+            when (key) {
+                Utility.SHOW_PACE -> showPaceState.value = sharedPrefs.getBoolean(key, false)
+                Utility.SHOW_SECONDA -> showSecondaState.value = sharedPrefs.getBoolean(key, false)
+                Utility.SHOW_OFFERTORIO -> showOffertorioState.value =
+                    sharedPrefs.getBoolean(key, false)
+
+                Utility.SHOW_SANTO -> showSantoState.value = sharedPrefs.getBoolean(key, false)
+                Utility.SHOW_EUCARESTIA_PACE -> showEucarestiaPaceState.value = sharedPrefs.getBoolean(key, true)
+            }
+        }
+        pref.registerOnSharedPreferenceChangeListener(listener)
+        onDispose {
+            pref.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
+    val showPace by showPaceState
+    val showSeconda by showSecondaState
+    val showOffertorio by showOffertorioState
+    val showEucarestiaPace by showEucarestiaPaceState
+    val showSanto by showSantoState
+
+    val parolaMenuSize = 5 + listOf(showPace).count { it }
+    var parolaCounter = 0
+
+    val eucarestiaMenuSize = 4 + listOf(showSeconda, showOffertorio, showEucarestiaPace, showSanto).count { it }
+    var eucarestiaCounter = 0
+
+    DropdownMenuPopup(
         expanded = menuExpanded,
         onDismissRequest = { onDismissRequest() },
         offset = offset
     ) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.select_canto_popup)) },
-            onClick = {},
-            enabled = false
-        )
 
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.title_activity_favourites)) },
-            onClick = {
-                onDismissRequest()
-                ListeUtils.addToFavorites(fragment, viewModel.idDaAgg, true)
-            }
-        )
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShape(0, 1),
+            interactionSource = groupInteractionSource,
+        ) {
 
-        MenuExpandableItem(
-            text = stringResource(R.string.title_activity_canti_parola),
-            onClick = {
-                onDismissRequest()
-                parolaExpanded.value = true
-            }
-        )
+            MenuDefaults.Label { Text(stringResource(R.string.select_canto_popup)) }
+            HorizontalDivider(
+                modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
+            )
 
-        MenuExpandableItem(
-            text = stringResource(R.string.title_activity_canti_eucarestia),
-            onClick = {
-                onDismissRequest()
-                eucarestiaExpanded.value = true
-            }
-        )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.title_activity_favourites)) },
+                shape = MenuDefaults.itemShape(0, menuSize).shape,
+                onClick = {
+                    onDismissRequest()
+                    ListeUtils.addToFavorites(fragment, viewModel.idDaAgg, true)
+                }
+            )
 
-        listePersonalizzate?.let {
-            for (i in it.indices) {
-                MenuExpandableItem(
-                    text = it[i].lista!!.name,
-                    onClick = {
-                        onDismissRequest()
-                        subMenuExpanded = 10 + i
-                    }
-                )
+            MenuExpandableItem(
+                text = stringResource(R.string.title_activity_canti_parola),
+                onClick = {
+                    onDismissRequest()
+                    parolaExpanded.value = true
+                },
+                menuItemIndex = 1,
+                menuSize = menuSize
+            )
+
+            MenuExpandableItem(
+                text = stringResource(R.string.title_activity_canti_eucarestia),
+                onClick = {
+                    onDismissRequest()
+                    eucarestiaExpanded.value = true
+                },
+                menuItemIndex = 2,
+                menuSize = menuSize
+            )
+
+            listePersonalizzate?.let {
+                for (i in it.indices) {
+                    MenuExpandableItem(
+                        text = it[i].lista!!.name,
+                        onClick = {
+                            onDismissRequest()
+                            subMenuExpanded = 10 + i
+                        },
+                        menuItemIndex = 3 + i,
+                        menuSize = menuSize
+                    )
+                }
             }
+
         }
     }
 
-    DropdownMenu(
+    DropdownMenuPopup(
         expanded = parolaExpanded.value,
         onDismissRequest = { parolaExpanded.value = false },
         offset = offset
     ) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.title_activity_canti_parola)) },
-            onClick = {},
-            enabled = false
-        )
 
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.canto_iniziale)) },
-            onClick = {
-                parolaExpanded.value = false
-                viewModel.addToListaNoDup(1, 1, fragment, dialogTag2)
-            }
-        )
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShape(0, 1),
+            interactionSource = groupInteractionSource,
+        ) {
 
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.prima_lettura)) },
-            onClick = {
-                parolaExpanded.value = false
-                viewModel.addToListaNoDup(1, 2, fragment, dialogTag2)
-            }
-        )
+            MenuDefaults.Label { Text(stringResource(R.string.title_activity_canti_parola)) }
+            HorizontalDivider(
+                modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
+            )
 
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.seconda_lettura)) },
-            onClick = {
-                parolaExpanded.value = false
-                viewModel.addToListaNoDup(1, 3, fragment, dialogTag2)
-            }
-        )
-
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.terza_lettura)) },
-            onClick = {
-                parolaExpanded.value = false
-                viewModel.addToListaNoDup(1, 4, fragment, dialogTag2)
-            }
-        )
-
-        if (pref.getBoolean(Utility.SHOW_PACE, false)) {
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.canto_pace)) },
+                text = { Text(stringResource(R.string.canto_iniziale)) },
+                shape = MenuDefaults.itemShape(parolaCounter++, parolaMenuSize).shape,
                 onClick = {
                     parolaExpanded.value = false
-                    viewModel.addToListaNoDup(1, 6, fragment, dialogTag2)
+                    viewModel.addToListaNoDup(1, 1, fragment, dialogTag2)
                 }
             )
-        }
 
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.canto_fine)) },
-            onClick = {
-                parolaExpanded.value = false
-                viewModel.addToListaNoDup(1, 5, fragment, dialogTag2)
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.prima_lettura)) },
+                shape = MenuDefaults.itemShape(parolaCounter++, parolaMenuSize).shape,
+                onClick = {
+                    parolaExpanded.value = false
+                    viewModel.addToListaNoDup(1, 2, fragment, dialogTag2)
+                }
+            )
+
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.seconda_lettura)) },
+                shape = MenuDefaults.itemShape(parolaCounter++, parolaMenuSize).shape,
+                onClick = {
+                    parolaExpanded.value = false
+                    viewModel.addToListaNoDup(1, 3, fragment, dialogTag2)
+                }
+            )
+
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.terza_lettura)) },
+                shape = MenuDefaults.itemShape(parolaCounter++, parolaMenuSize).shape,
+                onClick = {
+                    parolaExpanded.value = false
+                    viewModel.addToListaNoDup(1, 4, fragment, dialogTag2)
+                }
+            )
+
+            if (showPace) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.canto_pace)) },
+                    shape = MenuDefaults.itemShape(parolaCounter++, parolaMenuSize).shape,
+                    onClick = {
+                        parolaExpanded.value = false
+                        viewModel.addToListaNoDup(1, 6, fragment, dialogTag2)
+                    }
+                )
             }
-        )
+
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.canto_fine)) },
+                shape = MenuDefaults.itemShape(parolaCounter++, parolaMenuSize).shape,
+                onClick = {
+                    parolaExpanded.value = false
+                    viewModel.addToListaNoDup(1, 5, fragment, dialogTag2)
+                }
+            )
+
+        }
 
     }
 
-    DropdownMenu(
+    DropdownMenuPopup(
         expanded = eucarestiaExpanded.value,
         onDismissRequest = { eucarestiaExpanded.value = false },
         offset = offset
     ) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.title_activity_canti_eucarestia)) },
-            onClick = {},
-            enabled = false
-        )
 
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.canto_iniziale)) },
-            onClick = {
-                eucarestiaExpanded.value = false
-                viewModel.addToListaNoDup(2, 1, fragment, dialogTag2)
-            }
-        )
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShape(0, 1),
+            interactionSource = groupInteractionSource,
+        ) {
 
-        if (pref.getBoolean(Utility.SHOW_SECONDA, false)) {
+            MenuDefaults.Label { Text(stringResource(R.string.title_activity_canti_eucarestia)) }
+            HorizontalDivider(
+                modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
+            )
+
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.seconda_lettura)) },
+                text = { Text(stringResource(R.string.canto_iniziale)) },
+                shape = MenuDefaults.itemShape(eucarestiaCounter++, eucarestiaMenuSize).shape,
                 onClick = {
                     eucarestiaExpanded.value = false
-                    viewModel.addToListaNoDup(2, 6, fragment, dialogTag2)
+                    viewModel.addToListaNoDup(2, 1, fragment, dialogTag2)
                 }
             )
-        }
 
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.canto_pace)) },
-            onClick = {
-                eucarestiaExpanded.value = false
-                viewModel.addToListaNoDup(2, 2, fragment, dialogTag2)
+            if (showSeconda) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.seconda_lettura)) },
+                    shape = MenuDefaults.itemShape(eucarestiaCounter++, eucarestiaMenuSize).shape,
+                    onClick = {
+                        eucarestiaExpanded.value = false
+                        viewModel.addToListaNoDup(2, 6, fragment, dialogTag2)
+                    }
+                )
             }
-        )
 
-        if (pref.getBoolean(Utility.SHOW_OFFERTORIO, false)) {
+            if (showEucarestiaPace) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.canto_pace)) },
+                    shape = MenuDefaults.itemShape(eucarestiaCounter++, eucarestiaMenuSize).shape,
+                    onClick = {
+                        eucarestiaExpanded.value = false
+                        viewModel.addToListaNoDup(2, 2, fragment, dialogTag2)
+                    }
+                )
+            }
+
+            if (showOffertorio) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.canto_offertorio)) },
+                    shape = MenuDefaults.itemShape(eucarestiaCounter++, eucarestiaMenuSize).shape,
+                    onClick = {
+                        eucarestiaExpanded.value = false
+                        viewModel.addToListaNoDup(2, 8, fragment, dialogTag2)
+                    }
+                )
+            }
+
+            if (showSanto) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.santo)) },
+                    shape = MenuDefaults.itemShape(eucarestiaCounter++, eucarestiaMenuSize).shape,
+                    onClick = {
+                        eucarestiaExpanded.value = false
+                        viewModel.addToListaNoDup(2, 8, fragment, dialogTag2)
+                    }
+                )
+            }
+
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.canto_offertorio)) },
+                text = { Text(stringResource(R.string.canto_pane)) },
+                shape = MenuDefaults.itemShape(eucarestiaCounter++, eucarestiaMenuSize).shape,
                 onClick = {
                     eucarestiaExpanded.value = false
-                    viewModel.addToListaNoDup(2, 8, fragment, dialogTag2)
+                    ListeUtils.addToListaDup(fragment, 2, 3, viewModel.idDaAgg)
                 }
             )
-        }
 
-        if (pref.getBoolean(Utility.SHOW_SANTO, false)) {
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.santo)) },
+                text = { Text(stringResource(R.string.canto_vino)) },
+                shape = MenuDefaults.itemShape(eucarestiaCounter++, eucarestiaMenuSize).shape,
                 onClick = {
                     eucarestiaExpanded.value = false
-                    viewModel.addToListaNoDup(2, 8, fragment, dialogTag2)
+                    ListeUtils.addToListaDup(fragment, 2, 4, viewModel.idDaAgg)
                 }
             )
+
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.canto_fine)) },
+                shape = MenuDefaults.itemShape(eucarestiaCounter++, eucarestiaMenuSize).shape,
+                onClick = {
+                    eucarestiaExpanded.value = false
+                    viewModel.addToListaNoDup(2, 5, fragment, dialogTag2)
+                }
+            )
+
         }
 
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.canto_pane)) },
-            onClick = {
-                eucarestiaExpanded.value = false
-                ListeUtils.addToListaDup(fragment, 2, 3,  viewModel.idDaAgg)
-            }
-        )
-
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.canto_vino)) },
-            onClick = {
-                eucarestiaExpanded.value = false
-                ListeUtils.addToListaDup(fragment, 2, 4, viewModel.idDaAgg)
-            }
-        )
-
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.canto_fine)) },
-            onClick = {
-                eucarestiaExpanded.value = false
-                viewModel.addToListaNoDup(2, 5, fragment, dialogTag2)
-            }
-        )
     }
 
     listePersonalizzate?.let { liste ->
         for (i in liste.indices) {
-            DropdownMenu(
+
+            val listaSize = liste[i].lista?.numPosizioni ?: 0
+
+            DropdownMenuPopup(
                 expanded = (subMenuExpanded == 10 + i),
                 onDismissRequest = { subMenuExpanded = 0 },
                 offset = offset
             ) {
-                DropdownMenuItem(
-                    text = { Text(liste[i].lista!!.name) },
-                    onClick = {},
-                    enabled = false
-                )
 
-                for (k in 0 until liste[i].lista!!.numPosizioni) {
-                    DropdownMenuItem(
-                        text = { Text(liste[i].lista!!.getNomePosizione(k)) },
-                        onClick = {
-                            subMenuExpanded = 0
-                            if (liste[i]
-                                    .lista
-                                    ?.getCantoPosizione(k)?.isEmpty() == true
-                            ) {
-                                liste[i]
-                                    .lista
-                                    ?.addCanto(
-                                        (viewModel.idDaAgg).toString(), k
-                                    )
-                                ListeUtils.updateListaPersonalizzata(fragment, liste[i])
-                            } else {
+                DropdownMenuGroup(
+                    shapes = MenuDefaults.groupShape(0, 1),
+                    interactionSource = groupInteractionSource,
+                ) {
+
+                    MenuDefaults.Label { Text(liste[i].lista!!.name) }
+                    HorizontalDivider(
+                        modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
+                    )
+
+                    for (k in 0 until liste[i].lista!!.numPosizioni) {
+                        DropdownMenuItem(
+                            text = { Text(liste[i].lista!!.getNomePosizione(k)) },
+                            shape = MenuDefaults.itemShape(k, listaSize).shape,
+                            onClick = {
+                                subMenuExpanded = 0
                                 if (liste[i]
                                         .lista
-                                        ?.getCantoPosizione(k) == (viewModel.idDaAgg).toString()
+                                        ?.getCantoPosizione(k)?.isEmpty() == true
                                 ) {
-                                    Snackbar.make(
-                                        fragment.requireActivity()
-                                            .findViewById(android.R.id.content),
-                                        R.string.present_yet,
-                                        Snackbar.LENGTH_SHORT
-                                    ).show()
+                                    liste[i]
+                                        .lista
+                                        ?.addCanto(
+                                            (viewModel.idDaAgg).toString(), k
+                                        )
+                                    ListeUtils.updateListaPersonalizzata(fragment, liste[i])
                                 } else {
-                                    viewModel.manageReplaceDialog(
-                                        fragment, Integer.parseInt(
-                                            liste[i]
-                                                .lista
-                                                ?.getCantoPosizione(k)
-                                                ?: "0"
-                                        ), dialogTag
-                                    )
+                                    if (liste[i]
+                                            .lista
+                                            ?.getCantoPosizione(k) == (viewModel.idDaAgg).toString()
+                                    ) {
+                                        Snackbar.make(
+                                            fragment.requireActivity()
+                                                .findViewById(android.R.id.content),
+                                            R.string.present_yet,
+                                            Snackbar.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        viewModel.manageReplaceDialog(
+                                            fragment, Integer.parseInt(
+                                                liste[i]
+                                                    .lista
+                                                    ?.getCantoPosizione(k)
+                                                    ?: "0"
+                                            ), dialogTag
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
+
                 }
+
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PassaggesDropDownMenu(
     menuExpanded: Boolean,
@@ -314,13 +419,18 @@ fun PassaggesDropDownMenu(
 ) {
 
     val passaggiSelectedItems = passaggiSelezionati.observeAsState()
+    val groupInteractionSource = remember { MutableInteractionSource() }
 
-    DropdownMenu(
+    DropdownMenuPopup(
         expanded = menuExpanded,
         onDismissRequest = { onDismissRequest() }
     ) {
 
-        Column {
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShape(0, 1),
+            interactionSource = groupInteractionSource,
+        ) {
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -328,7 +438,7 @@ fun PassaggesDropDownMenu(
                     .padding(start = 16.dp, end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SideMenuTitle(stringResource(R.string.passage_filter))
+                MenuDefaults.Label { Text(stringResource(R.string.select_canto_popup)) }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = { onDismissRequest() }) {
@@ -339,14 +449,22 @@ fun PassaggesDropDownMenu(
                 }
             }
 
-            indiciPassaggi.forEachIndexed { i, item ->
-                MenuSelectabletem(
-                    text = nomiPassaggi[i],
-                    onSelect = {
-                        onSelect(item, it)
-                    },
-                    selected = passaggiSelectedItems.value?.contains(item) ?: false
-                )
+            HorizontalDivider(
+                modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
+            )
+
+            Column {
+                indiciPassaggi.forEachIndexed { i, item ->
+                    MenuSelectabletem(
+                        text = nomiPassaggi[i],
+                        onSelect = {
+                            onSelect(item, it)
+                        },
+                        selected = passaggiSelectedItems.value?.contains(item) ?: false,
+                        itemIndex = i,
+                        itemsCount = indiciPassaggi.size
+                    )
+                }
             }
 
         }
@@ -575,12 +693,7 @@ val barreDropDownMenu =
         DropDownMenuItem.BARRE_RESET to emptyList()
     )
 
-//val otherDropDownMenu =
-//    mutableMapOf<DropDownMenuItem, List<DropDownMenuItem>>(
-//        DropDownMenuItem.EXPORT_PDF to emptyList(),
-//        DropDownMenuItem.HELP to emptyList()
-//    )
-
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CantoDropDownMenu(
     menu: Map<DropDownMenuItem, List<DropDownMenuItem>>,
@@ -590,59 +703,84 @@ fun CantoDropDownMenu(
     onDismissRequest: () -> Unit
 ) {
 
+    val groupInteractionSource = remember { MutableInteractionSource() }
     var subMenuExpanded by remember { mutableStateOf(DropDownMenuItem.DEFAULT) }
+    var menuItemCount = 0
 
-    DropdownMenu(
+    DropdownMenuPopup(
         expanded = menuExpanded,
         onDismissRequest = { onDismissRequest() },
         offset = offset
     ) {
-        menu.forEach { item ->
-            if (item.value.isNotEmpty()) {
-                MenuExpandableItem(
-                    text = stringResource(item.key.label),
-                    onClick = {
-                        onDismissRequest()
-                        subMenuExpanded = item.key
-                    },
-                    iconRes = item.key.iconRes
-                )
-            } else {
-                MenuSimpleItem(
-                    textRes = item.key.label,
-                    onClick = {
-                        onDismissRequest()
-                        onItemClick(item.key)
-                    },
-                    iconRes = item.key.iconRes
-                )
+
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShape(0, 1),
+            interactionSource = groupInteractionSource,
+        ) {
+
+            menu.forEach { item ->
+                if (item.value.isNotEmpty()) {
+                    MenuExpandableItem(
+                        text = stringResource(item.key.label),
+                        onClick = {
+                            onDismissRequest()
+                            subMenuExpanded = item.key
+                        },
+                        iconRes = item.key.iconRes,
+                        menuItemIndex = menuItemCount++,
+                        menuSize = menu.size
+                    )
+                } else {
+                    MenuSimpleItem(
+                        textRes = item.key.label,
+                        onClick = {
+                            onDismissRequest()
+                            onItemClick(item.key)
+                        },
+                        iconRes = item.key.iconRes,
+                        menuItemIndex = menuItemCount++,
+                        menuSize = menu.size
+                    )
+                }
             }
+
         }
+
     }
 
     menu.forEach { item ->
         if (item.value.isNotEmpty()) {
-            DropdownMenu(
+            DropdownMenuPopup(
                 expanded = subMenuExpanded == item.key,
                 onDismissRequest = { subMenuExpanded = DropDownMenuItem.DEFAULT },
                 offset = offset
             ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(item.key.label)) },
-                    onClick = {},
-                    enabled = false
-                )
 
-                item.value.forEach { listItem ->
-                    MenuSimpleItem(
-                        textRes = listItem.label,
-                        onClick = {
-                            subMenuExpanded = DropDownMenuItem.DEFAULT
-                            onItemClick(listItem)
-                        },
-                        iconRes = listItem.iconRes
+                DropdownMenuGroup(
+                    shapes = MenuDefaults.groupShape(0, 1),
+                    interactionSource = groupInteractionSource,
+                ) {
+
+                    MenuDefaults.Label { Text(stringResource(item.key.label)) }
+                    HorizontalDivider(
+                        modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
                     )
+
+                    item.value.forEachIndexed { index, listItem ->
+                        MenuSimpleItem(
+                            textRes = listItem.label,
+                            onClick = {
+                                subMenuExpanded = DropDownMenuItem.DEFAULT
+                                onItemClick(listItem)
+                            },
+                            iconRes = listItem.iconRes,
+                            menuItemIndex = index,
+                            menuSize = item.value.size,
+                        )
+                    }
+
                 }
+
             }
         }
     }

@@ -17,7 +17,7 @@ android {
         minSdk = 23
         targetSdk = 36
         multiDexEnabled = true
-        versionCode = 6101
+        versionCode = 6102
         versionName = "6.1.0"
 
     }
@@ -99,7 +99,7 @@ dependencies {
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
-    implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-auth")
@@ -114,8 +114,8 @@ dependencies {
     // ci sono conflitti di versioni dalla 2.5.0 in poi, in alcune librerie http - ce ne si accorge facendo il ripristino delle preferences
     //noinspection NewerVersionAvailable
     implementation("com.google.api-client:google-api-client:2.4.0")
-    implementation("io.coil-kt.coil3:coil-compose:3.3.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.4.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
     implementation("sh.calvin.reorderable:reorderable:3.0.0")
     implementation("io.github.mflisar.composechangelog:core-android:3.0.0")
     implementation("io.github.mflisar.composechangelog:statesaver-preferences-android:3.0.0") // core
@@ -124,9 +124,9 @@ dependencies {
     implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
     implementation("io.github.fornewid:material-motion-compose-core:2.0.1")
 
-    implementation(platform("androidx.compose:compose-bom:2026.02.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.02.01"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha14")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha15")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")
