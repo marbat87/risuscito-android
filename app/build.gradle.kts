@@ -78,12 +78,12 @@ val roomVersion = "2.8.4"
 val composepreferences = "2.0.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("com.google.android.material:material:1.14.0-alpha09")
+    implementation("com.google.android.material:material:1.14.0-alpha10")
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.activity:activity-ktx:1.12.4")
+    implementation("androidx.activity:activity-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.appcompat:appcompat-resources:1.7.1")
-    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.core:core-ktx:1.18.0")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
@@ -99,7 +99,7 @@ dependencies {
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
-    implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-auth")
@@ -124,7 +124,7 @@ dependencies {
     implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
     implementation("io.github.fornewid:material-motion-compose-core:2.0.1")
 
-    implementation(platform("androidx.compose:compose-bom:2026.02.01"))
+    implementation(platform("androidx.compose:compose-bom:2026.03.00"))
     // Material Design 3
     implementation("androidx.compose.material3:material3:1.5.0-alpha15")
     // Android Studio Preview support
