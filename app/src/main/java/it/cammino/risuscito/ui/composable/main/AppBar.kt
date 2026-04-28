@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui.composable.main
 
 import android.content.SharedPreferences
+import android.os.Bundle
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
@@ -64,7 +65,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.compose.AndroidFragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
@@ -499,10 +499,10 @@ private fun ExpandedSarchBarContent(
             )
         }
         AndroidFragment<SimpleIndexFragment>(
-            arguments = bundleOf(
-                SimpleIndexFragment.INDICE_LISTA to 0,
-                SimpleIndexFragment.IS_SEARCH to true
-            )
+            arguments = Bundle().apply {
+                putInt(SimpleIndexFragment.INDICE_LISTA, 0)
+                putBoolean(SimpleIndexFragment.IS_SEARCH, true)
+            }
         )
     }
 }

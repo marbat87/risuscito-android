@@ -30,6 +30,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             ndk {
                 debugSymbolLevel = "FULL"
@@ -78,7 +79,7 @@ val roomVersion = "2.8.4"
 val composepreferences = "2.0.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
-    implementation("com.google.android.material:material:1.14.0-alpha10")
+    implementation("com.google.android.material:material:1.14.0-beta01")
     implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.activity:activity-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
@@ -91,22 +92,22 @@ dependencies {
     implementation("androidx.media:media:1.7.1")
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.11.1")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.gms:play-services-auth:21.5.1")
-    implementation("androidx.credentials:credentials:1.5.0")
-    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation("androidx.credentials:credentials:1.6.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.6.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
-    implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.code.gson:gson:2.13.2")
+    implementation("com.google.code.gson:gson:2.14.0")
     implementation("com.leinardi.android:speed-dial:3.3.0")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
     implementation("com.jakewharton:process-phoenix:3.0.0")
@@ -116,7 +117,7 @@ dependencies {
     implementation("com.google.api-client:google-api-client:2.4.0")
     implementation("io.coil-kt.coil3:coil-compose:3.4.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
-    implementation("sh.calvin.reorderable:reorderable:3.0.0")
+    implementation("sh.calvin.reorderable:reorderable:3.1.0")
     implementation("io.github.mflisar.composechangelog:core-android:3.0.0")
     implementation("io.github.mflisar.composechangelog:statesaver-preferences-android:3.0.0") // core
     implementation("io.github.mflisar.composepreferences:core:$composepreferences") // modules
@@ -124,9 +125,9 @@ dependencies {
     implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
     implementation("io.github.fornewid:material-motion-compose-core:2.0.1")
 
-    implementation(platform("androidx.compose:compose-bom:2026.03.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.04.01"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha15")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha18")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")
@@ -142,6 +143,6 @@ dependencies {
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
     implementation("androidx.compose.material3.adaptive:adaptive-navigation")
     implementation("androidx.compose.ui:ui-text-google-fonts")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.9.7")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.9.8")
     implementation("androidx.fragment:fragment-compose:1.8.9")
 }

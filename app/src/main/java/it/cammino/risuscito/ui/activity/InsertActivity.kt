@@ -50,7 +50,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.compose.AndroidFragment
 import androidx.preference.PreferenceManager
 import com.google.firebase.Firebase
@@ -285,11 +284,11 @@ class InsertActivity : ThemeableActivity() {
                                         listPane = {
                                             Box(modifier = Modifier.preferredWidth(0.5f)) {
                                                 AndroidFragment<SimpleIndexFragment>(
-                                                    arguments = bundleOf(
-                                                        SimpleIndexFragment.INDICE_LISTA to 3,
-                                                        SimpleIndexFragment.IS_SEARCH to true,
-                                                        SimpleIndexFragment.IS_INSERT to true
-                                                    )
+                                                    arguments = Bundle().apply {
+                                                        putInt(SimpleIndexFragment.INDICE_LISTA, 3)
+                                                        putBoolean(SimpleIndexFragment.IS_SEARCH, true)
+                                                        putBoolean(SimpleIndexFragment.IS_INSERT, true)
+                                                    }
                                                 )
                                             }
                                         },
@@ -323,11 +322,11 @@ class InsertActivity : ThemeableActivity() {
                                     )
                                 } else {
                                     AndroidFragment<SimpleIndexFragment>(
-                                        arguments = bundleOf(
-                                            SimpleIndexFragment.INDICE_LISTA to 3,
-                                            SimpleIndexFragment.IS_SEARCH to true,
-                                            SimpleIndexFragment.IS_INSERT to true
-                                        )
+                                        arguments = Bundle().apply {
+                                            putInt(SimpleIndexFragment.INDICE_LISTA, 3)
+                                            putBoolean(SimpleIndexFragment.IS_SEARCH, true)
+                                            putBoolean(SimpleIndexFragment.IS_INSERT, true)
+                                        }
                                     )
                                 }
                             }

@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui.composable
 
 import android.util.Log
+import android.os.Bundle
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -71,7 +72,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import androidx.core.os.bundleOf
 import androidx.core.view.postDelayed
 import androidx.fragment.compose.AndroidFragment
 import it.cammino.risuscito.R
@@ -555,11 +555,11 @@ fun ClassicBackNavitagionButton(onBackPressedAction: () -> Unit) {
 @Composable
 fun CantoView(canto: CantoViewData) {
     AndroidFragment<CantoFragment>(
-        arguments = bundleOf(
-            CantoFragment.ARG_ID_CANTO to canto.idCanto,
-            CantoFragment.ARG_NUM_PAGINA to canto.pagina,
-            CantoFragment.ARG_ON_ACTIVITY to canto.inActivity
-        ),
+        arguments = Bundle().apply {
+            putInt(CantoFragment.ARG_ID_CANTO, canto.idCanto)
+            putString(CantoFragment.ARG_NUM_PAGINA, canto.pagina)
+            putBoolean(CantoFragment.ARG_ON_ACTIVITY, canto.inActivity)
+        },
         modifier = Modifier.fillMaxSize()
     )
 }

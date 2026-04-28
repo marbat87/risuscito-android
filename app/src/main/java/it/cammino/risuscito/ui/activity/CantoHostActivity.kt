@@ -6,7 +6,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.core.os.bundleOf
 import androidx.fragment.compose.AndroidFragment
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CantoFragment
@@ -32,9 +31,11 @@ class CantoHostActivity : ThemeableActivity() {
         setContent {
             RisuscitoTheme {
                 AndroidFragment<CantoFragment>(
-                    arguments = bundleOf(CantoFragment.ARG_ID_CANTO to viewModel.idCanto,
-                        CantoFragment.ARG_NUM_PAGINA to viewModel.pagina,
-                        CantoFragment.ARG_ON_ACTIVITY to viewModel.inActivity),
+                    arguments = Bundle().apply {
+                        putInt(CantoFragment.ARG_ID_CANTO, viewModel.idCanto)
+                        putString(CantoFragment.ARG_NUM_PAGINA, viewModel.pagina)
+                        putBoolean(CantoFragment.ARG_ON_ACTIVITY, viewModel.inActivity)
+                    },
                     modifier = Modifier.fillMaxSize()
                 )
             }

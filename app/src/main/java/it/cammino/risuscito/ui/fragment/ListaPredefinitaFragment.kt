@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -116,11 +115,11 @@ class ListaPredefinitaFragment : Fragment(), ActionModeFragment, FabActionsFragm
                                     it.launchForResultWithAnimation(
                                         startListInsertForResult,
                                         Intent(it, InsertActivity::class.java).putExtras(
-                                            bundleOf(
-                                                InsertActivity.FROM_ADD to 1,
-                                                InsertActivity.ID_LISTA to mCantiViewModel.defaultListaId,
-                                                InsertActivity.POSITION to idPosizione
-                                            )
+                                            Bundle().apply {
+                                                putInt(InsertActivity.FROM_ADD, 1)
+                                                putInt(InsertActivity.ID_LISTA, mCantiViewModel.defaultListaId)
+                                                putInt(InsertActivity.POSITION, idPosizione)
+                                            }
                                         )
                                     )
                                 }

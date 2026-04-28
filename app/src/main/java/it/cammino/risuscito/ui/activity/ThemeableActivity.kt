@@ -21,7 +21,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.edit
 import androidx.core.net.toUri
-import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -676,11 +675,11 @@ abstract class ThemeableActivity : AppCompatActivity() {
         mViewModel.cantoData.value = CantoViewData(idCanto, numPagina.orEmpty())
 
         if (forceOpenActivity) {
-            val args = bundleOf(
-                CantoFragment.ARG_NUM_PAGINA to numPagina,
-                CantoFragment.ARG_ID_CANTO to idCanto,
-                CantoFragment.ARG_ON_ACTIVITY to true
-            )
+            val args = Bundle().apply {
+                putString(CantoFragment.ARG_NUM_PAGINA, numPagina)
+                putInt(CantoFragment.ARG_ID_CANTO, idCanto)
+                putBoolean(CantoFragment.ARG_ON_ACTIVITY, true)
+            }
             val intent = Intent(this, CantoHostActivity::class.java)
             intent.putExtras(args)
             startActivityWithTransition(intent)

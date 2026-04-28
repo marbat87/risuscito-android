@@ -23,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -97,7 +96,9 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                         when (page) {
                             0, 1 ->
                                 AndroidFragment<ListaPredefinitaFragment>(
-                                    arguments = bundleOf(ListaPredefinitaFragment.INDICE_LISTA to page + 1),
+                                    arguments = Bundle().apply {
+                                        putInt(ListaPredefinitaFragment.INDICE_LISTA, page + 1)
+                                    },
                                     onUpdate = {
                                         fragmentsList[page] = it
                                     }
@@ -105,7 +106,9 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
 
                             else ->
                                 AndroidFragment<ListaPersonalizzataFragment>(
-                                    arguments = bundleOf(ListaPersonalizzataFragment.INDICE_LISTA to idListe[page - 2]),
+                                    arguments = Bundle().apply {
+                                        putInt(ListaPersonalizzataFragment.INDICE_LISTA, idListe[page - 2])
+                                    },
                                     onUpdate = {
                                         fragmentsList[page] = it
                                     }
@@ -164,10 +167,10 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                                     Intent(
                                         act, CreaListaActivity::class.java
                                     ).putExtras(
-                                        bundleOf(
-                                            LIST_TITLE to text,
-                                            EDIT_EXISTING_LIST to false
-                                        )
+                                        Bundle().apply {
+                                            putString(LIST_TITLE, text)
+                                            putBoolean(EDIT_EXISTING_LIST, false)
+                                        }
                                     )
                                 )
                             }
@@ -421,10 +424,10 @@ class CustomListsFragment : RisuscitoFragment(), SnackBarFragment,
                         startListEditForResult, Intent(
                             act, CreaListaActivity::class.java
                         ).putExtras(
-                            bundleOf(
-                                ID_DA_MODIF to idListe[sharedTabViewModel.tabsSelectedIndex.intValue - 2],
-                                EDIT_EXISTING_LIST to true
-                            )
+                            Bundle().apply {
+                                putInt(ID_DA_MODIF, idListe[sharedTabViewModel.tabsSelectedIndex.intValue - 2])
+                                putBoolean(EDIT_EXISTING_LIST, true)
+                            }
                         )
                     )
                 }

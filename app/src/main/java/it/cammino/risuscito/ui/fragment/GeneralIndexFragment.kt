@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.compose.AndroidFragment
 import androidx.lifecycle.lifecycleScope
@@ -52,17 +51,23 @@ class GeneralIndexFragment : RisuscitoFragment() {
                         when (page) {
                             0, 1 ->
                                 AndroidFragment<SimpleIndexFragment>(
-                                    arguments = bundleOf(SimpleIndexFragment.INDICE_LISTA to page)
+                                    arguments = Bundle().apply {
+                                        putInt(SimpleIndexFragment.INDICE_LISTA, page)
+                                    }
                                 )
 
                             2 ->
                                 AndroidFragment<SectionedIndexFragment>(
-                                    arguments = bundleOf(SectionedIndexFragment.INDICE_LISTA to 4)
+                                    arguments = Bundle().apply {
+                                        putInt(SectionedIndexFragment.INDICE_LISTA, 4)
+                                    }
                                 )
 
                             3 ->
                                 AndroidFragment<SimpleIndexFragment>(
-                                    arguments = bundleOf(SimpleIndexFragment.INDICE_LISTA to 2)
+                                    arguments = Bundle().apply {
+                                        putInt(SimpleIndexFragment.INDICE_LISTA, 2)
+                                    }
                                 )
                         }
                     }

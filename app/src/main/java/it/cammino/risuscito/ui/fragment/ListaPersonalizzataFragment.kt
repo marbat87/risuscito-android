@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -109,11 +108,11 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                                     it.launchForResultWithAnimation(
                                         startListInsertForResult,
                                         Intent(it, InsertActivity::class.java).putExtras(
-                                            bundleOf(
-                                                InsertActivity.FROM_ADD to 0,
-                                                InsertActivity.ID_LISTA to mCantiViewModel.listaPersonalizzataId,
-                                                InsertActivity.POSITION to idPosizione
-                                            )
+                                            Bundle().apply {
+                                                putInt(InsertActivity.FROM_ADD, 0)
+                                                putInt(InsertActivity.ID_LISTA, mCantiViewModel.listaPersonalizzataId)
+                                                putInt(InsertActivity.POSITION, idPosizione)
+                                            }
                                         )
                                     )
                                 }
