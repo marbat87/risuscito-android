@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -89,6 +90,10 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                 val hasTwoPanes = hasTwoPanes()
 
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
+
+                LaunchedEffect(state.canScrollForward, state.canScrollBackward) {
+                    sharedScrollViewModel.canScroll.value = state.canScrollForward || state.canScrollBackward
+                }
 
                 Box(
                     modifier = Modifier
@@ -190,7 +195,6 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                 BackHandler(backCallbackEnabled.value) {
                     Log.d(TAG, "handleOnBackPressed")
                     mMainActivity?.destroyActionMode()
-                    mMainActivity?.expandToolbar()
                 }
 
             }

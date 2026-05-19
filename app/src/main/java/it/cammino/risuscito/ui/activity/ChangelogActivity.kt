@@ -3,7 +3,6 @@ package it.cammino.risuscito.ui.activity
 import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,10 +31,11 @@ import com.michaelflisar.composechangelog.DefaultVersionFormatter
 import com.michaelflisar.composechangelog.classes.rememberChangelogState
 import com.michaelflisar.composechangelog.setup
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.composable.ClassicBackNavitagionButton
+import it.cammino.risuscito.ui.composable.ClassicBackNavigationButton
 import it.cammino.risuscito.ui.composable.layoutMargins
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
+import it.cammino.risuscito.utils.extension.enableEdgeToEdgeWrapper
 import it.cammino.risuscito.utils.extension.slideOutRight
 
 class ChangelogActivity : AppCompatActivity() {
@@ -45,7 +45,7 @@ class ChangelogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
+        enableEdgeToEdgeWrapper()
 
         setContent {
             val state = rememberChangelogState()
@@ -67,7 +67,7 @@ class ChangelogActivity : AppCompatActivity() {
                         TopAppBar(
                             title = { Text(stringResource(id = R.string.changelog)) },
                             navigationIcon = {
-                                ClassicBackNavitagionButton(
+                                ClassicBackNavigationButton(
                                     onBackPressedAction = { onBackPressedAction() })
                             },
                             scrollBehavior = scrollBehavior,

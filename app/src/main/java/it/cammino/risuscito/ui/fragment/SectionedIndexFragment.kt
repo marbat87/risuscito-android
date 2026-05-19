@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -77,12 +78,15 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
             setContent {
                 val state = rememberLazyListState()
                 val localItems by mCantiViewModel.modelSectionedItemsResult.observeAsState()
-//                val coroutineScope = rememberCoroutineScope()
                 val expandedItem = remember { mutableIntStateOf(-1) }
 
                 val hasTwoPanes = hasTwoPanes()
 
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
+
+                LaunchedEffect(state.canScrollForward, state.canScrollBackward) {
+                    sharedScrollViewModel.canScroll.value = state.canScrollForward || state.canScrollBackward
+                }
 
                 val rememberedOnItemClick = remember<(RisuscitoListItem) -> Unit> {
                     { item ->

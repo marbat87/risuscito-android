@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -107,6 +108,13 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
                 val isSearch = arguments?.getBoolean(IS_SEARCH, false) == true
+
+                if (!isSearch) {
+                    LaunchedEffect(state.canScrollForward, state.canScrollBackward) {
+                        sharedScrollViewModel.canScroll.value =
+                            state.canScrollForward || state.canScrollBackward
+                    }
+                }
 
                 val isInsert = arguments?.getBoolean(IS_INSERT, false) == true
 

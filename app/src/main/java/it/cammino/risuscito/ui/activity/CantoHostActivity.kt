@@ -2,7 +2,6 @@ package it.cammino.risuscito.ui.activity
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
@@ -10,6 +9,7 @@ import androidx.fragment.compose.AndroidFragment
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
+import it.cammino.risuscito.utils.extension.enableEdgeToEdgeWrapper
 
 class CantoHostActivity : ThemeableActivity() {
 
@@ -19,7 +19,7 @@ class CantoHostActivity : ThemeableActivity() {
 //        setEnterTransition()
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
+        enableEdgeToEdgeWrapper()
 
         if (viewModel.idCanto == 0) {
             viewModel.idCanto = this.intent.extras?.getInt(CantoFragment.ARG_ID_CANTO) ?: 0

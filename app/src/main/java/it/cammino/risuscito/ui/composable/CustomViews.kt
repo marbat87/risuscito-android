@@ -490,8 +490,10 @@ fun ScrollPlayerView(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .height(56.dp)
+            .background(MaterialTheme.colorScheme.surfaceContainer),
+        verticalAlignment = Alignment.CenterVertically,
+
     ) {
         Spacer(modifier = Modifier.width(5.dp))
         Text(
@@ -531,7 +533,7 @@ fun ScrollPlayerView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassicBackNavitagionButton(onBackPressedAction: () -> Unit) {
+fun ClassicBackNavigationButton(onBackPressedAction: () -> Unit) {
 
     TooltipBox(
         positionProvider =

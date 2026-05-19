@@ -97,6 +97,8 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
 
                 val hasTwoPanes = hasTwoPanes()
 
+                val state = rememberLazyListState()
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -113,6 +115,10 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                 !hasTwoPanes
                             )
                         }
+                    }
+
+                    LaunchedEffect(state.canScrollForward, state.canScrollBackward) {
+                        sharedScrollViewModel.canScroll.value = state.canScrollForward || state.canScrollBackward
                     }
 
                     AnimatedFadeContent(viewMode)
@@ -135,7 +141,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                                             ?: Modifier
                                     )
                                 LazyColumn(
-                                    state = rememberLazyListState(),
+                                    state = state,
                                     modifier = listModifier,
                                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
                                 ) {
@@ -301,7 +307,6 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                 BackHandler(backCallbackEnabled.value) {
                     Log.d(TAG, "handleOnBackPressed")
                     mMainActivity?.destroyActionMode()
-                    mMainActivity?.expandToolbar()
                     initFab()
                 }
 

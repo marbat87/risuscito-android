@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,6 +56,7 @@ import it.cammino.risuscito.ui.composable.hasNavigationBar
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.Destination
 import it.cammino.risuscito.ui.composable.main.MainScreen
+import it.cammino.risuscito.ui.composable.main.NavigationBarProtection
 import it.cammino.risuscito.ui.composable.main.NavigationScreen
 import it.cammino.risuscito.ui.composable.main.RisuscitoSnackBar
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
@@ -72,6 +72,7 @@ import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
 import it.cammino.risuscito.utils.extension.convertTabs
 import it.cammino.risuscito.utils.extension.convertiBarre
+import it.cammino.risuscito.utils.extension.enableEdgeToEdgeWrapper
 import it.cammino.risuscito.utils.extension.queryIntentActivities
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
@@ -156,7 +157,7 @@ class MainActivity : ThemeableActivity() {
 
         // enableEdgeToEdge sets window.isNavigationBarContrastEnforced = true
         // which is used to add a translucent scrim to three-button navigation
-        enableEdgeToEdge()
+        enableEdgeToEdgeWrapper()
 
         setContent {
 
@@ -343,6 +344,9 @@ class MainActivity : ThemeableActivity() {
 
                 // After drawing main content, draw status bar protection
                 StatusBarProtection(if (isActionMode.value) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer)
+
+                if (hasNavigationBar())
+                    NavigationBarProtection()
 
             }
 
@@ -886,6 +890,7 @@ class MainActivity : ThemeableActivity() {
     fun destroyActionMode() {
         isActionMode.value = false
         actionModeFragment?.destroyActionMode()
+        expandToolbar()
     }
 
     fun setFabActionsFragment(fragment: FabActionsFragment?) {

@@ -3,7 +3,6 @@ package it.cammino.risuscito.ui.activity
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +31,7 @@ import it.cammino.risuscito.ui.composable.dialogs.ProgressDialog
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.SettingsFragment
+import it.cammino.risuscito.utils.extension.enableEdgeToEdgeWrapper
 import it.cammino.risuscito.utils.extension.slideOutRight
 
 class SettingsActivity : ThemeableActivity() {
@@ -40,7 +40,7 @@ class SettingsActivity : ThemeableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
+        enableEdgeToEdgeWrapper()
 
         setContent {
             RisuscitoTheme {

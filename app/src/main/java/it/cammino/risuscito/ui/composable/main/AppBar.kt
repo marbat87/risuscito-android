@@ -53,6 +53,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -78,6 +80,24 @@ import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+
+@Composable
+fun NavigationBarProtection(
+    color: Color = MaterialTheme.colorScheme.surfaceContainer,
+) {
+    val navigationBars = WindowInsets.navigationBars
+    val density = LocalDensity.current
+    Canvas(Modifier.fillMaxSize()) {
+        val height = navigationBars.getBottom(density).toFloat()
+        if (height > 0) {
+            drawRect(
+                color = color,
+                topLeft = Offset(0f, size.height - height),
+                size = Size(size.width, height)
+            )
+        }
+    }
+}
 
 enum class ActionModeItem(
     val label: Int,

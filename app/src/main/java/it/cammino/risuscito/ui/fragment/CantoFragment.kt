@@ -97,6 +97,7 @@ import it.cammino.risuscito.ui.composable.dialogs.tontalitaDropDownMenu
 import it.cammino.risuscito.ui.composable.hasFiveMenuElements
 import it.cammino.risuscito.ui.composable.main.ActionModeItem
 import it.cammino.risuscito.ui.composable.main.FabActionItem
+import it.cammino.risuscito.ui.composable.main.NavigationBarProtection
 import it.cammino.risuscito.ui.composable.main.RisuscitoFab
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.main.cantoFabActions
@@ -650,6 +651,8 @@ open class CantoFragment : Fragment() {
 
                     // After drawing main content, draw status bar protection
                     StatusBarProtection()
+
+                    NavigationBarProtection()
 
                     BackHandler {
                         Log.d(TAG, "BackHandler")

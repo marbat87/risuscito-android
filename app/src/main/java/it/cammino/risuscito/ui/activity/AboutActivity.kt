@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,12 +22,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import it.cammino.risuscito.R
-import it.cammino.risuscito.ui.composable.ClassicBackNavitagionButton
+import it.cammino.risuscito.ui.composable.ClassicBackNavigationButton
 import it.cammino.risuscito.ui.composable.dialogs.WebViewDialog
 import it.cammino.risuscito.ui.composable.main.StatusBarProtection
 import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.composable.views.AppInfoScreen
 import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.utils.extension.enableEdgeToEdgeWrapper
 import it.cammino.risuscito.utils.extension.slideOutRight
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
 
@@ -38,7 +38,7 @@ class AboutActivity : ThemeableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
+        enableEdgeToEdgeWrapper()
 
         setContent {
 
@@ -63,7 +63,7 @@ class AboutActivity : ThemeableActivity() {
                                 Text(stringResource(R.string.title_activity_about))
                             },
                             navigationIcon = {
-                                ClassicBackNavitagionButton(
+                                ClassicBackNavigationButton(
                                     onBackPressedAction = { onBackPressedAction() }
                                 )
                             },

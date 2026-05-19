@@ -14,6 +14,9 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.AnimRes
 import androidx.annotation.RequiresApi
@@ -53,6 +56,22 @@ import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+
+fun ComponentActivity.enableEdgeToEdgeWrapper() {
+    enableEdgeToEdge(
+        statusBarStyle = SystemBarStyle.auto(
+            android.graphics.Color.TRANSPARENT,
+            android.graphics.Color.TRANSPARENT
+        ),
+        navigationBarStyle = SystemBarStyle.auto(
+            android.graphics.Color.TRANSPARENT,
+            android.graphics.Color.TRANSPARENT
+        )
+    )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        window.isNavigationBarContrastEnforced = false
+    }
+}
 
 @Suppress("DEPRECATION")
 private fun Resources.getSystemLocaleLegacy(): Locale {

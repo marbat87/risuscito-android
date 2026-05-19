@@ -79,7 +79,7 @@ import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.items.SwipeableRisuscitoListItem
-import it.cammino.risuscito.ui.composable.ClassicBackNavitagionButton
+import it.cammino.risuscito.ui.composable.ClassicBackNavigationButton
 import it.cammino.risuscito.ui.composable.DraggableDismissableListItem
 import it.cammino.risuscito.ui.composable.EmptyListView
 import it.cammino.risuscito.ui.composable.Hint
@@ -206,7 +206,7 @@ class CreaListaActivity : ThemeableActivity() {
                                 Text(mCreaListaViewModel.tempTitle.value)
                             },
                             navigationIcon = {
-                                ClassicBackNavitagionButton(
+                                ClassicBackNavigationButton(
                                     onBackPressedAction = { onOptionsItemSelected(ActionModeItem.CLOSE) }
                                 )
                             },
