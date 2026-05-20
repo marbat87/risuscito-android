@@ -9,21 +9,21 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
-import android.os.RemoteException
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
+import androidx.media3.session.MediaBrowser
+import androidx.media3.session.SessionToken
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
 import com.google.android.play.core.splitcompat.SplitCompat
@@ -117,34 +117,30 @@ abstract class ThemeableActivity : AppCompatActivity() {
 
         setTaskDescription(this.createTaskDescription(TAG))
 
-        // Connect a media browser just to get the media session token. There are other ways
-        // this can be done, for example by sharing the session token directly.
-        mMediaBrowser = MediaBrowserCompat(
-            this, ComponentName(
-                this, MusicService::
-                class.java
-            ), mConnectionCallback, null
-        )
-
         super.onCreate(savedInstanceState)
     }
 
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart: ")
-        try {
-            mMediaBrowser?.connect()
-        } catch (e: IllegalStateException) {
-            Log.e(TAG, "onStart: mMediaBrowser connecting", e)
-        }
+        val sessionToken = SessionToken(this, ComponentName(this, MusicService::class.java))
+        val browserFuture = MediaBrowser.Builder(this, sessionToken).buildAsync()
+        browserFuture.addListener({
+            mMediaBrowser = browserFuture.get()
+            mMediaBrowser?.addListener(mPlayerListener)
+            mViewModel.lastPlaybackState.value = mMediaBrowser?.playbackState
+            mViewModel.isPlaying.value = mMediaBrowser?.isPlaying
+            mViewModel.playerConnected.value = true
+        }, ContextCompat.getMainExecutor(this))
     }
 
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop: ")
-        mMediaBrowser?.disconnect()
-        val controller = MediaControllerCompat.getMediaController(this)
-        controller?.unregisterCallback(mMediaControllerCallback)
+        mMediaBrowser?.removeListener(mPlayerListener)
+        mMediaBrowser?.release()
+        mMediaBrowser = null
+        mViewModel.playerConnected.value = false
     }
 
     override fun onResume() {
@@ -575,62 +571,30 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     // Callback that ensures that we are showing the controls
-    private val mMediaControllerCallback = object : MediaControllerCompat.Callback() {
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            Log.d(TAG, "onPlaybackStateChanged: ${state.state}")
-            mViewModel.lastPlaybackState.value = state
+    private val mPlayerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            Log.d(TAG, "onPlaybackStateChanged: $playbackState")
+            mViewModel.lastPlaybackState.value = playbackState
         }
 
-        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-            Log.d(TAG, "onMetadataChanged")
-            if (metadata != null) {
-                mViewModel.medatadaCompat.value = metadata
-            }
-        }
-    }
-
-    private var mMediaBrowser: MediaBrowserCompat? = null
-    private val mConnectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
-        override fun onConnected() {
-            Log.d(TAG, "onConnected")
-            try {
-                mMediaBrowser?.let {
-                    val mediaController = MediaControllerCompat(
-                        this@ThemeableActivity, it.sessionToken
-                    )
-                    MediaControllerCompat.setMediaController(
-                        this@ThemeableActivity,
-                        mediaController
-                    )
-                    mediaController.registerCallback(mMediaControllerCallback)
-                    mViewModel.lastPlaybackState.value = mediaController.playbackState
-                    mViewModel.playerConnected.value = true
-                } ?: Log.e(TAG, "onConnected: mMediaBrowser is NULL")
-            } catch (e: RemoteException) {
-                Log.e(TAG, "onConnected: could not connect media controller", e)
-            }
-
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            Log.d(TAG, "onIsPlayingChanged: $isPlaying")
+            mViewModel.isPlaying.value = isPlaying
         }
 
-        override fun onConnectionFailed() {
-            Log.e(TAG, "onConnectionFailed")
-        }
-
-        override fun onConnectionSuspended() {
-            Log.d(TAG, "onConnectionSuspended")
-            val mediaController =
-                MediaControllerCompat.getMediaController(this@ThemeableActivity)
-            mediaController?.unregisterCallback(mMediaControllerCallback)
-            MediaControllerCompat.setMediaController(this@ThemeableActivity, null)
+        override fun onMediaMetadataChanged(metadata: MediaMetadata) {
+            Log.d(TAG, "onMediaMetadataChanged")
+            mViewModel.medatadaCompat.value = metadata
         }
     }
+
+    private var mMediaBrowser: MediaBrowser? = null
+
+    fun getMediaBrowser(): MediaBrowser? = mMediaBrowser
 
     fun stopMedia() {
         Log.d(TAG, "stopMedia: ")
-        if (mViewModel.lastPlaybackState.value?.state != PlaybackStateCompat.STATE_STOPPED) {
-            val controller = MediaControllerCompat.getMediaController(this)
-            controller?.transportControls?.stop()
-        }
+        mMediaBrowser?.stop()
     }
 
     fun showSnackBar(
@@ -671,6 +635,8 @@ abstract class ThemeableActivity : AppCompatActivity() {
     ) {
 
         Firebase.crashlytics.log("open_canto - function: ${function.orEmpty()} - idCanto: $idCanto - numPagina: ${numPagina.orEmpty()} - onActivity: $forceOpenActivity")
+
+        mMediaBrowser?.seekToDefaultPosition()
 
         mViewModel.cantoData.value = CantoViewData(idCanto, numPagina.orEmpty())
 

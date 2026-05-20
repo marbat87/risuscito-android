@@ -1,10 +1,9 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
+import androidx.media3.common.MediaMetadata
 import it.cammino.risuscito.items.CantoViewData
 
 class MainActivityViewModel(application: Application) : DialogManagerViewModel(application) {
@@ -14,8 +13,9 @@ class MainActivityViewModel(application: Application) : DialogManagerViewModel(a
     var loginState = MutableLiveData(LOGIN_STATE_STARTED)
     var profileAction = ProfileAction.NONE
     var catalogRefreshReady = MutableLiveData(true)
-    var lastPlaybackState = MutableLiveData<PlaybackStateCompat>()
-    var medatadaCompat = MutableLiveData<MediaMetadataCompat>()
+    var lastPlaybackState = MutableLiveData<Int>() // Using Player.State constants
+    var isPlaying = MutableLiveData<Boolean>()
+    var medatadaCompat = MutableLiveData<MediaMetadata>()
     var playerConnected = MutableLiveData(false)
 
     val cantoData = mutableStateOf(CantoViewData())

@@ -89,7 +89,9 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.media:media:1.8.0")
+    implementation("androidx.media3:media3-exoplayer:1.10.1")
+    implementation("androidx.media3:media3-session:1.10.1")
+    implementation("androidx.media3:media3-common:1.10.1")
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.work:work-runtime-ktx:2.11.2")
@@ -125,9 +127,9 @@ dependencies {
     implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
     implementation("io.github.fornewid:material-motion-compose-core:2.0.1")
 
-    implementation(platform("androidx.compose:compose-bom:2026.05.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.05.01"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha19")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha20")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")

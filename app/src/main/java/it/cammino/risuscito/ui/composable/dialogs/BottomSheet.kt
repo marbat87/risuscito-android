@@ -16,7 +16,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,7 +46,7 @@ fun RisuscitoBottomSheet(
     pm: PackageManager,
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
     val scope = rememberCoroutineScope()
 
     if (bottomSheetViewModel.showBottomSheet.value) {
@@ -106,7 +107,7 @@ fun ChangelogBottomSheet() {
     // Usa l'istanza singleton invece di crearne una nuova
     val changelogStateSaver = application.changelogStateSaver
 
-    // optional - here you can apply some customisations like changelog resource id, localized texts, styles, filter, sorter, ...
+    // optional - here you can apply some customizations like changelog resource id, localized texts, styles, filter, sorter, ...
     val setup = ChangelogDefaults.setup(
         context = context,
         versionFormatter = CHANGELOG_FORMATTER

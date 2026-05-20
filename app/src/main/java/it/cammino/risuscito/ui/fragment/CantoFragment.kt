@@ -12,11 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import android.provider.MediaStore
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -70,6 +66,8 @@ import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.Player
+import androidx.media3.session.SessionCommand
 import androidx.preference.PreferenceManager
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.CustomKeysAndValues
@@ -361,30 +359,20 @@ open class CantoFragment : Fragment() {
                                                     playButtonMode = playButtonMode,
                                                     playButtonAnimated = playButtonAnimated.value,
                                                     onPlayButtonClick = {
-                                                        val controller =
-                                                            MediaControllerCompat.getMediaController(
-                                                                requireActivity()
-                                                            )
-                                                        val stateObj = controller.playbackState
-                                                        val state = stateObj?.state
-                                                            ?: PlaybackStateCompat.STATE_NONE
+                                                        val browser = mMainActivity?.getMediaBrowser()
+                                                        val isPlaying = browser?.isPlaying ?: false
                                                         Log.d(
                                                             TAG,
-                                                            "playPause: Button pressed, in state $state"
+                                                            "playPause: Button pressed, isPlaying $isPlaying"
                                                         )
 
-                                                        when (state) {
-                                                            PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.STATE_NONE -> {
+                                                        if (isPlaying) {
+                                                            pauseMedia()
+                                                        } else {
+                                                            if (browser?.playbackState == Player.STATE_IDLE || browser?.playbackState == Player.STATE_ENDED)
                                                                 playFromId(mCantiViewModel.idCanto.toString())
-                                                            }
-
-                                                            PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.STATE_CONNECTING -> {
-                                                                pauseMedia()
-                                                            }
-
-                                                            PlaybackStateCompat.STATE_PAUSED -> {
+                                                            else
                                                                 playMedia()
-                                                            }
                                                         }
                                                     },
                                                     playButtonEnabled = playButtonEnabled.value,
@@ -394,11 +382,7 @@ open class CantoFragment : Fragment() {
                                                     seekBarEnabled = seekBarEnabled.value,
                                                     onValueChange = { newValue ->
                                                         stopSeekbarUpdate()
-                                                        val controller =
-                                                            MediaControllerCompat.getMediaController(
-                                                                requireActivity()
-                                                            )
-                                                        controller?.transportControls?.seekTo(
+                                                        mMainActivity?.getMediaBrowser()?.seekTo(
                                                             newValue.toLong()
                                                         )
                                                         scheduleSeekbarUpdate()
@@ -781,40 +765,42 @@ open class CantoFragment : Fragment() {
             updatePlayBackStatus(it)
         }
 
+        mainActivityViewModel.isPlaying.observe(viewLifecycleOwner) {
+            showPlaying(it)
+            if (it) scheduleSeekbarUpdate() else stopSeekbarUpdate()
+        }
+
         mainActivityViewModel.medatadaCompat.observe(viewLifecycleOwner) {
             updateSeekBarValueTo(
-                it.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toFloat()
+                mMainActivity?.getMediaBrowser()?.duration?.toFloat() ?: 0f
             )
             enableSeekbar(true)
         }
 
         mainActivityViewModel.playerConnected.observe(viewLifecycleOwner) {
-            if (mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
+            if (mainActivityViewModel.isPlaying.value == true) {
                 scheduleSeekbarUpdate()
             }
-            showPlaying(mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING)
-            enableSeekbar(
-                mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING
-                        || mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PAUSED
-            )
+            showPlaying(mainActivityViewModel.isPlaying.value == true)
 
-            mainActivityViewModel.medatadaCompat.value?.let {
+            val browser = mMainActivity?.getMediaBrowser()
+            val isPlayingOrPaused = browser?.playWhenReady == true &&
+                (browser.playbackState == Player.STATE_READY || browser.playbackState == Player.STATE_BUFFERING)
+
+            enableSeekbar(isPlayingOrPaused)
+
+            mMainActivity?.getMediaBrowser()?.let {
                 Log.d(
                     TAG,
-                    "onConnected: duration ${it.getLong(MediaMetadataCompat.METADATA_KEY_DURATION)}"
+                    "onConnected: duration ${it.duration}"
                 )
-                updateSeekBarValueTo(
-                    it.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toFloat()
+                updateSeekBarValueTo(it.duration.toFloat())
+                Log.d(
+                    TAG,
+                    "onConnected: currentPosition ${it.currentPosition}"
                 )
+                updateSeekBarValue(it.currentPosition.toFloat())
             }
-
-            Log.d(
-                TAG,
-                "onConnected: mLastPlaybackState.getPosition() ${mainActivityViewModel.lastPlaybackState.value?.position}"
-            )
-            updateSeekBarValue(
-                mainActivityViewModel.lastPlaybackState.value?.position?.toFloat() ?: 0F
-            )
         }
 
         mainActivityViewModel.catalogRefreshReady.observe(viewLifecycleOwner) {
@@ -858,40 +844,33 @@ open class CantoFragment : Fragment() {
         }
     }
 
-    private fun updatePlayBackStatus(state: PlaybackStateCompat) {
-        Log.d(TAG, "updatePlayBackStatus - state: ${state.state}")
+    private fun updatePlayBackStatus(state: Int) {
+        Log.d(TAG, "updatePlayBackStatus - state: $state")
         enableMusicControls(mCantiViewModel.mostraAudio)
-        when (state.state) {
-            PlaybackStateCompat.STATE_PAUSED -> {
-                stopSeekbarUpdate()
-                showPlaying(false)
-                enableSeekbar(true)
+        when (state) {
+            Player.STATE_READY -> {
+                val isPlaying = mMainActivity?.getMediaBrowser()?.isPlaying ?: false
+                if (!isPlaying) {
+                    stopSeekbarUpdate()
+                    showPlaying(false)
+                    enableSeekbar(true)
+                } else {
+                    mCantiViewModel.seekBarMode.value = PaginaRenderViewModel.SeekBarMode.SEEKBAR
+                    scheduleSeekbarUpdate()
+                    showPlaying(true)
+                    enableSeekbar(true)
+                }
             }
 
-            PlaybackStateCompat.STATE_STOPPED -> {
+            Player.STATE_IDLE, Player.STATE_ENDED -> {
                 stopSeekbarUpdate()
                 updateSeekBarValue(0F)
                 enableSeekbar(false)
                 showPlaying(false)
             }
 
-            PlaybackStateCompat.STATE_ERROR -> {
-
-                mCantiViewModel.seekBarMode.value = PaginaRenderViewModel.SeekBarMode.SEEKBAR
-                stopSeekbarUpdate()
-                updateSeekBarValue(0F)
-                enableSeekbar(false)
-                showPlaying(false)
-                Log.e(TAG, "onPlaybackStateChanged: " + state.errorMessage)
-                showSnackBar(state.errorMessage.toString())
-            }
-
-            PlaybackStateCompat.STATE_PLAYING -> {
-
-                mCantiViewModel.seekBarMode.value = PaginaRenderViewModel.SeekBarMode.SEEKBAR
-                scheduleSeekbarUpdate()
-                showPlaying(true)
-                enableSeekbar(true)
+            Player.STATE_BUFFERING -> {
+                mCantiViewModel.seekBarMode.value = PaginaRenderViewModel.SeekBarMode.LOADINGBAR
             }
 
             else -> {
@@ -1210,35 +1189,37 @@ open class CantoFragment : Fragment() {
 
     private fun playMedia() {
         Log.d(TAG, "playMedia: ")
-        val controller = MediaControllerCompat.getMediaController(requireActivity())
-        controller?.transportControls?.play()
+        mMainActivity?.getMediaBrowser()?.play()
     }
 
     private fun pauseMedia() {
         Log.d(TAG, "pauseMedia: ")
-        val controller = MediaControllerCompat.getMediaController(requireActivity())
-        controller?.transportControls?.pause()
+        mMainActivity?.getMediaBrowser()?.pause()
     }
 
     private fun stopMedia() {
         Log.d(TAG, "stopMedia: ")
-        if (mainActivityViewModel.lastPlaybackState.value?.state != PlaybackStateCompat.STATE_STOPPED) {
-            val controller = MediaControllerCompat.getMediaController(requireActivity())
-            controller?.transportControls?.stop()
-        }
+        mMainActivity?.getMediaBrowser()?.stop()
     }
 
     private fun playFromId(id: String) {
         mCantiViewModel.seekBarMode.value = PaginaRenderViewModel.SeekBarMode.LOADINGBAR
-        val controller = MediaControllerCompat.getMediaController(requireActivity())
-        controller?.transportControls?.playFromMediaId(id, null)
+        val browser = mMainActivity?.getMediaBrowser()
+        val mediaItem = androidx.media3.common.MediaItem.Builder()
+            .setMediaId(id)
+            .build()
+        browser?.setMediaItem(mediaItem)
+        browser?.prepare()
+        browser?.play()
     }
 
     private fun refreshCatalog() {
         Log.d(TAG, "refreshCatalog")
         playButtonEnabled.value = false
-        val controller = MediaControllerCompat.getMediaController(requireActivity())
-        controller?.transportControls?.sendCustomAction(MusicService.ACTION_REFRESH, null)
+        mMainActivity?.getMediaBrowser()?.sendCustomCommand(
+            SessionCommand(MusicService.ACTION_REFRESH, Bundle.EMPTY),
+            Bundle.EMPTY
+        )
     }
 
     private fun scheduleSeekbarUpdate() {
@@ -1272,21 +1253,8 @@ open class CantoFragment : Fragment() {
     }
 
     private fun updateProgress() {
-        if (mainActivityViewModel.lastPlaybackState.value == null) {
-            return
-        }
-        var currentPosition = mainActivityViewModel.lastPlaybackState.value?.position ?: 0
-        if (mainActivityViewModel.lastPlaybackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
-            // Calculate the elapsed time between the last position update and now and unless
-            // paused, we can assume (delta * speed) + current position is approximately the
-            // latest position. This ensures that we do not repeatedly call the getPlaybackState()
-            // on MediaControllerCompat.
-            val timeDelta =
-                SystemClock.elapsedRealtime() - (mainActivityViewModel.lastPlaybackState.value?.lastPositionUpdateTime
-                    ?: 0L)
-            currentPosition += (timeDelta.toInt() * (mainActivityViewModel.lastPlaybackState.value?.playbackSpeed
-                ?: 0F)).toLong()
-        }
+        val browser = mMainActivity?.getMediaBrowser() ?: return
+        val currentPosition = browser.currentPosition
         enableSeekbar(true)
         updateSeekBarValue(currentPosition.toFloat())
     }

@@ -3,12 +3,11 @@ package it.cammino.risuscito.utils
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ContentResolver
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -304,49 +303,12 @@ object Utility {
         )
     }
 
-    private fun calculateInSampleSize(
-        options: BitmapFactory.Options,
-        reqWidth: Int,
-        reqHeight: Int
-    ): Int {
-        // Raw height and width of image
-        val (height: Int, width: Int) = options.run { outHeight to outWidth }
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-
-            val halfHeight: Int = height / 2
-            val halfWidth: Int = width / 2
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-
-        return inSampleSize
-    }
-
-    internal fun decodeSampledBitmapFromResource(
-        res: Resources,
-        resId: Int,
-        reqWidth: Int,
-        reqHeight: Int
-    ): Bitmap {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        return BitmapFactory.Options().run {
-            inJustDecodeBounds = true
-            BitmapFactory.decodeResource(res, resId, this)
-
-            // Calculate inSampleSize
-            inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
-
-            // Decode bitmap with inSampleSize set
-            inJustDecodeBounds = false
-
-            BitmapFactory.decodeResource(res, resId, this)
-        }
+    fun getResourceUri(context: Context, resId: Int): Uri {
+        return Uri.Builder()
+            .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE) // "android.resource"
+            .authority(context.packageName)
+            .appendPath(resId.toString())
+            .build()
     }
 
     private val STROKE_LETTERS: Map<String, String> = mapOf(
