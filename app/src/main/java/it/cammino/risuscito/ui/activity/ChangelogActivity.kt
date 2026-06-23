@@ -27,8 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.michaelflisar.composechangelog.Changelog
 import com.michaelflisar.composechangelog.ChangelogDefaults
-import com.michaelflisar.composechangelog.DefaultVersionFormatter
 import com.michaelflisar.composechangelog.classes.rememberChangelogState
+import com.michaelflisar.composechangelog.format.DefaultVersionFormatter
 import com.michaelflisar.composechangelog.setup
 import it.cammino.risuscito.R
 import it.cammino.risuscito.ui.composable.ClassicBackNavigationButton

@@ -138,6 +138,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import kotlin.time.Duration.Companion.milliseconds
 
 
 open class CantoFragment : Fragment() {
@@ -1490,7 +1491,7 @@ open class CantoFragment : Fragment() {
         progressDialogViewModel.buttonTextRes = 0
         progressDialogViewModel.showProgressDialog.value = true
         val pdfOutput = PdfExporter(requireContext()).exportPdf(htmlContent.value)
-        delay(1000)
+        delay(1000.milliseconds)
         progressDialogViewModel.showProgressDialog.value = false
         if (pdfOutput.isError) {
             showSnackBar("${getString(R.string.error)}: ${pdfOutput.errorMessage}")

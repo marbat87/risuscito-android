@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id("com.google.devtools.ksp") version "2.3.4" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.21" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.0" apply false
 }
 
 buildscript {
@@ -11,7 +11,7 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:9.2.1")
-        classpath("com.google.gms:google-services:4.4.4")
+        classpath("com.google.gms:google-services:4.5.0")
         classpath(kotlin("gradle-plugin", version = "2.2.10"))
         classpath("com.google.firebase:firebase-crashlytics-gradle:3.0.7")
         // NOTE: Do not place your application dependencies here; they belong
@@ -28,5 +28,6 @@ allprojects {
 }
 
 tasks.register("clean", Delete::class) {
+    description = ""
     delete(rootProject.layout.buildDirectory)
 }

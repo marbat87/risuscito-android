@@ -73,26 +73,27 @@ fun ComponentActivity.enableEdgeToEdgeWrapper() {
     }
 }
 
-@Suppress("DEPRECATION")
-private fun Resources.getSystemLocaleLegacy(): Locale {
-    return configuration.locale
-}
-
-@RequiresApi(Build.VERSION_CODES.N)
-private fun Resources.getSystemLocaleN(): Locale {
-    return configuration.locales.get(0)
-}
+//@Suppress("DEPRECATION")
+//private fun Resources.getSystemLocaleLegacy(): Locale {
+//    return configuration.locale
+//}
+//
+//@RequiresApi(Build.VERSION_CODES.N)
+//private fun Resources.getSystemLocaleN(): Locale {
+//    return configuration.locales.get(0)
+//}
 
 val Resources.systemLocale: Locale
     get() {
-        return if (OSUtils.hasN()) getSystemLocaleN()
-        else getSystemLocaleLegacy()
+        return configuration.locales.get(0)
+//        return if (OSUtils.hasN()) getSystemLocaleN()
+//        else getSystemLocaleLegacy()
     }
 
 fun Activity.startActivityWithTransition(intent: Intent) {
 //    if (OSUtils.isObySamsung()) {
-        startActivity(intent)
-        slideInRight()
+    startActivity(intent)
+    slideInRight()
 //    } else {
 //        val exit = MaterialSharedAxis(axis, true).apply {
 //            addTarget(android.R.id.content)
@@ -371,7 +372,8 @@ private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.
 }
 
 fun AppCompatActivity.launchForResultWithAnimation(
-    resultLauncher: ActivityResultLauncher<Intent>, intent: Intent) {
+    resultLauncher: ActivityResultLauncher<Intent>, intent: Intent
+) {
 //    if (OSUtils.isObySamsung()) {
     resultLauncher.launch(intent)
     slideInDown()

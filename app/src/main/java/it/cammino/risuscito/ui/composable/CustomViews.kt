@@ -1,7 +1,7 @@
 package it.cammino.risuscito.ui.composable
 
-import android.util.Log
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -83,6 +83,7 @@ import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -290,7 +291,7 @@ fun WebView(
                 val realScrollSpeed = (updatedScrollSpeed * 100).toInt()
                 Log.d("webView", "WebView: Eseguo scrollBy: $realScrollSpeed")
                 webView.scrollBy(0, realScrollSpeed)
-                delay(700) // Aspetta 700ms prima di scorrere di nuovo
+                delay(700.milliseconds) // Aspetta 700ms prima di scorrere di nuovo
             }
         }
     }

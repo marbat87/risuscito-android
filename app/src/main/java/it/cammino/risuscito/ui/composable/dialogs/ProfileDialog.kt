@@ -55,6 +55,7 @@ import it.cammino.risuscito.viewmodels.SharedProfileViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ProfileDialog(
@@ -89,7 +90,7 @@ fun ExpandedProfileDialog(
     val animateTrigger = remember { mutableStateOf(false) }
     LaunchedEffect(key1 = Unit) {
         launch {
-            delay(100)
+            delay(100.milliseconds)
             animateTrigger.value = true
         }
     }
@@ -397,7 +398,7 @@ private suspend fun startDismissWithExitAnimation(
     onDismissRequest: () -> Unit
 ) {
     animateTrigger.value = false
-    delay(300)
+    delay(300.milliseconds)
     onDismissRequest()
 }
 

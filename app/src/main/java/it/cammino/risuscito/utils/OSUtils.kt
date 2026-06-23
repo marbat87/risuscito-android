@@ -52,9 +52,9 @@ object OSUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     }
 
-    fun hasN(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-    }
+//    fun hasN(): Boolean {
+//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+//    }
 
     fun hasP(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P

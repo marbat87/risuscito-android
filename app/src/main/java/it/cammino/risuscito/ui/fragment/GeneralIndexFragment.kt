@@ -23,6 +23,7 @@ import it.cammino.risuscito.viewmodels.SharedTabViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class GeneralIndexFragment : RisuscitoFragment() {
 
@@ -118,7 +119,7 @@ class GeneralIndexFragment : RisuscitoFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            delay(500)
+            delay(500.milliseconds)
             if (sharedTabViewModel.resetTab.value) {
                 Log.d(TAG, "GeneralIndexFragment newINSTANCE")
                 sharedTabViewModel.resetTab.value = false
