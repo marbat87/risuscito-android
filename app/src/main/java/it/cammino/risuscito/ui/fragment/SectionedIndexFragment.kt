@@ -25,11 +25,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -143,7 +140,6 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                             {
                                 val itemContextMenuExpanded =
                                     remember { mutableStateOf(false) }
-                                val offset = remember { mutableStateOf(DpOffset.Zero) }
                                 var isExpanded = false
                                 if (simpleItem.itemType == ExpandableItemType.EXPANDABLE)
                                     isExpanded =
@@ -163,9 +159,6 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                                     },
                                     onHeaderClicked = rememberedOnHeaderClick,
                                     isExpanded = isExpanded,
-                                    modifier = Modifier.onSizeChanged {
-                                        offset.value = DpOffset((it.width / 12).dp, 0.dp)
-                                    }
                                 )
                                 AddToDropDownMenu(
                                     this@SectionedIndexFragment,
@@ -174,7 +167,6 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                                     SimpleDialogTag.LITURGICO_REPLACE_2,
                                     listePersonalizzate,
                                     itemContextMenuExpanded.value,
-                                    offset.value
                                 ) { itemContextMenuExpanded.value = false }
                             }
                         }

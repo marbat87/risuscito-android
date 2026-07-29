@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -50,7 +49,6 @@ fun AddToDropDownMenu(
     dialogTag2: SimpleDialogTag,
     listePersonalizzate: List<ListaPers>?,
     menuExpanded: Boolean,
-    offset: DpOffset,
     onDismissRequest: () -> Unit
 ) {
 
@@ -102,7 +100,6 @@ fun AddToDropDownMenu(
     DropdownMenuPopup(
         expanded = menuExpanded,
         onDismissRequest = { onDismissRequest() },
-        offset = offset
     ) {
 
         DropdownMenuGroup(
@@ -110,7 +107,7 @@ fun AddToDropDownMenu(
             interactionSource = groupInteractionSource,
         ) {
 
-            MenuDefaults.Label { Text(stringResource(R.string.select_canto_popup)) }
+            MenuDefaults.DropdownMenuGroupLabel { Text(stringResource(R.string.select_canto_popup)) }
             HorizontalDivider(
                 modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
             )
@@ -164,7 +161,6 @@ fun AddToDropDownMenu(
     DropdownMenuPopup(
         expanded = parolaExpanded.value,
         onDismissRequest = { parolaExpanded.value = false },
-        offset = offset
     ) {
 
         DropdownMenuGroup(
@@ -172,7 +168,7 @@ fun AddToDropDownMenu(
             interactionSource = groupInteractionSource,
         ) {
 
-            MenuDefaults.Label { Text(stringResource(R.string.title_activity_canti_parola)) }
+            MenuDefaults.DropdownMenuGroupLabel { Text(stringResource(R.string.title_activity_canti_parola)) }
             HorizontalDivider(
                 modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
             )
@@ -240,7 +236,6 @@ fun AddToDropDownMenu(
     DropdownMenuPopup(
         expanded = eucarestiaExpanded.value,
         onDismissRequest = { eucarestiaExpanded.value = false },
-        offset = offset
     ) {
 
         DropdownMenuGroup(
@@ -248,7 +243,7 @@ fun AddToDropDownMenu(
             interactionSource = groupInteractionSource,
         ) {
 
-            MenuDefaults.Label { Text(stringResource(R.string.title_activity_canti_eucarestia)) }
+            MenuDefaults.DropdownMenuGroupLabel { Text(stringResource(R.string.title_activity_canti_eucarestia)) }
             HorizontalDivider(
                 modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
             )
@@ -345,7 +340,6 @@ fun AddToDropDownMenu(
             DropdownMenuPopup(
                 expanded = (subMenuExpanded == 10 + i),
                 onDismissRequest = { subMenuExpanded = 0 },
-                offset = offset
             ) {
 
                 DropdownMenuGroup(
@@ -353,7 +347,7 @@ fun AddToDropDownMenu(
                     interactionSource = groupInteractionSource,
                 ) {
 
-                    MenuDefaults.Label { Text(liste[i].lista!!.name) }
+                    MenuDefaults.DropdownMenuGroupLabel { Text(liste[i].lista!!.name) }
                     HorizontalDivider(
                         modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
                     )
@@ -438,7 +432,7 @@ fun PassaggesDropDownMenu(
                     .padding(start = 16.dp, end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                MenuDefaults.Label { Text(stringResource(R.string.select_canto_popup)) }
+                MenuDefaults.DropdownMenuGroupLabel { Text(stringResource(R.string.select_canto_popup)) }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = { onDismissRequest() }) {
@@ -698,7 +692,6 @@ val barreDropDownMenu =
 fun CantoDropDownMenu(
     menu: Map<DropDownMenuItem, List<DropDownMenuItem>>,
     menuExpanded: Boolean,
-    offset: DpOffset = DpOffset.Zero,
     onItemClick: (DropDownMenuItem) -> Unit,
     onDismissRequest: () -> Unit
 ) {
@@ -710,7 +703,6 @@ fun CantoDropDownMenu(
     DropdownMenuPopup(
         expanded = menuExpanded,
         onDismissRequest = { onDismissRequest() },
-        offset = offset
     ) {
 
         DropdownMenuGroup(
@@ -753,7 +745,6 @@ fun CantoDropDownMenu(
             DropdownMenuPopup(
                 expanded = subMenuExpanded == item.key,
                 onDismissRequest = { subMenuExpanded = DropDownMenuItem.DEFAULT },
-                offset = offset
             ) {
 
                 DropdownMenuGroup(
@@ -761,7 +752,7 @@ fun CantoDropDownMenu(
                     interactionSource = groupInteractionSource,
                 ) {
 
-                    MenuDefaults.Label { Text(stringResource(item.key.label)) }
+                    MenuDefaults.DropdownMenuGroupLabel { Text(stringResource(item.key.label)) }
                     HorizontalDivider(
                         modifier = Modifier.padding(MenuDefaults.HorizontalDividerPadding)
                     )

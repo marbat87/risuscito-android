@@ -254,7 +254,7 @@ fun ExpandableListItem(
     onHeaderClicked: (RisuscitoListItem) -> Unit,
     onItemClick: (RisuscitoListItem) -> Unit,
     onItemLongClick: (RisuscitoListItem) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     isExpanded: Boolean
 ) {
 
