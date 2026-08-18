@@ -4,159 +4,92 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
-import androidx.core.app.ShareCompat
-import androidx.core.content.ContextCompat
-import androidx.core.view.MenuProvider
-import com.danielstone.materialaboutlibrary.ConvenienceBuilder
-import com.danielstone.materialaboutlibrary.MaterialAboutFragment
-import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
-import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
-import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
-import com.danielstone.materialaboutlibrary.model.MaterialAboutList
-import com.google.android.material.transition.MaterialSharedAxis
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
-import it.cammino.risuscito.R
+import android.view.ViewGroup
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.ui.activity.ChangelogActivity
-import it.cammino.risuscito.ui.activity.MainActivity
 import it.cammino.risuscito.ui.activity.ThemeableActivity
-import it.cammino.risuscito.utils.extension.shareThisApp
+import it.cammino.risuscito.ui.composable.views.AppInfoScreen
+import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
+import it.cammino.risuscito.viewmodels.SharedScrollViewModel
+import it.cammino.risuscito.viewmodels.WebViewDialogManagerViewModel
 
 
-class AboutFragment : MaterialAboutFragment() {
+class AboutFragment : Fragment() {
+
+    private val webViewDialogManagerViewModel: WebViewDialogManagerViewModel by activityViewModels()
+
+    private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
 
     private var mMainActivity: ThemeableActivity? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mMainActivity = activity as? ThemeableActivity
         Log.d(TAG, "Fragment: ${this::class.java.canonicalName}")
         Firebase.crashlytics.log("Fragment: ${this::class.java}")
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        mMainActivity = activity as? ThemeableActivity
 
-        //solo per tablet
-        (mMainActivity as? MainActivity)?.let {
-            it.addMenuProvider(object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    it.updateProfileImage()
-                }
+        mMainActivity?.setTabVisible(false)
+        mMainActivity?.initFab(enable = false)
+        mMainActivity?.createOptionsMenu(
+            emptyList(),
+            null
+        )
 
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    return false
-                }
-            }, viewLifecycleOwner)
-            it.setupToolbarTitle(R.string.title_activity_about)
-            it.setTabVisible(false)
-            it.enableFab(false)
-        }
-    }
+        return ComposeView(requireContext()).apply {
 
-    override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList? {
-        val builder = MaterialAboutList.Builder()
+            setContent {
 
-        context?.let { ctx ->
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                val versionName = packageInfo.versionName ?: "1.0.0"
+                val versionCode = OSUtils.getVersionCode(context)
 
-            val infoCard = MaterialAboutCard.Builder().outline(false).addItem(
-                MaterialAboutTitleItem.Builder().text(getString(R.string.app_name))
-                    .icon(R.drawable.ic_launcher_144dp).build()
-            ).addItem(
-                ConvenienceBuilder.createVersionActionItem(
-                    ctx,
-                    ContextCompat.getDrawable(ctx, R.drawable.info_24px),
-                    getString(R.string.version),
-                    true
-                )
-            ).addItem(
-                ConvenienceBuilder.createWebViewDialogItem(
-                    ctx,
-                    ContextCompat.getDrawable(ctx, R.drawable.policy_24px),
-                    getString(R.string.privacy),
-                    null,
-                    getString(R.string.privacy),
-                    "https://marbat87.altervista.org/privacy_policy.html",
-                    true,
-                    false
-                )
-            ).build()
+                val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
-            val authorCard = MaterialAboutCard.Builder().outline(false).title("Author").addItem(
-                MaterialAboutTitleItem.Builder().text("Marbat87").desc("Italy")
-                    .icon(R.drawable.ic_brand_icon).build()
-            ).addItem(
-                MaterialAboutActionItem.Builder().text(R.string.email)
-                    .subText("marbat87@outlook.it").icon(R.drawable.mail_24px)
-                    .setOnClickAction {
-                        try {
-                            ctx.startActivity(
-                                ShareCompat.IntentBuilder(ctx).setType("text/html")
-
-                                    .setSubject(getString(R.string.app_name))
-                                    .addEmailTo("marbat87@outlook.it").intent
-                            )
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Error:", e)
-                            // No activity to handle intent
-                            Toast.makeText(
-                                ctx, com.danielstone.materialaboutlibrary.R.string.mal_activity_exception, Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }.build()
-            ).build()
-
-            val miscCard = MaterialAboutCard.Builder().outline(false).addItem(
-                MaterialAboutActionItem.Builder().text(R.string.changelog)
-                    .icon(R.drawable.list_alt_24px).setOnClickAction {
-                        activity?.let {
-                            it.startActivityWithTransition(
-                                Intent(
-                                    it, ChangelogActivity::class.java
-                                ),
-                                com.google.android.material.transition.platform.MaterialSharedAxis.Y
+                val listModifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        scrollBehaviorFromSharedVM?.let {
+                            Modifier.nestedScroll(
+                                it.nestedScrollConnection
                             )
                         }
-                    }.build()
-            ).addItem(
-                ConvenienceBuilder.createRateActionItem(
-                    ctx,
-                    ContextCompat.getDrawable(ctx, R.drawable.star_24px),
-                    getString(R.string.rate_five_stars),
-                    null
-                )
-            ).addItem(
-                MaterialAboutActionItem.Builder().text(R.string.share_app)
-                    .icon(R.drawable.share_24px).setOnClickAction {
-                        ctx.startActivity(
-                            ctx.shareThisApp(getString(R.string.app_name))
+                            ?: Modifier
+                    )
+
+                AppInfoScreen(
+                    versionName = versionName,
+                    versionCode = versionCode,
+                    modifier = listModifier,
+                    onChangelogClick = {
+                        mMainActivity?.startActivityWithTransition(
+                            Intent(
+                                context, ChangelogActivity::class.java
+                            )
                         )
-                    }.build()
-            ).addItem(
-                MaterialAboutActionItem.Builder().text(R.string.update_app)
-                    .icon(R.drawable.file_download_24px)
-                    .setOnClickAction(ConvenienceBuilder.createRateOnClickAction(ctx)).build()
-            ).build()
-
-            builder.addCard(infoCard)
-            builder.addCard(authorCard)
-            builder.addCard(miscCard)
-
+                    },
+                    onPrivacyClick = {
+                        webViewDialogManagerViewModel.showWebViewDialog.value = true
+                    }
+                )
+            }
         }
-
-        return builder.build()
     }
 
     companion object {

@@ -16,6 +16,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.gson.GsonBuilder
 import it.cammino.risuscito.R
+import it.cammino.risuscito.utils.StringUtils.UNEXPECTED_CREDENTIAL
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
@@ -170,6 +171,5 @@ class CredentialCacheManager(
     companion object {
         private val TAG = CredentialCacheManager::class.java.canonicalName
         private const val CREDENTIAL_RESPONSE = "credential_response_cache"
-        const val UNEXPECTED_CREDENTIAL = "Unexpected type of credential"
     }
 }

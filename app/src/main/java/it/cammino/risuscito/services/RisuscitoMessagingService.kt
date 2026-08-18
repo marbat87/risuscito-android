@@ -1,16 +1,18 @@
 package it.cammino.risuscito.services
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+@SuppressLint("MissingFirebaseInstanceTokenRefresh")
 class RisuscitoMessagingService : FirebaseMessagingService() {
 
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        Log.d(TAG, "onNewToken - token: $token")
+    override fun onRegistered(installationId: String) {
+        super.onRegistered(installationId)
+        Log.d(TAG, "onNewToken - token: $installationId")
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

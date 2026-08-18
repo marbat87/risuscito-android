@@ -1,15 +1,20 @@
 package it.cammino.risuscito.ui
 
+import android.app.Application
 import android.content.Context
-import androidx.multidex.MultiDexApplication
 import com.google.android.material.color.DynamicColors
+import com.michaelflisar.composechangelog.statesaver.preferences.ChangelogStateSaverPreferences
+import com.michaelflisar.composechangelog.statesaver.preferences.create
 import it.cammino.risuscito.utils.LocaleManager
 import it.cammino.risuscito.utils.extension.dynamicColorOptions
 import it.cammino.risuscito.utils.extension.setDefaultNightMode
 
 
-class RisuscitoApplication : MultiDexApplication() {
+class RisuscitoApplication : Application() {
 
+    val changelogStateSaver: ChangelogStateSaverPreferences by lazy {
+        ChangelogStateSaverPreferences.create(this)
+    }
     override fun onCreate() {
         super.onCreate()
 

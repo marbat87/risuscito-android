@@ -1,14 +1,12 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.ListaPers
 
-class CustomListsViewModel(application: Application) : AndroidViewModel(application) {
+class CustomListsViewModel(application: Application) : DialogManagerViewModel(application) {
 
     var indDaModif = 0
 

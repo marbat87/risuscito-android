@@ -14,34 +14,26 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.AnimRes
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
-import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.elevation.SurfaceColors
-import com.google.android.material.transition.platform.MaterialSharedAxis
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import it.cammino.risuscito.ListaPersonalizzata
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.database.entities.Cronologia
-import it.cammino.risuscito.ui.activity.CantoHostActivity
-import it.cammino.risuscito.ui.activity.ThemeableActivity
-import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.utils.CambioAccordi
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH
 import it.cammino.risuscito.utils.LocaleManager.Companion.LANGUAGE_ENGLISH_PHILIPPINES
@@ -51,9 +43,6 @@ import it.cammino.risuscito.utils.OSUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.Utility.NEW_LANGUAGE
 import it.cammino.risuscito.utils.Utility.OLD_LANGUAGE
-import it.cammino.risuscito.utils.Utility.SHARED_AXIS
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -68,93 +57,83 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-@Suppress("DEPRECATION")
-private fun Resources.getSystemLocaleLegacy(): Locale {
-    return configuration.locale
+fun ComponentActivity.enableEdgeToEdgeWrapper() {
+    enableEdgeToEdge(
+        statusBarStyle = SystemBarStyle.auto(
+            android.graphics.Color.TRANSPARENT,
+            android.graphics.Color.TRANSPARENT
+        ),
+        navigationBarStyle = SystemBarStyle.auto(
+            android.graphics.Color.TRANSPARENT,
+            android.graphics.Color.TRANSPARENT
+        )
+    )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        window.isNavigationBarContrastEnforced = false
+    }
 }
 
-@RequiresApi(Build.VERSION_CODES.N)
-private fun Resources.getSystemLocaleN(): Locale {
-    return configuration.locales.get(0)
-}
+//@Suppress("DEPRECATION")
+//private fun Resources.getSystemLocaleLegacy(): Locale {
+//    return configuration.locale
+//}
+//
+//@RequiresApi(Build.VERSION_CODES.N)
+//private fun Resources.getSystemLocaleN(): Locale {
+//    return configuration.locales.get(0)
+//}
 
 val Resources.systemLocale: Locale
     get() {
-        return if (OSUtils.hasN()) getSystemLocaleN()
-        else getSystemLocaleLegacy()
+        return configuration.locales.get(0)
+//        return if (OSUtils.hasN()) getSystemLocaleN()
+//        else getSystemLocaleLegacy()
     }
 
-fun Activity.setupNavBarColor() {
-    if (!OSUtils.hasV()) setupNavBarColorLegacy()
-}
-
-@Suppress("DEPRECATION")
-fun Activity.setupNavBarColorLegacy() {
-    if (OSUtils.hasO()) {
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        if (!isDarkMode) setLightNavigationBar()
-        window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun Activity.setLightNavigationBar() {
-    WindowInsetsControllerCompat(
-        window, window.decorView
-    ).isAppearanceLightNavigationBars = true
-}
-
-fun Activity.setLigthStatusBar(light: Boolean) {
-    WindowCompat.getInsetsController(
-        window, window.decorView
-    ).isAppearanceLightStatusBars = light
-//    if (light) window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-}
-
-fun Activity.startActivityWithTransition(intent: Intent, axis: Int) {
-    if (OSUtils.isObySamsung()) {
-        startActivity(intent)
-        slideInRight()
-    } else {
-        val exit = MaterialSharedAxis(axis, true).apply {
-            addTarget(R.id.content_frame)
-            duration = 700L
-        }
-
-        val enter = MaterialSharedAxis(axis, false).apply {
-            addTarget(R.id.content_frame)
-            duration = 700L
-        }
-        window.exitTransition = exit
-        window.reenterTransition = enter
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
-        startActivity(
-            intent.putExtras(
-                bundleOf(SHARED_AXIS to axis)
-            ), options.toBundle()
-        )
-    }
+fun Activity.startActivityWithTransition(intent: Intent) {
+//    if (OSUtils.isObySamsung()) {
+    startActivity(intent)
+    slideInRight()
+//    } else {
+//        val exit = MaterialSharedAxis(axis, true).apply {
+//            addTarget(android.R.id.content)
+//            duration = 700L
+//        }
+//
+//        val enter = MaterialSharedAxis(axis, false).apply {
+//            addTarget(android.R.id.content)
+//            duration = 700L
+//        }
+//        window.exitTransition = exit
+//        window.reenterTransition = enter
+//        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
+//        startActivity(
+//            intent.putExtras(
+//                bundleOf(SHARED_AXIS to axis)
+//            ), options.toBundle()
+//        )
+//    }
 
 }
 
 
-fun Activity.setEnterTransition() {
-    if (!OSUtils.isObySamsung()) {
-        val axis = intent.getIntExtra(SHARED_AXIS, MaterialSharedAxis.X)
-        val enter = MaterialSharedAxis(axis, true).apply {
-            duration = 700L
-        }
-        val returnT = MaterialSharedAxis(axis, false).apply {
-            duration = 700L
-        }
-        window.enterTransition = enter
-        window.returnTransition = returnT
-
-        // Allow Activity A’s exit transition to play at the same time as this Activity’s
-        // enter transition instead of playing them sequentially.
-        window.allowEnterTransitionOverlap = true
-    }
-}
+//fun Activity.setEnterTransition() {
+//    if (!OSUtils.isObySamsung()) {
+//        val axis = intent.getIntExtra(SHARED_AXIS, MaterialSharedAxis.X)
+//        val enter = MaterialSharedAxis(axis, true).apply {
+//            duration = 700L
+//        }
+//        val returnT = MaterialSharedAxis(axis, false).apply {
+//            duration = 700L
+//        }
+//        window.enterTransition = enter
+//        window.returnTransition = returnT
+//
+//        // Allow Activity A’s exit transition to play at the same time as this Activity’s
+//        // enter transition instead of playing them sequentially.
+//        window.allowEnterTransitionOverlap = true
+//    }
+//}
 
 fun Activity.startActivityWithFadeIn(intent: Intent) {
     startActivity(intent)
@@ -164,7 +143,8 @@ fun Activity.startActivityWithFadeIn(intent: Intent) {
 //ISSUE in API 21
 fun Activity.finishAfterTransitionWrapper() {
     closeKeyboard()
-    finishAfterTransition()
+    finish()
+    slideOutDown()
 }
 
 private fun Activity.closeKeyboard() {
@@ -312,50 +292,12 @@ fun Activity.slideOutRight() {
     overrideCloseTransition(R.anim.animate_slide_in_left, R.anim.animate_slide_out_right)
 }
 
-fun ThemeableActivity.openCanto(
-    function: String?, idCanto: Int, numPagina: String?, forceOpenActivity: Boolean = false
-) {
-
-    Firebase.crashlytics.log("open_canto - function: ${function.orEmpty()} - idCanto: $idCanto - numPagina: ${numPagina.orEmpty()} - onActivity: ${forceOpenActivity || isOnPhone}")
-
-    val args = bundleOf(
-        CantoFragment.ARG_NUM_PAGINA to numPagina,
-        CantoFragment.ARG_ID_CANTO to idCanto,
-        CantoFragment.ARG_ON_ACTIVITY to (forceOpenActivity || isOnPhone)
-    )
-
-    if (forceOpenActivity || isOnPhone) {
-        val intent = Intent(this, CantoHostActivity::class.java)
-        intent.putExtras(args)
-        startActivityWithTransition(intent, MaterialSharedAxis.X)
-    } else {
-        stopMedia()
-        val fragment: Fragment = CantoFragment()
-        fragment.arguments = args
-        supportFragmentManager.commit {
-            replace(
-                R.id.detail_fragment, fragment, R.id.canto_fragment.toString()
-            )
-        }
-    }
-
-    (this as? AppCompatActivity)?.updateHistory(idCanto)
-
+fun Activity.slideInDown() {
+    overrideOpenTransition(R.anim.animate_slide_in_down, R.anim.animate_slide_out_up)
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
-fun Activity.getVersionCodeP(): Int {
-    return packageManager.getPackageInfo(packageName).longVersionCode.toInt()
-}
-
-@Suppress("DEPRECATION")
-fun Activity.getVersionCodeLegacy(): Int {
-    return packageManager.getPackageInfo(packageName).versionCode
-}
-
-fun Activity.getVersionCode(): Int {
-    return if (OSUtils.hasP()) getVersionCodeP()
-    else getVersionCodeLegacy()
+fun Activity.slideOutDown() {
+    overrideOpenTransition(R.anim.animate_slide_in_up, R.anim.animate_slide_out_down)
 }
 
 fun Activity.overrideOpenTransition(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
@@ -429,43 +371,32 @@ private fun Activity.createTaskDescriptionLegacy(tag: String?): ActivityManager.
     )
 }
 
-private fun AppCompatActivity.updateHistory(idCanto: Int) {
-    val mDao = RisuscitoDatabase.getInstance(this).cronologiaDao()
-    val cronologia = Cronologia()
-    cronologia.idCanto = idCanto
-    this.lifecycleScope.launch(Dispatchers.IO) {
-        mDao.insertCronologia(
-            cronologia
-        )
-    }
-}
-
 fun AppCompatActivity.launchForResultWithAnimation(
-    resultLauncher: ActivityResultLauncher<Intent>, intent: Intent, axis: Int
+    resultLauncher: ActivityResultLauncher<Intent>, intent: Intent
 ) {
-    if (OSUtils.isObySamsung()) {
-        resultLauncher.launch(intent)
-        slideInRight()
-    } else {
-        val exit = MaterialSharedAxis(axis, true).apply {
-            addTarget(R.id.content_frame)
-            duration = 700L
-        }
-
-        val enter = MaterialSharedAxis(axis, false).apply {
-            addTarget(R.id.content_frame)
-            duration = 700L
-        }
-        window.exitTransition = exit
-        window.reenterTransition = enter
-        resultLauncher.launch(
-            intent.putExtras(
-                bundleOf(SHARED_AXIS to axis)
-            ), ActivityOptionsCompat.makeSceneTransitionAnimation(
-                this
-            )
-        )
-    }
+//    if (OSUtils.isObySamsung()) {
+    resultLauncher.launch(intent)
+    slideInDown()
+//    } else {
+//        val exit = MaterialSharedAxis(axis, true).apply {
+//            addTarget(android.R.id.content)
+//            duration = 700L
+//        }
+//
+//        val enter = MaterialSharedAxis(axis, false).apply {
+//            addTarget(android.R.id.content)
+//            duration = 700L
+//        }
+//        window.exitTransition = exit
+//        window.reenterTransition = enter
+//        resultLauncher.launch(
+//            intent.putExtras(
+//                bundleOf(SHARED_AXIS to axis)
+//            ), ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                this
+//            )
+//        )
+//    }
 }
 
 // converte gli accordi salvati dalla lingua vecchia alla nuova

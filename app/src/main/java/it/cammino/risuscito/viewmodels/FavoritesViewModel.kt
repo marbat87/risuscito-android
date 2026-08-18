@@ -1,36 +1,40 @@
 package it.cammino.risuscito.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.entities.Canto
-import it.cammino.risuscito.items.SimpleItem
-import it.cammino.risuscito.items.simpleItem
+import it.cammino.risuscito.items.RisuscitoListItem
+import it.cammino.risuscito.items.risuscitoListItem
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.useOldIndex
 
-class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
+class FavoritesViewModel(application: Application) : DialogManagerViewModel(application) {
 
-    var mFavoritesResult: LiveData<List<SimpleItem>>? = null
+    val viewMode = mutableStateOf(ViewMode.VIEW)
+
+    var mFavoritesResult: LiveData<List<RisuscitoListItem>>? = null
         private set
+
+    val mFavoritesSortedResult = MutableLiveData(emptyList<RisuscitoListItem>())
 
     init {
         val mDb = RisuscitoDatabase.getInstance(getApplication())
-        val useOldIndex = application.useOldIndex()
         mFavoritesResult = mDb.favoritesDao().liveFavorites().map { canti ->
-            val newList = ArrayList<SimpleItem>()
+            val newList = ArrayList<RisuscitoListItem>()
             canti.forEach {
                 newList.add(
-                    simpleItem {
-                        setTitle = Utility.getResId(it.titolo, R.string::class.java)
-                        setPage = Utility.getResId(
-                            if (useOldIndex) it.pagina + Utility.OLD_PAGE_SUFFIX else it.pagina,
+                    risuscitoListItem(
+                        titleRes = Utility.getResId(it.titolo, R.string::class.java)
+                    ) {
+                        pageRes = Utility.getResId(
+                            it.pagina,
                             R.string::class.java
                         )
-                        setSource = Utility.getResId(it.source, R.string::class.java)
+                        sourceRes = Utility.getResId(it.source, R.string::class.java)
                         setColor = it.color ?: Canto.BIANCO
                         id = it.id
                     }
@@ -38,6 +42,11 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
             }
             newList
         }
+    }
+
+    enum class ViewMode {
+        VIEW,
+        EMPTY
     }
 
 }
