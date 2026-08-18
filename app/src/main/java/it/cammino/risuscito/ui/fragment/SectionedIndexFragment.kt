@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -65,7 +63,6 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
     private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
     private var mActivity: MainActivity? = null
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,7 +79,8 @@ class SectionedIndexFragment : Fragment(), SnackBarFragment {
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
                 LaunchedEffect(state.canScrollForward, state.canScrollBackward) {
-                    sharedScrollViewModel.canScroll.value = state.canScrollForward || state.canScrollBackward
+                    sharedScrollViewModel.canScroll.value =
+                        state.canScrollForward || state.canScrollBackward
                 }
 
                 val rememberedOnItemClick = remember<(RisuscitoListItem) -> Unit> {

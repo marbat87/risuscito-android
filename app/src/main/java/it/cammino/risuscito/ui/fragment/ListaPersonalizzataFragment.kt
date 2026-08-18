@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -82,7 +81,6 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
 
     private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -96,7 +94,8 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                 val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
                 LaunchedEffect(state.canScrollForward, state.canScrollBackward) {
-                    sharedScrollViewModel.canScroll.value = state.canScrollForward || state.canScrollBackward
+                    sharedScrollViewModel.canScroll.value =
+                        state.canScrollForward || state.canScrollBackward
                 }
 
                 val showInputDialog by inputdialogViewModel.showAlertDialog.observeAsState()
@@ -115,7 +114,10 @@ class ListaPersonalizzataFragment : Fragment(), ActionModeFragment, SnackBarFrag
                                         Intent(it, InsertActivity::class.java).putExtras(
                                             Bundle().apply {
                                                 putInt(InsertActivity.FROM_ADD, 0)
-                                                putInt(InsertActivity.ID_LISTA, mCantiViewModel.listaPersonalizzataId)
+                                                putInt(
+                                                    InsertActivity.ID_LISTA,
+                                                    mCantiViewModel.listaPersonalizzataId
+                                                )
                                                 putInt(InsertActivity.POSITION, idPosizione)
                                             }
                                         )

@@ -393,7 +393,6 @@ fun StateNotificationViewPreview() {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MediaPlayerView(
     seekbarViewMode: PaginaRenderViewModel.SeekBarMode,
@@ -478,7 +477,6 @@ fun MediaPlayerView(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ScrollPlayerView(
     playButtonAnimated: Boolean = false,

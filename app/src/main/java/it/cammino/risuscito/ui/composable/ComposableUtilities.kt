@@ -1,7 +1,7 @@
 package it.cammino.risuscito.ui.composable
 
 import android.util.Log
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.navigationSuiteType
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
@@ -23,7 +23,7 @@ import androidx.window.core.layout.WindowSizeClass
 
 @Composable
 fun hasFiveMenuElements(): Boolean {
-    val sizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
 //    Log.d(TAG, "sizeClass minWidthDp: ${sizeClass.minWidthDp}")
 //    Log.d(TAG, "sizeClass minHeightDp: ${sizeClass.minHeightDp}")
     val returnValue =
@@ -34,7 +34,7 @@ fun hasFiveMenuElements(): Boolean {
 
 @Composable
 fun hasNavigationBar(): Boolean {
-    val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfo())
+    val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2())
     val returnValue = navigationSuiteType == NavigationSuiteType.ShortNavigationBarCompact
             || navigationSuiteType == NavigationSuiteType.ShortNavigationBarMedium
     Log.d(TAG, "hasNavigationBar: $returnValue")
@@ -43,14 +43,14 @@ fun hasNavigationBar(): Boolean {
 
 @Composable
 fun hasTwoPanes(): Boolean {
-    val returnValue =  currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+    val returnValue = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
     Log.d(TAG, "hasTwoPanes: $returnValue")
     return returnValue
 }
 
 @Composable
 fun layoutMargins(): Dp {
-    val sizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     var returnValue = 16.dp
     if (sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
         returnValue = 24.dp
@@ -61,7 +61,7 @@ fun layoutMargins(): Dp {
 
 @Composable
 fun layoutMinMargins(): Dp {
-    val sizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     var returnValue = 8.dp
     if (sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
         returnValue = 12.dp

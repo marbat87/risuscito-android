@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberSearchBarState
@@ -33,7 +32,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.firebase.Firebase
@@ -136,7 +134,6 @@ class MainActivity : ThemeableActivity() {
     private var fabActionsFragment: FabActionsFragment? = null
     private val signedId = mutableStateOf(false)
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
         installSplashScreen()
@@ -377,18 +374,25 @@ class MainActivity : ThemeableActivity() {
 
         subscribeUiChanges()
 
-        Firebase.messaging.token.addOnCompleteListener(OnCompleteListener { task ->
+//        Firebase.messaging.token.addOnCompleteListener(OnCompleteListener { task ->
+//            if (!task.isSuccessful) {
+//                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+//                return@OnCompleteListener
+//            }
+//
+//            // Get new FCM registration token
+//            val token = task.result
+//
+//            // Log and toast
+//            Log.d(TAG, "token ok $token")
+//        })
+
+        Firebase.messaging.register().addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
+                return@addOnCompleteListener
             }
-
-            // Get new FCM registration token
-            val token = task.result
-
-            // Log and toast
-            Log.d(TAG, "token ok $token")
-        })
+        }
 
     }
 
@@ -546,9 +550,8 @@ class MainActivity : ThemeableActivity() {
         fabExpanded.value = expanded
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     fun expandToolbar() {
-        scrollViewModel.scrollBehavior.value?.scrollOffset = 0F
+        scrollViewModel.scrollBehavior.value?.scrollState?.scrollOffset = 0F
     }
 
     fun setupMaterialTab(tabsList: List<Destination>, selectedIndex: Int = 0) {

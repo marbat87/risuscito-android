@@ -1,6 +1,5 @@
 package it.cammino.risuscito.ui.composable.main
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -36,7 +35,6 @@ val generalIndexesList = listOf(
 )
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RisuscitoTabs(
     selectedTabIndex: MutableIntState,

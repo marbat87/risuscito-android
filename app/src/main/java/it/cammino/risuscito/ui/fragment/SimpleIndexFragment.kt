@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LoadingIndicator
@@ -91,7 +90,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
         mActivity = activity as? ThemeableActivity
     }
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -195,7 +194,8 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
                 ) {
                     itemsIndexed(
-                        items = localItems.value) { index, simpleItem ->
+                        items = localItems.value
+                    ) { index, simpleItem ->
                         Box(
                             modifier = Modifier
                                 .wrapContentHeight()

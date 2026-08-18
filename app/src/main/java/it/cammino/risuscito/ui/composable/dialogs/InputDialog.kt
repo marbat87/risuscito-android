@@ -45,7 +45,6 @@ import it.cammino.risuscito.ui.composable.DialogTitle
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.extension.capitalize
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputDialog(
     dialogTag: InputDialogTag = InputDialogTag.DEFAULT,

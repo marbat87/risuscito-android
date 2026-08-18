@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -80,10 +79,7 @@ import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class,
-    ExperimentalMaterial3ExpressiveApi::class
-)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MainScreen(
     sharedScrollViewModel: SharedScrollViewModel,
@@ -341,7 +337,6 @@ fun MainScreen(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 private fun NavigationSuiteScope.myNavigationSuiteItems(
     showRailIcon: Boolean,
     iconHeaderColor: Color, iconHeaderShape: Shape,
@@ -382,8 +377,8 @@ private fun NavigationSuiteScope.myNavigationSuiteItems(
             selected = currentRoute == screen.route,
             onClick = {
                 resetTab.value = true
-                scrollBehavior.scrollOffset = 0F
-                scrollBehavior.contentOffset = 0f
+                scrollBehavior.scrollState.scrollOffset = 0F
+                scrollBehavior.scrollState.contentOffset = 0f
                 navController.navigate(screen.route) {
                     popUpTo(navController.graph.startDestinationId)
                     launchSingleTop = true

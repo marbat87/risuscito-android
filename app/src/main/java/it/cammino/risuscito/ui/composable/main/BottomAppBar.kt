@@ -5,7 +5,6 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.fragment.compose.AndroidFragment
@@ -101,7 +100,6 @@ val navitagionRailItems =
 
 const val animationDuration = 300
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigationHost(navController: NavHostController) {
     NavHost(

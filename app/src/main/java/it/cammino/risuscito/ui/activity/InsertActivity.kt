@@ -166,21 +166,19 @@ class InsertActivity : ThemeableActivity() {
                     topBar = {
                         val textFieldState = rememberTextFieldState()
 
+                        LaunchedEffect(textFieldState) {
+                            snapshotFlow { textFieldState.text }
+                                .distinctUntilChanged()
+                                .collect {
+                                    sharedSearchViewModel.searchFilter.value = it.toString()
+                                }
+                        }
+
                         val inputField =
                             @Composable {
                                 SearchBarDefaults.InputField(
-                                    query = textFieldState.text.toString(),
-                                    onQueryChange = {
-                                        textFieldState.edit { replace(0, length, it) }
-                                        sharedSearchViewModel.searchFilter.value = it
-                                    },
-                                    expanded = true,
-                                    onExpandedChange = {
-                                        if (it) scope.launch { searchBarState.animateToExpanded() }
-                                        else {
-                                            scope.launch { searchBarState.animateToCollapsed() }
-                                        }
-                                    },
+                                    textFieldState = textFieldState,
+                                    searchBarState = searchBarState,
                                     onSearch = { },
                                     placeholder = {
                                         Text(
@@ -205,7 +203,6 @@ class InsertActivity : ThemeableActivity() {
                                         if (textFieldState.text.isNotEmpty()) {
                                             IconButton(onClick = {
                                                 textFieldState.edit { replace(0, length, "") }
-                                                sharedSearchViewModel.searchFilter.value = ""
                                             }) {
                                                 Icon(
                                                     painterResource(R.drawable.close_24px),

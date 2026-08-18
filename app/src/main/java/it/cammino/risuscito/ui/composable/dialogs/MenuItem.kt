@@ -35,7 +35,7 @@ fun MenuExpandableItem(
             text = { Text(text) },
             shape = MenuDefaults.itemShape(menuItemIndex, menuSize).shape,
             onClick = onClick,
-            trailingIcon = {
+            trailingContent = {
                 Icon(
                     modifier = Modifier.size(MenuDefaults.TrailingIconSize),
                     painter = painterResource(R.drawable.arrow_right_24px),
@@ -55,7 +55,7 @@ fun MenuExpandableItem(
             text = { Text(text) },
             shape = MenuDefaults.itemShape(menuItemIndex, menuSize).shape,
             onClick = onClick,
-            trailingIcon = {
+            trailingContent = {
                 Icon(
                     modifier = Modifier.size(MenuDefaults.TrailingIconSize),
                     painter = painterResource(R.drawable.arrow_right_24px),
@@ -114,7 +114,7 @@ fun MenuSelectabletem(
         onClick = {
             onSelect(!selected)
         },
-        trailingIcon = {
+        trailingContent = {
             Checkbox(
                 modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                 checked = selected,
