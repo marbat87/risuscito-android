@@ -17,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 37
         multiDexEnabled = true
-        versionCode = 6106
+        versionCode = 6107
         versionName = "6.1.0"
 
     }
@@ -99,15 +99,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.11.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    //noinspection LoginCredentials
-    implementation("com.google.android.gms:play-services-auth:21.6.0")
-    //noinspection LoginCredentials
+    implementation("com.google.android.gms:play-services-auth:22.0.0")
     implementation("androidx.credentials:credentials:1.6.0")
-    //noinspection LoginCredentials
     implementation("androidx.credentials:credentials-play-services-auth:1.6.0")
-    //noinspection LoginCredentials
     implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
-    implementation(platform("com.google.firebase:firebase-bom:34.17.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.18.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     //noinspection LoginCredentials
