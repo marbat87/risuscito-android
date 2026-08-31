@@ -17,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 37
         multiDexEnabled = true
-        versionCode = 6107
+        versionCode = 6108
         versionName = "6.1.0"
 
     }
@@ -131,7 +131,7 @@ dependencies {
 
     implementation(platform("androidx.compose:compose-bom:2026.08.00"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha26")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha27")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")
@@ -146,5 +146,5 @@ dependencies {
     implementation("androidx.compose.animation:animation-graphics")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
     implementation("androidx.compose.material3.adaptive:adaptive-navigation")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.9.8")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.10.0")
 }
