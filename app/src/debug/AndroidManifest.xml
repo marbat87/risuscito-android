@@ -49,8 +49,7 @@
         <activity
             android:name="it.cammino.risuscito.ui.activity.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.App.Starting"
-            android:windowSoftInputMode="adjustPan">
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -109,30 +108,17 @@
             </intent-filter>
         </activity>
 
-        <!-- Main music service, provides media browsing and media playback services to
-         consumers through MediaBrowserService and MediaSession. Consumers connect to it through
-         MediaBrowser (for browsing) and MediaController (for play session control) -->
         <service
             android:name="it.cammino.risuscito.playback.MusicService"
             android:exported="true"
             tools:ignore="ExportedService"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
 
-        <!-- A receiver that will receive media buttons and send as
-            intents to your MediaBrowserServiceCompat implementation.
-            Required on pre-Lollipop. More information at
-            http://developer.android.com/reference/android/support/v4/media/session/MediaButtonReceiver.html -->
-        <receiver
-            android:name="androidx.media.session.MediaButtonReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
 
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
@@ -146,9 +132,11 @@
             </intent-filter>
         </service>
 
+        <meta-data android:name="firebase_messaging_installation_id_enabled" android:value="true" />
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification_info" />
+            android:resource="@drawable/info_24px" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/ic_launcher_background" />

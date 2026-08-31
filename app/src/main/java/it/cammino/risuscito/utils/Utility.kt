@@ -3,25 +3,20 @@ package it.cammino.risuscito.utils
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ContentResolver
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.toColorInt
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.googleapis.util.Utils
-import com.mikepenz.fastadapter.ui.utils.StringHolder
 import java.io.File
 import java.text.Normalizer
 import java.util.Random
@@ -32,13 +27,12 @@ object Utility {
     // Costanti per le impostazioni
     private val TAG = Utility::class.java.canonicalName
 //    const val VECCHIO_INDICE = "vecchio_indice"
-    const val VECCHIO_INDICE = "vecchio_indice_new"
+//    const val VECCHIO_INDICE = "vecchio_indice_new"
     const val SCREEN_ON = "sempre_acceso"
     const val SYSTEM_LANGUAGE = "lingua_sistema_new_new"
     const val CHANGE_LANGUAGE = "changed_language"
     const val OLD_LANGUAGE = "old_language"
     const val NEW_LANGUAGE = "new_language"
-    const val CLICK_DELAY: Long = 2000
     internal const val SHOW_SECONDA = "mostra_seconda_lettura"
     internal const val SHOW_PACE = "mostra_canto_pace"
     internal const val SAVE_LOCATION = "memoria_salvataggio_scelta"
@@ -52,26 +46,27 @@ object Utility {
     internal const val SHOW_EUCARESTIA_PACE = "mostra_eucarestia_pace"
     internal const val PREFERITI_OPEN = "preferiti_open"
     internal const val HISTORY_OPEN = "history_open"
-    internal const val INTRO_CONSEGNATI = "intro_consegnati_test"
-    internal const val INTRO_CONSEGNATI_2 = "intro_consegnati_2_test"
+//    internal const val INTRO_CONSEGNATI = "intro_consegnati_test"
+//    internal const val INTRO_CONSEGNATI_2 = "intro_consegnati_2_test"
     internal const val INTRO_PAGINARENDER = "intro_paginarender_test"
-    internal const val INTRO_CREALISTA = "intro_crealista_test"
+//    internal const val INTRO_CREALISTA = "intro_crealista_test"
     internal const val INTRO_CREALISTA_2 = "intro_crealista_2_test"
     internal const val INTRO_CUSTOMLISTS = "intro_customlists_test_2"
     internal const val NIGHT_MODE = "night_mode"
     internal const val DYNAMIC_COLORS = "dynamic_colors"
-    internal const val OLD_PAGE_SUFFIX = "_old"
-    internal const val SHARED_AXIS = "shared_axis"
+//    internal const val SHARED_AXIS = "shared_axis"
 //    private const val TOKEN_VALIDATION_PATH = "https://oauth2.googleapis.com/tokeninfo?id_token="
 
     //    internal const val PRIMARY_COLOR = "new_primary_color"
 //    internal const val SECONDARY_COLOR = "new_accent_color"
     internal const val ULTIMA_APP_USATA = "ULTIMA_APP_USATA"
-    internal const val CLICK_DELAY_SELECTION: Long = 300
 
     // Costanti per il passaggio dati alla pagina di visualizzazione canto in fullscreen
     internal const val HTML_CONTENT = "htmlContent"
     internal const val SPEED_VALUE = "speedValue"
+    internal const val ZOOM_VALUE = "zoomValue"
+    internal const val SCROLL_X_VALUE = "scrollXValue"
+    internal const val SCROLL_Y_VALUE = "scrollYValue"
     internal const val SCROLL_PLAYING = "scrollPlaying"
     internal const val TIPO_LISTA = "tipoLista"
 
@@ -92,24 +87,24 @@ object Utility {
 
     /* Filtra il link di input per tenere solo il nome del file */
     private fun filterMediaLinkNew(link: String?): String {
-        link?.let {
-            return if (it.isEmpty())
+        return link?.let {
+            if (it.isEmpty())
                 it
             else {
                 it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
-        } ?: return StringUtils.EMPTY
+        }.orEmpty()
     }
 
     /* Filtra il link di input per tenere solo il nome del file */
     internal fun filterMediaLink(link: String?): String {
-        link?.let {
-            return if (it.isEmpty())
+        return link?.let {
+            if (it.isEmpty())
                 it
             else {
                 it.substring(it.lastIndexOf("/") + 1).replace("%20".toRegex(), "_")
             }
-        } ?: return StringUtils.EMPTY
+        }.orEmpty()
     }
 
     fun retrieveMediaFileLink(activity: Context, link: String?, cercaEsterno: Boolean): String {
@@ -263,12 +258,6 @@ object Utility {
         mNotificationManager.createNotificationChannel(mChannel)
     }
 
-    fun <T> helperSetString(t: T): StringHolder = when (t) {
-        is String -> StringHolder(t)
-        is Int -> StringHolder(t)
-        else -> throw IllegalArgumentException()
-    }
-
     fun helperSetColor(t: String?): Int =
         if (t.isNullOrEmpty())
             Color.WHITE
@@ -314,49 +303,12 @@ object Utility {
         )
     }
 
-    private fun calculateInSampleSize(
-        options: BitmapFactory.Options,
-        reqWidth: Int,
-        reqHeight: Int
-    ): Int {
-        // Raw height and width of image
-        val (height: Int, width: Int) = options.run { outHeight to outWidth }
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-
-            val halfHeight: Int = height / 2
-            val halfWidth: Int = width / 2
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-
-        return inSampleSize
-    }
-
-    internal fun decodeSampledBitmapFromResource(
-        res: Resources,
-        resId: Int,
-        reqWidth: Int,
-        reqHeight: Int
-    ): Bitmap {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        return BitmapFactory.Options().run {
-            inJustDecodeBounds = true
-            BitmapFactory.decodeResource(res, resId, this)
-
-            // Calculate inSampleSize
-            inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
-
-            // Decode bitmap with inSampleSize set
-            inJustDecodeBounds = false
-
-            BitmapFactory.decodeResource(res, resId, this)
-        }
+    fun getResourceUri(context: Context, resId: Int): Uri {
+        return Uri.Builder()
+            .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE) // "android.resource"
+            .authority(context.packageName)
+            .appendPath(resId.toString())
+            .build()
     }
 
     private val STROKE_LETTERS: Map<String, String> = mapOf(
@@ -428,26 +380,26 @@ object Utility {
 
     }
 
-    fun fixSystemBarPadding(view: View) {
-        ViewCompat.setOnApplyWindowInsetsListener(
-            view
-        ) { v, insets ->
-            val innerPadding = insets.getInsets(
-                // Notice we're using systemBars, not statusBar
-                WindowInsetsCompat.Type.systemBars()
-                        // Notice we're also accounting for the display cutouts
-                        or WindowInsetsCompat.Type.displayCutout()
-                // If using EditText, also add
-                // "or WindowInsetsCompat.Type.ime()"
-                // to maintain focus when opening the IME
-            )
-            v.setPadding(
-                innerPadding.left,
-                0,
-                innerPadding.right,
-                innerPadding.bottom)
-            insets
-        }
-    }
+//    fun fixSystemBarPadding(view: View) {
+//        ViewCompat.setOnApplyWindowInsetsListener(
+//            view
+//        ) { v, insets ->
+//            val innerPadding = insets.getInsets(
+//                // Notice we're using systemBars, not statusBar
+//                WindowInsetsCompat.Type.systemBars()
+//                        // Notice we're also accounting for the display cutouts
+//                        or WindowInsetsCompat.Type.displayCutout()
+//                // If using EditText, also add
+//                // "or WindowInsetsCompat.Type.ime()"
+//                // to maintain focus when opening the IME
+//            )
+//            v.setPadding(
+//                innerPadding.left,
+//                0,
+//                innerPadding.right,
+//                innerPadding.bottom)
+//            insets
+//        }
+//    }
 
 }

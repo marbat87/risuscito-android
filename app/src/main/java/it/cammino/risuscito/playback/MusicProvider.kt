@@ -18,16 +18,15 @@ package it.cammino.risuscito.playback
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.preference.PreferenceManager
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
 import it.cammino.risuscito.database.dao.CantoDao
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.Utility.decodeSampledBitmapFromResource
 import it.cammino.risuscito.utils.Utility.isExternalStorageReadable
 import it.cammino.risuscito.utils.Utility.retrieveMediaFileLink
 import it.cammino.risuscito.utils.extension.isDefaultLocationPublic
@@ -52,45 +51,45 @@ internal constructor(
 ) {
 
     // Categorized caches for music track data:
-    private val mMusicListById: LinkedHashMap<String, MediaMetadataCompat> = LinkedHashMap()
+    private val mMusicListById: LinkedHashMap<String, MediaItem> = LinkedHashMap()
 
     @Volatile
     private var mCurrentState = State.NON_INITIALIZED
     private val mDao: CantoDao = RisuscitoDatabase.getInstance(mContext).cantoDao()
 
-    val allMusics: Iterable<MediaMetadataCompat>
+    val allMusics: Iterable<MediaItem>
         get() = if (mCurrentState != State.INITIALIZED || mMusicListById.isEmpty()) {
             emptyList()
         } else mMusicListById.values
 
-    val isInitialized: Boolean
-        get() = mCurrentState == State.INITIALIZED
+//    val isInitialized: Boolean
+//        get() = mCurrentState == State.INITIALIZED
 
     /**
      * Return the MediaMetadata for the given musicID.
      *
      * @param musicId The unique music ID.
      */
-    fun getMusic(musicId: String?): MediaMetadataCompat? {
+    fun getMusic(musicId: String?): MediaItem? {
         return if (mMusicListById.containsKey(musicId)) mMusicListById[musicId] else null
     }
 
-    /**
-     * Update the metadata associated with a musicId. If the musicId doesn't exist, the update is
-     * dropped. (That is, it does not create a new mediaId.)
-     *
-     * @param musicId The ID
-     * @param metadata New Metadata to associate with it
-     */
-    @Synchronized
-    fun updateMusic(musicId: String?, metadata: MediaMetadataCompat) {
-        musicId?.let {
-            val track = mMusicListById[it]
-            if (track != null) {
-                mMusicListById[it] = metadata
-            }
-        }
-    }
+//    /**
+//     * Update the metadata associated with a musicId. If the musicId doesn't exist, the update is
+//     * dropped. (That is, it does not create a new mediaId.)
+//     *
+//     * @param musicId The ID
+//     * @param metadata New Metadata to associate with it
+//     */
+//    @Synchronized
+//    fun updateMusic(musicId: String?, metadata: MediaItem) {
+//        musicId?.let {
+//            val track = mMusicListById[it]
+//            if (track != null) {
+//                mMusicListById[it] = metadata
+//            }
+//        }
+//    }
 
     /**
      * Get the list of music tracks from a server and caches the track information for future
@@ -119,24 +118,29 @@ internal constructor(
             Log.d(
                 TAG,
                 "LINGUA PREFERENCE: " + PreferenceManager.getDefaultSharedPreferences(mContext)
-                    .getString(Utility.SYSTEM_LANGUAGE, "")
+                    .getString(Utility.SYSTEM_LANGUAGE, StringUtils.EMPTY)
             )
 
 //            val mNewBase = mContext
 //            mNewBase = RisuscitoApplication.localeManager.useCustomConfig(mNewBase)
 
-            val art = decodeSampledBitmapFromResource(
-                mContext.resources,
-                R.drawable.ic_launcher_144dp,
-                320,
-                320
+//            val art = decodeSampledBitmapFromResource(
+//                mContext.resources,
+//                R.drawable.ic_launcher_144dp,
+//                320,
+//                320
+//            )
+//            val artSmall = BitmapFactory.decodeResource(mContext.resources, R.mipmap.ic_launcher)
+
+            val artNew = Utility.getResourceUri(
+                mContext,
+                R.drawable.ic_launcher_144dp
             )
-            val artSmall = BitmapFactory.decodeResource(mContext.resources, R.mipmap.ic_launcher)
 
             val canti = mDao.allByWithLink()
             Log.d(TAG, "$RETRIEVE_MEDIA: ${canti.size}")
 
-            var temp: MediaMetadataCompat
+            var temp: MediaItem
 
             for (canto in canti) {
                 Log.d(
@@ -198,24 +202,11 @@ internal constructor(
                 )
 
                 if (!url.isNullOrEmpty()) {
-                    temp = MediaMetadataCompat.Builder()
-                        .putString(
-                            MediaMetadataCompat.METADATA_KEY_MEDIA_ID, canto.id.toString()
-                        )
-                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, url)
-                        .putString(
-                            MediaMetadataCompat.METADATA_KEY_ALBUM,
-                            mContext.getString(R.string.app_name)
-                        )
-                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Kiko Arguello")
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
-                        .putString(MediaMetadataCompat.METADATA_KEY_GENRE, "Sacred")
-                        .putString(
-                            MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
-                            StringUtils.EMPTY
-                        )
-                        .putString(
-                            MediaMetadataCompat.METADATA_KEY_TITLE,
+                    val metadata = MediaMetadata.Builder()
+                        .setAlbumTitle(mContext.getString(R.string.app_name))
+                        .setArtist("Kiko Arguello")
+                        .setGenre("Sacred")
+                        .setTitle(
                             mContext.resources.getString(
                                 Utility.getResId(
                                     canto.titolo,
@@ -223,20 +214,15 @@ internal constructor(
                                 )
                             )
                         )
-                        .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, canto.id.toLong())
-                        .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, canti.size.toLong())
-                        // Set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is
-                        //                                // used, for example, on the lockscreen
-                        // background when the media
-                        //                                // session is active.
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
-                        //
-                        //                                // Set small version of the album art in the
-                        // DISPLAY_ICON. This is
-                        //                                // used on the MediaDescription and thus it
-                        // should be small to be
-                        //                                // serialized if necessary.
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artSmall)
+                        .setTrackNumber(canto.id)
+                        .setTotalTrackCount(canti.size)
+                        .setArtworkUri(artNew)
+                        .build()
+
+                    temp = MediaItem.Builder()
+                        .setMediaId(canto.id.toString())
+                        .setUri(url)
+                        .setMediaMetadata(metadata)
                         .build()
 
                     mMusicListById[canto.id.toString()] = temp

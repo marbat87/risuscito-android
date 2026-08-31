@@ -9,27 +9,31 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
-import android.os.RemoteException
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.net.toUri
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
+import androidx.media3.session.MediaBrowser
+import androidx.media3.session.SessionToken
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Tasks
-import com.google.android.material.elevation.SurfaceColors
 import com.google.android.play.core.splitcompat.SplitCompat
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.storage
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import it.cammino.risuscito.R
@@ -43,20 +47,27 @@ import it.cammino.risuscito.database.entities.ListaPers
 import it.cammino.risuscito.database.entities.LocalLink
 import it.cammino.risuscito.database.serializer.DateTimeDeserializer
 import it.cammino.risuscito.database.serializer.DateTimeSerializer
+import it.cammino.risuscito.items.CantoViewData
 import it.cammino.risuscito.playback.MusicService
 import it.cammino.risuscito.services.RisuscitoMessagingService
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
-import it.cammino.risuscito.utils.OSUtils
+import it.cammino.risuscito.ui.composable.dialogs.SimpleDialogTag
+import it.cammino.risuscito.ui.composable.main.FabActionItem
+import it.cammino.risuscito.ui.composable.main.OptionMenuItem
+import it.cammino.risuscito.ui.fragment.CantoFragment
+import it.cammino.risuscito.ui.interfaces.FabFragment
+import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
+import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.extension.checkScreenAwake
 import it.cammino.risuscito.utils.extension.convertIntPreferences
 import it.cammino.risuscito.utils.extension.createTaskDescription
 import it.cammino.risuscito.utils.extension.isDarkMode
-import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.isLandscape
-import it.cammino.risuscito.utils.extension.isOnTablet
-import it.cammino.risuscito.utils.extension.setLigthStatusBar
-import it.cammino.risuscito.utils.extension.setupNavBarColor
+import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
+import it.cammino.risuscito.viewmodels.ProgressDialogManagerViewModel
+import it.cammino.risuscito.viewmodels.SharedSnackBarViewModel
+import it.cammino.risuscito.viewmodels.WebViewDialogManagerViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -64,11 +75,32 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.sql.Date
 import java.util.concurrent.ExecutionException
-import androidx.core.content.edit
 
 abstract class ThemeableActivity : AppCompatActivity() {
 
     protected val mViewModel: MainActivityViewModel by viewModels()
+
+    protected val sharedSnackBarViewModel: SharedSnackBarViewModel by viewModels()
+
+    protected val progressDialogViewModel: ProgressDialogManagerViewModel by viewModels()
+
+    protected val webViewDialogManagerViewModel: WebViewDialogManagerViewModel by viewModels()
+    protected var snackBarFragment: SnackBarFragment? = null
+
+    protected val tabsVisible = mutableStateOf(false)
+
+    protected val showFab = mutableStateOf(false)
+
+    protected var fabFragment: FabFragment? = null
+
+    protected val fabIconRes = mutableIntStateOf(R.drawable.edit_24px)
+
+    protected val fabActionList = MutableLiveData(ArrayList<FabActionItem>())
+
+    protected val fabExpanded = mutableStateOf(false)
+
+    protected var optionMenuFragment: OptionMenuFragment? = null
+    protected val optionMenuList = MutableLiveData(ArrayList<OptionMenuItem>())
 
     @SuppressLint("NewApi")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,27 +115,7 @@ abstract class ThemeableActivity : AppCompatActivity() {
         Log.d(TAG, "isDarkMode: $isDarkMode")
         convertIntPreferences()
 
-        Log.d(TAG, "onCreate: isOnTablet = $isOnTablet")
-        Log.d(TAG, "onCreate: isGridLayout = $isGridLayout")
-        Log.d(TAG, "onCreate: isLandscape = $isLandscape")
-        mViewModel.isTabletWithFixedDrawer = isOnTablet && isLandscape
-        Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithFixedDrawer}")
-        mViewModel.isTabletWithNoFixedDrawer = isOnTablet && !isLandscape
-        Log.d(TAG, "onCreate: hasFixedDrawer = ${mViewModel.isTabletWithNoFixedDrawer}")
-
-        setupNavBarColor()
-        updateStatusBarLightMode()
-
         setTaskDescription(this.createTaskDescription(TAG))
-
-        // Connect a media browser just to get the media session token. There are other ways
-        // this can be done, for example by sharing the session token directly.
-        mMediaBrowser = MediaBrowserCompat(
-            this, ComponentName(
-                this, MusicService::
-                class.java
-            ), mConnectionCallback, null
-        )
 
         super.onCreate(savedInstanceState)
     }
@@ -111,25 +123,28 @@ abstract class ThemeableActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart: ")
-        try {
-            mMediaBrowser?.connect()
-        } catch (e: IllegalStateException) {
-            Log.e(TAG, "onStart: mMediaBrowser connecting", e)
-        }
+        val sessionToken = SessionToken(this, ComponentName(this, MusicService::class.java))
+        val browserFuture = MediaBrowser.Builder(this, sessionToken).buildAsync()
+        browserFuture.addListener({
+            mMediaBrowser = browserFuture.get()
+            mMediaBrowser?.addListener(mPlayerListener)
+            mViewModel.lastPlaybackState.value = mMediaBrowser?.playbackState
+            mViewModel.isPlaying.value = mMediaBrowser?.isPlaying
+            mViewModel.playerConnected.value = true
+        }, ContextCompat.getMainExecutor(this))
     }
 
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop: ")
-        mMediaBrowser?.disconnect()
-        val controller = MediaControllerCompat.getMediaController(this)
-        controller?.unregisterCallback(mMediaControllerCallback)
+        mMediaBrowser?.removeListener(mPlayerListener)
+        mMediaBrowser?.release()
+        mMediaBrowser = null
+        mViewModel.playerConnected.value = false
     }
 
     override fun onResume() {
         super.onResume()
-
-        updateStatusBarLightMode()
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(
             showInfoBroadcastReceiver,
             IntentFilter(RisuscitoMessagingService.MESSAGE_RECEIVED_TAG)
@@ -152,23 +167,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         super.onDestroy()
         Log.d(TAG, "onDestroy(): $isFinishing")
         if (isFinishing) stopMedia()
-    }
-
-    private fun updateStatusBarLightMode() {
-        setLigthStatusBar(!isDarkMode)
-    }
-
-    fun setTransparentStatusBar(trasparent: Boolean) {
-        if (!OSUtils.hasV())
-            setTransparentStatusBarLegacy(trasparent)
-    }
-
-    @Suppress("DEPRECATION")
-    private fun setTransparentStatusBarLegacy(trasparent: Boolean) {
-        window.statusBarColor = if (trasparent) ContextCompat.getColor(
-            this,
-            android.R.color.transparent
-        ) else SurfaceColors.SURFACE_2.getColor(this)
     }
 
     override fun attachBaseContext(newBase: Context) {
@@ -548,14 +546,12 @@ abstract class ThemeableActivity : AppCompatActivity() {
                 R.string.general_message
             )
             val body = intent.getStringExtra(RisuscitoMessagingService.MESSAGE_BODY).orEmpty()
-            SimpleDialogFragment.show(
-                SimpleDialogFragment.Builder(NOTIFICATION_DIALOG)
-                    .title(title)
-                    .icon(R.drawable.info_24px)
-                    .content(body)
-                    .positiveButton(R.string.ok),
-                supportFragmentManager
-            )
+            mViewModel.dialogTag = SimpleDialogTag.NOTIFICATION_DIALOG
+            mViewModel.dialogTitle.value = title
+            mViewModel.iconRes.value = R.drawable.info_24px
+            mViewModel.content.value = body
+            mViewModel.positiveButton.value = getString(R.string.ok)
+            mViewModel.showAlertDialog.value = true
         }
     }
 
@@ -575,62 +571,114 @@ abstract class ThemeableActivity : AppCompatActivity() {
     }
 
     // Callback that ensures that we are showing the controls
-    private val mMediaControllerCallback = object : MediaControllerCompat.Callback() {
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            Log.d(TAG, "onPlaybackStateChanged: ${state.state}")
-            mViewModel.lastPlaybackState.value = state
+    private val mPlayerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            Log.d(TAG, "onPlaybackStateChanged: $playbackState")
+            mViewModel.lastPlaybackState.value = playbackState
         }
 
-        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-            Log.d(TAG, "onMetadataChanged")
-            if (metadata != null) {
-                mViewModel.medatadaCompat.value = metadata
-            }
-        }
-    }
-
-    private var mMediaBrowser: MediaBrowserCompat? = null
-    private val mConnectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
-        override fun onConnected() {
-            Log.d(TAG, "onConnected")
-            try {
-                mMediaBrowser?.let {
-                    val mediaController = MediaControllerCompat(
-                        this@ThemeableActivity, it.sessionToken
-                    )
-                    MediaControllerCompat.setMediaController(
-                        this@ThemeableActivity,
-                        mediaController
-                    )
-                    mediaController.registerCallback(mMediaControllerCallback)
-                    mViewModel.lastPlaybackState.value = mediaController.playbackState
-                    mViewModel.playerConnected.value = true
-                } ?: Log.e(TAG, "onConnected: mMediaBrowser is NULL")
-            } catch (e: RemoteException) {
-                Log.e(TAG, "onConnected: could not connect media controller", e)
-            }
-
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            Log.d(TAG, "onIsPlayingChanged: $isPlaying")
+            mViewModel.isPlaying.value = isPlaying
         }
 
-        override fun onConnectionFailed() {
-            Log.e(TAG, "onConnectionFailed")
-        }
-
-        override fun onConnectionSuspended() {
-            Log.d(TAG, "onConnectionSuspended")
-            val mediaController =
-                MediaControllerCompat.getMediaController(this@ThemeableActivity)
-            mediaController?.unregisterCallback(mMediaControllerCallback)
-            MediaControllerCompat.setMediaController(this@ThemeableActivity, null)
+        override fun onMediaMetadataChanged(metadata: MediaMetadata) {
+            Log.d(TAG, "onMediaMetadataChanged")
+            mViewModel.medatadaCompat.value = metadata
         }
     }
+
+    private var mMediaBrowser: MediaBrowser? = null
+
+    fun getMediaBrowser(): MediaBrowser? = mMediaBrowser
 
     fun stopMedia() {
         Log.d(TAG, "stopMedia: ")
-        if (mViewModel.lastPlaybackState.value?.state != PlaybackStateCompat.STATE_STOPPED) {
-            val controller = MediaControllerCompat.getMediaController(this)
-            controller?.transportControls?.stop()
+        mMediaBrowser?.stop()
+    }
+
+    fun showSnackBar(
+        message: String,
+        callback: SnackBarFragment? = null,
+        label: String? = null
+    ) {
+        snackBarFragment = callback
+        sharedSnackBarViewModel.snackbarMessage.value = message
+        sharedSnackBarViewModel.actionLabel.value = label.orEmpty()
+        sharedSnackBarViewModel.showSnackBar.value = true
+    }
+
+    fun setTabVisible(visible: Boolean) {
+        tabsVisible.value = visible
+    }
+
+    fun initFab(
+        enable: Boolean,
+        fragment: FabFragment? = null,
+        iconRes: Int = R.drawable.add_24px,
+        fabActions: List<FabActionItem>? = null
+    ) {
+        Log.d(TAG, "initFab: $enable")
+        fabExpanded.value = false
+        fabFragment = fragment
+        fabIconRes.intValue = iconRes
+        val newList = ArrayList(fabActions.orEmpty())
+        fabActionList.value = newList
+        showFab.value = enable
+    }
+
+    fun openCanto(
+        function: String?,
+        idCanto: Int,
+        numPagina: String?,
+        forceOpenActivity: Boolean = false
+    ) {
+
+        Firebase.crashlytics.log("open_canto - function: ${function.orEmpty()} - idCanto: $idCanto - numPagina: ${numPagina.orEmpty()} - onActivity: $forceOpenActivity")
+
+        mMediaBrowser?.seekToDefaultPosition()
+
+        mViewModel.cantoData.value = CantoViewData(idCanto, numPagina.orEmpty())
+
+        if (forceOpenActivity) {
+            val args = Bundle().apply {
+                putString(CantoFragment.ARG_NUM_PAGINA, numPagina)
+                putInt(CantoFragment.ARG_ID_CANTO, idCanto)
+                putBoolean(CantoFragment.ARG_ON_ACTIVITY, true)
+            }
+            val intent = Intent(this, CantoHostActivity::class.java)
+            intent.putExtras(args)
+            startActivityWithTransition(intent)
         }
+
+        updateHistory(idCanto)
+
+    }
+
+    fun closeCanto() {
+        mViewModel.cantoData.value = CantoViewData()
+        mViewModel.navigateBack.value = true
+    }
+
+    private fun updateHistory(idCanto: Int) {
+        val mDao = RisuscitoDatabase.getInstance(this).cronologiaDao()
+        val cronologia = Cronologia()
+        cronologia.idCanto = idCanto
+        this.lifecycleScope.launch(Dispatchers.IO) {
+            mDao.insertCronologia(
+                cronologia
+            )
+        }
+    }
+
+    fun createOptionsMenu(
+        optionMenu: List<OptionMenuItem>,
+        fragment: OptionMenuFragment?
+    ) {
+        Log.d(TAG, "createOptionsMenu")
+        val newList = ArrayList(optionMenu) // Crea una nuova lista
+        optionMenuList.value = newList
+        optionMenuFragment = fragment
     }
 
     companion object {
@@ -642,7 +690,6 @@ abstract class ThemeableActivity : AppCompatActivity() {
         internal const val FIREBASE_FIELD_TIMESTAMP = "timestamp"
         internal const val FIREBASE_COLLECTION_IMPOSTAZIONI = "Impostazioni"
         internal const val CANTO_FILE_NAME = "Canto"
-        internal const val NOTIFICATION_DIALOG = "NOTIFICATION_DIALOG"
         internal const val CUSTOM_LIST_FILE_NAME = "CustomList"
         internal const val LISTA_PERS_FILE_NAME = "ListaPers"
         internal const val LOCAL_LINK_FILE_NAME = "LocalLink"

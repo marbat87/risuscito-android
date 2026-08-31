@@ -3,137 +3,241 @@ package it.cammino.risuscito.ui.fragment
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
-import androidx.core.view.MenuProvider
-import androidx.core.view.isInvisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.transition.MaterialSharedAxis
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
-import com.mikepenz.fastadapter.IAdapter
-import com.mikepenz.fastadapter.adapters.FastItemAdapter
-import com.mikepenz.fastadapter.select.SelectExtension
-import com.mikepenz.itemanimators.SlideRightAlphaAnimator
 import it.cammino.risuscito.R
 import it.cammino.risuscito.database.RisuscitoDatabase
-import it.cammino.risuscito.databinding.LayoutHistoryBinding
-import it.cammino.risuscito.items.SimpleHistoryItem
-import it.cammino.risuscito.ui.dialog.DialogState
-import it.cammino.risuscito.ui.dialog.SimpleDialogFragment
+import it.cammino.risuscito.database.entities.Cronologia
+import it.cammino.risuscito.items.RisuscitoListItem
+import it.cammino.risuscito.items.risuscitoListItem
+import it.cammino.risuscito.ui.composable.EmptyListView
+import it.cammino.risuscito.ui.composable.HistoryListItem
+import it.cammino.risuscito.ui.composable.animations.AnimatedFadeContent
+import it.cammino.risuscito.ui.composable.dialogs.SimpleAlertDialog
+import it.cammino.risuscito.ui.composable.hasTwoPanes
+import it.cammino.risuscito.ui.composable.layoutMinMargins
+import it.cammino.risuscito.ui.composable.main.ActionModeItem
+import it.cammino.risuscito.ui.composable.main.OptionMenuItem
+import it.cammino.risuscito.ui.composable.main.cleanListOptionMenu
+import it.cammino.risuscito.ui.composable.main.deleteMenu
+import it.cammino.risuscito.ui.composable.main.helpOptionMenu
 import it.cammino.risuscito.ui.interfaces.ActionModeFragment
-import it.cammino.risuscito.utils.ListeUtils
+import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
+import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.utils.extension.isGridLayout
-import it.cammino.risuscito.utils.extension.openCanto
+import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.CronologiaViewModel
+import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.sql.Date
 
-class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
+class HistoryFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragment,
+    OptionMenuFragment {
 
     private val mCronologiaViewModel: CronologiaViewModel by viewModels()
-    private val simpleDialogViewModel: SimpleDialogFragment.DialogViewModel by viewModels({ requireActivity() })
-    private val cantoAdapter: FastItemAdapter<SimpleHistoryItem> = FastItemAdapter()
-    private var selectExtension: SelectExtension<SimpleHistoryItem>? = null
-
+    private val sharedScrollViewModel: SharedScrollViewModel by activityViewModels()
     private var actionModeOk: Boolean = false
-
-    private var mLastClickTime: Long = 0
-
-    private var menuProvider: MenuProvider? = null
-
-    private var _binding: LayoutHistoryBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
+    private var backCallbackEnabled = mutableStateOf(false)
+    private val selectedItems = MutableLiveData(ArrayList<RisuscitoListItem>())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = LayoutHistoryBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        return ComposeView(requireContext()).apply {
+            setContent {
+                val state = rememberLazyListState()
+                val coroutineScope = rememberCoroutineScope()
+                val localItems by mCronologiaViewModel.historySortedResult.observeAsState()
+                val localSelectedItems by selectedItems.observeAsState()
 
-    override fun onStop() {
-        super.onStop()
-        menuProvider?.let {
-            Log.d(TAG, "removeMenu")
-            mMainActivity?.removeMenuProvider(it)
-        }
-    }
+                val viewMode by remember { mCronologiaViewModel.viewMode }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+                val hasTwoPanes = hasTwoPanes()
 
-    override fun onStart() {
-        super.onStart()
-        menuProvider = object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.clean_list_menu, menu)
-                menu.findItem(R.id.list_reset).isVisible = cantoAdapter.adapterItemCount > 0
-            }
+                val scrollBehaviorFromSharedVM by sharedScrollViewModel.scrollBehavior.collectAsState()
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.list_reset -> {
-                        activity?.let { act ->
-                            SimpleDialogFragment.show(
-                                SimpleDialogFragment.Builder(
-                                    RESET_HISTORY
-                                ).title(R.string.dialog_reset_history_title)
-                                    .icon(R.drawable.clear_all_24px)
-                                    .content(R.string.dialog_reset_history_desc)
-                                    .positiveButton(R.string.clear_confirm)
-                                    .negativeButton(R.string.cancel), act.supportFragmentManager
-                            )
+                LaunchedEffect(state.canScrollForward, state.canScrollBackward) {
+                    sharedScrollViewModel.canScroll.value = state.canScrollForward || state.canScrollBackward
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimatedFadeContent(viewMode)
+                    { targetState ->
+                        when (targetState) {
+                            CronologiaViewModel.ViewMode.VIEW -> {
+                                val listModifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(layoutMinMargins())
+                                    .then(
+                                        scrollBehaviorFromSharedVM?.let {
+                                            Modifier.nestedScroll(
+                                                it.nestedScrollConnection
+                                            )
+                                        }
+                                            ?: Modifier
+                                    )
+                                LazyColumn(
+                                    state = state,
+                                    modifier = listModifier,
+                                    verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+                                ) {
+                                    itemsIndexed(
+                                        items = localItems.orEmpty(),
+                                        key = { _, it -> it.id }) { index, simpleItem ->
+                                        val isItemSelected =
+                                            localSelectedItems.orEmpty()
+                                                .any { it.id == simpleItem.id }
+                                        val source = stringResource(simpleItem.sourceRes)
+                                        HistoryListItem(
+                                            requireContext(),
+                                            simpleItem,
+                                            onItemClick = { item ->
+                                                if (mMainActivity?.isActionMode?.value == true) {
+                                                    if (isItemSelected) {
+                                                        deselectItem(item.id)
+                                                    } else {
+                                                        selectItem(item.id, item.timestamp)
+                                                    }
+                                                    if (localSelectedItems.orEmpty()
+                                                            .isEmpty()
+                                                    ) {
+                                                        mMainActivity?.destroyActionMode()
+                                                    } else updateActionModeTitle()
+                                                } else {
+                                                    mMainActivity?.openCanto(
+                                                        TAG,
+                                                        item.id,
+                                                        source,
+                                                        !hasTwoPanes
+                                                    )
+                                                }
+                                            },
+                                            onItemLongClick = { item ->
+                                                if (mMainActivity?.isActionMode?.value != true && !isItemSelected) {
+                                                    selectItem(item.id, item.timestamp)
+                                                    startCab()
+                                                }
+                                            },
+                                            selected = isItemSelected,
+                                            modifier = Modifier.animateItem(),
+                                            index = index,
+                                            itemsCount = localItems.orEmpty().size
+                                        )
+                                    }
+                                }
+                            }
+
+                            CronologiaViewModel.ViewMode.EMPTY -> {
+                                EmptyListView(
+                                    iconRes = R.drawable.history_24px,
+                                    textRes = R.string.history_empty
+                                )
+                            }
                         }
-                        return true
-                    }
-
-                    R.id.action_help -> {
-                        Toast.makeText(
-                            activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT
-                        ).show()
-                        return true
                     }
                 }
-                return false
+                if (mCronologiaViewModel.showAlertDialog.observeAsState().value == true) {
+                    SimpleAlertDialog(
+                        onDismissRequest = {
+                            mCronologiaViewModel.showAlertDialog.postValue(false)
+                        },
+                        onConfirmation = {
+                            mCronologiaViewModel.showAlertDialog.postValue(false)
+                            val mDao =
+                                RisuscitoDatabase.getInstance(requireContext())
+                                    .cronologiaDao()
+                            coroutineScope.launch(Dispatchers.IO) { mDao.emptyCronologia() }
+                        },
+                        dialogTitle = stringResource(R.string.dialog_reset_history_title),
+                        dialogText = stringResource(R.string.dialog_reset_history_desc),
+                        iconRes = R.drawable.clear_all_24px,
+                        confirmButtonText = stringResource(R.string.clear_confirm),
+                        dismissButtonText = stringResource(R.string.cancel)
+                    )
+                }
+
+                mCronologiaViewModel.cronologiaCanti?.observe(viewLifecycleOwner) { canti ->
+                    mCronologiaViewModel.historySortedResult.postValue(canti)
+                    mMainActivity?.createOptionsMenu(
+                        if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,
+                        this@HistoryFragment
+                    )
+
+                    mCronologiaViewModel.viewMode.value =
+                        if (canti.isEmpty()) CronologiaViewModel.ViewMode.EMPTY else CronologiaViewModel.ViewMode.VIEW
+                    if (canti.isEmpty())
+                        mMainActivity?.expandToolbar()
+                }
+
+                BackHandler(backCallbackEnabled.value) {
+                    Log.d(TAG, "handleOnBackPressed")
+                    mMainActivity?.destroyActionMode()
+                }
+
             }
         }
-        menuProvider?.let {
-            Log.d(TAG, "addMenu")
-            mMainActivity?.addMenuProvider(it)
-        }
+    }
+
+    private fun selectItem(idCanto: Int, timestampCanto: String) {
+        val currentSelected = selectedItems.value.orEmpty()
+        val newSelected = ArrayList(currentSelected) // Crea una nuova lista
+        newSelected.add(
+            risuscitoListItem(
+                timestamp = timestampCanto
+            ) {
+                id = idCanto
+            })
+        selectedItems.value = newSelected // Assegna la nuova lista
+    }
+
+    private fun deselectItem(id: Int) {
+        val currentSelected = selectedItems.value.orEmpty()
+        val newSelected =
+            ArrayList(currentSelected.filter { it.id != id }) // Crea una nuova lista
+        selectedItems.value = newSelected // Assegna la nuova lista
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_history)
-        mMainActivity?.enableFab(false)
+        mMainActivity?.initFab(enable = false)
         mMainActivity?.setTabVisible(false)
 
         if (!PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -142,94 +246,47 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
             PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .edit { putBoolean(Utility.HISTORY_OPEN, true) }
             Handler(Looper.getMainLooper()).postDelayed(250) {
-                Toast.makeText(activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    activity,
+                    getString(R.string.new_hint_remove),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
         }
-
-        subscribeUiHistory()
-
-        cantoAdapter.onPreClickListener =
-            { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
-                var consume = false
-                if (mMainActivity?.isActionMode == true) {
-                    if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY_SELECTION) {
-                        mLastClickTime = SystemClock.elapsedRealtime()
-                        cantoAdapter.getAdapterItem(position).isSelected =
-                            !cantoAdapter.getAdapterItem(position).isSelected
-                        cantoAdapter.notifyAdapterItemChanged(position)
-                        if (selectExtension?.selectedItems?.size == 0) mMainActivity?.destroyActionMode()
-                        else updateActionModeTitle()
-                    }
-                    consume = true
-                }
-                consume
-            }
-
-        cantoAdapter.onClickListener =
-            { _: View?, _: IAdapter<SimpleHistoryItem>, item: SimpleHistoryItem, _: Int ->
-                var consume = false
-                if (SystemClock.elapsedRealtime() - mLastClickTime >= Utility.CLICK_DELAY) {
-                    mLastClickTime = SystemClock.elapsedRealtime()
-                    mMainActivity?.openCanto(
-                        TAG, item.id, item.source?.getText(requireContext()), false
-                    )
-                    consume = true
-                }
-                consume
-            }
-
-        cantoAdapter.onPreLongClickListener =
-            { _: View?, _: IAdapter<SimpleHistoryItem>, _: SimpleHistoryItem, position: Int ->
-                if (mMainActivity?.isActionMode != true) {
-                    cantoAdapter.getAdapterItem(position).isSelected = true
-                    cantoAdapter.notifyAdapterItemChanged(position)
-                    startCab()
-                }
-                true
-            }
-
-        cantoAdapter.setHasStableIds(true)
-
-        selectExtension = SelectExtension(cantoAdapter)
-        selectExtension?.isSelectable = true
-        selectExtension?.multiSelect = true
-        selectExtension?.selectOnLongClick = true
-        selectExtension?.deleteAllSelectedItems()
-
-        binding.historyRecycler.adapter = cantoAdapter
-        val llm = if (context?.isGridLayout == true) GridLayoutManager(context, 2)
-        else LinearLayoutManager(context)
-        binding.historyRecycler.layoutManager = llm
-        binding.historyRecycler.itemAnimator = SlideRightAlphaAnimator()
 
     }
 
     private fun startCab() {
         actionModeOk = false
-        mMainActivity?.createActionMode(R.menu.menu_delete, this) { item ->
-            if (item?.itemId == R.id.action_remove_item) {
-                removeHistories()
-                actionModeOk = true
-                mMainActivity?.destroyActionMode()
-                true
-            } else false
+        mMainActivity?.createActionMode(deleteMenu, this) {
+            when (it) {
+                ActionModeItem.DELETE -> {
+                    removeHistories()
+                    actionModeOk = true
+                    mMainActivity?.destroyActionMode()
+                }
+
+                ActionModeItem.CLOSE -> {
+                    actionModeOk = false
+                    mMainActivity?.destroyActionMode()
+                }
+
+                else -> {}
+            }
         }
         updateActionModeTitle()
+        backCallbackEnabled.value = true
     }
 
     override fun destroyActionMode() {
-        if (!actionModeOk) {
-            try {
-                selectExtension?.deselect()
-            } catch (e: Exception) {
-                Firebase.crashlytics.recordException(e)
-            }
-        }
+        if (!actionModeOk)
+            selectedItems.value = ArrayList()
+        backCallbackEnabled.value = false
     }
 
     private fun updateActionModeTitle() {
-        val itemSelectedCount = selectExtension?.selectedItems?.size ?: 0
+        val itemSelectedCount = selectedItems.value.orEmpty().count()
         mMainActivity?.updateActionModeTitle(
             resources.getQuantityString(
                 R.plurals.item_selected, itemSelectedCount, itemSelectedCount
@@ -238,43 +295,74 @@ class HistoryFragment : AccountMenuFragment(), ActionModeFragment {
     }
 
     private fun removeHistories() {
-        ListeUtils.removeHistoriesWithUndo(this, selectExtension?.selectedItems)
+        lifecycleScope.launch {
+            val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
+            selectedItems.value?.let { removedItems ->
+                withContext(Dispatchers.IO) {
+                    for (removedItem in removedItems)
+                        mDao.deleteCronologiaById(
+                            removedItem.id
+                        )
+                }
+                showSnackBar(
+                    message = resources.getQuantityString(
+                        R.plurals.histories_removed,
+                        removedItems.count(),
+                        removedItems.count()
+                    ),
+                    label = getString(R.string.cancel)
+                        .uppercase(systemLocale)
+                )
+            }
+        }
     }
 
-    private fun subscribeUiHistory() {
-        mCronologiaViewModel.cronologiaCanti?.observe(viewLifecycleOwner) {
-            cantoAdapter.set(it)
-            binding.noHistory.isInvisible = cantoAdapter.adapterItemCount > 0
-            binding.historyRecycler.isInvisible = cantoAdapter.adapterItemCount == 0
-            if (cantoAdapter.adapterItemCount == 0) mMainActivity?.expandToolbar()
-            activity?.invalidateOptionsMenu()
+    override fun onActionPerformed() {
+        val mDao = RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
+        for (removedItem in selectedItems.value.orEmpty()) {
+            val cronTemp = Cronologia()
+            cronTemp.idCanto = removedItem.id
+            cronTemp.ultimaVisita = Date(
+                java.lang.Long.parseLong(
+                    removedItem.timestamp
+                )
+            )
+            lifecycleScope.launch(Dispatchers.IO) {
+                mDao.insertCronologia(
+                    cronTemp
+                )
+            }
         }
+        selectedItems.value = ArrayList()
+    }
 
-        simpleDialogViewModel.state.observe(viewLifecycleOwner) {
-            Log.d(TAG, "simpleDialogViewModel state $it")
-            if (!simpleDialogViewModel.handled) {
-                when (it) {
-                    is DialogState.Positive -> {
-                        when (simpleDialogViewModel.mTag) {
-                            RESET_HISTORY -> {
-                                simpleDialogViewModel.handled = true
-                                val mDao =
-                                    RisuscitoDatabase.getInstance(requireContext()).cronologiaDao()
-                                lifecycleScope.launch(Dispatchers.IO) { mDao.emptyCronologia() }
-                            }
-                        }
-                    }
+    override fun onDismissed() {
+        selectedItems.value = ArrayList()
+    }
 
-                    is DialogState.Negative -> {
-                        simpleDialogViewModel.handled = true
-                    }
-                }
+    override fun showSnackBar(message: String, label: String?) {
+        mMainActivity?.showSnackBar(
+            message = message,
+            callback = this,
+            label = label
+        )
+    }
+
+    override fun onItemClick(route: String) {
+        when (route) {
+            OptionMenuItem.ClearAll.route -> {
+                mCronologiaViewModel.showAlertDialog.postValue(true)
+            }
+
+            OptionMenuItem.Help.route -> {
+                Toast.makeText(
+                    activity, getString(R.string.new_hint_remove), Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
     companion object {
         private val TAG = HistoryFragment::class.java.canonicalName
-        private const val RESET_HISTORY = "RESET_HISTORY"
     }
 }

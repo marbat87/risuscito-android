@@ -1,9 +1,7 @@
 package it.cammino.risuscito.utils.extension
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.content.res.Configuration
@@ -11,7 +9,6 @@ import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.TypedValue
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -26,13 +23,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.Locale
 
-
-fun Context.getTypedValueResId(resId: Int): Int {
-    val outTypedValue = TypedValue()
-    theme.resolveAttribute(resId, outTypedValue, true)
-    return outTypedValue.resourceId
-}
-
 fun Context.setDefaultNightMode() {
     when (prefNightMode) {
         LIGHT_MODE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -41,7 +31,7 @@ fun Context.setDefaultNightMode() {
     }
 }
 
-private val Context.prefNightMode: String
+val Context.prefNightMode: String
     get() {
         return PreferenceManager.getDefaultSharedPreferences(this)
             .getString(Utility.NIGHT_MODE, DEFAULT_MODE)
@@ -102,20 +92,8 @@ val Context.isOnline: Boolean
         return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
-val Context.isOnTablet: Boolean
-    get() = resources.getBoolean(R.bool.is_tablet)
-
 val Context.isOnPhone: Boolean
     get() = resources.getBoolean(R.bool.is_phone_view)
-
-val Context.isGridLayout: Boolean
-    get() = resources.getBoolean(R.bool.is_grid_layout)
-
-val Context.isLandscape: Boolean
-    get() = resources.getBoolean(R.bool.landscape)
-
-val Context.isFabExpansionLeft: Boolean
-    get() = resources.getBoolean(R.bool.fab_orientation_left)
 
 fun PackageManager.queryIntentActivities(intent: Intent): MutableList<ResolveInfo> {
     return if (OSUtils.hasT())
@@ -136,41 +114,6 @@ fun PackageManager.queryIntentActivitiesLegacy(intent: Intent): MutableList<Reso
     return queryIntentActivities(intent, 0)
 }
 
-fun PackageManager.getPackageInfo(packageName: String): PackageInfo {
-    return if (OSUtils.hasT())
-        getPackageInfoTiramisu(packageName)
-    else
-        getPackageInfoLegacy(packageName)
-}
-
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-fun PackageManager.getPackageInfoTiramisu(packageName: String): PackageInfo {
-    return getPackageInfo(
-        packageName,
-        PackageManager.PackageInfoFlags.of(0)
-    )
-}
-
-fun PackageManager.getPackageInfoLegacy(packageName: String): PackageInfo {
-    return getPackageInfo(packageName, 0)
-}
-
-fun Application.useOldIndex(): Boolean {
-    return PreferenceManager.getDefaultSharedPreferences(this)
-        .getBoolean(
-            Utility.VECCHIO_INDICE,
-            false
-        ) && systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
-}
-
-fun Context.useOldIndex(): Boolean {
-    return PreferenceManager.getDefaultSharedPreferences(this)
-        .getBoolean(
-            Utility.VECCHIO_INDICE,
-            false
-        ) && systemLocale.language == LocaleManager.LANGUAGE_ITALIAN
-}
-
 fun Context.shareThisApp(subject: String?): Intent {
     val intent = Intent(Intent.ACTION_SEND)
     intent.type = "text/plain"
@@ -182,10 +125,15 @@ fun Context.shareThisApp(subject: String?): Intent {
 val Context.systemLocale: Locale
     get() {
         return AppCompatDelegate.getApplicationLocales()[0] ?: run {
-            return if (RisuscitoApplication.localeManager.getLanguage(this) == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES) Locale(
-                LocaleManager.LANGUAGE_ENGLISH,
-                LocaleManager.COUNTRY_PHILIPPINES
-            ) else Locale(RisuscitoApplication.localeManager.getLanguage(this))
+            return if (RisuscitoApplication.localeManager.getLanguage(this) == LocaleManager.LANGUAGE_ENGLISH_PHILIPPINES)
+                Locale.Builder()
+                    .setLanguage(LocaleManager.LANGUAGE_ENGLISH)
+                    .setRegion(LocaleManager.COUNTRY_PHILIPPINES) // Usa setRegion per il paese
+                    .build()
+            else
+                Locale.Builder()
+                    .setLanguage(RisuscitoApplication.localeManager.getLanguage(this))
+                    .build()
         }
     }
 

@@ -1,0 +1,99 @@
+package it.cammino.risuscito.ui.composable
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import it.cammino.risuscito.ui.composable.theme.RisuscitoColor
+import it.cammino.risuscito.ui.composable.theme.mediumFontFamily
+
+@Preview
+@Composable
+fun BottomSheetTitle(title: String = "Titolo") {
+    Text(
+        text = title,
+        textAlign = TextAlign.Start,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+@Preview
+fun GridItemTitle(title: String = "Elemento") {
+    Text(
+        text = title,
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier
+            .wrapContentSize()
+    )
+}
+
+@Composable
+@Preview
+fun PageText(title: String = "15", color: Long = 0xFFFCFCFC) {
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .border(1.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
+            .background(Color(color)),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = RisuscitoColor.md_theme_light_onBackground
+        )
+    }
+}
+
+@Composable
+@Preview
+fun ContextualToolbarTitle(title: String = "1 selezionato") {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .height(76.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary,
+            fontFamily = mediumFontFamily
+        )
+    }
+}
+
+@Composable
+@Preview
+fun DialogTitle(title: String = "Filtra per passaggi") {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.headlineSmall,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+        color = MaterialTheme.colorScheme.onSurface,
+        textAlign = TextAlign.Center
+    )
+}

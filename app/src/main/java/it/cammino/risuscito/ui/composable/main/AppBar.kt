@@ -1,0 +1,538 @@
+package it.cammino.risuscito.ui.composable.main
+
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.AppBarRow
+import androidx.compose.material3.AppBarWithSearch
+import androidx.compose.material3.ExpandedDockedSearchBar
+import androidx.compose.material3.ExpandedFullScreenSearchBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarScrollBehavior
+import androidx.compose.material3.SearchBarState
+import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.toShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.fragment.compose.AndroidFragment
+import androidx.preference.PreferenceManager
+import com.google.android.material.color.MaterialColors
+import it.cammino.risuscito.R
+import it.cammino.risuscito.ui.composable.ContextualToolbarTitle
+import it.cammino.risuscito.ui.composable.dialogs.AccountMenuImage
+import it.cammino.risuscito.ui.composable.hasNavigationBar
+import it.cammino.risuscito.ui.composable.layoutMinMargins
+import it.cammino.risuscito.ui.fragment.SimpleIndexFragment
+import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.viewmodels.SharedSearchViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+
+@Composable
+fun NavigationBarProtection(
+    color: Color = MaterialTheme.colorScheme.surfaceContainer,
+) {
+    val navigationBars = WindowInsets.navigationBars
+    val density = LocalDensity.current
+    Canvas(Modifier.fillMaxSize()) {
+        val height = navigationBars.getBottom(density).toFloat()
+        if (height > 0) {
+            drawRect(
+                color = color,
+                topLeft = Offset(0f, size.height - height),
+                size = Size(size.width, height)
+            )
+        }
+    }
+}
+
+enum class ActionModeItem(
+    val label: Int,
+    val iconRes: Int,
+) {
+    DELETE(
+        R.string.action_remove,
+        R.drawable.delete_24px
+    ),
+
+    UNDO(
+        android.R.string.cancel,
+        R.drawable.undo_24px
+    ),
+
+    SELECTNONE(
+        R.string.select_none,
+        R.drawable.filter_none_24px
+    ),
+
+    SELECTALL(
+        android.R.string.selectAll,
+        R.drawable.library_add_check_24px
+    ),
+
+    HELP(
+        R.string.action_help,
+        R.drawable.help_24px
+    ),
+
+    SWAP(
+        R.string.action_switch_to,
+        R.drawable.shuffle_24px
+    ),
+
+    CLOSE(
+        R.string.material_drawer_close,
+        R.drawable.arrow_back_24px
+    ),
+
+    TONALITA(
+        R.string.action_tonalita,
+        R.drawable.music_note_24px
+    ),
+
+    BARRE(
+        R.string.action_barre,
+        R.drawable.guitar_acoustic_24
+    ),
+
+    EXPORT_PDF(
+        R.string.action_exp_pdf,
+        R.drawable.picture_as_pdf_24px,
+    )
+
+}
+
+val deleteMenu =
+    listOf(ActionModeItem.DELETE)
+
+val consegnatiMenu =
+    listOf(
+        ActionModeItem.UNDO,
+        ActionModeItem.SELECTNONE,
+        ActionModeItem.SELECTALL
+    )
+//val consegnatiMenu =
+//    listOf(
+//        ActionModeItem.UNDO,
+//        ActionModeItem.SELECTNONE,
+//        ActionModeItem.SELECTALL,
+//        ActionModeItem.HELP
+//    )
+
+val customListsMenu =
+    listOf(ActionModeItem.SWAP, ActionModeItem.DELETE)
+
+val creaListaMenu =
+    listOf(ActionModeItem.HELP)
+
+val cantoMenu =
+    listOf(ActionModeItem.TONALITA, ActionModeItem.BARRE, ActionModeItem.EXPORT_PDF)
+//val cantoMenu =
+//    listOf(ActionModeItem.TONALITA, ActionModeItem.BARRE, ActionModeItem.EXPORT_PDF, ActionModeItem.HELP)
+
+
+sealed class OptionMenuItem(
+    val route: String,
+    val label: Int,
+    val iconRes: Int,
+) {
+    object ClearAll :
+        OptionMenuItem(
+            "list_reset",
+            R.string.dialog_reset_favorites_title,
+            R.drawable.clear_all_24px
+        )
+
+    object Help :
+        OptionMenuItem(
+            "action_help",
+            R.string.action_help,
+            R.drawable.help_24px
+        )
+
+    object FilterRemove :
+        OptionMenuItem(
+            "action_filter_remove",
+            R.string.filters_remove,
+            R.drawable.filter_list_off_24px
+        )
+
+    object Filter :
+        OptionMenuItem(
+            "action_filter",
+            R.string.passage_filter,
+            R.drawable.filter_list_24px
+        )
+}
+
+val helpOptionMenu =
+    listOf(OptionMenuItem.Help)
+
+val cleanListOptionMenu =
+    listOf(OptionMenuItem.ClearAll, OptionMenuItem.Help)
+
+val consegnatiOptionMenu =
+    listOf(OptionMenuItem.Filter)
+//val consegnatiOptionMenu =
+//    listOf(OptionMenuItem.Filter, OptionMenuItem.Help)
+
+val consegnatiResetOptionMenu =
+    listOf(OptionMenuItem.FilterRemove, OptionMenuItem.Filter)
+//val consegnatiResetOptionMenu =
+//    listOf(OptionMenuItem.FilterRemove, OptionMenuItem.Filter, OptionMenuItem.Help)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun TopAppBarWithSearch(
+    searchBarState: SearchBarState,
+    scrollBehavior: SearchBarScrollBehavior,
+    isActionMode: Boolean = false,
+    actionModeMenu: List<ActionModeItem> = emptyList(),
+    hideNavigation: Boolean = false,
+    onActionModeClick: (ActionModeItem) -> Unit = {},
+    contextualTitle: String = "",
+    sharedSearchViewModel: SharedSearchViewModel,
+    optionMenu: List<OptionMenuItem>? = emptyList(),
+    onOptionMenuClick: (String) -> Unit = {},
+    loggedIn: Boolean = false,
+    profilePhotoUrl: String = "",
+    onProfileItemClick: (Boolean) -> Unit = {},
+) {
+
+    val pref = PreferenceManager.getDefaultSharedPreferences(LocalContext.current)
+
+    val textFieldState = rememberTextFieldState()
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(textFieldState) {
+        snapshotFlow { textFieldState.text }
+            .distinctUntilChanged()
+            .collect {
+                Log.d("AppBar", "textFieldState.text: $it")
+                sharedSearchViewModel.searchFilter.value = it.toString()
+            }
+    }
+
+    LaunchedEffect(searchBarState) {
+        snapshotFlow { searchBarState.isExpanded }
+            .distinctUntilChanged()
+            .collect {
+                Log.d("AppBar", "searchBarState: $it")
+                if (!it) {
+                    textFieldState.edit { replace(0, length, "") }
+                }
+            }
+    }
+
+    val inputField =
+        @Composable {
+            SearchBarDefaults.InputField(
+                searchBarState = searchBarState,
+                textFieldState = textFieldState,
+                onSearch = { },
+                placeholder = {
+                    Text(
+                        if (searchBarState.isExpanded) stringResource(
+                            R.string.search_hint
+                        ) else stringResource(R.string.search_name_text),
+                        textAlign = if (searchBarState.isExpanded) TextAlign.Start else TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                leadingIcon = {
+                    if (searchBarState.isExpanded) {
+                        TooltipBox(
+                            positionProvider =
+                                TooltipDefaults.rememberTooltipPositionProvider(
+                                    TooltipAnchorPosition.Above
+                                ),
+                            tooltip = { PlainTooltip { Text(stringResource(R.string.material_drawer_close)) } },
+                            state = rememberTooltipState(),
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    scope.launch { searchBarState.animateToCollapsed() }
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back_24px),
+                                    contentDescription = stringResource(R.string.material_drawer_close),
+                                )
+                            }
+                        }
+                    }
+                },
+                trailingIcon = {
+                    if (searchBarState.isExpanded) {
+                        if (textFieldState.text.isNotEmpty()) {
+                            IconButton(onClick = {
+                                textFieldState.edit { replace(0, length, "") }
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.close_24px),
+                                    contentDescription = "Cancella"
+                                )
+                            }
+                        }
+                    } else {
+                        AppBarRow(overflowIndicator = {}) {
+                            optionMenu?.forEach { item ->
+                                clickableItem(
+                                    onClick = { onOptionMenuClick(item.route) },
+                                    icon = {
+                                        Icon(
+                                            painter = painterResource(item.iconRes),
+                                            contentDescription = stringResource(item.label)
+                                        )
+                                    },
+                                    label = "",
+                                )
+                            }
+                        }
+                    }
+                }
+            )
+        }
+
+    AppBarWithSearch(
+        scrollBehavior = scrollBehavior,
+        state = searchBarState,
+        contentPadding = PaddingValues(vertical = 6.dp),
+        inputField = inputField,
+        navigationIcon = {
+            if (hasNavigationBar()) {
+                IconButton(
+                    onClick = {},
+                    shape = MaterialShapes.Circle.toShape()
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(
+                                color = Color(
+                                    MaterialColors.harmonize(
+                                        colorResource(R.color.ic_launcher_background).toArgb(),
+                                        MaterialTheme.colorScheme.primary.toArgb()
+                                    )
+                                ),
+                                shape = MaterialShapes.Circle.toShape()
+                            ),
+                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = stringResource(R.string.copertina),
+                        tint = Color.White
+                    )
+                }
+
+            }
+        },
+        actions = {
+            AccountMenuImage(
+                onClick = onProfileItemClick,
+                loggedIn = loggedIn,
+                profilePhotoUrl = profilePhotoUrl
+            )
+        }
+    )
+    AnimatedVisibility(
+        visible = isActionMode,
+        enter = scaleIn(),
+        exit = scaleOut()
+    ) {
+        TopAppBar(
+            navigationIcon = {
+                if (!hideNavigation) { // Mostra l'icona del menu solo se la barra di ricerca non è espansa
+                    IconButton(
+                        onClick = { onActionModeClick(ActionModeItem.CLOSE) }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_back_24px),
+                            contentDescription = stringResource(R.string.material_drawer_close),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            },
+            title = { ContextualToolbarTitle(contextualTitle) },
+            actions = {
+                AppBarRow(overflowIndicator = {}) {
+                    actionModeMenu.forEach {
+                        clickableItem(
+                            onClick = { onActionModeClick(it) },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(it.iconRes),
+                                    contentDescription = stringResource(it.label),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            label = "",
+                        )
+                    }
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            )
+        )
+    }
+    if (searchBarState.isExpanded) {
+        if (hasNavigationBar())
+            ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
+                ExpandedSarchBarContent(
+                    sharedSearchViewModel = sharedSearchViewModel,
+                    pref = pref
+                )
+            }
+        else {
+            ExpandedDockedSearchBar(state = searchBarState, inputField = inputField) {
+                ExpandedSarchBarContent(
+                    sharedSearchViewModel = sharedSearchViewModel,
+                    pref = pref
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun StatusBarProtection(
+    color: Color = MaterialTheme.colorScheme.surfaceContainer,
+    heightProvider: () -> Float = calculateGradientHeight(),
+) {
+
+    Canvas(Modifier.fillMaxSize()) {
+        val calculatedHeight = heightProvider()
+        val gradient = Brush.verticalGradient(
+            colors = listOf(
+                color.copy(alpha = 1f),
+                color.copy(alpha = .8f),
+                Color.Transparent
+            ),
+            startY = 0f,
+            endY = calculatedHeight
+        )
+        drawRect(
+            brush = gradient,
+            size = Size(size.width, calculatedHeight),
+        )
+    }
+}
+
+@Composable
+private fun ExpandedSarchBarContent(
+    sharedSearchViewModel: SharedSearchViewModel,
+    pref: SharedPreferences
+) {
+    var selected by remember {
+        mutableStateOf(
+            (Integer.parseInt(
+                pref.getString(
+                    Utility.DEFAULT_SEARCH,
+                    "0"
+                ) ?: "0"
+            ) != 0)
+        )
+    }
+    Column {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = layoutMinMargins())
+        ) {
+            FilterChip(
+                onClick = {
+                    selected = !selected
+                    sharedSearchViewModel.advancedSearchFilter.value = selected
+                },
+                label = {
+                    Text(stringResource(R.string.advanced_search_subtitle))
+                },
+                selected = selected,
+                leadingIcon = if (selected) {
+                    {
+                        Icon(
+                            painter = painterResource(R.drawable.check_24px),
+                            contentDescription = "Done icon",
+                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                        )
+                    }
+                } else {
+                    null
+                },
+            )
+        }
+        AndroidFragment<SimpleIndexFragment>(
+            arguments = Bundle().apply {
+                putInt(SimpleIndexFragment.INDICE_LISTA, 0)
+                putBoolean(SimpleIndexFragment.IS_SEARCH, true)
+            }
+        )
+    }
+}
+
+private val SearchBarState.isExpanded
+    get() = this.currentValue == SearchBarValue.Expanded
+
+@Composable
+fun calculateGradientHeight(): () -> Float {
+    val statusBars = WindowInsets.statusBars
+    val density = LocalDensity.current
+    return { statusBars.getTop(density).times(1.2f) }
+}

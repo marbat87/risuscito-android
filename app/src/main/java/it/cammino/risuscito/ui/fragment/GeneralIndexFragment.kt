@@ -5,108 +5,133 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.compose.AndroidFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayoutMediator
-import com.google.android.material.transition.MaterialSharedAxis
-import it.cammino.risuscito.R
-import it.cammino.risuscito.databinding.TabsLayoutBinding
+import it.cammino.risuscito.ui.composable.main.generalIndexesList
 import it.cammino.risuscito.utils.Utility
-import it.cammino.risuscito.viewmodels.GeneralIndexViewModel
+import it.cammino.risuscito.viewmodels.SharedTabViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
-class GeneralIndexFragment : AccountMenuFragment() {
+class GeneralIndexFragment : RisuscitoFragment() {
 
-    private val mViewModel: GeneralIndexViewModel by viewModels()
-
-    private val mPageChange: ViewPager2.OnPageChangeCallback =
-        object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                Log.d(TAG, "onPageSelected: $position")
-                mViewModel.pageViewed = position
-            }
-        }
-
-    private var _binding: TabsLayoutBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-    }
+    private val sharedTabViewModel: SharedTabViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = TabsLayoutBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        return ComposeView(requireContext()).apply {
+            setContent {
 
-    override fun onDestroyView() {
-        binding.viewPager.unregisterOnPageChangeCallback(mPageChange)
-        _binding = null
-        super.onDestroyView()
+                val localPagerState = rememberPagerState(pageCount = {
+                    4
+                })
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    HorizontalPager(
+                        state = localPagerState
+                    ) { page ->
+                        // Our page content
+                        when (page) {
+                            0, 1 ->
+                                AndroidFragment<SimpleIndexFragment>(
+                                    arguments = Bundle().apply {
+                                        putInt(SimpleIndexFragment.INDICE_LISTA, page)
+                                    }
+                                )
+
+                            2 ->
+                                AndroidFragment<SectionedIndexFragment>(
+                                    arguments = Bundle().apply {
+                                        putInt(SectionedIndexFragment.INDICE_LISTA, 4)
+                                    }
+                                )
+
+                            3 ->
+                                AndroidFragment<SimpleIndexFragment>(
+                                    arguments = Bundle().apply {
+                                        putInt(SimpleIndexFragment.INDICE_LISTA, 2)
+                                    }
+                                )
+                        }
+                    }
+                }
+
+                LaunchedEffect(localPagerState) {
+                    snapshotFlow { localPagerState.currentPage }
+                        .distinctUntilChanged()
+                        .collect { page ->
+                            Log.d(
+                                TAG,
+                                "localPagerState.currentPage CHANGED (from snapshotFlow): $page"
+                            )
+                            if (sharedTabViewModel.tabsSelectedIndex.intValue != page)
+                                sharedTabViewModel.tabsSelectedIndex.intValue = page
+                        }
+                }
+
+                LaunchedEffect(Unit) { // Esegui una volta e colleziona il flow
+                    snapshotFlow { sharedTabViewModel.tabsSelectedIndex.intValue }
+                        .collect { selectedIndex ->
+                            Log.d(
+                                TAG,
+                                "Tabs selected index CHANGED (from snapshotFlow): $selectedIndex"
+                            )
+                            if (localPagerState.currentPage != selectedIndex) {
+                                Log.d(TAG, "Animating pager to page: $selectedIndex")
+                                localPagerState.scrollToPage(selectedIndex)
+                            }
+                        }
+                }
+
+            }
+
+            mMainActivity?.createOptionsMenu(
+                emptyList(),
+                null
+            )
+
+            mMainActivity?.setupMaterialTab(generalIndexesList)
+            mMainActivity?.setTabVisible(true)
+            mMainActivity?.initFab(enable = false)
+
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mMainActivity?.setupToolbarTitle(R.string.title_activity_general_index)
-        mMainActivity?.setTabVisible(true)
-        mMainActivity?.enableFab(false)
-
-        binding.viewPager.adapter = IndexTabsAdapter(this)
-        mMainActivity?.getMaterialTabs()?.let {
-            TabLayoutMediator(it, binding.viewPager) { tab, position ->
-                tab.setText(
-                    when (position) {
-                        0 -> R.string.letter_order_text
-                        1 -> R.string.page_order_text
-                        2 -> R.string.indice_liturgico_index
-                        3 -> R.string.salmi_musica_index
-                        else -> R.string.letter_order_text
-                    }
-                )
-            }.attach()
-        }
-        binding.viewPager.registerOnPageChangeCallback(mPageChange)
-
         lifecycleScope.launch {
-            delay(500)
-            if (savedInstanceState == null) {
+            delay(500.milliseconds)
+            if (sharedTabViewModel.resetTab.value) {
+                Log.d(TAG, "GeneralIndexFragment newINSTANCE")
+                sharedTabViewModel.resetTab.value = false
                 val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                binding.viewPager.currentItem = Integer.parseInt(
+                sharedTabViewModel.tabsSelectedIndex.intValue = Integer.parseInt(
                     pref.getString(Utility.DEFAULT_INDEX, "0")
                         ?: "0"
                 )
-            } else
-                binding.viewPager.currentItem = mViewModel.pageViewed
-        }
-
-    }
-
-    private class IndexTabsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-        override fun getItemCount(): Int = 4
-
-        override fun createFragment(position: Int): Fragment =
-            when (position) {
-                0 -> SimpleIndexFragment.newInstance(0)
-                1 -> SimpleIndexFragment.newInstance(1)
-                2 -> SectionedIndexFragment.newInstance(0)
-                3 -> SimpleIndexFragment.newInstance(2)
-                else -> SimpleIndexFragment.newInstance(0)
+                mMainActivity?.setTabVisible(true)
             }
+
+        }
     }
 
     companion object {

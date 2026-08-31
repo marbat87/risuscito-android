@@ -1,6 +1,19 @@
 package it.cammino.risuscito.utils
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageInfo
+import android.net.Uri
 import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.ShareCompat
+import androidx.core.net.toUri
+import it.cammino.risuscito.R
+import it.cammino.risuscito.ui.fragment.AboutFragment.Companion.TAG
+import it.cammino.risuscito.utils.extension.shareThisApp
 import java.util.Locale
 
 @Suppress("unused")
@@ -39,9 +52,9 @@ object OSUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     }
 
-    fun hasN(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-    }
+//    fun hasN(): Boolean {
+//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+//    }
 
     fun hasP(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
@@ -51,9 +64,9 @@ object OSUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     }
 
-    fun isObySamsung(): Boolean {
-        return (Build.VERSION.SDK_INT == Build.VERSION_CODES.O || Build.VERSION.SDK_INT == Build.VERSION_CODES.O_MR1 || Build.VERSION.SDK_INT == Build.VERSION_CODES.N || Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1) && isSamsungDevice()
-    }
+//    fun isObySamsung(): Boolean {
+//        return (Build.VERSION.SDK_INT == Build.VERSION_CODES.O || Build.VERSION.SDK_INT == Build.VERSION_CODES.O_MR1 || Build.VERSION.SDK_INT == Build.VERSION_CODES.N || Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1) && isSamsungDevice()
+//    }
 
     fun hasT(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
@@ -65,6 +78,84 @@ object OSUtils {
 
     fun hasV(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+    }
+
+    fun getVersionCode(context: Context): Long {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        return if (hasP())
+            getVersionCodeP(packageInfo)
+        else getVersionCodeLegacy(packageInfo)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun getVersionCodeLegacy(packageInfo: PackageInfo): Long {
+        return packageInfo.versionCode.toLong()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun getVersionCodeP(packageInfo: PackageInfo): Long {
+        return packageInfo.longVersionCode
+    }
+
+    fun rateOnClickAction(c: Context) {
+        val uri = ("market://details?id=" + c.packageName).toUri()
+        val goToMarket = Intent(Intent.ACTION_VIEW, uri)
+        goToMarket.addFlags(
+            Intent.FLAG_ACTIVITY_NO_HISTORY or
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+        )
+
+        try {
+            c.startActivity(goToMarket)
+        } catch (e: ActivityNotFoundException) {
+            c.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    ("http://play.google.com/store/apps/details?id=" + c.packageName).toUri()
+                )
+            )
+        }
+    }
+
+    fun shareAppOnClickAction(context: Context) {
+        context.startActivity(
+            context.shareThisApp(context.getString(R.string.app_name))
+        )
+    }
+
+    fun sendMailOnClickAction(context: Context) {
+        try {
+            context.startActivity(
+                ShareCompat.IntentBuilder(context).setType("text/html")
+
+                    .setSubject(context.getString(R.string.app_name))
+                    .addEmailTo("marbat87@outlook.it").intent
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error:", e)
+            // No activity to handle intent
+            Toast.makeText(
+                context,
+                R.string.mal_activity_exception,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    fun createWebsiteOnClickAction(c: Context, websiteUrl: Uri?) {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = websiteUrl
+        try {
+            c.startActivity(i)
+        } catch (e: java.lang.Exception) {
+            // No activity to handle intent
+            Toast.makeText(
+                c,
+                R.string.mal_activity_exception,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
 }

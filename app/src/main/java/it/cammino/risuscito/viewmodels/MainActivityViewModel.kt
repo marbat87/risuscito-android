@@ -1,25 +1,26 @@
 package it.cammino.risuscito.viewmodels
 
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.PlaybackStateCompat
+import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import it.cammino.risuscito.R
+import androidx.media3.common.MediaMetadata
+import it.cammino.risuscito.items.CantoViewData
 
-class MainActivityViewModel : ViewModel() {
+class MainActivityViewModel(application: Application) : DialogManagerViewModel(application) {
 
     var backupRestoreState = MutableLiveData(BakupRestoreState.NONE)
     var httpRequestState = MutableLiveData(ClientState.STARTED)
     var loginState = MutableLiveData(LOGIN_STATE_STARTED)
     var profileAction = ProfileAction.NONE
-
-    var isTabletWithFixedDrawer: Boolean = false
-    var isTabletWithNoFixedDrawer: Boolean = false
-    var selectedMenuItemId: Int = R.id.navigation_indexes
     var catalogRefreshReady = MutableLiveData(true)
-    var lastPlaybackState = MutableLiveData<PlaybackStateCompat>()
-    var medatadaCompat = MutableLiveData<MediaMetadataCompat>()
+    var lastPlaybackState = MutableLiveData<Int>() // Using Player.State constants
+    var isPlaying = MutableLiveData<Boolean>()
+    var medatadaCompat = MutableLiveData<MediaMetadata>()
     var playerConnected = MutableLiveData(false)
+
+    val cantoData = mutableStateOf(CantoViewData())
+
+    val navigateBack = mutableStateOf(false)
 
     enum class BakupRestoreState {
         NONE,
