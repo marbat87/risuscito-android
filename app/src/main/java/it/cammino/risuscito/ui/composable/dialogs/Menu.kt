@@ -64,7 +64,8 @@ fun AddToDropDownMenu(
     val showSecondaState = remember { mutableStateOf(pref.getBoolean(Utility.SHOW_SECONDA, false)) }
     val showOffertorioState =
         remember { mutableStateOf(pref.getBoolean(Utility.SHOW_OFFERTORIO, false)) }
-    val showEucarestiaPaceState = remember { mutableStateOf(pref.getBoolean(Utility.SHOW_EUCARESTIA_PACE, true)) }
+    val showEucarestiaPaceState =
+        remember { mutableStateOf(pref.getBoolean(Utility.SHOW_EUCARESTIA_PACE, true)) }
     val showSantoState = remember { mutableStateOf(pref.getBoolean(Utility.SHOW_SANTO, false)) }
 
     DisposableEffect(pref) {
@@ -76,7 +77,8 @@ fun AddToDropDownMenu(
                     sharedPrefs.getBoolean(key, false)
 
                 Utility.SHOW_SANTO -> showSantoState.value = sharedPrefs.getBoolean(key, false)
-                Utility.SHOW_EUCARESTIA_PACE -> showEucarestiaPaceState.value = sharedPrefs.getBoolean(key, true)
+                Utility.SHOW_EUCARESTIA_PACE -> showEucarestiaPaceState.value =
+                    sharedPrefs.getBoolean(key, true)
             }
         }
         pref.registerOnSharedPreferenceChangeListener(listener)
@@ -94,7 +96,8 @@ fun AddToDropDownMenu(
     val parolaMenuSize = 5 + listOf(showPace).count { it }
     var parolaCounter = 0
 
-    val eucarestiaMenuSize = 4 + listOf(showSeconda, showOffertorio, showEucarestiaPace, showSanto).count { it }
+    val eucarestiaMenuSize =
+        4 + listOf(showSeconda, showOffertorio, showEucarestiaPace, showSanto).count { it }
     var eucarestiaCounter = 0
 
     DropdownMenuPopup(
@@ -432,7 +435,7 @@ fun PassaggesDropDownMenu(
                     .padding(start = 16.dp, end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                MenuDefaults.DropdownMenuGroupLabel { Text(stringResource(R.string.select_canto_popup)) }
+                MenuDefaults.DropdownMenuGroupLabel { Text(stringResource(R.string.passage_filter)) }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = { onDismissRequest() }) {
@@ -449,14 +452,14 @@ fun PassaggesDropDownMenu(
 
             Column {
                 indiciPassaggi.forEachIndexed { i, item ->
-                    MenuSelectabletem(
+                    MenuCheckableItem(
+                        checked = passaggiSelectedItems.value?.contains(item) ?: false,
                         text = nomiPassaggi[i],
-                        onSelect = {
+                        onCheckedChange = {
                             onSelect(item, it)
                         },
-                        selected = passaggiSelectedItems.value?.contains(item) ?: false,
                         itemIndex = i,
-                        itemsCount = indiciPassaggi.size
+                        itemsCount = indiciPassaggi.size,
                     )
                 }
             }

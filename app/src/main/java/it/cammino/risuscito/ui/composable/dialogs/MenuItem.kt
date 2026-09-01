@@ -1,6 +1,7 @@
 package it.cammino.risuscito.ui.composable.dialogs
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CheckableDropdownMenuItem
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -99,31 +100,35 @@ fun MenuSimpleItem(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun MenuSelectabletem(
+fun MenuCheckableItem(
     text: String,
-    onSelect: (Boolean) -> Unit,
-    selected: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit,
+    checked: Boolean = false,
     itemIndex: Int = 0,
     itemsCount: Int = 1
 ) {
 
-    DropdownMenuItem(
-        selected = selected,
+    CheckableDropdownMenuItem(
+        checked = checked,
         text = { Text(text) },
+        onCheckedChange = onCheckedChange,
         shapes = MenuDefaults.itemShape(itemIndex, itemsCount),
-        onClick = {
-            onSelect(!selected)
-        },
-        trailingContent = {
+        leadingIcon = {
             Checkbox(
                 modifier = Modifier.size(MenuDefaults.LeadingIconSize),
-                checked = selected,
-                onCheckedChange = {
-                    onSelect(it)
-                }
+                checked = false,
+                onCheckedChange = onCheckedChange
+            )
+        },
+        checkedLeadingIcon = {
+            Checkbox(
+                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                checked = true,
+                onCheckedChange = onCheckedChange
             )
         }
     )
+
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
