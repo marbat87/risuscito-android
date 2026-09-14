@@ -17,6 +17,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaSession.ConnectionResult
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
@@ -109,6 +110,21 @@ class MusicService : MediaLibraryService() {
     }
 
     private inner class LibraryCallback : MediaLibrarySession.Callback {
+
+        @OptIn(UnstableApi::class)
+        override fun onConnect(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo
+        ): ConnectionResult {
+            val sessionCommands = ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
+                .add(SessionCommand(ACTION_REFRESH, Bundle.EMPTY))
+                .build()
+            return ConnectionResult.AcceptedResultBuilder(session, controller)
+                .setAvailableSessionCommands(sessionCommands)
+                .setAvailablePlayerCommands(ConnectionResult.DEFAULT_PLAYER_COMMANDS)
+                .build()
+        }
+
         override fun onGetLibraryRoot(
             session: MediaLibrarySession,
             browser: MediaSession.ControllerInfo,
@@ -135,7 +151,10 @@ class MusicService : MediaLibraryService() {
             params: LibraryParams?
         ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
             val items = when (parentId) {
-                MusicProvider.MEDIA_ID_ROOT -> ImmutableList.copyOf(mMusicProvider?.allMusics ?: emptyList())
+                MusicProvider.MEDIA_ID_ROOT -> ImmutableList.copyOf(
+                    mMusicProvider?.allMusics ?: emptyList()
+                )
+
                 else -> ImmutableList.of()
             }
             return Futures.immediateFuture(LibraryResult.ofItemList(items, params))
@@ -169,14 +188,20 @@ class MusicService : MediaLibraryService() {
             startPositionMs: Long
         ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
             // We want to make sure the URIs are resolved if they are just IDs
-            val resolvedItems = mediaItems.map { item ->
+            val resolvedItems = mediaItems.mapNotNull { item ->
                 if (item.localConfiguration == null) {
-                    mMusicProvider?.getMusic(item.mediaId) ?: item
+                    mMusicProvider?.getMusic(item.mediaId)
                 } else {
                     item
                 }
             }
-            return Futures.immediateFuture(MediaSession.MediaItemsWithStartPosition(resolvedItems, startIndex, startPositionMs))
+            return Futures.immediateFuture(
+                MediaSession.MediaItemsWithStartPosition(
+                    resolvedItems,
+                    startIndex,
+                    startPositionMs
+                )
+            )
         }
     }
 

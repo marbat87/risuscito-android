@@ -50,14 +50,17 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -83,6 +86,7 @@ import it.cammino.risuscito.ui.composable.theme.RisuscitoTheme
 import it.cammino.risuscito.ui.fragment.CantoFragment
 import it.cammino.risuscito.viewmodels.PaginaRenderViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -407,6 +411,18 @@ fun MediaPlayerView(
     onValueChange: (Float) -> Unit
 
 ) {
+    val sliderState = key(seekBarMaxValue) {
+        rememberSliderState(value = seekBarValue, trackRange = 0f..seekBarMaxValue)
+    }
+    LaunchedEffect(seekBarValue) {
+        snapshotFlow { seekBarValue }
+            .distinctUntilChanged()
+            .collect {
+                Log.d("MediaPlayerView", "seekBarValue: $it")
+                sliderState.value = it
+            }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -433,11 +449,10 @@ fun MediaPlayerView(
 
                     PaginaRenderViewModel.SeekBarMode.SEEKBAR -> {
                         Slider(
-                            value = seekBarValue,
-                            onValueChange = { onValueChange(it) },
-                            valueRange = 0f..seekBarMaxValue,
+                            state = sliderState,
+                            modifier = Modifier.fillMaxWidth(),
                             enabled = seekBarEnabled,
-                            modifier = Modifier.fillMaxWidth()
+                            onValueChangeFinished = { onValueChange(sliderState.value) }
                         )
                     }
                 }
@@ -486,6 +501,15 @@ fun ScrollPlayerView(
 
 ) {
 
+    val sliderState = rememberSliderState(value = seekBarValue)
+    LaunchedEffect(seekBarValue) {
+        snapshotFlow { seekBarValue }
+            .distinctUntilChanged()
+            .collect {
+                sliderState.value = it
+            }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -493,7 +517,7 @@ fun ScrollPlayerView(
             .background(MaterialTheme.colorScheme.surfaceContainer),
         verticalAlignment = Alignment.CenterVertically,
 
-    ) {
+        ) {
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = stringResource(R.string.percent_progress, (seekBarValue * 100).toInt()),
@@ -505,10 +529,12 @@ fun ScrollPlayerView(
 
         Box(modifier = Modifier.weight(1f)) {
             Slider(
-                value = seekBarValue,
-                onValueChange = { onValueChange(it) },
-                modifier = Modifier.fillMaxWidth()
-            )
+                sliderState,
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = {
+                    sliderState.value = it
+                    onValueChange(it)
+                })
         }
 
         Spacer(modifier = Modifier.width(16.dp))
