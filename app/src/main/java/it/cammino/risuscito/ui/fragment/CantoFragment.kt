@@ -382,13 +382,15 @@ open class CantoFragment : Fragment() {
                                                     seekBarMaxValue = seekBarMaxValue.floatValue,
                                                     seekBarEnabled = seekBarEnabled.value,
                                                     onValueChange = { newValue ->
-                                                        stopSeekbarUpdate()
-                                                        mMainActivity?.getMediaBrowser()?.seekTo(
-                                                            newValue.toLong()
-                                                        )
-                                                        scheduleSeekbarUpdate()
                                                         seekBarValue.floatValue = newValue
-                                                        updateTimeText(newValue)
+                                                        stopSeekbarUpdate()
+                                                    },
+                                                    onValueChangeFinished = {
+                                                        mMainActivity?.getMediaBrowser()?.seekTo(
+                                                            seekBarValue.floatValue.toLong()
+                                                        )
+                                                        updateTimeText(seekBarValue.floatValue)
+                                                        scheduleSeekbarUpdate()
                                                     }
                                                 )
                                             }

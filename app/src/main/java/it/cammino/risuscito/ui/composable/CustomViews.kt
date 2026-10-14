@@ -89,7 +89,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Hint(
     hintText: String,
@@ -408,8 +407,8 @@ fun MediaPlayerView(
     seekBarValue: Float = 0f,
     seekBarMaxValue: Float = 0f,
     seekBarEnabled: Boolean = false,
-    onValueChange: (Float) -> Unit
-
+    onValueChange: (Float) -> Unit,
+    onValueChangeFinished: () -> Unit,
 ) {
     val sliderState = key(seekBarMaxValue) {
         rememberSliderState(value = seekBarValue, trackRange = 0f..seekBarMaxValue)
@@ -452,7 +451,11 @@ fun MediaPlayerView(
                             state = sliderState,
                             modifier = Modifier.fillMaxWidth(),
                             enabled = seekBarEnabled,
-                            onValueChangeFinished = { onValueChange(sliderState.value) }
+                            onValueChange = {
+                                sliderState.value = it
+                                onValueChange(sliderState.value)
+                            },
+                            onValueChangeFinished = onValueChangeFinished
                         )
                     }
                 }

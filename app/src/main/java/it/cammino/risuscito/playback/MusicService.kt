@@ -203,6 +203,32 @@ class MusicService : MediaLibraryService() {
                 )
             )
         }
+
+        @OptIn(UnstableApi::class)
+        override fun onPlaybackResumption(
+            mediaSession: MediaSession,
+            controller: MediaSession.ControllerInfo,
+            isForPlayback: Boolean
+        ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+            val items = if (player.mediaItemCount > 0) {
+                val currentItems = mutableListOf<MediaItem>()
+                for (i in 0 until player.mediaItemCount) {
+                    currentItems.add(player.getMediaItemAt(i))
+                }
+                MediaSession.MediaItemsWithStartPosition(
+                    currentItems,
+                    player.currentMediaItemIndex,
+                    player.currentPosition
+                )
+            } else {
+                MediaSession.MediaItemsWithStartPosition(
+                    emptyList(),
+                    C.INDEX_UNSET,
+                    C.TIME_UNSET
+                )
+            }
+            return Futures.immediateFuture(items)
+        }
     }
 
     private fun sendMusicProviderStatusBroadcast(done: Boolean) {
