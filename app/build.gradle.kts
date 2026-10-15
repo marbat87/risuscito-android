@@ -17,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 37
         multiDexEnabled = true
-        versionCode = 6108
+        versionCode = 6113
         versionName = "6.1.0"
 
     }
@@ -75,7 +75,7 @@ ksp {
     arg("room.expandProjection", "true")
     arg("room.generateKotlin", "true")
 }
-val roomVersion = "2.8.4"
+val roomVersion = "2.8.5"
 val composepreferences = "3.0.0"
 dependencies {
     implementation(files("libs/pfdjet.aar"))
@@ -84,26 +84,30 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation("androidx.appcompat:appcompat-resources:1.8.0")
-    implementation("androidx.core:core-ktx:1.19.0")
-    implementation("androidx.fragment:fragment-ktx:1.9.0")
-    implementation("androidx.fragment:fragment-compose:1.9.0")
+    implementation("androidx.core:core-ktx:1.19.1")
+    implementation("androidx.fragment:fragment-ktx:1.9.1")
+    implementation("androidx.fragment:fragment-compose:1.9.1")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.2")
-    implementation("androidx.media3:media3-exoplayer:1.11.0")
-    implementation("androidx.media3:media3-session:1.11.0")
-    implementation("androidx.media3:media3-common:1.11.0")
+    implementation("androidx.media3:media3-exoplayer:1.11.1")
+    implementation("androidx.media3:media3-session:1.11.1")
+    implementation("androidx.media3:media3-common:1.11.1")
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.work:work-runtime-ktx:2.11.2")
+    implementation("androidx.work:work-runtime-ktx:2.12.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.11.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
+    //noinspection LoginCredentials
     implementation("com.google.android.gms:play-services-auth:22.0.0")
+    //noinspection LoginCredentials
     implementation("androidx.credentials:credentials:1.6.0")
+    //noinspection LoginCredentials
     implementation("androidx.credentials:credentials-play-services-auth:1.6.0")
-    implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
-    implementation(platform("com.google.firebase:firebase-bom:34.18.0"))
+    //noinspection LoginCredentials
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.2.1")
+    implementation(platform("com.google.firebase:firebase-bom:35.0.0"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     //noinspection LoginCredentials
@@ -119,8 +123,8 @@ dependencies {
     // ci sono conflitti di versioni dalla 2.5.0 in poi, in alcune librerie http - ce ne si accorge facendo il ripristino delle preferences
     //noinspection NewerVersionAvailable
     implementation("com.google.api-client:google-api-client:2.4.0")
-    implementation("io.coil-kt.coil3:coil-compose:3.5.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.5.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.6.3")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.6.3")
     implementation("sh.calvin.reorderable:reorderable:3.1.0")
     implementation("io.github.mflisar.composechangelog:core-android:4.0.0")
     implementation("io.github.mflisar.composechangelog:statesaver-preferences-android:4.0.0") // core
@@ -129,9 +133,9 @@ dependencies {
     implementation("io.github.mflisar.composepreferences:screen-list:${composepreferences}")
     implementation("io.github.fornewid:material-motion-compose-core:2.0.1")
 
-    implementation(platform("androidx.compose:compose-bom:2026.08.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.09.00"))
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.5.0-alpha27")
+    implementation("androidx.compose.material3:material3:1.5.0-beta01")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.ui:ui")
@@ -146,5 +150,5 @@ dependencies {
     implementation("androidx.compose.animation:animation-graphics")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
     implementation("androidx.compose.material3.adaptive:adaptive-navigation")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.10.0")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.10.2")
 }

@@ -72,6 +72,7 @@ import it.cammino.risuscito.utils.extension.convertTabs
 import it.cammino.risuscito.utils.extension.convertiBarre
 import it.cammino.risuscito.utils.extension.enableEdgeToEdgeWrapper
 import it.cammino.risuscito.utils.extension.queryIntentActivities
+import it.cammino.risuscito.utils.extension.safeGetString
 import it.cammino.risuscito.utils.extension.startActivityWithTransition
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.MainActivityViewModel
@@ -525,7 +526,7 @@ class MainActivity : ThemeableActivity() {
             sharedSearchViewModel.titoli.value = canti.sortedWith(
                 compareBy(
                     Collator.getInstance(systemLocale)
-                ) { getString(it.titleRes) })
+                ) { safeGetString(it.titleRes) })
         }
 
     }

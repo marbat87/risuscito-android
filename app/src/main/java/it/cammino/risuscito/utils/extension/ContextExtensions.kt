@@ -58,20 +58,23 @@ private const val DARK_MODE = "dark"
 private const val DEFAULT_MODE = "default"
 
 fun Resources.readTextFromResource(resourceID: String): String {
-    val inputStream =
-        openRawResource(Utility.getResId(resourceID, R.raw::class.java))
-    val br = BufferedReader(InputStreamReader(inputStream, "utf-8"))
-    var line: String? = br.readLine()
-    val cantoTrasportato = StringBuffer()
+    val resId = Utility.getResId(resourceID, R.raw::class.java)
+    if (resId <= 0) return ""
+    return try {
+        val inputStream = openRawResource(resId)
+        val br = BufferedReader(InputStreamReader(inputStream, "utf-8"))
+        var line: String? = br.readLine()
+        val cantoTrasportato = StringBuilder()
 
-    while (line != null) {
-//            Log.d(TAG, "line: $line")
-        cantoTrasportato.append(line)
-        cantoTrasportato.append("\n")
-        line = br.readLine()
+        while (line != null) {
+            cantoTrasportato.append(line).append("\n")
+            line = br.readLine()
+        }
+        br.close()
+        cantoTrasportato.toString()
+    } catch (_: Exception) {
+        ""
     }
-    br.close()
-    return cantoTrasportato.toString()
 }
 
 val Context.isDefaultLocationPublic: Boolean
@@ -141,3 +144,21 @@ val Fragment.systemLocale: Locale
     get() {
         return requireContext().systemLocale
     }
+
+fun Context.safeGetString(resId: Int): String {
+    if (resId <= 0) return ""
+    return try {
+        getString(resId)
+    } catch (_: Exception) {
+        ""
+    }
+}
+
+fun Fragment.safeGetString(resId: Int): String {
+    if (resId <= 0) return ""
+    return try {
+        getString(resId)
+    } catch (_: Exception) {
+        ""
+    }
+}
