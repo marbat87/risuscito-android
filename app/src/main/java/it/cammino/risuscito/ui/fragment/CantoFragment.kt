@@ -132,7 +132,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.File
-import java.io.IOException
 import java.io.InputStreamReader
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -705,32 +704,28 @@ open class CantoFragment : Fragment() {
                 ).putString("lingua", requireContext().systemLocale.language).build()
             )
 
-            mCantiViewModel.primaNota =
-                mCantiViewModel.primaNota.ifEmpty {
-                    CambioAccordi.recuperaPrimoAccordo(
-                        resources.openRawResource(
-                            Utility.getResId(
-                                mCantiViewModel.pagina,
-                                R.raw::class.java
-                            )
-                        ),
-                        requireContext().systemLocale.language
-                    )
-                }
-            mCantiViewModel.primoBarre =
-                mCantiViewModel.primoBarre.ifEmpty {
-                    cambioAccordi.recuperaBarre(
-                        resources.openRawResource(
-                            Utility.getResId(
-                                mCantiViewModel.pagina,
-                                R.raw::class.java
-                            )
-                        ),
-                        requireContext().systemLocale.language
-                    )
-                }
-        } catch (e: IOException) {
-            Log.e(TAG, e.localizedMessage, e)
+            val rawResId = Utility.getResId(
+                mCantiViewModel.pagina,
+                R.raw::class.java
+            )
+            if (rawResId > 0) {
+                mCantiViewModel.primaNota =
+                    mCantiViewModel.primaNota.ifEmpty {
+                        CambioAccordi.recuperaPrimoAccordo(
+                            resources.openRawResource(rawResId),
+                            requireContext().systemLocale.language
+                        )
+                    }
+                mCantiViewModel.primoBarre =
+                    mCantiViewModel.primoBarre.ifEmpty {
+                        cambioAccordi.recuperaBarre(
+                            resources.openRawResource(rawResId),
+                            requireContext().systemLocale.language
+                        )
+                    }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, e.localizedMessage ?: "Error loading raw resource", e)
         }
 
         lifecycleScope.launch { retrieveData() }
@@ -962,14 +957,15 @@ open class CantoFragment : Fragment() {
         var barreScritto = false
 
         try {
+            val rawResId = Utility.getResId(
+                mCantiViewModel.pagina,
+                R.raw::class.java
+            )
+            if (rawResId <= 0) return ""
+
             val br = BufferedReader(
                 InputStreamReader(
-                    resources.openRawResource(
-                        Utility.getResId(
-                            mCantiViewModel.pagina,
-                            R.raw::class.java
-                        )
-                    ), ECONDING_UTF8
+                    resources.openRawResource(rawResId), ECONDING_UTF8
                 )
             )
 

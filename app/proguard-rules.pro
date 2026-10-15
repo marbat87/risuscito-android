@@ -26,7 +26,10 @@
     static ** CREATOR;
 }
 
-# Keep string resource fields for dynamic reflection lookup via Utility.getResId
+# Keep string and raw resource fields for dynamic reflection lookup via Utility.getResId
 -keepclassmembers class **.R$string {
+    public static <fields>;
+}
+-keepclassmembers class **.R$raw {
     public static <fields>;
 }
