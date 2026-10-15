@@ -54,6 +54,7 @@ import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.safeGetString
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.FavoritesViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
@@ -201,7 +202,7 @@ class FavoritesFragment : RisuscitoFragment(), ActionModeFragment, SnackBarFragm
                     canti.sortedWith(
                         compareBy(
                             Collator.getInstance(systemLocale)
-                        ) { getString(it.titleRes) })
+                        ) { safeGetString(it.titleRes) })
 
                 mMainActivity?.createOptionsMenu(
                     if (canti.isNotEmpty()) cleanListOptionMenu else helpOptionMenu,

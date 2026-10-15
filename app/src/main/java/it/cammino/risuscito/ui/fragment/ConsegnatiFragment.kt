@@ -60,6 +60,7 @@ import it.cammino.risuscito.ui.interfaces.ActionModeFragment
 import it.cammino.risuscito.ui.interfaces.FabFragment
 import it.cammino.risuscito.ui.interfaces.OptionMenuFragment
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.safeGetString
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.ConsegnatiViewModel
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
@@ -274,7 +275,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                     consegnatiViewModel.consegnatiSortedList.value = canti.sortedWith(
                         compareBy(
                             Collator.getInstance(systemLocale)
-                        ) { getString(it.titleRes) }).filter { consegnato ->
+                        ) { safeGetString(it.titleRes) }).filter { consegnato ->
                         consegnatiViewModel.passaggiSelectedList.value?.isEmpty() == true
                                 || consegnatiViewModel.passaggiSelectedList.value?.any { it == consegnato.numPassaggio } == true
                     }
@@ -290,7 +291,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
                         consegnatiViewModel.consegnatiList?.value?.sortedWith(
                             compareBy(
                                 Collator.getInstance(systemLocale)
-                            ) { getString(it.titleRes) })?.filter { consegnato ->
+                            ) { safeGetString(it.titleRes) })?.filter { consegnato ->
                             passaggiSelectedListState?.isEmpty() == true ||
                                     passaggiSelectedListState?.any { it == consegnato.numPassaggio }
                                     ?: false
@@ -380,7 +381,7 @@ class ConsegnatiFragment : RisuscitoFragment(), ActionModeFragment, OptionMenuFr
         }.sortedWith(
             compareBy(
                 Collator.getInstance(systemLocale)
-            ) { getString(it.titleRes) })
+            ) { safeGetString(it.titleRes) })
         consegnatiViewModel.consegnatiSelectedList.value =
             canti.filter { it.consegnato != -1 }.map { it.id }
     }

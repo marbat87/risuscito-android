@@ -54,6 +54,7 @@ import it.cammino.risuscito.ui.interfaces.SnackBarFragment
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.StringUtils
 import it.cammino.risuscito.utils.Utility
+import it.cammino.risuscito.utils.extension.safeGetString
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SharedScrollViewModel
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
@@ -126,7 +127,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                             mActivity?.openCanto(
                                 TAG,
                                 item.id,
-                                getString(item.sourceRes),
+                                safeGetString(item.sourceRes),
                                 !hasTwoPanes
                             )
                         }
@@ -139,7 +140,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                         mActivity?.openCanto(
                             TAG,
                             item.id,
-                            getString(item.sourceRes),
+                            safeGetString(item.sourceRes),
                             !hasTwoPanes
                         )
                     }
@@ -314,7 +315,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     sharedSearchViewModel.itemsResultFiltered.observe(viewLifecycleOwner) { canti ->
                         localItems.value =
                             canti.sortedWith(compareBy(Collator.getInstance(systemLocale)) {
-                                getString(it.titleRes)
+                                safeGetString(it.titleRes)
                             })
                     }
 
@@ -333,10 +334,10 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                                             systemLocale
                                         )
                                     ) {
-                                        getString(it.titleRes)
+                                        safeGetString(it.titleRes)
                                     })
 
-                                1 -> canti.sortedBy { getString(it.pageRes).toInt() }
+                                1 -> canti.sortedBy { safeGetString(it.pageRes).toIntOrNull() ?: 0 }
                                 else -> canti
                             }
                     }
@@ -419,7 +420,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                     Log.d(TAG, "performSearch onTextChanged: stringa $stringa")
                     sharedSearchViewModel.titoli.value.orEmpty().filter {
                         Utility.removeAccents(
-                            getString(it.titleRes)
+                            safeGetString(it.titleRes)
                         ).lowercase(systemLocale)
                             .contains(stringa) && (sharedSearchViewModel.consegnatiOnlyFilter.value != true || it.consegnato != -1)
                     }.forEach {
@@ -432,7 +433,7 @@ class SimpleIndexFragment : Fragment(), SnackBarFragment {
                         titoliResult.sortedWith(
                             compareBy(
                                 Collator.getInstance(systemLocale)
-                            ) { getString(it.titleRes) })
+                            ) { safeGetString(it.titleRes) })
                     showSearchProgress.value = false
                 }
             } else {

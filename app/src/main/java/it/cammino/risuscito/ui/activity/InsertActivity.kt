@@ -68,6 +68,7 @@ import it.cammino.risuscito.utils.CantiXmlParser
 import it.cammino.risuscito.utils.ListeUtils
 import it.cammino.risuscito.utils.Utility
 import it.cammino.risuscito.utils.extension.finishAfterTransitionWrapper
+import it.cammino.risuscito.utils.extension.safeGetString
 import it.cammino.risuscito.utils.extension.systemLocale
 import it.cammino.risuscito.viewmodels.SharedSearchViewModel
 import it.cammino.risuscito.viewmodels.SimpleIndexViewModel
@@ -383,7 +384,7 @@ class InsertActivity : ThemeableActivity() {
             sharedSearchViewModel.titoli.value = canti.sortedWith(
                 compareBy(
                     Collator.getInstance(systemLocale)
-                ) { getString(it.titleRes) })
+                ) { safeGetString(it.titleRes) })
         }
 
     }

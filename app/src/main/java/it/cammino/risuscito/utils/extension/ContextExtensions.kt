@@ -141,3 +141,21 @@ val Fragment.systemLocale: Locale
     get() {
         return requireContext().systemLocale
     }
+
+fun Context.safeGetString(resId: Int): String {
+    if (resId <= 0) return ""
+    return try {
+        getString(resId)
+    } catch (_: Exception) {
+        ""
+    }
+}
+
+fun Fragment.safeGetString(resId: Int): String {
+    if (resId <= 0) return ""
+    return try {
+        getString(resId)
+    } catch (_: Exception) {
+        ""
+    }
+}
